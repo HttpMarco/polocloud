@@ -1,0 +1,20 @@
+[versions]
+lombok = "1.18.32"
+osgan = "1.1.15-20240514.180642-1"
+
+
+jansi = "2.4.1"
+jline = "3.26.1"
+
+[libraries]
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+
+osgan-utils = { group = "dev.httpmarco", name = "osgan-utils", version.ref = "osgan" }
+osgan-files = { group = "dev.httpmarco", name = "osgan-files", version.ref = "osgan" }
+
+jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" }
+jline = { group = "org.jline", name = "jline", version.ref = "jline" }
+
+[bundles]
+utils = ["lombok", "osgan-utils", "osgan-files"]
+console = ["jline", "jansi"]
