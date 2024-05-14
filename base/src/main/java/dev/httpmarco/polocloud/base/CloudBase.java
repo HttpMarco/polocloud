@@ -5,11 +5,17 @@ import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
+@Getter
+@Accessors(fluent = true)
 public final class CloudBase extends CloudAPI {
+
+    private final CloudTerminal terminal;
 
     private boolean running = true;
 
@@ -18,14 +24,14 @@ public final class CloudBase extends CloudAPI {
         dependencyService().load(new Dependency("org.jline", "jline", "3.26.1"));
         dependencyService().load(new Dependency("org.fusesource.jansi", "jansi", "2.4.1"));
 
+        this.terminal = new CloudTerminal();
         // register logging layers (for general output)
-        this.loggerFactory().registerLoggers(new FileLoggerHandler(), new CloudTerminal());
+        this.loggerFactory().registerLoggers(new FileLoggerHandler(), terminal);
 
         System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
 
         logger().info("Successfully started up!");
-
     }
 
     public void shutdown() {
@@ -35,6 +41,8 @@ public final class CloudBase extends CloudAPI {
         running = false;
 
         logger().info("Shutdown cloud...");
+
+        this.terminal.close();
         System.exit(0);
     }
 
