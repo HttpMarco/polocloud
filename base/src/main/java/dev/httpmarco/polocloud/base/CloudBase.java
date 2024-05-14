@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
@@ -31,7 +32,14 @@ public final class CloudBase extends CloudAPI {
         System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
 
+        // print cloud header informations
+        terminal.spacer();
+        terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.12");
+        terminal.spacer("   &1node&2: &1node-1 &2| &1id&2: &1" + UUID.randomUUID());
+        terminal.spacer();
+
         logger().info("Successfully started up!");
+        this.terminal.start();
     }
 
     public void shutdown() {

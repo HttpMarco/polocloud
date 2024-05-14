@@ -10,6 +10,8 @@ public enum CloudTerminalColor {
     DEFAULT(209, 209, 209),
     DARK_GRAY(69, 69, 69),
 
+    WHITE(255, 255, 255),
+
     WARNING(176, 130, 23),
     ERROR(161, 46, 40);
 

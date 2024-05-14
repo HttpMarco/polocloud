@@ -47,6 +47,9 @@ public final class CloudTerminal implements Closeable, LoggerHandler {
                 .build();
 
         this.clear();
+    }
+
+    public void start() {
         this.terminalThread.start();
     }
 
@@ -69,12 +72,23 @@ public final class CloudTerminal implements Closeable, LoggerHandler {
         this.terminal.close();
     }
 
+    public void spacer() {
+        this.spacer(" ");
+    }
+
+    public void spacer(String message) {
+        this.terminal.puts(InfoCmp.Capability.carriage_return);
+        this.terminal.writer().println(includeColorCodes(message));
+        this.terminal.flush();
+        this.update();
+    }
+
     @Override
     public void print(Level level, String message, Throwable throwable, Object... objects) {
         terminal.puts(InfoCmp.Capability.carriage_return);
         if (level != Level.OFF) {
-            terminal.writer().write(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| &1" + level.getName() + "&2: &1" + message)
-                    + Ansi.ansi().a(Ansi.Attribute.RESET).toString() + "\n");
+            terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| &1" + level.getName() + "&2: &1" + message)
+                    + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         } else {
             terminal.writer().write(message);
         }
