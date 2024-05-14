@@ -1,4 +1,11 @@
 package dev.httpmarco.polocloud.base.node;
 
-public class Node {
+import java.util.UUID;
+
+public interface Node {
+
+    UUID id();
+
+    String name();
+
 }
