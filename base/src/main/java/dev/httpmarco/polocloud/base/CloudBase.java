@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
+import dev.httpmarco.polocloud.base.node.LocalNode;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -53,6 +54,7 @@ public final class CloudBase extends CloudAPI {
         terminal.spacer("   &1node&2: &1" + nodeService.localNode().name() + " &2| &1id&2: &1" + nodeService.localNode().id());
         terminal.spacer();
 
+        this.nodeService.localNode().initialize();
         logger().info("Successfully started up!");
         this.terminal.start();
     }
@@ -64,6 +66,9 @@ public final class CloudBase extends CloudAPI {
         running = false;
 
         logger().info("Shutdown cloud...");
+
+        this.nodeService.localNode().close();
+        logger().info("Networking was sucessfully closed");
 
         this.terminal.close();
         System.exit(0);

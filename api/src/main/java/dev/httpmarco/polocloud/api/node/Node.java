@@ -8,4 +8,6 @@ public interface Node {
 
     String name();
 
+    void close();
+
 }
