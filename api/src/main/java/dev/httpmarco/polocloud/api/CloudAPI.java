@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.api;
 import dev.httpmarco.polocloud.api.dependencies.DependencyService;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
+import dev.httpmarco.polocloud.api.node.NodeService;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -21,4 +22,7 @@ public abstract class CloudAPI {
     public CloudAPI() {
         instance = this;
     }
+
+    public abstract NodeService nodeService();
+
 }

@@ -39,10 +39,11 @@ public final class Dependency {
 
         var name = groupId + "." + artifactoryId + "." + version;
         var file = RunnerBoostrap.RUNNER.dependencyFolder().resolve(artifactoryId + "-" + version + ".jar");
+        this.file = file.toFile();
 
         if (!Files.exists(file)) {
             System.err.println("Downloading dependency: " + name + "...");
-            if (download(file)) {
+            if (download()) {
                 addClasspath();
                 System.out.println("Successfully downloading dependency " + name);
                 return;
@@ -50,11 +51,10 @@ public final class Dependency {
             System.err.println("Cannot download dependency: " + name);
             System.exit(-1);
         }
-        this.file = file.toFile();
         addClasspath();
     }
 
-    private boolean download(Path path) {
+    private boolean download() {
         var dependencyLink = repository.formatted(groupId.replace(".", "/"), artifactoryId, version, artifactoryId + "-" + subversion);
 
         try (var inputStream = new URL(dependencyLink).openStream();
@@ -68,8 +68,6 @@ public final class Dependency {
         } catch (IOException e) {
             return false;
         }
-
-        this.file = path.toFile();
         return true;
     }
 

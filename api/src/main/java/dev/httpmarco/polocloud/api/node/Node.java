@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.base.node;
+package dev.httpmarco.polocloud.api.node;
 
 import java.util.UUID;
 
