@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.api;
 
 import dev.httpmarco.polocloud.api.dependencies.DependencyService;
+import dev.httpmarco.polocloud.api.groups.CloudGroupService;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
 import dev.httpmarco.polocloud.api.node.NodeService;
@@ -24,5 +25,7 @@ public abstract class CloudAPI {
     }
 
     public abstract NodeService nodeService();
+
+    public abstract CloudGroupService groupService();
 
 }

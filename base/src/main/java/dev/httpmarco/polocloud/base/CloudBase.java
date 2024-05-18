@@ -2,7 +2,9 @@ package dev.httpmarco.polocloud.base;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
+import dev.httpmarco.polocloud.api.groups.CloudGroupService;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.base.groups.CloudServiceGroupService;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
@@ -19,6 +21,7 @@ public final class CloudBase extends CloudAPI {
 
     private final CloudTerminal terminal;
     private final NodeService nodeService;
+    private final CloudGroupService groupService;
 
     private boolean running = true;
 
@@ -54,6 +57,8 @@ public final class CloudBase extends CloudAPI {
         terminal.spacer();
 
         this.nodeService.localNode().initialize();
+        this.groupService = new CloudServiceGroupService();
+
         logger().info("Successfully started up!");
         this.terminal.start();
     }
