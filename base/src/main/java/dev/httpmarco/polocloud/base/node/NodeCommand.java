@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.base.terminal.commands.impl;
+package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;

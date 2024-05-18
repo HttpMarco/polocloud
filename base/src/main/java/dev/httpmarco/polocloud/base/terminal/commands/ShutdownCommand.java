@@ -1,7 +1,6 @@
-package dev.httpmarco.polocloud.base.terminal.commands.impl;
+package dev.httpmarco.polocloud.base.terminal.commands;
 
 import dev.httpmarco.polocloud.base.CloudBase;
-import dev.httpmarco.polocloud.base.terminal.commands.Command;
 
 public final class ShutdownCommand {
 
