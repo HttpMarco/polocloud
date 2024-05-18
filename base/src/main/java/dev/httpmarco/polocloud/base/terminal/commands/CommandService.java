@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.base.terminal.commands;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.base.terminal.commands.impl.NodeCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.impl.ShutdownCommand;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -17,6 +19,7 @@ public final class CommandService {
 
     public CommandService() {
         this.registerCommand(new ShutdownCommand());
+        this.registerCommand(new NodeCommand());
     }
 
     private void registerCommand(Object command) {
@@ -29,15 +32,28 @@ public final class CommandService {
         for (var command : commands) {
             for (var method : command.getClass().getDeclaredMethods()) {
 
-                if (!method.isAnnotationPresent(Command.class)) {
-                    return;
+                if (args.length == 1) {
+                    if (!method.isAnnotationPresent(Command.class)) {
+                        continue;
+                    }
+
+                    var commandData = method.getDeclaredAnnotation(Command.class);
+                    if (main.equalsIgnoreCase(commandData.command()) || Arrays.stream(commandData.aliases()).anyMatch(it -> it.equalsIgnoreCase(main))) {
+                        method.invoke(command);
+                        continue;
+                    }
                 }
 
-                var commandData = method.getDeclaredAnnotation(Command.class);
-
-                if (main.equalsIgnoreCase(commandData.command()) || Arrays.stream(commandData.aliases()).anyMatch(it -> it.equalsIgnoreCase(main))) {
-                    method.invoke(command);
+                if (!method.isAnnotationPresent(SubCommand.class)) {
                     continue;
+                }
+
+                var commandData = method.getDeclaredAnnotation(SubCommand.class);
+
+                if ((commandData.args().length + 1) == args.length) {
+                    if (Arrays.equals(Arrays.copyOfRange(args, 1, args.length), commandData.args())) {
+                        method.invoke(command);
+                    }
                 }
             }
         }

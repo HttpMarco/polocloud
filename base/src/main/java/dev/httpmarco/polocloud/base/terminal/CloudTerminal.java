@@ -22,12 +22,14 @@ import java.util.logging.Level;
 
 @Getter(AccessLevel.PACKAGE)
 @Accessors(fluent = true)
-public final class CloudTerminal implements Closeable, LoggerHandler {
+public final class CloudTerminal implements LoggerHandler {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     private final Terminal terminal;
     private final LineReader lineReader;
+
+    @Getter(AccessLevel.PUBLIC)
     private final CommandService commandService = new CommandService();
     private final CloudTerminalThread terminalThread = new CloudTerminalThread(this);
 
@@ -66,7 +68,6 @@ public final class CloudTerminal implements Closeable, LoggerHandler {
         }
     }
 
-    @Override
     @SneakyThrows
     public void close() {
         this.terminal.close();
