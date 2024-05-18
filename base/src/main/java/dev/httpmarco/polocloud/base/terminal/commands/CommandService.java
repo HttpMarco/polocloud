@@ -1,8 +1,7 @@
 package dev.httpmarco.polocloud.base.terminal.commands;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.base.terminal.commands.impl.NodeCommand;
-import dev.httpmarco.polocloud.base.terminal.commands.impl.ShutdownCommand;
+import dev.httpmarco.polocloud.base.groups.GroupCommand;
+import dev.httpmarco.polocloud.base.node.NodeCommand;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -20,6 +19,7 @@ public final class CommandService {
     public CommandService() {
         this.registerCommand(new ShutdownCommand());
         this.registerCommand(new NodeCommand());
+        this.registerCommand(new GroupCommand());
     }
 
     private void registerCommand(Object command) {
