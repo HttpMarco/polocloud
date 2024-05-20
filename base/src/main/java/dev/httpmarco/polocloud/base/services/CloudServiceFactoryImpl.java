@@ -35,7 +35,11 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         ((CloudServiceGroupProvider) CloudBase.instance().groupProvider()).platformService().preparePlatform(service);
 
         service.process(new ProcessBuilder().directory(service.runningFolder().toFile())
-                .command("java", "-javaagent:../../polocloud.jar", "-jar", "../../polocloud.jar", "--instance")
+                .command("java",
+                        "-javaagent:../../polocloud.jar",
+                        "-jar", "../../polocloud.jar",
+                        "--instance",
+                        "--bootstrap=" + service.group().platform())
                 .redirectOutput(new File("test"))
                 .redirectError(new File("test2"))
                 .start());
@@ -49,7 +53,13 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         }
 
         if (localCloudService.process() != null) {
-            localCloudService.process().destroyForcibly();
+            localCloudService.process().toHandle().destroyForcibly();
+            localCloudService.process().waitFor();
+            localCloudService.process(null);
+        }
+
+        synchronized (this) {
+            // FileUtils.deleteDirectory(localCloudService.run);
         }
 
         java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
