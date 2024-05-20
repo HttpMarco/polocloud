@@ -12,4 +12,6 @@ public abstract class Platform {
 
     private final Set<String> possibleVersions = new HashSet<>();
 
+    public abstract void download(String version);
+
 }

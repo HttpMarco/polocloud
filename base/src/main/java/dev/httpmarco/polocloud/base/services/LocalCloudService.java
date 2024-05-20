@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.nio.file.Path;
@@ -12,6 +13,8 @@ import java.util.UUID;
 public final class LocalCloudService extends CloudServiceImpl {
 
     private final Path runningFolder;
+
+    @Setter
     private Process process;
 
     public LocalCloudService(CloudGroup group, int orderedId, UUID id) {

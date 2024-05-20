@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.api.dependencies;
 
-import dev.httpmarco.polocloud.runner.RunnerBoostrap;
+import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
@@ -13,8 +13,8 @@ public final class DependencyService {
 
     @SneakyThrows
     public DependencyService() {
-        if (!Files.exists(RunnerBoostrap.RUNNER.dependencyFolder())) {
-            Files.createDirectory(RunnerBoostrap.RUNNER.dependencyFolder());
+        if (!Files.exists(RunnerBootstrap.RUNNER.dependencyFolder())) {
+            Files.createDirectory(RunnerBootstrap.RUNNER.dependencyFolder());
         }
     }
 

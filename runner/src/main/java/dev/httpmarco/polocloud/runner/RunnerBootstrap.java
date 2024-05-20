@@ -5,12 +5,17 @@ import dev.httpmarco.polocloud.runner.impl.CloudBaseRunner;
 import dev.httpmarco.polocloud.runner.impl.CloudInstanceRunner;
 import lombok.SneakyThrows;
 
+import java.lang.instrument.Instrumentation;
 import java.util.Arrays;
 
-public class RunnerBoostrap {
+public class RunnerBootstrap {
 
     public static CloudRunner RUNNER;
     public static final CloudClassLoader LOADER = new CloudClassLoader();
+
+    public static void premain(String args, Instrumentation instrumentation) {
+
+    }
 
     @SneakyThrows
     public static void main(String[] args) {

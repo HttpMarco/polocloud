@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.api.dependencies;
 
-import dev.httpmarco.polocloud.runner.RunnerBoostrap;
+import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -8,7 +8,6 @@ import lombok.experimental.Accessors;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 @Getter
 @Accessors(fluent = true)
@@ -38,7 +37,7 @@ public final class Dependency {
         this.subversion = subversion;
 
         var name = groupId + "." + artifactoryId + "." + version;
-        var file = RunnerBoostrap.RUNNER.dependencyFolder().resolve(artifactoryId + "-" + version + ".jar");
+        var file = RunnerBootstrap.RUNNER.dependencyFolder().resolve(artifactoryId + "-" + version + ".jar");
         this.file = file.toFile();
 
         if (!Files.exists(file)) {
@@ -77,7 +76,7 @@ public final class Dependency {
             return;
         }
 
-        RunnerBoostrap.LOADER.addURL(this.file.toURI().toURL());
+        RunnerBootstrap.LOADER.addURL(this.file.toURI().toURL());
     }
 
 }
