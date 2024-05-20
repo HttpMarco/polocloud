@@ -2,12 +2,15 @@ package dev.httpmarco.polocloud.base;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
-import dev.httpmarco.polocloud.api.groups.CloudGroupService;
+import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
-import dev.httpmarco.polocloud.base.groups.CloudServiceGroupService;
+import dev.httpmarco.polocloud.api.services.CloudService;
+import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
+import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -21,7 +24,8 @@ public final class CloudBase extends CloudAPI {
 
     private final CloudTerminal terminal;
     private final NodeService nodeService;
-    private final CloudGroupService groupService;
+    private final CloudGroupProvider groupProvider;
+    private final CloudServiceProvider serviceProvider;
 
     private boolean running = true;
 
@@ -57,7 +61,8 @@ public final class CloudBase extends CloudAPI {
         terminal.spacer();
 
         this.nodeService.localNode().initialize();
-        this.groupService = new CloudServiceGroupService();
+        this.groupProvider = new CloudServiceGroupProvider();
+        this.serviceProvider = new CloudServiceProviderImpl();
 
         logger().info("Successfully started up!");
         this.terminal.start();
@@ -70,6 +75,11 @@ public final class CloudBase extends CloudAPI {
         running = false;
 
         logger().info("Shutdown cloud...");
+        ((CloudServiceProviderImpl) serviceProvider).close();
+
+        for (var service : this.serviceProvider.services()) {
+            service.shutdown();
+        }
 
         this.nodeService.localNode().close();
         logger().info("Networking was sucessfully closed");

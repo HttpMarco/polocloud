@@ -6,12 +6,14 @@ public interface CloudGroup {
 
     String name();
 
-    //todo platform
+    String platform();
 
     int memory();
 
     int minOnlineServices();
 
     PropertiesPool properties();
+
+    int onlineAmount();
 
 }

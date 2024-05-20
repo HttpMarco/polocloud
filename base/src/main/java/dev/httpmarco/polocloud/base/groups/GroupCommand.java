@@ -7,7 +7,6 @@ public class GroupCommand {
 
     @Command(command = "groups")
     public void handle() {
-        CloudAPI.instance().groupService().createGroup("lobby", 512, 5);
+        CloudAPI.instance().groupProvider().createGroup("lobby", "paper-1.20.6", 512, 5);
     }
-
 }
