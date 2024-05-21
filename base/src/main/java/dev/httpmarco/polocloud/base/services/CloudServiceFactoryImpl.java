@@ -28,7 +28,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID());
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
-        CloudAPI.instance().logger().info("Server " + service.name() + " is starting now on node " + CloudAPI.instance().nodeService().localNode().name() + ".");
+        CloudAPI.instance().logger().info("Server " + service.name() + " is starting now on node " + CloudAPI.instance().nodeService().localNode().name() + "&2.");
 
         Files.createDirectoryIfNotExists(service.runningFolder());
 
@@ -47,11 +47,11 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         args.add("--bootstrap=" + service.group().platform());
         args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsArguments()).toList());
 
-        service.process(new ProcessBuilder().directory(service.runningFolder().toFile())
-                .command(args.toArray(String[]::new))
-                .redirectOutput(new File("test"))
-                .redirectError(new File("test2"))
-                .start());
+        var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile())
+                .command(args.toArray(String[]::new));
+
+        processBuilder.environment().put("serviceId", service.id().toString());
+        service.process(processBuilder.start());
     }
 
     @Override

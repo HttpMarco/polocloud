@@ -64,7 +64,8 @@ public final class CloudBase extends CloudAPI {
         this.groupProvider = new CloudServiceGroupProvider();
         this.serviceProvider = new CloudServiceProviderImpl();
 
-        logger().info("Successfully started up! ");
+        logger().info("Successfully started up&2!");
+
         this.terminal.start();
     }
 
@@ -82,8 +83,6 @@ public final class CloudBase extends CloudAPI {
         }
 
         this.nodeService.localNode().close();
-        logger().info("Networking was sucessfully closed");
-
         this.terminal.close();
         System.exit(0);
     }
