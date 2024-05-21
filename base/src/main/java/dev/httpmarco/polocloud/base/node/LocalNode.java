@@ -2,7 +2,6 @@ package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.osgan.files.annotations.ConfigExclude;
 import dev.httpmarco.osgan.networking.server.NettyServer;
-import dev.httpmarco.osgan.networking.server.NettyServerBuilder;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.AbstractNode;
 
@@ -18,8 +17,10 @@ public final class LocalNode extends AbstractNode implements dev.httpmarco.poloc
     }
 
     public void initialize() {
-        server = new NettyServerBuilder().withHostname(hostname()).withPort(port()).onInactive(channelTransmit -> {
-            CloudAPI.instance().logger().error("Cannot started netty server on " + hostname()+ ":" + port(), null);
+        server = NettyServer.builder().onInactive(channelTransmit -> {
+            CloudAPI.instance().logger().info("Cannot started netty server on " + hostname()+ ":" + port());
+        }).onActive(channelTransmit -> {
+            System.out.println("pol");
         }).build();
     }
 

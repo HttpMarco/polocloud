@@ -31,7 +31,7 @@ public final class PaperMCPlatform extends Platform {
 
     @Override
     public String[] platformsArguments() {
-        return new String[]{"nogui"};
+        return new String[]{"nogui", "noconsole"};
     }
 
     @Override
