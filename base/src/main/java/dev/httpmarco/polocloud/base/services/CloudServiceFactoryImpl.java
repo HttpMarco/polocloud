@@ -6,12 +6,13 @@ import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import lombok.SneakyThrows;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.UUID;
+import java.util.*;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
@@ -32,14 +33,23 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         Files.createDirectoryIfNotExists(service.runningFolder());
 
         // download and/or copy platform file to service
-        ((CloudServiceGroupProvider) CloudBase.instance().groupProvider()).platformService().preparePlatform(service);
+        CloudGroupPlatformService platformService = ((CloudServiceGroupProvider) CloudBase.instance().groupProvider()).platformService();
+        platformService.preparePlatform(service);
+
+        var args = new LinkedList<>();
+
+        args.add("java");
+        args.add("-javaagent:../../polocloud.jar");
+        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsEnvironment()).toList());
+        args.add("-jar");
+        args.add("../../polocloud.jar");
+        args.add("--instance");
+        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsArguments()).toList());
+        args.add("--bootstrap=" + service.group().platform());
+
 
         service.process(new ProcessBuilder().directory(service.runningFolder().toFile())
-                .command("java",
-                        "-javaagent:../../polocloud.jar",
-                        "-jar", "../../polocloud.jar",
-                        "--instance",
-                        "--bootstrap=" + service.group().platform())
+                .command(args.toArray(String[]::new))
                 .redirectOutput(new File("test"))
                 .redirectError(new File("test2"))
                 .start());
@@ -59,7 +69,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         }
 
         synchronized (this) {
-            // FileUtils.deleteDirectory(localCloudService.run);
+            deleteDirectory(localCloudService.runningFolder().toFile());
         }
 
         java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
@@ -77,4 +87,15 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
     private boolean isIdPresent(CloudGroup group, int id) {
         return CloudAPI.instance().serviceProvider().services(group).stream().anyMatch(it -> it.orderedId() == id);
     }
+
+    private void deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directoryToBeDeleted.delete();
+    }
 }
+
