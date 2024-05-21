@@ -44,9 +44,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         args.add("-jar");
         args.add("../../polocloud.jar");
         args.add("--instance");
-        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsArguments()).toList());
         args.add("--bootstrap=" + service.group().platform());
-
+        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsArguments()).toList());
 
         service.process(new ProcessBuilder().directory(service.runningFolder().toFile())
                 .command(args.toArray(String[]::new))

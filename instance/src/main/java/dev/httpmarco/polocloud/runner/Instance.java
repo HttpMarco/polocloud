@@ -12,6 +12,7 @@ public class Instance {
     public static void main(String[] args) {
         //start platform
 
+
         var bootstrapPath = Path.of(Arrays.stream(args).filter(it -> it.startsWith("--bootstrap=")).map(it -> it.substring("--bootstrap=".length())).findFirst().orElse(null) + ".jar");
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
@@ -19,8 +20,8 @@ public class Instance {
         try (final var jar = new JarFile(bootstrapPath.toFile())) {
             final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
             try {
-                final var main = Class.forName(mainClass, true,  RunnerBootstrap.LOADER).getMethod("main", String[].class);
-                main.invoke(null, (Object) new String[0]);
+                final var main = Class.forName(mainClass, true, RunnerBootstrap.LOADER).getMethod("main", String[].class);
+                main.invoke(null, (Object) Arrays.copyOfRange(args, 2, args.length));
             } catch (Exception e) {
                 e.printStackTrace(System.err);
             }
