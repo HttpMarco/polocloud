@@ -9,7 +9,7 @@ public class GroupCommand {
     @Command(command = "groups")
     public void handle() {
         // send todo
-      //  CloudAPI.instance().groupProvider().createGroup("lobby", "paper-1.20.6", 512, 5);
+        //  CloudAPI.instance().groupProvider().createGroup("lobby", "paper-1.20.6", 512, 5);
     }
 
     @SubCommand(args = {"list"})
@@ -25,8 +25,9 @@ public class GroupCommand {
     }
 
     @SubCommand(args = {"create", "<name>"})
-    public void handleCreate() {
-        // todo
+    public void handleCreate(String name) {
+        if (CloudAPI.instance().groupProvider().createGroup(name, "paper-1.20.6", 512, 1)) {
+            CloudAPI.instance().logger().info("fucking yheay");
+        }
     }
-
 }

@@ -6,9 +6,8 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Parameter;
+import java.util.*;
 
 @Getter
 @Accessors(fluent = true)
@@ -52,19 +51,56 @@ public final class CommandService {
             for (var method : command.getClass().getDeclaredMethods()) {
                 if (args.length == 1 && method.isAnnotationPresent(Command.class)) {
                     method.invoke(command);
+                    continue;
                 }
+
                 if (!method.isAnnotationPresent(SubCommand.class)) {
                     continue;
                 }
 
                 var commandData = method.getDeclaredAnnotation(SubCommand.class);
-
                 if ((commandData.args().length + 1) == args.length) {
-                    if (Arrays.equals(Arrays.copyOfRange(args, 1, args.length), commandData.args())) {
-                        method.invoke(command);
+                    boolean find = isSubCommand(args, commandData);
+                    if (find) {
+                        var params = new LinkedList<>();
+
+                        for (var parameter : method.getParameters()) {
+                            var index = -1;
+                            var argIndex = 0;
+                            for (var arg : commandData.args()) {
+                                if (arg.substring(1, arg.length() - 1).equalsIgnoreCase(parameter.getName())) {
+                                    index = argIndex;
+                                    break;
+                                }
+                                argIndex++;
+                            }
+
+                            if (index == -1) {
+                                continue;
+                            }
+                            params.add(parameter.getType().cast(args[index + 1]));
+                        }
+                        method.invoke(command, params.toArray());
                     }
                 }
             }
         }
+    }
+
+    private static boolean isSubCommand(String[] args, SubCommand commandData) {
+        var index = 0;
+        var find = true;
+        for (var s : Arrays.copyOfRange(args, 1, args.length)) {
+            var subPart = commandData.args()[index];
+            if (subPart.startsWith("<") && subPart.endsWith(">")) {
+                index++;
+                continue;
+            }
+            if (!Objects.equals(subPart, s)) {
+                find = false;
+            }
+            index++;
+        }
+        return find;
     }
 }

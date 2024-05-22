@@ -23,26 +23,27 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     }
 
     @Override
-    public void createGroup(String name, String platform, int memory, int minOnlineCount) {
+    public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
 
         if (isGroup(name)) {
             CloudAPI.instance().logger().info("The group already exists!");
-            return;
+            return false;
         }
 
         if (memory <= 0) {
             CloudAPI.instance().logger().info("The minimum memory value must be higher then 0. ");
-            return;
+            return false;
         }
 
         if (!platformService.isValidPlatform(platform)) {
             CloudAPI.instance().logger().info("The platform " + platform + " is an invalid type!");
-            return;
+            return false;
         }
 
         var group = new CloudGroupImpl(name, platform, memory, minOnlineCount);
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);
+        return true;
     }
 
     @Override
