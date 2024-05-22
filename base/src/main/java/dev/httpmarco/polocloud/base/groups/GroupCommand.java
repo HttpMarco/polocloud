@@ -13,8 +13,13 @@ public class GroupCommand {
 
     @SubCommand(args = {"list"})
     public void handleList() {
-        CloudAPI.instance().groupProvider().groups().forEach(cloudGroup -> {
-            CloudAPI.instance().logger().info(cloudGroup.name());
+        var logger = CloudAPI.instance().logger();
+        var groups = CloudAPI.instance().groupProvider().groups();
+
+        logger.info("Following &3" + groups.size() + " &1groups are loading&2:");
+
+        groups.forEach(cloudGroup -> {
+            logger.info("&2- &4" + cloudGroup.name() + "&2: (&1" + cloudGroup.toString() + "&2)");
         });
     }
 }

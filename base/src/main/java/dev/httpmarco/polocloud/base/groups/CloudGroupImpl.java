@@ -26,4 +26,11 @@ public class CloudGroupImpl implements CloudGroup {
     public int onlineAmount() {
         return CloudAPI.instance().serviceProvider().services(this).size();
     }
+
+    @Override
+    public String toString() {
+        return "platform='" + platform + '\'' +
+                ", memory=" + memory +
+                ", minOnlineServices=" + minOnlineServices;
+    }
 }
