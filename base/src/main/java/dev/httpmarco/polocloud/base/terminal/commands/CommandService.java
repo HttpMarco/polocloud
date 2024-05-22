@@ -30,20 +30,29 @@ public final class CommandService {
     public void call(String[] args) {
         var main = args[0];
         for (var command : commands) {
+
+            Command mainCommand = null;
+
             for (var method : command.getClass().getDeclaredMethods()) {
-
-                if (args.length == 1) {
-                    if (!method.isAnnotationPresent(Command.class)) {
-                        continue;
-                    }
-
-                    var commandData = method.getDeclaredAnnotation(Command.class);
-                    if (main.equalsIgnoreCase(commandData.command()) || Arrays.stream(commandData.aliases()).anyMatch(it -> it.equalsIgnoreCase(main))) {
-                        method.invoke(command);
-                        continue;
-                    }
+                if (!method.isAnnotationPresent(Command.class)) {
+                    continue;
                 }
+                mainCommand = method.getDeclaredAnnotation(Command.class);
+                break;
+            }
 
+            if (mainCommand == null) {
+                continue;
+            }
+
+            if (!(main.equalsIgnoreCase(mainCommand.command()) || Arrays.stream(mainCommand.aliases()).anyMatch(it -> it.equalsIgnoreCase(main)))) {
+                continue;
+            }
+
+            for (var method : command.getClass().getDeclaredMethods()) {
+                if (args.length == 1) {
+                    method.invoke(command);
+                }
                 if (!method.isAnnotationPresent(SubCommand.class)) {
                     continue;
                 }
