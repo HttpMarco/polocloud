@@ -44,6 +44,7 @@ public final class CloudBase extends CloudAPI {
         dependencyService().load(new Dependency("org.jline", "jline", "3.26.1"));
         dependencyService().load(new Dependency("org.fusesource.jansi", "jansi", "2.4.1"));
 
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
         this.terminal = new CloudTerminal();
         // register logging layers (for general output)
