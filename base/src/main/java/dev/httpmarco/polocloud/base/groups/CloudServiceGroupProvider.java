@@ -25,7 +25,7 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     @Override
     public void createGroup(String name, String platform, int memory, int minOnlineCount) {
 
-        if (!isGroup(name)) {
+        if (isGroup(name)) {
             CloudAPI.instance().logger().info("The group already exists!");
             return;
         }
@@ -40,7 +40,9 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
             return;
         }
 
-        this.groupServiceTypeAdapter.includeFile(new CloudGroupImpl(name, platform, memory, minOnlineCount));
+        var group = new CloudGroupImpl(name, platform, memory, minOnlineCount);
+        this.groupServiceTypeAdapter.includeFile(group);
+        this.groups.add(group);
     }
 
     @Override

@@ -15,8 +15,11 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
     private static final Path GROUP_FOLDER = Path.of("local/groups");
     private final Gson LOADER = new GsonBuilder().setPrettyPrinting().serializeNulls().registerTypeHierarchyAdapter(CloudGroup.class, this).create();
 
-    public void includeFile(CloudGroup cloudGroup) {
+    public CloudGroupServiceTypeAdapter() {
         Files.createDirectoryIfNotExists(GROUP_FOLDER);
+    }
+
+    public void includeFile(CloudGroup cloudGroup) {
         Files.writeString(GROUP_FOLDER.resolve(cloudGroup.name() + ".json"), LOADER.toJson(cloudGroup));
     }
 

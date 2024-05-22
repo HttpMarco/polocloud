@@ -50,7 +50,7 @@ public final class CommandService {
             }
 
             for (var method : command.getClass().getDeclaredMethods()) {
-                if (args.length == 1) {
+                if (args.length == 1 && method.isAnnotationPresent(Command.class)) {
                     method.invoke(command);
                 }
                 if (!method.isAnnotationPresent(SubCommand.class)) {
