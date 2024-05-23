@@ -24,10 +24,18 @@ public class GroupCommand {
         });
     }
 
-    @SubCommand(args = {"create", "<name>"})
-    public void handleCreate(String name) {
-        if (CloudAPI.instance().groupProvider().createGroup(name, "paper-1.20.6", 512, 1)) {
+    @SubCommand(args = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
+    public void handleCreate(String name, String platform, int memory, int minOnlineCount) {
+        if (CloudAPI.instance().groupProvider().createGroup(name, platform, memory, 1)) {
             CloudAPI.instance().logger().info("fucking yheay");
         }
     }
+
+    @SubCommand(args = {"delete", "<name>"})
+    public void handleCreate(String name) {
+        if (CloudAPI.instance().groupProvider().deleteGroup(name)) {
+            CloudAPI.instance().logger().info("Successfully deleted " + name + "&2!");
+        }
+    }
+
 }

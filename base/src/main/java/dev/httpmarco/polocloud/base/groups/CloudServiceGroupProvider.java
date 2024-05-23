@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
+import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -47,8 +48,28 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     }
 
     @Override
+    public boolean deleteGroup(String name) {
+
+        if (!isGroup(name)) {
+            CloudAPI.instance().logger().info("The group does not exists!");
+            return false;
+        }
+
+        var group = group(name);
+        CloudAPI.instance().serviceProvider().services(group).forEach(CloudService::shutdown);
+        this.groupServiceTypeAdapter.excludeFile(group);
+        this.groups.remove(group);
+        return true;
+    }
+
+    @Override
     public boolean isGroup(String name) {
         return groups.stream().anyMatch(it -> it.name().equalsIgnoreCase(name));
+    }
+
+    @Override
+    public CloudGroup group(String name) {
+        return this.groups.stream().filter(it -> it.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
 }

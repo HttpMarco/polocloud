@@ -78,7 +78,12 @@ public final class CommandService {
                             if (index == -1) {
                                 continue;
                             }
-                            params.add(parameter.getType().cast(args[index + 1]));
+
+                            if (parameter.getType().equals(Integer.class) || parameter.getType().equals(int.class)) {
+                                params.add(Integer.parseInt(args[index + 1]));
+                            } else {
+                                params.add(parameter.getType().cast(args[index + 1]));
+                            }
                         }
                         method.invoke(command, params.toArray());
                     }

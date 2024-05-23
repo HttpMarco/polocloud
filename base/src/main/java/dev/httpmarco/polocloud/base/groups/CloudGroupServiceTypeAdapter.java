@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.base.groups;
 import com.google.gson.*;
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import lombok.SneakyThrows;
 
 import java.lang.reflect.Type;
 import java.nio.file.Path;
@@ -21,6 +22,11 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
 
     public void includeFile(CloudGroup cloudGroup) {
         Files.writeString(GROUP_FOLDER.resolve(cloudGroup.name() + ".json"), LOADER.toJson(cloudGroup));
+    }
+
+    @SneakyThrows
+    public void excludeFile(CloudGroup cloudGroup) {
+        java.nio.file.Files.delete(GROUP_FOLDER.resolve(cloudGroup.name() + ".json"));
     }
 
     public List<CloudGroup> readGroups() {
