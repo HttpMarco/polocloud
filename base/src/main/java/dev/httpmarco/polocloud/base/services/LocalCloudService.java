@@ -4,12 +4,15 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,17 +32,15 @@ public final class LocalCloudService extends CloudServiceImpl {
     }
 
     @Override
+    @SneakyThrows
     public List<String> log() {
         var logs = new ArrayList<String>();
-        try (var standardOutput = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = standardOutput.readLine()) != null) {
-                CloudAPI.instance().logger().info(line);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        var inputStream = process.getInputStream();
+        var bytes = new byte[2048];
+        int length;
+        while (inputStream.available() > 0 && (length = inputStream.read(bytes, 0, bytes.length)) != -1) {
+            logs.addAll(Arrays.stream(new String(bytes, 0, length, StandardCharsets.UTF_8).split("\n")).toList());
         }
-
         return logs;
     }
 }

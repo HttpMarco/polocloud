@@ -21,7 +21,7 @@ public final class ServiceCommand {
         }
 
         for (var log : service.log()) {
-            CloudAPI.instance().logger().info(name + " &2: " + log);
+            CloudAPI.instance().logger().info("&3" + name + " &2: &1" + log);
         }
     }
 }
