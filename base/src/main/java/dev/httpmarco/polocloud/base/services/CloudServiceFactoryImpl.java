@@ -72,6 +72,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         }
 
         java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
+        ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
         CloudAPI.instance().logger().info("Server " + service.name() + " is stopped now.");
     }
 

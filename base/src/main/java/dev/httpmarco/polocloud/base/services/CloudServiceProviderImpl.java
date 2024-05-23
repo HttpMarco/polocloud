@@ -31,6 +31,11 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         this.services.add(cloudService);
     }
 
+    public void unregisterService(CloudService cloudService) {
+        this.services.remove(cloudService);
+    }
+
+
     @Override
     public List<CloudService> services(CloudGroup group) {
         return services.stream().filter(it -> it.group().equals(group)).toList();
