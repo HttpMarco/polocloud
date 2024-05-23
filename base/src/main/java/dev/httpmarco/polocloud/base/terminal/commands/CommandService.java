@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.terminal.commands;
 
 import dev.httpmarco.polocloud.base.groups.GroupCommand;
 import dev.httpmarco.polocloud.base.node.NodeCommand;
+import dev.httpmarco.polocloud.base.services.ServiceCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.defaults.ClearCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.defaults.HelpCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.defaults.ReloadCommand;
@@ -26,6 +27,7 @@ public final class CommandService {
         this.registerCommand(new ClearCommand());
         this.registerCommand(new HelpCommand());
         this.registerCommand(new ReloadCommand());
+        this.registerCommand(new ServiceCommand());
     }
 
     private void registerCommand(Object command) {

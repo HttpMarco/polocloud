@@ -46,4 +46,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     public CloudService find(UUID id) {
         return services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
     }
+
+    @Override
+    public CloudService service(String name) {
+        return services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null);
+    }
 }

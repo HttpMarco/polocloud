@@ -15,4 +15,6 @@ public interface CloudServiceProvider {
 
     CloudService find(UUID id);
 
+    CloudService service(String name);
+
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -20,5 +21,11 @@ public class CloudServiceImpl implements CloudService {
     @Override
     public String name() {
         return CloudService.super.name();
+    }
+
+    @Override
+    public List<String> log() {
+        // todo
+        return List.of();
     }
 }
