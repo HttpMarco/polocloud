@@ -10,12 +10,13 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Accessors(fluent = true)
 public final class CloudServiceProviderImpl implements CloudServiceProvider {
 
-    private final List<CloudService> services = new ArrayList<>();
+    private final List<CloudService> services = new CopyOnWriteArrayList<>();
     private final CloudServiceFactory factory = new CloudServiceFactoryImpl();
     private final CloudServiceQueue queue = new CloudServiceQueue(this);
 

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base;
 
+import dev.httpmarco.osgan.files.json.JsonDocument;
 import dev.httpmarco.osgan.networking.server.NettyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
@@ -7,10 +8,13 @@ import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
+import dev.httpmarco.polocloud.base.node.ExternalNode;
+import dev.httpmarco.polocloud.base.node.LocalNode;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
 import lombok.Getter;
@@ -18,6 +22,8 @@ import lombok.experimental.Accessors;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
@@ -46,6 +52,8 @@ public final class CloudBase extends CloudAPI {
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
+        var cloudConfiguration = loadConfiguration();
+
         this.terminal = new CloudTerminal();
         // register logging layers (for general output)
         this.loggerFactory().registerLoggers(new FileLoggerHandler(), terminal);
@@ -53,7 +61,7 @@ public final class CloudBase extends CloudAPI {
         System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
 
-        this.nodeService = new CloudNodeService();
+        this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.clusterId(), cloudConfiguration.clusterName(), "127.0.0.1", 8879), cloudConfiguration.externalNodes());
 
         // print cloud header information
         terminal.spacer();
@@ -87,6 +95,10 @@ public final class CloudBase extends CloudAPI {
 
         this.loggerFactory().close();
         System.exit(0);
+    }
+
+    public CloudConfiguration loadConfiguration() {
+        return new JsonDocument<>(new CloudConfiguration(UUID.randomUUID(), "node-1", 10000, new ExternalNode[0]), Path.of("config.json")).value();
     }
 
     public static CloudBase instance() {
