@@ -36,6 +36,8 @@ public final class CommandCompleter implements Completer {
             } else if (main.equalsIgnoreCase(data.command()) || Arrays.stream(data.aliases()).anyMatch(it -> it.equalsIgnoreCase(main))) {
                 //sub commands
                 var subIndex = line.wordIndex();
+                var subCommand = Arrays.copyOfRange(context, 1, context.length);
+
                 for (var completer : command.getClass().getDeclaredMethods()) {
 
                     if (!completer.isAnnotationPresent(SubCommandCompleter.class)) {
@@ -43,7 +45,12 @@ public final class CommandCompleter implements Completer {
                     }
 
                     var subCompleter = completer.getDeclaredAnnotation(SubCommandCompleter.class);
-                    completer.invoke(command, subIndex, candidates);
+
+                    if (subCompleter.completionPattern()[subIndex - 1].startsWith("<") && (subCompleter.completionPattern()[subIndex - 1].endsWith(">"))) {
+                        completer.invoke(command, subIndex, candidates);
+                    } else {
+                        candidates.add(new Candidate(subCompleter.completionPattern()[subIndex - 1]));
+                    }
                 }
 
                 for (var completer : command.getClass().getDeclaredMethods()) {

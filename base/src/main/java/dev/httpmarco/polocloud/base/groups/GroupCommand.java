@@ -87,6 +87,15 @@ public final class GroupCommand {
         }
     }
 
+    @SubCommandCompleter(completionPattern = {"delete", "<name>"})
+    public void completeDeleteMethod(int index, List<Candidate> candidates) {
+        if (index == 1) {
+            candidates.add(new Candidate("delete"));
+        } else if (index == 2) {
+            candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
+        }
+    }
+
     @SubCommand(args = {"edit", "<name>", "<key>", "<value>"})
     public void handleEdit(String name, String key, String value) {
         //todo
