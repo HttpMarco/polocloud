@@ -3,10 +3,7 @@ package dev.httpmarco.polocloud.base.terminal.commands;
 import dev.httpmarco.polocloud.base.groups.GroupCommand;
 import dev.httpmarco.polocloud.base.node.NodeCommand;
 import dev.httpmarco.polocloud.base.services.ServiceCommand;
-import dev.httpmarco.polocloud.base.terminal.commands.defaults.ClearCommand;
-import dev.httpmarco.polocloud.base.terminal.commands.defaults.HelpCommand;
-import dev.httpmarco.polocloud.base.terminal.commands.defaults.ReloadCommand;
-import dev.httpmarco.polocloud.base.terminal.commands.defaults.ShutdownCommand;
+import dev.httpmarco.polocloud.base.terminal.commands.defaults.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -21,13 +18,14 @@ public final class CommandService {
     private final List<Object> commands = new ArrayList<>();
 
     public CommandService() {
-        this.registerCommand(new ShutdownCommand());
         this.registerCommand(new NodeCommand());
         this.registerCommand(new GroupCommand());
+        this.registerCommand(new ServiceCommand());
+        this.registerCommand(new ReloadCommand());
+        this.registerCommand(new InfoCommand());
         this.registerCommand(new ClearCommand());
         this.registerCommand(new HelpCommand());
-        this.registerCommand(new ReloadCommand());
-        this.registerCommand(new ServiceCommand());
+        this.registerCommand(new ShutdownCommand());
     }
 
     private void registerCommand(Object command) {
