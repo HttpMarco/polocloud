@@ -16,6 +16,7 @@ import dev.httpmarco.polocloud.base.node.CloudNodeService;
 import dev.httpmarco.polocloud.base.node.ExternalNode;
 import dev.httpmarco.polocloud.base.node.LocalNode;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
+import dev.httpmarco.polocloud.base.templates.TemplatesService;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -33,19 +34,11 @@ public final class CloudBase extends CloudAPI {
     private final NodeService nodeService;
     private final CloudGroupProvider groupProvider;
     private final CloudServiceProvider serviceProvider;
+    private final TemplatesService templatesService;
 
     private boolean running = true;
 
     public CloudBase() {
-        dependencyService().load(new Dependency("dev.httpmarco", "osgan-utils", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
-        dependencyService().load(new Dependency("dev.httpmarco", "osgan-files", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
-        dependencyService().load(new Dependency("dev.httpmarco", "osgan-netty", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
-        dependencyService().load(new Dependency("io.netty", "netty5-common", "5.0.0.Alpha5"));
-        dependencyService().load(new Dependency("io.netty", "netty5-transport", "5.0.0.Alpha5"));
-        dependencyService().load(new Dependency("io.netty", "netty5-codec", "5.0.0.Alpha5"));
-        dependencyService().load(new Dependency("io.netty", "netty5-resolver", "5.0.0.Alpha5"));
-        dependencyService().load(new Dependency("io.netty", "netty5-buffer", "5.0.0.Alpha5"));
-        dependencyService().load(new Dependency("io.netty", "netty5-transport-classes-epoll", "5.0.0.Alpha5"));
         dependencyService().load(new Dependency("com.google.code.gson", "gson", "2.10.1"));
         dependencyService().load(new Dependency("org.jline", "jline", "3.26.1"));
         dependencyService().load(new Dependency("org.fusesource.jansi", "jansi", "2.4.1"));
@@ -73,6 +66,7 @@ public final class CloudBase extends CloudAPI {
 
         this.nodeService.localNode().initialize();
         this.groupProvider = new CloudServiceGroupProvider();
+        this.templatesService = new TemplatesService();
         this.serviceProvider = new CloudServiceProviderImpl();
 
         logger().info("Successfully started up&2!");
