@@ -62,14 +62,16 @@ public final class GroupCommand {
             // send changes to other nodes or update data files
             group.update();
 
-            logger.info("Successfully created &3" + name + " &1group&2.");
+            logger.success("Successfully created &3" + name + " &1group&2.");
         }
     }
 
     @SubCommand(args = {"delete", "<name>"})
     public void handleCreate(String name) {
         if (CloudAPI.instance().groupProvider().deleteGroup(name)) {
-            logger.info("Successfully deleted &3" + name + "&2!");
+            logger.success("Successfully deleted &3" + name + "&2!");
+        } else {
+            CloudAPI.instance().logger().warn("The group does not exists!");
         }
     }
 

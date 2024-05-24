@@ -54,7 +54,6 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     public boolean deleteGroup(String name) {
 
         if (!isGroup(name)) {
-            CloudAPI.instance().logger().info("The group does not exists!");
             return false;
         }
 
