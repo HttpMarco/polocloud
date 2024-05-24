@@ -17,12 +17,7 @@ public class CloudGroupImpl implements CloudGroup {
     private String platform;
     private int memory;
     private int minOnlineServices;
-
-    @Override
-    public PropertiesPool<GroupProperties<?>> properties() {
-        //todo
-        return null;
-    }
+    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
 
     @Override
     public int onlineAmount() {
