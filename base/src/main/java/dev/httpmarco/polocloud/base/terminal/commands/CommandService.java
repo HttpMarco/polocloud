@@ -22,6 +22,7 @@ public final class CommandService {
         this.registerCommand(new GroupCommand());
         this.registerCommand(new ServiceCommand());
         this.registerCommand(new ReloadCommand());
+        this.registerCommand(new PropertyCommand());
         this.registerCommand(new InfoCommand());
         this.registerCommand(new ClearCommand());
         this.registerCommand(new HelpCommand());
