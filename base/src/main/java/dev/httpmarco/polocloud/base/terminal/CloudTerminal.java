@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base.terminal;
 
+import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.api.logging.LoggerHandler;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandCompleter;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandService;
@@ -85,10 +86,10 @@ public final class CloudTerminal implements LoggerHandler {
     }
 
     @Override
-    public void print(Level level, String message, Throwable throwable, Object... objects) {
+    public void print(LogLevel level, String message, Throwable throwable, Object... objects) {
         terminal.puts(InfoCmp.Capability.carriage_return);
-        if (level != Level.OFF) {
-            terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| &4" + level.getName() + "&2: &1" + message)
+        if (level != LogLevel.OFF) {
+            terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| " + level.colorCode() + level.name() + "&2: &1" + message)
                     + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         } else {
             terminal.writer().write(message);

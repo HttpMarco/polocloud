@@ -15,7 +15,7 @@ public final class LoggerFactory implements LoggerHandler {
     }
 
     @Override
-    public void print(Level level, String message, Throwable throwable, Object... objects) {
+    public void print(LogLevel level, String message, Throwable throwable, Object... objects) {
         handlers.forEach(it -> it.print(level, message, throwable, objects));
     }
 

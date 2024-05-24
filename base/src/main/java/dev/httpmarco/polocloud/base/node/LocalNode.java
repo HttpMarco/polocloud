@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.osgan.files.annotations.ConfigExclude;
 import dev.httpmarco.osgan.networking.server.NettyServer;
+import dev.httpmarco.osgan.networking.server.NettyServerBuilder;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.AbstractNode;
 import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
@@ -18,7 +19,9 @@ public final class LocalNode extends AbstractNode implements dev.httpmarco.poloc
     }
 
     public void initialize() {
-        server = NettyServer.builder().onInactive(channelTransmit -> CloudAPI.instance().logger().info("Communication instance is successfully stopped!")).build();
+        server = NettyServer.builder().onInactive(channelTransmit -> {
+            // todo
+        }).build();
 
         server.listen(CloudServiceRegisterPacket.class, (channelTransmit, cloudServiceRegisterPacket) -> {
             var service = CloudAPI.instance().serviceProvider().find(cloudServiceRegisterPacket.uuid());

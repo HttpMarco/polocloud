@@ -1,11 +1,10 @@
 package dev.httpmarco.polocloud.base.terminal;
 
+import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.base.CloudBase;
 import org.fusesource.jansi.Ansi;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
-
-import java.util.logging.Level;
 
 public final class CloudTerminalThread extends Thread {
 
@@ -47,6 +46,6 @@ public final class CloudTerminalThread extends Thread {
     }
 
     private void resetConsoleInput() {
-        this.terminal.print(Level.OFF, Ansi.ansi().reset().cursorUp(1).eraseLine().toString(), null);
+        this.terminal.print(LogLevel.OFF, Ansi.ansi().reset().cursorUp(1).eraseLine().toString(), null);
     }
 }

@@ -52,12 +52,11 @@ public final class CloudBase extends CloudAPI {
 
         System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
-
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
         this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.clusterId(), cloudConfiguration.clusterName(), "127.0.0.1", 8879), cloudConfiguration.externalNodes());
-
         // print cloud header information
+
         terminal.spacer();
         terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.12");
         terminal.spacer("   &1node&2: &1" + nodeService.localNode().name() + " &2| &1id&2: &1" + nodeService.localNode().id());
@@ -68,7 +67,7 @@ public final class CloudBase extends CloudAPI {
         this.templatesService = new TemplatesService();
         this.serviceProvider = new CloudServiceProviderImpl();
 
-        logger().info("Successfully started up&2!");
+        logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
 
         this.terminal.start();
     }

@@ -1,18 +1,16 @@
 package dev.httpmarco.polocloud.base.logging;
 
 import dev.httpmarco.osgan.files.Files;
-import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.api.logging.LoggerHandler;
 import lombok.SneakyThrows;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public final class FileLoggerHandler implements LoggerHandler {
@@ -34,7 +32,7 @@ public final class FileLoggerHandler implements LoggerHandler {
 
     @Override
     @SneakyThrows
-    public void print(Level level, String message, Throwable throwable, Object... objects) {
+    public void print(LogLevel level, String message, Throwable throwable, Object... objects) {
         logWriter.append("[").append(LOG_LAYOUT.format(Calendar.getInstance().getTime())).append("]: ").append(removeColorCodes(message)).append("\n");
         logWriter.flush();
     }
