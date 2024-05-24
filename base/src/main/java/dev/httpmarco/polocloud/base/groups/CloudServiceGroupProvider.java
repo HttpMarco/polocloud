@@ -3,12 +3,15 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @Getter
 @Accessors(fluent = true)
@@ -72,4 +75,8 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
         return this.groups.stream().filter(it -> it.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
+    @Override
+    public void update(CloudGroup cloudGroup) {
+        this.groupServiceTypeAdapter.updateFile(cloudGroup);
+    }
 }

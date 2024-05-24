@@ -4,11 +4,13 @@ import dev.httpmarco.polocloud.api.dependencies.DependencyService;
 import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
 @Getter
@@ -26,8 +28,12 @@ public abstract class CloudAPI {
     @Getter
     private final EventNode<Event> globalEventHandler = new EventNode<Event>();
 
+    @SneakyThrows
     public CloudAPI() {
         instance = this;
+
+        // todo better loading of custom properties
+        Class.forName(GroupProperties.class.getName());
     }
 
     public abstract NodeService nodeService();

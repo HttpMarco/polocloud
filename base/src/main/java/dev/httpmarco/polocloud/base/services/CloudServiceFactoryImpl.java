@@ -8,7 +8,6 @@ import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import lombok.SneakyThrows;
 
 import java.io.File;
@@ -48,11 +47,11 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         args.add("--bootstrap=" + service.group().platform());
         args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsArguments()).toList());
 
-        var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile())
-                .command(args.toArray(String[]::new));
+        var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
         processBuilder.environment().put("serviceId", service.id().toString());
 
+        /*
         if (cloudGroup.properties().has(GroupProperties.TEMPLATES)) {
             var templates = cloudGroup.properties().property(GroupProperties.TEMPLATES);
 
@@ -64,7 +63,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
                 }
             }
         }
-
+         */
         service.process(processBuilder.start());
     }
 
@@ -102,14 +101,14 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         return CloudAPI.instance().serviceProvider().services(group).stream().anyMatch(it -> it.orderedId() == id);
     }
 
-    private void deleteDirectory(File directoryToBeDeleted) {
+    private boolean deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
                 deleteDirectory(file);
             }
         }
-        directoryToBeDeleted.delete();
+        return directoryToBeDeleted.delete();
     }
 }
 

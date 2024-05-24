@@ -8,16 +8,24 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-@AllArgsConstructor
 @Accessors(fluent = true)
 @Getter
+@AllArgsConstructor
 public class CloudGroupImpl implements CloudGroup {
 
-    private String name;
-    private String platform;
-    private int memory;
-    private int minOnlineServices;
-    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
+    private final String name;
+    private final String platform;
+    private final int memory;
+    private final int minOnlineServices;
+    private final PropertiesPool<GroupProperties<?>> properties;
+
+    public CloudGroupImpl(String name, String platform, int memory, int minOnlineServices) {
+        this.minOnlineServices = minOnlineServices;
+        this.memory = memory;
+        this.platform = platform;
+        this.name = name;
+        this.properties = new PropertiesPool<>();
+    }
 
     @Override
     public int onlineAmount() {

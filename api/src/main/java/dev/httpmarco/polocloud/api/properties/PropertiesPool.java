@@ -3,12 +3,17 @@ package dev.httpmarco.polocloud.api.properties;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Getter
 @Accessors(fluent = true)
 public final class PropertiesPool<T extends Property<?>> {
 
+    // all properties of cluster
+    public static final List<Property<?>> PROPERTY_LIST = new ArrayList<>();
+    // single properties of current pool
     private final HashMap<T, Object> properties = new HashMap<>();
 
     public boolean has(T key) {
@@ -27,9 +32,5 @@ public final class PropertiesPool<T extends Property<?>> {
     @SuppressWarnings("unchecked")
     public <P> P property(Property<P> property) {
         return (P) this.properties.get(property);
-    }
-
-    public Object property(String key) {
-        return this.properties.get(key);
     }
 }

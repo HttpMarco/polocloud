@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.api.groups;
 
+import dev.httpmarco.polocloud.api.services.CloudService;
+
 import java.util.List;
 
 public interface CloudGroupProvider {
@@ -13,5 +15,7 @@ public interface CloudGroupProvider {
     CloudGroup group(String name);
 
     List<CloudGroup> groups();
+
+    void update(CloudGroup cloudGroup);
 
 }

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.api.groups;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 
 public interface CloudGroup {
@@ -16,4 +17,7 @@ public interface CloudGroup {
 
     int onlineAmount();
 
+    default void update() {
+        CloudAPI.instance().groupProvider().update(this);
+    }
 }
