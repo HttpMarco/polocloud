@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.base.terminal.commands;
 
 import dev.httpmarco.polocloud.base.CloudBase;
+import lombok.SneakyThrows;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
@@ -13,6 +14,7 @@ import java.util.List;
 public final class CommandCompleter implements Completer {
 
     @Override
+    @SneakyThrows
     public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
 
         var context = line.line().split(" ", -1);
@@ -34,8 +36,6 @@ public final class CommandCompleter implements Completer {
             } else if (main.equalsIgnoreCase(data.command()) || Arrays.stream(data.aliases()).anyMatch(it -> it.equalsIgnoreCase(main))) {
                 //sub commands
                 var subIndex = line.wordIndex();
-                var subCommand = Arrays.copyOfRange(context, 1, context.length);
-
                 for (var completer : command.getClass().getDeclaredMethods()) {
 
                     if (!completer.isAnnotationPresent(SubCommandCompleter.class)) {
@@ -43,10 +43,7 @@ public final class CommandCompleter implements Completer {
                     }
 
                     var subCompleter = completer.getDeclaredAnnotation(SubCommandCompleter.class);
-
-
-
-
+                    completer.invoke(command, subIndex, candidates);
                 }
 
                 for (var completer : command.getClass().getDeclaredMethods()) {

@@ -7,7 +7,9 @@ import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.SneakyThrows;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class CloudGroupPlatformService {
@@ -48,5 +50,14 @@ public class CloudGroupPlatformService {
         var platformFile = platformName + ".jar";
         java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName + ".jar"), cloudService.runningFolder().resolve(platformFile));
         platform.prepare(cloudService);
+    }
+
+
+    public List<String> validPlatformVersions() {
+        var versions = new ArrayList<String>();
+        for (var platform : this.platforms) {
+            versions.addAll(platform.possibleVersions());
+        }
+        return versions;
     }
 }

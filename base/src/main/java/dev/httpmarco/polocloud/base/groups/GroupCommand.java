@@ -70,9 +70,12 @@ public final class GroupCommand {
     }
 
     @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
-    public void completeMethod(int index, String subArg, List<Candidate> candidates) {
-        System.out.println(index + ":" + subArg);
-        candidates.add(new Candidate("test"));
+    public void completeMethod(int index, List<Candidate> candidates) {
+        if (index == 1) {
+            candidates.add(new Candidate("create"));
+        } else if (index == 3) {
+            candidates.addAll(((CloudServiceGroupProvider) CloudAPI.instance().groupProvider()).platformService().validPlatformVersions().stream().map(Candidate::new).toList());
+        }
     }
 
     @SubCommand(args = {"delete", "<name>"})
