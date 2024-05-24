@@ -28,4 +28,11 @@ public class CloudServiceImpl implements CloudService {
         // todo
         return List.of();
     }
+
+    @Override
+    public String toString() {
+        return "group=" + group +
+                ", orderedId=" + orderedId +
+                ", id=" + id;
+    }
 }
