@@ -39,15 +39,7 @@ public final class CommandService {
         var main = args[0];
         for (var command : commands) {
 
-            Command mainCommand = null;
-
-            for (var method : command.getClass().getDeclaredMethods()) {
-                if (!method.isAnnotationPresent(Command.class)) {
-                    continue;
-                }
-                mainCommand = method.getDeclaredAnnotation(Command.class);
-                break;
-            }
+            var mainCommand = command.getClass().getDeclaredAnnotation(Command.class);;
 
             if (mainCommand == null) {
                 continue;
@@ -58,7 +50,7 @@ public final class CommandService {
             }
 
             for (var method : command.getClass().getDeclaredMethods()) {
-                if (args.length == 1 && method.isAnnotationPresent(Command.class)) {
+                if (args.length == 1 && method.isAnnotationPresent(DefaultCommand.class)) {
                     method.invoke(command);
                     continue;
                 }
