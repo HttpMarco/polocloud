@@ -1,9 +1,10 @@
 package dev.httpmarco.polocloud.runner;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.properties.CloudProperty;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import lombok.SneakyThrows;
 
@@ -42,16 +43,25 @@ public class Instance extends CloudAPI {
 
     @Override
     public NodeService nodeService() {
+        //todo
         return null;
     }
 
     @Override
     public CloudGroupProvider groupProvider() {
+        //todo
         return null;
     }
 
     @Override
     public CloudServiceProvider serviceProvider() {
+        //todo
+        return null;
+    }
+
+    @Override
+    public PropertiesPool<CloudProperty<?>> globalProperties() {
+        //todo
         return null;
     }
 }

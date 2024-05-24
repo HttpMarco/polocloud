@@ -32,4 +32,14 @@ public final class ServiceCommand {
             CloudAPI.instance().logger().info("&3" + name + " &2: &1" + log);
         }
     }
+
+    @SubCommand(args = {"<name>", "shutdown"})
+    public void handleShutdown(String name) {
+        var service = CloudAPI.instance().serviceProvider().service(name);
+        if (service == null) {
+            CloudAPI.instance().logger().info("This services does not exists&2!");
+            return;
+        }
+        service.shutdown();
+    }
 }

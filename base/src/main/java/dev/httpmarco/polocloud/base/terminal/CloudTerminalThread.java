@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.base.terminal;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.LogLevel;
+import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.base.CloudBase;
 import org.fusesource.jansi.Ansi;
 import org.jline.reader.EndOfFileException;
@@ -15,7 +17,10 @@ public final class CloudTerminalThread extends Thread {
         this.terminal = terminal;
 
         setName("console-reading-thread");
-        this.prompt = this.terminal.includeColorCodes("&3cloud &2» &1");
+
+        var globalProperties = CloudAPI.instance().globalProperties();
+        this.prompt = this.terminal.includeColorCodes(globalProperties.has(CloudProperty.PROMPT) ? globalProperties.property(CloudProperty.PROMPT) : "&3cloud &2» &1");
+
         setContextClassLoader(Thread.currentThread().getContextClassLoader());
     }
 

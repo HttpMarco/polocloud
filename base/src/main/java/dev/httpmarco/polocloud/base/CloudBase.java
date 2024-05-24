@@ -5,6 +5,8 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.properties.CloudProperty;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
@@ -29,6 +31,8 @@ import java.util.UUID;
 @Accessors(fluent = true)
 public final class CloudBase extends CloudAPI {
 
+    private final PropertiesPool<CloudProperty<?>> globalProperties;
+
     private final CloudTerminal terminal;
     private final NodeService nodeService;
     private final CloudGroupProvider groupProvider;
@@ -46,6 +50,7 @@ public final class CloudBase extends CloudAPI {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
         var cloudConfiguration = loadConfiguration();
+        this.globalProperties = cloudConfiguration.properties();
 
         this.terminal = new CloudTerminal();
         // register logging layers (for general output)

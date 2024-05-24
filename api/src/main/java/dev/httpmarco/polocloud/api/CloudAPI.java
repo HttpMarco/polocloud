@@ -8,6 +8,8 @@ import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.properties.CloudProperty;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -34,11 +36,15 @@ public abstract class CloudAPI {
 
         // todo better loading of custom properties
         Class.forName(GroupProperties.class.getName());
+        Class.forName(CloudProperty.class.getName());
     }
 
     public abstract NodeService nodeService();
 
     public abstract CloudGroupProvider groupProvider();
+
     public abstract CloudServiceProvider serviceProvider();
+
+    public abstract PropertiesPool<CloudProperty<?>> globalProperties();
 
 }
