@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.templates;
 
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.osgan.files.json.JsonDocument;
+import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -21,7 +22,7 @@ public final class TemplatesService {
     public TemplatesService() {
         Files.createDirectoryIfNotExists(TEMPLATES);
 
-        this.document = new JsonDocument<>(new TemplatesConfig(), TEMPLATES.resolve("templates.json"));
+        this.document = new JsonDocument<>(new TemplatesConfig(), TEMPLATES.resolve("templates.json"), new PropertiesPoolSerializer());
 
         this.createTemplates("every");
         this.createTemplates("every_server");

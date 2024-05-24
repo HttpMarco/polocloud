@@ -1,7 +1,12 @@
 package dev.httpmarco.polocloud.api.properties;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
 import java.util.HashMap;
 
+@Getter
+@Accessors(fluent = true)
 public final class PropertiesPool<T extends Property<?>> {
 
     private final HashMap<T, Object> properties = new HashMap<>();
