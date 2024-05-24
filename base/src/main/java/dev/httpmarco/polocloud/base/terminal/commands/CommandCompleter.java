@@ -31,7 +31,7 @@ public final class CommandCompleter implements Completer {
                 if (data.command().startsWith(main)) {
                     candidates.add(new Candidate(data.command()));
                 }
-            } else if (main.equalsIgnoreCase(data.command())) {
+            } else if (main.equalsIgnoreCase(data.command()) || Arrays.stream(data.aliases()).anyMatch(it -> it.equalsIgnoreCase(main))) {
                 //sub commands
                 var subIndex = line.wordIndex();
                 var subCommand = Arrays.copyOfRange(context, 1, context.length);
@@ -59,12 +59,11 @@ public final class CommandCompleter implements Completer {
                         continue;
                     }
 
-                    if (subData.args().length < +subIndex) {
+                    if (subData.args().length < subIndex) {
                         continue;
                     }
 
                     var possibleSubCommand = subData.args()[subIndex - 1];
-
                     candidates.add(new Candidate(possibleSubCommand));
                     break;
                 }
