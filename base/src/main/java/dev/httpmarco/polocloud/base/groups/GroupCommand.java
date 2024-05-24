@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.services.CloudService;
+import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -54,6 +55,8 @@ public final class GroupCommand {
         if (CloudAPI.instance().groupProvider().createGroup(name, platform, memory, minOnlineCount)) {
             var group = CloudAPI.instance().groupProvider().group(name);
 
+            // we must create a separate template directory
+            CloudBase.instance().templatesService().createTemplates(name, "every", "every_server");
             // we set as default value all important templates
             group.properties().put(GroupProperties.TEMPLATES, name);
             // send changes to other nodes or update data files

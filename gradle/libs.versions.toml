@@ -7,6 +7,8 @@ gson = "2.10.1"
 jansi = "2.4.1"
 jline = "3.26.1"
 
+commons = "2.16.1"
+
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 
@@ -16,6 +18,7 @@ osgan-netty = { group = "dev.httpmarco", name = "osgan-netty", version.ref = "os
 
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
+commons = { group = "commons-io", name = "commons-io", version.ref = "commons" }
 
 jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" }
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }

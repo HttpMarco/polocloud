@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 
 @Command(command = "templates", description = "Manage or merge templates")
-public class TemplateCommand {
+public final class TemplateCommand {
 
     @DefaultCommand
     public void handle() {

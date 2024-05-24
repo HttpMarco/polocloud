@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class TemplatesConfig {
+public final class TemplatesConfig {
 
     private final List<Template> templates;
 

@@ -41,6 +41,7 @@ public final class CloudBase extends CloudAPI {
         dependencyService().load(new Dependency("com.google.code.gson", "gson", "2.10.1"));
         dependencyService().load(new Dependency("org.jline", "jline", "3.26.1"));
         dependencyService().load(new Dependency("org.fusesource.jansi", "jansi", "2.4.1"));
+        dependencyService().load(new Dependency("commons-io", "commons-io", "2.16.1"));
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
