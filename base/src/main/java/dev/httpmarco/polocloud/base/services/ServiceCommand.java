@@ -2,11 +2,13 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
+import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 
+@Command(command = "service", aliases = {"services", "ser"}, description = "Manage all your online services")
 public final class ServiceCommand {
 
-    @Command(command = "service", aliases = {"services", "ser"})
+    @DefaultCommand
     public void handle() {
         CloudAPI.instance().logger().info("&3service &2<&1name&2> &2- &1All specific information&2.");
         CloudAPI.instance().logger().info("&3service &2<&1name&2> &1log &2- &1Get the last not read log lines&2.");

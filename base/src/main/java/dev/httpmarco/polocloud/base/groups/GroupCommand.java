@@ -3,11 +3,14 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
+import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 
+
+@Command(command = "groups", aliases = {"group"}, description = "Manage or create your cluster groups")
 public final class GroupCommand {
 
-    @Command(command = "groups", aliases = {"group"})
+    @DefaultCommand
     public void handle() {
         CloudAPI.instance().logger().info("&3groups create &2<&1name&2> &2<&1platform&2> &2<&1memory&2> &2<&1minOnlineCount&2> &2- &1Create a new group&2.");
         CloudAPI.instance().logger().info("&3groups delete &2<&1name&2> &2- &1Delete a existing group&2.");
