@@ -7,6 +7,6 @@ public final class ShutdownCommand {
 
     @Command(command = "shutdown", aliases = {"exit", "stop"})
     public void handle() {
-        CloudBase.instance().shutdown();
+        CloudBase.instance().shutdown(false);
     }
 }

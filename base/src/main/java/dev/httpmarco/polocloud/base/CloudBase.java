@@ -50,7 +50,7 @@ public final class CloudBase extends CloudAPI {
         dependencyService().load(new Dependency("org.jline", "jline", "3.26.1"));
         dependencyService().load(new Dependency("org.fusesource.jansi", "jansi", "2.4.1"));
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
         var cloudConfiguration = loadConfiguration();
 
@@ -60,6 +60,8 @@ public final class CloudBase extends CloudAPI {
 
         System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
+
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
         this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.clusterId(), cloudConfiguration.clusterName(), "127.0.0.1", 8879), cloudConfiguration.externalNodes());
 
@@ -78,7 +80,7 @@ public final class CloudBase extends CloudAPI {
         this.terminal.start();
     }
 
-    public void shutdown() {
+    public void shutdown(boolean shutdownCycle) {
         if (!running) {
             return;
         }
@@ -93,8 +95,12 @@ public final class CloudBase extends CloudAPI {
 
         this.nodeService.localNode().close();
 
+        logger().info("Cloud successfully stopped!");
         this.loggerFactory().close();
-        System.exit(0);
+
+        if (!shutdownCycle) {
+            System.exit(0);
+        }
     }
 
     public CloudConfiguration loadConfiguration() {

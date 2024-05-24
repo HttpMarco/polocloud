@@ -26,7 +26,7 @@ public final class LoggerOutPutStream extends ByteArrayOutputStream {
             if (!errorStream) {
                 CloudAPI.instance().logger().info(input);
             } else {
-                CloudAPI.instance().logger().error(input, null);
+                CloudAPI.instance().logger().error(input.replace("\n", ""), null);
             }
         }
     }
