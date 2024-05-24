@@ -13,7 +13,7 @@ import java.util.List;
 @Accessors(fluent = true)
 public final class TemplatesService {
 
-    private static final Path TEMPLATES = Path.of("templates");
+    public static final Path TEMPLATES = Path.of("templates");
 
     @Getter(AccessLevel.PACKAGE)
     private final JsonDocument<TemplatesConfig> document;
@@ -36,7 +36,7 @@ public final class TemplatesService {
         var template = new Template(name, mergedTemplates);
 
         Files.createDirectoryIfNotExists(TEMPLATES.resolve(name));
-        this.document.value().configTemplates().add(template);
+        templates().add(template);
         this.document.updateDocument();
         return true;
     }
@@ -46,7 +46,11 @@ public final class TemplatesService {
     }
 
     public List<Template> templates() {
-        return this.document.value().configTemplates();
+        return this.document.value().templates();
+    }
+
+    public Template templates(String name) {
+        return templates().stream().filter(it -> it.id().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
 }

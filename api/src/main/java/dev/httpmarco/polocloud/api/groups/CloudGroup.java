@@ -12,7 +12,7 @@ public interface CloudGroup {
 
     int minOnlineServices();
 
-    PropertiesPool properties();
+    PropertiesPool<GroupProperties<?>> properties();
 
     int onlineAmount();
 

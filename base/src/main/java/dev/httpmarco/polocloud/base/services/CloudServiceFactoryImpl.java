@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import lombok.SneakyThrows;
 
 import java.io.File;
@@ -51,6 +52,19 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
                 .command(args.toArray(String[]::new));
 
         processBuilder.environment().put("serviceId", service.id().toString());
+
+        if (cloudGroup.properties().has(GroupProperties.TEMPLATES)) {
+            var templates = cloudGroup.properties().property(GroupProperties.TEMPLATES);
+
+            for (var template : templates) {
+                var temp = CloudBase.instance().templatesService().templates(template);
+
+                if (temp != null) {
+                    temp.copy(service);
+                }
+            }
+        }
+
         service.process(processBuilder.start());
     }
 

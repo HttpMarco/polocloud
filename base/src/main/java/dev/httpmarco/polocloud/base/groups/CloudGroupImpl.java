@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,8 @@ public class CloudGroupImpl implements CloudGroup {
     private int minOnlineServices;
 
     @Override
-    public PropertiesPool properties() {
+    public PropertiesPool<GroupProperties<?>> properties() {
+        //todo
         return null;
     }
 

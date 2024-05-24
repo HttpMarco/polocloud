@@ -2,25 +2,26 @@ package dev.httpmarco.polocloud.api.properties;
 
 import java.util.HashMap;
 
-public final class PropertiesPool {
+public final class PropertiesPool<T extends Property<?>> {
 
-    private final HashMap<String, Object> properties = new HashMap<>();
+    private final HashMap<T, Object> properties = new HashMap<>();
 
-    public boolean has(String key) {
+    public boolean has(T key) {
         return properties.containsKey(key);
     }
 
-    public void put(String key, Object value) {
-        this.properties.put(key, value);
+    @SuppressWarnings("unchecked")
+    public <R, P extends Property<R>> void put(P property, R value) {
+        this.properties.put((T) property, value);
     }
 
-    public void remove(String key) {
-       this.properties.remove(key);
+    public void remove(T property) {
+        this.properties.remove(property);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T property(String key, Class<T> clazz) {
-       return (T) this.properties.get(key);
+    public <P> P property(Property<P> property) {
+        return (P) this.properties.get(property);
     }
 
     public Object property(String key) {
