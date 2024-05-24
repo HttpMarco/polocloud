@@ -6,6 +6,8 @@ import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 public final class CommandCompleter implements Completer {
@@ -15,27 +17,56 @@ public final class CommandCompleter implements Completer {
 
         var context = line.line().split(" ", -1);
 
+        if (context.length == 0) {
+            return;
+        }
+
+        var main = context[0];
+
         for (var command : CloudBase.instance().terminal().commandService().commands()) {
 
-            if(context.length == 1) {
-                var main = context[0];
+            var data = command.getClass().getDeclaredAnnotation(Command.class);
 
-                for (var method : command.getClass().getDeclaredMethods()) {
-                    if (!method.isAnnotationPresent(Command.class)) {
+            if (context.length == 1) {
+                if (data.command().startsWith(main)) {
+                    candidates.add(new Candidate(data.command()));
+                }
+            } else if (main.equalsIgnoreCase(data.command())) {
+                //sub commands
+                var subIndex = line.wordIndex();
+                var subCommand = Arrays.copyOfRange(context, 1, context.length);
+
+                for (var completer : command.getClass().getDeclaredMethods()) {
+
+                    if (!completer.isAnnotationPresent(SubCommandCompleter.class)) {
                         continue;
                     }
 
-                    var commandData = method.getDeclaredAnnotation(Command.class);
+                    var subCompleter = completer.getDeclaredAnnotation(SubCommandCompleter.class);
 
-                    if(commandData.command().startsWith(main)) {
-                        candidates.add(new Candidate(commandData.command()));
+
+
+
+                }
+
+                for (var completer : command.getClass().getDeclaredMethods()) {
+                    if (!completer.isAnnotationPresent(SubCommand.class)) {
+                        continue;
                     }
 
-                    for (var alias : commandData.aliases()) {
-                        if(alias.startsWith(main)) {
-                            candidates.add(new Candidate(alias));
-                        }
+                    var subData = completer.getDeclaredAnnotation(SubCommand.class);
+                    if (Arrays.stream(subData.args()).anyMatch(s -> s.startsWith("<") && s.endsWith(">"))) {
+                        continue;
                     }
+
+                    if (subData.args().length < +subIndex) {
+                        continue;
+                    }
+
+                    var possibleSubCommand = subData.args()[subIndex - 1];
+
+                    candidates.add(new Candidate(possibleSubCommand));
+                    break;
                 }
             }
         }

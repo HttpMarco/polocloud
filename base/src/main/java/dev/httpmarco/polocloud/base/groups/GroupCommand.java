@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.base.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -9,9 +8,13 @@ import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
+import dev.httpmarco.polocloud.base.terminal.commands.SubCommandCompleter;
+import org.jline.reader.Candidate;
+
+import java.util.List;
 
 
-@Command(command = "groups", aliases = {"group"}, description = "Manage or create your cluster groups")
+@Command(command = "group", aliases = {"groups"}, description = "Manage or create your cluster groups")
 public final class GroupCommand {
 
     private final Logger logger = CloudAPI.instance().logger();
@@ -64,6 +67,12 @@ public final class GroupCommand {
 
             logger.success("Successfully created &3" + name + " &1group&2.");
         }
+    }
+
+    @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
+    public void completeMethod(int index, String subArg, List<Candidate> candidates) {
+        System.out.println(index + ":" + subArg);
+        candidates.add(new Candidate("test"));
     }
 
     @SubCommand(args = {"delete", "<name>"})
