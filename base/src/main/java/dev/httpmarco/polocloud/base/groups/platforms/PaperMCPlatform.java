@@ -70,7 +70,7 @@ public final class PaperMCPlatform extends Platform {
 
             if (!Files.exists(serverProperties.toPath())) {
                 // copy file from storage
-                Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server.properties")), localCloudService.runningFolder().resolve("server.properties"));
+                Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/spigot/server.properties")), localCloudService.runningFolder().resolve("server.properties"));
 
             }
 
