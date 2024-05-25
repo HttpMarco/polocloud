@@ -3,10 +3,15 @@ package dev.httpmarco.polocloud.base.groups.platforms;
 import com.google.gson.JsonObject;
 import dev.httpmarco.osgan.files.json.JsonUtils;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
+import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
+import java.util.Properties;
 
 public final class PaperMCPlatform extends Platform {
 
@@ -58,6 +63,30 @@ public final class PaperMCPlatform extends Platform {
     public void prepare(LocalCloudService localCloudService) {
         // accept eula without cringe logs
         Files.writeString(localCloudService.runningFolder().resolve("eula.txt"), "eula=true");
+
+        // manipulate only paper under services
+        if (product.equalsIgnoreCase("paper")) {
+            var serverProperties = localCloudService.runningFolder().resolve("server.properties").toFile();
+
+            if (!Files.exists(serverProperties.toPath())) {
+                // copy file from storage
+                Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server.properties")), localCloudService.runningFolder().resolve("server.properties"));
+
+            }
+
+            var properties = new Properties();
+
+            try (var fileReader = new FileReader(serverProperties)) {
+                properties.load(fileReader);
+            }
+
+            properties.setProperty("server-name", localCloudService.name());
+            properties.setProperty("server-port", String.valueOf(localCloudService.port()));
+
+            try (var fileWriter = new FileWriter(serverProperties)) {
+                properties.store(fileWriter, null);
+            }
+        }
     }
 
     @SneakyThrows
