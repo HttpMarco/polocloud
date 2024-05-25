@@ -46,6 +46,12 @@ public final class CommandCompleter implements Completer {
 
                     var subCompleter = completer.getDeclaredAnnotation(SubCommandCompleter.class);
 
+                    if (subCompleter.completionPattern().length < subIndex) {
+                        continue;
+                    }
+
+                    // todo check if previous args are the same layout
+
                     if (subCompleter.completionPattern()[subIndex - 1].startsWith("<") && (subCompleter.completionPattern()[subIndex - 1].endsWith(">"))) {
                         completer.invoke(command, subIndex, candidates);
                     } else {

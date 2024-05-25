@@ -39,6 +39,8 @@ public final class CloudBase extends CloudAPI {
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
 
+    private final CloudConfiguration cloudConfiguration;
+
     private boolean running = true;
 
     public CloudBase() {
@@ -49,7 +51,7 @@ public final class CloudBase extends CloudAPI {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
-        var cloudConfiguration = loadConfiguration();
+        this.cloudConfiguration = loadConfiguration();
         this.globalProperties = cloudConfiguration.properties();
 
         this.terminal = new CloudTerminal();
