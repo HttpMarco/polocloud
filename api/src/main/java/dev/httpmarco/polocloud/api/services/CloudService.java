@@ -18,6 +18,8 @@ public interface CloudService {
 
     UUID id();
 
+    int port();
+
     List<String> log();
 
     default void shutdown() {
