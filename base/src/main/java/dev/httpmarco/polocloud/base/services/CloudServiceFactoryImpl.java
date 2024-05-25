@@ -10,8 +10,7 @@ import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import lombok.SneakyThrows;
-
-import java.io.File;
+import org.apache.commons.io.FileUtils;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -26,7 +25,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
     @Override
     @SneakyThrows
     public void start(CloudGroup cloudGroup) {
-        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID());
+        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup));
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
         CloudAPI.instance().logger().info("Server " + service.name() + " is starting now on node " + CloudAPI.instance().nodeService().localNode().name() + "&2.");
@@ -75,7 +74,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         }
 
         synchronized (this) {
-            deleteDirectory(localCloudService.runningFolder().toFile());
+            FileUtils.deleteDirectory(localCloudService.runningFolder().toFile());
         }
 
         java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
@@ -93,16 +92,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
     private boolean isIdPresent(CloudGroup group, int id) {
         return CloudAPI.instance().serviceProvider().services(group).stream().anyMatch(it -> it.orderedId() == id);
-    }
-
-    private boolean deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
     }
 }
 
