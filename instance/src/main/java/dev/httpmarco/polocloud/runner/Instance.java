@@ -33,6 +33,7 @@ public class Instance extends CloudAPI {
             final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
             try {
                 final var main = Class.forName(mainClass, true, RunnerBootstrap.LOADER).getMethod("main", String[].class);
+
                 main.invoke(null, (Object) Arrays.copyOfRange(args, 2, args.length));
             } catch (Exception e) {
                 e.printStackTrace(System.err);
