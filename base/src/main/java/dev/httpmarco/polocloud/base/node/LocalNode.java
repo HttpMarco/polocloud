@@ -2,13 +2,16 @@ package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.osgan.files.annotations.ConfigExclude;
 import dev.httpmarco.osgan.networking.server.NettyServer;
-import dev.httpmarco.osgan.networking.server.NettyServerBuilder;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.AbstractNode;
 import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
+@Getter
+@Accessors(fluent = true)
 public final class LocalNode extends AbstractNode implements dev.httpmarco.polocloud.api.node.LocalNode {
 
     @ConfigExclude

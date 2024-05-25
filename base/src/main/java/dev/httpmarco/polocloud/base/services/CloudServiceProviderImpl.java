@@ -1,9 +1,11 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -21,6 +23,12 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     private final CloudServiceQueue queue = new CloudServiceQueue(this);
 
     public CloudServiceProviderImpl() {
+
+        CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, jsonObjectSerializer) -> {
+            System.out.println("packet kkommt an ");
+            return new CloudServiceRegisterPacket();
+        });
+
         queue.start();
     }
 
@@ -35,7 +43,6 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     public void unregisterService(CloudService cloudService) {
         this.services.remove(cloudService);
     }
-
 
     @Override
     public List<CloudService> services(CloudGroup group) {

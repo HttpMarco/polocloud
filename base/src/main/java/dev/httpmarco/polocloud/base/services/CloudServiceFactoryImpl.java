@@ -11,6 +11,7 @@ import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+
 import java.nio.file.Path;
 import java.util.*;
 
@@ -57,6 +58,14 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
                 temp.copy(service);
             }
         }
+
+        var pluginDirectory = service.runningFolder().resolve("plugins");
+
+        Files.createDirectoryIfNotExists(pluginDirectory);
+
+        // copy polocloud plugin
+        java.nio.file.Files.copy(Path.of("local/polocloud-plugin.jar"),pluginDirectory.resolve("polocloud-plugin.jar"));
+
         service.process(processBuilder.start());
     }
 

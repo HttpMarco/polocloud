@@ -7,6 +7,7 @@ tasks.jar {
     from(project(":base").tasks.jar)
     from(project(":api").tasks.jar)
     from(project(":instance").tasks.jar)
+    from(project(":plugin").tasks.jar)
 
     manifest {
         attributes["Premain-Class"] = "dev.httpmarco.polocloud.runner.RunnerBootstrap"

@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.base;
 
 import dev.httpmarco.osgan.files.json.JsonDocument;
+import dev.httpmarco.osgan.networking.server.NettyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
@@ -105,6 +106,10 @@ public final class CloudBase extends CloudAPI {
 
     public CloudConfiguration loadConfiguration() {
         return new JsonDocument<>(new CloudConfiguration(UUID.randomUUID(), "node-1", 10000, new ExternalNode[0]), Path.of("config.json"), new PropertiesPoolSerializer()).value();
+    }
+
+    public NettyServer transmitter() {
+        return ((LocalNode) this.nodeService.localNode()).server();
     }
 
     public static CloudBase instance() {
