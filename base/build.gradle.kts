@@ -1,5 +1,6 @@
 dependencies {
     implementation(project(":api"))
+    implementation(project(":runner"))
     implementation(libs.bundles.console)
     implementation(libs.osgan.netty)
     implementation(libs.gson)
