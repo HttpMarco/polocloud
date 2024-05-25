@@ -53,6 +53,13 @@ public final class GroupCommand {
         });
     }
 
+    @SubCommandCompleter(completionPattern = {"<name>"})
+    public void completeInfoMethod(int index, List<Candidate> candidates) {
+        if (index == 1) {
+            candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
+        }
+    }
+
     @SubCommand(args = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
     public void handleCreate(String name, String platform, int memory, int minOnlineCount) {
         if (CloudAPI.instance().groupProvider().createGroup(name, platform, memory, minOnlineCount)) {
@@ -71,9 +78,7 @@ public final class GroupCommand {
 
     @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
     public void completeMethod(int index, List<Candidate> candidates) {
-        if (index == 1) {
-            candidates.add(new Candidate("create"));
-        } else if (index == 3) {
+        if (index == 3) {
             candidates.addAll(((CloudServiceGroupProvider) CloudAPI.instance().groupProvider()).platformService().validPlatformVersions().stream().map(Candidate::new).toList());
         }
     }
@@ -89,9 +94,7 @@ public final class GroupCommand {
 
     @SubCommandCompleter(completionPattern = {"delete", "<name>"})
     public void completeDeleteMethod(int index, List<Candidate> candidates) {
-        if (index == 1) {
-            candidates.add(new Candidate("delete"));
-        } else if (index == 2) {
+        if (index == 2) {
             candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
         }
     }
@@ -111,4 +114,12 @@ public final class GroupCommand {
         CloudAPI.instance().serviceProvider().services(group).forEach(CloudService::shutdown);
         logger.info("You successfully stopped all services of group &3" + name + "&2!");
     }
+
+    @SubCommandCompleter(completionPattern = {"shutdown", "<name>"})
+    public void completeShutdownMethod(int index, List<Candidate> candidates) {
+        if (index == 2) {
+            candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
+        }
+    }
+
 }
