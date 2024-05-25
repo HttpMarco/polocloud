@@ -25,8 +25,8 @@ public final class LocalCloudService extends CloudServiceImpl {
     @Setter
     private Process process;
 
-    public LocalCloudService(CloudGroup group, int orderedId, UUID id) {
-        super(group, orderedId, id);
+    public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port) {
+        super(group, orderedId, id, port);
 
         this.runningFolder = Path.of("running/" + name() + "-" + id());
     }

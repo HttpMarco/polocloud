@@ -17,11 +17,7 @@ public class CloudServiceImpl implements CloudService {
     private CloudGroup group;
     private int orderedId;
     private UUID id;
-
-    @Override
-    public String name() {
-        return CloudService.super.name();
-    }
+    private int port;
 
     @Override
     public List<String> log() {
