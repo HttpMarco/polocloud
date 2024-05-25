@@ -19,8 +19,9 @@ public final class DependencyService {
 
         // load default dependencies of base and instance
         this.load(new Dependency("dev.httpmarco", "osgan-utils", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
+        this.load(new Dependency("dev.httpmarco", "osgan-reflections", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
         this.load(new Dependency("dev.httpmarco", "osgan-files", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
-        this.load(new Dependency("dev.httpmarco", "osgan-netty", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
+        this.load(new Dependency("dev.httpmarco", "osgan-netty", "1.2.1-SNAPSHOT", "1.2.1-20240525.221303-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO));
         this.load(new Dependency("io.netty", "netty5-common", "5.0.0.Alpha5"));
         this.load(new Dependency("io.netty", "netty5-transport", "5.0.0.Alpha5"));
         this.load(new Dependency("io.netty", "netty5-codec", "5.0.0.Alpha5"));

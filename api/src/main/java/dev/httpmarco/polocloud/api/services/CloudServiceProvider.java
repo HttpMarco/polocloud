@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.api.services;
 
+import dev.httpmarco.osgan.networking.Packet;
+import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 
 import java.util.List;
@@ -16,5 +18,7 @@ public interface CloudServiceProvider {
     CloudService find(UUID id);
 
     CloudService service(String name);
+
+    CloudService fromPacket(CodecBuffer buffer);
 
 }

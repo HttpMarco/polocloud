@@ -2,7 +2,9 @@ package dev.httpmarco.polocloud.api.groups;
 
 import dev.httpmarco.polocloud.api.properties.Property;
 
-public class GroupProperties<T> extends Property<T> {
+import java.io.Serializable;
+
+public class GroupProperties<T> extends Property<T> implements Serializable {
 
     public GroupProperties(String id, Class<T> type) {
         super(id, type);

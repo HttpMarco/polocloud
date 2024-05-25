@@ -1,7 +1,8 @@
 package dev.httpmarco.polocloud.runner.services;
 
+import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
+import dev.httpmarco.polocloud.api.packets.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -19,8 +20,12 @@ public class InstanceServiceProvider implements CloudServiceProvider {
     @Override
     public List<CloudService> services() {
         System.out.println("sending packet");
-        Instance.instance().client().transmitter().request("services-all", CloudServiceRegisterPacket.class, it -> {
-            System.out.println("is da was");
+        // todo
+        Instance.instance().client().transmitter().request("services-all", CloudAllServicesPacket.class, it -> {
+
+            for (CloudService service : it.services()) {
+                System.out.println(service.orderedId());
+            }
         });
         return List.of();
     }
@@ -38,5 +43,10 @@ public class InstanceServiceProvider implements CloudServiceProvider {
     @Override
     public CloudService service(String name) {
         return null;
+    }
+
+    @Override
+    public CloudService fromPacket(CodecBuffer buffer) {
+        return new InstanceCloudService(buffer.readInt());
     }
 }

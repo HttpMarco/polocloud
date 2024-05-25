@@ -3,13 +3,14 @@ package dev.httpmarco.polocloud.api.properties;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 @Getter
 @Accessors(fluent = true)
-public final class PropertiesPool<T extends Property<?>> {
+public final class PropertiesPool<T extends Property<?>> implements Serializable {
 
     // all properties of cluster
     public static final List<Property<?>> PROPERTY_LIST = new ArrayList<>();

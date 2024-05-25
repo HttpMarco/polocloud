@@ -2,7 +2,6 @@ package dev.httpmarco.polocloud.api.packets;
 
 import dev.httpmarco.osgan.networking.Packet;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -18,12 +17,15 @@ public class CloudServiceRegisterPacket extends Packet {
 
     public CloudServiceRegisterPacket(UUID uuid) {
         this.uuid = uuid;
-        getBuffer().writeUniqueId(this.uuid);
     }
 
-    public CloudServiceRegisterPacket(CodecBuffer buffer) {
-        super(buffer);
+    @Override
+    public void onRead(CodecBuffer codecBuffer) {
+        this.uuid = codecBuffer.readUniqueId();
+    }
 
-        this.uuid = buffer.readUniqueId();
+    @Override
+    public void onWrite(CodecBuffer codecBuffer) {
+        codecBuffer.writeUniqueId(this.uuid);
     }
 }

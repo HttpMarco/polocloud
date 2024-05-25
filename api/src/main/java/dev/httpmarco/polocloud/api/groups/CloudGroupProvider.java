@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.api.groups;
 
-import dev.httpmarco.polocloud.api.services.CloudService;
+import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 
 import java.util.List;
 
@@ -17,5 +17,7 @@ public interface CloudGroupProvider {
     List<CloudGroup> groups();
 
     void update(CloudGroup cloudGroup);
+
+    CloudGroup fromPacket(CodecBuffer buffer);
 
 }

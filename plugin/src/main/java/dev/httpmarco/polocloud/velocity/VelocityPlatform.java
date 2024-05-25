@@ -11,14 +11,15 @@ import lombok.Getter;
 
 import javax.inject.Inject;
 
+@Getter
 @Plugin(
         id = "polocloud",
         name = "PoloCloud",
-        version = "1.0.0"
+        version = "1.0.0",
+        authors = "HttpMarco"
 )
 public final class VelocityPlatform extends AbstractPlatform<ProxyServer> {
 
-    @Getter
     private final ProxyServer server;
 
     @Inject
@@ -34,7 +35,7 @@ public final class VelocityPlatform extends AbstractPlatform<ProxyServer> {
 
         //todo register sub servers
         for (CloudService service : CloudAPI.instance().serviceProvider().services()) {
-            System.out.println("Register new service: " + service.name());
+            System.out.println("Register new service: " + service.orderedId());
         }
     }
 }

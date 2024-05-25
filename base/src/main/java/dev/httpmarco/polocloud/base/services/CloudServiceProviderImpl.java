@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.base.services;
 
+import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.packets.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
@@ -25,10 +27,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     public CloudServiceProviderImpl() {
 
         CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, jsonObjectSerializer) -> {
-            System.out.println("packet kkommt an ");
-            return new CloudServiceRegisterPacket();
+            System.out.println(services.size());
+           return new CloudAllServicesPacket(services);
         });
-
         queue.start();
     }
 
@@ -57,5 +58,11 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     @Override
     public CloudService service(String name) {
         return services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null);
+    }
+
+    @Override
+    public CloudService fromPacket(CodecBuffer buffer) {
+        //todo
+        return null;
     }
 }
