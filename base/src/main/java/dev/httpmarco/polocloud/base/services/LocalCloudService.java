@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base.services;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.Getter;
@@ -37,8 +38,8 @@ public final class LocalCloudService extends CloudServiceImpl {
         var writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
 
         writer.write(execute);
+        writer.newLine();
         writer.flush();
-        writer.close();
     }
 
     public void subscribeLog() {
@@ -57,7 +58,7 @@ public final class LocalCloudService extends CloudServiceImpl {
                     if (!this.subscribed) {
                         break;
                     }
-                    System.out.println(line);
+                    CloudAPI.instance().logger().info(line);
                 }
             } catch (IOException exception) {
                 throw new RuntimeException(exception);

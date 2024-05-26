@@ -10,7 +10,6 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 
 public final class CloudTerminalThread extends Thread {
-
     private final String prompt;
     private final CloudTerminal terminal;
 
