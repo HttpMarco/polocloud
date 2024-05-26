@@ -72,7 +72,7 @@ public abstract class PaperMCPlatform extends Platform {
             var process = new ProcessBuilder("java", "-Dpaperclip.patchonly=true", "-jar", "build.jar").directory(platformPath.resolve("cache").toFile()).start();
             process.waitFor(2, TimeUnit.MINUTES);
             process.destroy();
-            Files.delete(platformPath.resolve("build.jar"));
+            Files.delete(platformPath.resolve("cache").resolve("build.jar"));
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
