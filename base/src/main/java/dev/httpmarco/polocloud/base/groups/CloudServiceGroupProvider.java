@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base.groups;
 
+import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
@@ -77,5 +78,11 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     @Override
     public void update(CloudGroup cloudGroup) {
         this.groupServiceTypeAdapter.updateFile(cloudGroup);
+    }
+
+    @Override
+    public CloudGroup fromPacket(CodecBuffer buffer) {
+        //todo
+        return null;
     }
 }

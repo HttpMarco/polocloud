@@ -35,7 +35,7 @@ public final class VelocityPlatform extends AbstractPlatform<ProxyServer> {
 
         //todo register sub servers
         for (CloudService service : CloudAPI.instance().serviceProvider().services()) {
-            System.out.println("Register new service: " + service.orderedId());
+            System.out.println("Register new service: " + service.name());
         }
     }
 }

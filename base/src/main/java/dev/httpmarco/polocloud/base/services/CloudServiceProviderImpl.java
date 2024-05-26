@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
@@ -14,6 +15,7 @@ import lombok.experimental.Accessors;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
@@ -26,10 +28,10 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
 
     public CloudServiceProviderImpl() {
 
-        CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, jsonObjectSerializer) -> {
-            System.out.println(services.size());
-           return new CloudAllServicesPacket(services);
-        });
+        // send all services back to request
+        CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, jsonObjectSerializer) -> new CloudAllServicesPacket(services));
+
+        // allow service to start the process
         queue.start();
     }
 
@@ -43,6 +45,11 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
 
     public void unregisterService(CloudService cloudService) {
         this.services.remove(cloudService);
+    }
+
+    @Override
+    public CompletableFuture<List<CloudService>> servicesAsync() {
+        return FutureResult.completedFuture(this.services);
     }
 
     @Override
@@ -61,7 +68,7 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService fromPacket(CodecBuffer buffer) {
+    public CloudService fromPacket(CloudGroup parent, CodecBuffer buffer) {
         //todo
         return null;
     }

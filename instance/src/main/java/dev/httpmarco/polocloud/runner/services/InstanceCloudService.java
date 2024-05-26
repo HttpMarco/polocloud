@@ -15,24 +15,14 @@ import java.util.UUID;
 public class InstanceCloudService implements CloudService {
 
     private final int orderedId;
+    private final UUID id;
+    private final int port;
+    private CloudGroup group;
 
-    @Override
-    public CloudGroup group() {
-        return null;
-    }
-
-    @Override
-    public UUID id() {
-        return null;
-    }
-
-    @Override
-    public int port() {
-        return 0;
-    }
 
     @Override
     public List<String> log() {
+        //todo
         return List.of();
     }
 }
