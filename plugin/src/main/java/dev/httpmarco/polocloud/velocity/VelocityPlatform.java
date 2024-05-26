@@ -1,15 +1,19 @@
 package dev.httpmarco.polocloud.velocity;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.AbstractPlatform;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.Getter;
 
 import javax.inject.Inject;
+import java.net.InetSocketAddress;
 
 @Getter
 @Plugin(
@@ -35,7 +39,17 @@ public final class VelocityPlatform extends AbstractPlatform<ProxyServer> {
 
         //todo register sub servers
         for (CloudService service : CloudAPI.instance().serviceProvider().services()) {
-            System.out.println("Register new service: " + service.name());
+            if (service.name().equalsIgnoreCase("lobby-1")) {
+                server.registerServer(new ServerInfo(service.name(),  new InetSocketAddress("127.0.0.1", service.port())));
+                System.out.println("Register new service: " + service.name());
+            }
         }
     }
+
+    @Subscribe
+    public void onProxyInitialize(PlayerChooseInitialServerEvent event) {
+        //todo
+        event.setInitialServer(server.getAllServers().stream().findFirst().orElse(null));
+    }
+
 }
