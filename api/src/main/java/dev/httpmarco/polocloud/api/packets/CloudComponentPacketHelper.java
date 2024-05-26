@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.api.packets;
 
+import dev.httpmarco.osgan.files.json.JsonUtils;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
@@ -16,6 +17,7 @@ public final class CloudComponentPacketHelper {
     }
 
     public static void writeGroup(CloudGroup cloudService, CodecBuffer buffer) {
+        buffer.writeString(JsonUtils.toJson(cloudService));
         //todo
     }
 
