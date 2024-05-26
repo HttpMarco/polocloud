@@ -13,7 +13,7 @@ public final class CloudComponentPacketHelper {
         buffer.writeInt(cloudService.orderedId());
         buffer.writeUniqueId(cloudService.id());
         buffer.writeInt(cloudService.port());
-
+        buffer.writeEnum(cloudService.state());
         //todo properties
     }
 

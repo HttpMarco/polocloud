@@ -4,9 +4,7 @@ import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.CloudAllServicesPacket;
-import dev.httpmarco.polocloud.api.services.CloudService;
-import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
-import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.runner.Instance;
 import lombok.SneakyThrows;
 
@@ -35,6 +33,18 @@ public class InstanceServiceProvider implements CloudServiceProvider {
     }
 
     @Override
+    public List<CloudService> filterService(ServiceFilter filter) {
+        //todo
+        return List.of();
+    }
+
+    @Override
+    public CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter) {
+        //todo
+        return null;
+    }
+
+    @Override
     public List<CloudService> services(CloudGroup group) {
         return List.of();
     }
@@ -54,7 +64,8 @@ public class InstanceServiceProvider implements CloudServiceProvider {
         var orderedId = buffer.readInt();
         var id = buffer.readUniqueId();
         var port = buffer.readInt();
+        var state = buffer.readEnum(ServiceState.class);
 
-        return new InstanceCloudService(orderedId, id, port, parent);
+        return new InstanceCloudService(orderedId, id, port, state, parent);
     }
 }

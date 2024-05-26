@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -22,11 +23,12 @@ public final class LocalCloudService extends CloudServiceImpl {
     @Setter
     private Process process;
 
-    public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port) {
-        super(group, orderedId, id, port);
+    public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port, ServiceState state) {
+        super(group, orderedId, id, port, state);
 
         this.runningFolder = Path.of("running/" + name() + "-" + id());
     }
+
 
     @Override
     @SneakyThrows

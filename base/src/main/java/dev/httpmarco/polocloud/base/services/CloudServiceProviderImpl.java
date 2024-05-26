@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -50,6 +51,18 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     @Override
     public CompletableFuture<List<CloudService>> servicesAsync() {
         return FutureResult.completedFuture(this.services);
+    }
+
+    @Override
+    public List<CloudService> filterService(ServiceFilter filter) {
+        // todo
+        return List.of();
+    }
+
+    @Override
+    public CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter) {
+        //todo
+        return null;
     }
 
     @Override

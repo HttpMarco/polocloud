@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
+import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
@@ -26,7 +27,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
     @Override
     @SneakyThrows
     public void start(CloudGroup cloudGroup) {
-        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup));
+        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), ServiceState.PREPARED);
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
         CloudAPI.instance().logger().info("Server " + service.name() + " is starting now on node " + CloudAPI.instance().nodeService().localNode().name() + "&2.");
@@ -64,8 +65,9 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         Files.createDirectoryIfNotExists(pluginDirectory);
 
         // copy polocloud plugin
-        java.nio.file.Files.copy(Path.of("local/polocloud-plugin.jar"),pluginDirectory.resolve("polocloud-plugin.jar"));
+        java.nio.file.Files.copy(Path.of("local/polocloud-plugin.jar"), pluginDirectory.resolve("polocloud-plugin.jar"));
 
+        service.state(ServiceState.STARTING);
         service.process(processBuilder.start());
     }
 

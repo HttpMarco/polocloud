@@ -21,6 +21,8 @@ public interface CloudService extends Serializable {
 
     int port();
 
+    ServiceState state();
+
     List<String> log();
 
     default void shutdown() {

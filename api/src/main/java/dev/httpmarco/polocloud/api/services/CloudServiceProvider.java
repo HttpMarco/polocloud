@@ -1,9 +1,6 @@
 package dev.httpmarco.polocloud.api.services;
 
-import dev.httpmarco.osgan.networking.Packet;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
-import dev.httpmarco.osgan.utils.executers.FutureResult;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 
 import java.util.List;
@@ -18,6 +15,11 @@ public interface CloudServiceProvider {
 
     CompletableFuture<List<CloudService>> servicesAsync();
 
+    List<CloudService> filterService(ServiceFilter filter);
+
+    CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter);
+
+
     List<CloudService> services(CloudGroup group);
 
     CloudService find(UUID id);
@@ -25,7 +27,6 @@ public interface CloudServiceProvider {
     CloudService service(String name);
 
     CloudService fromPacket(CloudGroup parent, CodecBuffer buffer);
-
 
 
 }

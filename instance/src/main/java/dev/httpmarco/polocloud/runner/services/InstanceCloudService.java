@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.runner.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.CloudService;
+import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -17,6 +18,7 @@ public class InstanceCloudService implements CloudService {
     private final int orderedId;
     private final UUID id;
     private final int port;
+    private final ServiceState state;
     private CloudGroup group;
 
 

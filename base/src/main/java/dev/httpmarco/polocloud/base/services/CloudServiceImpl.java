@@ -2,8 +2,11 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.CloudService;
+import dev.httpmarco.polocloud.api.services.ServiceState;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -19,6 +22,9 @@ public class CloudServiceImpl implements CloudService {
     private UUID id;
     private int port;
 
+    @Setter(AccessLevel.PACKAGE)
+    private ServiceState state;
+
     @Override
     public List<String> log() {
         // todo
@@ -29,6 +35,7 @@ public class CloudServiceImpl implements CloudService {
     public String toString() {
         return "group=" + group +
                 ", orderedId=" + orderedId +
+                ", state=" + state +
                 ", id=" + id;
     }
 }
