@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class CloudGroupPlatformService {
-
     public static final String PROXY_SECRET = MessageUtils.randomString(8);
     private static final Path PLATFORM_FOLDER = Path.of("local/platforms");
 
