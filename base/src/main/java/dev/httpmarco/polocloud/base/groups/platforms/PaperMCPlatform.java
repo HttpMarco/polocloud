@@ -49,23 +49,30 @@ public abstract class PaperMCPlatform extends Platform {
         var builds = JsonUtils.getGson().fromJson(downloadStringContext(BUILD_URL.formatted(product, orgVersion)), JsonObject.class).get("builds").getAsJsonArray().asList();
         var buildIndex = builds.get(builds.size() - 1).getAsJsonObject().get("build").getAsInt();
 
-        var platformPath = Path.of("local").resolve("platforms");
+        var platformPath = Path.of("local").resolve("platforms").resolve(version);
         final var url = URI.create(DOWNLOAD_URL.formatted(product, orgVersion, buildIndex, version, buildIndex)).toURL();
-        Files.copy(url.openConnection().getInputStream(), Path.of(platformPath + "/" + version + ".jar"));
+        platformPath.toFile().mkdirs();
+
+        Files.copy(url.openConnection().getInputStream(), Path.of(platformPath + "/server.jar"));
 
         // pre build
-        Files.createDirectory(platformPath.resolve(version));
+        Files.createDirectory(platformPath.resolve("cache"));
         try {
-            java.nio.file.Files.copy(platformPath.resolve(version + ".jar"), platformPath.resolve(version).resolve("build.jar"));
+            java.nio.file.Files.copy(platformPath.resolve("server.jar"), platformPath.resolve("cache").resolve("build.jar"));
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
 
+        // check if papermcplatform is velocity
+        if(version.startsWith("velocity")) {
+            return;
+        }
+
         try {
-            var process = new ProcessBuilder("java", "-Dpaperclip.patchonly=true", "-jar", "build.jar").directory(platformPath.resolve(version).toFile()).start();
+            var process = new ProcessBuilder("java", "-Dpaperclip.patchonly=true", "-jar", "build.jar").directory(platformPath.resolve("cache").toFile()).start();
             process.waitFor(2, TimeUnit.MINUTES);
             process.destroy();
-            Files.delete(platformPath.resolve(version).resolve("build.jar"));
+            Files.delete(platformPath.resolve("build.jar"));
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }

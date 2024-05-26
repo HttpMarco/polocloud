@@ -49,9 +49,8 @@ public class CloudGroupPlatformService {
             platform.download(platformName);
         }
 
-        var platformFile = platformName + ".jar";
-        FileUtils.copyDirectory(PLATFORM_FOLDER.resolve(platformName).toFile(), cloudService.runningFolder().toFile());
-        java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformFile), cloudService.runningFolder().resolve(platformFile));
+        FileUtils.copyDirectory(PLATFORM_FOLDER.resolve(platformName).resolve("cache").toFile(), cloudService.runningFolder().toFile());
+        java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), cloudService.runningFolder().resolve(platformName + ".jar"));
 
         platform.prepare(cloudService);
 
