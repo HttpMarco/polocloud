@@ -8,6 +8,7 @@ allprojects {
         mavenCentral()
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/")
         maven(url = "https://repo.papermc.io/repository/maven-public/")
+        maven(url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     }
 
     dependencies {

@@ -12,6 +12,7 @@ commons = "2.16.1"
 
 #platforms
 velocity = "3.3.0-SNAPSHOT"
+spigot = "1.20.6-R0.1-SNAPSHOT"
 
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
@@ -27,6 +28,7 @@ commons = { group = "commons-io", name = "commons-io", version.ref = "commons" }
 
 #platforms
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
 
 jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" }
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }

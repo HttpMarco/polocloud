@@ -1,6 +1,8 @@
 dependencies {
     implementation(project(":api"))
 
+    implementation(libs.spigot)
+
     implementation(libs.velocity)
     annotationProcessor(libs.velocity)
 }

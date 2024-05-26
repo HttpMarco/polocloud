@@ -2,12 +2,10 @@ package dev.httpmarco.polocloud.velocity;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
-import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
-import dev.httpmarco.polocloud.AbstractPlatform;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.Getter;
@@ -22,7 +20,7 @@ import java.net.InetSocketAddress;
         version = "1.0.0",
         authors = "HttpMarco"
 )
-public final class VelocityPlatform extends AbstractPlatform<ProxyServer> {
+public final class VelocityPlatform {
 
     private final ProxyServer server;
 

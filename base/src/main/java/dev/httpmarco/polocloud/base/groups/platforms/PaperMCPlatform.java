@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 public abstract class PaperMCPlatform extends Platform {
@@ -63,6 +62,7 @@ public abstract class PaperMCPlatform extends Platform {
             throw new RuntimeException(exception);
         }
 
+        // todo better
         // check if papermcplatform is velocity
         if(version.startsWith("velocity")) {
             return;
