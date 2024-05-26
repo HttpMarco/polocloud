@@ -39,7 +39,7 @@ public final class ServiceCommand {
         }
 
         for (var log : service.log()) {
-            logger.info("&3" + name + " &2: &1" + log);
+            logger.info("&3" + name + "&2: &1" + log);
         }
     }
 
