@@ -11,7 +11,7 @@ import java.util.Objects;
 public final class VelocityPlatform extends PaperMCPlatform {
 
     public VelocityPlatform() {
-        super("velocity");
+        super("velocity", true);
     }
 
     @Override

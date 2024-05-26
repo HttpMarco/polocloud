@@ -30,7 +30,16 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     public CloudServiceProviderImpl() {
 
         // send all services back to request
-        CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, jsonObjectSerializer) -> new CloudAllServicesPacket(services));
+        CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, properties) -> new CloudAllServicesPacket(services));
+
+        CloudBase.instance().transmitter().registerResponder("services-filtering", (channelTransmit, properties) -> switch (properties.readObject("filter", ServiceFilter.class)) {
+            case EMPTY_SERVICES -> null;
+            case PLAYERS_PRESENT_SERVERS -> null;
+            case FULL_SERVICES -> null;
+            case SAME_NODE_SERVICES -> null;
+            case PROXIES -> new CloudAllServicesPacket(services.stream().filter(this::isProxy).toList());
+            case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
+        });
 
         // allow service to start the process
         queue.start();
@@ -84,5 +93,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     public CloudService fromPacket(CloudGroup parent, CodecBuffer buffer) {
         //todo
         return null;
+    }
+
+    private boolean isProxy(CloudService service) {
+        return CloudBase.instance().groupProvider().platformService().find(service.group().platform()).proxy();
     }
 }

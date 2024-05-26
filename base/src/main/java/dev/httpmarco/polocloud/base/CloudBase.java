@@ -36,7 +36,7 @@ public final class CloudBase extends CloudAPI {
 
     private final CloudTerminal terminal;
     private final NodeService nodeService;
-    private final CloudGroupProvider groupProvider;
+    private final CloudServiceGroupProvider groupProvider;
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
 

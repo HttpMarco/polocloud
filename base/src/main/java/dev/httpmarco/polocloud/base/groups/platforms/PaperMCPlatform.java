@@ -17,7 +17,8 @@ public abstract class PaperMCPlatform extends Platform {
 
     private final String product;
 
-    public PaperMCPlatform(String product) {
+    public PaperMCPlatform(String product, boolean proxy) {
+        super(proxy);
         this.product = product;
         for (var version : readPaperInformation(VERSION_URL.formatted(product)).get("versions").getAsJsonArray()) {
             possibleVersions().add(product + "-" + version.getAsString());
@@ -64,7 +65,7 @@ public abstract class PaperMCPlatform extends Platform {
 
         // todo better
         // check if papermcplatform is velocity
-        if(version.startsWith("velocity")) {
+        if (version.startsWith("velocity")) {
             return;
         }
 

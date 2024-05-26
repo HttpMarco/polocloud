@@ -21,7 +21,7 @@ public final class PaperPlatform extends PaperMCPlatform{
     private static final Gson WRITER = new Gson();
 
     public PaperPlatform() {
-        super("paper");
+        super("paper", false);
     }
 
     @Override

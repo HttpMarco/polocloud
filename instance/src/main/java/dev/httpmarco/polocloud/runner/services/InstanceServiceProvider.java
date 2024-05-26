@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.runner.services;
 
+import dev.httpmarco.osgan.files.json.JsonObjectSerializer;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
@@ -33,15 +34,20 @@ public class InstanceServiceProvider implements CloudServiceProvider {
     }
 
     @Override
+    @SneakyThrows
     public List<CloudService> filterService(ServiceFilter filter) {
-        //todo
-        return List.of();
+        return filterServiceAsync(filter).get(5, TimeUnit.SECONDS);
     }
 
     @Override
     public CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter) {
-        //todo
-        return null;
+        var future = new FutureResult<List<CloudService>>();
+        Instance.instance().client().transmitter()
+                .request("services-filtering",
+                        new JsonObjectSerializer().append("filter", filter),
+                        CloudAllServicesPacket.class, it -> future.complete(it.services()));
+
+        return future.toCompletableFuture();
     }
 
     @Override
