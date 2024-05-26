@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.base.groups.platforms.VelocityPlatform;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -49,7 +50,9 @@ public class CloudGroupPlatformService {
         }
 
         var platformFile = platformName + ".jar";
-        java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName + ".jar"), cloudService.runningFolder().resolve(platformFile));
+        FileUtils.copyDirectory(PLATFORM_FOLDER.resolve(platformName).toFile(), cloudService.runningFolder().toFile());
+        java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformFile), cloudService.runningFolder().resolve(platformFile));
+
         platform.prepare(cloudService);
 
         // append server icon
