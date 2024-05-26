@@ -30,7 +30,7 @@ public final class ServiceCommand {
     }
 
     @SubCommand(args = {"<name>", "log"})
-    public void handleSub(String name) {
+    public void handleLog(String name) {
         var service = CloudAPI.instance().serviceProvider().service(name);
 
         if (service == null) {
@@ -41,6 +41,16 @@ public final class ServiceCommand {
         for (var log : service.log()) {
             logger.info("&3" + name + "&2: &1" + log);
         }
+    }
+
+    @SubCommand(args = {"<name>", "screen"})
+    public void handleScreen(String name) {
+        var service = CloudAPI.instance().serviceProvider().service(name);
+        if (service == null) {
+            logger.info("This services does not exists&2!");
+            return;
+        }
+        ((LocalCloudService) service).subscribeLog();
     }
 
     @SubCommand(args = {"<name>", "shutdown"})

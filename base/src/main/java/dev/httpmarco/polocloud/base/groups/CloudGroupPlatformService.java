@@ -26,8 +26,7 @@ public class CloudGroupPlatformService {
         this.platforms.add(new PaperPlatform());
         this.platforms.add(new VelocityPlatform());
     }
-
-
+    
     public boolean isValidPlatform(String platform) {
         return platforms.stream().anyMatch(it -> it.possibleVersions().stream().anyMatch(v -> v.equalsIgnoreCase(platform)));
     }

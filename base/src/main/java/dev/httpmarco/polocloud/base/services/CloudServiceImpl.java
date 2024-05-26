@@ -16,7 +16,6 @@ import java.util.UUID;
 @Getter
 @Accessors(fluent = true)
 public class CloudServiceImpl implements CloudService {
-
     private CloudGroup group;
     private int orderedId;
     private UUID id;
