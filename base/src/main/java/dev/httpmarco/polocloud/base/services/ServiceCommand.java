@@ -8,7 +8,6 @@ import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 
 @Command(command = "service", aliases = {"services", "ser"}, description = "Manage all your online services")
 public final class ServiceCommand {
-
     private final Logger logger = CloudAPI.instance().logger();
 
     @DefaultCommand
