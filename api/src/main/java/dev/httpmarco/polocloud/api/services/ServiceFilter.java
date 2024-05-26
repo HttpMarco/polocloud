@@ -7,6 +7,7 @@ public enum ServiceFilter {
     FULL_SERVICES,
 
     SAME_NODE_SERVICES,
+    FALLBACKS,
 
     PROXIES,
     SERVERS

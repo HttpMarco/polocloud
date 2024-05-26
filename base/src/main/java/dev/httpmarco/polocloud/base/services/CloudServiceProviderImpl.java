@@ -33,10 +33,11 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, properties) -> new CloudAllServicesPacket(services));
 
         CloudBase.instance().transmitter().registerResponder("services-filtering", (channelTransmit, properties) -> switch (properties.readObject("filter", ServiceFilter.class)) {
-            case EMPTY_SERVICES -> null;
-            case PLAYERS_PRESENT_SERVERS -> null;
-            case FULL_SERVICES -> null;
-            case SAME_NODE_SERVICES -> null;
+            case EMPTY_SERVICES -> null; //todo
+            case PLAYERS_PRESENT_SERVERS -> null; //todo
+            case FULL_SERVICES -> null; //todo
+            case SAME_NODE_SERVICES -> null; //todo
+            case FALLBACKS -> null; //todo
             case PROXIES -> new CloudAllServicesPacket(services.stream().filter(this::isProxy).toList());
             case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
         });
