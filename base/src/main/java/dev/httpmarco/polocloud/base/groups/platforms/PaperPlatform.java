@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.base.groups.platforms;
 
+import com.google.gson.Gson;
+import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
@@ -7,12 +9,16 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
 public final class PaperPlatform extends PaperMCPlatform{
+
+    private static final Gson WRITER = new Gson();
 
     public PaperPlatform() {
         super("paper");
@@ -37,6 +43,7 @@ public final class PaperPlatform extends PaperMCPlatform{
             properties.load(fileReader);
         }
 
+        properties.setProperty("online-mode", "false");
         properties.setProperty("server-name", localCloudService.name());
         properties.setProperty("server-port", String.valueOf(localCloudService.port()));
 
@@ -45,7 +52,8 @@ public final class PaperPlatform extends PaperMCPlatform{
         }
 
         // manipulate velocity secret if
-        var globalPaperProperty = localCloudService.runningFolder().resolve("config/paper-global.yml");
+        var configPath = localCloudService.runningFolder().resolve("config");
+        var globalPaperProperty = configPath.resolve("paper-global.yml");
 
         if (Files.exists(globalPaperProperty)) {
             Yaml yaml = new Yaml();
@@ -54,12 +62,31 @@ public final class PaperPlatform extends PaperMCPlatform{
             var proxyProperties = (Map<String, Object>) paperProperties.get("proxies");
             var velocityProperties = (Map<String, Object>) proxyProperties.get("velocity");
 
-
             velocityProperties.put("enabled", true);
-            velocityProperties.put("secret", "abc");
+            velocityProperties.put("secret", CloudGroupPlatformService.PROXY_SECRET);
 
             var writer = new FileWriter(globalPaperProperty.toString());
             yaml.dump(paperProperties, writer);
+        } else {
+            Map<String, Object> data = new LinkedHashMap<>();
+            Map<String, Object> proxies = new LinkedHashMap<>();
+            Map<String, Object> velocity = new LinkedHashMap<>();
+
+            velocity.put("enabled", true);
+            velocity.put("online-mode", true);
+            velocity.put("secret", CloudGroupPlatformService.PROXY_SECRET);
+            proxies.put("velocity", velocity);
+            data.put("proxies", proxies);
+
+            try {
+                Files.createDirectories(configPath);
+                FileWriter writer = new FileWriter(configPath.resolve("paper-global.yml").toString());
+
+                writer.write(WRITER.toJson(data));
+                writer.close();
+            } catch (IOException exception) {
+                throw new RuntimeException(exception);
+            }
         }
     }
 }

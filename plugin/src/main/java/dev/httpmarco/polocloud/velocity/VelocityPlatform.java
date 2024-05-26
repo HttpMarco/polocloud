@@ -37,19 +37,19 @@ public final class VelocityPlatform extends AbstractPlatform<ProxyServer> {
             this.server.unregisterServer(registered.getServerInfo());
         }
 
-        //todo register sub servers
         for (CloudService service : CloudAPI.instance().serviceProvider().services()) {
-            if (service.name().equalsIgnoreCase("lobby-1")) {
-                server.registerServer(new ServerInfo(service.name(),  new InetSocketAddress("127.0.0.1", service.port())));
-                System.out.println("Register new service: " + service.name());
-            }
+            server.registerServer(new ServerInfo(service.name(),  new InetSocketAddress("127.0.0.1", service.port())));
+            System.out.println("Register new service: " + service.name());
         }
     }
 
     @Subscribe
     public void onProxyInitialize(PlayerChooseInitialServerEvent event) {
-        //todo
-        event.setInitialServer(server.getAllServers().stream().findFirst().orElse(null));
+        event.setInitialServer(server.getAllServers().stream()
+                .filter(it -> it.getServerInfo().getName().toLowerCase().startsWith("lobby"))
+                .findFirst()
+                .orElse(null)
+        );
     }
 
 }
