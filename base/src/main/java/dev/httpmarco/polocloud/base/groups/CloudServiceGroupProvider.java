@@ -26,7 +26,6 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
 
     @Override
     public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
-
         if (isGroup(name)) {
             CloudAPI.instance().logger().info("The group already exists!");
             return false;
@@ -45,6 +44,9 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
         var group = new CloudGroupImpl(name, platform, memory, minOnlineCount);
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);
+
+
+
         return true;
     }
 
