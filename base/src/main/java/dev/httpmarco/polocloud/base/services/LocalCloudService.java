@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base.services;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.osgan.networking.ChannelTransmit;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.ServiceState;
@@ -8,8 +9,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -37,6 +37,14 @@ public final class LocalCloudService extends CloudServiceImpl {
     }
 
     @SneakyThrows
+    public void execute(String execute) {
+        var writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
+
+        writer.write(execute);
+        writer.newLine();
+        writer.flush();
+    }
+
     public void subscribeLog() {
         if(this.subscribed) {
             this.subscribed = false;
@@ -45,14 +53,20 @@ public final class LocalCloudService extends CloudServiceImpl {
         this.subscribed = true;
 
         log().forEach(System.out::println);
-        var in = new BufferedReader(new InputStreamReader(this.process.getInputStream()));
-        String line;
-        while ((line = in.readLine()) != null) {
-            if(!this.subscribed) {
-                break;
+        new Thread(() -> {
+            var in = new BufferedReader(new InputStreamReader(this.process.getInputStream()));
+            String line;
+            try {
+                while ((line = in.readLine()) != null) {
+                    if (!this.subscribed) {
+                        break;
+                    }
+                    CloudAPI.instance().logger().info(line);
+                }
+            } catch (IOException exception) {
+                throw new RuntimeException(exception);
             }
-            System.out.println(line);
-        }
+        }).start();
     }
 
     @Override

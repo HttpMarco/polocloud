@@ -4,12 +4,12 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import org.fusesource.jansi.Ansi;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 
 public final class CloudTerminalThread extends Thread {
-
     private final String prompt;
     private final CloudTerminal terminal;
 
@@ -30,11 +30,26 @@ public final class CloudTerminalThread extends Thread {
             try {
                 try {
                     try {
-                        final var line = terminal.lineReader().readLine(prompt).split(" ");
+                        final var rawLine = terminal.lineReader().readLine(prompt);
+                        final var line = rawLine.split(" ");
                         resetConsoleInput();
 
                         if (line.length > 0) {
-                            terminal.commandService().call(line);
+                            var service = CloudAPI.instance().serviceProvider().services()
+                                    .stream()
+                                    .map(it -> (LocalCloudService) it)
+                                    .filter(LocalCloudService::subscribed).findFirst()
+                                    .orElse(null);
+                            if(service != null) {
+                                if(rawLine.equalsIgnoreCase("leave")) {
+                                    service.subscribeLog();
+                                    this.terminal.clear();
+                                } else {
+                                    service.execute(rawLine);
+                                }
+                            } else {
+                                terminal.commandService().call(line);
+                            }
                         }
                     } catch (EndOfFileException ignore) {
                         resetConsoleInput();
