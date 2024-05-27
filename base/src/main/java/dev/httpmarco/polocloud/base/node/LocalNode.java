@@ -5,6 +5,7 @@ import dev.httpmarco.osgan.networking.server.NettyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.AbstractNode;
 import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
+import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -29,7 +30,12 @@ public final class LocalNode extends AbstractNode implements dev.httpmarco.poloc
         server.listen(CloudServiceRegisterPacket.class, (channelTransmit, cloudServiceRegisterPacket) -> {
             var service = CloudAPI.instance().serviceProvider().find(cloudServiceRegisterPacket.uuid());
 
-            CloudAPI.instance().logger().info("Server " + service.name() + " is now successfully started up&2.");
+            if (service instanceof LocalCloudService localCloudService) {
+                localCloudService.channelTransmit(channelTransmit);
+                CloudAPI.instance().logger().info("Server " + service.name() + " is now successfully started up&2.");
+            } else {
+                //todo
+            }
         });
     }
 

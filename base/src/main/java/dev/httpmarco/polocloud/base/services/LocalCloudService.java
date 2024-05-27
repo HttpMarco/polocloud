@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base.services;
 
+import dev.httpmarco.osgan.networking.ChannelTransmit;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.Getter;
@@ -24,6 +25,8 @@ public final class LocalCloudService extends CloudServiceImpl {
 
     @Setter
     private Process process;
+    @Setter
+    private ChannelTransmit channelTransmit;
     private boolean subscribed;
 
     public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port, ServiceState state) {

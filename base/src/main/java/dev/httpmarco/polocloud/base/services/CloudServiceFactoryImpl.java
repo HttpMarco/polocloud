@@ -35,7 +35,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         Files.createDirectoryIfNotExists(service.runningFolder());
 
         // download and/or copy platform file to service
-        CloudGroupPlatformService platformService = ((CloudServiceGroupProvider) CloudBase.instance().groupProvider()).platformService();
+        CloudGroupPlatformService platformService = CloudBase.instance().groupProvider().platformService();
         platformService.preparePlatform(service);
 
         var args = new LinkedList<>();

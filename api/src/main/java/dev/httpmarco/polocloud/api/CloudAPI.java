@@ -27,9 +27,6 @@ public abstract class CloudAPI {
 
     private final DependencyService dependencyService = new DependencyService();
 
-    @Getter
-    private final EventNode<Event> globalEventHandler = new EventNode<Event>();
-
     @SneakyThrows
     public CloudAPI() {
         instance = this;
@@ -46,5 +43,7 @@ public abstract class CloudAPI {
     public abstract CloudServiceProvider serviceProvider();
 
     public abstract PropertiesPool<CloudProperty<?>> globalProperties();
+
+    public abstract EventNode<Event> globalEventNode();
 
 }

@@ -4,13 +4,14 @@ import dev.httpmarco.osgan.files.json.JsonDocument;
 import dev.httpmarco.osgan.networking.server.NettyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
-import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
+import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
+import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
@@ -41,6 +42,7 @@ public final class CloudBase extends CloudAPI {
     private final TemplatesService templatesService;
 
     private final CloudConfiguration cloudConfiguration;
+    private final GlobalEventNode<Event> globalEventNode;
 
     private boolean running = true;
 
@@ -73,6 +75,8 @@ public final class CloudBase extends CloudAPI {
         terminal.spacer();
 
         this.nodeService.localNode().initialize();
+
+        this.globalEventNode = new GlobalEventNode<>();
         this.groupProvider = new CloudServiceGroupProvider();
         this.templatesService = new TemplatesService();
         this.serviceProvider = new CloudServiceProviderImpl();
