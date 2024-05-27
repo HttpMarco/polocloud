@@ -63,7 +63,7 @@ public abstract class PaperMCPlatform extends Platform {
             throw new RuntimeException(exception);
         }
 
-        // todo better
+        //todo better
         // check if papermcplatform is velocity
         if (version.startsWith("velocity")) {
             return;

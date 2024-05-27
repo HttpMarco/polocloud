@@ -1,7 +1,8 @@
-package dev.httpmarco.polocloud.api.packets;
+package dev.httpmarco.polocloud.api.packets.service;
 
 import dev.httpmarco.osgan.networking.Packet;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.polocloud.api.packets.CloudComponentPacketHelper;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;

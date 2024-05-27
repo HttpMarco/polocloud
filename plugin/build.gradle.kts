@@ -1,5 +1,7 @@
 dependencies {
     implementation(project(":api"))
+    implementation(project(":instance"))
+    implementation(libs.osgan.netty)
 
     implementation(libs.spigot)
 

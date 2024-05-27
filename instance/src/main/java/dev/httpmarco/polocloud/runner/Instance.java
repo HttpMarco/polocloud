@@ -15,11 +15,14 @@ import lombok.experimental.Accessors;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.jar.JarFile;
 
 @Getter
 @Accessors(fluent = true)
 public class Instance extends CloudAPI {
+
+    public static final UUID SERVICE_ID = UUID.fromString(System.getenv("serviceId"));
 
     public static void main(String[] args) {
         //start platform
@@ -32,7 +35,7 @@ public class Instance extends CloudAPI {
     private final InstanceClient client;
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
     private final CloudServiceProvider serviceProvider = new InstanceServiceProvider();
-    private final InstanceGlobalEventNode globalEventNode = new InstanceGlobalEventNode();
+    private final InstanceGlobalEventNode globalEventNode;
 
     @SneakyThrows
     public Instance(String[] args) {
@@ -43,6 +46,8 @@ public class Instance extends CloudAPI {
         this.client = new InstanceClient("127.0.0.1", 8192);
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
+
+        this.globalEventNode = new InstanceGlobalEventNode();
 
         try (final var jar = new JarFile(bootstrapPath.toFile())) {
             final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
@@ -55,7 +60,6 @@ public class Instance extends CloudAPI {
             }
         }
     }
-
 
     @Override
     public NodeService nodeService() {

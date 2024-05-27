@@ -4,7 +4,7 @@ import dev.httpmarco.osgan.files.json.JsonObjectSerializer;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.packets.CloudAllServicesPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.runner.Instance;
 import lombok.SneakyThrows;
@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class InstanceServiceProvider implements CloudServiceProvider {
+public final class InstanceServiceProvider implements CloudServiceProvider {
     @Override
     public CloudServiceFactory factory() {
         return null;

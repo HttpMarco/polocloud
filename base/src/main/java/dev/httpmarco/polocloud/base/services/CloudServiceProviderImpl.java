@@ -1,10 +1,11 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.server.NettyServer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.packets.CloudAllServicesPacket;
-import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -13,7 +14,6 @@ import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -30,9 +30,10 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     public CloudServiceProviderImpl() {
 
         // send all services back to request
-        CloudBase.instance().transmitter().registerResponder("services-all", (channelTransmit, properties) -> new CloudAllServicesPacket(services));
+        var transmitter = CloudBase.instance().transmitter();
+        transmitter.registerResponder("services-all", (channelTransmit, properties) -> new CloudAllServicesPacket(services));
 
-        CloudBase.instance().transmitter().registerResponder("services-filtering", (channelTransmit, properties) -> switch (properties.readObject("filter", ServiceFilter.class)) {
+        transmitter.registerResponder("services-filtering", (channelTransmit, properties) -> switch (properties.readObject("filter", ServiceFilter.class)) {
             case EMPTY_SERVICES -> null; //todo
             case PLAYERS_PRESENT_SERVERS -> null; //todo
             case FULL_SERVICES -> null; //todo
@@ -42,6 +43,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
             case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
         });
 
+        transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
+            System.out.println(packet.id() + " change state: " + packet.state());
+        });
         // allow service to start the process
         queue.start();
     }
@@ -65,7 +69,7 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
 
     @Override
     public List<CloudService> filterService(ServiceFilter filter) {
-        // todo
+        //todo
         return List.of();
     }
 

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class InstanceCloudService implements CloudService {
+public final class InstanceCloudService implements CloudService {
 
     private final int orderedId;
     private final UUID id;

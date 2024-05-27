@@ -9,13 +9,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Getter
 @Accessors(fluent = true)
 public class CloudServiceImpl implements CloudService {
+
     private CloudGroup group;
     private int orderedId;
     private UUID id;
@@ -24,9 +24,12 @@ public class CloudServiceImpl implements CloudService {
     @Setter(AccessLevel.PACKAGE)
     private ServiceState state;
 
+
+    private final Set<String> subscribedEvents = new HashSet<>();
+
     @Override
     public List<String> log() {
-        // todo
+        //todo
         return List.of();
     }
 

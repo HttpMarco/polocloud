@@ -8,8 +8,11 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceStartEvent;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
+import dev.httpmarco.polocloud.api.services.ServiceState;
+import dev.httpmarco.polocloud.runner.Instance;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -37,14 +40,15 @@ public final class VelocityPlatform {
             this.server.unregisterServer(registered.getServerInfo());
         }
 
-        CloudAPI.instance().globalEventNode().addListener(CloudServiceStartEvent.class, event1 -> {
-            System.out.println("testing");
+        CloudAPI.instance().globalEventNode().addListener(CloudServiceStartEvent.class, startEvent -> {
+            server.registerServer(new ServerInfo(startEvent.cloudService().name(), new InetSocketAddress("127.0.0.1", startEvent.cloudService().port())));
         });
 
         for (CloudService service : CloudAPI.instance().serviceProvider().filterService(ServiceFilter.SERVERS)) {
             server.registerServer(new ServerInfo(service.name(), new InetSocketAddress("127.0.0.1", service.port())));
-            System.out.println("Register new service: " + service.name());
         }
+        //todo duplicated code
+        Instance.instance().client().transmitter().sendPacket(new CloudServiceStateChangePacket(Instance.SERVICE_ID, ServiceState.ONLINE));
     }
 
     @Subscribe

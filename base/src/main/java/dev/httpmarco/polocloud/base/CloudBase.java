@@ -42,7 +42,7 @@ public final class CloudBase extends CloudAPI {
     private final TemplatesService templatesService;
 
     private final CloudConfiguration cloudConfiguration;
-    private final GlobalEventNode<Event> globalEventNode;
+    private final GlobalEventNode globalEventNode;
 
     private boolean running = true;
 
@@ -76,7 +76,7 @@ public final class CloudBase extends CloudAPI {
 
         this.nodeService.localNode().initialize();
 
-        this.globalEventNode = new GlobalEventNode<>();
+        this.globalEventNode = new GlobalEventNode();
         this.groupProvider = new CloudServiceGroupProvider();
         this.templatesService = new TemplatesService();
         this.serviceProvider = new CloudServiceProviderImpl();

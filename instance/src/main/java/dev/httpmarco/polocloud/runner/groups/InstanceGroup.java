@@ -7,11 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-// todo fix duplicated code
+//todo fix duplicated code
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class InstanceGroup implements CloudGroup {
+public final class InstanceGroup implements CloudGroup {
 
     private final String name;
     private final String platform;

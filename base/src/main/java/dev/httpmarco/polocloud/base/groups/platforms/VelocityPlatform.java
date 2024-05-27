@@ -22,7 +22,7 @@ public final class VelocityPlatform extends PaperMCPlatform {
         Files.writeString(localCloudService.runningFolder().resolve("forwarding.secret"), CloudGroupPlatformService.PROXY_SECRET);
 
         if (Files.exists(propertiesPath)) {
-            // todo
+            //todo
         } else {
             Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/velocity/velocity.toml")), localCloudService.runningFolder().resolve("velocity.toml"));
         }

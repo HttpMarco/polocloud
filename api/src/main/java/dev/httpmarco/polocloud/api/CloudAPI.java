@@ -31,7 +31,7 @@ public abstract class CloudAPI {
     public CloudAPI() {
         instance = this;
 
-        // todo better loading of custom properties
+        //todo better loading of custom properties
         Class.forName(GroupProperties.class.getName());
         Class.forName(CloudProperty.class.getName());
     }
@@ -44,6 +44,6 @@ public abstract class CloudAPI {
 
     public abstract PropertiesPool<CloudProperty<?>> globalProperties();
 
-    public abstract EventNode<Event> globalEventNode();
+    public abstract EventNode globalEventNode();
 
 }

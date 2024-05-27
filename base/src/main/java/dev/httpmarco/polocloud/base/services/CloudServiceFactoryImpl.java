@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.events.service.CloudServiceStartEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -13,6 +14,7 @@ import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -53,6 +55,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         processBuilder.environment().put("serviceId", service.id().toString());
 
+        processBuilder.redirectError(new File("test.log"));
+
         if (cloudGroup.properties().has(GroupProperties.TEMPLATES)) {
             var temp = CloudBase.instance().templatesService().templates(cloudGroup.properties().property(GroupProperties.TEMPLATES));
             if (temp != null) {
@@ -68,6 +72,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         java.nio.file.Files.copy(Path.of("local/polocloud-plugin.jar"), pluginDirectory.resolve("polocloud-plugin.jar"));
 
         service.state(ServiceState.STARTING);
+        CloudAPI.instance().globalEventNode().call(new CloudServiceStartEvent(service));
+
         service.process(processBuilder.start());
     }
 

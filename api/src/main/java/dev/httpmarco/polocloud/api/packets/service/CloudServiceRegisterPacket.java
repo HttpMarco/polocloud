@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.api.packets;
+package dev.httpmarco.polocloud.api.packets.service;
 
 import dev.httpmarco.osgan.networking.Packet;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;

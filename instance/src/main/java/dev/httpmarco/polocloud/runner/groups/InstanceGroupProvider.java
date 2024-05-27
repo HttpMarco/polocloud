@@ -3,12 +3,12 @@ package dev.httpmarco.polocloud.runner.groups;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
-import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
 import dev.httpmarco.polocloud.runner.Instance;
 
 import java.util.List;
 
-public class InstanceGroupProvider implements CloudGroupProvider {
+public final class InstanceGroupProvider implements CloudGroupProvider {
 
     @Override
     public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
@@ -32,7 +32,6 @@ public class InstanceGroupProvider implements CloudGroupProvider {
 
     @Override
     public List<CloudGroup> groups() {
-        System.out.println("sending packet");
         Instance.instance().client().transmitter().request("groups-all", CloudServiceRegisterPacket.class, it -> {
 
         });

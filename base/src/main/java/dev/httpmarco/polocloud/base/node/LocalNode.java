@@ -4,7 +4,7 @@ import dev.httpmarco.osgan.files.annotations.ConfigExclude;
 import dev.httpmarco.osgan.networking.server.NettyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.AbstractNode;
-import dev.httpmarco.polocloud.api.packets.CloudServiceRegisterPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -24,7 +24,7 @@ public final class LocalNode extends AbstractNode implements dev.httpmarco.poloc
 
     public void initialize() {
         server = NettyServer.builder().onInactive(channelTransmit -> {
-            // todo
+            //todo
         }).build();
 
         server.listen(CloudServiceRegisterPacket.class, (channelTransmit, cloudServiceRegisterPacket) -> {

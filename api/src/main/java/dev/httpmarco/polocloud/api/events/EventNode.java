@@ -1,7 +1,9 @@
 package dev.httpmarco.polocloud.api.events;
 
-public interface EventNode<T extends Event> {
+public interface EventNode {
 
-    void addListener(Class<? extends T> event, EventRunnable<T> runnable);
+    <T extends Event> void addListener(Class<T> event, EventRunnable<T> runnable);
+
+    void call(Event event);
 
 }

@@ -50,7 +50,7 @@ public final class FileLoggerHandler implements LoggerHandler {
         var date = new Date(timelines);
 
         LATEST_LOG.toFile().renameTo(LOGS_PATH.resolve(FILE_FORMAT.format(date) + ".log").toFile().getAbsoluteFile());
-        // todo no exception print
+        //todo no exception print
     }
 
     private String removeColorCodes(String message) {

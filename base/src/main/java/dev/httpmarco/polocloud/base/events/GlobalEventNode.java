@@ -1,48 +1,57 @@
 package dev.httpmarco.polocloud.base.events;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.events.EventRunnable;
 import dev.httpmarco.polocloud.api.events.Listener;
+import dev.httpmarco.polocloud.api.packets.event.CloudEventCallPacket;
 import dev.httpmarco.polocloud.api.packets.event.CloudEventRegitserPacket;
+import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.services.CloudServiceImpl;
+import dev.httpmarco.polocloud.base.services.LocalCloudService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GlobalEventNode<T extends Event> implements EventNode<T> {
+public class GlobalEventNode implements EventNode {
 
-    private final List<GlobalEventNode<T>> children = new ArrayList<>();
-    private final List<Listener<T>> listeners = new ArrayList<>();
 
     public GlobalEventNode() {
-        CloudBase.instance().transmitter().listen(CloudEventRegitserPacket.class, (channelTransmit, cloudEventRegitserPacket) -> {
-
-
-
-            System.out.println("register: " + cloudEventRegitserPacket.event());
+        CloudBase.instance().transmitter().listen(CloudEventRegitserPacket.class, (transmit, packet) -> {
+            // find channel cloud service
+            var service = (CloudServiceImpl) CloudAPI.instance().serviceProvider().find(packet.serviceId());
+            // register the new event
+            service.subscribedEvents().add(packet.event());
         });
     }
 
-    public void call(T event) {
-        listeners.stream()
-                .filter(listener -> listener.event().equals(event.getClass()))
-                .forEach(listener -> listener.runnable().run(event));
+    public void call(Event event) {
+        for (var cloudService : CloudAPI.instance().serviceProvider().services()) {
+            var service = (CloudServiceImpl) cloudService;
 
-        children.forEach(children -> children.call(event));
+            if (service.subscribedEvents().isEmpty()) {
+                continue;
+            }
+
+            for (var subscribedEvent : service.subscribedEvents()) {
+                // call
+
+                if(!event.getClass().getName().equals(subscribedEvent)) {
+                    continue;
+                }
+
+                if (service instanceof LocalCloudService localCloudService) {
+                    localCloudService.channelTransmit().sendPacket(new CloudEventCallPacket(event));
+                } else {
+                    //todo send information to the current node
+                }
+            }
+        }
     }
 
-    public void addListener(Class<? extends T> event, EventRunnable<T> runnable) {
-        listeners.add(new Listener<>(event, runnable));
-    }
-
-    public GlobalEventNode<T> addChildren(GlobalEventNode<T> globalEventNode) {
-        children.add(globalEventNode);
-        return this;
-    }
-
-    public GlobalEventNode<T> removeChildren(GlobalEventNode<T> globalEventNode) {
-        this.children.remove(globalEventNode);
-        return this;
+    public <T extends Event> void addListener(Class<T> event, EventRunnable<T> runnable) {
+        //todo internal
     }
 }

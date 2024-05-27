@@ -50,7 +50,7 @@ public final class CommandCompleter implements Completer {
                         continue;
                     }
 
-                    // todo check if previous args are the same layout
+                    //todo check if previous args are the same layout
 
                     if (subCompleter.completionPattern()[subIndex - 1].startsWith("<") && (subCompleter.completionPattern()[subIndex - 1].endsWith(">"))) {
                         completer.invoke(command, subIndex, candidates);

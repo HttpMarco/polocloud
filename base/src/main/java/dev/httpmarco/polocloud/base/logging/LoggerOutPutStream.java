@@ -18,15 +18,15 @@ public final class LoggerOutPutStream extends ByteArrayOutputStream {
     public void flush() throws IOException {
         super.flush();
 
-        final var input = this.toString(StandardCharsets.UTF_8);
-
+        var input = this.toString(StandardCharsets.UTF_8);
         super.reset();
 
         if (input != null && !input.isEmpty()) {
+            input = input.replace("\n", "");
             if (!errorStream) {
                 CloudAPI.instance().logger().info(input);
             } else {
-                CloudAPI.instance().logger().error(input.replace("\n", ""), null);
+                CloudAPI.instance().logger().error(input, null);
             }
         }
     }
