@@ -4,7 +4,7 @@ import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
-import dev.httpmarco.polocloud.runner.Instance;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public final class InstanceGroupProvider implements CloudGroupProvider {
 
     @Override
     public List<CloudGroup> groups() {
-        Instance.instance().client().transmitter().request("groups-all", CloudServiceRegisterPacket.class, it -> {
+        CloudInstance.instance().client().transmitter().request("groups-all", CloudServiceRegisterPacket.class, it -> {
 
         });
         return List.of();

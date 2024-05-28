@@ -26,6 +26,7 @@ public final class PaperPlatform extends PaperMCPlatform{
 
     @Override
     @SneakyThrows
+    @SuppressWarnings("unchecked")
     public void prepare(LocalCloudService localCloudService) {
         // accept eula without cringe logs
         Files.writeString(localCloudService.runningFolder().resolve("eula.txt"), "eula=true");

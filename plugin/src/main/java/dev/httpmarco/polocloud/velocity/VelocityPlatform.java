@@ -12,7 +12,7 @@ import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import dev.httpmarco.polocloud.api.services.ServiceState;
-import dev.httpmarco.polocloud.runner.Instance;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -36,23 +36,26 @@ public final class VelocityPlatform {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
+        var instance = CloudAPI.instance();
+
         for (var registered : this.server.getAllServers()) {
             this.server.unregisterServer(registered.getServerInfo());
         }
 
-        CloudAPI.instance().globalEventNode().addListener(CloudServiceStartEvent.class, startEvent -> {
+        instance.globalEventNode().addListener(CloudServiceStartEvent.class, startEvent -> {
             server.registerServer(new ServerInfo(startEvent.cloudService().name(), new InetSocketAddress("127.0.0.1", startEvent.cloudService().port())));
         });
 
-        for (CloudService service : CloudAPI.instance().serviceProvider().filterService(ServiceFilter.SERVERS)) {
+        for (CloudService service : instance.serviceProvider().filterService(ServiceFilter.SERVERS)) {
             server.registerServer(new ServerInfo(service.name(), new InetSocketAddress("127.0.0.1", service.port())));
         }
         //todo duplicated code
-        Instance.instance().client().transmitter().sendPacket(new CloudServiceStateChangePacket(Instance.SERVICE_ID, ServiceState.ONLINE));
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceStateChangePacket(CloudInstance.SERVICE_ID, ServiceState.ONLINE));
     }
 
     @Subscribe
     public void onProxyInitialize(PlayerChooseInitialServerEvent event) {
+        //todo search fallback
         event.setInitialServer(server.getAllServers().stream()
                 .filter(it -> it.getServerInfo().getName().toLowerCase().startsWith("lobby"))
                 .findFirst()

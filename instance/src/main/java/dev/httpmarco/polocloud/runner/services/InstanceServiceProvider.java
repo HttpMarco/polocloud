@@ -6,7 +6,7 @@ import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.services.*;
-import dev.httpmarco.polocloud.runner.Instance;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.SneakyThrows;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     @Override
     public CompletableFuture<List<CloudService>> servicesAsync() {
         var future = new FutureResult<List<CloudService>>();
-        Instance.instance().client().transmitter().request("services-all", CloudAllServicesPacket.class, it -> future.complete(it.services()));
+        CloudInstance.instance().client().transmitter().request("services-all", CloudAllServicesPacket.class, it -> future.complete(it.services()));
         return future.toCompletableFuture();
     }
 
@@ -42,7 +42,7 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     @Override
     public CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter) {
         var future = new FutureResult<List<CloudService>>();
-        Instance.instance().client().transmitter()
+        CloudInstance.instance().client().transmitter()
                 .request("services-filtering",
                         new JsonObjectSerializer().append("filter", filter),
                         CloudAllServicesPacket.class, it -> future.complete(it.services()));
