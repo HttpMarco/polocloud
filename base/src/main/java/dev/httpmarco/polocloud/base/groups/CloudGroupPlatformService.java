@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.osgan.utils.types.MessageUtils;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.base.groups.platforms.BungeeCordPlatform;
 import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
 import dev.httpmarco.polocloud.base.groups.platforms.Platform;
 import dev.httpmarco.polocloud.base.groups.platforms.VelocityPlatform;
@@ -10,7 +11,6 @@ import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
-
 import java.nio.file.Path;
 import java.util.*;
 
@@ -26,8 +26,9 @@ public class CloudGroupPlatformService {
 
         this.platforms.add(new PaperPlatform());
         this.platforms.add(new VelocityPlatform());
+        this.platforms.add(new BungeeCordPlatform());
     }
-    
+
     public boolean isValidPlatform(String platform) {
         return platforms.stream().anyMatch(it -> it.possibleVersions().stream().anyMatch(v -> v.version().equalsIgnoreCase(platform)));
     }
@@ -49,7 +50,10 @@ public class CloudGroupPlatformService {
             platform.download(platformName);
         }
 
-        FileUtils.copyDirectory(PLATFORM_FOLDER.resolve(platformName).resolve("cache").toFile(), cloudService.runningFolder().toFile());
+        var cacheDirectory = PLATFORM_FOLDER.resolve(platformName).resolve("cache");
+        if (java.nio.file.Files.exists(cacheDirectory)) {
+            FileUtils.copyDirectory(cacheDirectory.toFile(), cloudService.runningFolder().toFile());
+        }
         java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), cloudService.runningFolder().resolve(platformName + ".jar"));
 
         platform.prepare(cloudService);

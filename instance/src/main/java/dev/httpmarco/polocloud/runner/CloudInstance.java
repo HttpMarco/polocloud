@@ -41,8 +41,7 @@ public class CloudInstance extends CloudAPI {
     public CloudInstance(String[] args) {
         instance = this;
 
-        var bootstrapPath = Path.of(Arrays.stream(args).filter(it -> it.startsWith("--bootstrap=")).map(it -> it.substring("--bootstrap=".length())).findFirst().orElse(null) + ".jar");
-
+        var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
         this.client = new CloudInstanceClient("127.0.0.1", 8192);
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
@@ -50,11 +49,16 @@ public class CloudInstance extends CloudAPI {
         this.globalEventNode = new InstanceGlobalEventNode();
 
         try (final var jar = new JarFile(bootstrapPath.toFile())) {
+
+            if (Boolean.parseBoolean(System.getenv("appendSearchClasspath"))) {
+                RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(jar);
+            }
+
             final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
             try {
                 final var main = Class.forName(mainClass, true, RunnerBootstrap.LOADER).getMethod("main", String[].class);
 
-                main.invoke(null, (Object) Arrays.copyOfRange(args, 2, args.length));
+                main.invoke(null, (Object) Arrays.copyOfRange(args, 1, args.length));
             } catch (Exception e) {
                 e.printStackTrace(System.err);
             }

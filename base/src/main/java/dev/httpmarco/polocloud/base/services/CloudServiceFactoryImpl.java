@@ -11,6 +11,7 @@ import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
+import dev.httpmarco.polocloud.base.groups.platforms.BungeeCordPlatform;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 
@@ -48,11 +49,12 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         args.add("-jar");
         args.add("../../polocloud.jar");
         args.add("--instance");
-        args.add("--bootstrap=" + service.group().platform().version());
         args.addAll(Arrays.stream(platformService.find(cloudGroup.platform().version()).platformsArguments()).toList());
 
         var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
+        processBuilder.environment().put("appendSearchClasspath", String.valueOf((platformService.find(service.group().platform().version()) instanceof BungeeCordPlatform)));
+        processBuilder.environment().put("bootstrapFile", service.group().platform().version());
         processBuilder.environment().put("serviceId", service.id().toString());
 
         processBuilder.redirectError(new File("test.log"));

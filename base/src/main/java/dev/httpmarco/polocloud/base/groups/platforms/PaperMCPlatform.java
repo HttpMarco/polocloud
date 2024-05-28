@@ -50,6 +50,7 @@ public abstract class PaperMCPlatform extends Platform {
         var builds = JsonUtils.getGson().fromJson(downloadStringContext(BUILD_URL.formatted(product, orgVersion)), JsonObject.class).get("builds").getAsJsonArray().asList();
         var buildIndex = builds.get(builds.size() - 1).getAsJsonObject().get("build").getAsInt();
 
+        //todo duplicated code
         var platformPath = Path.of("local").resolve("platforms").resolve(version);
         final var url = URI.create(DOWNLOAD_URL.formatted(product, orgVersion, buildIndex, version, buildIndex)).toURL();
         platformPath.toFile().mkdirs();
