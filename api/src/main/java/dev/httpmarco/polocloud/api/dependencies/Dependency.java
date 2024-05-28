@@ -19,14 +19,17 @@ public final class Dependency {
     private final String dependencyLink;
     private final File file;
 
-    public Dependency(String groupId, String artifactoryId, String version) {
-        this(groupId, artifactoryId, version, version, MAVEN_CENTRAL_REPO);
+    public static void load(String groupId, String artifactoryId, String version) {
+        load(groupId, artifactoryId, version, version, MAVEN_CENTRAL_REPO);
+    }
+
+    public static void load(String groupId, String artifactoryId, String version, String subversion, String repository) {
+        new Dependency(groupId, artifactoryId, version, subversion, repository);
     }
 
     @SneakyThrows
-    public Dependency(String groupId, String artifactoryId, String version, String subversion, String repository) {
+    private Dependency(String groupId, String artifactoryId, String version, String subversion, String repository) {
         this.dependencyLink = repository.formatted(groupId.replace(".", "/"), artifactoryId, version, artifactoryId + "-" + subversion);
-        ;
 
         var name = groupId + "." + artifactoryId + "." + version;
         var file = RunnerBootstrap.RUNNER.dependencyFolder().resolve(artifactoryId + "-" + version + ".jar");

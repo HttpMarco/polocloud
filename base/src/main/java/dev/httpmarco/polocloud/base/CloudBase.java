@@ -47,11 +47,11 @@ public final class CloudBase extends CloudAPI {
     private boolean running = true;
 
     public CloudBase() {
-        dependencyService().load(new Dependency("com.google.code.gson", "gson", "2.10.1"));
-        dependencyService().load(new Dependency("org.yaml", "snakeyaml", "2.2"));
-        dependencyService().load(new Dependency("org.jline", "jline", "3.26.1"));
-        dependencyService().load(new Dependency("org.fusesource.jansi", "jansi", "2.4.1"));
-        dependencyService().load(new Dependency("commons-io", "commons-io", "2.16.1"));
+        Dependency.load("com.google.code.gson", "gson", "2.10.1");
+        Dependency.load("org.yaml", "snakeyaml", "2.2");
+        Dependency.load("org.jline", "jline", "3.26.1");
+        Dependency.load("org.fusesource.jansi", "jansi", "2.4.1");
+        Dependency.load("commons-io", "commons-io", "2.16.1");
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
