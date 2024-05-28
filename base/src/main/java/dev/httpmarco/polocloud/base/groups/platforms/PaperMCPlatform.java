@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.groups.platforms;
 
 import com.google.gson.JsonObject;
 import dev.httpmarco.osgan.files.json.JsonUtils;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public abstract class PaperMCPlatform extends Platform {
         super(proxy);
         this.product = product;
         for (var version : readPaperInformation(VERSION_URL.formatted(product)).get("versions").getAsJsonArray()) {
-            possibleVersions().add(product + "-" + version.getAsString());
+            possibleVersions().add(new PlatformVersion(product + "-" + version.getAsString(), proxy));
         }
     }
 

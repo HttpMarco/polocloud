@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base.groups.platforms;
 
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.Set;
 public abstract class Platform {
 
     private final boolean proxy;
-    private final Set<String> possibleVersions = new HashSet<>();
+    private final Set<PlatformVersion> possibleVersions = new HashSet<>();
 
     public abstract void download(String version);
 

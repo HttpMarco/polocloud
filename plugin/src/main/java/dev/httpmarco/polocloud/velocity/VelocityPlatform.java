@@ -7,7 +7,8 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.events.service.CloudServiceStartEvent;
+import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
+import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
@@ -17,6 +18,7 @@ import lombok.Getter;
 
 import javax.inject.Inject;
 import java.net.InetSocketAddress;
+import java.util.List;
 
 @Getter
 @Plugin(
@@ -42,11 +44,18 @@ public final class VelocityPlatform {
             this.server.unregisterServer(registered.getServerInfo());
         }
 
-        instance.globalEventNode().addListener(CloudServiceStartEvent.class, startEvent -> {
+        instance.globalEventNode().addListener(CloudServiceOnlineEvent.class, startEvent -> {
+            if (startEvent.cloudService().group().platform().proxy()) {
+                return;
+            }
             server.registerServer(new ServerInfo(startEvent.cloudService().name(), new InetSocketAddress("127.0.0.1", startEvent.cloudService().port())));
         });
 
-        for (CloudService service : instance.serviceProvider().filterService(ServiceFilter.SERVERS)) {
+        instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, shutdownEvent ->
+                server.getServer(shutdownEvent.cloudService().name()).ifPresent(registeredServer ->
+                        server.unregisterServer(registeredServer.getServerInfo())));
+
+        for (var service : instance.serviceProvider().filterService(ServiceFilter.SERVERS)) {
             server.registerServer(new ServerInfo(service.name(), new InetSocketAddress("127.0.0.1", service.port())));
         }
         //todo duplicated code
@@ -55,12 +64,14 @@ public final class VelocityPlatform {
 
     @Subscribe
     public void onProxyInitialize(PlayerChooseInitialServerEvent event) {
-        //todo search fallback
-        event.setInitialServer(server.getAllServers().stream()
-                .filter(it -> it.getServerInfo().getName().toLowerCase().startsWith("lobby"))
-                .findFirst()
-                .orElse(null)
-        );
-    }
 
+        var service = CloudAPI.instance().serviceProvider().filterService(ServiceFilter.LOWEST_FALLBACK);
+
+        if (service.isEmpty()) {
+            event.setInitialServer(null);
+            return;
+        }
+
+        server.getServer(service.get(0).name()).ifPresentOrElse(event::setInitialServer, () -> event.setInitialServer(null));
+    }
 }

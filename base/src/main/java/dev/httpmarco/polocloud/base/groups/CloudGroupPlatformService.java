@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.groups;
 
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.osgan.utils.types.MessageUtils;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
 import dev.httpmarco.polocloud.base.groups.platforms.Platform;
 import dev.httpmarco.polocloud.base.groups.platforms.VelocityPlatform;
@@ -28,11 +29,11 @@ public class CloudGroupPlatformService {
     }
     
     public boolean isValidPlatform(String platform) {
-        return platforms.stream().anyMatch(it -> it.possibleVersions().stream().anyMatch(v -> v.equalsIgnoreCase(platform)));
+        return platforms.stream().anyMatch(it -> it.possibleVersions().stream().anyMatch(v -> v.version().equalsIgnoreCase(platform)));
     }
 
     public Platform find(String platform) {
-        return platforms.stream().filter(it -> it.possibleVersions().stream().anyMatch(v -> v.equalsIgnoreCase(platform))).findFirst().orElse(null);
+        return platforms.stream().filter(it -> it.possibleVersions().stream().anyMatch(v -> v.version().equalsIgnoreCase(platform))).findFirst().orElse(null);
     }
 
     private boolean isPlatformAvailableForRuntime(String platform) {
@@ -41,7 +42,7 @@ public class CloudGroupPlatformService {
 
     @SneakyThrows
     public void preparePlatform(LocalCloudService cloudService) {
-        String platformName = cloudService.group().platform();
+        String platformName = cloudService.group().platform().version();
         var platform = find(platformName);
 
         if (!isPlatformAvailableForRuntime(platformName)) {
@@ -61,8 +62,8 @@ public class CloudGroupPlatformService {
     }
 
 
-    public List<String> validPlatformVersions() {
-        var versions = new ArrayList<String>();
+    public List<PlatformVersion> validPlatformVersions() {
+        var versions = new ArrayList<PlatformVersion>();
         for (var platform : this.platforms) {
             versions.addAll(platform.possibleVersions());
         }
