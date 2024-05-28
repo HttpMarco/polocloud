@@ -1,0 +1,4 @@
+name: PoloCloud
+version: 1.0.0-SNAPSHOT
+author: HttpMarco
+main: dev.httpmarco.polocloud.bungeecord.BungeeCordPlatform

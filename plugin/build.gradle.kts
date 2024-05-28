@@ -4,6 +4,7 @@ dependencies {
     implementation(libs.osgan.netty)
 
     implementation(libs.spigot)
+    implementation(libs.bungeecord)
 
     implementation(libs.velocity)
     annotationProcessor(libs.velocity)
