@@ -8,6 +8,7 @@ public enum ServiceFilter {
 
     SAME_NODE_SERVICES,
     FALLBACKS,
+    LOWEST_FALLBACK,
 
     PROXIES,
     SERVERS
