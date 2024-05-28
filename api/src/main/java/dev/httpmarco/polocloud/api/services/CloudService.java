@@ -29,4 +29,14 @@ public interface CloudService extends Serializable {
         CloudAPI.instance().serviceProvider().factory().stop(this);
     }
 
+    boolean isFull();
+
+    int currentMemory();
+
+    int maxMemory();
+
+    int maxPlayers();
+
+    int onlinePlayers();
+
 }

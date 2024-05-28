@@ -34,6 +34,36 @@ public class CloudServiceImpl implements CloudService {
     }
 
     @Override
+    public boolean isFull() {
+        // todo
+        return false;
+    }
+
+    @Override
+    public int currentMemory() {
+        // todo
+        return 0;
+    }
+
+    @Override
+    public int maxMemory() {
+        // todo
+        return 0;
+    }
+
+    @Override
+    public int maxPlayers() {
+        // todo
+        return 0;
+    }
+
+    @Override
+    public int onlinePlayers() {
+        // todo
+        return 0;
+    }
+
+    @Override
     public String toString() {
         return "group=" + group +
                 ", orderedId=" + orderedId +
