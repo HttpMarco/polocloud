@@ -79,7 +79,7 @@ public final class GroupCommand {
     @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
     public void completeMethod(int index, List<Candidate> candidates) {
         if (index == 3) {
-            candidates.addAll(((CloudServiceGroupProvider) CloudAPI.instance().groupProvider()).platformService().validPlatformVersions().stream().map(Candidate::new).toList());
+            candidates.addAll(((CloudServiceGroupProvider) CloudAPI.instance().groupProvider()).platformService().validPlatformVersions().stream().map(platformVersion -> new Candidate(platformVersion.version())).toList());
         }
     }
 

@@ -32,7 +32,6 @@ public final class LocalNode extends AbstractNode implements dev.httpmarco.poloc
 
             if (service instanceof LocalCloudService localCloudService) {
                 localCloudService.channelTransmit(channelTransmit);
-                CloudAPI.instance().logger().info("Server " + service.name() + " is now successfully started up&2.");
             } else {
                 //todo
             }

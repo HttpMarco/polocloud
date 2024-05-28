@@ -1,13 +1,14 @@
 package dev.httpmarco.polocloud.api.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 
 public interface CloudGroup {
 
     String name();
 
-    String platform();
+    PlatformVersion platform();
 
     int memory();
 

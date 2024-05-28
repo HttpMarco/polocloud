@@ -24,7 +24,8 @@ public final class CloudComponentPacketHelper {
 
     public static void writeGroup(CloudGroup group, CodecBuffer buffer) {
         buffer.writeString(group.name());
-        buffer.writeString(group.platform());
+        buffer.writeString(group.platform().version());
+        buffer.writeBoolean(group.platform().proxy());
         buffer.writeInt(group.minOnlineServices());
         buffer.writeInt(group.memory());
 

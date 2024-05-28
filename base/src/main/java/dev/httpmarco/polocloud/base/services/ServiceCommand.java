@@ -28,6 +28,31 @@ public final class ServiceCommand {
         services.forEach(service -> logger.info("&2- &4" + service.name() + "&2: (&1" + service + "&2)"));
     }
 
+    @SubCommand(args = {"<name>"})
+    public void handleInfo(String name) {
+
+        var service = CloudAPI.instance().serviceProvider().service(name);
+
+        if (service == null) {
+            logger.info("This services does not exists&2!");
+            return;
+        }
+
+        logger.info("Name&2: &3" + name);
+        logger.info("Platform&2: &3" + service.group().platform().version());
+        logger.info("Current memory&2: &3-1");
+        logger.info("Players&2: &3-1");
+        logger.info("Maximal players&2: &3" + service.maxPlayers());
+        logger.info("Port &2: &3" + service.port());
+        logger.info("State&2: &3" + service.state());
+        logger.info("Properties &2(&1" + service.properties().properties().size() + "&2): &3");
+
+        service.properties().properties().forEach((groupProperties, o) -> {
+            logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
+        });
+
+    }
+
     @SubCommand(args = {"<name>", "log"})
     public void handleLog(String name) {
         var service = CloudAPI.instance().serviceProvider().service(name);

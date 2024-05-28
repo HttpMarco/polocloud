@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.api.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 
 import java.io.Serializable;
 import java.util.List;
@@ -38,5 +39,7 @@ public interface CloudService extends Serializable {
     int maxPlayers();
 
     int onlinePlayers();
+
+    PropertiesPool<?> properties();
 
 }

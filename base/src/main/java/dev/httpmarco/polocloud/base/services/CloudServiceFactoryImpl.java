@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceStartEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
@@ -10,7 +11,6 @@ import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
-import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 
@@ -44,12 +44,12 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         args.add("java");
         args.add("-javaagent:../../polocloud.jar");
-        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsEnvironment()).toList());
+        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform().version()).platformsEnvironment()).toList());
         args.add("-jar");
         args.add("../../polocloud.jar");
         args.add("--instance");
-        args.add("--bootstrap=" + service.group().platform());
-        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform()).platformsArguments()).toList());
+        args.add("--bootstrap=" + service.group().platform().version());
+        args.addAll(Arrays.stream(platformService.find(cloudGroup.platform().version()).platformsArguments()).toList());
 
         var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
@@ -84,6 +84,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         if (!(service instanceof LocalCloudService localCloudService)) {
             return;
         }
+
+        CloudAPI.instance().globalEventNode().call(new CloudServiceShutdownEvent(service));
 
         if (localCloudService.process() != null) {
             localCloudService.process().toHandle().destroyForcibly();

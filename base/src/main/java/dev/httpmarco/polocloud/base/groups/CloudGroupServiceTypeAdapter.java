@@ -26,8 +26,11 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
             .registerTypeHierarchyAdapter(PropertiesPool.class, new PropertiesPoolSerializer())
             .create();
 
-    public CloudGroupServiceTypeAdapter() {
+    private final CloudGroupPlatformService platformService;
+
+    public CloudGroupServiceTypeAdapter(CloudGroupPlatformService platformService) {
         Files.createDirectoryIfNotExists(GROUP_FOLDER);
+        this.platformService = platformService;
     }
 
     public void includeFile(CloudGroup cloudGroup) {
@@ -67,7 +70,9 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
         var minOnlineServices = elements.get("minOnlineCount").getAsInt();
         var properties = jsonDeserializationContext.deserialize(elements.get("properties"), PropertiesPool.class);
 
-        return new CloudGroupImpl(name, platform, memory, minOnlineServices, (PropertiesPool<GroupProperties<?>>) properties);
+        var parentPlatform = platformService.find(platform).possibleVersions().stream().filter(it -> it.version().equals(platform)).findFirst().orElseThrow();
+
+        return new CloudGroupImpl(name, parentPlatform, memory, minOnlineServices, (PropertiesPool<GroupProperties<?>>) properties);
     }
 
     @Override
@@ -75,7 +80,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
         var object = new JsonObject();
 
         object.addProperty("name", cloudGroup.name());
-        object.addProperty("platform", cloudGroup.platform());
+        object.addProperty("platform", cloudGroup.platform().version());
         object.addProperty("memory", cloudGroup.memory());
         object.addProperty("minOnlineCount", cloudGroup.minOnlineServices());
 

@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.runner.groups;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import lombok.experimental.Accessors;
 public final class InstanceGroup implements CloudGroup {
 
     private final String name;
-    private final String platform;
+    private final PlatformVersion platform;
     private final int memory;
     private final int minOnlineServices;
 

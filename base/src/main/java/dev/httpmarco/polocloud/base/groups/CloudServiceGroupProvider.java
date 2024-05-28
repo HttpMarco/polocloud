@@ -4,6 +4,7 @@ import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
@@ -16,8 +17,8 @@ import java.util.List;
 public final class CloudServiceGroupProvider implements CloudGroupProvider {
 
     private final List<CloudGroup> groups;
-    private final CloudGroupServiceTypeAdapter groupServiceTypeAdapter = new CloudGroupServiceTypeAdapter();
     private final CloudGroupPlatformService platformService = new CloudGroupPlatformService();
+    private final CloudGroupServiceTypeAdapter groupServiceTypeAdapter = new CloudGroupServiceTypeAdapter(platformService);
 
     public CloudServiceGroupProvider() {
         this.groups = groupServiceTypeAdapter.readGroups();
@@ -25,7 +26,7 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     }
 
     @Override
-    public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
+    public boolean createGroup(String name, String platformVersion, int memory, int minOnlineCount) {
         if (isGroup(name)) {
             CloudAPI.instance().logger().info("The group already exists!");
             return false;
@@ -36,15 +37,16 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
             return false;
         }
 
-        if (!platformService.isValidPlatform(platform)) {
-            CloudAPI.instance().logger().info("The platform " + platform + " is an invalid type!");
+        if (!platformService.isValidPlatform(platformVersion)) {
+            CloudAPI.instance().logger().info("The platform " + platformVersion + " is an invalid type!");
             return false;
         }
 
-        var group = new CloudGroupImpl(name, platform, memory, minOnlineCount);
+        var platform = platformService.find(platformVersion);
+
+        var group = new CloudGroupImpl(name, new PlatformVersion(platformVersion, platform.proxy()), memory, minOnlineCount);
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);
-
 
 
         return true;

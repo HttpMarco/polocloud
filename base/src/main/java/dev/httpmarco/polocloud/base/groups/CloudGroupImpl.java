@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,12 +17,12 @@ import java.io.Serializable;
 public class CloudGroupImpl implements CloudGroup, Serializable {
 
     private final String name;
-    private final String platform;
+    private final PlatformVersion platform;
     private final int memory;
     private final int minOnlineServices;
     private final PropertiesPool<GroupProperties<?>> properties;
 
-    public CloudGroupImpl(String name, String platform, int memory, int minOnlineServices) {
+    public CloudGroupImpl(String name, PlatformVersion platform, int memory, int minOnlineServices) {
         this.minOnlineServices = minOnlineServices;
         this.memory = memory;
         this.platform = platform;

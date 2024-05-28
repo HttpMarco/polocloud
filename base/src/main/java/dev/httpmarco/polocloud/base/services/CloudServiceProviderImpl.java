@@ -3,7 +3,10 @@ package dev.httpmarco.polocloud.base.services;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.osgan.networking.server.NettyServer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
+import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -41,10 +44,24 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
             case FALLBACKS -> null; //todo
             case PROXIES -> new CloudAllServicesPacket(services.stream().filter(this::isProxy).toList());
             case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
+            // todo ordering with players
+            case LOWEST_FALLBACK -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).toList());
         });
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
-            System.out.println(packet.id() + " change state: " + packet.state());
+            var service = find(packet.id());
+
+            if (service == null) {
+                return;
+            }
+
+            if (service instanceof LocalCloudService) {
+                ((LocalCloudService) service).state(packet.state());
+            } else {
+                //todo
+            }
+            CloudAPI.instance().logger().info("Server " + service.name() + " is now successfully online&2.");
+            CloudAPI.instance().globalEventNode().call(new CloudServiceOnlineEvent(service));
         });
         // allow service to start the process
         queue.start();
@@ -101,6 +118,6 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     private boolean isProxy(CloudService service) {
-        return CloudBase.instance().groupProvider().platformService().find(service.group().platform()).proxy();
+        return service.group().platform().proxy();
     }
 }

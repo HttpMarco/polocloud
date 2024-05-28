@@ -14,4 +14,6 @@ public class GroupProperties<T> extends Property<T> implements Serializable {
 
     public static GroupProperties<Integer> PORT_RANGE = new GroupProperties<>("portRange", int.class);
 
+    public static GroupProperties<Boolean> FALLBACK = new GroupProperties<>("fallback", boolean.class);
+
 }

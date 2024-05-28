@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.AccessLevel;
@@ -24,7 +25,7 @@ public class CloudServiceImpl implements CloudService {
     @Setter(AccessLevel.PACKAGE)
     private ServiceState state;
 
-
+    private final PropertiesPool<?> properties = new PropertiesPool();
     private final Set<String> subscribedEvents = new HashSet<>();
 
     @Override
