@@ -20,30 +20,30 @@ import java.util.jar.JarFile;
 
 @Getter
 @Accessors(fluent = true)
-public class Instance extends CloudAPI {
+public class CloudInstance extends CloudAPI {
 
     public static final UUID SERVICE_ID = UUID.fromString(System.getenv("serviceId"));
 
     public static void main(String[] args) {
         //start platform
-        new Instance(args);
+        new CloudInstance(args);
     }
 
     @Getter
-    private static Instance instance;
+    private static CloudInstance cloudInstance;
 
-    private final InstanceClient client;
+    private final CloudInstanceClient client;
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
     private final CloudServiceProvider serviceProvider = new InstanceServiceProvider();
     private final InstanceGlobalEventNode globalEventNode;
 
     @SneakyThrows
-    public Instance(String[] args) {
-        instance = this;
+    public CloudInstance(String[] args) {
+        cloudInstance = this;
 
         var bootstrapPath = Path.of(Arrays.stream(args).filter(it -> it.startsWith("--bootstrap=")).map(it -> it.substring("--bootstrap=".length())).findFirst().orElse(null) + ".jar");
 
-        this.client = new InstanceClient("127.0.0.1", 8192);
+        this.client = new CloudInstanceClient("127.0.0.1", 8192);
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
 

@@ -8,15 +8,15 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
-public final class InstanceClient {
+public final class CloudInstanceClient {
 
     private final NettyClient transmitter;
 
-    public InstanceClient(String hostname, int port) {
+    public CloudInstanceClient(String hostname, int port) {
         this.transmitter = new NettyClientBuilder()
                 .withHostname("127.0.0.1")
                 .onActive(channelTransmit -> {
-                    channelTransmit.sendPacket(new CloudServiceRegisterPacket(Instance.SERVICE_ID));
+                    channelTransmit.sendPacket(new CloudServiceRegisterPacket(CloudInstance.SERVICE_ID));
                 }).onInactive(channelTransmit -> {
                 }).withConnectTimeout(10000).build();
     }
