@@ -12,9 +12,10 @@ public class RunnerBootstrap {
 
     public static CloudRunner RUNNER;
     public static final CloudClassLoader LOADER = new CloudClassLoader();
+    public static Instrumentation INSTRUMENTATION;
 
     public static void premain(String args, Instrumentation instrumentation) {
-
+        INSTRUMENTATION = instrumentation;
     }
 
     @SneakyThrows

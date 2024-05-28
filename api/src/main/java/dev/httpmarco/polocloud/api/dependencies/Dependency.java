@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.jar.JarFile;
 
 @Getter
 @Accessors(fluent = true)
@@ -34,6 +35,10 @@ public final class Dependency {
         var name = groupId + "." + artifactoryId + "." + version;
         var file = RunnerBootstrap.RUNNER.dependencyFolder().resolve(artifactoryId + "-" + version + ".jar");
         this.file = file.toFile();
+
+        if (RunnerBootstrap.INSTRUMENTATION != null) {
+            RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(file()));
+        }
 
         if (!Files.exists(file)) {
             System.err.println("Downloading dependency: " + name + "...");

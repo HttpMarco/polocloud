@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
 
 import java.nio.file.Path;
+import java.util.jar.JarFile;
 
 public final class CloudInstanceRunner implements CloudRunner {
 
@@ -18,11 +19,14 @@ public final class CloudInstanceRunner implements CloudRunner {
 
         RunnerBootstrap.LOADER.addURL(apiFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(instanceFile.toUri().toURL());
+
+        RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(apiFile.toFile()));
+        RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(instanceFile.toFile()));
     }
 
     @Override
     public String mainEntry() {
-        return "dev.httpmarco.polocloud.runner.Instance";
+        return "dev.httpmarco.polocloud.runner.CloudInstance";
     }
 
     @Override

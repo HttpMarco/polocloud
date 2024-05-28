@@ -75,6 +75,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         CloudAPI.instance().globalEventNode().call(new CloudServiceStartEvent(service));
 
         service.process(processBuilder.start());
+        //todo
     }
 
     @Override

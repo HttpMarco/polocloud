@@ -1,14 +1,19 @@
 package dev.httpmarco.polocloud.api.dependencies;
 
-import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
+
+import java.nio.file.Files;
 
 public final class DependencyService {
 
     @SneakyThrows
     public DependencyService() {
-        Files.createDirectoryIfNotExists(RunnerBootstrap.RUNNER.dependencyFolder());
+        var dependenciesPath = RunnerBootstrap.RUNNER.dependencyFolder();
+
+        if (!Files.exists(dependenciesPath)) {
+            Files.createDirectory(dependenciesPath);
+        }
 
         // todo generate default dependency definitions
         // load default dependencies of base and instance
