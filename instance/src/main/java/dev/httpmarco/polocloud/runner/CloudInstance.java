@@ -30,7 +30,7 @@ public class CloudInstance extends CloudAPI {
     }
 
     @Getter
-    private static CloudInstance cloudInstance;
+    private static CloudInstance instance;
 
     private final CloudInstanceClient client;
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
@@ -39,7 +39,7 @@ public class CloudInstance extends CloudAPI {
 
     @SneakyThrows
     public CloudInstance(String[] args) {
-        cloudInstance = this;
+        instance = this;
 
         var bootstrapPath = Path.of(Arrays.stream(args).filter(it -> it.startsWith("--bootstrap=")).map(it -> it.substring("--bootstrap=".length())).findFirst().orElse(null) + ".jar");
 
