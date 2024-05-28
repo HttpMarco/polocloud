@@ -35,16 +35,16 @@ public final class Dependency {
         if (!Files.exists(file)) {
             System.err.println("Downloading dependency: " + name + "...");
             if (download()) {
-                addClasspath();
                 System.out.println("Successfully downloading dependency " + name);
-                return;
+            } else {
+                System.err.println("Cannot download dependency: " + name);
+                System.exit(-1);
             }
-            System.err.println("Cannot download dependency: " + name);
-            System.exit(-1);
         }
-        addClasspath();
+        RunnerBootstrap.LOADER.addURL(this.file.toURI().toURL());
     }
 
+    //todo with osgan
     private boolean download() {
         try (var inputStream = new URL(dependencyLink).openStream();
              var outputStream = new BufferedOutputStream(new FileOutputStream(file.toString()))) {
@@ -58,13 +58,5 @@ public final class Dependency {
             return false;
         }
         return true;
-    }
-
-    @SneakyThrows
-    private void addClasspath() {
-        if (file == null) {
-            return;
-        }
-        RunnerBootstrap.LOADER.addURL(this.file.toURI().toURL());
     }
 }
