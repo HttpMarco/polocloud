@@ -56,59 +56,62 @@ public final class PaperPlatform extends PaperMCPlatform {
         }
 
 
-        CloudAPI.instance().serviceProvider().services().stream().filter(it -> it.group().platform().proxy()).distinct().forEach(cloudService -> {
-            var platform = CloudBase.instance().groupProvider().platformService().find(cloudService.group().platform().version());
+        CloudAPI.instance().groupProvider().groups().stream()
+                .filter(it -> it.platform().proxy())
+                .map(it -> it.platform().version())
+                .distinct()
+                .forEach(platformVersion -> {
+                    var platform = CloudBase.instance().groupProvider().platformService().find(platformVersion);
+                    if (platform instanceof VelocityPlatform) {
+                        // manipulate velocity secret if
+                        var configPath = localCloudService.runningFolder().resolve("config");
+                        var globalPaperProperty = configPath.resolve("paper-global.yml");
 
-            if (platform instanceof VelocityPlatform velocityPlatform) {
-                // manipulate velocity secret if
-                var configPath = localCloudService.runningFolder().resolve("config");
-                var globalPaperProperty = configPath.resolve("paper-global.yml");
+                        if (Files.exists(globalPaperProperty)) {
+                            Yaml yaml = new Yaml();
 
-                if (Files.exists(globalPaperProperty)) {
-                    Yaml yaml = new Yaml();
+                            var paperProperties = (Map<String, Object>) yaml.load(globalPaperProperty.toString());
+                            var proxyProperties = (Map<String, Object>) paperProperties.get("proxies");
+                            var velocityProperties = (Map<String, Object>) proxyProperties.get("velocity");
 
-                    var paperProperties = (Map<String, Object>) yaml.load(globalPaperProperty.toString());
-                    var proxyProperties = (Map<String, Object>) paperProperties.get("proxies");
-                    var velocityProperties = (Map<String, Object>) proxyProperties.get("velocity");
+                            velocityProperties.put("enabled", true);
+                            velocityProperties.put("secret", CloudGroupPlatformService.PROXY_SECRET);
 
-                    velocityProperties.put("enabled", true);
-                    velocityProperties.put("secret", CloudGroupPlatformService.PROXY_SECRET);
+                            try {
+                                var writer = new FileWriter(globalPaperProperty.toString());
+                                yaml.dump(paperProperties, writer);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else {
+                            Map<String, Object> data = new LinkedHashMap<>();
+                            Map<String, Object> proxies = new LinkedHashMap<>();
+                            Map<String, Object> velocity = new LinkedHashMap<>();
 
-                    try {
-                        var writer = new FileWriter(globalPaperProperty.toString());
-                        yaml.dump(paperProperties, writer);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                            velocity.put("enabled", true);
+                            velocity.put("online-mode", true);
+                            velocity.put("secret", CloudGroupPlatformService.PROXY_SECRET);
+                            proxies.put("velocity", velocity);
+                            data.put("proxies", proxies);
+
+                            try {
+                                Files.createDirectories(configPath);
+                                FileWriter writer = new FileWriter(configPath.resolve("paper-global.yml").toString());
+
+                                writer.write(WRITER.toJson(data));
+                                writer.close();
+                            } catch (IOException exception) {
+                                throw new RuntimeException(exception);
+                            }
+                        }
+                        return;
                     }
-                } else {
-                    Map<String, Object> data = new LinkedHashMap<>();
-                    Map<String, Object> proxies = new LinkedHashMap<>();
-                    Map<String, Object> velocity = new LinkedHashMap<>();
 
-                    velocity.put("enabled", true);
-                    velocity.put("online-mode", true);
-                    velocity.put("secret", CloudGroupPlatformService.PROXY_SECRET);
-                    proxies.put("velocity", velocity);
-                    data.put("proxies", proxies);
-
-                    try {
-                        Files.createDirectories(configPath);
-                        FileWriter writer = new FileWriter(configPath.resolve("paper-global.yml").toString());
-
-                        writer.write(WRITER.toJson(data));
-                        writer.close();
-                    } catch (IOException exception) {
-                        throw new RuntimeException(exception);
+                    if (platform instanceof BungeeCordPlatform bungeeCordPlatform) {
+                        // enable bungeecord in spigot.yml
+                        return;
                     }
-                }
-                return;
-            }
-
-            if (platform instanceof BungeeCordPlatform bungeeCordPlatform) {
-                // enable bungeecord in spigot.yml
-                return;
-            }
-        });
+                });
 
     }
 }
