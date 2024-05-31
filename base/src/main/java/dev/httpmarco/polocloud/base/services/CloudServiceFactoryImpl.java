@@ -73,8 +73,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         processBuilder.environment().put("bootstrapFile", service.group().platform().version());
         processBuilder.environment().put("serviceId", service.id().toString());
 
-        processBuilder.redirectError(new File("test.log"));
-
         if (cloudGroup.properties().has(GroupProperties.TEMPLATES)) {
             var temp = CloudBase.instance().templatesService().templates(cloudGroup.properties().property(GroupProperties.TEMPLATES));
             if (temp != null) {
