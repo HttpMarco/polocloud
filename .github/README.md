@@ -5,11 +5,11 @@ cloud group optional properties
 
 ### Global cluster properties
 
-| id                | description                                | type   | default value    |
-|-------------------|--------------------------------------------|--------|------------------|
-| prompt            | The the input prefix of the cloud terminal | Text   | '&3cloud &2» &1' |
-| server-port-range | The the detection rage of proxy ports      | Number | 25565            |
-| proxy-port-range  | The the detection rage of server ports     | Number | 30000            |
+| id                | description                            | type   | default value    |
+|-------------------|----------------------------------------|--------|------------------|
+| prompt            | The input prefix of the cloud terminal | Text   | '&3cloud &2» &1' |
+| server-port-range | The detection range of proxy ports     | Number | 25565            |
+| proxy-port-range  | The detection range of server ports    | Number | 30000            |
 
 
 ### Cloud group properties
