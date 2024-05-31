@@ -16,10 +16,8 @@
 
 package dev.httpmarco.polocloud.api.events;
 
-import lombok.Getter;
 import lombok.experimental.Accessors;
 
-@Getter
 @Accessors(fluent = true)
 public record Listener<T extends Event>(Class<? extends T> event, EventRunnable<T> runnable) {
 
