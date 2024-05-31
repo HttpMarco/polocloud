@@ -37,8 +37,10 @@ public final class GroupCommand {
 
     @DefaultCommand
     public void handle() {
+        logger.info("&3groups list &2- &1List all groups&2.");
+        logger.info("&3groups &2<&1name&2> &2- &1Get information about a group&2.");
         logger.info("&3groups create &2<&1name&2> &2<&1platform&2> &2<&1memory&2> &2<&1minOnlineCount&2> &2- &1Create a new group&2.");
-        logger.info("&3groups delete &2<&1name&2> &2- &1Delete a existing group&2.");
+        logger.info("&3groups delete &2<&1name&2> &2- &1Delete an existing group&2.");
         logger.info("&3groups edit &2<&1name&2> &2<&1key&2> &2<&1value&2> &2- &1Edit a value in a group&2.");
         logger.info("&3groups shutdown &2<&1name&2> &2- &1Shutdown all services of a group&2.");
     }
@@ -59,7 +61,7 @@ public final class GroupCommand {
         var group = CloudAPI.instance().groupProvider().group(name);
 
         logger.info("Name&2: &3" + name);
-        logger.info("Platform&2: &3" + group.platform());
+        logger.info("Platform&2: &3" + group.platform().version());
         logger.info("Memory&2: &3" + group.memory());
         logger.info("Minimum online services&2: &3" + group.minOnlineServices());
         logger.info("Properties &2(&1" + group.properties().properties().size() + "&2): &3");
