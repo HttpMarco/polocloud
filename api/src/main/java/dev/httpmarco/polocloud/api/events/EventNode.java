@@ -1,33 +1,25 @@
+/*
+ * Copyright 2024 Mirco Lindenau | HttpMarco
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.httpmarco.polocloud.api.events;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface EventNode {
 
-public class EventNode<T extends Event> {
+    <T extends Event> void addListener(Class<T> event, EventRunnable<T> runnable);
 
-    private final List<EventNode<T>> children = new ArrayList<>();
-    private final List<Listener<T>> listeners = new ArrayList<>();
+    void call(Event event);
 
-    public void call(T event){
-        listeners.stream()
-                .filter(listener -> listener.getEvent().equals(event.getClass()))
-                .forEach(listener -> listener.getRunnable().run(event));
-
-        children.stream()
-                .forEach(children -> children.call(event));
-    }
-
-    public void addListener(Class<? extends T> event, EventRunnable<T> runnable){
-        listeners.add(new Listener<T>(event, runnable));
-    }
-
-    public EventNode<T> addChildren(EventNode<T> eventNode){
-        children.add(eventNode);
-        return this;
-    }
-
-    public EventNode<T> removeChildren(EventNode<T> eventNode){
-        this.children.remove(eventNode);
-        return this;
-    }
 }

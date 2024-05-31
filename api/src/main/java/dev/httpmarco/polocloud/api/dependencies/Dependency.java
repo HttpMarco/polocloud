@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 Mirco Lindenau | HttpMarco
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.httpmarco.polocloud.api.dependencies;
 
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
@@ -8,6 +24,7 @@ import lombok.experimental.Accessors;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.jar.JarFile;
 
 @Getter
 @Accessors(fluent = true)
@@ -19,32 +36,39 @@ public final class Dependency {
     private final String dependencyLink;
     private final File file;
 
-    public Dependency(String groupId, String artifactoryId, String version) {
-        this(groupId, artifactoryId, version, version, MAVEN_CENTRAL_REPO);
+    public static void load(String groupId, String artifactoryId, String version) {
+        load(groupId, artifactoryId, version, version, MAVEN_CENTRAL_REPO);
+    }
+
+    public static void load(String groupId, String artifactoryId, String version, String subversion, String repository) {
+        new Dependency(groupId, artifactoryId, version, subversion, repository);
     }
 
     @SneakyThrows
-    public Dependency(String groupId, String artifactoryId, String version, String subversion, String repository) {
+    private Dependency(String groupId, String artifactoryId, String version, String subversion, String repository) {
         this.dependencyLink = repository.formatted(groupId.replace(".", "/"), artifactoryId, version, artifactoryId + "-" + subversion);
-        ;
 
         var name = groupId + "." + artifactoryId + "." + version;
         var file = RunnerBootstrap.RUNNER.dependencyFolder().resolve(artifactoryId + "-" + version + ".jar");
         this.file = file.toFile();
 
+        if (RunnerBootstrap.INSTRUMENTATION != null) {
+            RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(file()));
+        }
+
         if (!Files.exists(file)) {
             System.err.println("Downloading dependency: " + name + "...");
             if (download()) {
-                addClasspath();
                 System.out.println("Successfully downloading dependency " + name);
-                return;
+            } else {
+                System.err.println("Cannot download dependency: " + name);
+                System.exit(-1);
             }
-            System.err.println("Cannot download dependency: " + name);
-            System.exit(-1);
         }
-        addClasspath();
+        RunnerBootstrap.LOADER.addURL(this.file.toURI().toURL());
     }
 
+    //todo with osgan
     private boolean download() {
         try (var inputStream = new URL(dependencyLink).openStream();
              var outputStream = new BufferedOutputStream(new FileOutputStream(file.toString()))) {
@@ -58,13 +82,5 @@ public final class Dependency {
             return false;
         }
         return true;
-    }
-
-    @SneakyThrows
-    private void addClasspath() {
-        if (file == null) {
-            return;
-        }
-        RunnerBootstrap.LOADER.addURL(this.file.toURI().toURL());
     }
 }

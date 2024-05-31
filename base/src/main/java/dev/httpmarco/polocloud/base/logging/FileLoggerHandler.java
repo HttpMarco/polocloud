@@ -1,18 +1,32 @@
+/*
+ * Copyright 2024 Mirco Lindenau | HttpMarco
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.httpmarco.polocloud.base.logging;
 
 import dev.httpmarco.osgan.files.Files;
-import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.api.logging.LoggerHandler;
 import lombok.SneakyThrows;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public final class FileLoggerHandler implements LoggerHandler {
@@ -34,7 +48,7 @@ public final class FileLoggerHandler implements LoggerHandler {
 
     @Override
     @SneakyThrows
-    public void print(Level level, String message, Throwable throwable, Object... objects) {
+    public void print(LogLevel level, String message, Throwable throwable, Object... objects) {
         logWriter.append("[").append(LOG_LAYOUT.format(Calendar.getInstance().getTime())).append("]: ").append(removeColorCodes(message)).append("\n");
         logWriter.flush();
     }
@@ -52,7 +66,7 @@ public final class FileLoggerHandler implements LoggerHandler {
         var date = new Date(timelines);
 
         LATEST_LOG.toFile().renameTo(LOGS_PATH.resolve(FILE_FORMAT.format(date) + ".log").toFile().getAbsoluteFile());
-        // todo no exception print
+        //todo no exception print
     }
 
     private String removeColorCodes(String message) {
