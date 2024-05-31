@@ -20,12 +20,14 @@ public class CloudServiceImpl implements CloudService {
     private CloudGroup group;
     private int orderedId;
     private UUID id;
+
     private int port;
+    private String hostname;
 
     @Setter(AccessLevel.PACKAGE)
     private ServiceState state;
 
-    private final PropertiesPool<?> properties = new PropertiesPool();
+    private final PropertiesPool<?> properties = new PropertiesPool<>();
     private final Set<String> subscribedEvents = new HashSet<>();
 
     @Override
@@ -60,7 +62,7 @@ public class CloudServiceImpl implements CloudService {
 
     @Override
     public int onlinePlayers() {
-        // todo
+        // todo with external nodes, local nodes method is overrited
         return 0;
     }
 

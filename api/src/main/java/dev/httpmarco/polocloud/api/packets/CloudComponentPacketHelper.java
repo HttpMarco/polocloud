@@ -14,6 +14,7 @@ public final class CloudComponentPacketHelper {
         buffer.writeUniqueId(cloudService.id());
         buffer.writeInt(cloudService.port());
         buffer.writeEnum(cloudService.state());
+        buffer.writeString(cloudService.hostname());
         //todo properties
     }
 

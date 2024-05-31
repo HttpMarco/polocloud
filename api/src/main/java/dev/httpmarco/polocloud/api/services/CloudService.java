@@ -22,6 +22,8 @@ public interface CloudService extends Serializable {
 
     int port();
 
+    String hostname();
+
     ServiceState state();
 
     List<String> log();

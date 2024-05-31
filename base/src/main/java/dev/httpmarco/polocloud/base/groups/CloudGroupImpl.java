@@ -37,7 +37,7 @@ public class CloudGroupImpl implements CloudGroup, Serializable {
 
     @Override
     public String toString() {
-        return "platform='" + platform + '\'' +
+        return "platform='" + platform.version() + '\'' +
                 ", memory=" + memory +
                 ", minOnlineServices=" + minOnlineServices;
     }

@@ -17,7 +17,8 @@ import java.net.InetSocketAddress;
 public final class BungeeCordPlatform extends Plugin implements Listener {
 
     private final RunningPlatform runningPlatform = new RunningProxyPlatform(
-            it -> registerServer(it.name(), it.port()),
+            it -> ProxyServer.getInstance().getOnlineCount(),
+            it -> registerServer(it.name(), it.hostname(), it.port()),
             it -> ProxyServer.getInstance().getServers().remove(it.name()));
 
     @Override
@@ -30,8 +31,8 @@ public final class BungeeCordPlatform extends Plugin implements Listener {
         this.runningPlatform.changeToOnline();
     }
 
-    private void registerServer(String name, int port) {
-        var info = ProxyServer.getInstance().constructServerInfo(name, new InetSocketAddress("127.0.0.1", port), "PoloCloud Service", false);
+    private void registerServer(String name, String hostname, int port) {
+        var info = ProxyServer.getInstance().constructServerInfo(name, new InetSocketAddress(hostname, port), "PoloCloud Service", false);
         ProxyServer.getInstance().getServers().put(name, info);
     }
 

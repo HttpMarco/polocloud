@@ -18,10 +18,12 @@ public final class InstanceCloudService implements CloudService {
 
     private final int orderedId;
     private final UUID id;
+
     private final int port;
+    private final String hostname;
+
     private final ServiceState state;
     private CloudGroup group;
-
 
     @Override
     public List<String> log() {

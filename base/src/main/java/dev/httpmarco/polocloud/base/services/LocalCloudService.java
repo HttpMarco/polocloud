@@ -30,7 +30,7 @@ public final class LocalCloudService extends CloudServiceImpl {
     private boolean subscribed;
 
     public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port, ServiceState state) {
-        super(group, orderedId, id, port, state);
+        super(group, orderedId, id, port, group.platform().proxy() ? "0.0.0.0" : CloudAPI.instance().nodeService().localNode().hostname(), state);
 
         this.runningFolder = Path.of("running/" + name() + "-" + id());
         this.subscribed = false;
@@ -46,7 +46,7 @@ public final class LocalCloudService extends CloudServiceImpl {
     }
 
     public void subscribeLog() {
-        if(this.subscribed) {
+        if (this.subscribed) {
             this.subscribed = false;
             return;
         }
@@ -80,5 +80,10 @@ public final class LocalCloudService extends CloudServiceImpl {
             logs.addAll(Arrays.stream(new String(bytes, 0, length, StandardCharsets.UTF_8).split("\n")).toList());
         }
         return logs;
+    }
+
+    @Override
+    public int onlinePlayers() {
+        return -1;
     }
 }

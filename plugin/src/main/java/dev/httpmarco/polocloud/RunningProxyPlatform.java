@@ -10,12 +10,14 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Getter
 @Accessors(fluent = true)
 public class RunningProxyPlatform extends RunningPlatform {
 
-    public RunningProxyPlatform(Consumer<CloudService> register, Consumer<CloudService> unRegister) {
+    public RunningProxyPlatform(Function<Void, Integer> onlinePlayers, Consumer<CloudService> register, Consumer<CloudService> unRegister) {
+        super(onlinePlayers);
         var instance = CloudAPI.instance();
 
         for (var service : CloudAPI.instance().serviceProvider().filterService(ServiceFilter.SERVERS)) {

@@ -6,6 +6,8 @@ public interface Node {
 
     UUID id();
 
+    String hostname();
+
     String name();
 
     void close();

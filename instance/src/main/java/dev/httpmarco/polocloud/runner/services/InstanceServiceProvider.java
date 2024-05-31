@@ -71,7 +71,8 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
         var id = buffer.readUniqueId();
         var port = buffer.readInt();
         var state = buffer.readEnum(ServiceState.class);
+        var hostname = buffer.readString();
 
-        return new InstanceCloudService(orderedId, id, port, state, parent);
+        return new InstanceCloudService(orderedId, id, port, hostname, state, parent);
     }
 }
