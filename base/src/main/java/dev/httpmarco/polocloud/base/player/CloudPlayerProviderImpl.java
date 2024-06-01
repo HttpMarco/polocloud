@@ -42,7 +42,6 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
         var transmitter = CloudBase.instance().transmitter();
         transmitter.registerResponder("players-all", ((channelTransmit, properties) -> new CloudAllPlayersPacket(this.players)));
 
-
         transmitter.registerResponder("player-get", ((channelTransmit, properties) -> {
             UUID uniqueId = UUID.fromString(properties.readString("uniqueId"));
             return new CloudPlayerPacket(this.find(uniqueId));
@@ -50,12 +49,11 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
 
         transmitter.listen(CloudPlayerRegisterPacket.class, (channelTransmit, packet) -> {
             this.register(packet.id(), packet.name());
+            ((CloudPlayerImpl) this.find(packet.id())).currentProxy(CloudAPI.instance().serviceProvider().find(packet.proxyId()).name());
         });
 
-        transmitter.listen(CloudPlayerServiceChangePacket.class, (channelTransmit, packet) -> {
-            var player = (CloudPlayerImpl) this.find(packet.uniqueId());
-            player.currentServer(CloudAPI.instance().serviceProvider().find(packet.uniqueId()).name());
-        });
+        transmitter.listen(CloudPlayerServiceChangePacket.class, (channelTransmit, packet) ->
+                ((CloudPlayerImpl) this.find(packet.id())).currentServer(CloudAPI.instance().serviceProvider().find(packet.serviceId()).name()));
     }
 
     @Override

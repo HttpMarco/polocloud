@@ -34,8 +34,6 @@ public interface CloudPlayer {
 
     String currentServer();
 
-    void currentServer(String serverName);
-
     String currentProxy();
 
     void connectToServer(String serverName);

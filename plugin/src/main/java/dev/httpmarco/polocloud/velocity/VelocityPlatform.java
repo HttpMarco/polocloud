@@ -17,19 +17,16 @@
 package dev.httpmarco.polocloud.velocity;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.velocity.listener.PlayerChooseInitialServerListener;
 import dev.httpmarco.polocloud.velocity.listener.PlayerDisconnectListener;
+import dev.httpmarco.polocloud.velocity.listener.PlayerServerSwitchListener;
 import dev.httpmarco.polocloud.velocity.listener.PreLoginListener;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 
 import javax.inject.Inject;
 import java.net.InetSocketAddress;
@@ -55,14 +52,9 @@ public final class VelocityPlatform extends RunningProxyPlatform {
         var eventManager = this.server.getEventManager();
         eventManager.register(this, new PlayerChooseInitialServerListener(this.server));
         eventManager.register(this, new PlayerDisconnectListener());
+        eventManager.register(this, new PlayerServerSwitchListener());
         eventManager.register(this, new PreLoginListener());
 
         this.changeToOnline();
-    }
-
-    @Subscribe
-    public void handle(PlayerChatEvent event) {
-        Player player = event.getPlayer();
-        player.sendMessage(Component.text(CloudAPI.instance().playerProvider().find(player.getUniqueId()).currentServer()));
     }
 }

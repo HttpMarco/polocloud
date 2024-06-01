@@ -16,9 +16,7 @@
 
 package dev.httpmarco.polocloud.runner.player;
 
-import dev.httpmarco.polocloud.api.packets.player.CloudPlayerServiceChangePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
-import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,9 +31,8 @@ public final class InstanceCloudPlayerImpl implements CloudPlayer {
 
     private final UUID uniqueId;
     private final String name;
-    @Setter
     private String currentServer;
-    private final String currentProxy;
+    private String currentProxy;
 
     @Override
     public void sendMessage(String message) {
