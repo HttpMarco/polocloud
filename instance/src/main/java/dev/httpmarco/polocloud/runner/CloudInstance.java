@@ -19,11 +19,13 @@ package dev.httpmarco.polocloud.runner;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.runner.event.InstanceGlobalEventNode;
 import dev.httpmarco.polocloud.runner.groups.InstanceGroupProvider;
+import dev.httpmarco.polocloud.runner.player.InstanceCloudPlayerProvider;
 import dev.httpmarco.polocloud.runner.services.InstanceServiceProvider;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -51,6 +53,7 @@ public class CloudInstance extends CloudAPI {
     private final CloudInstanceClient client;
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
     private final CloudServiceProvider serviceProvider = new InstanceServiceProvider();
+    private final CloudPlayerProvider playerProvider = new InstanceCloudPlayerProvider();
     private final InstanceGlobalEventNode globalEventNode;
 
     @SneakyThrows

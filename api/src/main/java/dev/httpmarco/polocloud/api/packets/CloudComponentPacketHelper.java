@@ -19,38 +19,50 @@ package dev.httpmarco.polocloud.api.packets;
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.services.CloudService;
 
 public final class CloudComponentPacketHelper {
 
-    public static void writeService(CloudService cloudService, CodecBuffer buffer) {
-        writeGroup(cloudService.group(), buffer);
+    public static void writeService(CloudService cloudService, CodecBuffer codecBuffer) {
+        writeGroup(cloudService.group(), codecBuffer);
 
-        buffer.writeInt(cloudService.orderedId());
-        buffer.writeUniqueId(cloudService.id());
-        buffer.writeInt(cloudService.port());
-        buffer.writeEnum(cloudService.state());
-        buffer.writeString(cloudService.hostname());
+        codecBuffer.writeInt(cloudService.orderedId());
+        codecBuffer.writeUniqueId(cloudService.id());
+        codecBuffer.writeInt(cloudService.port());
+        codecBuffer.writeEnum(cloudService.state());
+        codecBuffer.writeString(cloudService.hostname());
         //todo properties
     }
 
-    public static CloudService readService(CodecBuffer buffer) {
+    public static CloudService readService(CodecBuffer codecBuffer) {
         //todo properties
-        return CloudAPI.instance().serviceProvider().fromPacket(readGroup(buffer), buffer);
+        return CloudAPI.instance().serviceProvider().fromPacket(readGroup(codecBuffer), codecBuffer);
     }
 
-    public static void writeGroup(CloudGroup group, CodecBuffer buffer) {
-        buffer.writeString(group.name());
-        buffer.writeString(group.platform().version());
-        buffer.writeBoolean(group.platform().proxy());
-        buffer.writeInt(group.minOnlineServices());
-        buffer.writeInt(group.memory());
+    public static void writeGroup(CloudGroup group, CodecBuffer codecBuffer) {
+        codecBuffer.writeString(group.name());
+        codecBuffer.writeString(group.platform().version());
+        codecBuffer.writeBoolean(group.platform().proxy());
+        codecBuffer.writeInt(group.minOnlineServices());
+        codecBuffer.writeInt(group.memory());
 
         //todo properties
     }
 
-    public static CloudGroup readGroup(CodecBuffer buffer) {
+    public static CloudGroup readGroup(CodecBuffer codecBuffer) {
         //todo properties
-        return CloudAPI.instance().groupProvider().fromPacket(buffer);
+        return CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
+    }
+
+    public static void writePlayer(CloudPlayer cloudPlayer, CodecBuffer codecBuffer) {
+        codecBuffer.writeUniqueId(cloudPlayer.uniqueId());
+        codecBuffer.writeString(cloudPlayer.name());
+        codecBuffer.writeString(cloudPlayer.currentServer());
+        codecBuffer.writeString(cloudPlayer.currentProxy());
+    }
+
+    public static CloudPlayer readPlayer(CodecBuffer codecBuffer) {
+        return CloudAPI.instance().playerProvider().fromPacket(codecBuffer);
     }
 }

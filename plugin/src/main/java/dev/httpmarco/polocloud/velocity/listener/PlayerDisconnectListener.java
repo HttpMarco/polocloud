@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.player;
+package dev.httpmarco.polocloud.velocity.listener;
 
-import java.util.UUID;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
+import dev.httpmarco.polocloud.api.CloudAPI;
 
-public interface CloudPlayer {
+public class PlayerDisconnectListener {
 
-    UUID uniqueId();
-
-    String name();
-
-    void sendMessage(String message);
-
-    void sendActionBar(String message);
-
-    void sendTitle(String title, String subtitle, Integer fadeIn, Integer stay, Integer fadeOut);
-
-    void kick(String reason);
-
-    String currentServer();
-
-    String currentProxy();
-
-    void connectToServer(String serverName);
+    @Subscribe
+    public void onDisconnect(DisconnectEvent event) {
+        CloudAPI.instance().playerProvider().unregister(event.getPlayer().getUniqueId());
+    }
 }
