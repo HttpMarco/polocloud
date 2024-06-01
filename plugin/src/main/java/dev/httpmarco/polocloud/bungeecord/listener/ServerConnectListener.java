@@ -27,7 +27,7 @@ import net.md_5.bungee.event.EventHandler;
 public class ServerConnectListener implements Listener {
 
     @EventHandler
-    public void handlePreLogin(ServerConnectEvent event) {
+    public void handleServerConnect(ServerConnectEvent event) {
         var service = CloudAPI.instance().serviceProvider().filterService(ServiceFilter.LOWEST_FALLBACK);
 
         if (service.isEmpty()) {
