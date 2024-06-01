@@ -56,7 +56,6 @@ public final class FileLoggerHandler implements LoggerHandler {
     @Override
     @SneakyThrows
     public void close() {
-
         this.logWriter.close();
         if (!java.nio.file.Files.exists(LATEST_LOG)) {
             return;

@@ -28,6 +28,7 @@ public final class ServiceCommand {
 
     @DefaultCommand
     public void handle() {
+        logger.info("&3service &2list &2- &1List all online services&2.");
         logger.info("&3service &2<&1name&2> &2- &1All specific information&2.");
         logger.info("&3service &2<&1name&2> &1log &2- &1Get the last not read log lines&2.");
         logger.info("&3service &2<&1name&2> &1screen &2- &1Join into a service console&2.");
@@ -46,7 +47,6 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>"})
     public void handleInfo(String name) {
-
         var service = CloudAPI.instance().serviceProvider().service(name);
 
         if (service == null) {
@@ -66,7 +66,6 @@ public final class ServiceCommand {
         service.properties().properties().forEach((groupProperties, o) -> {
             logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
         });
-
     }
 
     @SubCommand(args = {"<name>", "log"})

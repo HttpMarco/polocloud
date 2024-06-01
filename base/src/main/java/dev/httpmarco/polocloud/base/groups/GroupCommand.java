@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.base.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
@@ -37,8 +38,11 @@ public final class GroupCommand {
 
     @DefaultCommand
     public void handle() {
+        logger.info("&3groups list &2- &1List all groups&2.");
+        logger.info("&3groups &2<&1name&2> &2- &1Get information about a group&2.");
+        logger.info("&3groups versions &2<&1platform&2> &2- &1List all versions of a platform&2.");
         logger.info("&3groups create &2<&1name&2> &2<&1platform&2> &2<&1memory&2> &2<&1minOnlineCount&2> &2- &1Create a new group&2.");
-        logger.info("&3groups delete &2<&1name&2> &2- &1Delete a existing group&2.");
+        logger.info("&3groups delete &2<&1name&2> &2- &1Delete an existing group&2.");
         logger.info("&3groups edit &2<&1name&2> &2<&1key&2> &2<&1value&2> &2- &1Edit a value in a group&2.");
         logger.info("&3groups shutdown &2<&1name&2> &2- &1Shutdown all services of a group&2.");
     }
@@ -59,7 +63,7 @@ public final class GroupCommand {
         var group = CloudAPI.instance().groupProvider().group(name);
 
         logger.info("Name&2: &3" + name);
-        logger.info("Platform&2: &3" + group.platform());
+        logger.info("Platform&2: &3" + group.platform().version());
         logger.info("Memory&2: &3" + group.memory());
         logger.info("Minimum online services&2: &3" + group.minOnlineServices());
         logger.info("Properties &2(&1" + group.properties().properties().size() + "&2): &3");
@@ -74,6 +78,19 @@ public final class GroupCommand {
         if (index == 1) {
             candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
         }
+    }
+
+    @SubCommand(args = {"versions", "<platform>"})
+    public void handleVersions(String platform) {
+        List<String> versions = CloudBase.instance().groupProvider().platformService().validPlatformVersions().stream()
+                .map(PlatformVersion::version).filter(version -> version.startsWith(platform.toLowerCase() + "-")).sorted().toList();
+
+        if (versions.isEmpty()) {
+            logger.info("No versions found for platform &3" + platform + "&2!");
+            return;
+        }
+
+        logger.info(String.join(", ", versions));
     }
 
     @SubCommand(args = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
