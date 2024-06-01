@@ -5,13 +5,14 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="" />
+        <option name="gradleJvm" value="17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/instance" />
+            <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/runner" />
           </set>
         </option>

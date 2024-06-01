@@ -1,11 +1,19 @@
 [versions]
 lombok = "1.18.32"
-osgan = "1.1.15-20240514.180642-1"
+osgan = "1.2.1-20240525.221303-1"
 
 gson = "2.10.1"
+yaml = "2.2"
 
 jansi = "2.4.1"
 jline = "3.26.1"
+
+commons = "2.16.1"
+
+#platforms
+velocity = "3.3.0-SNAPSHOT"
+spigot = "1.20.6-R0.1-SNAPSHOT"
+bungeecord = "1.20-R0.2"
 
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
@@ -15,7 +23,14 @@ osgan-files = { group = "dev.httpmarco", name = "osgan-files", version.ref = "os
 osgan-netty = { group = "dev.httpmarco", name = "osgan-netty", version.ref = "osgan" }
 
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+yaml = { group = "org.yaml", name = "snakeyaml", version.ref = "yaml" }
 
+commons = { group = "commons-io", name = "commons-io", version.ref = "commons" }
+
+#platforms
+velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
+bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 
 jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" }
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }

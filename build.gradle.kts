@@ -2,11 +2,13 @@ allprojects {
     apply(plugin = "java-library")
 
     group = "dev.httpmarco"
-    version = "1.0-SNAPSHOT"
+    version = "1.0.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven(url = "https://repo.papermc.io/repository/maven-public/")
+        maven(url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     }
 
     dependencies {

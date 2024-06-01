@@ -1,5 +1,22 @@
+/*
+ * Copyright 2024 Mirco Lindenau | HttpMarco
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package dev.httpmarco.polocloud.base.terminal;
 
+import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.api.logging.LoggerHandler;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandCompleter;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandService;
@@ -85,10 +102,10 @@ public final class CloudTerminal implements LoggerHandler {
     }
 
     @Override
-    public void print(Level level, String message, Throwable throwable, Object... objects) {
+    public void print(LogLevel level, String message, Throwable throwable, Object... objects) {
         terminal.puts(InfoCmp.Capability.carriage_return);
-        if (level != Level.OFF) {
-            terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| &4" + level.getName() + "&2: &1" + message)
+        if (level != LogLevel.OFF) {
+            terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| " + level.colorCode() + level.name() + "&2: &1" + message)
                     + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         } else {
             terminal.writer().write(message);
