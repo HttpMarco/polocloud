@@ -19,7 +19,6 @@ package dev.httpmarco.polocloud.runner.player;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.UUID;
