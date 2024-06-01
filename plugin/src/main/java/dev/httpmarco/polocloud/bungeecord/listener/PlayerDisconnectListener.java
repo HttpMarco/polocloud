@@ -17,23 +17,15 @@
 package dev.httpmarco.polocloud.bungeecord.listener;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-public class PreLoginListener implements Listener {
+public class PlayerDisconnectListener implements Listener {
 
     @EventHandler
-    public void handlePreLogin(PreLoginEvent event) {
-        if (ProxyServer.getInstance().getServers().isEmpty()) {
-            event.setReason(TextComponent.fromLegacy("No fallback server available"));
-            event.setCancelled(true);
-        }
-
-        var connection = event.getConnection();
-        CloudAPI.instance().playerProvider().register(connection.getUniqueId(), connection.getName());
+    public void handlePlayerDisconnect(PlayerDisconnectEvent event) {
+        CloudAPI.instance().playerProvider().unregister(event.getPlayer().getUniqueId());
     }
 
 }

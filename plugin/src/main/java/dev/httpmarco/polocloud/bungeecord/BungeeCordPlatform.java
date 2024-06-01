@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.bungeecord;
 
 import dev.httpmarco.polocloud.RunningPlatform;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
+import dev.httpmarco.polocloud.bungeecord.listener.PlayerDisconnectListener;
 import dev.httpmarco.polocloud.bungeecord.listener.PreLoginListener;
 import dev.httpmarco.polocloud.bungeecord.listener.ServerConnectListener;
 import net.md_5.bungee.api.ProxyServer;
@@ -39,6 +40,7 @@ public final class BungeeCordPlatform extends Plugin {
         instance.getServers().clear();
 
         var pluginManager = instance.getPluginManager();
+        pluginManager.registerListener(this, new PlayerDisconnectListener());
         pluginManager.registerListener(this, new PreLoginListener());
         pluginManager.registerListener(this, new ServerConnectListener());
 
