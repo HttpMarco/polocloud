@@ -18,7 +18,6 @@ package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.event.connection.PreLoginEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
 
 public class PlayerDisconnectListener {
