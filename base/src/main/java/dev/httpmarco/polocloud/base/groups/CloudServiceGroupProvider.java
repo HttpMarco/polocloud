@@ -64,13 +64,11 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);
 
-
         return true;
     }
 
     @Override
     public boolean deleteGroup(String name) {
-
         if (!isGroup(name)) {
             return false;
         }

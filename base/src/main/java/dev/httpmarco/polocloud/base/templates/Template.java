@@ -42,7 +42,6 @@ public final class Template {
 
     @SneakyThrows
     public void copy(LocalCloudService localCloudService) {
-
         if (canUsed) {
             FileUtils.copyDirectory(TemplatesService.TEMPLATES.resolve(id).toFile(), localCloudService.runningFolder().toFile());
         }
