@@ -17,13 +17,13 @@
 package dev.httpmarco.polocloud.api;
 
 import dev.httpmarco.polocloud.api.dependencies.DependencyService;
-import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -57,6 +57,8 @@ public abstract class CloudAPI {
     public abstract CloudGroupProvider groupProvider();
 
     public abstract CloudServiceProvider serviceProvider();
+
+    public abstract CloudPlayerProvider playerProvider();
 
     public abstract PropertiesPool<CloudProperty<?>> globalProperties();
 

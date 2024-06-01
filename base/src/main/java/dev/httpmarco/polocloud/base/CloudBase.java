@@ -22,6 +22,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -34,6 +35,7 @@ import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
 import dev.httpmarco.polocloud.base.node.ExternalNode;
 import dev.httpmarco.polocloud.base.node.LocalNode;
+import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
 import dev.httpmarco.polocloud.base.templates.TemplatesService;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
@@ -56,6 +58,7 @@ public final class CloudBase extends CloudAPI {
     private final CloudServiceGroupProvider groupProvider;
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
+    private final CloudPlayerProvider playerProvider;
 
     private final CloudConfiguration cloudConfiguration;
     private final GlobalEventNode globalEventNode;
@@ -96,6 +99,7 @@ public final class CloudBase extends CloudAPI {
         this.groupProvider = new CloudServiceGroupProvider();
         this.templatesService = new TemplatesService();
         this.serviceProvider = new CloudServiceProviderImpl();
+        this.playerProvider = new CloudPlayerProviderImpl();
 
         logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
 
