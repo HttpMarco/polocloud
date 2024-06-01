@@ -114,17 +114,17 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
 
     @Override
     public List<CloudService> services(CloudGroup group) {
-        return services.stream().filter(it -> it.group().equals(group)).toList();
+        return this.services.stream().filter(it -> it.group().equals(group)).toList();
     }
 
     @Override
     public CloudService find(UUID id) {
-        return services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
+        return this.services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
     }
 
     @Override
     public CloudService service(String name) {
-        return services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null);
+        return this.services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null);
     }
 
     @Override
