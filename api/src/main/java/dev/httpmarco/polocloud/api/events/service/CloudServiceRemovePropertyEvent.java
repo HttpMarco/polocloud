@@ -18,15 +18,10 @@ package dev.httpmarco.polocloud.api.events.service;
 
 import dev.httpmarco.osgan.networking.codec.CodecBuffer;
 import dev.httpmarco.polocloud.api.services.CloudService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.experimental.Accessors;
 
-@Getter
 @Accessors(fluent = true)
-@AllArgsConstructor
-public final class CloudServiceRemovePropertyEvent implements ServiceEvent{
-    private final CloudService cloudService;
+public record CloudServiceRemovePropertyEvent(CloudService cloudService) implements ServiceEvent {
 
     @Override
     public void read(CodecBuffer buffer) {
