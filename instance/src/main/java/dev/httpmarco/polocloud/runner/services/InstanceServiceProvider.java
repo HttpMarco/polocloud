@@ -73,12 +73,12 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
 
     @Override
     public CloudService find(UUID id) {
-        return null;
+        return this.services().stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
     }
 
     @Override
     public CloudService service(String name) {
-        return null;
+        return this.services().stream().filter(it -> it.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     @Override
