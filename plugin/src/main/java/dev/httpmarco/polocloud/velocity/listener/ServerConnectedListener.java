@@ -24,7 +24,7 @@ import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class PlayerServerSwitchListener {
+public class ServerConnectedListener {
 
     @Subscribe
     public void onPlayerChooseInitialServer(ServerConnectedEvent event) {
