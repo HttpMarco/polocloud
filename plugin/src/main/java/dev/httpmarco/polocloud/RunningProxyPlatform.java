@@ -32,21 +32,21 @@ import java.util.function.Function;
 @Accessors(fluent = true)
 public class RunningProxyPlatform extends RunningPlatform {
 
-    public RunningProxyPlatform(Function<Void, Integer> onlinePlayers, Consumer<CloudService> register, Consumer<CloudService> unRegister) {
+    public RunningProxyPlatform(Function<Void, Integer> onlinePlayers, Consumer<CloudService> registerService, Consumer<CloudService> unregisterService) {
         super(onlinePlayers);
         var instance = CloudAPI.instance();
 
         for (var service : CloudAPI.instance().serviceProvider().filterService(ServiceFilter.SERVERS)) {
-            register.accept(service);
+            registerService.accept(service);
         }
 
         instance.globalEventNode().addListener(CloudServiceOnlineEvent.class, event -> {
             if (event.cloudService().group().platform().proxy() || event.cloudService().state() != ServiceState.ONLINE) {
                 return;
             }
-            register.accept(event.cloudService());
+            registerService.accept(event.cloudService());
         });
 
-        instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> unRegister.accept(event.cloudService()));
+        instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> unregisterService.accept(event.cloudService()));
     }
 }
