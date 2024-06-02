@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
@@ -69,23 +70,19 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
+        processBuilder.redirectError(new File(service.name()));
         processBuilder.environment().put("appendSearchClasspath", String.valueOf((platformService.find(service.group().platform().version()) instanceof BungeeCordPlatform)));
         processBuilder.environment().put("bootstrapFile", service.group().platform().version());
         processBuilder.environment().put("serviceId", service.id().toString());
 
-        if (cloudGroup.properties().has(GroupProperties.TEMPLATES)) {
-            var temp = CloudBase.instance().templatesService().templates(cloudGroup.properties().property(GroupProperties.TEMPLATES));
-            if (temp != null) {
-                temp.copy(service);
-            }
-        }
+        CloudBase.instance().templatesService().cloneTemplate(service);
 
         var pluginDirectory = service.runningFolder().resolve("plugins");
 
         Files.createDirectoryIfNotExists(pluginDirectory);
 
         // copy polocloud plugin
-        java.nio.file.Files.copy(Path.of("local/polocloud-plugin.jar"), pluginDirectory.resolve("polocloud-plugin.jar"));
+        java.nio.file.Files.copy(Path.of("local/polocloud-plugin.jar"), pluginDirectory.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
 
         service.state(ServiceState.STARTING);
         CloudAPI.instance().globalEventNode().call(new CloudServiceStartEvent(service));
@@ -109,11 +106,13 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             localCloudService.process(null);
         }
 
-        synchronized (this) {
-            FileUtils.deleteDirectory(localCloudService.runningFolder().toFile());
+        if (!service.group().properties().has(GroupProperties.STATIC)) {
+            synchronized (this) {
+                FileUtils.deleteDirectory(localCloudService.runningFolder().toFile());
+            }
+            java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
         }
 
-        java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
         CloudAPI.instance().logger().info("Server " + service.name() + " is stopped now.");
     }

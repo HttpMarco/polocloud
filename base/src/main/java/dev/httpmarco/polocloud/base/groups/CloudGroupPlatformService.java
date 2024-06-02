@@ -27,6 +27,7 @@ import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+
 import java.nio.file.Path;
 import java.util.*;
 
@@ -70,7 +71,10 @@ public class CloudGroupPlatformService {
         if (java.nio.file.Files.exists(cacheDirectory)) {
             FileUtils.copyDirectory(cacheDirectory.toFile(), cloudService.runningFolder().toFile());
         }
-        java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), cloudService.runningFolder().resolve(platformName + ".jar"));
+        var platformSource = cloudService.runningFolder().resolve(platformName + ".jar");
+        if (!java.nio.file.Files.exists(platformSource)) {
+            java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), platformSource);
+        }
 
         platform.prepare(cloudService);
 
