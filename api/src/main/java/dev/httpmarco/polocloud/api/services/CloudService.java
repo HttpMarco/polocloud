@@ -57,6 +57,8 @@ public interface CloudService extends Serializable {
 
     int maxPlayers();
 
+    int onlinePlayersCount();
+
     List<CloudPlayer> onlinePlayers();
 
     PropertiesPool<?> properties();

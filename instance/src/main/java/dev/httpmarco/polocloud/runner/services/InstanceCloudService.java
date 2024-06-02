@@ -73,6 +73,12 @@ public final class InstanceCloudService implements CloudService {
     }
 
     @Override
+    public int onlinePlayersCount() {
+        // todo
+        return 0;
+    }
+
+    @Override
     public List<CloudPlayer> onlinePlayers() {
         //todo
         return List.of();
