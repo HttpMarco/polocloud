@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.runner.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
@@ -72,9 +73,15 @@ public final class InstanceCloudService implements CloudService {
     }
 
     @Override
-    public int onlinePlayers() {
-        //todo
+    public int onlinePlayersCount() {
+        // todo
         return 0;
+    }
+
+    @Override
+    public List<CloudPlayer> onlinePlayers() {
+        //todo
+        return List.of();
     }
 
     @Override

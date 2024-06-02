@@ -98,8 +98,4 @@ public final class LocalCloudService extends CloudServiceImpl {
         return logs;
     }
 
-    @Override
-    public int onlinePlayers() {
-        return -1;
-    }
 }
