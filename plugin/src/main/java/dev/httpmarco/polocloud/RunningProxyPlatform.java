@@ -26,22 +26,24 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Getter
 @Accessors(fluent = true)
 public class RunningProxyPlatform extends RunningPlatform {
 
-    public RunningProxyPlatform(Function<Void, Integer> onlinePlayers, Consumer<CloudService> registerService, Consumer<CloudService> unregisterService) {
-        super(onlinePlayers);
+    public RunningProxyPlatform(Consumer<CloudService> registerService, Consumer<CloudService> unregisterService) {
         var instance = CloudAPI.instance();
 
-        for (var service : CloudAPI.instance().serviceProvider().filterService(ServiceFilter.SERVERS)) {
-            registerService.accept(service);
-        }
+        CloudAPI.instance().serviceProvider().filterServiceAsync(ServiceFilter.SERVERS).whenComplete((cloudServices, throwable) -> {
+            for (var service : cloudServices) {
+                if (service.state() == ServiceState.ONLINE) {
+                    registerService.accept(service);
+                }
+            }
+        });
 
         instance.globalEventNode().addListener(CloudServiceOnlineEvent.class, event -> {
-            if (event.cloudService().group().platform().proxy() || event.cloudService().state() != ServiceState.ONLINE) {
+            if (event.cloudService().group().platform().proxy()) {
                 return;
             }
             registerService.accept(event.cloudService());

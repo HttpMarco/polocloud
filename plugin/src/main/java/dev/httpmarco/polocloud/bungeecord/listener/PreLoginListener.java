@@ -16,7 +16,6 @@
 
 package dev.httpmarco.polocloud.bungeecord.listener;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -31,9 +30,5 @@ public class PreLoginListener implements Listener {
             event.setReason(TextComponent.fromLegacy("No fallback server available"));
             event.setCancelled(true);
         }
-
-        var connection = event.getConnection();
-        CloudAPI.instance().playerProvider().register(connection.getUniqueId(), connection.getName());
     }
-
 }

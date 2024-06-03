@@ -50,7 +50,8 @@ public class CloudInstance extends CloudAPI {
     @Getter
     private static CloudInstance instance;
 
-    private final CloudInstanceClient client;
+    private CloudInstanceClient client;
+
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
     private final CloudServiceProvider serviceProvider = new InstanceServiceProvider();
     private final CloudPlayerProvider playerProvider = new InstanceCloudPlayerProvider();
@@ -61,27 +62,35 @@ public class CloudInstance extends CloudAPI {
         instance = this;
 
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
+
         this.client = new CloudInstanceClient("127.0.0.1", 8192);
+
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
 
         this.globalEventNode = new InstanceGlobalEventNode();
 
-        try (final var jar = new JarFile(bootstrapPath.toFile())) {
+        final var thread = new Thread(() -> {
+            try (final var jar = new JarFile(bootstrapPath.toFile())) {
 
-            if (Boolean.parseBoolean(System.getenv("appendSearchClasspath"))) {
-                RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(jar);
+                if (Boolean.parseBoolean(System.getenv("appendSearchClasspath"))) {
+                    RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(jar);
+                }
+
+                final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
+                try {
+                    final var main = Class.forName(mainClass, true, RunnerBootstrap.LOADER).getMethod("main", String[].class);
+
+                    main.invoke(null, (Object) Arrays.copyOfRange(args, 1, args.length));
+                } catch (Exception e) {
+                    e.printStackTrace(System.err);
+                }
+            }catch (Exception e) {
+                e.printStackTrace();
             }
-
-            final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
-            try {
-                final var main = Class.forName(mainClass, true, RunnerBootstrap.LOADER).getMethod("main", String[].class);
-
-                main.invoke(null, (Object) Arrays.copyOfRange(args, 1, args.length));
-            } catch (Exception e) {
-                e.printStackTrace(System.err);
-            }
-        }
+        });
+        thread.setContextClassLoader(RunnerBootstrap.LOADER);
+        thread.start();
     }
 
     @Override

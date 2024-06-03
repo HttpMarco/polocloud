@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud;
+package dev.httpmarco.polocloud.bungeecord.listener;
 
-import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
-import dev.httpmarco.polocloud.api.services.ServiceState;
-import dev.httpmarco.polocloud.runner.CloudInstance;
+import dev.httpmarco.polocloud.api.CloudAPI;
+import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
-import java.util.function.Function;
+public class PlayerLoginListener implements Listener {
 
-public class RunningPlatform {
-
-    public void changeToOnline() {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceStateChangePacket(CloudInstance.SERVICE_ID, ServiceState.ONLINE));
+    @EventHandler
+    public void handleLogin(LoginEvent event) {
+        var connection = event.getConnection();
+        CloudAPI.instance().playerProvider().register(connection.getUniqueId(), connection.getName());
     }
 }
