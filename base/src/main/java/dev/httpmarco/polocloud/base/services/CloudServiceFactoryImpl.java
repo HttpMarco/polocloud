@@ -76,6 +76,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         processBuilder.environment().put("appendSearchClasspath", String.valueOf((platformService.find(service.group().platform().version()) instanceof BungeeCordPlatform)));
         processBuilder.environment().put("bootstrapFile", service.group().platform().version());
         processBuilder.environment().put("serviceId", service.id().toString());
+        processBuilder.environment().put("proxySecret", CloudGroupPlatformService.PROXY_SECRET);
 
         CloudBase.instance().templatesService().cloneTemplate(service);
 
