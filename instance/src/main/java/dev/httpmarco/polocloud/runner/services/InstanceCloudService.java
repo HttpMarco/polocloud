@@ -49,12 +49,6 @@ public final class InstanceCloudService implements CloudService {
     }
 
     @Override
-    public boolean isFull() {
-        //todo
-        return false;
-    }
-
-    @Override
     public int currentMemory() {
         //todo
         return 0;

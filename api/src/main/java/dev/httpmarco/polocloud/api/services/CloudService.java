@@ -49,7 +49,9 @@ public interface CloudService extends Serializable {
         CloudAPI.instance().serviceProvider().factory().stop(this);
     }
 
-    boolean isFull();
+    default boolean isFull() {
+        return onlinePlayersCount() >= maxPlayers();
+    }
 
     int currentMemory();
 
