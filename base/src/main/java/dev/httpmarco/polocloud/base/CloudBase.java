@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base;
 
 import dev.httpmarco.osgan.files.json.JsonDocument;
-import dev.httpmarco.osgan.networking.server.NettyServer;
+import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.node.NodeService;
@@ -84,7 +84,7 @@ public final class CloudBase extends CloudAPI {
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
-        this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.clusterId(), cloudConfiguration.clusterName(), "127.0.0.1", 8879), cloudConfiguration.externalNodes());
+        this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.clusterId(), cloudConfiguration.clusterName(), "127.0.0.1", 8192), cloudConfiguration.externalNodes());
         // print cloud header information
 
         terminal.spacer();
@@ -132,7 +132,7 @@ public final class CloudBase extends CloudAPI {
         return new JsonDocument<>(new CloudConfiguration(UUID.randomUUID(), "node-1", 10000, new ExternalNode[0]), Path.of("config.json"), new PropertiesPoolSerializer()).value();
     }
 
-    public NettyServer transmitter() {
+    public CommunicationServer transmitter() {
         return ((LocalNode) this.nodeService.localNode()).server();
     }
 

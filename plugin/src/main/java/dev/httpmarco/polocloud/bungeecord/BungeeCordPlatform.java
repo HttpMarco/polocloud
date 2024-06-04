@@ -18,10 +18,7 @@ package dev.httpmarco.polocloud.bungeecord;
 
 import dev.httpmarco.polocloud.RunningPlatform;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
-import dev.httpmarco.polocloud.bungeecord.listener.PlayerDisconnectListener;
-import dev.httpmarco.polocloud.bungeecord.listener.PreLoginListener;
-import dev.httpmarco.polocloud.bungeecord.listener.ServerConnectListener;
-import dev.httpmarco.polocloud.bungeecord.listener.ServerConnectedListener;
+import dev.httpmarco.polocloud.bungeecord.listener.*;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -29,10 +26,7 @@ import java.net.InetSocketAddress;
 
 public final class BungeeCordPlatform extends Plugin {
 
-    private final RunningPlatform runningPlatform = new RunningProxyPlatform(
-            it -> ProxyServer.getInstance().getOnlineCount(),
-            it -> registerServer(it.name(), it.hostname(), it.port()),
-            it -> ProxyServer.getInstance().getServers().remove(it.name()));
+    private RunningPlatform runningPlatform;
 
     @Override
     public void onEnable() {
@@ -44,7 +38,13 @@ public final class BungeeCordPlatform extends Plugin {
         pluginManager.registerListener(this, new PlayerDisconnectListener());
         pluginManager.registerListener(this, new PreLoginListener());
         pluginManager.registerListener(this, new ServerConnectedListener());
-        pluginManager.registerListener(this, new ServerConnectListener());
+        pluginManager.registerListener(this, new PlayerLoginListener());
+
+        instance.setReconnectHandler(new BungeeCordReconnectHandler());
+
+        this.runningPlatform = new RunningProxyPlatform(
+                it -> registerServer(it.name(), it.hostname(), it.port()),
+                it -> ProxyServer.getInstance().getServers().remove(it.name()));
 
         this.runningPlatform.changeToOnline();
     }

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.group;
+package dev.httpmarco.polocloud.bungeecord.listener;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.CloudAPI;
+import net.md_5.bungee.api.event.LoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
-public record CloudGroupRemoveEvent(CloudGroup cloudGroup) implements GroupEvent {
+public class PlayerLoginListener implements Listener {
 
-    @Override
-    public void read(PacketBuffer buffer) {
-
-    }
-
-    @Override
-    public void write(PacketBuffer buffer) {
-
+    @EventHandler
+    public void handleLogin(LoginEvent event) {
+        var connection = event.getConnection();
+        CloudAPI.instance().playerProvider().register(connection.getUniqueId(), connection.getName());
     }
 }

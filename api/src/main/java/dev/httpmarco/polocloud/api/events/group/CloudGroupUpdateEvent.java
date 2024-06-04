@@ -16,18 +16,18 @@
 
 package dev.httpmarco.polocloud.api.events.group;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 
 public record CloudGroupUpdateEvent(CloudGroup cloudGroup) implements GroupEvent {
 
     @Override
-    public void read(CodecBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(CodecBuffer buffer) {
+    public void write(PacketBuffer buffer) {
 
     }
 }

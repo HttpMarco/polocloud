@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.api.player;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,5 +36,5 @@ public interface CloudPlayerProvider {
 
     CompletableFuture<CloudPlayer> findAsync(UUID id);
 
-    CloudPlayer fromPacket(CodecBuffer buffer);
+    CloudPlayer fromPacket(PacketBuffer packetBuffer);
 }

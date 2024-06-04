@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.api.events.service;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.experimental.Accessors;
 
@@ -24,12 +24,12 @@ import lombok.experimental.Accessors;
 public record CloudServiceUpdatePropertyEvent(CloudService cloudService) implements ServiceEvent {
 
     @Override
-    public void read(CodecBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(CodecBuffer buffer) {
+    public void write(PacketBuffer buffer) {
 
     }
 

@@ -14,37 +14,35 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.bungeecord.listener;
+package dev.httpmarco.polocloud.bungeecord;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.ReconnectHandler;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public class ServerConnectListener implements Listener {
+public final class BungeeCordReconnectHandler implements ReconnectHandler {
 
-    @EventHandler
-    public void handleServerConnect(ServerConnectEvent event) {
+    @Override
+    public ServerInfo getServer(ProxiedPlayer proxiedPlayer) {
         var service = CloudAPI.instance().serviceProvider().filterService(ServiceFilter.LOWEST_FALLBACK);
 
         if (service.isEmpty()) {
-            event.getPlayer().disconnect(TextComponent.fromLegacy("No fallback server available"));
-            event.setCancelled(true);
-            return;
+            proxiedPlayer.disconnect(TextComponent.fromLegacy("No fallback found"));
+            return null;
         }
-
-        var info = ProxyServer.getInstance().getServerInfo(service.get(0).name());
-
-        if (info == null) {
-            event.getPlayer().disconnect(TextComponent.fromLegacy("No fallback server available"));
-            event.setCancelled(true);
-            return;
-        }
-        System.out.println("found fallback: " + service.get(0).name());
-        event.setTarget(info);
+        return ProxyServer.getInstance().getServerInfo(service.get(0).name());
     }
 
+    @Override
+    public void setServer(ProxiedPlayer proxiedPlayer) {}
+
+    @Override
+    public void save() {}
+
+    @Override
+    public void close() {}
 }

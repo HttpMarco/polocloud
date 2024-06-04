@@ -16,15 +16,16 @@
 
 package dev.httpmarco.polocloud.api.packets;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 
 public final class CloudComponentPacketHelper {
 
-    public static void writeService(CloudService cloudService, CodecBuffer codecBuffer) {
+    public static void writeService(CloudService cloudService, PacketBuffer codecBuffer) {
         writeGroup(cloudService.group(), codecBuffer);
 
         codecBuffer.writeInt(cloudService.orderedId());
@@ -35,34 +36,71 @@ public final class CloudComponentPacketHelper {
         //todo properties
     }
 
-    public static CloudService readService(CodecBuffer codecBuffer) {
+    public static CloudService readService(PacketBuffer codecBuffer) {
         //todo properties
         return CloudAPI.instance().serviceProvider().fromPacket(readGroup(codecBuffer), codecBuffer);
     }
 
-    public static void writeGroup(CloudGroup group, CodecBuffer codecBuffer) {
+    public static void writeGroup(CloudGroup group, PacketBuffer codecBuffer) {
         codecBuffer.writeString(group.name());
         codecBuffer.writeString(group.platform().version());
         codecBuffer.writeBoolean(group.platform().proxy());
         codecBuffer.writeInt(group.minOnlineServices());
         codecBuffer.writeInt(group.memory());
 
-        //todo properties
+        writeProperty(group.properties(), codecBuffer);
     }
 
-    public static CloudGroup readGroup(CodecBuffer codecBuffer) {
-        //todo properties
-        return CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
+    private static void writeProperty(PropertiesPool<?> properties, PacketBuffer codecBuffer) {
+        codecBuffer.writeInt(properties.properties().size());
+        properties.properties().forEach((property, o) -> {
+            codecBuffer.writeString(property.id());
+
+            if (o instanceof Integer intValue) {
+                codecBuffer.writeInt(intValue);
+            } else if (o instanceof String stringValue) {
+                codecBuffer.writeString(stringValue);
+            } else if (o instanceof Boolean booleanValue) {
+                codecBuffer.writeBoolean(booleanValue);
+            }
+        });
     }
 
-    public static void writePlayer(CloudPlayer cloudPlayer, CodecBuffer codecBuffer) {
+    public static PropertiesPool<?> readProperties(PacketBuffer buffer) {
+        var properties = new PropertiesPool<>();
+        var elementSize = buffer.readInt();
+
+        for (int i = 0; i < elementSize; i++) {
+
+            var name = buffer.readString();
+            var property = PropertiesPool.property(name);
+
+            if (property.type().equals(Integer.class)) {
+                properties.putRaw(property, buffer.readInt());
+            } else if (property.type().equals(String.class)) {
+                properties.putRaw(property, buffer.readString());
+            } else if (property.type().equals(Boolean.class)) {
+                properties.putRaw(property, buffer.readBoolean());
+            }
+        }
+
+        return properties;
+    }
+
+    public static CloudGroup readGroup(PacketBuffer codecBuffer) {
+        var group = CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
+        group.properties().appendAll(readProperties(codecBuffer));
+        return group;
+    }
+
+    public static void writePlayer(CloudPlayer cloudPlayer, PacketBuffer codecBuffer) {
         codecBuffer.writeUniqueId(cloudPlayer.uniqueId());
         codecBuffer.writeString(cloudPlayer.name());
         codecBuffer.writeString(cloudPlayer.currentServer());
         codecBuffer.writeString(cloudPlayer.currentProxy());
     }
 
-    public static CloudPlayer readPlayer(CodecBuffer codecBuffer) {
+    public static CloudPlayer readPlayer(PacketBuffer codecBuffer) {
         return CloudAPI.instance().playerProvider().fromPacket(codecBuffer);
     }
 }

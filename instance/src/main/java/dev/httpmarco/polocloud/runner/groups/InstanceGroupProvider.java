@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.runner.groups;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
@@ -61,7 +61,7 @@ public final class InstanceGroupProvider implements CloudGroupProvider {
     }
 
     @Override
-    public CloudGroup fromPacket(CodecBuffer buffer) {
+    public CloudGroup fromPacket(PacketBuffer buffer) {
         var name = buffer.readString();
         var platform = buffer.readString();
         var platformProxy = buffer.readBoolean();

@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.osgan.files.annotations.ConfigExclude;
-import dev.httpmarco.osgan.networking.server.NettyServer;
+import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.AbstractNode;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
@@ -32,16 +32,15 @@ import java.util.UUID;
 public final class LocalNode extends AbstractNode implements dev.httpmarco.polocloud.api.node.LocalNode {
 
     @ConfigExclude
-    private NettyServer server;
+    private CommunicationServer server;
 
     public LocalNode(UUID id, String name, String hostname, int port) {
         super(id, name, hostname, port);
     }
 
     public void initialize() {
-        server = NettyServer.builder().onInactive(channelTransmit -> {
-            //todo
-        }).build();
+        server = new CommunicationServer(hostname(), port());
+        server.initialize();
 
         server.listen(CloudServiceRegisterPacket.class, (channelTransmit, cloudServiceRegisterPacket) -> {
             var service = CloudAPI.instance().serviceProvider().find(cloudServiceRegisterPacket.uuid());

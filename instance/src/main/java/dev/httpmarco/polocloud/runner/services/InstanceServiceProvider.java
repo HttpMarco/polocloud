@@ -17,7 +17,8 @@
 package dev.httpmarco.polocloud.runner.services;
 
 import dev.httpmarco.osgan.files.json.JsonObjectSerializer;
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
@@ -58,11 +59,7 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     @Override
     public CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter) {
         var future = new FutureResult<List<CloudService>>();
-        CloudInstance.instance().client().transmitter()
-                .request("services-filtering",
-                        new JsonObjectSerializer().append("filter", filter),
-                        CloudAllServicesPacket.class, it -> future.complete(it.services()));
-
+        CloudInstance.instance().client().transmitter().request("services-filtering", new CommunicationProperty().set("filter", filter), CloudAllServicesPacket.class, it -> future.complete(it.services()));
         return future.toCompletableFuture();
     }
 
@@ -82,7 +79,7 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService fromPacket(CloudGroup parent, CodecBuffer buffer) {
+    public CloudService fromPacket(CloudGroup parent, PacketBuffer buffer) {
         var orderedId = buffer.readInt();
         var id = buffer.readUniqueId();
         var port = buffer.readInt();

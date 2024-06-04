@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.api.events.service;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.packets.CloudComponentPacketHelper;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.AllArgsConstructor;
@@ -31,12 +31,12 @@ public final class CloudServiceStartEvent implements ServiceEvent{
     private CloudService cloudService;
 
     @Override
-    public void read(CodecBuffer buffer) {
+    public void read(PacketBuffer buffer) {
         this.cloudService = CloudComponentPacketHelper.readService(buffer);
     }
 
     @Override
-    public void write(CodecBuffer buffer) {
+    public void write(PacketBuffer buffer) {
         CloudComponentPacketHelper.writeService(cloudService, buffer);
     }
 }

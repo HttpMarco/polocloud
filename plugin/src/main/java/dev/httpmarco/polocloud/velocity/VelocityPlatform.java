@@ -38,7 +38,7 @@ public final class VelocityPlatform extends RunningProxyPlatform {
 
     @Inject
     public VelocityPlatform(ProxyServer server) {
-        super(unused -> server.getPlayerCount(), it -> server.registerServer(new ServerInfo(it.name(), new InetSocketAddress(it.hostname(), it.port()))),
+        super(it -> server.registerServer(new ServerInfo(it.name(), new InetSocketAddress(it.hostname(), it.port()))),
                 it -> server.getServer(it.name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo())));
         this.server = server;
     }
