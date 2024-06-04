@@ -20,17 +20,22 @@ import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
 //todo fix duplicated code
+@Getter
 @Accessors(fluent = true)
-public record InstanceGroup(String name, PlatformVersion platform, int memory, int minOnlineServices) implements CloudGroup {
+@AllArgsConstructor
+public class InstanceGroup implements CloudGroup {
 
-    @Override
-    public PropertiesPool<GroupProperties<?>> properties() {
-        //todo
-        return null;
-    }
+    private final String name;
+    private final PlatformVersion platform;
+    private final int memory;
+    private final int minOnlineServices;
+    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
+
 
     @Override
     public int onlineAmount() {

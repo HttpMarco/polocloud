@@ -97,7 +97,12 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
 
     @Override
     public CloudGroup fromPacket(PacketBuffer buffer) {
-        //todo
-        return null;
+        var name = buffer.readString();
+        var platform = buffer.readString();
+        var platformProxy = buffer.readBoolean();
+        var minOnlineServices = buffer.readInt();
+        var memory = buffer.readInt();
+
+        return new CloudGroupImpl(name, new PlatformVersion(platform, platformProxy), minOnlineServices, memory);
     }
 }

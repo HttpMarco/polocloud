@@ -48,7 +48,7 @@ public final class CloudComponentPacketHelper {
         codecBuffer.writeInt(group.minOnlineServices());
         codecBuffer.writeInt(group.memory());
 
-        writeProperty(group.properties(), codecBuffer);
+        writeProperty(new PropertiesPool<>(), codecBuffer);
     }
 
     private static void writeProperty(PropertiesPool<?> properties, PacketBuffer codecBuffer) {
@@ -89,6 +89,7 @@ public final class CloudComponentPacketHelper {
 
     public static CloudGroup readGroup(PacketBuffer codecBuffer) {
         var group = CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
+
         group.properties().appendAll(readProperties(codecBuffer));
         return group;
     }
