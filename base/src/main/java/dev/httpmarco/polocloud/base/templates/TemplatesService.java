@@ -25,6 +25,7 @@ import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+
 import java.nio.file.Path;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public final class TemplatesService {
 
     public void cloneTemplate(LocalCloudService service) {
         if (service.group().properties().has(GroupProperties.TEMPLATES)) {
-            var temp = CloudBase.instance().templatesService().templates(service.group().properties().property(GroupProperties.TEMPLATES));
+            var temp = CloudBase.instance().templatesService().template(service.group().properties().property(GroupProperties.TEMPLATES));
             if (temp != null) {
                 temp.copy(service);
             }
@@ -79,12 +80,28 @@ public final class TemplatesService {
         }
     }
 
+    public boolean deleteTemplate(String name) {
+        if (!isTemplate(name)) {
+            return false;
+        }
+
+        for (var file : TEMPLATES.toFile().listFiles()) {
+            if (!file.getName().equalsIgnoreCase(name)) {
+                return false;
+            }
+            file.delete();
+            this.templates().remove(name);
+            this.document.value().templates().remove(name);
+            this.document.updateDocument();
+        }
+        return true;
+    }
+
     public List<Template> templates() {
         return this.document.value().templates();
     }
 
-    public Template templates(String name) {
+    public Template template(String name) {
         return templates().stream().filter(it -> it.id().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
-
 }

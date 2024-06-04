@@ -47,7 +47,7 @@ public final class Template {
         }
 
         for (var templateName : this.mergedTemplates) {
-            var template = CloudBase.instance().templatesService().templates(templateName);
+            var template = CloudBase.instance().templatesService().template(templateName);
 
             if (template != null) {
                 template.copy(localCloudService);
