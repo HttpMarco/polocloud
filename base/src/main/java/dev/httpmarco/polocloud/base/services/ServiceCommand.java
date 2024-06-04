@@ -26,6 +26,8 @@ import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.nio.file.Path;
 
 @Command(command = "service", aliases = {"services", "ser"}, description = "Manage all your online services")
@@ -125,9 +127,16 @@ public final class ServiceCommand {
         var runningFolder = ((LocalCloudService) service).runningFolder();
         var templateFolder = Path.of("templates", template);
 
+        //add a filter so the session.lock file wont be copied as well otherwise it will throw an error
+        var filter = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return !file.getName().equalsIgnoreCase("session.lock");
+            }
+        };
 
         Files.createDirectoryIfNotExists(templateFolder);
-        FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile());
+        FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile(), filter);
 
         logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");
     }
