@@ -23,7 +23,6 @@ import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +31,6 @@ public final class CommandCompleter implements Completer {
     @Override
     @SneakyThrows
     public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
-
         var context = line.line().split(" ", -1);
 
         if (context.length == 0) {

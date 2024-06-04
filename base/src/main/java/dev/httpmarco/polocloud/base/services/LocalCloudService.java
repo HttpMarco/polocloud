@@ -16,9 +16,11 @@
 
 package dev.httpmarco.polocloud.base.services;
 
+import dev.httpmarco.osgan.files.Files;
+import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.osgan.networking.ChannelTransmit;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,7 +50,14 @@ public final class LocalCloudService extends CloudServiceImpl {
     public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port, ServiceState state) {
         super(group, orderedId, id, port, group.platform().proxy() ? "0.0.0.0" : CloudAPI.instance().nodeService().localNode().hostname(), state);
 
-        this.runningFolder = Path.of("running/" + name() + "-" + id());
+        if (group.properties().has(GroupProperties.STATIC)) {
+            this.runningFolder = Path.of("static/" + name());
+        } else {
+            this.runningFolder = Path.of("running/" + name() + "-" + id());
+        }
+
+
+        Files.createDirectoryIfNotExists(runningFolder.getParent());
         this.subscribed = false;
     }
 
@@ -98,8 +107,4 @@ public final class LocalCloudService extends CloudServiceImpl {
         return logs;
     }
 
-    @Override
-    public int onlinePlayers() {
-        return -1;
-    }
 }

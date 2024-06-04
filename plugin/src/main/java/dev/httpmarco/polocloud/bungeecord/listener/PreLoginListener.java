@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.group;
+package dev.httpmarco.polocloud.bungeecord.listener;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
-public record CloudGroupRemoveEvent(CloudGroup cloudGroup) implements GroupEvent {
+public class PreLoginListener implements Listener {
 
-    @Override
-    public void read(PacketBuffer buffer) {
-
-    }
-
-    @Override
-    public void write(PacketBuffer buffer) {
-
+    @EventHandler
+    public void handlePreLogin(PreLoginEvent event) {
+        if (ProxyServer.getInstance().getServers().isEmpty()) {
+            event.setReason(TextComponent.fromLegacy("No fallback server available"));
+            event.setCancelled(true);
+        }
     }
 }

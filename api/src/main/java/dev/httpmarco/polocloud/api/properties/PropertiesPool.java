@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Accessors(fluent = true)
@@ -37,8 +38,16 @@ public final class PropertiesPool<T extends Property<?>> implements Serializable
         return properties.containsKey(key);
     }
 
+    public void appendAll(PropertiesPool<?> propertiesPool) {
+        this.properties.putAll((Map<? extends T, ?>) propertiesPool.properties);
+    }
+
     @SuppressWarnings("unchecked")
     public <R, P extends Property<R>> void put(P property, R value) {
+        this.properties.put((T) property, value);
+    }
+
+    public void putRaw(Property<?> property, Object value) {
         this.properties.put((T) property, value);
     }
 
@@ -49,5 +58,9 @@ public final class PropertiesPool<T extends Property<?>> implements Serializable
     @SuppressWarnings("unchecked")
     public <P> P property(Property<P> property) {
         return (P) this.properties.get(property);
+    }
+
+    public static Property<?> property(String id) {
+        return PROPERTY_LIST.stream().filter(it -> it.id().equals(id)).findFirst().orElseThrow();
     }
 }

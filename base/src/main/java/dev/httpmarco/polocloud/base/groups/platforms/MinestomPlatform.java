@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.group;
+package dev.httpmarco.polocloud.base.groups.platforms;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.base.services.LocalCloudService;
 
-public record CloudGroupRemoveEvent(CloudGroup cloudGroup) implements GroupEvent {
+public final class MinestomPlatform extends Platform {
 
-    @Override
-    public void read(PacketBuffer buffer) {
+    public MinestomPlatform() {
+        super(false);
 
+        possibleVersions().add(new PlatformVersion("minestom-custom", false));
     }
 
     @Override
-    public void write(PacketBuffer buffer) {
+    public void download(String version) {
+        // nothing here
+    }
+
+    @Override
+    public void prepare(LocalCloudService localCloudService) {
 
     }
 }

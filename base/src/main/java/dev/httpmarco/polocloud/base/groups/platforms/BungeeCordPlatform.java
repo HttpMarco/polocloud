@@ -24,7 +24,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class BungeeCordPlatform extends Platform {
+public final class BungeeCordPlatform extends Platform {
 
     private static final String LATEST_BUNGEECORD = "https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar";
 

@@ -28,19 +28,14 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class InstanceGroup implements CloudGroup {
+public class InstanceGroup implements CloudGroup {
 
     private final String name;
     private final PlatformVersion platform;
     private final int memory;
     private final int minOnlineServices;
+    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
 
-
-    @Override
-    public PropertiesPool<GroupProperties<?>> properties() {
-        //todo
-        return null;
-    }
 
     @Override
     public int onlineAmount() {

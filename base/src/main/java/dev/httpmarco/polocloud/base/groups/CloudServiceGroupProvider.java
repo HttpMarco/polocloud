@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.groups;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
@@ -64,13 +64,11 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);
 
-
         return true;
     }
 
     @Override
     public boolean deleteGroup(String name) {
-
         if (!isGroup(name)) {
             return false;
         }
@@ -98,8 +96,13 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     }
 
     @Override
-    public CloudGroup fromPacket(CodecBuffer buffer) {
-        //todo
-        return null;
+    public CloudGroup fromPacket(PacketBuffer buffer) {
+        var name = buffer.readString();
+        var platform = buffer.readString();
+        var platformProxy = buffer.readBoolean();
+        var minOnlineServices = buffer.readInt();
+        var memory = buffer.readInt();
+
+        return new CloudGroupImpl(name, new PlatformVersion(platform, platformProxy), minOnlineServices, memory);
     }
 }

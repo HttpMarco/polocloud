@@ -19,13 +19,13 @@ package dev.httpmarco.polocloud.base.terminal.commands;
 import dev.httpmarco.polocloud.base.groups.GroupCommand;
 import dev.httpmarco.polocloud.base.node.NodeCommand;
 import dev.httpmarco.polocloud.base.services.ServiceCommand;
+import dev.httpmarco.polocloud.base.templates.TemplateCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.defaults.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Accessors(fluent = true)
@@ -43,6 +43,7 @@ public final class CommandService {
         this.registerCommand(new ClearCommand());
         this.registerCommand(new HelpCommand());
         this.registerCommand(new ShutdownCommand());
+        this.registerCommand(new TemplateCommand());
     }
 
     private void registerCommand(Object command) {

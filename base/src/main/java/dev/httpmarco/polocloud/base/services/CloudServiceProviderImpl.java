@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -49,18 +50,20 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
 
         // send all services back to request
         var transmitter = CloudBase.instance().transmitter();
-        transmitter.registerResponder("services-all", (channelTransmit, properties) -> new CloudAllServicesPacket(services));
+        transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
 
-        transmitter.registerResponder("services-filtering", (channelTransmit, properties) -> switch (properties.readObject("filter", ServiceFilter.class)) {
+        transmitter.responder("services-filtering", property -> switch (property.getEnum("filter", ServiceFilter.class)) {
             case EMPTY_SERVICES -> null; //todo
             case PLAYERS_PRESENT_SERVERS -> null; //todo
             case FULL_SERVICES -> null; //todo
             case SAME_NODE_SERVICES -> null; //todo
-            case FALLBACKS -> null; //todo
+            case FALLBACKS ->
+                    new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).toList()); //todo
             case PROXIES -> new CloudAllServicesPacket(services.stream().filter(this::isProxy).toList());
             case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
             // todo ordering with players
-            case LOWEST_FALLBACK -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).toList());
+            case LOWEST_FALLBACK ->
+                    new CloudAllServicesPacket(List.of(Objects.requireNonNull(services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).findFirst().orElse(null))));
         });
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
@@ -127,7 +130,7 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService fromPacket(CloudGroup parent, CodecBuffer buffer) {
+    public CloudService fromPacket(CloudGroup parent, PacketBuffer buffer) {
         //todo
         return null;
     }

@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.player;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.packets.player.CloudAllPlayersPacket;
@@ -40,12 +40,9 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
 
     public CloudPlayerProviderImpl() {
         var transmitter = CloudBase.instance().transmitter();
-        transmitter.registerResponder("players-all", ((channelTransmit, properties) -> new CloudAllPlayersPacket(this.players)));
 
-        transmitter.registerResponder("player-get", ((channelTransmit, properties) -> {
-            UUID uniqueId = UUID.fromString(properties.readString("uniqueId"));
-            return new CloudPlayerPacket(this.find(uniqueId));
-        }));
+        transmitter.responder("players-all", property -> new CloudAllPlayersPacket(this.players));
+        transmitter.responder("player-get", properties -> new CloudPlayerPacket(this.find(UUID.fromString(properties.getString("uniqueId")))));
 
         transmitter.listen(CloudPlayerRegisterPacket.class, (channelTransmit, packet) -> {
             this.register(packet.id(), packet.name());
@@ -90,7 +87,7 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
     }
 
     @Override
-    public CloudPlayer fromPacket(CodecBuffer buffer) {
+    public CloudPlayer fromPacket(PacketBuffer buffer) {
         var uuid = buffer.readUniqueId();
         var player = this.find(uuid);
         if (player != null) return player;

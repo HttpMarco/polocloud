@@ -17,7 +17,8 @@
 package dev.httpmarco.polocloud.runner.player;
 
 import dev.httpmarco.osgan.files.json.JsonObjectSerializer;
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.packets.player.CloudAllPlayersPacket;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerPacket;
@@ -67,12 +68,12 @@ public final class InstanceCloudPlayerProvider implements CloudPlayerProvider {
     @Override
     public CompletableFuture<CloudPlayer> findAsync(UUID id) {
         var future = new FutureResult<CloudPlayer>();
-        CloudInstance.instance().client().transmitter().request("player-get", new JsonObjectSerializer().append("uniqueId", id.toString()), CloudPlayerPacket.class, it -> future.complete(it.cloudPlayer()));
+        CloudInstance.instance().client().transmitter().request("player-get", new CommunicationProperty().set("uniqueId", id), CloudPlayerPacket.class, it -> future.complete(it.cloudPlayer()));
         return future.toCompletableFuture();
     }
 
     @Override
-    public CloudPlayer fromPacket(CodecBuffer buffer) {
+    public CloudPlayer fromPacket(PacketBuffer buffer) {
         var uniqueId = buffer.readUniqueId();
         var name = buffer.readString();
         var currentServer = buffer.readString();

@@ -26,27 +26,29 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @Getter
 @Accessors(fluent = true)
 public class RunningProxyPlatform extends RunningPlatform {
 
-    public RunningProxyPlatform(Function<Void, Integer> onlinePlayers, Consumer<CloudService> register, Consumer<CloudService> unRegister) {
-        super(onlinePlayers);
+    public RunningProxyPlatform(Consumer<CloudService> registerService, Consumer<CloudService> unregisterService) {
         var instance = CloudAPI.instance();
 
-        for (var service : CloudAPI.instance().serviceProvider().filterService(ServiceFilter.SERVERS)) {
-            register.accept(service);
-        }
-
-        instance.globalEventNode().addListener(CloudServiceOnlineEvent.class, event -> {
-            if (event.cloudService().group().platform().proxy() || event.cloudService().state() != ServiceState.ONLINE) {
-                return;
+        CloudAPI.instance().serviceProvider().filterServiceAsync(ServiceFilter.SERVERS).whenComplete((cloudServices, throwable) -> {
+            for (var service : cloudServices) {
+                if (service.state() == ServiceState.ONLINE) {
+                    registerService.accept(service);
+                }
             }
-            register.accept(event.cloudService());
         });
 
-        instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> unRegister.accept(event.cloudService()));
+        instance.globalEventNode().addListener(CloudServiceOnlineEvent.class, event -> {
+            if (event.cloudService().group().platform().proxy()) {
+                return;
+            }
+            registerService.accept(event.cloudService());
+        });
+
+        instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> unregisterService.accept(event.cloudService()));
     }
 }

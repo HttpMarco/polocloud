@@ -16,14 +16,64 @@
 
 package dev.httpmarco.polocloud.base.templates;
 
+import dev.httpmarco.polocloud.api.logging.Logger;
+import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
+import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
+import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 
-@Command(command = "templates", description = "Manage or merge templates")
+import java.io.File;
+
+@Command(command = "template", aliases = {"templates",}, description = "Manage or merge templates")
 public final class TemplateCommand {
+
+    private final Logger logger = CloudBase.instance().logger();
 
     @DefaultCommand
     public void handle() {
+        logger.info("&3template delete &2<&1name&2> &2- &1Delete a existing template&2.");
+        logger.info("&3template list &2- &1List all available templates&2.");
+        logger.info("&3template copy &2<&1source&2> &2<&1target&2> &2- &1Copy a existing template to another&2.");
+    }
 
+    @SubCommand(args = {"delete", "<name>"})
+    public void handleDelete(String name) {
+        if (CloudBase.instance().templatesService().deleteTemplate(name)) {
+            logger.success("The template &2'&4" + name + "&2' &1has been deleted successfully");
+        } else {
+            logger.info("The template &2'&4" + name + "&2' &1does not exists!");
+        }
+    }
+
+    @SneakyThrows
+    @SubCommand(args = {"copy", "<from>", "<to>"})
+    public void handleCopy(String from, String to) {
+        var templatesFolder = TemplatesService.TEMPLATES.toFile();
+        var fromTemplate = new File(templatesFolder, from);
+        var toTemplate = new File(templatesFolder, to);
+
+        if (!CloudBase.instance().templatesService().isTemplate(from)) {
+            logger.info("The template &2'&4" + from + "&2' &1 does not exists!");
+            return;
+        }
+
+        if (!CloudBase.instance().templatesService().isTemplate(to)) {
+            CloudBase.instance().templatesService().createTemplates(to);
+        }
+
+        FileUtils.copyDirectory(fromTemplate, toTemplate);
+        logger.info("The template &2'&4" + from + "&2' &1has been successfully copied to &2'&4" + to + "&2'");
+    }
+
+    @SubCommand(args = {"list"})
+    public void handleList() {
+        if (CloudBase.instance().templatesService().templates() == null) {
+            logger.info("No templates were found");
+        }
+        logger.info("Following templates were found&2:");
+        CloudBase.instance().templatesService().templates().forEach(template -> logger.info("&2- &4" + template.id()));
     }
 }
+

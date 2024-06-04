@@ -16,17 +16,17 @@
 
 package dev.httpmarco.polocloud.api.events.property;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 
 public final class GlobalPropertyRemoveEvent implements PropertyEvent{
 
     @Override
-    public void read(CodecBuffer buffer) {
+    public void read(PacketBuffer buffer) {
 
     }
 
     @Override
-    public void write(CodecBuffer buffer) {
+    public void write(PacketBuffer buffer) {
 
     }
     //todo: Add changed property

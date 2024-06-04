@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
@@ -53,12 +54,6 @@ public class CloudServiceImpl implements CloudService {
     }
 
     @Override
-    public boolean isFull() {
-        // todo
-        return false;
-    }
-
-    @Override
     public int currentMemory() {
         // todo
         return 0;
@@ -77,9 +72,15 @@ public class CloudServiceImpl implements CloudService {
     }
 
     @Override
-    public int onlinePlayers() {
-        // todo with external nodes, local nodes method is overrited
+    public int onlinePlayersCount() {
+        // todo
         return 0;
+    }
+
+    @Override
+    public List<CloudPlayer> onlinePlayers() {
+        // todo
+        return List.of();
     }
 
     @Override

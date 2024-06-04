@@ -42,13 +42,12 @@ public final class Template {
 
     @SneakyThrows
     public void copy(LocalCloudService localCloudService) {
-
         if (canUsed) {
             FileUtils.copyDirectory(TemplatesService.TEMPLATES.resolve(id).toFile(), localCloudService.runningFolder().toFile());
         }
 
         for (var templateName : this.mergedTemplates) {
-            var template = CloudBase.instance().templatesService().templates(templateName);
+            var template = CloudBase.instance().templatesService().template(templateName);
 
             if (template != null) {
                 template.copy(localCloudService);

@@ -18,20 +18,17 @@ package dev.httpmarco.polocloud.base.templates;
 
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.osgan.files.json.JsonDocument;
-import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
-import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
-import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
+import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import org.apache.commons.io.FileUtils;
 
-import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 @Getter
@@ -39,6 +36,7 @@ import java.util.List;
 public final class TemplatesService {
 
     public static final Path TEMPLATES = Path.of("templates");
+    public static final Path STATIC = Path.of("static");
 
     @Getter(AccessLevel.PACKAGE)
     private final JsonDocument<TemplatesConfig> document;
@@ -71,12 +69,42 @@ public final class TemplatesService {
         return templates().stream().anyMatch(it -> it.id().equalsIgnoreCase(id));
     }
 
+    public void cloneTemplate(LocalCloudService service) {
+        if (service.group().properties().has(GroupProperties.TEMPLATES)) {
+            var temp = CloudBase.instance().templatesService().template(service.group().properties().property(GroupProperties.TEMPLATES));
+            if (temp != null) {
+                temp.copy(service);
+            }
+        }
+
+        if (service.group().properties().has(GroupProperties.STATIC)) {
+            Files.createDirectoryIfNotExists(STATIC);
+        }
+    }
+
+    @SneakyThrows
+    public boolean deleteTemplate(String name) {
+        if (!isTemplate(name)) {
+            return false;
+        }
+
+        for (var file : TEMPLATES.toFile().listFiles()) {
+            if (!file.getName().equalsIgnoreCase(name)) {
+                return false;
+            }
+            FileUtils.deleteDirectory(file);
+            this.templates().remove(name);
+            this.document.value().templates().remove(name);
+            this.document.updateDocument();
+        }
+        return true;
+    }
+
     public List<Template> templates() {
         return this.document.value().templates();
     }
 
-    public Template templates(String name) {
+    public Template template(String name) {
         return templates().stream().filter(it -> it.id().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
-
 }

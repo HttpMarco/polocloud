@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.group;
+package dev.httpmarco.polocloud.base.groups.platforms;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.base.services.LocalCloudService;
 
-public record CloudGroupRemoveEvent(CloudGroup cloudGroup) implements GroupEvent {
+public final class PurpurPlatform extends Platform {
+
+    public PurpurPlatform() {
+        super(false);
+    }
 
     @Override
-    public void read(PacketBuffer buffer) {
+    public void download(String version) {
 
     }
 
     @Override
-    public void write(PacketBuffer buffer) {
+    public void prepare(LocalCloudService localCloudService) {
 
     }
 }
