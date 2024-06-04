@@ -71,6 +71,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
         processBuilder.redirectError(new File(service.name()));
+        processBuilder.environment().put("hostname", service.hostname());
+        processBuilder.environment().put("port", String.valueOf(service.port()));
         processBuilder.environment().put("appendSearchClasspath", String.valueOf((platformService.find(service.group().platform().version()) instanceof BungeeCordPlatform)));
         processBuilder.environment().put("bootstrapFile", service.group().platform().version());
         processBuilder.environment().put("serviceId", service.id().toString());
@@ -82,6 +84,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         Files.createDirectoryIfNotExists(pluginDirectory);
 
         // copy polocloud plugin
+        //todo a better way for minestom
         java.nio.file.Files.copy(Path.of("local/polocloud-plugin.jar"), pluginDirectory.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
 
         service.state(ServiceState.STARTING);

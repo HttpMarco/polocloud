@@ -19,10 +19,7 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.osgan.files.Files;
 import dev.httpmarco.osgan.utils.types.MessageUtils;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.base.groups.platforms.BungeeCordPlatform;
-import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
-import dev.httpmarco.polocloud.base.groups.platforms.Platform;
-import dev.httpmarco.polocloud.base.groups.platforms.VelocityPlatform;
+import dev.httpmarco.polocloud.base.groups.platforms.*;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
@@ -44,6 +41,8 @@ public class CloudGroupPlatformService {
         this.platforms.add(new PaperPlatform());
         this.platforms.add(new VelocityPlatform());
         this.platforms.add(new BungeeCordPlatform());
+        this.platforms.add(new MinestomPlatform());
+        this.platforms.add(new PurpurPlatform());
     }
 
     public boolean isValidPlatform(String platform) {
@@ -67,13 +66,15 @@ public class CloudGroupPlatformService {
             platform.download(platformName);
         }
 
-        var cacheDirectory = PLATFORM_FOLDER.resolve(platformName).resolve("cache");
-        if (java.nio.file.Files.exists(cacheDirectory)) {
-            FileUtils.copyDirectory(cacheDirectory.toFile(), cloudService.runningFolder().toFile());
-        }
-        var platformSource = cloudService.runningFolder().resolve(platformName + ".jar");
-        if (!java.nio.file.Files.exists(platformSource)) {
-            java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), platformSource);
+        if (!(platform instanceof MinestomPlatform)) {
+            var cacheDirectory = PLATFORM_FOLDER.resolve(platformName).resolve("cache");
+            if (java.nio.file.Files.exists(cacheDirectory)) {
+                FileUtils.copyDirectory(cacheDirectory.toFile(), cloudService.runningFolder().toFile());
+            }
+            var platformSource = cloudService.runningFolder().resolve(platformName + ".jar");
+            if (!java.nio.file.Files.exists(platformSource)) {
+                java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), platformSource);
+            }
         }
 
         platform.prepare(cloudService);
