@@ -24,7 +24,9 @@ import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import org.apache.commons.io.FileUtils;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -80,6 +82,7 @@ public final class TemplatesService {
         }
     }
 
+    @SneakyThrows
     public boolean deleteTemplate(String name) {
         if (!isTemplate(name)) {
             return false;
@@ -89,7 +92,7 @@ public final class TemplatesService {
             if (!file.getName().equalsIgnoreCase(name)) {
                 return false;
             }
-            file.delete();
+            FileUtils.deleteDirectory(file);
             this.templates().remove(name);
             this.document.value().templates().remove(name);
             this.document.updateDocument();
