@@ -40,7 +40,6 @@ public final class TemplateCommand {
 
     @SubCommand(args = {"delete", "<name>"})
     public void handleDelete(String name) {
-        ;
         if (CloudBase.instance().templatesService().deleteTemplate(name)) {
             logger.success("The template &2'&4" + name + "&2' &1has been deleted successfully");
         } else {
