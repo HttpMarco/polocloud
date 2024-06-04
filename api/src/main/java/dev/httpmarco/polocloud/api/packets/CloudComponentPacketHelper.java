@@ -16,18 +16,16 @@
 
 package dev.httpmarco.polocloud.api.packets;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
-import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.api.services.CloudService;
 
 public final class CloudComponentPacketHelper {
 
-    public static void writeService(CloudService cloudService, CodecBuffer codecBuffer) {
+    public static void writeService(CloudService cloudService, PacketBuffer codecBuffer) {
         writeGroup(cloudService.group(), codecBuffer);
 
         codecBuffer.writeInt(cloudService.orderedId());
@@ -38,22 +36,22 @@ public final class CloudComponentPacketHelper {
         //todo properties
     }
 
-    public static CloudService readService(CodecBuffer codecBuffer) {
+    public static CloudService readService(PacketBuffer codecBuffer) {
         //todo properties
         return CloudAPI.instance().serviceProvider().fromPacket(readGroup(codecBuffer), codecBuffer);
     }
 
-    public static void writeGroup(CloudGroup group, CodecBuffer codecBuffer) {
+    public static void writeGroup(CloudGroup group, PacketBuffer codecBuffer) {
         codecBuffer.writeString(group.name());
         codecBuffer.writeString(group.platform().version());
         codecBuffer.writeBoolean(group.platform().proxy());
         codecBuffer.writeInt(group.minOnlineServices());
         codecBuffer.writeInt(group.memory());
 
-        //writeProperty(group.properties(), codecBuffer);
+        writeProperty(group.properties(), codecBuffer);
     }
 
-    private static void writeProperty(PropertiesPool<?> properties, CodecBuffer codecBuffer) {
+    private static void writeProperty(PropertiesPool<?> properties, PacketBuffer codecBuffer) {
         codecBuffer.writeInt(properties.properties().size());
         properties.properties().forEach((property, o) -> {
             codecBuffer.writeString(property.id());
@@ -68,7 +66,7 @@ public final class CloudComponentPacketHelper {
         });
     }
 
-    public static PropertiesPool<?> readProperties(CodecBuffer buffer) {
+    public static PropertiesPool<?> readProperties(PacketBuffer buffer) {
         var properties = new PropertiesPool<>();
         var elementSize = buffer.readInt();
 
@@ -89,20 +87,20 @@ public final class CloudComponentPacketHelper {
         return properties;
     }
 
-    public static CloudGroup readGroup(CodecBuffer codecBuffer) {
+    public static CloudGroup readGroup(PacketBuffer codecBuffer) {
         var group = CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
-        //group.properties().appendAll(readProperties(codecBuffer));
+        group.properties().appendAll(readProperties(codecBuffer));
         return group;
     }
 
-    public static void writePlayer(CloudPlayer cloudPlayer, CodecBuffer codecBuffer) {
+    public static void writePlayer(CloudPlayer cloudPlayer, PacketBuffer codecBuffer) {
         codecBuffer.writeUniqueId(cloudPlayer.uniqueId());
         codecBuffer.writeString(cloudPlayer.name());
         codecBuffer.writeString(cloudPlayer.currentServer());
         codecBuffer.writeString(cloudPlayer.currentProxy());
     }
 
-    public static CloudPlayer readPlayer(CodecBuffer codecBuffer) {
+    public static CloudPlayer readPlayer(PacketBuffer codecBuffer) {
         return CloudAPI.instance().playerProvider().fromPacket(codecBuffer);
     }
 }

@@ -16,12 +16,12 @@
 
 package dev.httpmarco.polocloud.api.events;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 
 public interface Event {
 
-    void read(CodecBuffer buffer);
+    void read(PacketBuffer buffer);
 
-    void write(CodecBuffer buffer);
+    void write(PacketBuffer buffer);
 
 }

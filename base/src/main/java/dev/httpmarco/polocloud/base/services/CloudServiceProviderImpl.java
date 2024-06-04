@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
@@ -50,9 +50,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
 
         // send all services back to request
         var transmitter = CloudBase.instance().transmitter();
-        transmitter.registerResponder("services-all", (channelTransmit, properties) -> new CloudAllServicesPacket(services));
+        transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
 
-        transmitter.registerResponder("services-filtering", (channelTransmit, properties) -> switch (properties.readObject("filter", ServiceFilter.class)) {
+        transmitter.responder("services-filtering", property -> switch (property.getEnum("filter", ServiceFilter.class)) {
             case EMPTY_SERVICES -> null; //todo
             case PLAYERS_PRESENT_SERVERS -> null; //todo
             case FULL_SERVICES -> null; //todo
@@ -130,7 +130,7 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService fromPacket(CloudGroup parent, CodecBuffer buffer) {
+    public CloudService fromPacket(CloudGroup parent, PacketBuffer buffer) {
         //todo
         return null;
     }

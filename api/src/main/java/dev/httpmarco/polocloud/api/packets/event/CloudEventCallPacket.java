@@ -16,8 +16,8 @@
 
 package dev.httpmarco.polocloud.api.packets.event;
 
-import dev.httpmarco.osgan.networking.Packet;
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.Packet;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.reflections.common.Allocator;
 import dev.httpmarco.polocloud.api.events.Event;
 import lombok.AllArgsConstructor;
@@ -35,14 +35,14 @@ public final class CloudEventCallPacket extends Packet {
     @Override
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    public void onRead(CodecBuffer codecBuffer) {
+    public void read(PacketBuffer codecBuffer) {
         event = Allocator.allocate((Class<Event>) Class.forName(codecBuffer.readString()));
         event.read(codecBuffer);
 
     }
 
     @Override
-    public void onWrite(CodecBuffer codecBuffer) {
+    public void write(PacketBuffer codecBuffer) {
         codecBuffer.writeString(event.getClass().getName());
         event.write(codecBuffer);
     }

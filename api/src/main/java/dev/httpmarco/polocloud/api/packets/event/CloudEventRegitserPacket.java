@@ -16,8 +16,8 @@
 
 package dev.httpmarco.polocloud.api.packets.event;
 
-import dev.httpmarco.osgan.networking.Packet;
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.Packet;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -33,13 +33,13 @@ public final class CloudEventRegitserPacket extends Packet {
     private String event;
 
     @Override
-    public void onRead(CodecBuffer codecBuffer) {
+    public void read(PacketBuffer codecBuffer) {
         this.serviceId = codecBuffer.readUniqueId();
         this.event = codecBuffer.readString();
     }
 
     @Override
-    public void onWrite(CodecBuffer codecBuffer) {
+    public void write(PacketBuffer codecBuffer) {
         codecBuffer.writeUniqueId(serviceId);
         codecBuffer.writeString(event);
     }

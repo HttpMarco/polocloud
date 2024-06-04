@@ -16,24 +16,23 @@
 
 package dev.httpmarco.polocloud.runner;
 
-import dev.httpmarco.osgan.networking.client.NettyClient;
-import dev.httpmarco.osgan.networking.client.NettyClientBuilder;
+import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
 public final class CloudInstanceClient {
 
-    private final NettyClient transmitter;
+    private final CommunicationClient transmitter;
 
+    @SneakyThrows
     public CloudInstanceClient(String hostname, int port) {
-        this.transmitter = new NettyClientBuilder()
-                .withHostname("127.0.0.1")
-                .onActive(channelTransmit -> {
-                    channelTransmit.sendPacket(new CloudServiceRegisterPacket(CloudInstance.SERVICE_ID));
-                }).onInactive(channelTransmit -> {
-                }).withConnectTimeout(10000).build();
+        this.transmitter = new CommunicationClient(hostname, port, channelTransmit -> {
+            channelTransmit.sendPacket(new CloudServiceRegisterPacket(CloudInstance.SERVICE_ID));
+        });
+        this.transmitter.initialize();
     }
 }

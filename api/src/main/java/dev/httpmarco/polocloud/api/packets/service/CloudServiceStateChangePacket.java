@@ -16,8 +16,8 @@
 
 package dev.httpmarco.polocloud.api.packets.service;
 
-import dev.httpmarco.osgan.networking.Packet;
-import dev.httpmarco.osgan.networking.codec.CodecBuffer;
+import dev.httpmarco.osgan.networking.packet.Packet;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,13 +35,13 @@ public class CloudServiceStateChangePacket extends Packet {
     private ServiceState state;
 
     @Override
-    public void onRead(CodecBuffer codecBuffer) {
+    public void read(PacketBuffer codecBuffer) {
         this.id = codecBuffer.readUniqueId();
         this.state = codecBuffer.readEnum(ServiceState.class);
     }
 
     @Override
-    public void onWrite(CodecBuffer codecBuffer) {
+    public void write(PacketBuffer codecBuffer) {
         codecBuffer.writeUniqueId(this.id);
         codecBuffer.writeEnum(this.state);
     }

@@ -1,6 +1,6 @@
 [versions]
 lombok = "1.18.32"
-osgan = "1.2.1-20240525.221303-1"
+osgan = "1.2.5-SNAPSHOT"
 
 gson = "2.10.1"
 yaml = "2.2"
