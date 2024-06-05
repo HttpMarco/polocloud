@@ -16,12 +16,14 @@
 
 package dev.httpmarco.polocloud.base.groups.platforms;
 
+import com.electronwill.nightconfig.core.file.FileConfig;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 
 public final class VelocityPlatform extends PaperMCPlatform {
@@ -37,10 +39,16 @@ public final class VelocityPlatform extends PaperMCPlatform {
 
         Files.writeString(localCloudService.runningFolder().resolve("forwarding.secret"), CloudGroupPlatformService.PROXY_SECRET);
 
-        if (Files.exists(propertiesPath)) {
-            //todo
-        } else {
-            Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/velocity/velocity.toml")), localCloudService.runningFolder().resolve("velocity.toml"));
+        if (!Files.exists(propertiesPath)) {
+            Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/velocity/velocity.toml")), propertiesPath);
         }
+
+        // we must change the port and hostname
+        FileConfig config = FileConfig.builder(propertiesPath).build();
+        config.load();
+
+        config.set("bind", localCloudService.hostname() + ":" + localCloudService.port());
+        config.save();
+        config.close();
     }
 }

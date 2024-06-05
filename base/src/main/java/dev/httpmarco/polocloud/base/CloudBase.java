@@ -70,6 +70,8 @@ public final class CloudBase extends CloudAPI {
         Dependency.load("org.jline", "jline", "3.26.1");
         Dependency.load("org.fusesource.jansi", "jansi", "2.4.1");
         Dependency.load("commons-io", "commons-io", "2.16.1");
+        Dependency.load("com.electronwill.night-config", "toml", "3.6.7");
+        Dependency.load("com.electronwill.night-config", "core", "3.6.7");
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 

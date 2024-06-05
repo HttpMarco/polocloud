@@ -24,6 +24,7 @@ osgan-netty = { group = "dev.httpmarco", name = "osgan-netty", version.ref = "os
 
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 yaml = { group = "org.yaml", name = "snakeyaml", version.ref = "yaml" }
+toml = { group = "com.electronwill.night-config", name = "toml", version.ref = "toml" }
 
 commons = { group = "commons-io", name = "commons-io", version.ref = "commons" }
 

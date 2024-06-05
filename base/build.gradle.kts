@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.osgan.netty)
     implementation(libs.gson)
     implementation(libs.yaml)
+    implementation(libs.toml)
     implementation(libs.commons)
 }
 

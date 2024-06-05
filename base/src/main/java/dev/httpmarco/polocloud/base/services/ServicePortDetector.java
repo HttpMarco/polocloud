@@ -19,19 +19,27 @@ package dev.httpmarco.polocloud.base.services;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 
 public final class ServicePortDetector {
 
     public static int detectServicePort(CloudGroup group) {
-        var servicePort = group.properties().has(GroupProperties.PORT_RANGE) ? group.properties().property(GroupProperties.PORT_RANGE) : 25565;
 
-        while (isUsed(servicePort)) {
-            servicePort++;
+        var serverPort = 30000;
+
+        if (group.properties().has(GroupProperties.PORT_RANGE)) {
+            serverPort = group.properties().property(GroupProperties.PORT_RANGE);
+        } else {
+            if (group.platform().proxy()) {
+                serverPort = 25565;
+            }
         }
-
-        return servicePort;
+        while (isUsed(serverPort)) {
+            serverPort++;
+        }
+        return serverPort;
     }
 
     private static boolean isUsed(int port) {
