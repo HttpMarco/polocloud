@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import lombok.AllArgsConstructor;
 
@@ -32,7 +33,15 @@ public final class CloudServiceQueue extends Thread {
                 var onlineDiff = group.onlineAmount() - group.minOnlineServices();
 
                 if (onlineDiff < 0) {
+
+                    var maxValue = group.properties().has(GroupProperties.MAX_SERVICES) ? group.properties().property(GroupProperties.MAX_SERVICES) : -1;
+
                     for (int i = 0; i < (-onlineDiff); i++) {
+
+                        if (maxValue != -1 && (group.onlineAmount() + 1) > maxValue) {
+                            continue;
+                        }
+
                         serviceProvider.factory().start(group);
                     }
                 }

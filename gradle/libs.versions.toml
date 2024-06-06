@@ -4,6 +4,7 @@ osgan = "1.2.5-SNAPSHOT"
 
 gson = "2.11.0"
 yaml = "2.2"
+toml = "3.6.7"
 
 jansi = "2.4.1"
 jline = "3.26.1"

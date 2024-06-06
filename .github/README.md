@@ -16,7 +16,7 @@ cloud group optional properties
 | id                               | description | type              | default value | implemented |
 |----------------------------------|-------------|-------------------|---------------|-------------|
 | static                           |             | State             | false         | yes         |
-| maxOnlineServices                |             | Number            | -1            | //todo      |
+| maxOnlineServices                |             | Number            | -1            | yes         |
 | startArguments                   |             | Text              | ''            | //todo      |
 | percentageToStartNewService      |             | Percentage Number | 100.0         | //todo      |
 | preferredFallback                |             | Text list         | ''            | //todo      |
