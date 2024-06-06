@@ -30,6 +30,8 @@ public class GroupProperties<T> extends Property<T> implements Serializable {
 
     public static GroupProperties<Integer> PORT_RANGE = new GroupProperties<>("portRange", int.class);
 
+    public static GroupProperties<Integer> MAX_SERVICES = new GroupProperties<>("maxOnlineServices", int.class);
+
     public static GroupProperties<Boolean> FALLBACK = new GroupProperties<>("fallback", boolean.class);
 
     public static GroupProperties<Boolean> STATIC = new GroupProperties<>("static", boolean.class);

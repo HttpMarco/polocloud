@@ -8,15 +8,15 @@ cloud group optional properties
 | id                | description                            | type   | default value    | implemented |
 |-------------------|----------------------------------------|--------|------------------|-------------|
 | prompt            | The input prefix of the cloud terminal | Text   | '&3cloud &2» &1' | yes         |
-| server-port-range | The detection range of proxy ports     | Number | 25565            | yes         |
-| proxy-port-range  | The detection range of server ports    | Number | 30000            | yes         |
+| server-port-range | The detection range of proxy ports     | Number | 30000            | yes         |
+| proxy-port-range  | The detection range of server ports    | Number | 25565            | yes         |
 
 
 ### Cloud group properties
 | id                               | description | type              | default value | implemented |
 |----------------------------------|-------------|-------------------|---------------|-------------|
 | static                           |             | State             | false         | yes         |
-| maxOnlineServices                |             | Number            | -1            | //todo      |
+| maxOnlineServices                |             | Number            | -1            | yes         |
 | startArguments                   |             | Text              | ''            | //todo      |
 | percentageToStartNewService      |             | Percentage Number | 100.0         | //todo      |
 | preferredFallback                |             | Text list         | ''            | //todo      |

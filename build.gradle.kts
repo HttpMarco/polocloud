@@ -2,7 +2,7 @@ allprojects {
     apply(plugin = "java-library")
 
     group = "dev.httpmarco"
-    version = "1.0.0-SNAPSHOT"
+    version = "1.0.1-SNAPSHOT"
 
     repositories {
         mavenCentral()
