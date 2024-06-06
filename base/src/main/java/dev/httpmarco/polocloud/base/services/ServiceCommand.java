@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.files.Files;
+import dev.httpmarco.osgan.files.OsganFile;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.base.CloudBase;
@@ -135,7 +135,7 @@ public final class ServiceCommand {
             }
         };
 
-        Files.createDirectoryIfNotExists(templateFolder);
+        OsganFile.create(templateFolder);
         FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile(), filter);
 
         logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");

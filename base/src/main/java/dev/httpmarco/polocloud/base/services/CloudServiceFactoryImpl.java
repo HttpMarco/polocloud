@@ -16,7 +16,8 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.files.Files;
+import dev.httpmarco.osgan.files.OsganFile;
+import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceStartEvent;
@@ -38,11 +39,7 @@ import java.util.*;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
-    private static final Path RUNNING_FOLDER = Path.of("running");
-
-    public CloudServiceFactoryImpl() {
-        Files.createDirectoryIfNotExists(RUNNING_FOLDER);
-    }
+    private static final Path RUNNING_FOLDER = OsganFile.define("running", OsganFileCreateOption.CREATION).path();
 
     @Override
     @SneakyThrows
@@ -51,8 +48,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
         CloudAPI.instance().logger().info("Server " + service.name() + " is starting now on node " + CloudAPI.instance().nodeService().localNode().name() + "&2.");
-
-        Files.createDirectoryIfNotExists(service.runningFolder());
 
         // download and/or copy platform file to service
         CloudGroupPlatformService platformService = CloudBase.instance().groupProvider().platformService();
@@ -82,7 +77,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         var pluginDirectory = service.runningFolder().resolve("plugins");
 
-        Files.createDirectoryIfNotExists(pluginDirectory);
+        OsganFile.create(pluginDirectory.toString());
 
         // copy polocloud plugin
         //todo a better way for minestom

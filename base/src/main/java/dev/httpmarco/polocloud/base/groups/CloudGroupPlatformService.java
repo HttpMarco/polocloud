@@ -16,7 +16,8 @@
 
 package dev.httpmarco.polocloud.base.groups;
 
-import dev.httpmarco.osgan.files.Files;
+import dev.httpmarco.osgan.files.OsganFile;
+import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.osgan.utils.types.MessageUtils;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.base.groups.platforms.*;
@@ -29,21 +30,10 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class CloudGroupPlatformService {
+
     public static final String PROXY_SECRET = MessageUtils.randomString(8);
-    private static final Path PLATFORM_FOLDER = Path.of("local/platforms");
-
-    private final Set<Platform> platforms = new HashSet<>();
-
-    public CloudGroupPlatformService() {
-
-        Files.createDirectoryIfNotExists(PLATFORM_FOLDER);
-
-        this.platforms.add(new PaperPlatform());
-        this.platforms.add(new VelocityPlatform());
-        this.platforms.add(new BungeeCordPlatform());
-        this.platforms.add(new MinestomPlatform());
-        this.platforms.add(new PurpurPlatform());
-    }
+    private static final Path PLATFORM_FOLDER = OsganFile.define("local/platforms", OsganFileCreateOption.CREATION).path();
+    private final Set<Platform> platforms = Set.of(new PaperPlatform(), new VelocityPlatform(), new BungeeCordPlatform(), new MinestomPlatform(), new PurpurPlatform());
 
     public boolean isValidPlatform(String platform) {
         return platforms.stream().anyMatch(it -> it.possibleVersions().stream().anyMatch(v -> v.version().equalsIgnoreCase(platform)));

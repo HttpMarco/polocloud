@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.node;
 
-import dev.httpmarco.osgan.files.annotations.ConfigExclude;
+import dev.httpmarco.osgan.files.DocumentExclude;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.AbstractNode;
@@ -31,7 +31,7 @@ import java.util.UUID;
 @Accessors(fluent = true)
 public final class LocalNode extends AbstractNode implements dev.httpmarco.polocloud.api.node.LocalNode {
 
-    @ConfigExclude
+    @DocumentExclude
     private CommunicationServer server;
 
     public LocalNode(UUID id, String name, String hostname, int port) {

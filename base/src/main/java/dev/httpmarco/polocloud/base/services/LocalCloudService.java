@@ -16,7 +16,8 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.files.Files;
+import dev.httpmarco.osgan.files.OsganFile;
+import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
@@ -40,7 +41,6 @@ import java.util.UUID;
 public final class LocalCloudService extends CloudServiceImpl {
 
     private final Path runningFolder;
-
     @Setter
     private Process process;
     @Setter
@@ -51,13 +51,10 @@ public final class LocalCloudService extends CloudServiceImpl {
         super(group, orderedId, id, port, group.platform().proxy() ? "0.0.0.0" : CloudAPI.instance().nodeService().localNode().hostname(), state);
 
         if (group.properties().has(GroupProperties.STATIC)) {
-            this.runningFolder = Path.of("static/" + name());
+            this.runningFolder = OsganFile.define("static/" + name(), OsganFileCreateOption.CREATION).path();
         } else {
-            this.runningFolder = Path.of("running/" + name() + "-" + id());
+            this.runningFolder = OsganFile.define("running/" + name() + "-" + id(), OsganFileCreateOption.CREATION).path();
         }
-
-
-        Files.createDirectoryIfNotExists(runningFolder.getParent());
         this.subscribed = false;
     }
 

@@ -27,7 +27,6 @@ import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
-@AllArgsConstructor
 public final class CloudConfiguration {
 
     private final UUID clusterId;
@@ -37,4 +36,10 @@ public final class CloudConfiguration {
     private final ExternalNode[] externalNodes;
     private final PropertiesPool<CloudProperty<?>> properties = new PropertiesPool<>();
 
+    public CloudConfiguration() {
+        this.clusterId = UUID.randomUUID();
+        this.clusterName = "node-1";
+        this.maxMemory = 10000;
+        this.externalNodes = new ExternalNode[0];
+    }
 }

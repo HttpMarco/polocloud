@@ -16,7 +16,9 @@
 
 package dev.httpmarco.polocloud.base.logging;
 
-import dev.httpmarco.osgan.files.Files;
+
+import dev.httpmarco.osgan.files.OsganFile;
+import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.api.logging.LoggerHandler;
 import lombok.SneakyThrows;
@@ -37,12 +39,11 @@ public final class FileLoggerHandler implements LoggerHandler {
     private static final Pattern COLOR_PATTERN = Pattern.compile("&[0-9a-fA-Fk-oK-OrR]");
 
     private final BufferedWriter logWriter;
-    private static final Path LOGS_PATH = Path.of("local/logs");
+    private static final Path LOGS_PATH = OsganFile.define("local/logs", OsganFileCreateOption.CREATION).path();
     private static final Path LATEST_LOG = LOGS_PATH.resolve("latest.log");
 
     @SneakyThrows
     public FileLoggerHandler() {
-        Files.createDirectoryIfNotExists(LOGS_PATH);
         this.logWriter = new BufferedWriter(new FileWriter(LATEST_LOG.toString(), true));
     }
 

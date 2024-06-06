@@ -16,8 +16,9 @@
 
 package dev.httpmarco.polocloud.base;
 
-import dev.httpmarco.osgan.files.json.JsonDocument;
+import dev.httpmarco.osgan.files.OsganFile;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
+import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.node.NodeService;
@@ -43,8 +44,6 @@ import lombok.experimental.Accessors;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
@@ -58,8 +57,7 @@ public final class CloudBase extends CloudAPI {
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
     private final CloudPlayerProvider playerProvider;
-
-    private final CloudConfiguration cloudConfiguration;
+    private final CloudConfiguration cloudConfiguration = OsganFile.define("config.json").asDocument(new CloudConfiguration(), new Pair<>(PropertiesPool.class, new PropertiesPoolSerializer())).content();
     private final GlobalEventNode globalEventNode;
 
     private boolean running = true;
@@ -75,8 +73,7 @@ public final class CloudBase extends CloudAPI {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
-        this.cloudConfiguration = loadConfiguration();
-        this.globalProperties = cloudConfiguration.properties();
+        this.globalProperties = this.cloudConfiguration.properties();
 
         this.terminal = new CloudTerminal();
         // register logging layers (for general output)
@@ -128,10 +125,6 @@ public final class CloudBase extends CloudAPI {
         if (!shutdownCycle) {
             System.exit(0);
         }
-    }
-
-    public CloudConfiguration loadConfiguration() {
-        return new JsonDocument<>(new CloudConfiguration(UUID.randomUUID(), "node-1", 10000, new ExternalNode[0]), Path.of("config.json"), new PropertiesPoolSerializer()).value();
     }
 
     public CommunicationServer transmitter() {

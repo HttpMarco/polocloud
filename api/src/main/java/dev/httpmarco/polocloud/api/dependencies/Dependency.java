@@ -58,7 +58,7 @@ public final class Dependency {
 
         if (!Files.exists(file)) {
             System.err.println("Downloading dependency: " + name + "...");
-            if (download()) {
+            if (download(dependencyLink)) {
                 System.out.println("Successfully downloading dependency " + name);
             } else {
                 System.err.println("Cannot download dependency: " + name);
@@ -68,9 +68,8 @@ public final class Dependency {
         RunnerBootstrap.LOADER.addURL(this.file.toURI().toURL());
     }
 
-    //todo with osgan
-    private boolean download() {
-        try (var inputStream = new URL(dependencyLink).openStream();
+    public boolean download(String url) {
+        try (var inputStream = new URL(url).openStream();
              var outputStream = new BufferedOutputStream(new FileOutputStream(file.toString()))) {
 
             var buffer = new byte[1024];
@@ -83,4 +82,5 @@ public final class Dependency {
         }
         return true;
     }
+
 }

@@ -17,25 +17,26 @@
 package dev.httpmarco.polocloud.base.groups;
 
 import com.google.gson.*;
-import dev.httpmarco.osgan.files.Files;
-import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.osgan.files.OsganFile;
+import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
-import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
+@RequiredArgsConstructor
 public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudGroup>, JsonDeserializer<CloudGroup> {
 
-    private static final Path GROUP_FOLDER = Path.of("local/groups");
+    private static final Path GROUP_FOLDER = OsganFile.define("local/groups", OsganFileCreateOption.CREATION).path();
     private final Gson LOADER = new GsonBuilder().setPrettyPrinting().serializeNulls()
             .registerTypeHierarchyAdapter(CloudGroup.class, this)
             .registerTypeAdapter(PropertiesPool.class, new PropertiesPoolSerializer())
@@ -44,11 +45,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
 
     private final CloudGroupPlatformService platformService;
 
-    public CloudGroupServiceTypeAdapter(CloudGroupPlatformService platformService) {
-        Files.createDirectoryIfNotExists(GROUP_FOLDER);
-        this.platformService = platformService;
-    }
-
+    @SneakyThrows
     public void includeFile(CloudGroup cloudGroup) {
         Files.writeString(GROUP_FOLDER.resolve(cloudGroup.name() + ".json"), LOADER.toJson(cloudGroup));
     }
@@ -62,6 +59,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
         this.includeFile(cloudGroup);
     }
 
+    @SneakyThrows
     public List<CloudGroup> readGroups() {
         var groups = new ArrayList<CloudGroup>();
         for (var file : Objects.requireNonNull(GROUP_FOLDER.toFile().listFiles())) {

@@ -34,10 +34,10 @@ public final class DependencyService {
         // todo generate default dependency definitions
         // load default dependencies of base and instance
         //todo better subversion
-        Dependency.load("dev.httpmarco", "osgan-utils", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);;
-        Dependency.load("dev.httpmarco", "osgan-reflections", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
-        Dependency.load("dev.httpmarco", "osgan-files", "1.1.19-SNAPSHOT", "1.1.19-20240521.201941-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
-        Dependency.load("dev.httpmarco", "osgan-netty", "1.2.5-SNAPSHOT", "1.2.5-20240604.185212-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
+        Dependency.load("dev.httpmarco", "osgan-utils", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);;
+        Dependency.load("dev.httpmarco", "osgan-reflections", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
+        Dependency.load("dev.httpmarco", "osgan-files", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
+        Dependency.load("dev.httpmarco", "osgan-netty", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
         Dependency.load("io.netty", "netty5-common", "5.0.0.Alpha5");
         Dependency.load("io.netty", "netty5-transport", "5.0.0.Alpha5");
         Dependency.load("io.netty", "netty5-codec", "5.0.0.Alpha5");

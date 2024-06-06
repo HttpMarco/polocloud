@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base.groups.platforms;
 
 import com.google.gson.JsonObject;
-import dev.httpmarco.osgan.files.json.JsonUtils;
+import dev.httpmarco.osgan.files.OsganGsonContext;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import lombok.SneakyThrows;
 
@@ -44,7 +44,7 @@ public abstract class PaperMCPlatform extends Platform {
 
     @SneakyThrows
     private JsonObject readPaperInformation(String link) {
-        return JsonUtils.getGson().fromJson(downloadStringContext(link), JsonObject.class);
+        return OsganGsonContext.GSON.fromJson(downloadStringContext(link), JsonObject.class);
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class PaperMCPlatform extends Platform {
         var orgVersion = version.replace(product + "-", "");
 
         // search for the current build version
-        var builds = JsonUtils.getGson().fromJson(downloadStringContext(BUILD_URL.formatted(product, orgVersion)), JsonObject.class).get("builds").getAsJsonArray().asList();
+        var builds =OsganGsonContext.GSON.fromJson(downloadStringContext(BUILD_URL.formatted(product, orgVersion)), JsonObject.class).get("builds").getAsJsonArray().asList();
         var buildIndex = builds.get(builds.size() - 1).getAsJsonObject().get("build").getAsInt();
 
         //todo duplicated code

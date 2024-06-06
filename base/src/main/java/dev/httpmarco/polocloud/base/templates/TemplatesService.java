@@ -16,11 +16,11 @@
 
 package dev.httpmarco.polocloud.base.templates;
 
-import dev.httpmarco.osgan.files.Files;
-import dev.httpmarco.osgan.files.json.JsonDocument;
+import dev.httpmarco.osgan.files.OsganFile;
+import dev.httpmarco.osgan.files.OsganFileCreateOption;
+import dev.httpmarco.osgan.files.OsganFileDocument;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.base.CloudBase;
-import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,15 +36,13 @@ import java.util.List;
 public final class TemplatesService {
 
     public static final Path TEMPLATES = Path.of("templates");
-    public static final Path STATIC = Path.of("static");
+    public static final Path STATIC = OsganFile.define("static", OsganFileCreateOption.CREATION).path();
 
     @Getter(AccessLevel.PACKAGE)
-    private final JsonDocument<TemplatesConfig> document;
+    private final OsganFileDocument<TemplatesConfig> document;
 
     public TemplatesService() {
-        Files.createDirectoryIfNotExists(TEMPLATES);
-
-        this.document = new JsonDocument<>(new TemplatesConfig(), TEMPLATES.resolve("templates.json"), new PropertiesPoolSerializer());
+        this.document = OsganFile.define("templates/templates.json").asDocument(new TemplatesConfig());
 
         this.createTemplates("every");
         this.createTemplates("every_server");
@@ -58,10 +56,9 @@ public final class TemplatesService {
 
         var directory = TEMPLATES.resolve(name);
         var template = new Template(name, mergedTemplates);
-        Files.createDirectoryIfNotExists(directory);
+        OsganFile.create(directory);
         templates().add(template);
-        this.document.updateDocument();
-
+        this.document.update();
         return true;
     }
 
@@ -76,10 +73,6 @@ public final class TemplatesService {
                 temp.copy(service);
             }
         }
-
-        if (service.group().properties().has(GroupProperties.STATIC)) {
-            Files.createDirectoryIfNotExists(STATIC);
-        }
     }
 
     @SneakyThrows
@@ -93,15 +86,16 @@ public final class TemplatesService {
                 return false;
             }
             FileUtils.deleteDirectory(file);
+            //todo check work? String? Object remove?
             this.templates().remove(name);
-            this.document.value().templates().remove(name);
-            this.document.updateDocument();
+            this.document.content().templates().remove(name);
+            this.document.update();
         }
         return true;
     }
 
     public List<Template> templates() {
-        return this.document.value().templates();
+        return this.document.content().templates();
     }
 
     public Template template(String name) {
