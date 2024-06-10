@@ -35,7 +35,7 @@ import java.util.List;
 @Accessors(fluent = true)
 public final class TemplatesService {
 
-    public static final Path TEMPLATES = Path.of("templates");
+    public static final Path TEMPLATES = OsganFile.define("templates", OsganFileCreateOption.CREATION).path();
     public static final Path STATIC = OsganFile.define("static", OsganFileCreateOption.CREATION).path();
 
     @Getter(AccessLevel.PACKAGE)
