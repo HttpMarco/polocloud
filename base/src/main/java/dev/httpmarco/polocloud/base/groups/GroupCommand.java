@@ -99,7 +99,7 @@ public final class GroupCommand {
             var group = CloudAPI.instance().groupProvider().group(name);
 
             // we must create a separate template directory
-            CloudBase.instance().templatesService().createTemplates(name, "every", "every_server");
+            CloudBase.instance().templatesService().createTemplates(name, "every", (group.platform().proxy() ? "every_proxy" : "every_server"));
             // we set as default value all important templates
             group.properties().put(GroupProperties.TEMPLATES, name);
             // send changes to other nodes or update data files

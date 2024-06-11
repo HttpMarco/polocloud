@@ -45,7 +45,6 @@ public final class Template {
         if (canUsed) {
             FileUtils.copyDirectory(TemplatesService.TEMPLATES.resolve(id).toFile(), localCloudService.runningFolder().toFile());
         }
-
         for (var templateName : this.mergedTemplates) {
             var template = CloudBase.instance().templatesService().template(templateName);
 

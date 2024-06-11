@@ -58,7 +58,7 @@ public final class TemplatesService {
         var template = new Template(name, mergedTemplates);
         OsganFile.create(directory);
         templates().add(template);
-        this.document.update();
+        this.document.save();
         return true;
     }
 
