@@ -52,10 +52,6 @@ public final class Dependency {
         var file = RunnerBootstrap.RUNNER.dependencyFolder().resolve(artifactoryId + "-" + version + ".jar");
         this.file = file.toFile();
 
-        if (RunnerBootstrap.INSTRUMENTATION != null) {
-            RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(file()));
-        }
-
         if (!Files.exists(file)) {
             System.err.println("Downloading dependency: " + name + "...");
             if (download(dependencyLink)) {
@@ -65,6 +61,10 @@ public final class Dependency {
                 System.exit(-1);
             }
         }
+        if (RunnerBootstrap.INSTRUMENTATION != null) {
+            RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(file()));
+        }
+
         RunnerBootstrap.LOADER.addURL(this.file.toURI().toURL());
     }
 

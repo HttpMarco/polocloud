@@ -22,6 +22,9 @@ dependencies {
     implementation(libs.spigot)
     implementation(libs.bungeecord)
 
+    implementation(libs.minimessage)
+    implementation(libs.bungeeminimessage)
+
     implementation(libs.velocity)
     annotationProcessor(libs.velocity)
 }

@@ -19,6 +19,7 @@ package dev.httpmarco.polocloud.bungeecord;
 import dev.httpmarco.polocloud.RunningPlatform;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
 import dev.httpmarco.polocloud.bungeecord.listener.*;
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 

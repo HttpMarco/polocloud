@@ -11,6 +11,10 @@ jline = "3.26.1"
 
 commons = "2.16.1"
 
+
+minimessage = "4.17.0"
+bungeeminimessage = "4.3.2"
+
 #platforms
 velocity = "3.3.0-SNAPSHOT"
 spigot = "1.20.6-R0.1-SNAPSHOT"
@@ -33,6 +37,11 @@ commons = { group = "commons-io", name = "commons-io", version.ref = "commons" }
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
 spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
+
+
+minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "minimessage" }
+bungeeminimessage = { group = "net.kyori", name = "adventure-platform-bungeecord", version.ref = "bungeeminimessage" }
+
 
 jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" }
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
