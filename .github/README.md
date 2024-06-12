@@ -11,7 +11,7 @@ To install PoloCloud, follow these steps:
 ```
 3. Create a Proxy and Lobby Group using 'group create'
 4. Find the 'Lobby.json' file in the 'local/groups' folder and add the 'fallback' property into it
-5. That's it, now you should be able to join your server
+5. Connect to your Server using ip-address:DEFAULT-PROXY-PORT 
 
 ### Global cluster properties
 
