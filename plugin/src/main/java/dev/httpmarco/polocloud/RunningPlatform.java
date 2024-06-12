@@ -25,6 +25,6 @@ import java.util.function.Function;
 public class RunningPlatform {
 
     public void changeToOnline() {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceStateChangePacket(CloudInstance.SERVICE_ID, ServiceState.ONLINE));
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceStateChangePacket(CloudInstance.SELF_ID, ServiceState.ONLINE));
     }
 }
