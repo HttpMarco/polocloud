@@ -32,6 +32,7 @@ import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -62,8 +63,11 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
             case PROXIES -> new CloudAllServicesPacket(services.stream().filter(this::isProxy).toList());
             case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
             // todo ordering with players
-            case LOWEST_FALLBACK ->
-                    new CloudAllServicesPacket(List.of(Objects.requireNonNull(services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).findFirst().orElse(null))));
+            case LOWEST_FALLBACK -> {
+                var fallback = new ArrayList<CloudService>();
+                services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).findFirst().ifPresent(fallback::add);
+                yield new CloudAllServicesPacket(fallback);
+            }
         });
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
