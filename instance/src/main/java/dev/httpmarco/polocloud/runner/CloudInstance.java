@@ -41,6 +41,8 @@ import java.util.jar.JarFile;
 @Accessors(fluent = true)
 public class CloudInstance extends CloudAPI {
 
+    public static final UUID SELF_ID = UUID.fromString(System.getenv("serviceId"));
+
     public static void main(String[] args) {
         //start platform
         new CloudInstance(args);
@@ -50,27 +52,31 @@ public class CloudInstance extends CloudAPI {
     private static CloudInstance instance;
 
     private final CloudInstanceClient client;
-    private final CloudService self;
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
     private final CloudServiceProvider serviceProvider = new InstanceServiceProvider();
     private final CloudPlayerProvider playerProvider = new InstanceCloudPlayerProvider();
     private final InstanceGlobalEventNode globalEventNode;
 
+    private CloudService self;
+
     @SneakyThrows
     public CloudInstance(String[] args) {
         instance = this;
 
-        var selfServiceId = UUID.fromString(System.getenv("serviceId"));
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
-        this.client = new CloudInstanceClient("127.0.0.1", 8192);
-        this.self = serviceProvider.find(selfServiceId);
+        this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> {
+            serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> {
+                this.self = service;
+            });
+        });
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
 
         this.globalEventNode = new InstanceGlobalEventNode();
 
         final var thread = new Thread(() -> {
+
             try (final var jar = new JarFile(bootstrapPath.toFile())) {
 
                 if (Boolean.parseBoolean(System.getenv("appendSearchClasspath"))) {

@@ -23,6 +23,7 @@ import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
@@ -69,6 +70,8 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
                 yield new CloudAllServicesPacket(fallback);
             }
         });
+
+        transmitter.responder("service-find", (properties) -> new CloudServicePacket(find(properties.getUUID("uuid"))));
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
             var service = find(packet.id());
@@ -126,6 +129,12 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     @Override
     public CloudService find(UUID id) {
         return this.services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
+    }
+
+    @Override
+    public CompletableFuture<CloudService> findAsync(UUID id) {
+        //todo
+        return null;
     }
 
     @Override
