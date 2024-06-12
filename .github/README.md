@@ -30,6 +30,7 @@ cloud group optional properties
 | portRange                        |             | Number            | -1            | //todo      |
 | disablePlatformCache             |             | State             | false         | //todo      |
 | disableConfigurationManipulation |             | State             | false         | //todo      |
+| maintenance                      |             | State             | false         | yes         |
 
 ### Template properties
 | id               | description | type        | default value | implemented |

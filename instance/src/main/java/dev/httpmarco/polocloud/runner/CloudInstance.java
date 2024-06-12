@@ -22,6 +22,7 @@ import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.runner.event.InstanceGlobalEventNode;
 import dev.httpmarco.polocloud.runner.groups.InstanceGroupProvider;
@@ -40,8 +41,6 @@ import java.util.jar.JarFile;
 @Accessors(fluent = true)
 public class CloudInstance extends CloudAPI {
 
-    public static final UUID SERVICE_ID = UUID.fromString(System.getenv("serviceId"));
-
     public static void main(String[] args) {
         //start platform
         new CloudInstance(args);
@@ -50,8 +49,8 @@ public class CloudInstance extends CloudAPI {
     @Getter
     private static CloudInstance instance;
 
-    private CloudInstanceClient client;
-
+    private final CloudInstanceClient client;
+    private final CloudService self;
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
     private final CloudServiceProvider serviceProvider = new InstanceServiceProvider();
     private final CloudPlayerProvider playerProvider = new InstanceCloudPlayerProvider();
@@ -61,10 +60,11 @@ public class CloudInstance extends CloudAPI {
     public CloudInstance(String[] args) {
         instance = this;
 
+        var selfServiceId = UUID.fromString(System.getenv("serviceId"));
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
         this.client = new CloudInstanceClient("127.0.0.1", 8192);
-
+        this.self = serviceProvider.find(selfServiceId);
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
 
@@ -85,7 +85,7 @@ public class CloudInstance extends CloudAPI {
                 } catch (Exception e) {
                     e.printStackTrace(System.err);
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
