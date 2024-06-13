@@ -103,5 +103,4 @@ public final class LocalCloudService extends CloudServiceImpl {
         }
         return logs;
     }
-
 }

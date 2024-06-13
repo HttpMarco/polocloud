@@ -98,6 +98,7 @@ public final class PaperPlatform extends PaperMCPlatform {
                                 try {
                                     var writer = new FileWriter(globalPaperProperty.toString());
                                     yaml.dump(paperProperties, writer);
+                                    writer.close();
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
