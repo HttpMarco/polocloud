@@ -24,18 +24,20 @@ import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
 import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.runner.CloudInstance;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+@Getter
+@Accessors(fluent = true)
 public final class InstanceServiceProvider implements CloudServiceProvider {
-    @Override
-    public CloudServiceFactory factory() {
-        return null;
-    }
+
+    private final CloudServiceFactory factory = new InstanceCloudServiceFactory();
 
     @Override
     @SneakyThrows
