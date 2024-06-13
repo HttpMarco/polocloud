@@ -17,7 +17,7 @@ To install PoloCloud, follow these steps:
 
 | id                | description                            | type   | default value    | implemented |
 |-------------------|----------------------------------------|--------|------------------|-------------|
-| prompt            | The input prefix of the cloud terminal | Text   | '&3cloud &2» &1' | yes         |
+| prompt            | The input prefix of the cloud terminal | Text   | '&3cloud &2» &1' | yes         |s
 | server-port-range | The detection range of server ports    | Number | 30000            | yes         |
 | proxy-port-range  | The detection range of proxy ports     | Number | 25565            | yes         |
 
