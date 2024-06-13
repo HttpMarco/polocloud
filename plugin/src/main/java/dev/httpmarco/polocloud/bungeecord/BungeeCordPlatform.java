@@ -18,28 +18,42 @@ package dev.httpmarco.polocloud.bungeecord;
 
 import dev.httpmarco.polocloud.RunningPlatform;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
+import dev.httpmarco.polocloud.bungeecord.command.CloudCommand;
 import dev.httpmarco.polocloud.bungeecord.listener.*;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
 
+@Getter
+@Accessors(fluent = true)
 public final class BungeeCordPlatform extends Plugin {
 
+    @Getter
+    private static BungeeCordPlatform instance;
+
     private RunningPlatform runningPlatform;
+    private BungeeAudiences audiences;
 
     @Override
     public void onEnable() {
+        instance = this;
         var instance = ProxyServer.getInstance();
         instance.getConfigurationAdapter().getServers().clear();
         instance.getServers().clear();
+
+        this.audiences = BungeeAudiences.create(this);
 
         var pluginManager = instance.getPluginManager();
         pluginManager.registerListener(this, new PlayerDisconnectListener());
         pluginManager.registerListener(this, new PreLoginListener());
         pluginManager.registerListener(this, new ServerConnectedListener());
         pluginManager.registerListener(this, new PlayerLoginListener());
+
+        pluginManager.registerCommand(this, new CloudCommand());
 
         instance.setReconnectHandler(new BungeeCordReconnectHandler());
 
