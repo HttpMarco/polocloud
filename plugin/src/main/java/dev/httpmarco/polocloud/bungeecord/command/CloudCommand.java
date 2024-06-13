@@ -19,15 +19,12 @@ package dev.httpmarco.polocloud.bungeecord.command;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.CloudService;
-import dev.httpmarco.polocloud.bungeecord.BungeeCordPlatform;
-import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
-import org.bukkit.event.server.TabCompleteEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,29 +33,24 @@ import java.util.List;
 
 public class CloudCommand extends Command implements TabExecutor {
 
-    private final BungeeAudiences audiences;
-    private final String PREFIX;
+    private final String PREFIX = "§bPoloCloud §8» §7";
 
     public CloudCommand() {
         super("cloud");
-        this.audiences = BungeeCordPlatform.instance().audiences();
-        this.PREFIX = "<color:#00feed>PoloCloud</color> <dark_gray>»</dark_gray> ";
     }
 
-    // todo: make Messages! -> Adding Minimessages
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!(sender instanceof ProxiedPlayer player)) {
-            sender.sendMessage("PoloCloud » you are not a Player!");
-            return;
-        }
-/*
-        if (!(player.hasPermission("cloud.command"))) {
-            this.sendMessage(player, this.PREFIX + "<red>You don't have the Permission for that!</red>");
+            sender.sendMessage(TextComponent.fromLegacy(PREFIX + "§cYou must be a Player to execute this command."));
             return;
         }
 
- */
+        if (!(player.hasPermission("cloud.command"))) {
+            player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§cYou don't have the Permission for that!"));
+            return;
+        }
+
         if (args.length == 0) {
             this.sendUsage(player);
             return;
@@ -67,16 +59,17 @@ public class CloudCommand extends Command implements TabExecutor {
         switch (args[0].toLowerCase()) {
             case "group", "groups" -> {
                 this.handleGroupCommand(player, args);
+                return;
             }
             case "service", "ser", "serv" -> {
                 this.handleServiceCommand(player, args);
+                return;
             }
             default -> {
                 this.sendUsage(player);
+                return;
             }
         }
-
-        this.sendUsage(player);
     }
 
     @Override
@@ -91,61 +84,61 @@ public class CloudCommand extends Command implements TabExecutor {
 
  */
 
-        if (args.length == 0) {
-            return Arrays.asList("group", "service");
-        }
+        //todo: remove this!
+        ProxyServer.getInstance().broadcast(args.length + " TAB");
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("group")) {
-            List<String> list = new ArrayList<>();
-            list.add("list");
-            list.add("shutdown");
-            CloudAPI.instance().groupProvider().groups().forEach(cloudGroup -> {
-                list.add(cloudGroup.name());
-            });
-            return list;
+        if (args.length == 1) {
+            return Arrays.asList("group", "service");
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("group")) {
             List<String> list = new ArrayList<>();
+            list.add("list");
+            list.add("shutdown");
             CloudAPI.instance().groupProvider().groups().forEach(cloudGroup -> {
                 list.add(cloudGroup.name());
             });
             return list;
         }
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("service")) {
+        if (args.length == 3 && args[0].equalsIgnoreCase("group")) {
             List<String> list = new ArrayList<>();
-            list.add("list");
-            list.add("shutdown");
-            CloudAPI.instance().serviceProvider().services().forEach(cloudService -> {
-                list.add(cloudService.name());
+            CloudAPI.instance().groupProvider().groups().forEach(cloudGroup -> {
+                list.add(cloudGroup.name());
             });
             return list;
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("service")) {
             List<String> list = new ArrayList<>();
+            list.add("list");
+            list.add("shutdown");
             CloudAPI.instance().serviceProvider().services().forEach(cloudService -> {
                 list.add(cloudService.name());
             });
             return list;
         }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("service")) {
+            List<String> list = new ArrayList<>();
+            CloudAPI.instance().serviceProvider().services().forEach(cloudService -> {
+                list.add(cloudService.name());
+            });
+            return list;
+        }
+
         return Collections.emptyList();
     }
 
-    private void sendMessage(ProxiedPlayer player, String message) {
-       this.audiences.player(player).sendMessage(MiniMessage.miniMessage().deserialize(message));
-    }
-
     private void sendUsage(ProxiedPlayer player) {
-        this.sendMessage(player, this.PREFIX + "<gray>/cloud group list - list all groups</gray>");
-        this.sendMessage(player, this.PREFIX + "<gray>/cloud group <groupName> - show info about group</gray>");
-        this.sendMessage(player, this.PREFIX + "<gray>/cloud group shutdown <groupName> - shutdown all server by a group</gray>");
+        player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7/cloud group list §8- §7list all groups"));
+        player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7/cloud group <groupName> §8- §7show info about group"));
+        player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7/cloud group shutdown <groupName> §8- §7shutdown all server by a group"));
 
-        this.sendMessage(player, this.PREFIX + "<gray>/cloud service list - list all services</gray>");
-        this.sendMessage(player, this.PREFIX + "<gray>/cloud service <serviceName> - show info about service</gray>");
-        this.sendMessage(player, this.PREFIX + "<gray>/cloud service shutdown <serviceName> - shutdown a service</gray>");
-        // TODO: Adding copy Command for Copy the Server into the Template!
+        player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7/cloud service list §8- §7list all services"));
+        player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7/cloud service <serviceName> §8- §7show info about service"));
+        player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7/cloud service shutdown <serviceName> §8- §7shutdown a service"));
+        // todo: Adding copy Command for Copy the Server into the Template!
     }
 
     private void handleGroupCommand(ProxiedPlayer player, String[] args) {
@@ -153,27 +146,32 @@ public class CloudCommand extends Command implements TabExecutor {
             case 2 -> {
                 if (args[1].equalsIgnoreCase("list")) {
                     final List<CloudGroup> groups = CloudAPI.instance().groupProvider().groups();
-                    player.sendMessage("Following &3" + groups.size() + " &1groups are loading&2:");
-                    groups.forEach(cloudGroup -> player.sendMessage("&2- &4" + cloudGroup.name() + "&2: (&1" + cloudGroup + "&2)"));
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7Following §b" + groups.size() + " §7groups are loading:"));
+                    groups.forEach(cloudGroup -> {
+                        player.sendMessage(TextComponent.fromLegacy("§8- §f" + cloudGroup.name() + "§8: (§b" + cloudGroup + "§8)"));
+                    });
                     return;
                 }
 
                 final String groupName = args[0];
                 if (!CloudAPI.instance().groupProvider().isGroup(groupName)) {
-                    player.sendMessage("This group does not exists&2!");
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§cThis group does not exists!"));
                     return;
                 }
+
                 final CloudGroup group = CloudAPI.instance().groupProvider().group(groupName);
 
-                player.sendMessage("Name&2: &3" + groupName);
-                player.sendMessage("Platform&2: &3" + group.platform().version());
-                player.sendMessage("Memory&2: &3" + group.memory());
-                player.sendMessage("Minimum online services&2: &3" + group.minOnlineServices());
-                player.sendMessage("Properties &2(&1" + group.properties().properties().size() + "&2): &3");
-
-                group.properties().properties().forEach((groupProperties, o) -> {
-                    player.sendMessage("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
-                });
+                player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Name§8: §b" + groupName));
+                player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Platform§8: §b" + group.platform().version()));
+                player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Memory§8: §b" + group.memory()));
+                player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Minimum online services§8: §b" + group.minOnlineServices()));
+                if (group.properties() != null) {
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Properties §8(§b" + group.properties().properties().size() + "§8): §b"));
+                    group.properties().properties().forEach((groupProperties, o) -> {
+                        player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString()));
+                    });
+                }
+                return;
             }
             case 3 -> {
                 if (!(args[1].equalsIgnoreCase("shutdown"))) {
@@ -182,12 +180,13 @@ public class CloudCommand extends Command implements TabExecutor {
                 }
                 final String groupName = args[2];
                 if (!CloudAPI.instance().groupProvider().isGroup(groupName)) {
-                    player.sendMessage("This group does not exists&2!");
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§cThis group does not exists!"));
                     return;
                 }
                 final CloudGroup cloudGroup = CloudAPI.instance().groupProvider().group(groupName);
                 CloudAPI.instance().serviceProvider().services(cloudGroup).forEach(CloudService::shutdown);
-                player.sendMessage("You successfully stopped all services of group &3" + groupName + "&2!");
+                player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "You successfully stopped all services of group §b" + groupName + "§8!"));
+                return;
             }
         }
     }
@@ -197,45 +196,50 @@ public class CloudCommand extends Command implements TabExecutor {
             case 2 -> {
                 if (args[1].equalsIgnoreCase("list")) {
                     final List<CloudService> services = CloudAPI.instance().serviceProvider().services();
-                    player.sendMessage("Following &3" + services.size() + " &1services are loading&2:");
-                    services.forEach(cloudService -> player.sendMessage("&2- &4" + cloudService.name() + "&2: (&1" + cloudService.group().name() + "&2)"));
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Following §b" + services.size() + " §7services are loading§8:"));
+                    services.forEach(cloudService -> {
+                        player.sendMessage(TextComponent.fromLegacy("§8- §f" + cloudService.name() + "§8: (§b" + cloudService.group().name() + "§8)"));
+                    });
                     return;
                 }
 
                 final String serviceName = args[1];
-                var service = CloudAPI.instance().serviceProvider().service(serviceName);
+                final CloudService service = CloudAPI.instance().serviceProvider().service(serviceName);
                 if (service == null) {
-                    player.sendMessage("This services does not exists&2!");
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§cThis services does not exists!"));
                     return;
                 }
 
-                player.sendMessage("Name&2: &3" + serviceName);
-                player.sendMessage("Platform&2: &3" + service.group().platform().version());
-                player.sendMessage("Current memory&2: &3-1");
-                player.sendMessage("Players&2: &3-1");
-                player.sendMessage("Maximal players&2: &3" + service.maxPlayers());
-                player.sendMessage("Port &2: &3" + service.port());
-                player.sendMessage("State&2: &3" + service.state());
-                player.sendMessage("Properties &2(&1" + service.properties().properties().size() + "&2): &3");
+                player.sendMessage("Name§8: §b" + serviceName);
+                player.sendMessage("Platform§8: §b" + service.group().platform().version());
+                player.sendMessage("Current memory§8: §b-1");
+                player.sendMessage("Players§8: §b-1");
+                player.sendMessage("Maximal players§8: §b" + service.maxPlayers());
+                player.sendMessage("Port §8: §b" + service.port());
+                player.sendMessage("State§8: §b" + service.state());
+                player.sendMessage("Properties §8(§b" + service.properties().properties().size() + "§8): §b");
 
                 service.properties().properties().forEach((groupProperties, o) -> {
-                    player.sendMessage("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
+                    player.sendMessage("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString());
                 });
+                return;
             }
             case 3 -> {
-                if (args[1].equalsIgnoreCase("shutdown")) {
-                    final String serviceName = args[2];
-                    var service = CloudAPI.instance().serviceProvider().service(serviceName);
-                    if (service == null) {
-                        player.sendMessage("This services does not exists&2!");
-                        return;
-                    }
-
-                    service.shutdown();
-                    player.sendMessage("This services " + service.name() + " stopping now..");
+                if (!(args[1].equalsIgnoreCase("shutdown"))) {
+                    this.sendUsage(player);
                     return;
                 }
-                this.sendUsage(player);
+
+                final String serviceName = args[2];
+                var service = CloudAPI.instance().serviceProvider().service(serviceName);
+                if (service == null) {
+                    player.sendMessage("This services does not exists§8!");
+                    return;
+                }
+
+                service.shutdown();
+                player.sendMessage("This services " + service.name() + " stopping now..");
+                return;
             }
         }
     }
