@@ -16,48 +16,55 @@
 
 package dev.httpmarco.polocloud.runner.groups;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
+import dev.httpmarco.polocloud.api.packets.groups.CloudGroupCollectionPacket;
+import dev.httpmarco.polocloud.api.packets.groups.CloudGroupPacket;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
-public final class InstanceGroupProvider implements CloudGroupProvider {
+public final class InstanceGroupProvider extends CloudGroupProvider {
 
     @Override
     public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
+        //todo
         return false;
     }
 
     @Override
     public boolean deleteGroup(String name) {
+        //todo
         return false;
     }
 
     @Override
-    public boolean isGroup(String name) {
-        return false;
-    }
-
-    @Override
-    public CloudGroup group(String name) {
+    public CompletableFuture<Boolean> isGroupAsync(String name) {
+        //todo
         return null;
     }
 
     @Override
-    public List<CloudGroup> groups() {
-        CloudInstance.instance().client().transmitter().request("groups-all", CloudServiceRegisterPacket.class, it -> {
+    public CompletableFuture<CloudGroup> groupAsync(String name) {
+        var future = new CompletableFuture<CloudGroup>();
+        CloudInstance.instance().client().transmitter().request("group-find", new CommunicationProperty().set("name", name), CloudGroupPacket.class, it -> future.complete(it.group()));
+        return future;
+    }
 
-        });
-        return List.of();
+    @Override
+    public CompletableFuture<List<CloudGroup>> groupsAsync() {
+        var future = new CompletableFuture<List<CloudGroup>>();
+        CloudInstance.instance().client().transmitter().request("groups-all", CloudGroupCollectionPacket.class, it -> future.complete(it.groups()));
+        return future;
     }
 
     @Override
     public void update(CloudGroup cloudGroup) {
-
+        //todo
     }
 
     @Override

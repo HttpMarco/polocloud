@@ -17,23 +17,41 @@
 package dev.httpmarco.polocloud.api.groups;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import lombok.SneakyThrows;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-public interface CloudGroupProvider {
+public abstract class CloudGroupProvider {
 
-    boolean createGroup(String name, String platform, int memory, int minOnlineCount);
+    public abstract boolean createGroup(String name, String platform, int memory, int minOnlineCount);
 
-    boolean deleteGroup(String name);
+    public abstract boolean deleteGroup(String name);
 
-    boolean isGroup(String name);
+    @SneakyThrows
+    public boolean isGroup(String name) {
+        return isGroupAsync(name).get(5, TimeUnit.SECONDS);
+    }
 
-    CloudGroup group(String name);
+    public abstract CompletableFuture<Boolean> isGroupAsync(String name);
 
-    List<CloudGroup> groups();
+    @SneakyThrows
+    public CloudGroup group(String name) {
+        return this.groupAsync(name).get(5, TimeUnit.SECONDS);
+    }
 
-    void update(CloudGroup cloudGroup);
+    public abstract CompletableFuture<CloudGroup> groupAsync(String name);
 
-    CloudGroup fromPacket(PacketBuffer buffer);
+    @SneakyThrows
+    public List<CloudGroup> groups() {
+        return this.groupsAsync().get(5, TimeUnit.SECONDS);
+    }
+
+    public abstract CompletableFuture<List<CloudGroup>> groupsAsync();
+
+    public abstract void update(CloudGroup cloudGroup);
+
+    public abstract CloudGroup fromPacket(PacketBuffer buffer);
 
 }

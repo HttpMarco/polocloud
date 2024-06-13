@@ -18,7 +18,7 @@ package dev.httpmarco.polocloud.api.packets.player;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.packets.CloudComponentPacketHelper;
+import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -35,11 +35,11 @@ public final class CloudPlayerPacket extends Packet {
 
     @Override
     public void read(PacketBuffer codecBuffer) {
-        this.cloudPlayer = CloudComponentPacketHelper.readPlayer(codecBuffer);
+        this.cloudPlayer = ComponentPacketHelper.readPlayer(codecBuffer);
     }
 
     @Override
     public void write(PacketBuffer codecBuffer) {
-        CloudComponentPacketHelper.writePlayer(cloudPlayer, codecBuffer);
+        ComponentPacketHelper.writePlayer(cloudPlayer, codecBuffer);
     }
 }

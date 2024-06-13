@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.runner;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
+import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
@@ -79,7 +80,6 @@ public class CloudInstance extends CloudAPI {
         this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> {
             serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> {
                 this.self = service;
-
             });
         });
 

@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.api.events.service;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.packets.CloudComponentPacketHelper;
+import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,11 +31,11 @@ public final class CloudServiceShutdownEvent implements ServiceEvent{
 
     @Override
     public void read(PacketBuffer buffer) {
-        this.cloudService = CloudComponentPacketHelper.readService(buffer);
+        this.cloudService = ComponentPacketHelper.readService(buffer);
     }
 
     @Override
     public void write(PacketBuffer buffer) {
-        CloudComponentPacketHelper.writeService(cloudService, buffer);
+        ComponentPacketHelper.writeService(cloudService, buffer);
     }
 }
