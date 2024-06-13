@@ -57,6 +57,7 @@ public final class CloudServiceGroupProvider extends CloudGroupProvider {
 
     @Override
     public boolean createGroup(String name, String platformVersion, int memory, int minOnlineCount) {
+        //todo remove outpoint
         if (isGroup(name)) {
             CloudAPI.instance().logger().info("The group already exists!");
             return false;
