@@ -21,8 +21,7 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.api.packets.groups.CloudGroupCollectionPacket;
-import dev.httpmarco.polocloud.api.packets.groups.CloudGroupPacket;
+import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 
 import java.util.List;
@@ -32,20 +31,23 @@ public final class InstanceGroupProvider extends CloudGroupProvider {
 
     @Override
     public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
-        //todo
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupCreatePacket(name, platform, memory, minOnlineCount));
+        //todo wait for response
         return false;
     }
 
     @Override
     public boolean deleteGroup(String name) {
-        //todo
-        return false;
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupDeletePacket(name));
+        //todo wait for response
+        return true;
     }
 
     @Override
     public CompletableFuture<Boolean> isGroupAsync(String name) {
-        //todo
-        return null;
+        var future = new CompletableFuture<Boolean>();
+        CloudInstance.instance().client().transmitter().request("group-exist", new CommunicationProperty().set("name", name), CloudGroupExistResponsePacket.class, it -> future.complete(it.response()));
+        return future;
     }
 
     @Override
@@ -64,7 +66,7 @@ public final class InstanceGroupProvider extends CloudGroupProvider {
 
     @Override
     public void update(CloudGroup cloudGroup) {
-        //todo
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupUpdatePacket(cloudGroup));
     }
 
     @Override

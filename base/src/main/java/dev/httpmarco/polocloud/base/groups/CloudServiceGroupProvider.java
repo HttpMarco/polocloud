@@ -21,12 +21,12 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.api.packets.groups.CloudGroupCollectionPacket;
-import dev.httpmarco.polocloud.api.packets.groups.CloudGroupPacket;
+import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -44,6 +44,11 @@ public final class CloudServiceGroupProvider extends CloudGroupProvider {
         var transmitter = CloudBase.instance().transmitter();
         transmitter.responder("groups-all", (properties) -> new CloudGroupCollectionPacket(groups()));
         transmitter.responder("group-find", (properties) -> new CloudGroupPacket(group(properties.getString("name"))));
+        transmitter.responder("group-exist", (properties) -> new CloudGroupExistResponsePacket(isGroup(properties.getString("name"))));
+
+        transmitter.listen(CloudGroupCreatePacket.class, (channelTransmit, packet) -> this.createGroup(packet.name(), packet.platform(), packet.memory(), packet.minOnlineCount()));
+        transmitter.listen(CloudGroupDeletePacket.class, (channelTransmit, packet) -> this.deleteGroup(packet.name()));
+        transmitter.listen(CloudGroupUpdatePacket.class, (channelTransmit, packet) -> this.update(packet.group()));
 
         // load default groups
         this.groups = groupServiceTypeAdapter.readGroups();

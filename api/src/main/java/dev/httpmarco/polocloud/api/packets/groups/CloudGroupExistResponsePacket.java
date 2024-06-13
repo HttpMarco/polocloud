@@ -24,27 +24,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class CloudGroupPacket extends Packet {
+public final class CloudGroupExistResponsePacket extends Packet {
 
-    private CloudGroup group;
+    private boolean response;
 
     @Override
     public void read(PacketBuffer packetBuffer) {
-        if (!packetBuffer.readBoolean()) {
-            this.group = ComponentPacketHelper.readGroup(packetBuffer);
-        }
+        response = packetBuffer.readBoolean();
     }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
-        packetBuffer.writeBoolean(group == null);
-
-        if (group == null) {
-            return;
-        }
-        ComponentPacketHelper.writeGroup(group, packetBuffer);
+        packetBuffer.writeBoolean(response);
     }
 }

@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class CloudGroupPacket extends Packet {
+public final class CloudGroupUpdatePacket extends Packet {
 
     private CloudGroup group;
 
@@ -45,6 +45,7 @@ public final class CloudGroupPacket extends Packet {
         if (group == null) {
             return;
         }
+
         ComponentPacketHelper.writeGroup(group, packetBuffer);
     }
 }

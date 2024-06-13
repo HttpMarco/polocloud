@@ -18,8 +18,6 @@ package dev.httpmarco.polocloud.api.packets.groups;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -27,24 +25,26 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class CloudGroupPacket extends Packet {
+public final class CloudGroupCreatePacket extends Packet {
 
-    private CloudGroup group;
+    private String name;
+    private String platform;
+    private int memory;
+    private int minOnlineCount;
 
     @Override
     public void read(PacketBuffer packetBuffer) {
-        if (!packetBuffer.readBoolean()) {
-            this.group = ComponentPacketHelper.readGroup(packetBuffer);
-        }
+        this.name = packetBuffer.readString();
+        this.platform = packetBuffer.readString();
+        this.memory = packetBuffer.readInt();
+        this.minOnlineCount = packetBuffer.readInt();
     }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
-        packetBuffer.writeBoolean(group == null);
-
-        if (group == null) {
-            return;
-        }
-        ComponentPacketHelper.writeGroup(group, packetBuffer);
+        packetBuffer.writeString(name);
+        packetBuffer.writeString(platform);
+        packetBuffer.writeInt(memory);
+        packetBuffer.writeInt(minOnlineCount);
     }
 }
