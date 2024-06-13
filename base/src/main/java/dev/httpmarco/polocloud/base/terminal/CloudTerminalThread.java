@@ -56,8 +56,8 @@ public final class CloudTerminalThread extends Thread {
                                     .map(it -> (LocalCloudService) it)
                                     .filter(LocalCloudService::subscribed).findFirst()
                                     .orElse(null);
-                            if(service != null) {
-                                if(rawLine.equalsIgnoreCase("leave")) {
+                            if (service != null) {
+                                if (rawLine.equalsIgnoreCase("leave")) {
                                     service.subscribeLog();
                                     this.terminal.clear();
                                 } else {

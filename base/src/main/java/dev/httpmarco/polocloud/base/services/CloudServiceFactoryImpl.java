@@ -112,7 +112,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
                 if (localCloudService.process().waitFor(10, TimeUnit.SECONDS)) {
                     localCloudService.process().toHandle().destroyForcibly();
                     localCloudService.process(null);
-                    return;
                 }
             } catch (InterruptedException ignored) {
             }
