@@ -13,7 +13,7 @@ commons = "2.16.1"
 
 
 minimessage = "4.17.0"
-bungeeminimessage = "4.3.2"
+bungeeminimessage = "4.3.3"
 
 #platforms
 velocity = "3.3.0-SNAPSHOT"
