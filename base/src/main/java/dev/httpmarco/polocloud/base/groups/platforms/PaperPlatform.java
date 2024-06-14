@@ -77,55 +77,61 @@ public final class PaperPlatform extends PaperMCPlatform {
                 .map(it -> it.platform().version())
                 .distinct()
                 .forEach(platformVersion -> {
-                    var platform = CloudBase.instance().groupProvider().platformService().find(platformVersion);
-                    if (platform instanceof VelocityPlatform) {
-                        // manipulate velocity secret if
-                        var configPath = localCloudService.runningFolder().resolve("config");
-                        var globalPaperProperty = configPath.resolve("paper-global.yml");
+                    try {
 
-                        if (Files.exists(globalPaperProperty)) {
-                            Yaml yaml = new Yaml();
+                        var platform = CloudBase.instance().groupProvider().platformService().find(platformVersion);
+                        if (platform instanceof VelocityPlatform) {
+                            // manipulate velocity secret if
+                            var configPath = localCloudService.runningFolder().resolve("config");
+                            var globalPaperProperty = configPath.resolve("paper-global.yml");
 
-                            var paperProperties = (Map<String, Object>) yaml.load(globalPaperProperty.toString());
-                            var proxyProperties = (Map<String, Object>) paperProperties.get("proxies");
-                            var velocityProperties = (Map<String, Object>) proxyProperties.get("velocity");
+                            if (Files.exists(globalPaperProperty)) {
+                                Yaml yaml = new Yaml();
 
-                            velocityProperties.put("enabled", true);
-                            velocityProperties.put("secret", CloudGroupPlatformService.PROXY_SECRET);
+                                var paperProperties = (Map<String, Object>) yaml.load(Files.readString(globalPaperProperty));
+                                var proxyProperties = (Map<String, Object>) paperProperties.get("proxies");
+                                var velocityProperties = (Map<String, Object>) proxyProperties.get("velocity");
 
-                            try {
-                                var writer = new FileWriter(globalPaperProperty.toString());
-                                yaml.dump(paperProperties, writer);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                velocityProperties.put("enabled", true);
+                                velocityProperties.put("secret", CloudGroupPlatformService.PROXY_SECRET);
+
+                                try {
+                                    var writer = new FileWriter(globalPaperProperty.toString());
+                                    yaml.dump(paperProperties, writer);
+                                    writer.close();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            } else {
+                                Map<String, Object> data = new LinkedHashMap<>();
+                                Map<String, Object> proxies = new LinkedHashMap<>();
+                                Map<String, Object> velocity = new LinkedHashMap<>();
+
+                                velocity.put("enabled", true);
+                                velocity.put("online-mode", true);
+                                velocity.put("secret", CloudGroupPlatformService.PROXY_SECRET);
+                                proxies.put("velocity", velocity);
+                                data.put("proxies", proxies);
+
+                                try {
+                                    Files.createDirectories(configPath);
+                                    FileWriter writer = new FileWriter(configPath.resolve("paper-global.yml").toString());
+
+                                    writer.write(WRITER.toJson(data));
+                                    writer.close();
+                                } catch (IOException exception) {
+                                    throw new RuntimeException(exception);
+                                }
                             }
-                        } else {
-                            Map<String, Object> data = new LinkedHashMap<>();
-                            Map<String, Object> proxies = new LinkedHashMap<>();
-                            Map<String, Object> velocity = new LinkedHashMap<>();
-
-                            velocity.put("enabled", true);
-                            velocity.put("online-mode", true);
-                            velocity.put("secret", CloudGroupPlatformService.PROXY_SECRET);
-                            proxies.put("velocity", velocity);
-                            data.put("proxies", proxies);
-
-                            try {
-                                Files.createDirectories(configPath);
-                                FileWriter writer = new FileWriter(configPath.resolve("paper-global.yml").toString());
-
-                                writer.write(WRITER.toJson(data));
-                                writer.close();
-                            } catch (IOException exception) {
-                                throw new RuntimeException(exception);
-                            }
+                            return;
                         }
-                        return;
-                    }
 
-                    if (platform instanceof BungeeCordPlatform bungeeCordPlatform) {
-                        // enable bungeecord in spigot.yml
-                        return;
+                        if (platform instanceof BungeeCordPlatform bungeeCordPlatform) {
+                            // enable bungeecord in spigot.yml
+                            return;
+                        }
+                    }catch (Exception exception) {
+                        exception.printStackTrace();
                     }
                 });
 

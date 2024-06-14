@@ -18,7 +18,7 @@ package dev.httpmarco.polocloud.api.packets.service;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.packets.CloudComponentPacketHelper;
+import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -42,7 +42,7 @@ public final class CloudAllServicesPacket extends Packet {
 
         int amount = codecBuffer.readInt();
         for (int i = 0; i < amount; i++) {
-            this.services.add(CloudComponentPacketHelper.readService(codecBuffer));
+            this.services.add(ComponentPacketHelper.readService(codecBuffer));
         }
     }
 
@@ -51,7 +51,7 @@ public final class CloudAllServicesPacket extends Packet {
         codecBuffer.writeInt(services.size());
 
         for (CloudService service : services) {
-            CloudComponentPacketHelper.writeService(service, codecBuffer);
+            ComponentPacketHelper.writeService(service, codecBuffer);
         }
     }
 }

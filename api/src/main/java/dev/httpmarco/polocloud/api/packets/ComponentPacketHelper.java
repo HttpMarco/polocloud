@@ -23,7 +23,7 @@ import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 
-public final class CloudComponentPacketHelper {
+public final class ComponentPacketHelper {
 
     public static void writeService(CloudService cloudService, PacketBuffer codecBuffer) {
         writeGroup(cloudService.group(), codecBuffer);

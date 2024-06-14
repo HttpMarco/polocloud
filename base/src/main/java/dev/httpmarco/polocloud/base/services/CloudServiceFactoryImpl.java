@@ -36,6 +36,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
@@ -104,6 +105,16 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         CloudAPI.instance().globalEventNode().call(new CloudServiceShutdownEvent(service));
 
         if (localCloudService.process() != null) {
+
+            // todo check platform
+            localCloudService.execute("stop");
+            try {
+                if (localCloudService.process().waitFor(10, TimeUnit.SECONDS)) {
+                    localCloudService.process().toHandle().destroyForcibly();
+                    localCloudService.process(null);
+                }
+            } catch (InterruptedException ignored) {
+            }
             localCloudService.process().toHandle().destroyForcibly();
             localCloudService.process().waitFor();
             localCloudService.process(null);

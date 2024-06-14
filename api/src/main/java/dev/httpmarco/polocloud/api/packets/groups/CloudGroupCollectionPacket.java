@@ -14,32 +14,42 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.packets.service;
+package dev.httpmarco.polocloud.api.packets.groups;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
-import dev.httpmarco.polocloud.api.services.CloudService;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Accessors(fluent = true)
-public final class CloudServicePacket extends Packet {
+@AllArgsConstructor
+public final class CloudGroupCollectionPacket extends Packet {
 
-    private CloudService service;
+    private List<CloudGroup> groups;
 
-    public CloudServicePacket(CloudService service) {
-        this.service = service;
+    @Override
+    public void read(PacketBuffer packetBuffer) {
+        var groupAmount = packetBuffer.readInt();
+        var groups = new ArrayList<CloudGroup>();
+
+        for (int i = 0; i < groupAmount; i++) {
+            groups.add(ComponentPacketHelper.readGroup(packetBuffer));
+        }
+        this.groups = groups;
     }
 
     @Override
-    public void read(PacketBuffer codecBuffer) {
-        this.service = ComponentPacketHelper.readService(codecBuffer);
-    }
-
-    @Override
-    public void write(PacketBuffer codecBuffer) {
-        ComponentPacketHelper.writeService(service, codecBuffer);
+    public void write(PacketBuffer packetBuffer) {
+        packetBuffer.writeInt(groups.size());
+        for (var group : groups) {
+            ComponentPacketHelper.writeGroup(group, packetBuffer);
+        }
     }
 }

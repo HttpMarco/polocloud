@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.service;
+package dev.httpmarco.polocloud.runner.services;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
+import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceShutdownPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 
-@Getter
-@Accessors(fluent = true)
-@AllArgsConstructor
-public final class CloudServiceStartEvent implements ServiceEvent{
-
-    private CloudService cloudService;
+public final class InstanceCloudServiceFactory implements CloudServiceFactory {
 
     @Override
-    public void read(PacketBuffer buffer) {
-        this.cloudService = ComponentPacketHelper.readService(buffer);
+    public void start(CloudGroup cloudGroup) {
+        //todo
     }
 
     @Override
-    public void write(PacketBuffer buffer) {
-        ComponentPacketHelper.writeService(cloudService, buffer);
+    public void stop(CloudService service) {
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceShutdownPacket(service.id()));
     }
 }

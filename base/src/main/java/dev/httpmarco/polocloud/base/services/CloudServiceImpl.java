@@ -78,6 +78,11 @@ public class CloudServiceImpl implements CloudService {
     }
 
     @Override
+    public void execute(String command) {
+        // todo send packet to self hosted node
+    }
+
+    @Override
     public List<CloudPlayer> onlinePlayers() {
         // todo
         return List.of();

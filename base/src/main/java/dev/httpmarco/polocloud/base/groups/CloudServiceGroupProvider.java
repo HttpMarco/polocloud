@@ -21,28 +21,43 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudServiceGroupProvider implements CloudGroupProvider {
+public final class CloudServiceGroupProvider extends CloudGroupProvider {
 
     private final List<CloudGroup> groups;
     private final CloudGroupPlatformService platformService = new CloudGroupPlatformService();
     private final CloudGroupServiceTypeAdapter groupServiceTypeAdapter = new CloudGroupServiceTypeAdapter(platformService);
 
     public CloudServiceGroupProvider() {
+
+        // register group packet responders
+        var transmitter = CloudBase.instance().transmitter();
+        transmitter.responder("groups-all", (properties) -> new CloudGroupCollectionPacket(groups()));
+        transmitter.responder("group-find", (properties) -> new CloudGroupPacket(group(properties.getString("name"))));
+        transmitter.responder("group-exist", (properties) -> new CloudGroupExistResponsePacket(isGroup(properties.getString("name"))));
+
+        transmitter.listen(CloudGroupCreatePacket.class, (channelTransmit, packet) -> this.createGroup(packet.name(), packet.platform(), packet.memory(), packet.minOnlineCount()));
+        transmitter.listen(CloudGroupDeletePacket.class, (channelTransmit, packet) -> this.deleteGroup(packet.name()));
+        transmitter.listen(CloudGroupUpdatePacket.class, (channelTransmit, packet) -> this.update(packet.group()));
+
+        // load default groups
         this.groups = groupServiceTypeAdapter.readGroups();
         CloudBase.instance().logger().info("Loading following groups&2: &3" + String.join("&2, &3", groups.stream().map(CloudGroup::name).toList()));
     }
 
     @Override
     public boolean createGroup(String name, String platformVersion, int memory, int minOnlineCount) {
+        //todo remove outpoint
         if (isGroup(name)) {
             CloudAPI.instance().logger().info("The group already exists!");
             return false;
@@ -86,16 +101,29 @@ public final class CloudServiceGroupProvider implements CloudGroupProvider {
     }
 
     @Override
+    public CompletableFuture<Boolean> isGroupAsync(String name) {
+        return CompletableFuture.completedFuture(isGroup(name));
+    }
+
+    @Override
     public CloudGroup group(String name) {
         return this.groups.stream().filter(it -> it.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     @Override
+    public CompletableFuture<CloudGroup> groupAsync(String name) {
+        return CompletableFuture.completedFuture(group(name));
+    }
+
+    @Override
+    public CompletableFuture<List<CloudGroup>> groupsAsync() {
+        return CompletableFuture.completedFuture(groups);
+    }
+
     public void update(CloudGroup cloudGroup) {
         this.groupServiceTypeAdapter.updateFile(cloudGroup);
     }
 
-    @Override
     public CloudGroup fromPacket(PacketBuffer buffer) {
         var name = buffer.readString();
         var platform = buffer.readString();

@@ -73,6 +73,11 @@ public final class InstanceCloudService implements CloudService {
     }
 
     @Override
+    public void execute(String command) {
+        //todo
+    }
+
+    @Override
     public List<CloudPlayer> onlinePlayers() {
         //todo
         return List.of();

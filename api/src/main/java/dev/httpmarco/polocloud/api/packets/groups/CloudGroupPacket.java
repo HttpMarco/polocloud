@@ -14,32 +14,37 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.packets.service;
+package dev.httpmarco.polocloud.api.packets.groups;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
-import dev.httpmarco.polocloud.api.services.CloudService;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudServicePacket extends Packet {
+@AllArgsConstructor
+public final class CloudGroupPacket extends Packet {
 
-    private CloudService service;
+    private CloudGroup group;
 
-    public CloudServicePacket(CloudService service) {
-        this.service = service;
+    @Override
+    public void read(PacketBuffer packetBuffer) {
+        if (!packetBuffer.readBoolean()) {
+            this.group = ComponentPacketHelper.readGroup(packetBuffer);
+        }
     }
 
     @Override
-    public void read(PacketBuffer codecBuffer) {
-        this.service = ComponentPacketHelper.readService(codecBuffer);
-    }
+    public void write(PacketBuffer packetBuffer) {
+        packetBuffer.writeBoolean(group == null);
 
-    @Override
-    public void write(PacketBuffer codecBuffer) {
-        ComponentPacketHelper.writeService(service, codecBuffer);
+        if (group == null) {
+            return;
+        }
+        ComponentPacketHelper.writeGroup(group, packetBuffer);
     }
 }

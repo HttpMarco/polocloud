@@ -24,6 +24,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceShutdownPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
@@ -35,7 +36,6 @@ import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -72,6 +72,8 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         });
 
         transmitter.responder("service-find", (properties) -> new CloudServicePacket(find(properties.getUUID("uuid"))));
+
+        transmitter.listen(CloudServiceShutdownPacket.class, (channel, packet) -> factory.stop(find(packet.uuid())));
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
             var service = find(packet.id());
