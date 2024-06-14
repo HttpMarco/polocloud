@@ -22,6 +22,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
+import dev.httpmarco.polocloud.velocity.command.CloudCommand;
 import dev.httpmarco.polocloud.velocity.listener.PlayerChooseInitialServerListener;
 import dev.httpmarco.polocloud.velocity.listener.PlayerDisconnectListener;
 import dev.httpmarco.polocloud.velocity.listener.ServerConnectedListener;
@@ -54,6 +55,9 @@ public final class VelocityPlatform extends RunningProxyPlatform {
         eventManager.register(this, new PlayerDisconnectListener());
         eventManager.register(this, new ServerConnectedListener());
         eventManager.register(this, new PreLoginListener());
+
+        var commandManager = this.server.getCommandManager();
+        commandManager.register(commandManager.metaBuilder("cloud").build(), new CloudCommand());
 
         this.changeToOnline();
     }
