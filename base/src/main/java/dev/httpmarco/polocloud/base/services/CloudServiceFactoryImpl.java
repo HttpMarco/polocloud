@@ -29,6 +29,7 @@ import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.platforms.BungeeCordPlatform;
+import dev.httpmarco.polocloud.base.groups.platforms.VelocityPlatform;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 
@@ -105,30 +106,32 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         CloudAPI.instance().globalEventNode().call(new CloudServiceShutdownEvent(service));
 
         if (localCloudService.process() != null) {
-
-            // todo check platform
-            localCloudService.execute("stop");
-            try {
-                if (localCloudService.process().waitFor(10, TimeUnit.SECONDS)) {
-                    localCloudService.process().toHandle().destroyForcibly();
-                    localCloudService.process(null);
-                }
-            } catch (InterruptedException ignored) {
+            // todo fix
+            if (localCloudService.group().platform().proxy()) {
+                localCloudService.execute("end");
+            } else {
+                localCloudService.execute("stop");
             }
-            localCloudService.process().toHandle().destroyForcibly();
-            localCloudService.process().waitFor();
-            localCloudService.process(null);
+
+            this.shutdownProcess(localCloudService);
         }
 
         if (!service.group().properties().has(GroupProperties.STATIC)) {
             synchronized (this) {
                 FileUtils.deleteDirectory(localCloudService.runningFolder().toFile());
+                java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
             }
-            java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
         }
 
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
         CloudAPI.instance().logger().info("Server " + service.name() + " is stopped now.");
+    }
+
+    @SneakyThrows
+    private void shutdownProcess(LocalCloudService service) {
+        service.process().toHandle().destroyForcibly();
+        service.process().waitFor();
+        service.process(null);
     }
 
     private int nextServiceId(CloudGroup cloudGroup) {

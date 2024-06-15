@@ -6,5 +6,6 @@ include("instance")
 include("plugin")
 include("addon")
 include("modules")
-include("modules:syncproxy")
-findProject(":modules:syncproxy")?.name = "syncproxy"
+include("addons")
+include("addons:proxy-addon")
+findProject(":addons:proxy-addon")?.name = "proxy-addon"

@@ -60,11 +60,11 @@ public final class LocalCloudService extends CloudServiceImpl {
 
     @SneakyThrows
     public void execute(String execute) {
-        var writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
-
-        writer.write(execute);
-        writer.newLine();
-        writer.flush();
+        if (this.process != null) {
+            final var outputStream = this.process.getOutputStream();
+            outputStream.write((execute + "\n").getBytes(StandardCharsets.UTF_8));
+            outputStream.flush();
+        }
     }
 
     public void subscribeLog() {

@@ -108,6 +108,14 @@ public class CloudInstance extends CloudAPI {
             }
         });
         thread.setContextClassLoader(RunnerBootstrap.LOADER);
+
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (thread.isAlive()) {
+                thread.interrupt();
+            }
+            this.client.transmitter().close();
+        }));
         thread.start();
     }
 
