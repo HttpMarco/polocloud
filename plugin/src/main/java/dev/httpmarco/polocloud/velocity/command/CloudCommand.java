@@ -16,102 +16,73 @@
 
 package dev.httpmarco.polocloud.velocity.command;
 
+import com.google.common.collect.Lists;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.services.CloudService;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class CloudCommand implements SimpleCommand {
 
-    private final String PREFIX = "§bPoloCloud §8» §7";
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private final String PREFIX = "<aqua>PoloCloud <dark_gray>» <gray>";
 
     @Override
     public void execute(Invocation invocation) {
         if (!(invocation.source() instanceof Player player)) {
-            invocation.source().sendMessage(Component.text(this.PREFIX + "§cYou must be a Player to execute this command."));
+            invocation.source().sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>You must be a Player to execute this command."));
             return;
         }
 
-        if (!(player.hasPermission("cloud.command"))) {
-            player.sendMessage(Component.text(this.PREFIX + "§cYou don't have the Permission for that!"));
-            return;
-        }
-
-        final String[] args = invocation.arguments();
-
+        var args = invocation.arguments();
         if (args.length == 0) {
             this.sendUsage(player);
             return;
         }
 
         switch (args[0].toLowerCase()) {
-            case "group", "groups" -> {
-                this.handleGroupCommand(player, args);
-                return;
-            }
-            case "service", "ser", "serv" -> {
-                this.handleServiceCommand(player, args);
-                return;
-            }
-            default -> {
-                this.sendUsage(player);
-                return;
-            }
+            case "group", "groups" -> this.handleGroupCommand(player, args);
+            case "service", "ser", "serv" -> this.handleServiceCommand(player, args);
+            default -> this.sendUsage(player);
         }
     }
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        if (!(invocation.source() instanceof Player player)) {
+        if (!(invocation.source() instanceof Player)) {
             return Collections.emptyList();
         }
 
-        if (!(player.hasPermission("cloud.command"))) {
-            return Collections.emptyList();
-        }
-
-        final String[] args = invocation.arguments();
-
+        var args = invocation.arguments();
         if (args.length == 1) {
             return Arrays.asList("group", "service");
         }
 
-        if (args.length == 2 && args[0].toLowerCase().startsWith("service")) {
-            List<String> list = new ArrayList<>();
+        if (args.length == 2 && args[0].toLowerCase().startsWith("ser")) {
+            List<String> list = Lists.newArrayList();
             list.add("list");
-            CloudAPI.instance().serviceProvider().services().forEach(cloudService -> {
-                list.add(cloudService.name());
-            });
+            CloudAPI.instance().serviceProvider().services().forEach(cloudService -> list.add(cloudService.name()));
             return list;
         }
 
-        if (args.length == 3 && args[0].toLowerCase().startsWith("service")) {
-            return Arrays.asList("shutdown");
+        if (args.length == 3 && args[0].toLowerCase().startsWith("ser")) {
+            return List.of("shutdown");
         }
 
         if (args.length == 2 && args[0].toLowerCase().startsWith("group")) {
-            List<String> list = new ArrayList<>();
+            List<String> list = Lists.newArrayList();
             list.add("list");
-            list.add("shutdown");
-            CloudAPI.instance().groupProvider().groups().forEach(cloudGroup -> {
-                list.add(cloudGroup.name());
-            });
+            CloudAPI.instance().groupProvider().groups().forEach(cloudGroup -> list.add(cloudGroup.name()));
             return list;
         }
 
         if (args.length == 3 && args[0].toLowerCase().startsWith("group")) {
-            List<String> list = new ArrayList<>();
-            CloudAPI.instance().groupProvider().groups().forEach(cloudGroup -> {
-                list.add(cloudGroup.name());
-            });
-            return list;
+            return List.of("shutdown");
         }
         return Collections.emptyList();
     }
@@ -122,13 +93,13 @@ public class CloudCommand implements SimpleCommand {
     }
 
     private void sendUsage(Player player) {
-        player.sendMessage(Component.text(this.PREFIX + "§7/cloud group list §8- §7list all groups"));
-        player.sendMessage(Component.text(this.PREFIX + "§7/cloud group <groupName> §8- §7show info about group"));
-        player.sendMessage(Component.text(this.PREFIX + "§7/cloud group shutdown <groupName> §8- §7shutdown all server by a group"));
+        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "/cloud group list <dark_gray>- <gray>List all groups"));
+        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "/cloud group <groupName> <dark_gray>- <gray>Show info about a group"));
+        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "/cloud group <groupName> shutdown <dark_gray>- <gray>Shutdown all services by a group"));
 
-        player.sendMessage(Component.text(this.PREFIX + "§7/cloud service list §8- §7list all services"));
-        player.sendMessage(Component.text(this.PREFIX + "§7/cloud service <serviceName> §8- §7show info about service"));
-        player.sendMessage(Component.text(this.PREFIX + "§7/cloud service <serviceName> shutdown  §8- §7shutdown a service"));
+        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "/cloud service list <dark_gray>- <gray>List all services"));
+        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "/cloud service <serviceName> <dark_gray>- <gray>Show info about a service"));
+        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "/cloud service <serviceName> shutdown <dark_gray>- <gray>Shutdown a service"));
         // todo: Adding copy Command for Copy the Server into the Template!
     }
 
@@ -136,48 +107,48 @@ public class CloudCommand implements SimpleCommand {
         switch (args.length) {
             case 2 -> {
                 if (args[1].equalsIgnoreCase("list")) {
-                    final List<CloudGroup> groups = CloudAPI.instance().groupProvider().groups();
-                    player.sendMessage(Component.text(this.PREFIX + "§7Following §b" + groups.size() + " §7groups are loading:"));
-                    groups.forEach(cloudGroup -> {
-                        player.sendMessage(Component.text("§8- §f" + cloudGroup.name() + "§8: (§b" + cloudGroup + "§8)"));
-                    });
+                    var groups = CloudAPI.instance().groupProvider().groups();
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Following <aqua>" + groups.size() + " <gray>groups are loaded<dark_gray>:"));
+                    groups.forEach(cloudGroup -> player.sendMessage(this.miniMessage.deserialize("<gray>- <white>" + cloudGroup.name())));
                     return;
                 }
 
-                final String groupName = args[0];
+                var groupName = args[1];
                 if (!CloudAPI.instance().groupProvider().isGroup(groupName)) {
-                    player.sendMessage(Component.text(this.PREFIX + "§cThis group does not exists!"));
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>This group does not exists!"));
                     return;
                 }
 
-                final CloudGroup group = CloudAPI.instance().groupProvider().group(groupName);
+                var group = CloudAPI.instance().groupProvider().group(groupName);
 
-                player.sendMessage(Component.text(this.PREFIX + "Name§8: §b" + groupName));
-                player.sendMessage(Component.text(this.PREFIX + "Platform§8: §b" + group.platform().version()));
-                player.sendMessage(Component.text(this.PREFIX + "Memory§8: §b" + group.memory()));
-                player.sendMessage(Component.text(this.PREFIX + "Minimum online services§8: §b" + group.minOnlineServices()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Name<dark_gray>: <aqua>" + groupName));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Platform<dark_gray>: <aqua>" + group.platform().version()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Memory<dark_gray>: <aqua>" + group.memory()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Minimum online services<dark_gray>: <aqua>" + group.minOnlineServices()));
+
                 if (group.properties() != null) {
-                    player.sendMessage(Component.text(this.PREFIX + "Properties §8(§b" + group.properties().properties().size() + "§8): §b"));
-                    group.properties().properties().forEach((groupProperties, o) -> {
-                        player.sendMessage(Component.text("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString()));
-                    });
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Properties <dark_gray>(<aqua>" +
+                            group.properties().properties().size() + "<dark_gray>):"));
+                    group.properties().properties().forEach((groupProperties, o) ->
+                            player.sendMessage(this.miniMessage.deserialize("<dark_gray>   - <aqua>" + groupProperties.id() +
+                                    " <dark_gray>= <aqua>" + o.toString()))
+                    );
                 }
-                return;
             }
             case 3 -> {
-                if (!(args[1].equalsIgnoreCase("shutdown"))) {
+                if (!(args[2].equalsIgnoreCase("shutdown"))) {
                     this.sendUsage(player);
                     return;
                 }
-                final String groupName = args[2];
+                var groupName = args[1];
                 if (!CloudAPI.instance().groupProvider().isGroup(groupName)) {
-                    player.sendMessage(Component.text(this.PREFIX + "§cThis group does not exists!"));
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>This group does not exists!"));
                     return;
                 }
-                final CloudGroup cloudGroup = CloudAPI.instance().groupProvider().group(groupName);
+                var cloudGroup = CloudAPI.instance().groupProvider().group(groupName);
                 CloudAPI.instance().serviceProvider().services(cloudGroup).forEach(CloudService::shutdown);
-                player.sendMessage(Component.text(this.PREFIX + "You successfully stopped all services of group §b" + groupName + "§8!"));
-                return;
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<gray>You successfully stopped all services of group <aqua>" +
+                        groupName + "<dark_gray>!"));
             }
         }
     }
@@ -186,36 +157,37 @@ public class CloudCommand implements SimpleCommand {
         switch (args.length) {
             case 2 -> {
                 if (args[1].equalsIgnoreCase("list")) {
-                    final List<CloudService> services = CloudAPI.instance().serviceProvider().services();
-                    player.sendMessage(Component.text(this.PREFIX + "Following §b" + services.size() + " §7services are loading§8:"));
-                    services.forEach(cloudService -> {
-                        player.sendMessage(Component.text("§8- §f" + cloudService.name() + "§8: (§b" + cloudService.group().name() + "§8)"));
-                    });
+                    var services = CloudAPI.instance().serviceProvider().services();
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Following <aqua>" + services.size() +
+                            " <gray>services are loaded<dark_gray>:"));
+                    services.forEach(cloudService -> player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "- <white>" +
+                            cloudService.name() + "<dark_gray>: (<aqua>" + cloudService.group().name() + "<dark_gray>)")));
                     return;
                 }
 
-                final String serviceName = args[1];
-                final CloudService service = CloudAPI.instance().serviceProvider().service(serviceName);
+                var serviceName = args[1];
+                var service = CloudAPI.instance().serviceProvider().service(serviceName);
                 if (service == null) {
-                    player.sendMessage(Component.text(this.PREFIX + "§cThis services does not exists!"));
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>This service does not exists!"));
                     return;
                 }
 
-                player.sendMessage(Component.text(this.PREFIX + "Name§8: §b" + serviceName));
-                player.sendMessage(Component.text(this.PREFIX + "Platform§8: §b" + service.group().platform().version()));
-                player.sendMessage(Component.text(this.PREFIX + "Current memory§8: §b-1"));
-                player.sendMessage(Component.text(this.PREFIX + "Players§8: §b-1"));
-                player.sendMessage(Component.text(this.PREFIX + "Maximal players§8: §b" + service.maxPlayers()));
-                player.sendMessage(Component.text(this.PREFIX + "Port §8: §b" + service.port()));
-                player.sendMessage(Component.text(this.PREFIX + "State§8: §b" + service.state()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Name<dark_gray>: <aqua>" + serviceName));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Platform<dark_gray>: <aqua>" + service.group().platform().version()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Current memory<dark_gray>: <aqua>" + service.currentMemory()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Players<dark_gray>: <aqua>" + service.onlinePlayersCount()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Maximal players<dark_gray>: <aqua>" + service.maxPlayers()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Port <dark_gray>: <aqua>" + service.port()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "State<dark_gray>: <aqua>" + service.state()));
 
                 if (service.properties() != null) {
-                    player.sendMessage(Component.text(this.PREFIX + "Properties §8(§b" + service.properties().properties().size() + "§8): §b"));
-                    service.properties().properties().forEach((groupProperties, o) -> {
-                        player.sendMessage(Component.text("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString()));
-                    });
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Properties <dark_gray>(<aqua>" +
+                            service.properties().properties().size() + "<dark_gray>):"));
+                    service.properties().properties().forEach((groupProperties, o) ->
+                            player.sendMessage(this.miniMessage.deserialize("<dark_gray>   - <aqua>" + groupProperties.id() +
+                                    " <dark_gray>= <aqua>" + o.toString()))
+                    );
                 }
-                return;
             }
             case 3 -> {
                 if (!(args[2].equalsIgnoreCase("shutdown"))) {
@@ -223,16 +195,15 @@ public class CloudCommand implements SimpleCommand {
                     return;
                 }
 
-                final String serviceName = args[1];
+                var serviceName = args[1];
                 var service = CloudAPI.instance().serviceProvider().service(serviceName);
                 if (service == null) {
-                    player.sendMessage(Component.text(this.PREFIX + "§cThis services does not exists!"));
+                    player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>This service does not exists!"));
                     return;
                 }
 
                 service.shutdown();
-                player.sendMessage(Component.text(this.PREFIX + "§7This services §b" + service.name() + " §7stopping now.."));
-                return;
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "The service <aqua>" + serviceName + " <gray>is stopping now..."));
             }
         }
     }
