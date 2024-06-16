@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-dependencies {
-    implementation(project(":runner"))
-    compileOnly(libs.osgan.netty)
-    api(libs.gson)
-}
+package dev.httpmarco.polocloud.proxy;
 
-tasks.jar {
-    archiveFileName.set("api.jar")
+public class VelocityPlatformListeners {
 }

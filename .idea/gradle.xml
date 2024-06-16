@@ -9,14 +9,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/addon" />
             <option value="$PROJECT_DIR$/addons" />
             <option value="$PROJECT_DIR$/addons/proxy-addon" />
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/instance" />
-            <option value="$PROJECT_DIR$/modules" />
-            <option value="$PROJECT_DIR$/modules/syncproxy" />
             <option value="$PROJECT_DIR$/plugin" />
             <option value="$PROJECT_DIR$/runner" />
           </set>

@@ -134,6 +134,16 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
+    public CloudService find(String name) {
+        return this.services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null);
+    }
+
+    @Override
+    public CompletableFuture<CloudService> findAsync(String name) {
+        return null;
+    }
+
+    @Override
     public CompletableFuture<CloudService> findAsync(UUID id) {
         //todo
         return null;

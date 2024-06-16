@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-dependencies {
-    implementation(project(":runner"))
-    compileOnly(libs.osgan.netty)
-    api(libs.gson)
-}
+package dev.httpmarco.polocloud.proxy;
 
-tasks.jar {
-    archiveFileName.set("api.jar")
+import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.proxy.ProxyServer;
+
+import javax.inject.Inject;
+
+@Plugin(id = "polocloud-proxy", name = "PoloCloud", version = "1.0.0", authors = "HttpMarco")
+public final class VelocityPlatformPlugin {
+
+    @Inject
+    public VelocityPlatformPlugin(ProxyServer server) {
+
+    }
 }

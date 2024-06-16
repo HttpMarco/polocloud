@@ -33,7 +33,6 @@ import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
-import dev.httpmarco.polocloud.base.node.ExternalNode;
 import dev.httpmarco.polocloud.base.node.LocalNode;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;

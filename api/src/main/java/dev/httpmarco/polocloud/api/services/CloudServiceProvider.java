@@ -39,6 +39,11 @@ public interface CloudServiceProvider {
 
     CloudService find(UUID id);
 
+    CloudService find(String name);
+
+    CompletableFuture<CloudService> findAsync(String name);
+
+
     CompletableFuture<CloudService> findAsync(UUID id);
 
     CloudService service(String name);

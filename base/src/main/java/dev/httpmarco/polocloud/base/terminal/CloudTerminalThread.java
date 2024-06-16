@@ -51,21 +51,7 @@ public final class CloudTerminalThread extends Thread {
                         resetConsoleInput();
 
                         if (line.length > 0) {
-                            var service = CloudAPI.instance().serviceProvider().services()
-                                    .stream()
-                                    .map(it -> (LocalCloudService) it)
-                                    .filter(LocalCloudService::subscribed).findFirst()
-                                    .orElse(null);
-                            if (service != null) {
-                                if (rawLine.equalsIgnoreCase("leave")) {
-                                    service.subscribeLog();
-                                    this.terminal.clear();
-                                } else {
-                                    service.execute(rawLine);
-                                }
-                            } else {
-                                terminal.commandService().call(line);
-                            }
+                            terminal.commandService().call(line);
                         }
                     } catch (EndOfFileException ignore) {
                         resetConsoleInput();

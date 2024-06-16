@@ -4,8 +4,6 @@ include("runner")
 include("base")
 include("instance")
 include("plugin")
-include("addon")
-include("modules")
 include("addons")
 include("addons:proxy-addon")
 findProject(":addons:proxy-addon")?.name = "proxy-addon"

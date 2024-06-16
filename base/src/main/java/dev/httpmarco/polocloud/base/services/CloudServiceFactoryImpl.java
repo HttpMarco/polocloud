@@ -28,19 +28,16 @@ import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
-import dev.httpmarco.polocloud.base.groups.platforms.BungeeCordPlatform;
-import dev.httpmarco.polocloud.base.groups.platforms.VelocityPlatform;
+import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
+    // todo not used
     private static final Path RUNNING_FOLDER = OsganFile.define("running", OsganFileCreateOption.CREATION).path();
 
     @Override
@@ -58,8 +55,13 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         var args = new LinkedList<>();
 
         args.add("java");
-        args.add("-javaagent:../../polocloud.jar");
+
+        // default commands
+        args.add("-Djline.terminal=jline.UnsupportedTerminal");
+
+        //todo better
         args.addAll(Arrays.stream(platformService.find(cloudGroup.platform().version()).platformsEnvironment()).toList());
+        args.add("-javaagent:../../polocloud.jar");
         args.add("-jar");
         args.add("../../polocloud.jar");
         args.add("--instance");
@@ -67,14 +69,10 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
-        if (cloudGroup.properties().has(GroupProperties.DEBUG_MODE)) {
-            processBuilder.redirectError(new File(service.name() + "-error"));
-            processBuilder.redirectOutput(new File(service.name() + "-info"));
-        }
-
+        //todo better
         processBuilder.environment().put("hostname", service.hostname());
         processBuilder.environment().put("port", String.valueOf(service.port()));
-        processBuilder.environment().put("appendSearchClasspath", String.valueOf((platformService.find(service.group().platform().version()) instanceof BungeeCordPlatform)));
+        processBuilder.environment().put("appendSearchClasspath", String.valueOf(!(platformService.find(service.group().platform().version()) instanceof PaperPlatform)));
         processBuilder.environment().put("bootstrapFile", service.group().platform().version());
         processBuilder.environment().put("serviceId", service.id().toString());
         processBuilder.environment().put("proxySecret", CloudGroupPlatformService.PROXY_SECRET);
@@ -93,7 +91,26 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         CloudAPI.instance().globalEventNode().call(new CloudServiceStartEvent(service));
 
         service.process(processBuilder.start());
-        //todo
+
+        new Thread(() -> {
+            try {
+                service.process().waitFor();
+
+                CloudAPI.instance().globalEventNode().call(new CloudServiceShutdownEvent(service));
+
+                if (!service.group().properties().has(GroupProperties.STATIC)) {
+                    synchronized (this) {
+                        FileUtils.deleteDirectory(service.runningFolder().toFile());
+                        java.nio.file.Files.deleteIfExists(service.runningFolder());
+                    }
+                }
+
+                ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
+                CloudAPI.instance().logger().info("Server " + service.name() + " is stopped now.");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     @Override
@@ -103,8 +120,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             return;
         }
 
-        CloudAPI.instance().globalEventNode().call(new CloudServiceShutdownEvent(service));
-
         if (localCloudService.process() != null) {
             // todo fix
             if (localCloudService.group().platform().proxy()) {
@@ -112,19 +127,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             } else {
                 localCloudService.execute("stop");
             }
-
             this.shutdownProcess(localCloudService);
         }
-
-        if (!service.group().properties().has(GroupProperties.STATIC)) {
-            synchronized (this) {
-                FileUtils.deleteDirectory(localCloudService.runningFolder().toFile());
-                java.nio.file.Files.deleteIfExists(localCloudService.runningFolder());
-            }
-        }
-
-        ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
-        CloudAPI.instance().logger().info("Server " + service.name() + " is stopped now.");
     }
 
     @SneakyThrows

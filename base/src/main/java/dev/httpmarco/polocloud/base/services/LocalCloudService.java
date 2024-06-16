@@ -60,35 +60,13 @@ public final class LocalCloudService extends CloudServiceImpl {
 
     @SneakyThrows
     public void execute(String execute) {
-        if (this.process != null) {
-            final var outputStream = this.process.getOutputStream();
-            outputStream.write((execute + "\n").getBytes(StandardCharsets.UTF_8));
-            outputStream.flush();
-        }
-    }
-
-    public void subscribeLog() {
-        if (this.subscribed) {
-            this.subscribed = false;
+        if (this.process == null) {
             return;
         }
-        this.subscribed = true;
-
-        log().forEach(System.out::println);
-        new Thread(() -> {
-            var in = new BufferedReader(new InputStreamReader(this.process.getInputStream()));
-            String line;
-            try {
-                while ((line = in.readLine()) != null) {
-                    if (!this.subscribed) {
-                        break;
-                    }
-                    CloudAPI.instance().logger().info(line);
-                }
-            } catch (IOException exception) {
-                throw new RuntimeException(exception);
-            }
-        }).start();
+        var writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
+        writer.write(execute);
+        writer.newLine();
+        writer.flush();
     }
 
     @Override

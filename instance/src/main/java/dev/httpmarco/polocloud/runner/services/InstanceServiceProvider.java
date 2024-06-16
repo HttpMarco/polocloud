@@ -77,6 +77,16 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     }
 
     @Override
+    public CloudService find(String name) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<CloudService> findAsync(String name) {
+        return null;
+    }
+
+    @Override
     public CompletableFuture<CloudService> findAsync(UUID id) {
         var future = new FutureResult<CloudService>();
         CloudInstance.instance().client().transmitter().request("service-find", new CommunicationProperty().set("uuid", id), CloudServicePacket.class, it -> future.complete(it.service()));

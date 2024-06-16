@@ -90,16 +90,6 @@ public final class ServiceCommand {
         }
     }
 
-    @SubCommand(args = {"<name>", "screen"})
-    public void handleScreen(String name) {
-        var service = CloudAPI.instance().serviceProvider().service(name);
-        if (service == null) {
-            logger.info("This services does not exists&2!");
-            return;
-        }
-        ((LocalCloudService) service).subscribeLog();
-    }
-
     @SubCommand(args = {"<name>", "shutdown"})
     public void handleShutdown(String name) {
         var service = CloudAPI.instance().serviceProvider().service(name);
