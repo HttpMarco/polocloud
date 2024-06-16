@@ -48,7 +48,7 @@ public final class ComponentPacketHelper {
         codecBuffer.writeInt(group.minOnlineServices());
         codecBuffer.writeInt(group.memory());
 
-        writeProperty(new PropertiesPool<>(), codecBuffer);
+        writeProperty(group.properties(), codecBuffer);
     }
 
     private static void writeProperty(PropertiesPool<?> properties, PacketBuffer codecBuffer) {
@@ -75,11 +75,11 @@ public final class ComponentPacketHelper {
             var name = buffer.readString();
             var property = PropertiesPool.property(name);
 
-            if (property.type().equals(Integer.class)) {
+            if (property.type().equals(Integer.class) || property.type().equals(int.class)) {
                 properties.putRaw(property, buffer.readInt());
             } else if (property.type().equals(String.class)) {
                 properties.putRaw(property, buffer.readString());
-            } else if (property.type().equals(Boolean.class)) {
+            } else if (property.type().equals(Boolean.class) || property.type().equals(boolean.class)) {
                 properties.putRaw(property, buffer.readBoolean());
             }
         }
