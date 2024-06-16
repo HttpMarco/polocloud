@@ -89,7 +89,8 @@ public class CloudCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission("cloud.command");
+        //return invocation.source().hasPermission("cloud.command");
+        return true;
     }
 
     private void sendUsage(Player player) {
