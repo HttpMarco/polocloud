@@ -35,6 +35,7 @@ import org.apache.commons.io.FileUtils;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
     // todo not used
@@ -96,17 +97,9 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             try {
                 service.process().waitFor();
 
-                CloudAPI.instance().globalEventNode().call(new CloudServiceShutdownEvent(service));
-
-                if (!service.group().properties().has(GroupProperties.STATIC)) {
-                    synchronized (this) {
-                        FileUtils.deleteDirectory(service.runningFolder().toFile());
-                        java.nio.file.Files.deleteIfExists(service.runningFolder());
-                    }
+                if (CloudBase.instance().running()) {
+                    this.closeProcess(service);
                 }
-
-                ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
-                CloudAPI.instance().logger().info("Server " + service.name() + " is stopped now.");
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -121,7 +114,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         }
 
         if (localCloudService.process() != null) {
-            // todo fix
             if (localCloudService.group().platform().proxy()) {
                 localCloudService.execute("end");
             } else {
@@ -129,7 +121,27 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             }
             this.shutdownProcess(localCloudService);
         }
+
+        if (!CloudBase.instance().running()) {
+            this.closeProcess(localCloudService);
+        }
     }
+
+    @SneakyThrows
+    private void closeProcess(LocalCloudService service) {
+        CloudAPI.instance().globalEventNode().call(new CloudServiceShutdownEvent(service));
+
+        if (!service.group().properties().has(GroupProperties.STATIC)) {
+            synchronized (this) {
+                FileUtils.deleteDirectory(service.runningFolder().toFile());
+                java.nio.file.Files.deleteIfExists(service.runningFolder());
+            }
+        }
+
+        ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
+        CloudAPI.instance().logger().info("Server " + service.name() + " is stopped now.");
+    }
+
 
     @SneakyThrows
     private void shutdownProcess(LocalCloudService service) {
