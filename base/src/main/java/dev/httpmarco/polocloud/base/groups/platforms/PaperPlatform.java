@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.base.groups.platforms;
 
 import com.google.gson.Gson;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.common.YamlValidateWriter;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
@@ -51,10 +52,16 @@ public final class PaperPlatform extends PaperMCPlatform {
         Files.writeString(localCloudService.runningFolder().resolve("eula.txt"), "eula=true");
 
         var serverProperties = localCloudService.runningFolder().resolve("server.properties").toFile();
+        var spigotProperties = localCloudService.runningFolder().resolve("spigot.yml").toFile();
 
         if (!Files.exists(serverProperties.toPath())) {
             // copy file from storage
             Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/spigot/server.properties")), localCloudService.runningFolder().resolve("server.properties"));
+        }
+
+        if (!Files.exists(spigotProperties.toPath())) {
+            // copy file from storage
+            Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/spigot/spigot.yml")), localCloudService.runningFolder().resolve("spigot.yml"));
         }
 
         var properties = new Properties();
@@ -85,6 +92,7 @@ public final class PaperPlatform extends PaperMCPlatform {
                             var configPath = localCloudService.runningFolder().resolve("config");
                             var globalPaperProperty = configPath.resolve("paper-global.yml");
 
+                            // todo remove this shit
                             if (Files.exists(globalPaperProperty)) {
                                 Yaml yaml = new Yaml();
 
@@ -126,11 +134,18 @@ public final class PaperPlatform extends PaperMCPlatform {
                             return;
                         }
 
-                        if (platform instanceof BungeeCordPlatform bungeeCordPlatform) {
-                            // enable bungeecord in spigot.yml
-                            return;
+                        if (platform instanceof BungeeCordPlatform) {
+                            var globalPaperProperty = localCloudService.runningFolder().resolve("spigot.yml");
+
+                            YamlValidateWriter.validateYaml(globalPaperProperty.toFile(), s -> {
+                                if (s.replaceAll(" ", "").startsWith("bungeecord:")) {
+                                    return "  bungeecord: true";
+                                } else {
+                                    return s;
+                                }
+                            });
                         }
-                    }catch (Exception exception) {
+                    } catch (Exception exception) {
                         exception.printStackTrace();
                     }
                 });

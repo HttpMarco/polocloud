@@ -14,10 +14,6 @@ permissions:
     - bungeecord.command.kick
 network_compression_threshold: 256
 servers:
-  lobby:
-    motd: '&1Just another BungeeCord - Forced Host'
-    address: localhost:25565
-    restricted: false
 player_limit: -1
 prevent_proxy_connections: false
 reject_transfers: false
@@ -28,7 +24,7 @@ forge_support: false
 remote_ping_cache: -1
 log_commands: false
 log_pings: true
-ip_forward: false
+ip_forward: true
 disabled_commands:
   - disabledcommandhere
 groups:
