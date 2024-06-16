@@ -48,7 +48,7 @@ public final class ComponentPacketHelper {
         codecBuffer.writeInt(group.minOnlineServices());
         codecBuffer.writeInt(group.memory());
 
-        writeProperty(new PropertiesPool<>(), codecBuffer);
+        writeProperty(group.properties(), codecBuffer);
     }
 
     private static void writeProperty(PropertiesPool<?> properties, PacketBuffer codecBuffer) {

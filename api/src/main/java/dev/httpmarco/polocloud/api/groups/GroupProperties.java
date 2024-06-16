@@ -20,7 +20,7 @@ import dev.httpmarco.polocloud.api.properties.Property;
 
 import java.io.Serializable;
 
-public class GroupProperties<T> extends Property<T> implements Serializable {
+public final class GroupProperties<T> extends Property<T> implements Serializable {
 
     public GroupProperties(String id, Class<T> type) {
         super(id, type);
@@ -29,6 +29,8 @@ public class GroupProperties<T> extends Property<T> implements Serializable {
     public static GroupProperties<String> TEMPLATES = new GroupProperties<>("templates", String.class);
 
     public static GroupProperties<Boolean> DEBUG_MODE = new GroupProperties<>("debugMode", Boolean.class);
+
+    public static GroupProperties<Boolean> MAINTENANCE = new GroupProperties<>("maintenance", Boolean.class);
 
     public static GroupProperties<Integer> PORT_RANGE = new GroupProperties<>("portRange", int.class);
 
