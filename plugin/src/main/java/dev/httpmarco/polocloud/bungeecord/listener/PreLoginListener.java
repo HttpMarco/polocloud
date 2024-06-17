@@ -27,7 +27,7 @@ public class PreLoginListener implements Listener {
     @EventHandler
     public void handlePreLogin(PreLoginEvent event) {
         if (ProxyServer.getInstance().getServers().isEmpty()) {
-            event.setReason(TextComponent.fromLegacy("No fallback server available"));
+            event.setReason(TextComponent.fromLegacy("§cNo fallback server available"));
             event.setCancelled(true);
         }
     }
