@@ -48,6 +48,6 @@ public interface CloudServiceProvider {
 
     CloudService service(String name);
 
-    CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory);
+    CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers);
 
 }

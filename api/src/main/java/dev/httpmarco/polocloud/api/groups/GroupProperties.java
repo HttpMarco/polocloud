@@ -36,6 +36,8 @@ public final class GroupProperties<T> extends Property<T> implements Serializabl
 
     public static GroupProperties<Integer> MAX_SERVICES = new GroupProperties<>("maxOnlineServices", int.class);
 
+    public static GroupProperties<Integer> MAX_PLAYERS = new GroupProperties<>("maxPlayers", int.class);
+
     public static GroupProperties<Boolean> FALLBACK = new GroupProperties<>("fallback", boolean.class);
 
     public static GroupProperties<Boolean> STATIC = new GroupProperties<>("static", boolean.class);

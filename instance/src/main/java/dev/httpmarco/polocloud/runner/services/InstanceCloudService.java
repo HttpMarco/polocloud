@@ -17,8 +17,10 @@
 package dev.httpmarco.polocloud.runner.services;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -47,6 +49,8 @@ public final class InstanceCloudService implements CloudService {
     private final ServiceState state;
     private CloudGroup group;
 
+    private int maxPlayers;
+
     @Override
     public List<String> log() {
         //todo
@@ -60,9 +64,9 @@ public final class InstanceCloudService implements CloudService {
     }
 
     @Override
-    public int maxPlayers() {
-        //todo
-        return 0;
+    public void maxPlayers(int slots) {
+        this.maxPlayers = slots;
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceMaxPlayersUpdatePacket(id, slots));
     }
 
     @Override

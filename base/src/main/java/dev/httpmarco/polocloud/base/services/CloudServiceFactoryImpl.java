@@ -46,7 +46,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
     @Override
     @SneakyThrows
     public void start(CloudGroup cloudGroup) {
-        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), cloudGroup.memory(), ServiceState.PREPARED);
+        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), ServiceState.PREPARED);
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
         CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is starting now on node &2'&4" + CloudAPI.instance().nodeService().localNode().name() + "&2'");
@@ -64,7 +64,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         // default commands
         args.add("-Djline.terminal=jline.UnsupportedTerminal");
 
-        args.addAll(List.of( "-XX:+UseG1GC",
+        args.addAll(List.of("-XX:+UseG1GC",
                 "-XX:+ParallelRefProcEnabled",
                 "-XX:MaxGCPauseMillis=200",
                 "-XX:+UnlockExperimentalVMOptions",

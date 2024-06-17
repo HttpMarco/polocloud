@@ -23,10 +23,7 @@ import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
-import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
-import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
-import dev.httpmarco.polocloud.api.packets.service.CloudServiceShutdownPacket;
-import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
+import dev.httpmarco.polocloud.api.packets.service.*;
 import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
@@ -55,6 +52,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         transmitter.responder("service-find", (properties) -> new CloudServicePacket(find(properties.getUUID("uuid"))));
         transmitter.responder("player-count", (properties) -> new CloudPlayerCountPacket(find(properties.getUUID("id")).onlinePlayersCount()));
 
+        transmitter.listen(CloudServiceShutdownPacket.class, (channel, packet) -> factory.stop(find(packet.uuid())));
+        transmitter.listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> find(packet.id()).maxPlayers(packet.maxPlayers()));
+
 
         transmitter.responder("services-filtering", property -> switch (property.getEnum("filter", ServiceFilter.class)) {
             case EMPTY_SERVICES ->
@@ -73,8 +73,6 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
                 yield new CloudAllServicesPacket(fallback);
             }
         });
-
-        transmitter.listen(CloudServiceShutdownPacket.class, (channel, packet) -> factory.stop(find(packet.uuid())));
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
             var service = find(packet.id());
@@ -155,7 +153,7 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory) {
+    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers) {
         //todo
         return null;
     }

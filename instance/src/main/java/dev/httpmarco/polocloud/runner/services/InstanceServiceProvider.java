@@ -21,6 +21,7 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
 import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.runner.CloudInstance;
@@ -38,6 +39,15 @@ import java.util.concurrent.TimeUnit;
 public final class InstanceServiceProvider implements CloudServiceProvider {
 
     private final CloudServiceFactory factory = new InstanceCloudServiceFactory();
+
+    public InstanceServiceProvider() {
+        CloudInstance.instance().client().transmitter().listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> {
+            if (CloudInstance.instance().self().id().equals(packet.id())) {
+                CloudInstance.instance().self().maxPlayers(packet.maxPlayers());
+            }
+        });
+
+    }
 
     @Override
     @SneakyThrows
@@ -100,7 +110,7 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory) {
-        return new InstanceCloudService(orderedId, id, port, hostname, maxMemory, state, parent);
+    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers) {
+        return new InstanceCloudService(orderedId, id, port, hostname, maxMemory, state, parent, maxPlayers);
     }
 }

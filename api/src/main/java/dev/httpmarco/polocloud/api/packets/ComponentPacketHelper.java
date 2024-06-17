@@ -35,6 +35,7 @@ public final class ComponentPacketHelper {
         codecBuffer.writeEnum(cloudService.state());
         codecBuffer.writeString(cloudService.hostname());
         codecBuffer.writeInt(cloudService.memory());
+        codecBuffer.writeInt(cloudService.maxPlayers());
         //todo properties
     }
 
@@ -47,9 +48,10 @@ public final class ComponentPacketHelper {
         var state = buffer.readEnum(ServiceState.class);
         var hostname = buffer.readString();
         var maxMemory = buffer.readInt();
+        var maxPlayers = buffer.readInt();
 
         //todo properties
-        return CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory);
+        return CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory, maxPlayers);
     }
 
     public static void writeGroup(CloudGroup group, PacketBuffer codecBuffer) {

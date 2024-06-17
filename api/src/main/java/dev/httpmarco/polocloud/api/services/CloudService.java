@@ -62,6 +62,8 @@ public interface CloudService extends Serializable {
 
     int maxPlayers();
 
+    void maxPlayers(int slots);
+
     @SneakyThrows
     default int onlinePlayersCount() {
         return this.onlinePlayersCountAsync().get(5, TimeUnit.SECONDS);

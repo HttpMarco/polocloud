@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -47,6 +48,7 @@ public class CloudServiceImpl implements CloudService {
     private ServiceState state;
 
     private final int memory;
+    private int maxPlayers;
 
     private final PropertiesPool<?> properties = new PropertiesPool<>();
     private final Set<String> subscribedEvents = new HashSet<>();
@@ -64,9 +66,12 @@ public class CloudServiceImpl implements CloudService {
     }
 
     @Override
-    public int maxPlayers() {
-        //todo
-        return -1;
+    public void maxPlayers(int slots) {
+        this.maxPlayers = slots;
+
+        if (this instanceof LocalCloudService cloudService) {
+            cloudService.channelTransmit().sendPacket(new CloudServiceMaxPlayersUpdatePacket(id, maxPlayers));
+        }
     }
 
     @Override
