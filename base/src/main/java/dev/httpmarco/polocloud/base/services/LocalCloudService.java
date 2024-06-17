@@ -46,8 +46,8 @@ public final class LocalCloudService extends CloudServiceImpl {
     @Setter
     private ChannelTransmit channelTransmit;
 
-    public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port, int maxMemory, ServiceState state) {
-        super(group, orderedId, id, port, group.platform().proxy() ? "0.0.0.0" : CloudAPI.instance().nodeService().localNode().hostname(), state, maxMemory);
+    public LocalCloudService(CloudGroup group, int orderedId, UUID id, int port, int memory, ServiceState state) {
+        super(group, orderedId, id, port, group.platform().proxy() ? "0.0.0.0" : CloudAPI.instance().nodeService().localNode().hostname(), state, memory);
 
         if (group.properties().has(GroupProperties.STATIC)) {
             this.runningFolder = OsganFile.define("static/" + name(), OsganFileCreateOption.CREATION).path();

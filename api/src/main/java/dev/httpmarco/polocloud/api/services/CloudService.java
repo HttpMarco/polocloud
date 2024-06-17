@@ -55,7 +55,7 @@ public interface CloudService extends Serializable {
 
     int currentMemory();
 
-    int maxMemory();
+    int memory();
 
     int maxPlayers();
 

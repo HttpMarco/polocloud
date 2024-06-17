@@ -34,6 +34,7 @@ public final class ComponentPacketHelper {
         codecBuffer.writeInt(cloudService.port());
         codecBuffer.writeEnum(cloudService.state());
         codecBuffer.writeString(cloudService.hostname());
+        codecBuffer.writeInt(cloudService.memory());
         //todo properties
     }
 

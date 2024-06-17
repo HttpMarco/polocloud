@@ -38,7 +38,7 @@ public final class InstanceCloudService implements CloudService {
 
     private final int port;
     private final String hostname;
-    private final int maxMemory;
+    private final int memory;
 
     private final ServiceState state;
     private CloudGroup group;
