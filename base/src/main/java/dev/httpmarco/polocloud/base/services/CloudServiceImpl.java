@@ -44,6 +44,8 @@ public class CloudServiceImpl implements CloudService {
     @Setter(AccessLevel.PACKAGE)
     private ServiceState state;
 
+    private final int maxMemory;
+
     private final PropertiesPool<?> properties = new PropertiesPool<>();
     private final Set<String> subscribedEvents = new HashSet<>();
 
@@ -67,8 +69,7 @@ public class CloudServiceImpl implements CloudService {
 
     @Override
     public int maxPlayers() {
-        // todo
-        return 0;
+        return maxMemory;
     }
 
     @Override

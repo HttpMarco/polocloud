@@ -44,7 +44,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
     @Override
     @SneakyThrows
     public void start(CloudGroup cloudGroup) {
-        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), ServiceState.PREPARED);
+        var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), cloudGroup.memory(), ServiceState.PREPARED);
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
         CloudAPI.instance().logger().info("Server " + service.name() + " is starting now on node " + CloudAPI.instance().nodeService().localNode().name() + "&2.");
