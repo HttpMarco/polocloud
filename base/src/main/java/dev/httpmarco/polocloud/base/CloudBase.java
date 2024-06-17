@@ -63,7 +63,6 @@ public final class CloudBase extends CloudAPI {
 
     public CloudBase() {
         Dependency.load("com.google.code.gson", "gson", "2.10.1");
-        Dependency.load("org.yaml", "snakeyaml", "2.2");
         Dependency.load("org.jline", "jline", "3.26.1");
         Dependency.load("org.fusesource.jansi", "jansi", "2.4.1");
         Dependency.load("commons-io", "commons-io", "2.16.1");

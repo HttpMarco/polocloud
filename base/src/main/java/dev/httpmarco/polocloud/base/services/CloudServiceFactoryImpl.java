@@ -50,6 +50,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is starting now on node &2'&4" + CloudAPI.instance().nodeService().localNode().name() + "&2'");
 
+        CloudBase.instance().templatesService().cloneTemplate(service);
+
         // download and/or copy platform file to service
         CloudGroupPlatformService platformService = CloudBase.instance().groupProvider().platformService();
         platformService.preparePlatform(service);
@@ -110,8 +112,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         processBuilder.environment().put("bootstrapFile", service.group().platform().version());
         processBuilder.environment().put("serviceId", service.id().toString());
         processBuilder.environment().put("proxySecret", CloudGroupPlatformService.PROXY_SECRET);
-
-        CloudBase.instance().templatesService().cloneTemplate(service);
 
         var pluginDirectory = service.runningFolder().resolve("plugins");
 

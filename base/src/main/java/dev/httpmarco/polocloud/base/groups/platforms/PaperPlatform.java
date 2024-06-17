@@ -19,22 +19,17 @@ package dev.httpmarco.polocloud.base.groups.platforms;
 import com.google.gson.Gson;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.common.YamlValidateWriter;
-import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 public final class PaperPlatform extends PaperMCPlatform {
 
@@ -46,7 +41,6 @@ public final class PaperPlatform extends PaperMCPlatform {
 
     @Override
     @SneakyThrows
-    @SuppressWarnings("unchecked")
     public void prepare(LocalCloudService localCloudService) {
         // accept eula without cringe logs
         Files.writeString(localCloudService.runningFolder().resolve("eula.txt"), "eula=true");
@@ -85,51 +79,26 @@ public final class PaperPlatform extends PaperMCPlatform {
                 .distinct()
                 .forEach(platformVersion -> {
                     try {
-
                         var platform = CloudBase.instance().groupProvider().platformService().find(platformVersion);
                         if (platform instanceof VelocityPlatform) {
                             // manipulate velocity secret if
                             var configPath = localCloudService.runningFolder().resolve("config");
                             var globalPaperProperty = configPath.resolve("paper-global.yml");
 
-                            // todo remove this shit
-                            if (Files.exists(globalPaperProperty)) {
-                                Yaml yaml = new Yaml();
-
-                                var paperProperties = (Map<String, Object>) yaml.load(Files.readString(globalPaperProperty));
-                                var proxyProperties = (Map<String, Object>) paperProperties.get("proxies");
-                                var velocityProperties = (Map<String, Object>) proxyProperties.get("velocity");
-
-                                velocityProperties.put("enabled", true);
-                                velocityProperties.put("secret", CloudGroupPlatformService.PROXY_SECRET);
-
-                                try {
-                                    var writer = new FileWriter(globalPaperProperty.toString());
-                                    yaml.dump(paperProperties, writer);
-                                    writer.close();
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
+                            if (!Files.exists(globalPaperProperty)) {
+                                globalPaperProperty.toFile().getParentFile().mkdirs();
+                                Files.createFile(globalPaperProperty);
+                                Files.writeString(globalPaperProperty, String.join("\n", List.of("proxies:", " velocity:", "    enabled: true", "    secret: " + CloudGroupPlatformService.PROXY_SECRET)));
                             } else {
-                                Map<String, Object> data = new LinkedHashMap<>();
-                                Map<String, Object> proxies = new LinkedHashMap<>();
-                                Map<String, Object> velocity = new LinkedHashMap<>();
-
-                                velocity.put("enabled", true);
-                                velocity.put("online-mode", true);
-                                velocity.put("secret", CloudGroupPlatformService.PROXY_SECRET);
-                                proxies.put("velocity", velocity);
-                                data.put("proxies", proxies);
-
-                                try {
-                                    Files.createDirectories(configPath);
-                                    FileWriter writer = new FileWriter(configPath.resolve("paper-global.yml").toString());
-
-                                    writer.write(WRITER.toJson(data));
-                                    writer.close();
-                                } catch (IOException exception) {
-                                    throw new RuntimeException(exception);
-                                }
+                                YamlValidateWriter.validateYaml(globalPaperProperty.toFile(), s -> {
+                                    if (s.startsWith("    enabled: false")) {
+                                        return "    enabled: true";
+                                    }
+                                    if (s.replaceAll(" ", "").startsWith("secret:")) {
+                                        return "    secret: " + CloudGroupPlatformService.PROXY_SECRET;
+                                    }
+                                    return s;
+                                });
                             }
                             return;
                         }

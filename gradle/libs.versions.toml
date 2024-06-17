@@ -3,7 +3,6 @@ lombok = "1.18.32"
 osgan = "1.2.12-SNAPSHOT"
 
 gson = "2.11.0"
-yaml = "2.2"
 toml = "3.7.2"
 
 jansi = "2.4.1"
@@ -28,7 +27,6 @@ osgan-files = { group = "dev.httpmarco", name = "osgan-files", version.ref = "os
 osgan-netty = { group = "dev.httpmarco", name = "osgan-netty", version.ref = "osgan" }
 
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-yaml = { group = "org.yaml", name = "snakeyaml", version.ref = "yaml" }
 toml = { group = "com.electronwill.night-config", name = "toml", version.ref = "toml" }
 
 commons = { group = "commons-io", name = "commons-io", version.ref = "commons" }
