@@ -32,7 +32,7 @@ groups:
     - admin
 listeners:
   - host: 0.0.0.0:25565
-    motd: '&1Another Bungee server'
+    motd: "§b§lPoloCloud §8» §7Simple Cloudsystem§8 [§b1.8 §7- §b1.20.x§8]\n§fGitHub §8× §fgithub.com/HttpMarco/polocloud"
     max_players: 1
     force_default_server: false
     tab_size: 60
