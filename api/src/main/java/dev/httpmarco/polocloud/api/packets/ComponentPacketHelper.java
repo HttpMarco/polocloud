@@ -22,6 +22,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
+import dev.httpmarco.polocloud.api.services.ServiceState;
 
 public final class ComponentPacketHelper {
 
@@ -36,9 +37,18 @@ public final class ComponentPacketHelper {
         //todo properties
     }
 
-    public static CloudService readService(PacketBuffer codecBuffer) {
+    public static CloudService readService(PacketBuffer buffer) {
+
+        var group = readGroup(buffer);
+        var orderedId = buffer.readInt();
+        var id = buffer.readUniqueId();
+        var port = buffer.readInt();
+        var state = buffer.readEnum(ServiceState.class);
+        var hostname = buffer.readString();
+        var maxMemory = buffer.readInt();
+
         //todo properties
-        return CloudAPI.instance().serviceProvider().fromPacket(readGroup(codecBuffer), codecBuffer);
+        return CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory);
     }
 
     public static void writeGroup(CloudGroup group, PacketBuffer codecBuffer) {

@@ -100,13 +100,7 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService fromPacket(CloudGroup parent, PacketBuffer buffer) {
-        var orderedId = buffer.readInt();
-        var id = buffer.readUniqueId();
-        var port = buffer.readInt();
-        var state = buffer.readEnum(ServiceState.class);
-        var hostname = buffer.readString();
-
-        return new InstanceCloudService(orderedId, id, port, hostname, state, parent);
+    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory) {
+        return new InstanceCloudService(orderedId, id, port, hostname, maxMemory, state, parent);
     }
 }
