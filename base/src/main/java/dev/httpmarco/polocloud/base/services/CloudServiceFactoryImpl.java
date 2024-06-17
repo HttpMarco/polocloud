@@ -113,6 +113,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             return;
         }
 
+        localCloudService.state(ServiceState.STOPPING);
+
         if (localCloudService.process() != null) {
             if (localCloudService.group().platform().proxy()) {
                 localCloudService.execute("end");
