@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import java.net.InetSocketAddress;
 
 @Getter
-@Plugin(id = "polocloud", name = "PoloCloud", version = "1.0.0", authors = "HttpMarco")
+@Plugin(id = "polocloud", name = "PoloCloud-Plugin", version = "1.0.0", authors = "HttpMarco")
 public final class VelocityPlatform extends RunningProxyPlatform {
 
     private final ProxyServer server;
