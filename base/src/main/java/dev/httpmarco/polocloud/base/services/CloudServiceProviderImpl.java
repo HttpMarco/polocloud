@@ -35,6 +35,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -55,18 +56,19 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
 
         transmitter.responder("services-filtering", property -> switch (property.getEnum("filter", ServiceFilter.class)) {
-            case EMPTY_SERVICES -> null; //todo
-            case PLAYERS_PRESENT_SERVERS -> null; //todo
-            case FULL_SERVICES -> null; //todo
+            case EMPTY_SERVICES ->
+                    new CloudAllServicesPacket(services.stream().filter(it -> it.onlinePlayersCount() == 0).toList());
+            case PLAYERS_PRESENT_SERVERS ->
+                    new CloudAllServicesPacket(services.stream().filter(it -> it.onlinePlayersCount() > 0).toList());
+            case FULL_SERVICES -> new CloudAllServicesPacket(services.stream().filter(CloudService::isFull).toList());
             case SAME_NODE_SERVICES -> null; //todo
             case FALLBACKS ->
                     new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).toList()); //todo
             case PROXIES -> new CloudAllServicesPacket(services.stream().filter(this::isProxy).toList());
             case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
-            // todo ordering with players
             case LOWEST_FALLBACK -> {
                 var fallback = new ArrayList<CloudService>();
-                services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).findFirst().ifPresent(fallback::add);
+                services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).min(Comparator.comparingInt(CloudService::onlinePlayersCount)).ifPresent(fallback::add);
                 yield new CloudAllServicesPacket(fallback);
             }
         });
