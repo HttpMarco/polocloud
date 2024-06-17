@@ -20,10 +20,13 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import lombok.SneakyThrows;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public interface CloudService extends Serializable {
 
@@ -59,7 +62,12 @@ public interface CloudService extends Serializable {
 
     int maxPlayers();
 
-    int onlinePlayersCount();
+    @SneakyThrows
+    default int onlinePlayersCount() {
+        return this.onlinePlayersCountAsync().get(5, TimeUnit.SECONDS);
+    }
+
+    CompletableFuture<Integer> onlinePlayersCountAsync();
 
     void execute(String command);
 

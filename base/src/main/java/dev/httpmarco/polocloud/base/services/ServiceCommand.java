@@ -66,7 +66,7 @@ public final class ServiceCommand {
         logger.info("Name&2: &3" + name);
         logger.info("Platform&2: &3" + service.group().platform().version());
         logger.info("Current memory&2: &3-1");
-        logger.info("Players&2: &3-1");
+        logger.info("Players&2: &3" + service.onlinePlayersCount());
         logger.info("Maximal players&2: &3" + service.maxPlayers());
         logger.info("Port &2: &3" + service.port());
         logger.info("State&2: &3" + service.state());

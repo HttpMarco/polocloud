@@ -14,42 +14,28 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.runner.player;
+package dev.httpmarco.polocloud.api.packets.player;
 
-import dev.httpmarco.polocloud.api.player.CloudPlayer;
+import dev.httpmarco.osgan.networking.packet.Packet;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import java.util.UUID;
-
-@AllArgsConstructor
 @Getter
 @Accessors(fluent = true)
-public final class InstanceCloudPlayerImpl implements CloudPlayer {
+@AllArgsConstructor
+public final class CloudPlayerCountPacket extends Packet {
 
-    private final UUID uniqueId;
-    private final String name;
-    private String currentServerName;
-    private String currentProxyName;
+    private int amount;
 
     @Override
-    public void sendMessage(String message) {
+    public void read(PacketBuffer packetBuffer) {
+        this.amount = packetBuffer.readInt();
     }
 
     @Override
-    public void sendActionBar(String message) {
-    }
-
-    @Override
-    public void sendTitle(String title, String subtitle, Integer fadeIn, Integer stay, Integer fadeOut) {
-    }
-
-    @Override
-    public void kick(String reason) {
-    }
-
-    @Override
-    public void connectToServer(String serverName) {
+    public void write(PacketBuffer packetBuffer) {
+        packetBuffer.writeInt(amount);
     }
 }

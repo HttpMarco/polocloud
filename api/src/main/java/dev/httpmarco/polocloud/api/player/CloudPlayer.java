@@ -32,9 +32,9 @@ public interface CloudPlayer {
 
     void kick(String reason);
 
-    String currentServer();
+    String currentServerName();
 
-    String currentProxy();
+    String currentProxyName();
 
     void connectToServer(String serverName);
 }

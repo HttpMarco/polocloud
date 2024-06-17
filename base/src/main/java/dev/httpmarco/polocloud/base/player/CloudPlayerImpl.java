@@ -36,9 +36,9 @@ public final class CloudPlayerImpl implements CloudPlayer {
     }
 
     @Setter
-    private String currentServer = "null";
+    private String currentServerName = "null";
     @Setter
-    private String currentProxy = "null";
+    private String currentProxyName = "null";
 
     @Override
     public void sendMessage(String message) {

@@ -1,5 +1,6 @@
 [versions]
 lombok = "1.18.32"
+annotations = "24.1.0"
 osgan = "1.2.12-SNAPSHOT"
 
 gson = "2.11.0"
@@ -9,7 +10,6 @@ jansi = "2.4.1"
 jline = "3.26.1"
 
 commons = "2.16.1"
-
 
 minimessage = "4.17.0"
 bungeeminimessage = "4.3.3"
@@ -21,6 +21,7 @@ bungeecord = "1.20-R0.2"
 
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
 
 osgan-utils = { group = "dev.httpmarco", name = "osgan-utils", version.ref = "osgan" }
 osgan-files = { group = "dev.httpmarco", name = "osgan-files", version.ref = "osgan" }
@@ -46,4 +47,4 @@ jline = { group = "org.jline", name = "jline", version.ref = "jline" }
 
 [bundles]
 utils = ["lombok", "osgan-utils", "osgan-files"]
-console = ["jline", "jansi"]
+console = ["jline", "jansi", "annotations"]

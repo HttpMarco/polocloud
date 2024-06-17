@@ -108,8 +108,8 @@ public final class ComponentPacketHelper {
     public static void writePlayer(CloudPlayer cloudPlayer, PacketBuffer codecBuffer) {
         codecBuffer.writeUniqueId(cloudPlayer.uniqueId());
         codecBuffer.writeString(cloudPlayer.name());
-        codecBuffer.writeString(cloudPlayer.currentServer());
-        codecBuffer.writeString(cloudPlayer.currentProxy());
+        codecBuffer.writeString(cloudPlayer.currentServerName());
+        codecBuffer.writeString(cloudPlayer.currentProxyName());
     }
 
     public static CloudPlayer readPlayer(PacketBuffer codecBuffer) {

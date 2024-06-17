@@ -16,6 +16,7 @@
 
 package dev.httpmarco.polocloud.base.services;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
@@ -28,6 +29,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @Getter
@@ -68,9 +70,8 @@ public class CloudServiceImpl implements CloudService {
     }
 
     @Override
-    public int onlinePlayersCount() {
-        // todo
-        return 0;
+    public CompletableFuture<Integer> onlinePlayersCountAsync() {
+        return CompletableFuture.completedFuture(onlinePlayers().size());
     }
 
     @Override
@@ -80,15 +81,11 @@ public class CloudServiceImpl implements CloudService {
 
     @Override
     public List<CloudPlayer> onlinePlayers() {
-        // todo
-        return List.of();
+        return CloudAPI.instance().playerProvider().players().stream().filter(it -> (group.platform().proxy() ? it.currentProxyName() : it.currentServerName()).equalsIgnoreCase(this.name())).toList();
     }
 
     @Override
     public String toString() {
-        return "group=" + group +
-                ", orderedId=" + orderedId +
-                ", state=" + state +
-                ", id=" + id;
+        return "group=" + group + ", orderedId=" + orderedId + ", state=" + state + ", id=" + id;
     }
 }

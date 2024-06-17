@@ -16,17 +16,21 @@
 
 package dev.httpmarco.polocloud.runner.services;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 @Accessors(fluent = true)
@@ -62,9 +66,12 @@ public final class InstanceCloudService implements CloudService {
     }
 
     @Override
-    public int onlinePlayersCount() {
-        // todo
-        return 0;
+    public CompletableFuture<Integer> onlinePlayersCountAsync() {
+        var future = new CompletableFuture<Integer>();
+        CloudInstance.instance().client().transmitter().request("player-count", new CommunicationProperty().set("id", this.id), CloudPlayerCountPacket.class, it -> {
+            future.complete(it.amount());
+        });
+        return future;
     }
 
     @Override

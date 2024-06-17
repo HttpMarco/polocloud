@@ -22,6 +22,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceShutdownPacket;
@@ -51,6 +52,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         // send all services back to request
         var transmitter = CloudBase.instance().transmitter();
         transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
+        transmitter.responder("service-find", (properties) -> new CloudServicePacket(find(properties.getUUID("uuid"))));
+        transmitter.responder("player-count", (properties) -> new CloudPlayerCountPacket(find(properties.getUUID("id")).onlinePlayersCount()));
+
 
         transmitter.responder("services-filtering", property -> switch (property.getEnum("filter", ServiceFilter.class)) {
             case EMPTY_SERVICES ->
@@ -70,13 +74,10 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
             }
         });
 
-        transmitter.responder("service-find", (properties) -> new CloudServicePacket(find(properties.getUUID("uuid"))));
-
         transmitter.listen(CloudServiceShutdownPacket.class, (channel, packet) -> factory.stop(find(packet.uuid())));
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
             var service = find(packet.id());
-
             if (service == null) {
                 return;
             }

@@ -31,6 +31,7 @@ import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -179,7 +180,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
 
     @SneakyThrows
-    private void shutdownProcess(LocalCloudService service) {
+    private void shutdownProcess(@NotNull LocalCloudService service) {
         service.process().toHandle().destroyForcibly();
         service.process().waitFor();
         service.process(null);
