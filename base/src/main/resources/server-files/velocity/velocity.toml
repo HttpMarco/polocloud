@@ -6,7 +6,7 @@ bind = "0.0.0.0:25577"
 
 # What should be the MOTD? This gets displayed when the player adds your server to
 # their server list. Only MiniMessage format is accepted.
-motd = "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>simplest Cloudsystem<dark_gray> [<#00fdee>1.8 <gray>- <#00fdee>1.20.x<dark_gray>]\n<white>GitHub <dark_gray>× <white>github.com/httpMarco/polocloud"
+motd = "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>Simple Cloudsystem<dark_gray> [<#00fdee>1.8 <gray>- <#00fdee>1.20.x<dark_gray>]\n<white>GitHub <dark_gray>× <white>github.com/HttpMarco/polocloud"
 
 # What should we display for the maximum number of players? (Velocity does not support a cap
 # on the number of players online.)
