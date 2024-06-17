@@ -26,10 +26,7 @@ import dev.httpmarco.polocloud.api.packets.service.CloudAllServicesPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceShutdownPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
-import dev.httpmarco.polocloud.api.services.CloudService;
-import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
-import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
-import dev.httpmarco.polocloud.api.services.ServiceFilter;
+import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -157,7 +154,7 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService fromPacket(CloudGroup parent, PacketBuffer buffer) {
+    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory) {
         //todo
         return null;
     }
