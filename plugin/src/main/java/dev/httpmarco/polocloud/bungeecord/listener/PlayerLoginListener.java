@@ -20,11 +20,12 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import org.jetbrains.annotations.NotNull;
 
-public class PlayerLoginListener implements Listener {
+public final class PlayerLoginListener implements Listener {
 
     @EventHandler
-    public void handleLogin(LoginEvent event) {
+    public void handleLogin(@NotNull LoginEvent event) {
         var connection = event.getConnection();
         CloudAPI.instance().playerProvider().register(connection.getUniqueId(), connection.getName());
     }

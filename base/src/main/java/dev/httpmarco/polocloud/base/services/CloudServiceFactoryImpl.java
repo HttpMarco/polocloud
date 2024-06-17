@@ -106,6 +106,8 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
+        processBuilder.redirectError(new File("polo"));
+
         //todo better
         processBuilder.environment().put("hostname", service.hostname());
         processBuilder.environment().put("port", String.valueOf(service.port()));

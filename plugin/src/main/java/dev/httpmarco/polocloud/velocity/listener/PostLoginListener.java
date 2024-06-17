@@ -17,19 +17,19 @@
 package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.ServerConnectedEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.connection.PreLoginEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.packets.player.CloudPlayerServiceChangePacket;
 import dev.httpmarco.polocloud.runner.CloudInstance;
-import lombok.AllArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.TextComponent;
 
-@AllArgsConstructor
-public final class ServerConnectedListener {
+public final class PostLoginListener {
 
     @Subscribe
-    public void onPlayerChooseInitialServer(ServerConnectedEvent event) {
-        var player = event.getPlayer();
-        var cloudService = CloudAPI.instance().serviceProvider().service(event.getServer().getServerInfo().getName());
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
+    public void onPostLogin(PostLoginEvent event) {
+        if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
+            event.getPlayer().disconnect(Component.text("§cThis service is full!"));
+        }
     }
 }

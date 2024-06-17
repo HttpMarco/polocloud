@@ -24,7 +24,7 @@ import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class PlayerChooseInitialServerListener {
+public final class PlayerChooseInitialServerListener {
     private final ProxyServer server;
 
     @Subscribe

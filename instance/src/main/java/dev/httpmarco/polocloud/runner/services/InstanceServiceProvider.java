@@ -40,15 +40,6 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
 
     private final CloudServiceFactory factory = new InstanceCloudServiceFactory();
 
-    public InstanceServiceProvider() {
-        CloudInstance.instance().client().transmitter().listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> {
-            if (CloudInstance.instance().self().id().equals(packet.id())) {
-                CloudInstance.instance().self().maxPlayers(packet.maxPlayers());
-            }
-        });
-
-    }
-
     @Override
     @SneakyThrows
     public List<CloudService> services() {

@@ -19,11 +19,12 @@ package dev.httpmarco.polocloud.velocity.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import org.jetbrains.annotations.NotNull;
 
-public class PlayerDisconnectListener {
+public final class PlayerDisconnectListener {
 
     @Subscribe
-    public void onDisconnect(DisconnectEvent event) {
+    public void onDisconnect(@NotNull DisconnectEvent event) {
         CloudAPI.instance().playerProvider().unregister(event.getPlayer().getUniqueId());
     }
 }

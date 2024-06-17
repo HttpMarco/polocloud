@@ -20,7 +20,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PreLoginEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
 
-public class PreLoginListener {
+public final class PreLoginListener {
 
     @Subscribe
     public void onPreLogin(PreLoginEvent event) {

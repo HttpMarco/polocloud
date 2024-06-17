@@ -16,17 +16,18 @@
 
 package dev.httpmarco.polocloud.bungeecord.listener;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import dev.httpmarco.polocloud.runner.CloudInstance;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import org.jetbrains.annotations.NotNull;
 
-public final class PlayerDisconnectListener implements Listener {
+public final class PlayerPostLoginListener implements Listener {
 
     @EventHandler
-    public void handlePlayerDisconnect(@NotNull PlayerDisconnectEvent event) {
-        CloudAPI.instance().playerProvider().unregister(event.getPlayer().getUniqueId());
+    public void handleServerConnect(PostLoginEvent event) {
+        if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
+            event.getPlayer().disconnect(TextComponent.fromLegacy("§cThis service is full!"));
+        }
     }
-
 }
