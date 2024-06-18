@@ -16,22 +16,18 @@
 
 package dev.httpmarco.polocloud.spigot;
 
-import dev.httpmarco.polocloud.RunningPlatform;
 import dev.httpmarco.polocloud.runner.CloudInstance;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public final class SpigotPlatform extends JavaPlugin {
+public class PlayerLoginListener implements Listener {
 
-    private final RunningPlatform runningPlatform = new RunningPlatform();
-
-    @Override
-    public void onEnable() {
-        runningPlatform.changeToOnline();
-
-        Bukkit.getPluginManager().registerEvents(new PlayerLoginListener(), this);
+    @EventHandler
+    public void handle(PlayerLoginEvent event) {
+        if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, "§cThis service is full!");
+        }
     }
+
 }
