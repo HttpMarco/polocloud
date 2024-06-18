@@ -19,6 +19,7 @@ package dev.httpmarco.polocloud.velocity.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.events.player.CloudPlayerSwitchServerEvent;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerServiceChangePacket;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,12 @@ public final class ServerConnectedListener {
     @Subscribe
     public void onPlayerChooseInitialServer(ServerConnectedEvent event) {
         var player = event.getPlayer();
+        var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
         var cloudService = CloudAPI.instance().serviceProvider().service(event.getServer().getServerInfo().getName());
         CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
+
+        if (event.getPreviousServer().isEmpty()) return;
+        var previousService = CloudAPI.instance().serviceProvider().service(event.getPreviousServer().get().getServerInfo().getName());
+        CloudAPI.instance().globalEventNode().call(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudService, previousService));
     }
 }

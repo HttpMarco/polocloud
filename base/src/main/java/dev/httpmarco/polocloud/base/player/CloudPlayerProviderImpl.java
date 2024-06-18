@@ -47,14 +47,12 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
 
         transmitter.listen(CloudPlayerRegisterPacket.class, (channelTransmit, packet) -> {
             this.register(packet.id(), packet.name());
-            ((CloudPlayerImpl) this.find(packet.id())).currentProxyName(CloudAPI.instance().serviceProvider().find(packet.proxyId()).name());
+            this.find(packet.id()).currentProxyName(CloudAPI.instance().serviceProvider().find(packet.proxyId()).name());
         });
 
         transmitter.listen(CloudPlayerServiceChangePacket.class, (channelTransmit, packet) -> {
             var cloudPlayer = this.find(packet.id());
-            var cloudService = CloudAPI.instance().serviceProvider().find(packet.serviceId());
-            ((CloudPlayerImpl) cloudPlayer).currentServerName(CloudAPI.instance().serviceProvider().find(packet.serviceId()).name());
-            CloudAPI.instance().globalEventNode().call(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudService));
+            cloudPlayer.currentServerName(CloudAPI.instance().serviceProvider().find(packet.serviceId()).name());
         });
     }
 

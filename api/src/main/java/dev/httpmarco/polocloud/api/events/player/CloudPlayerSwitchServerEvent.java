@@ -17,7 +17,6 @@
 package dev.httpmarco.polocloud.api.events.player;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -31,17 +30,20 @@ import lombok.experimental.Accessors;
 public final class CloudPlayerSwitchServerEvent implements CloudPlayerEvent {
 
     private CloudPlayer cloudPlayer;
-    private CloudService cloudService;
+    private CloudService currentService;
+    private CloudService previousService;
 
     @Override
     public void read(PacketBuffer buffer) {
         this.cloudPlayer = ComponentPacketHelper.readPlayer(buffer);
-        this.cloudService = ComponentPacketHelper.readService(buffer);
+        this.currentService = ComponentPacketHelper.readService(buffer);
+        this.previousService = ComponentPacketHelper.readService(buffer);
     }
 
     @Override
     public void write(PacketBuffer buffer) {
         ComponentPacketHelper.writePlayer(this.cloudPlayer, buffer);
-        ComponentPacketHelper.writeService(this.cloudService, buffer);
+        ComponentPacketHelper.writeService(this.currentService, buffer);
+        ComponentPacketHelper.writeService(this.previousService, buffer);
     }
 }
