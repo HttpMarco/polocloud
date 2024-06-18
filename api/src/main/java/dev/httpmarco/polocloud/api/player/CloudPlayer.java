@@ -32,9 +32,9 @@ public abstract class CloudPlayer {
     private UUID uniqueId;
     private String name;
 
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PUBLIC)
     private String currentServerName;
-    @Setter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PUBLIC)
     private String currentProxyName;
 
     public abstract void sendMessage(String message);
