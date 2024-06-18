@@ -19,6 +19,7 @@ package dev.httpmarco.polocloud.base.player;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.events.player.CloudPlayerSwitchServerEvent;
 import dev.httpmarco.polocloud.api.packets.player.CloudAllPlayersPacket;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerPacket;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerRegisterPacket;
@@ -49,8 +50,12 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
             ((CloudPlayerImpl) this.find(packet.id())).currentProxyName(CloudAPI.instance().serviceProvider().find(packet.proxyId()).name());
         });
 
-        transmitter.listen(CloudPlayerServiceChangePacket.class, (channelTransmit, packet) ->
-                ((CloudPlayerImpl) this.find(packet.id())).currentServerName(CloudAPI.instance().serviceProvider().find(packet.serviceId()).name()));
+        transmitter.listen(CloudPlayerServiceChangePacket.class, (channelTransmit, packet) -> {
+            var cloudPlayer = this.find(packet.id());
+            var cloudService = CloudAPI.instance().serviceProvider().find(packet.serviceId());
+            ((CloudPlayerImpl) cloudPlayer).currentServerName(CloudAPI.instance().serviceProvider().find(packet.serviceId()).name());
+            CloudAPI.instance().globalEventNode().call(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudService));
+        });
     }
 
     @Override
