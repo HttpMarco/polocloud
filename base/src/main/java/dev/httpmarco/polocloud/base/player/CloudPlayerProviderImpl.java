@@ -42,7 +42,7 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
         var transmitter = CloudBase.instance().transmitter();
 
         transmitter.responder("players-all", property -> new CloudAllPlayersPacket(this.players));
-        transmitter.responder("player-get", properties -> new CloudPlayerPacket(this.find(UUID.fromString(properties.getString("uniqueId")))));
+        transmitter.responder("player-get", properties -> new CloudPlayerPacket(this.find(properties.getUUID("uniqueId"))));
 
         transmitter.listen(CloudPlayerRegisterPacket.class, (channelTransmit, packet) -> {
             this.register(packet.id(), packet.name());
