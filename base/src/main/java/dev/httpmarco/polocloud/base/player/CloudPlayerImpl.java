@@ -25,20 +25,19 @@ import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudPlayerImpl implements CloudPlayer {
-
-    private final UUID uniqueId;
-    private final String name;
+public final class CloudPlayerImpl extends CloudPlayer {
 
     public CloudPlayerImpl(UUID uniqueId, String name) {
-        this.uniqueId = uniqueId;
-        this.name = name;
+        super(uniqueId, name, null, null);
     }
 
-    @Setter
-    private String currentServerName = "null";
-    @Setter
-    private String currentProxyName = "null";
+    public void changeServerName(String name) {
+        super.currentServerName(name);
+    }
+
+    public void changeProxyName(String name) {
+        super.currentProxyName(name);
+    }
 
     @Override
     public void sendMessage(String message) {

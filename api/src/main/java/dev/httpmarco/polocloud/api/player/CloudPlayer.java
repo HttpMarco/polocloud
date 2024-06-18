@@ -16,25 +16,35 @@
 
 package dev.httpmarco.polocloud.api.player;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.util.UUID;
 
-public interface CloudPlayer {
+@Getter
+@AllArgsConstructor
+@Accessors(fluent = true)
+public abstract class CloudPlayer {
 
-    UUID uniqueId();
+    private UUID uniqueId;
+    private String name;
 
-    String name();
+    @Setter(AccessLevel.PROTECTED)
+    private String currentServerName;
+    @Setter(AccessLevel.PROTECTED)
+    private String currentProxyName;
 
-    void sendMessage(String message);
+    public abstract void sendMessage(String message);
 
-    void sendActionBar(String message);
+    public abstract void sendActionBar(String message);
 
-    void sendTitle(String title, String subtitle, Integer fadeIn, Integer stay, Integer fadeOut);
+    public abstract void sendTitle(String title, String subtitle, Integer fadeIn, Integer stay, Integer fadeOut);
 
-    void kick(String reason);
+    public abstract void kick(String reason);
 
-    String currentServerName();
+    public abstract void connectToServer(String serverName);
 
-    String currentProxyName();
-
-    void connectToServer(String serverName);
 }

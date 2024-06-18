@@ -23,15 +23,11 @@ import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
-@AllArgsConstructor
-@Getter
-@Accessors(fluent = true)
-public final class InstanceCloudPlayerImpl implements CloudPlayer {
+public final class InstanceCloudPlayerImpl extends CloudPlayer {
 
-    private final UUID uniqueId;
-    private final String name;
-    private String currentServerName;
-    private String currentProxyName;
+    public InstanceCloudPlayerImpl(UUID uniqueId, String name, String currentServerName, String currentProxyName) {
+        super(uniqueId, name, currentServerName, currentProxyName);
+    }
 
     @Override
     public void sendMessage(String message) {
