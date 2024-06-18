@@ -46,11 +46,11 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
 
         transmitter.listen(CloudPlayerRegisterPacket.class, (channelTransmit, packet) -> {
             this.register(packet.id(), packet.name());
-            ((CloudPlayerImpl) this.find(packet.id())).currentProxyName(CloudAPI.instance().serviceProvider().find(packet.proxyId()).name());
+            ((CloudPlayerImpl) this.find(packet.id())).changeProxyName(CloudAPI.instance().serviceProvider().find(packet.proxyId()).name());
         });
 
         transmitter.listen(CloudPlayerServiceChangePacket.class, (channelTransmit, packet) ->
-                ((CloudPlayerImpl) this.find(packet.id())).currentServerName(CloudAPI.instance().serviceProvider().find(packet.serviceId()).name()));
+                ((CloudPlayerImpl) this.find(packet.id())).changeServerName(CloudAPI.instance().serviceProvider().find(packet.serviceId()).name()));
     }
 
     @Override
