@@ -17,17 +17,26 @@
 package dev.httpmarco.polocloud.api.events.player;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-public record CloudPlayerDisconnectEvent(CloudPlayer cloudPlayer) implements CloudPlayerEvent {
+@Getter
+@Accessors(fluent = true)
+@AllArgsConstructor
+public final class CloudPlayerDisconnectEvent implements CloudPlayerEvent {
+
+    private CloudPlayer cloudPlayer;
 
     @Override
     public void read(PacketBuffer buffer) {
-
+        ComponentPacketHelper.writePlayer(this.cloudPlayer, buffer);
     }
 
     @Override
     public void write(PacketBuffer buffer) {
-
+        this.cloudPlayer = ComponentPacketHelper.readPlayer(buffer);
     }
 }
