@@ -55,7 +55,7 @@ public final class CommandService {
         var main = args[0];
         for (var command : commands) {
 
-            var mainCommand = command.getClass().getDeclaredAnnotation(Command.class);;
+            var mainCommand = command.getClass().getDeclaredAnnotation(Command.class);
 
             if (mainCommand == null) {
                 continue;
@@ -76,34 +76,28 @@ public final class CommandService {
                 }
 
                 var commandData = method.getDeclaredAnnotation(SubCommand.class);
-                if ((commandData.args().length + 1) == args.length) {
-                    boolean find = isSubCommand(args, commandData);
-                    if (find) {
-                        var params = new LinkedList<>();
+                if (isSubCommand(args, commandData)) {
+                    var params = new LinkedList<>();
+                    var argIndex = 1;
 
-                        for (var parameter : method.getParameters()) {
-                            var index = -1;
-                            var argIndex = 0;
-                            for (var arg : commandData.args()) {
-                                if (arg.substring(1, arg.length() - 1).equalsIgnoreCase(parameter.getName())) {
-                                    index = argIndex;
-                                    break;
-                                }
+                    for (var arg : commandData.args()) {
+                        if (arg.startsWith("<") && arg.endsWith("...>")) {
+                            var restArgs = Arrays.copyOfRange(args, argIndex, args.length);
+                            params.add(String.join(" ", restArgs));
+                            break;
+                        } else if (arg.startsWith("<") && arg.endsWith(">")) {
+                            if (argIndex < args.length) {
+                                params.add(args[argIndex]);
                                 argIndex++;
                             }
-
-                            if (index == -1) {
-                                continue;
-                            }
-
-                            if (parameter.getType().equals(Integer.class) || parameter.getType().equals(int.class)) {
-                                params.add(Integer.parseInt(args[index + 1]));
-                            } else {
-                                params.add(parameter.getType().cast(args[index + 1]));
+                        } else {
+                            if (argIndex < args.length && arg.equals(args[argIndex])) {
+                                argIndex++;
                             }
                         }
-                        method.invoke(command, params.toArray());
                     }
+
+                    method.invoke(command, params.toArray());
                 }
             }
         }
@@ -111,18 +105,31 @@ public final class CommandService {
 
     private static boolean isSubCommand(String[] args, SubCommand commandData) {
         var index = 0;
-        var find = true;
-        for (var s : Arrays.copyOfRange(args, 1, args.length)) {
-            var subPart = commandData.args()[index];
+        var commandArgs = commandData.args();
+
+        for (var i = 1; i < args.length; i++) {
+            if (index >= commandArgs.length) {
+                return false;
+            }
+
+            var subPart = commandArgs[index];
+
+            if (subPart.startsWith("<") && subPart.endsWith("...>")) {
+                return true;
+            }
+
             if (subPart.startsWith("<") && subPart.endsWith(">")) {
                 index++;
                 continue;
             }
-            if (!Objects.equals(subPart, s)) {
-                find = false;
+
+            if (!subPart.equalsIgnoreCase(args[i])) {
+                return false;
             }
+
             index++;
         }
-        return find;
+
+        return index == commandArgs.length;
     }
 }

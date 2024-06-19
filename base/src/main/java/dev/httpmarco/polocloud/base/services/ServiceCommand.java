@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 @Command(command = "service", aliases = {"services", "ser"}, description = "Manage all your online services")
 public final class ServiceCommand {
@@ -75,6 +76,18 @@ public final class ServiceCommand {
         service.properties().properties().forEach((groupProperties, o) -> {
             logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
         });
+    }
+
+    @SubCommand(args = {"<name>", "execute", "<command...>"})
+    public void handelExecuteCommand(String name, String command) {
+        var service = CloudAPI.instance().serviceProvider().service(name);
+        if (service == null) {
+            logger.info("This services does not exists&2!");
+            return;
+        }
+
+        service.execute(command);
+        logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
     @SubCommand(args = {"<name>", "log"})
