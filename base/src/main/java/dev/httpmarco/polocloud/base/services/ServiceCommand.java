@@ -19,7 +19,6 @@ package dev.httpmarco.polocloud.base.services;
 import dev.httpmarco.osgan.files.OsganFile;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.Logger;
-import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
@@ -72,17 +71,7 @@ public final class ServiceCommand {
         this.logger.info("State&2: &3" + service.state());
         this.logger.info("Properties &2(&1" + service.properties().properties().size() + "&2): &3");
 
-        service.properties().properties().forEach((groupProperties, o) -> {
-            this.logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
-        });
-    }
-
-    @SubCommand(args = {"<name>", "execute", "<command...>"})
-    public void handelExecuteCommand(String name, String command) {
-        if (serviceExists(name)) return;
-
-        this.serviceProvider.service(name).execute(command);
-        this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
+        service.properties().properties().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString()));
     }
 
     @SubCommand(args = {"<name>", "log"})
@@ -94,11 +83,21 @@ public final class ServiceCommand {
         }
     }
 
+    //TODO screen command
+
     @SubCommand(args = {"<name>", "shutdown"})
     public void handleShutdown(String name) {
         if (serviceExists(name)) return;
 
         this.serviceProvider.service(name).shutdown();
+    }
+
+    @SubCommand(args = {"<name>", "execute", "<command...>"})
+    public void handelExecuteCommand(String name, String command) {
+        if (serviceExists(name)) return;
+
+        this.serviceProvider.service(name).execute(command);
+        this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
     @SneakyThrows
@@ -128,6 +127,8 @@ public final class ServiceCommand {
 
         this.logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");
     }
+
+    //todo property commands
 
     private boolean serviceExists(String name) {
         var service = this.serviceProvider.service(name);
