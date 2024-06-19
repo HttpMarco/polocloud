@@ -1,0 +1,15 @@
+{
+  "platform": [
+    {
+      "id": "velocity",
+      "buildParser": "lastBuildParser",
+      "proxy": true,
+      "versions": [
+        {
+          "version": "3.3.0-SNAPSHOT",
+          "downloadUrl": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/%build%/downloads/velocity-3.3.0-SNAPSHOT-%build%.jar"
+        }
+      ]
+    }
+  ]
+}

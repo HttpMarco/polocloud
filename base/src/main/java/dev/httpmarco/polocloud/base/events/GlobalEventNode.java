@@ -20,16 +20,11 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.events.EventRunnable;
-import dev.httpmarco.polocloud.api.events.Listener;
 import dev.httpmarco.polocloud.api.packets.event.CloudEventCallPacket;
 import dev.httpmarco.polocloud.api.packets.event.CloudEventRegitserPacket;
-import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.services.CloudServiceImpl;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GlobalEventNode implements EventNode {
 
