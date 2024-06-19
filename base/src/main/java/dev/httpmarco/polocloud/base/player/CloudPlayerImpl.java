@@ -28,7 +28,7 @@ import java.util.UUID;
 public final class CloudPlayerImpl extends CloudPlayer {
 
     public CloudPlayerImpl(UUID uniqueId, String name) {
-        super(uniqueId, name, null, null);
+        super(uniqueId, name, "null", "null");
     }
 
     public void changeServerName(String name) {
