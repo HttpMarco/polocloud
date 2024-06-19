@@ -17,7 +17,6 @@
 package dev.httpmarco.polocloud.runner.services;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
@@ -72,9 +71,7 @@ public final class InstanceCloudService implements CloudService {
     @Override
     public CompletableFuture<Integer> onlinePlayersCountAsync() {
         var future = new CompletableFuture<Integer>();
-        CloudInstance.instance().client().transmitter().request("player-count", new CommunicationProperty().set("id", this.id), CloudPlayerCountPacket.class, it -> {
-            future.complete(it.amount());
-        });
+        CloudInstance.instance().client().transmitter().request("player-count", new CommunicationProperty().set("id", this.id), CloudPlayerCountPacket.class, it -> future.complete(it.amount()));
         return future;
     }
 
