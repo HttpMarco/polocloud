@@ -19,6 +19,7 @@ package dev.httpmarco.polocloud.base.services;
 import dev.httpmarco.osgan.files.OsganFile;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.Logger;
+import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
@@ -29,12 +30,12 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 @Command(command = "service", aliases = {"services", "ser"}, description = "Manage all your online services")
 public final class ServiceCommand {
 
     private final Logger logger = CloudAPI.instance().logger();
+    private final CloudServiceProvider serviceProvider = CloudAPI.instance().serviceProvider();
 
     @DefaultCommand
     public void handle() {
@@ -58,75 +59,58 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>"})
     public void handleInfo(String name) {
-        var service = CloudAPI.instance().serviceProvider().service(name);
-        if (service == null) {
-            logger.info("This services does not exists&2!");
-            return;
-        }
+        if (!serviceExists(name)) return;
+        final var service = this.serviceProvider.service(name);
 
-        logger.info("Name&2: &3" + name);
-        logger.info("Platform&2: &3" + service.group().platform().version());
-        logger.info("Current memory&2: &3-1");
-        logger.info("Players&2: &3" + service.onlinePlayersCount());
-        logger.info("Maximal players&2: &3" + service.maxPlayers());
-        logger.info("Port &2: &3" + service.port());
-        logger.info("State&2: &3" + service.state());
-        logger.info("Properties &2(&1" + service.properties().properties().size() + "&2): &3");
+        this.logger.info("Name&2: &3" + name);
+        this.logger.info("Platform&2: &3" + service.group().platform().version());
+        this.logger.info("Current memory&2: &3-1");
+        this.logger.info("Players&2: &3" + service.onlinePlayersCount());
+        this.logger.info("Maximal players&2: &3" + service.maxPlayers());
+        this.logger.info("Port &2: &3" + service.port());
+        this.logger.info("State&2: &3" + service.state());
+        this.logger.info("Properties &2(&1" + service.properties().properties().size() + "&2): &3");
 
-        service.properties().properties().forEach((groupProperties, o) -> {
-            logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
-        });
-    }
-
-    @SubCommand(args = {"<name>", "execute", "<command...>"})
-    public void handelExecuteCommand(String name, String command) {
-        var service = CloudAPI.instance().serviceProvider().service(name);
-        if (service == null) {
-            logger.info("This services does not exists&2!");
-            return;
-        }
-
-        service.execute(command);
-        logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
+        service.properties().properties().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString()));
     }
 
     @SubCommand(args = {"<name>", "log"})
     public void handleLog(String name) {
-        var service = CloudAPI.instance().serviceProvider().service(name);
-        if (service == null) {
-            logger.info("This services does not exists&2!");
-            return;
-        }
+        if (serviceExists(name)) return;
 
-        for (var log : service.log()) {
-            logger.info("&3" + name + "&2: &1" + log);
+        for (var log : this.serviceProvider.service(name).log()) {
+            this.logger.info("&3" + name + "&2: &1" + log);
         }
     }
 
+    //TODO screen command
+
     @SubCommand(args = {"<name>", "shutdown"})
     public void handleShutdown(String name) {
-        var service = CloudAPI.instance().serviceProvider().service(name);
-        if (service == null) {
-            logger.info("This services does not exists&2!");
-            return;
-        }
-        service.shutdown();
+        if (serviceExists(name)) return;
+
+        this.serviceProvider.service(name).shutdown();
+    }
+
+    @SubCommand(args = {"<name>", "execute", "<command...>"})
+    public void handelExecuteCommand(String name, String command) {
+        if (serviceExists(name)) return;
+
+        this.serviceProvider.service(name).execute(command);
+        this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
     @SneakyThrows
     @SubCommand(args = {"<name>", "copy", "<template>"})
     public void handleCopy(String name, String template) {
-        var service = CloudAPI.instance().serviceProvider().service(name);
-        if (service == null) {
-            logger.info("This services does not exists&2!");
-            return;
+        if (serviceExists(name)) return;
+
+        final var templatesService = CloudBase.instance().templatesService();
+        if (templatesService.template(template) == null) {
+            templatesService.createTemplates(template, "every", "every_server");
         }
 
-        final var temp = CloudBase.instance().templatesService().template(template);
-        if (temp == null) {
-            CloudBase.instance().templatesService().createTemplates(template, "every", "every_server");
-        }
-
+        var service = this.serviceProvider.service(name);
         var runningFolder = ((LocalCloudService) service).runningFolder();
         var templateFolder = Path.of("templates", template);
 
@@ -141,6 +125,16 @@ public final class ServiceCommand {
         OsganFile.create(templateFolder);
         FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile(), filter);
 
-        logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");
+        this.logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");
+    }
+
+    //todo property commands
+
+    private boolean serviceExists(String name) {
+        var service = this.serviceProvider.service(name);
+        if (service != null) return true;
+
+        this.logger.info("This services does not exists&2!");
+        return false;
     }
 }
