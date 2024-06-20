@@ -97,6 +97,17 @@ public final class CommandService {
                         }
                     }
 
+                    var parameters = method.getParameters();
+                    for (int index = 0; index < parameters.length; index++) {
+                        var parameter = parameters[index];
+
+                        if (params.size() > index) {
+                            if (parameter.getType().equals(Integer.class) || parameter.getType().equals(int.class)) {
+                                params.set(index, Integer.parseInt((String) params.get(index)));
+                            }
+                        }
+                    }
+
                     method.invoke(command, params.toArray());
                 }
             }
