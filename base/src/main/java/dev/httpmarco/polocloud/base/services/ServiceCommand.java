@@ -19,7 +19,6 @@ package dev.httpmarco.polocloud.base.services;
 import dev.httpmarco.osgan.files.OsganFile;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.Logger;
-import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
@@ -35,7 +34,6 @@ import java.nio.file.Path;
 public final class ServiceCommand {
 
     private final Logger logger = CloudAPI.instance().logger();
-    private final CloudServiceProvider serviceProvider = CloudAPI.instance().serviceProvider();
 
     @DefaultCommand
     public void handle() {
@@ -59,8 +57,8 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>"})
     public void handleInfo(String name) {
-        if (!serviceExists(name)) return;
-        final var service = this.serviceProvider.service(name);
+        if (serviceNotExits(name)) return;
+        final var service = CloudAPI.instance().serviceProvider().service(name);
 
         this.logger.info("Name&2: &3" + name);
         this.logger.info("Platform&2: &3" + service.group().platform().version());
@@ -76,9 +74,9 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>", "log"})
     public void handleLog(String name) {
-        if (serviceExists(name)) return;
+        if (serviceNotExits(name)) return;
 
-        for (var log : this.serviceProvider.service(name).log()) {
+        for (var log : CloudAPI.instance().serviceProvider().service(name).log()) {
             this.logger.info("&3" + name + "&2: &1" + log);
         }
     }
@@ -87,30 +85,30 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>", "shutdown"})
     public void handleShutdown(String name) {
-        if (serviceExists(name)) return;
+        if (serviceNotExits(name)) return;
 
-        this.serviceProvider.service(name).shutdown();
+        CloudAPI.instance().serviceProvider().service(name).shutdown();
     }
 
     @SubCommand(args = {"<name>", "execute", "<command...>"})
     public void handelExecuteCommand(String name, String command) {
-        if (serviceExists(name)) return;
+        if (serviceNotExits(name)) return;
 
-        this.serviceProvider.service(name).execute(command);
+        CloudAPI.instance().serviceProvider().service(name).execute(command);
         this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
     @SneakyThrows
     @SubCommand(args = {"<name>", "copy", "<template>"})
     public void handleCopy(String name, String template) {
-        if (serviceExists(name)) return;
+        if (serviceNotExits(name)) return;
 
         final var templatesService = CloudBase.instance().templatesService();
         if (templatesService.template(template) == null) {
             templatesService.createTemplates(template, "every", "every_server");
         }
 
-        var service = this.serviceProvider.service(name);
+        var service = CloudAPI.instance().serviceProvider().service(name);
         var runningFolder = ((LocalCloudService) service).runningFolder();
         var templateFolder = Path.of("templates", template);
 
@@ -130,11 +128,14 @@ public final class ServiceCommand {
 
     //todo property commands
 
-    private boolean serviceExists(String name) {
-        var service = this.serviceProvider.service(name);
-        if (service != null) return true;
+    private boolean serviceNotExits(String name) {
+        var serviceProvider = CloudAPI.instance().serviceProvider();
+        if (serviceProvider == null) return true;
+
+        var service = serviceProvider.service(name);
+        if (service != null) return false;
 
         this.logger.info("This services does not exists&2!");
-        return false;
+        return true;
     }
 }
