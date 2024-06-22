@@ -18,10 +18,12 @@ package dev.httpmarco.polocloud.api.services;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import lombok.SneakyThrows;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public interface CloudServiceProvider {
 
@@ -31,7 +33,10 @@ public interface CloudServiceProvider {
 
     CompletableFuture<List<CloudService>> servicesAsync();
 
-    List<CloudService> filterService(ServiceFilter filter);
+    @SneakyThrows
+    default List<CloudService> filterService(ServiceFilter filter) {
+        return this.filterServiceAsync(filter).get(5, TimeUnit.SECONDS);
+    }
 
     CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter);
 
@@ -42,7 +47,6 @@ public interface CloudServiceProvider {
     CloudService find(String name);
 
     CompletableFuture<CloudService> findAsync(String name);
-
 
     CompletableFuture<CloudService> findAsync(UUID id);
 

@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.runner.groups;
+package dev.httpmarco.polocloud.api.packets.general;
 
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.osgan.networking.packet.Packet;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-public class InstanceGroup extends CloudGroup {
+@Getter
+@Accessors(fluent = true)
+@AllArgsConstructor
+public final class OperationNumberPacket extends Packet {
 
-    public InstanceGroup(String name, PlatformVersion platform, int memory, int minOnlineService) {
-        super(name, platform, memory, minOnlineService);
+    private Double response;
+
+    @Override
+    public void read(PacketBuffer packetBuffer) {
+        this.response = packetBuffer.readDouble();
     }
 
     @Override
-    public int onlineAmount() {
-        //todo
-        return 0;
-    }
-
-    @Override
-    public void update() {
-        //todo
+    public void write(PacketBuffer packetBuffer) {
+        packetBuffer.writeDouble(this.response);
     }
 }

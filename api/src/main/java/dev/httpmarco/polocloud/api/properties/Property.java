@@ -32,4 +32,17 @@ public class Property<T> {
 
         PropertiesPool.PROPERTY_LIST.add(this);
     }
+
+    public Object cast(String value) {
+        if (type.equals(Boolean.class)) {
+            return Boolean.parseBoolean(value);
+        }
+        if (type.equals(Integer.class)) {
+            return Integer.parseInt(value);
+        }
+        if (type.equals(Long.class)) {
+            return Long.parseLong(value);
+        }
+        return (T) value;
+    }
 }

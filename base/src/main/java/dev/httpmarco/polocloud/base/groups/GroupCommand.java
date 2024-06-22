@@ -20,6 +20,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.logging.Logger;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
@@ -42,11 +43,73 @@ public final class GroupCommand {
     public void handle() {
         logger.info("&3groups list &2- &1List all groups&2.");
         logger.info("&3groups &2<&1name&2> &2- &1Get information about a group&2.");
+        logger.info("&3groups &2<&1name&2> property set &2<&1key&2> &2<&1value&2> &2- &1Add a property to a group&2.");
         logger.info("&3groups versions &2<&1platform&2> &2- &1List all versions of a platform&2.");
         logger.info("&3groups create &2<&1name&2> &2<&1platform&2> &2<&1memory&2> &2<&1minOnlineCount&2> &2- &1Create a new group&2.");
         logger.info("&3groups delete &2<&1name&2> &2- &1Delete an existing group&2.");
         logger.info("&3groups edit &2<&1name&2> &2<&1key&2> &2<&1value&2> &2- &1Edit a value in a group&2.");
         logger.info("&3groups shutdown &2<&1name&2> &2- &1Shutdown all services of a group&2.");
+    }
+
+    @SubCommand(args = {"<name>", "property", "set", "<key>", "<value>"})
+    public void handlePropertySet(String name, String key, String value) {
+        if (!CloudAPI.instance().groupProvider().isGroup(name)) {
+            logger.info("This group does not exists&2!");
+            return;
+        }
+        var group = CloudAPI.instance().groupProvider().group(name);
+        var property = PropertiesPool.property(key);
+
+        if (property != null && property instanceof GroupProperties<?> groupProperties) {
+            group.properties().putRaw(property, property.cast(value));
+            group.update();
+            logger.success("You add successfully the property " + key + " with value " + value + " to group " + group.name() + "&2.");
+        } else {
+            logger.info("This property does not exists&2!");
+        }
+    }
+
+    @SubCommand(args = {"<name>", "property", "remove", "<key>"})
+    public void handlePropertyRemove(String name, String key) {
+        if (!CloudAPI.instance().groupProvider().isGroup(name)) {
+            logger.info("This group does not exists&2!");
+            return;
+        }
+        var group = CloudAPI.instance().groupProvider().group(name);
+        var property = PropertiesPool.property(key);
+
+        if (property != null && property instanceof GroupProperties<?> groupProperties) {
+
+            if(!group.properties().has(groupProperties)) {
+                logger.info("The group " + group.name() + " doesnt have this property&2.");
+                return;
+            }
+
+            group.properties().remove(groupProperties);
+            group.update();
+            logger.success("You remove successfully the property " + key + " from group " + group.name() + "&2.");
+        } else {
+            logger.info("This property does not exists&2!");
+        }
+    }
+
+    // todo: duplicated code
+    @SubCommandCompleter(completionPattern = {"<name>", "property", "remove", "<key>"})
+    public void completePropertyRemove(int index, List<Candidate> candidates) {
+        if (index == 1) {
+            candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
+        } else if (index == 4) {
+            candidates.addAll(PropertiesPool.PROPERTY_LIST.stream().filter(it -> it instanceof GroupProperties<?>).map(property -> new Candidate(property.id())).toList());
+        }
+    }
+
+    @SubCommandCompleter(completionPattern = {"<name>", "property", "set", "<key>", "<value>"})
+    public void completePropertySet(int index, List<Candidate> candidates) {
+        if (index == 1) {
+            candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
+        } else if (index == 4) {
+            candidates.addAll(PropertiesPool.PROPERTY_LIST.stream().filter(it -> it instanceof GroupProperties<?>).map(property -> new Candidate(property.id())).toList());
+        }
     }
 
     @SubCommand(args = {"list"})
@@ -67,7 +130,7 @@ public final class GroupCommand {
         logger.info("Name&2: &3" + name);
         logger.info("Platform&2: &3" + group.platform().version());
         logger.info("Memory&2: &3" + group.memory());
-        logger.info("Minimum online services&2: &3" + group.minOnlineServices());
+        logger.info("Minimum online services&2: &3" + group.minOnlineService());
         logger.info("Properties &2(&1" + group.properties().properties().size() + "&2): &3");
 
         group.properties().properties().forEach((groupProperties, o) -> {

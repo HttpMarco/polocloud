@@ -26,17 +26,18 @@ import dev.httpmarco.polocloud.api.services.ServiceState;
 
 public final class ComponentPacketHelper {
 
-    public static void writeService(CloudService cloudService, PacketBuffer codecBuffer) {
-        writeGroup(cloudService.group(), codecBuffer);
+    public static void writeService(CloudService cloudService, PacketBuffer buffer) {
+        writeGroup(cloudService.group(), buffer);
 
-        codecBuffer.writeInt(cloudService.orderedId());
-        codecBuffer.writeUniqueId(cloudService.id());
-        codecBuffer.writeInt(cloudService.port());
-        codecBuffer.writeEnum(cloudService.state());
-        codecBuffer.writeString(cloudService.hostname());
-        codecBuffer.writeInt(cloudService.memory());
-        codecBuffer.writeInt(cloudService.maxPlayers());
-        //todo properties
+        buffer.writeInt(cloudService.orderedId())
+                .writeUniqueId(cloudService.id())
+                .writeInt(cloudService.port())
+                .writeEnum(cloudService.state())
+                .writeString(cloudService.hostname())
+                .writeInt(cloudService.memory())
+                .writeInt(cloudService.maxPlayers());
+
+        writeProperty(cloudService.properties(), buffer);
     }
 
     public static CloudService readService(PacketBuffer buffer) {
@@ -50,15 +51,16 @@ public final class ComponentPacketHelper {
         var maxMemory = buffer.readInt();
         var maxPlayers = buffer.readInt();
 
-        //todo properties
-        return CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory, maxPlayers);
+        var service = CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory, maxPlayers);
+        service.properties().appendAll(readProperties(buffer));
+        return service;
     }
 
     public static void writeGroup(CloudGroup group, PacketBuffer codecBuffer) {
         codecBuffer.writeString(group.name());
         codecBuffer.writeString(group.platform().version());
         codecBuffer.writeBoolean(group.platform().proxy());
-        codecBuffer.writeInt(group.minOnlineServices());
+        codecBuffer.writeInt(group.minOnlineService());
         codecBuffer.writeInt(group.memory());
 
         writeProperty(group.properties(), codecBuffer);

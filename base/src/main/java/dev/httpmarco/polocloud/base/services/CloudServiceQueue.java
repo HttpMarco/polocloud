@@ -33,7 +33,7 @@ public final class CloudServiceQueue extends Thread {
     public void run() {
         while (!isInterrupted()) {
             for (var group : CloudAPI.instance().groupProvider().groups()) {
-                var onlineDiff = group.onlineAmount() - group.minOnlineServices();
+                var onlineDiff = group.onlineAmount() - group.minOnlineService();
 
                 if (onlineDiff < 0) {
 

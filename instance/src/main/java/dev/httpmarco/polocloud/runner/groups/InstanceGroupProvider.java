@@ -21,26 +21,36 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.api.packets.general.OperationStatePacket;
 import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.runner.CloudInstance;
+import lombok.SneakyThrows;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public final class InstanceGroupProvider extends CloudGroupProvider {
 
     @Override
+    @SneakyThrows
     public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupCreatePacket(name, platform, memory, minOnlineCount));
-        //todo wait for response
-        return false;
+        var future = new CompletableFuture<Boolean>();
+        CloudInstance.instance().client().transmitter().request("group-create", new CommunicationProperty()
+                        .set("name", name)
+                        .set("platform", platform)
+                        .set("memory", memory)
+                        .set("minOnlineCount", minOnlineCount)
+                , OperationStatePacket.class, it -> future.complete(it.response()));
+        return future.get(5, TimeUnit.SECONDS);
     }
 
     @Override
+    @SneakyThrows
     public boolean deleteGroup(String name) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupDeletePacket(name));
-        //todo wait for response
-        return true;
+        var future = new CompletableFuture<Boolean>();
+        CloudInstance.instance().client().transmitter().request("group-delete", new CommunicationProperty().set("name", name), OperationStatePacket.class, it -> future.complete(it.response()));
+        return future.get(5, TimeUnit.SECONDS);
     }
 
     @Override

@@ -17,10 +17,10 @@
 package dev.httpmarco.polocloud.runner;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.dependencies.Dependency;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.common.CloudMemoryCalculator;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.CloudProperty;
@@ -68,13 +68,9 @@ public class CloudInstance extends CloudAPI {
 
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
-        this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> {
-            serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> {
-                this.self = service;
-            });
-        });
+        this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> this.self = service));
 
-        CloudInstance.instance().client().transmitter().listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> {
+        this.client.transmitter().listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> {
             if (self().id().equals(packet.id())) {
                 self().maxPlayers(packet.maxPlayers());
             }

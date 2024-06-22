@@ -61,6 +61,6 @@ public final class PropertiesPool<T extends Property<?>> implements Serializable
     }
 
     public static Property<?> property(String id) {
-        return PROPERTY_LIST.stream().filter(it -> it.id().equals(id)).findFirst().orElseThrow();
+        return PROPERTY_LIST.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
     }
 }

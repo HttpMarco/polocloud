@@ -27,23 +27,10 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-@Accessors(fluent = true)
-@Getter
-@AllArgsConstructor
-public class CloudGroupImpl implements CloudGroup, Serializable {
+public class CloudGroupImpl extends CloudGroup implements Serializable {
 
-    private final String name;
-    private final PlatformVersion platform;
-    private final int memory;
-    private final int minOnlineServices;
-    private final PropertiesPool<GroupProperties<?>> properties;
-
-    public CloudGroupImpl(String name, PlatformVersion platform, int memory, int minOnlineServices) {
-        this.minOnlineServices = minOnlineServices;
-        this.memory = memory;
-        this.platform = platform;
-        this.name = name;
-        this.properties = new PropertiesPool<>();
+    public CloudGroupImpl(String name, PlatformVersion platform, int memory, int minOnlineService) {
+        super(name, platform, memory, minOnlineService);
     }
 
     @Override
@@ -53,8 +40,8 @@ public class CloudGroupImpl implements CloudGroup, Serializable {
 
     @Override
     public String toString() {
-        return "platform='" + platform.version() + '\'' +
-                ", memory=" + memory +
-                ", minOnlineServices=" + minOnlineServices;
+        return "platform='" + platform().version() + '\'' +
+                ", memory=" + memory() +
+                ", minOnlineServices=" + minOnlineService();
     }
 }
