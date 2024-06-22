@@ -49,6 +49,7 @@ public final class InstanceCloudService implements CloudService {
     private CloudGroup group;
 
     private int maxPlayers;
+    private final PropertiesPool<?> properties = new PropertiesPool<>();
 
     @Override
     public List<String> log() {
@@ -84,10 +85,5 @@ public final class InstanceCloudService implements CloudService {
     public List<CloudPlayer> onlinePlayers() {
         //todo
         return List.of();
-    }
-
-    @Override
-    public PropertiesPool<?> properties() {
-        return null;
     }
 }
