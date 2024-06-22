@@ -28,7 +28,9 @@ import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommandCompleter;
 import org.jline.reader.Candidate;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Command(command = "group", aliases = {"groups"}, description = "Manage or create your cluster groups")
@@ -93,6 +95,15 @@ public final class GroupCommand {
         logger.info(String.join(", ", versions));
     }
 
+    @SubCommandCompleter(completionPattern = {"versions", "<platform>"})
+    public void completeVersionsMethod(int index, List<Candidate> candidates) {
+        if (index == 2) {
+            Set<String> platformNames = new HashSet<>();
+            CloudBase.instance().groupProvider().platformService().validPlatformVersions().forEach(it -> platformNames.add(it.version().split("-")[0]));
+            candidates.addAll(platformNames.stream().map(Candidate::new).toList());
+        }
+    }
+
     @SubCommand(args = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
     public void handleCreate(String name, String platform, int memory, int minOnlineCount) {
         if (CloudAPI.instance().groupProvider().createGroup(name, platform, memory, minOnlineCount)) {
@@ -110,14 +121,14 @@ public final class GroupCommand {
     }
 
     @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
-    public void completeMethod(int index, List<Candidate> candidates) {
+    public void completeCreateMethod(int index, List<Candidate> candidates) {
         if (index == 3) {
             candidates.addAll(((CloudServiceGroupProvider) CloudAPI.instance().groupProvider()).platformService().validPlatformVersions().stream().map(platformVersion -> new Candidate(platformVersion.version())).toList());
         }
     }
 
     @SubCommand(args = {"delete", "<name>"})
-    public void handleCreate(String name) {
+    public void handleDelete(String name) {
         if (CloudAPI.instance().groupProvider().deleteGroup(name)) {
             logger.success("Successfully deleted &3" + name + "&2!");
         } else {
