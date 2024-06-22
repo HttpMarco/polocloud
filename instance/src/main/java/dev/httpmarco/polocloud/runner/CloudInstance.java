@@ -66,16 +66,6 @@ public class CloudInstance extends CloudAPI {
     public CloudInstance(String[] args) {
         instance = this;
 
-        // todo find a better way
-        Dependency.load("net.kyori", "adventure-text-minimessage", "4.17.0");
-        Dependency.load("net.kyori", "adventure-key", "4.17.0");
-        Dependency.load("net.kyori", "examination-api", "1.3.0");
-        Dependency.load("net.kyori", "adventure-api", "4.17.0");
-        Dependency.load("net.kyori", "adventure-platform-api", "4.3.2");
-        Dependency.load("net.kyori", "adventure-platform-api", "4.3.2");
-        Dependency.load("net.kyori", "adventure-platform-facet", "4.3.2");
-        Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.2");
-
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
         this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> {
