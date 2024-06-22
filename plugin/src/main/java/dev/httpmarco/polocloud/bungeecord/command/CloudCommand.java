@@ -56,18 +56,9 @@ public class CloudCommand extends Command implements TabExecutor {
         }
 
         switch (args[0].toLowerCase()) {
-            case "group", "groups" -> {
-                this.handleGroupCommand(player, args);
-                return;
-            }
-            case "service", "ser", "serv" -> {
-                this.handleServiceCommand(player, args);
-                return;
-            }
-            default -> {
-                this.sendUsage(player);
-                return;
-            }
+            case "group", "groups" -> this.handleGroupCommand(player, args);
+            case "service", "ser", "serv" -> this.handleServiceCommand(player, args);
+            default -> this.sendUsage(player);
         }
     }
 
@@ -94,7 +85,7 @@ public class CloudCommand extends Command implements TabExecutor {
         }
 
         if (args.length == 3 && args[0].toLowerCase().startsWith("service")) {
-            return Arrays.asList("shutdown");
+            return List.of("shutdown");
         }
 
         if (args.length == 2 && args[0].toLowerCase().startsWith("group")) {
@@ -154,11 +145,8 @@ public class CloudCommand extends Command implements TabExecutor {
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Minimum online services§8: §b" + group.minOnlineServices()));
                 if (group.properties() != null) {
                     player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Properties §8(§b" + group.properties().properties().size() + "§8): §b"));
-                    group.properties().properties().forEach((groupProperties, o) -> {
-                        player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString()));
-                    });
+                    group.properties().properties().forEach((groupProperties, o) -> player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString())));
                 }
-                return;
             }
             case 3 -> {
                 if (!(args[1].equalsIgnoreCase("shutdown"))) {
@@ -173,7 +161,6 @@ public class CloudCommand extends Command implements TabExecutor {
                 final CloudGroup cloudGroup = CloudAPI.instance().groupProvider().group(groupName);
                 CloudAPI.instance().serviceProvider().services(cloudGroup).forEach(CloudService::shutdown);
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "You successfully stopped all services of group §b" + groupName + "§8!"));
-                return;
             }
         }
     }
@@ -211,7 +198,6 @@ public class CloudCommand extends Command implements TabExecutor {
                         player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString()));
                     });
                 }
-                return;
             }
             case 3 -> {
                 if (!(args[2].equalsIgnoreCase("shutdown"))) {
@@ -228,7 +214,6 @@ public class CloudCommand extends Command implements TabExecutor {
 
                 service.shutdown();
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§7This services §b" + service.name() + " §7stopping now.."));
-                return;
             }
         }
     }
