@@ -86,7 +86,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
 
         var parentPlatform = platformService.find(platform).possibleVersions().stream().filter(it -> it.version().equals(platform)).findFirst().orElseThrow();
 
-        return new CloudGroupImpl(name, parentPlatform, memory, minOnlineServices, (PropertiesPool<GroupProperties<?>>) properties);
+        return new CloudGroupImpl(name, parentPlatform, memory, minOnlineServices, properties);
     }
 
     @Override
