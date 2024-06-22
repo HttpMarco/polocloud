@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.api.events.property;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.properties.Property;
 
 public final class GlobalPropertyRemoveEvent implements PropertyEvent{
 
@@ -28,6 +29,11 @@ public final class GlobalPropertyRemoveEvent implements PropertyEvent{
     @Override
     public void write(PacketBuffer buffer) {
 
+    }
+
+    @Override
+    public Property<?> property() {
+        return null;
     }
     //todo: Add changed property
 }
