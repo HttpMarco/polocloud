@@ -52,6 +52,7 @@ public final class CommandCompleter implements Completer {
                 var subIndex = line.wordIndex();
                 var subCommand = Arrays.copyOfRange(context, 1, context.length);
 
+                outerLoop:
                 for (var completer : command.getClass().getDeclaredMethods()) {
 
                     if (!completer.isAnnotationPresent(SubCommandCompleter.class)) {
@@ -64,7 +65,11 @@ public final class CommandCompleter implements Completer {
                         continue;
                     }
 
-                    //todo check if previous args are the same layout
+                    for (int i = 1; i < subCommand.length; i++) {
+                        if (!subCommand[i-1].equals(subCompleter.completionPattern()[i-1]) && !(subCompleter.completionPattern()[i-1].startsWith("<") && (subCompleter.completionPattern()[i-1].endsWith(">")))) {
+                            continue outerLoop;
+                        }
+                    }
 
                     if (subCompleter.completionPattern()[subIndex - 1].startsWith("<") && (subCompleter.completionPattern()[subIndex - 1].endsWith(">"))) {
                         completer.invoke(command, subIndex, candidates);

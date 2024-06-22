@@ -23,12 +23,15 @@ import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
+import dev.httpmarco.polocloud.base.terminal.commands.SubCommandCompleter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.jline.reader.Candidate;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Path;
+import java.util.List;
 
 @Command(command = "service", aliases = {"services", "ser"}, description = "Manage all your online services")
 public final class ServiceCommand {
@@ -57,7 +60,7 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>"})
     public void handleInfo(String name) {
-        if (serviceNotExits(name)) return;
+        if (serviceNotExists(name)) return;
         final var service = CloudAPI.instance().serviceProvider().service(name);
 
         this.logger.info("Name&2: &3" + name);
@@ -72,12 +75,26 @@ public final class ServiceCommand {
         service.properties().properties().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString()));
     }
 
+    @SubCommandCompleter(completionPattern = {"<name>"})
+    public void completeInfoMethod(int index, List<Candidate> candidates) {
+        if (index == 1) {
+            candidates.addAll(CloudAPI.instance().serviceProvider().services().stream().map(it -> new Candidate(it.name())).toList());
+        }
+    }
+
     @SubCommand(args = {"<name>", "log"})
     public void handleLog(String name) {
-        if (serviceNotExits(name)) return;
+        if (serviceNotExists(name)) return;
 
         for (var log : CloudAPI.instance().serviceProvider().service(name).log()) {
             this.logger.info("&3" + name + "&2: &1" + log);
+        }
+    }
+
+    @SubCommandCompleter(completionPattern = {"<name>", "log"})
+    public void completeLogMethod(int index, List<Candidate> candidates) {
+        if (index == 2) {
+            candidates.add(new Candidate("log"));
         }
     }
 
@@ -85,23 +102,37 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>", "shutdown"})
     public void handleShutdown(String name) {
-        if (serviceNotExits(name)) return;
+        if (serviceNotExists(name)) return;
 
         CloudAPI.instance().serviceProvider().service(name).shutdown();
     }
 
+    @SubCommandCompleter(completionPattern = {"<name>", "shutdown"})
+    public void completeShutdownMethod(int index, List<Candidate> candidates) {
+        if (index == 2) {
+            candidates.add(new Candidate("shutdown"));
+        }
+    }
+
     @SubCommand(args = {"<name>", "execute", "<command...>"})
     public void handelExecuteCommand(String name, String command) {
-        if (serviceNotExits(name)) return;
+        if (serviceNotExists(name)) return;
 
         CloudAPI.instance().serviceProvider().service(name).execute(command);
         this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
+    @SubCommandCompleter(completionPattern = {"<name>", "execute", "<command...>"})
+    public void completeExecuteCommandMethod(int index, List<Candidate> candidates) {
+        if (index == 2) {
+            candidates.add(new Candidate("execute"));
+        }
+    }
+
     @SneakyThrows
     @SubCommand(args = {"<name>", "copy", "<template>"})
     public void handleCopy(String name, String template) {
-        if (serviceNotExits(name)) return;
+        if (serviceNotExists(name)) return;
 
         final var templatesService = CloudBase.instance().templatesService();
         if (templatesService.template(template) == null) {
@@ -126,9 +157,18 @@ public final class ServiceCommand {
         this.logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");
     }
 
+    @SubCommandCompleter(completionPattern = {"<name>", "copy", "<template>"})
+    public void completeCopyMethod(int index, List<Candidate> candidates) {
+        if (index == 2) {
+            candidates.add(new Candidate("copy"));
+        } else if (index == 3) {
+            candidates.addAll(CloudBase.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
+        }
+    }
+
     //todo property commands
 
-    private boolean serviceNotExits(String name) {
+    private boolean serviceNotExists(String name) {
         var serviceProvider = CloudAPI.instance().serviceProvider();
         if (serviceProvider == null) return true;
 
