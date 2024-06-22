@@ -28,6 +28,7 @@ import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,28 +52,10 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
         transmitter.responder("service-find", (properties) -> new CloudServicePacket(find(properties.getUUID("uuid"))));
         transmitter.responder("player-count", (properties) -> new CloudPlayerCountPacket(find(properties.getUUID("id")).onlinePlayersCount()));
+        transmitter.responder("services-filtering", property -> new CloudAllServicesPacket(filterService(property.getEnum("filter", ServiceFilter.class))));
 
         transmitter.listen(CloudServiceShutdownPacket.class, (channel, packet) -> factory.stop(find(packet.uuid())));
         transmitter.listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> find(packet.id()).maxPlayers(packet.maxPlayers()));
-
-
-        transmitter.responder("services-filtering", property -> switch (property.getEnum("filter", ServiceFilter.class)) {
-            case EMPTY_SERVICES ->
-                    new CloudAllServicesPacket(services.stream().filter(it -> it.onlinePlayersCount() == 0).toList());
-            case PLAYERS_PRESENT_SERVERS ->
-                    new CloudAllServicesPacket(services.stream().filter(it -> it.onlinePlayersCount() > 0).toList());
-            case FULL_SERVICES -> new CloudAllServicesPacket(services.stream().filter(CloudService::isFull).toList());
-            case SAME_NODE_SERVICES -> null; //todo
-            case FALLBACKS ->
-                    new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).toList()); //todo
-            case PROXIES -> new CloudAllServicesPacket(services.stream().filter(this::isProxy).toList());
-            case SERVERS -> new CloudAllServicesPacket(services.stream().filter(it -> !isProxy(it)).toList());
-            case LOWEST_FALLBACK -> {
-                var fallback = new ArrayList<CloudService>();
-                services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).min(Comparator.comparingInt(CloudService::onlinePlayersCount)).ifPresent(fallback::add);
-                yield new CloudAllServicesPacket(fallback);
-            }
-        });
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
             var service = find(packet.id());
@@ -105,20 +88,27 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
-    public CompletableFuture<List<CloudService>> servicesAsync() {
+    public @NotNull CompletableFuture<List<CloudService>> servicesAsync() {
         return FutureResult.completedFuture(this.services);
     }
 
     @Override
-    public List<CloudService> filterService(ServiceFilter filter) {
-        //todo
-        return List.of();
-    }
-
-    @Override
-    public CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter) {
-        //todo
-        return null;
+    public @NotNull CompletableFuture<List<CloudService>> filterServiceAsync(@NotNull ServiceFilter filter) {
+        return CompletableFuture.completedFuture((switch (filter) {
+            case EMPTY_SERVICES -> services.stream().filter(it -> it.onlinePlayersCount() == 0);
+            case PLAYERS_PRESENT_SERVERS -> services.stream().filter(it -> it.onlinePlayersCount() > 0);
+            case FULL_SERVICES -> services.stream().filter(CloudService::isFull);
+            case SAME_NODE_SERVICES -> new ArrayList<CloudService>().stream(); // todo
+            case FALLBACKS ->
+                    services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)); //todo
+            case PROXIES -> services.stream().filter(it -> isProxy(it));
+            case SERVERS -> services.stream().filter(it -> !isProxy(it));
+            case LOWEST_FALLBACK -> {
+                var fallback = new ArrayList<CloudService>();
+                services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).min(Comparator.comparingInt(CloudService::onlinePlayersCount)).ifPresent(fallback::add);
+                yield fallback.stream();
+            }
+        }).toList());
     }
 
     @Override
