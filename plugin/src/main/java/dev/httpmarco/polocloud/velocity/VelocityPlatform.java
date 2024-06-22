@@ -57,6 +57,7 @@ public final class VelocityPlatform extends RunningProxyPlatform {
         eventManager.register(this, new ServerConnectedListener());
         eventManager.register(this, new PreLoginListener());
         eventManager.register(this, new PostLoginListener());
+        eventManager.register(this, new ServerKickListener(this));
 
         var commandManager = this.server.getCommandManager();
         commandManager.register(commandManager.metaBuilder("cloud").build(), new CloudCommand());
