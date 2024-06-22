@@ -21,6 +21,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.api.packets.general.OperationStatePacket;
 import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
@@ -45,6 +46,12 @@ public final class CloudServiceGroupProvider extends CloudGroupProvider {
         transmitter.responder("groups-all", (properties) -> new CloudGroupCollectionPacket(groups()));
         transmitter.responder("group-find", (properties) -> new CloudGroupPacket(group(properties.getString("name"))));
         transmitter.responder("group-exist", (properties) -> new CloudGroupExistResponsePacket(isGroup(properties.getString("name"))));
+
+        transmitter.responder("group-delete", (properties) -> new OperationStatePacket(deleteGroup(properties.getString("name"))));
+        transmitter.responder("group-create", (properties) -> new OperationStatePacket(createGroup(properties.getString("name"),
+                properties.getString("platform"),
+                properties.getInteger("memory"),
+                properties.getInteger("minOnlineCount"))));
 
         transmitter.listen(CloudGroupCreatePacket.class, (channelTransmit, packet) -> this.createGroup(packet.name(), packet.platform(), packet.memory(), packet.minOnlineCount()));
         transmitter.listen(CloudGroupDeletePacket.class, (channelTransmit, packet) -> this.deleteGroup(packet.name()));
