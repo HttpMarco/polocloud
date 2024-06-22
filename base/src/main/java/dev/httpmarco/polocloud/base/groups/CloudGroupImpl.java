@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.concurrent.CompletableFuture;
 
 public class CloudGroupImpl extends CloudGroup implements Serializable {
 
@@ -34,8 +35,8 @@ public class CloudGroupImpl extends CloudGroup implements Serializable {
     }
 
     @Override
-    public int onlineAmount() {
-        return CloudAPI.instance().serviceProvider().services(this).size();
+    public CompletableFuture<Integer> onlineAmountAsync() {
+        return CompletableFuture.completedFuture(CloudAPI.instance().serviceProvider().services(this).size());
     }
 
     @Override
