@@ -58,9 +58,9 @@ public final class InstanceCloudService implements CloudService {
     }
 
     @Override
-    public int currentMemory() {
+    public CompletableFuture<Double> currentMemoryAsync() {
         //todo
-        return 0;
+        return null;
     }
 
     @Override

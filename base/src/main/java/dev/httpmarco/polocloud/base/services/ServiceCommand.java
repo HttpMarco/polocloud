@@ -65,7 +65,7 @@ public final class ServiceCommand {
 
         this.logger.info("Name&2: &3" + name);
         this.logger.info("Platform&2: &3" + service.group().platform().version());
-        this.logger.info("Current memory&2: &3-1");
+        this.logger.info("Current memory&2: &3" + service.currentMemory() + "mb");
         this.logger.info("Players&2: &3" + service.onlinePlayersCount());
         this.logger.info("Maximal players&2: &3" + service.maxPlayers());
         this.logger.info("Port &2: &3" + service.port());

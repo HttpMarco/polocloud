@@ -22,6 +22,7 @@ import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 @Accessors(fluent = true)
@@ -61,6 +63,13 @@ public final class LocalCloudService extends CloudServiceImpl {
         } else {
             this.runningFolder = OsganFile.define("running/" + name() + "-" + id(), OsganFileCreateOption.CREATION).path();
         }
+    }
+
+    @Override
+    public CompletableFuture<Double> currentMemoryAsync() {
+        var future = new CompletableFuture<Double>();
+        channelTransmit.request("service-memory", OperationNumberPacket.class, operationNumberPacket -> future.complete(operationNumberPacket.response()));
+        return future;
     }
 
     @SneakyThrows

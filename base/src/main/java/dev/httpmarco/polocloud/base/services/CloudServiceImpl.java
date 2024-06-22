@@ -60,9 +60,9 @@ public class CloudServiceImpl implements CloudService {
     }
 
     @Override
-    public int currentMemory() {
-        // todo
-        return 0;
+    public CompletableFuture<Double> currentMemoryAsync() {
+        //todo
+        return null;
     }
 
     @Override

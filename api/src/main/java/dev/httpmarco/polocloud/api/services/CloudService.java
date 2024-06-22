@@ -56,7 +56,12 @@ public interface CloudService extends Serializable {
         return onlinePlayersCount() >= maxPlayers();
     }
 
-    int currentMemory();
+    @SneakyThrows
+    default double currentMemory() {
+        return this.currentMemoryAsync().get(5, TimeUnit.SECONDS);
+    }
+
+    CompletableFuture<Double> currentMemoryAsync();
 
     int memory();
 
