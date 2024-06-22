@@ -22,7 +22,7 @@ import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
+import dev.httpmarco.polocloud.api.packets.general.OperationDoublePacket;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.Getter;
 import lombok.Setter;
@@ -68,7 +68,7 @@ public final class LocalCloudService extends CloudServiceImpl {
     @Override
     public CompletableFuture<Double> currentMemoryAsync() {
         var future = new CompletableFuture<Double>();
-        channelTransmit.request("service-memory", OperationNumberPacket.class, operationNumberPacket -> future.complete(operationNumberPacket.response()));
+        channelTransmit.request("service-memory", OperationDoublePacket.class, operationDoublePacket -> future.complete(operationDoublePacket.response()));
         return future;
     }
 

@@ -19,8 +19,8 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
 import dev.httpmarco.polocloud.api.packets.general.OperationStatePacket;
 import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -33,19 +33,20 @@ import java.util.concurrent.CompletableFuture;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudServiceGroupProvider extends CloudGroupProvider {
+public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups.CloudGroupProvider {
 
     private final List<CloudGroup> groups;
     private final CloudGroupPlatformService platformService = new CloudGroupPlatformService();
     private final CloudGroupServiceTypeAdapter groupServiceTypeAdapter = new CloudGroupServiceTypeAdapter(platformService);
 
-    public CloudServiceGroupProvider() {
+    public CloudGroupProvider() {
 
         // register group packet responders
         var transmitter = CloudBase.instance().transmitter();
         transmitter.responder("groups-all", (properties) -> new CloudGroupCollectionPacket(groups()));
         transmitter.responder("group-find", (properties) -> new CloudGroupPacket(group(properties.getString("name"))));
         transmitter.responder("group-exist", (properties) -> new CloudGroupExistResponsePacket(isGroup(properties.getString("name"))));
+        transmitter.responder("group-service-online", (properties) -> new OperationNumberPacket(group(properties.getString("name")).onlineAmount()));
 
         transmitter.responder("group-delete", (properties) -> new OperationStatePacket(deleteGroup(properties.getString("name"))));
         transmitter.responder("group-create", (properties) -> new OperationStatePacket(createGroup(properties.getString("name"),

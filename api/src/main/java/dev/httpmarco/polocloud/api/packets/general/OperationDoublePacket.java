@@ -25,17 +25,17 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class OperationNumberPacket extends Packet {
+public final class OperationDoublePacket extends Packet {
 
-    private int response;
+    private Double response;
 
     @Override
     public void read(PacketBuffer packetBuffer) {
-        this.response = packetBuffer.readInt();
+        this.response = packetBuffer.readDouble();
     }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
-        packetBuffer.writeInt(this.response);
+        packetBuffer.writeDouble(this.response);
     }
 }

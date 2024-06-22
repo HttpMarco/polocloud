@@ -20,7 +20,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.common.CloudMemoryCalculator;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
-import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
+import dev.httpmarco.polocloud.api.packets.general.OperationDoublePacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import dev.httpmarco.polocloud.api.services.ServiceState;
@@ -37,7 +37,7 @@ public class RunningProxyPlatform extends RunningPlatform {
     public RunningProxyPlatform(Consumer<CloudService> registerService, Consumer<CloudService> unregisterService) {
         var instance = CloudAPI.instance();
 
-        CloudInstance.instance().client().transmitter().responder("service-memory", communicationProperty -> new OperationNumberPacket(CloudMemoryCalculator.usedMemory()));
+        CloudInstance.instance().client().transmitter().responder("service-memory", communicationProperty -> new OperationDoublePacket(CloudMemoryCalculator.usedMemory()));
 
         CloudAPI.instance().serviceProvider().filterServiceAsync(ServiceFilter.SERVERS).whenComplete((cloudServices, throwable) -> {
             for (var service : cloudServices) {

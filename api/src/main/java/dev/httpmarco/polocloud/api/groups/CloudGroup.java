@@ -21,7 +21,11 @@ import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Accessors(fluent = true)
@@ -34,7 +38,12 @@ public abstract class CloudGroup {
     private int minOnlineService;
     private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
 
-    public abstract int onlineAmount();
+    @SneakyThrows
+    public int onlineAmount() {
+        return this.onlineAmountAsync().get(5, TimeUnit.SECONDS);
+    }
+
+    public abstract CompletableFuture<Integer> onlineAmountAsync();
 
     public void update() {
         CloudAPI.instance().groupProvider().update(this);
