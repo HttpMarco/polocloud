@@ -18,7 +18,10 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.properties.CloudProperty;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.api.services.ServiceState;
+import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -42,7 +45,16 @@ public final class CloudServiceQueue extends Thread {
                             continue;
                         }
 
-                        serviceProvider.factory().start(group);
+                        var currentStartedServices = CloudAPI.instance().serviceProvider().services().stream().filter(it -> it.state() == ServiceState.STARTING).count();
+
+                        if (CloudBase.instance().globalProperties().has(CloudProperty.MAX_QUEUE_SIZE)) {
+                            if (CloudBase.instance().globalProperties().property(CloudProperty.MAX_QUEUE_SIZE) > currentStartedServices) {
+                                serviceProvider.factory().start(group);
+                            }
+
+                        } else {
+                            serviceProvider.factory().start(group);
+                        }
                     }
                 }
             }

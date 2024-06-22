@@ -15,11 +15,12 @@ To install PoloCloud, follow these steps:
 
 ### Global cluster properties
 
-| id                | description                            | type   | default value    | implemented |
-|-------------------|----------------------------------------|--------|------------------|-------------|
-| prompt            | The input prefix of the cloud terminal | Text   | '&3cloud &2» &1' | yes         |
-| server-port-range | The detection range of server ports    | Number | 30000            | yes         |
-| proxy-port-range  | The detection range of proxy ports     | Number | 25565            | yes         |
+| id                | description                                 | type   | default value    | implemented |
+|-------------------|---------------------------------------------|--------|------------------|-------------|
+| prompt            | The input prefix of the cloud terminal      | Text   | '&3cloud &2» &1' | yes         |
+| server-port-range | The detection range of server ports         | Number | 30000            | yes         |
+| proxy-port-range  | The detection range of proxy ports          | Number | 25565            | yes         |
+| maxQueueSize      | Maximum value of parallel starting services | Number | -1               | yes         |
 
 
 ### Cloud group properties
@@ -41,7 +42,7 @@ To install PoloCloud, follow these steps:
 | disablePlatformCache             |             | State             | false          | //todo      |
 | disableConfigurationManipulation |             | State             | false          | //todo      |
 | maintenance                      |             | State             | false          | yes         |
- | DEBUG_MODE                      |             | State             | false          | yes         | 
+| DEBUG_MODE                      |             | State             | false          | yes         | 
 
 ### Template properties
 | id               | description | type        | default value | implemented |

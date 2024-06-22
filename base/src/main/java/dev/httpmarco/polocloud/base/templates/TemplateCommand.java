@@ -21,10 +21,13 @@ import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
+import dev.httpmarco.polocloud.base.terminal.commands.SubCommandCompleter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
+import org.jline.reader.Candidate;
 
 import java.io.File;
+import java.util.List;
 
 @Command(command = "template", aliases = {"templates",}, description = "Manage or merge templates")
 public final class TemplateCommand {
@@ -47,6 +50,13 @@ public final class TemplateCommand {
         }
     }
 
+    @SubCommandCompleter(completionPattern = {"delete", "<name>"})
+    public void completeDeleteMethod(int index, List<Candidate> candidates) {
+        if (index == 2) {
+            candidates.addAll(CloudBase.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
+        }
+    }
+
     @SneakyThrows
     @SubCommand(args = {"copy", "<from>", "<to>"})
     public void handleCopy(String from, String to) {
@@ -65,6 +75,13 @@ public final class TemplateCommand {
 
         FileUtils.copyDirectory(fromTemplate, toTemplate);
         logger.info("The template &2'&4" + from + "&2' &1has been successfully copied to &2'&4" + to + "&2'");
+    }
+
+    @SubCommandCompleter(completionPattern = {"copy", "<from>", "<to>"})
+    public void completeCopyMethod(int index, List<Candidate> candidates) {
+        if (index == 2 || index == 3) {
+            candidates.addAll(CloudBase.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
+        }
     }
 
     @SubCommand(args = {"list"})

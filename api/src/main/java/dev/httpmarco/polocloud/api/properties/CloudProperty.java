@@ -24,4 +24,6 @@ public final class CloudProperty<T> extends Property<T> {
 
     public static CloudProperty<String> PROMPT = new CloudProperty<>("prompt", String.class);
 
+    public static CloudProperty<Integer> MAX_QUEUE_SIZE = new CloudProperty<>("maxQueueSize", int.class);
+
 }
