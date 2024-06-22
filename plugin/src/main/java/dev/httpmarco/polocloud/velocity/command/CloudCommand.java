@@ -124,7 +124,7 @@ public class CloudCommand implements SimpleCommand {
                 player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Name<dark_gray>: <aqua>" + groupName));
                 player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Platform<dark_gray>: <aqua>" + group.platform().version()));
                 player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Memory<dark_gray>: <aqua>" + group.memory()));
-                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Minimum online services<dark_gray>: <aqua>" + group.minOnlineServices()));
+                player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Minimum online services<dark_gray>: <aqua>" + group.minOnlineService()));
 
                 if (group.properties() != null) {
                     player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Properties <dark_gray>(<aqua>" +

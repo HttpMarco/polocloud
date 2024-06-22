@@ -24,18 +24,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-//todo fix duplicated code
-@Getter
-@Accessors(fluent = true)
-@AllArgsConstructor
-public class InstanceGroup implements CloudGroup {
+public class InstanceGroup extends CloudGroup {
 
-    private final String name;
-    private final PlatformVersion platform;
-    private final int memory;
-    private final int minOnlineServices;
-    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
-
+    public InstanceGroup(String name, PlatformVersion platform, int memory, int minOnlineService) {
+        super(name, platform, memory, minOnlineService);
+    }
 
     @Override
     public int onlineAmount() {

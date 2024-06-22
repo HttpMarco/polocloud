@@ -142,7 +142,7 @@ public class CloudCommand extends Command implements TabExecutor {
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Name§8: §b" + groupName));
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Platform§8: §b" + group.platform().version()));
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Memory§8: §b" + group.memory()));
-                player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Minimum online services§8: §b" + group.minOnlineServices()));
+                player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Minimum online services§8: §b" + group.minOnlineService()));
                 if (group.properties() != null) {
                     player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Properties §8(§b" + group.properties().properties().size() + "§8): §b"));
                     group.properties().properties().forEach((groupProperties, o) -> player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString())));

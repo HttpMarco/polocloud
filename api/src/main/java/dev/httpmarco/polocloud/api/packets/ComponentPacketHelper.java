@@ -60,7 +60,7 @@ public final class ComponentPacketHelper {
         codecBuffer.writeString(group.name());
         codecBuffer.writeString(group.platform().version());
         codecBuffer.writeBoolean(group.platform().proxy());
-        codecBuffer.writeInt(group.minOnlineServices());
+        codecBuffer.writeInt(group.minOnlineService());
         codecBuffer.writeInt(group.memory());
 
         writeProperty(group.properties(), codecBuffer);

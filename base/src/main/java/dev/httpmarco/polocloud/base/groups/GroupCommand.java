@@ -130,7 +130,7 @@ public final class GroupCommand {
         logger.info("Name&2: &3" + name);
         logger.info("Platform&2: &3" + group.platform().version());
         logger.info("Memory&2: &3" + group.memory());
-        logger.info("Minimum online services&2: &3" + group.minOnlineServices());
+        logger.info("Minimum online services&2: &3" + group.minOnlineService());
         logger.info("Properties &2(&1" + group.properties().properties().size() + "&2): &3");
 
         group.properties().properties().forEach((groupProperties, o) -> {

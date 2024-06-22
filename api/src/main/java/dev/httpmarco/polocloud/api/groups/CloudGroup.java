@@ -19,22 +19,24 @@ package dev.httpmarco.polocloud.api.groups;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-public interface CloudGroup {
+@Getter
+@Accessors(fluent = true)
+@AllArgsConstructor
+public abstract class CloudGroup {
 
-    String name();
+    private String name;
+    private PlatformVersion platform;
+    private int memory;
+    private int minOnlineService;
+    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
 
-    PlatformVersion platform();
+    public abstract int onlineAmount();
 
-    int memory();
-
-    int minOnlineServices();
-
-    PropertiesPool<GroupProperties<?>> properties();
-
-    int onlineAmount();
-
-    default void update() {
+    public void update() {
         CloudAPI.instance().groupProvider().update(this);
     }
 }
