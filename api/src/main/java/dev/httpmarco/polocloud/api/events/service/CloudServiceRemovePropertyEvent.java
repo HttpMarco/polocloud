@@ -16,22 +16,12 @@
 
 package dev.httpmarco.polocloud.api.events.service;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.api.services.CloudService;
-import lombok.experimental.Accessors;
 
-@Accessors(fluent = true)
-public record CloudServiceRemovePropertyEvent(CloudService cloudService) implements ServiceEvent {
+public final class CloudServiceRemovePropertyEvent extends AbstractCloudServicePropertyEvent {
 
-    @Override
-    public void read(PacketBuffer buffer) {
-
+    public CloudServiceRemovePropertyEvent(CloudService cloudService, Property<?> property, Object value) {
+        super(cloudService, property, value);
     }
-
-    @Override
-    public void write(PacketBuffer buffer) {
-
-    }
-
-    //todo: Add changed property
 }

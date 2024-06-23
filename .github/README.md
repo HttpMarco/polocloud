@@ -10,18 +10,8 @@ To install PoloCloud, follow these steps:
   java -jar polocloud.jar
 ```
 3. Create a Proxy and Lobby Group using 'group create'
-4. Find the 'Lobby.json' file in the 'local/groups' folder and add the 'fallback' property into it
-5. Connect to your Server using ip-address:DEFAULT-PROXY-PORT 
-
-### Global cluster properties
-
-| id                | description                                 | type   | default value    | implemented |
-|-------------------|---------------------------------------------|--------|------------------|-------------|
-| prompt            | The input prefix of the cloud terminal      | Text   | '&3cloud &2» &1' | yes         |
-| server-port-range | The detection range of server ports         | Number | 30000            | yes         |
-| proxy-port-range  | The detection range of proxy ports          | Number | 25565            | yes         |
-| maxQueueSize      | Maximum value of parallel starting services | Number | -1               | yes         |
-
+4. Set lobby as a fallback service with 'group lobby property set fallback true'
+5. Connect to your Server using ip-address:DEFAULT-PROXY-PORT
 
 ### Cloud group properties
 | id                               | description | type              | default value  | implemented |

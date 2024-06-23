@@ -17,7 +17,10 @@
 package dev.httpmarco.polocloud.api.events.property;
 
 import dev.httpmarco.polocloud.api.events.Event;
+import dev.httpmarco.polocloud.api.properties.Property;
 
 public interface PropertyEvent extends Event {
-    //todo: Add changed property
+
+    Property<?> property();
+
 }

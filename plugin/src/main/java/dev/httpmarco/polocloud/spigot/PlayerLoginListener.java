@@ -16,6 +16,7 @@
 
 package dev.httpmarco.polocloud.spigot;
 
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +26,16 @@ public class PlayerLoginListener implements Listener {
 
     @EventHandler
     public void handle(PlayerLoginEvent event) {
+
+        if (CloudInstance.instance().self().group().properties().has(GroupProperties.MAINTENANCE)) {
+            var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
+
+            if (state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
+                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "§cThis service is full!");
+                return;
+            }
+        }
+
         if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
             event.disallow(PlayerLoginEvent.Result.KICK_FULL, "§cThis service is full!");
         }

@@ -17,10 +17,12 @@
 package dev.httpmarco.polocloud.api.packets;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 
@@ -37,7 +39,7 @@ public final class ComponentPacketHelper {
                 .writeInt(cloudService.memory())
                 .writeInt(cloudService.maxPlayers());
 
-        writeProperty(cloudService.properties(), buffer);
+        writeProperties(cloudService.properties(), buffer);
     }
 
     public static CloudService readService(PacketBuffer buffer) {
@@ -63,22 +65,38 @@ public final class ComponentPacketHelper {
         codecBuffer.writeInt(group.minOnlineService());
         codecBuffer.writeInt(group.memory());
 
-        writeProperty(group.properties(), codecBuffer);
+        writeProperties(group.properties(), codecBuffer);
     }
 
-    private static void writeProperty(PropertiesPool<?> properties, PacketBuffer codecBuffer) {
+    private static void writeProperties(PropertiesPool<?> properties, PacketBuffer codecBuffer) {
         codecBuffer.writeInt(properties.properties().size());
-        properties.properties().forEach((property, o) -> {
-            codecBuffer.writeString(property.id());
+        properties.properties().forEach((property, o) -> writeProperty(property, o, codecBuffer));
+    }
 
-            if (o instanceof Integer intValue) {
-                codecBuffer.writeInt(intValue);
-            } else if (o instanceof String stringValue) {
-                codecBuffer.writeString(stringValue);
-            } else if (o instanceof Boolean booleanValue) {
-                codecBuffer.writeBoolean(booleanValue);
-            }
-        });
+    public static void writeProperty(Property<?> property, Object value, PacketBuffer buffer) {
+        buffer.writeString(property.id());
+
+        if (value instanceof Integer intValue) {
+            buffer.writeInt(intValue);
+        } else if (value instanceof String stringValue) {
+            buffer.writeString(stringValue);
+        } else if (value instanceof Boolean booleanValue) {
+            buffer.writeBoolean(booleanValue);
+        }
+    }
+
+    public static Pair<Property<?>, ?> readProperty(PacketBuffer buffer) {
+        var name = buffer.readString();
+        var property = PropertiesPool.property(name);
+
+        if (property.type().equals(Integer.class) || property.type().equals(int.class)) {
+            return new Pair<>(property, buffer.readInt());
+        } else if (property.type().equals(String.class)) {
+            return new Pair<>(property, buffer.readString());
+        } else if (property.type().equals(Boolean.class) || property.type().equals(boolean.class)) {
+            return new Pair<>(property, buffer.readBoolean());
+        }
+        return null;
     }
 
     public static PropertiesPool<?> readProperties(PacketBuffer buffer) {
@@ -86,19 +104,9 @@ public final class ComponentPacketHelper {
         var elementSize = buffer.readInt();
 
         for (int i = 0; i < elementSize; i++) {
-
-            var name = buffer.readString();
-            var property = PropertiesPool.property(name);
-
-            if (property.type().equals(Integer.class) || property.type().equals(int.class)) {
-                properties.putRaw(property, buffer.readInt());
-            } else if (property.type().equals(String.class)) {
-                properties.putRaw(property, buffer.readString());
-            } else if (property.type().equals(Boolean.class) || property.type().equals(boolean.class)) {
-                properties.putRaw(property, buffer.readBoolean());
-            }
+            var property = readProperty(buffer);
+            properties.putRaw(property.getKey(), property.getValue());
         }
-
         return properties;
     }
 

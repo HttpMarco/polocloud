@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.packets.general;
+package dev.httpmarco.polocloud.api.events.service;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.events.property.PropertyEvent;
+import dev.httpmarco.polocloud.api.packets.ComponentPacketHelper;
+import dev.httpmarco.polocloud.api.properties.Property;
+import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -25,17 +29,24 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class OperationNumberPacket extends Packet {
+public abstract class AbstractCloudServicePropertyEvent extends Packet implements ServiceEvent, PropertyEvent {
 
-    private int response;
+    private CloudService cloudService;
+    private Property<?> property;
+    private Object value;
 
     @Override
     public void read(PacketBuffer packetBuffer) {
-        this.response = packetBuffer.readInt();
+        this.cloudService = ComponentPacketHelper.readService(packetBuffer);
+
+        var propertyData = ComponentPacketHelper.readProperty(packetBuffer);
+        this.property = propertyData.getKey();
+        this.value = propertyData.getValue();
     }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
-        packetBuffer.writeInt(this.response);
+        ComponentPacketHelper.writeService(cloudService, packetBuffer);
+        ComponentPacketHelper.writeProperty(property, value, packetBuffer);
     }
 }

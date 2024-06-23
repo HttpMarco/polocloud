@@ -29,7 +29,7 @@ import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
 import dev.httpmarco.polocloud.base.events.GlobalEventNode;
-import dev.httpmarco.polocloud.base.groups.CloudServiceGroupProvider;
+import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
@@ -52,7 +52,7 @@ public final class CloudBase extends CloudAPI {
 
     private final CloudTerminal terminal;
     private final NodeService nodeService;
-    private final CloudServiceGroupProvider groupProvider;
+    private final CloudGroupProvider groupProvider;
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
     private final CloudPlayerProvider playerProvider;
@@ -92,7 +92,7 @@ public final class CloudBase extends CloudAPI {
         this.nodeService.localNode().initialize();
 
         this.globalEventNode = new GlobalEventNode();
-        this.groupProvider = new CloudServiceGroupProvider();
+        this.groupProvider = new CloudGroupProvider();
         this.templatesService = new TemplatesService();
         this.serviceProvider = new CloudServiceProviderImpl();
         this.playerProvider = new CloudPlayerProviderImpl();
