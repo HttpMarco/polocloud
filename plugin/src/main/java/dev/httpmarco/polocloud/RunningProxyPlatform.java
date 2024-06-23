@@ -37,8 +37,6 @@ public class RunningProxyPlatform extends RunningPlatform {
     public RunningProxyPlatform(Consumer<CloudService> registerService, Consumer<CloudService> unregisterService) {
         var instance = CloudAPI.instance();
 
-        CloudInstance.instance().client().transmitter().responder("service-memory", communicationProperty -> new OperationDoublePacket(CloudMemoryCalculator.usedMemory()));
-
         CloudAPI.instance().serviceProvider().filterServiceAsync(ServiceFilter.SERVERS).whenComplete((cloudServices, throwable) -> {
             for (var service : cloudServices) {
                 if (service.state() == ServiceState.ONLINE) {

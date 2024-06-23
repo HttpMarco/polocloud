@@ -31,5 +31,6 @@ public final class PostLoginListener {
         if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
             event.getPlayer().disconnect(Component.text("§cThis service is full!"));
         }
+        CloudAPI.instance().playerProvider().register(event.getPlayer().getUniqueId(), event.getPlayer().getUsername());
     }
 }

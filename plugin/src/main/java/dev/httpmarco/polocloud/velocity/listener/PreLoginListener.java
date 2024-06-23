@@ -24,6 +24,6 @@ public final class PreLoginListener {
 
     @Subscribe
     public void onPreLogin(PreLoginEvent event) {
-        CloudAPI.instance().playerProvider().register(event.getUniqueId(), event.getUsername());
+        // todo check maintenance
     }
 }

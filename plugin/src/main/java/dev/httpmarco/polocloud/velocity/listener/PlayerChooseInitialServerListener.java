@@ -22,6 +22,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.text.Component;
 
 @AllArgsConstructor
 public final class PlayerChooseInitialServerListener {
@@ -31,6 +32,7 @@ public final class PlayerChooseInitialServerListener {
     public void onPlayerChooseInitialServer(PlayerChooseInitialServerEvent event) {
         var service = CloudAPI.instance().serviceProvider().filterService(ServiceFilter.LOWEST_FALLBACK);
         if (service.isEmpty()) {
+            event.getPlayer().disconnect(Component.text("§cNo fallback is available"));
             event.setInitialServer(null);
             return;
         }
