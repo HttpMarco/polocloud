@@ -41,6 +41,17 @@ public class ServerKickListener {
         }
 
         var registeredServer = fallback.get(0);
+        int loop = 0;
+        while (fallback.get(loop) == null) {
+            registeredServer = fallback.get(loop);
+            loop++;
+        }
+
+        if (registeredServer == null) {
+            event.setResult(KickedFromServerEvent.DisconnectPlayer.create(Component.text("No server available!")));
+            return;
+        }
+
         event.setResult(KickedFromServerEvent.RedirectPlayer.create(
                 platform.getServer().registerServer(new ServerInfo(registeredServer.name(), new InetSocketAddress(registeredServer.hostname(), registeredServer.port()))
         )));
