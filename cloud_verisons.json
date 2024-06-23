@@ -2,7 +2,6 @@
   "platform": [
     {
       "id": "velocity",
-      "buildParser": "lastBuildParser",
       "proxy": true,
       "versions": [
         {
