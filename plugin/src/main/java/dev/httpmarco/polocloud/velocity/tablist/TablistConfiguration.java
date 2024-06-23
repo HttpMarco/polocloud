@@ -31,22 +31,14 @@ public class TablistConfiguration {
 
     public void load() {
         var result = this.platform.getConfig().load(Tablist.class);
-        this.tablist = new Tablist(HEADER, FOOTER);
-
         if (result == null) {
+            this.tablist = new Tablist(HEADER, FOOTER);
             this.platform.getConfig().save(tablist);
             return;
         }
 
-        var loadedHeader = result.getHeader();
-        var loadedFooter = result.getFooter();
-
-        if (loadedHeader == null) {
-            loadedHeader = HEADER;
-        }
-        if (loadedFooter == null) {
-            loadedFooter = FOOTER;
-        }
+        var loadedHeader = (result.getHeader() == null) ? HEADER : result.getHeader();
+        var loadedFooter = (result.getFooter() == null) ? FOOTER : result.getFooter();
 
         this.tablist = new Tablist(loadedHeader, loadedFooter);
         this.platform.getConfig().save(this.tablist);
