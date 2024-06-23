@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.velocity.tablist;
+package dev.httpmarco.polocloud.proxy.listener;
 
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
+import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
-public class Tablist {
+public class ServerPostConnectListener {
 
-    private String header;
-    private String footer;
+    private final VelocityPlatformPlugin platform;
+
+    @Subscribe
+    public void onPost(ServerPostConnectEvent event) {
+        this.platform.getTabManager().addPlayer(event.getPlayer());
+    }
+
 
 }

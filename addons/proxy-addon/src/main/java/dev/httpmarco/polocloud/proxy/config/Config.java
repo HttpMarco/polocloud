@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.velocity.config;
+package dev.httpmarco.polocloud.proxy.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,7 +30,7 @@ public class Config {
     private final File file;
 
     public Config() {
-        File dir = new File("./plugins/PoloCloud-Plugin");
+        File dir = new File("./plugins/PoloCloud-Proxy");
         if (!dir.exists()) dir.mkdirs();
 
         this.file = new File(dir,"config.json");

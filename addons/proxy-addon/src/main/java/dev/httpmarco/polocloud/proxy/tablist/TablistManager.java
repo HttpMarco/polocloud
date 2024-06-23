@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.velocity.tablist;
+package dev.httpmarco.polocloud.proxy.tablist;
 
 import com.velocitypowered.api.proxy.Player;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.velocity.VelocityPlatform;
+import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class TablistManager {
 
     private final TablistConfiguration configuration;
 
-    public TablistManager(VelocityPlatform platform) {
+    public TablistManager(VelocityPlatformPlugin platform) {
         (this.configuration = new TablistConfiguration(platform, null)).load();
     }
 
