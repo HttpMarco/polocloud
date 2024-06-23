@@ -16,6 +16,7 @@
 
 package dev.httpmarco.polocloud.bungeecord.listener;
 
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -28,6 +29,15 @@ public final class PlayerPostLoginListener implements Listener {
     public void handleServerConnect(PostLoginEvent event) {
         if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
             event.getPlayer().disconnect(TextComponent.fromLegacy("§cThis service is full!"));
+        }
+
+        if (CloudInstance.instance().self().group().properties().has(GroupProperties.MAINTENANCE)) {
+            var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
+
+            if (state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
+                event.getPlayer().disconnect(TextComponent.fromLegacy("§cThis service is in maintenance"));
+                return;
+            }
         }
     }
 }

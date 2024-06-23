@@ -19,6 +19,9 @@ velocity = "3.3.0-SNAPSHOT"
 spigot = "1.21-R0.1-SNAPSHOT"
 bungeecord = "1.20-R0.2"
 
+# publishing
+nexus-publish = "2.0.0"
+
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
@@ -48,3 +51,6 @@ jline = { group = "org.jline", name = "jline", version.ref = "jline" }
 [bundles]
 utils = ["lombok", "osgan-utils", "osgan-files"]
 console = ["jline", "jansi", "annotations"]
+
+[plugins]
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }

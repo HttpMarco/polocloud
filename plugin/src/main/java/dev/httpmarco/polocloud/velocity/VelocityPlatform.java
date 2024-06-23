@@ -22,9 +22,6 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
-import dev.httpmarco.polocloud.api.common.CloudMemoryCalculator;
-import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
-import dev.httpmarco.polocloud.runner.CloudInstance;
 import dev.httpmarco.polocloud.velocity.command.CloudCommand;
 import dev.httpmarco.polocloud.velocity.listener.*;
 import lombok.Getter;
@@ -55,7 +52,6 @@ public final class VelocityPlatform extends RunningProxyPlatform {
         eventManager.register(this, new PlayerChooseInitialServerListener(this.server));
         eventManager.register(this, new PlayerDisconnectListener());
         eventManager.register(this, new ServerConnectedListener());
-        eventManager.register(this, new PreLoginListener());
         eventManager.register(this, new PostLoginListener());
         eventManager.register(this, new ServerKickListener(this));
 

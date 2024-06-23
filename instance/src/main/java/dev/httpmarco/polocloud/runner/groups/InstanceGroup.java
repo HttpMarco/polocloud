@@ -16,13 +16,18 @@
 
 package dev.httpmarco.polocloud.runner.groups;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+
+import java.util.concurrent.CompletableFuture;
 
 public class InstanceGroup extends CloudGroup {
 
@@ -31,9 +36,10 @@ public class InstanceGroup extends CloudGroup {
     }
 
     @Override
-    public int onlineAmount() {
-        //todo
-        return 0;
+    public CompletableFuture<Integer> onlineAmountAsync() {
+        var future = new CompletableFuture<Integer>();
+        CloudInstance.instance().client().transmitter().request("group-service-online", new CommunicationProperty().set("name", name()), OperationNumberPacket.class, it -> future.complete(it.response()));
+        return future;
     }
 
     @Override

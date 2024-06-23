@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.property;
+package dev.httpmarco.polocloud.api.packets.general;
 
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.properties.Property;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-public final class GlobalPropertySetEvent implements PropertyEvent{
+@Getter
+@Accessors(fluent = true)
+@AllArgsConstructor
+public final class OperationDoublePacket extends Packet {
+
+    private Double response;
+
     @Override
-    public void read(PacketBuffer buffer) {
-
+    public void read(PacketBuffer packetBuffer) {
+        this.response = packetBuffer.readDouble();
     }
 
     @Override
-    public void write(PacketBuffer buffer) {
-
+    public void write(PacketBuffer packetBuffer) {
+        packetBuffer.writeDouble(this.response);
     }
-
-    @Override
-    public Property<?> property() {
-        return null;
-    }
-    //todo: Add changed property
 }
