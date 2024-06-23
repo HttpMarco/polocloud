@@ -23,7 +23,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
 import dev.httpmarco.polocloud.velocity.command.CloudCommand;
+import dev.httpmarco.polocloud.velocity.config.Config;
 import dev.httpmarco.polocloud.velocity.listener.*;
+import dev.httpmarco.polocloud.velocity.tablist.TablistManager;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -34,6 +36,8 @@ import java.net.InetSocketAddress;
 public final class VelocityPlatform extends RunningProxyPlatform {
 
     private final ProxyServer server;
+    private Config config;
+    private TablistManager tabManager;
 
     @Inject
     public VelocityPlatform(ProxyServer server) {
@@ -44,6 +48,9 @@ public final class VelocityPlatform extends RunningProxyPlatform {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
+        this.config = new Config();
+        this.tabManager = new TablistManager(this);
+
         for (var registered : this.server.getAllServers()) {
             this.server.unregisterServer(registered.getServerInfo());
         }
@@ -54,6 +61,7 @@ public final class VelocityPlatform extends RunningProxyPlatform {
         eventManager.register(this, new ServerConnectedListener());
         eventManager.register(this, new PostLoginListener());
         eventManager.register(this, new ServerKickListener(this));
+        eventManager.register(this, new ServerPostConnectListener(this));
 
         var commandManager = this.server.getCommandManager();
         commandManager.register(commandManager.metaBuilder("cloud").build(), new CloudCommand());
