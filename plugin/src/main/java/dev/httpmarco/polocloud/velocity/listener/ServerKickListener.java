@@ -18,14 +18,11 @@ package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
-import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import dev.httpmarco.polocloud.velocity.VelocityPlatform;
 import lombok.AllArgsConstructor;
-import net.kyori.adventure.text.Component;
-
-import java.net.InetSocketAddress;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 @AllArgsConstructor
 public class ServerKickListener {
@@ -35,14 +32,24 @@ public class ServerKickListener {
     @Subscribe
     public void handelKick(KickedFromServerEvent event) {
         var fallback = CloudAPI.instance().serviceProvider().filterService(ServiceFilter.LOWEST_FALLBACK);
+        var message = MiniMessage.miniMessage().deserialize("<red>No server available!");
         if (fallback.isEmpty()) {
-            event.setResult(KickedFromServerEvent.DisconnectPlayer.create(Component.text("No server available!")));
+            event.setResult(KickedFromServerEvent.DisconnectPlayer.create(message));
             return;
         }
 
-        var registeredServer = fallback.get(0);
-        event.setResult(KickedFromServerEvent.RedirectPlayer.create(
-                platform.getServer().registerServer(new ServerInfo(registeredServer.name(), new InetSocketAddress(registeredServer.hostname(), registeredServer.port()))
-        )));
+        if (!event.getPlayer().isActive()) {
+            return;
+        }
+
+        fallback.stream().flatMap(service -> this.platform.getServer().getServer(service.name()).stream())
+                .findFirst()
+                .ifPresent(registeredServer -> {
+                    if (event.getServer().getServerInfo().getName().equals(registeredServer.getServerInfo().getName())) {
+                        event.setResult(KickedFromServerEvent.Notify.create(event.getServerKickReason().orElse(message)));
+                    } else {
+                        event.setResult(KickedFromServerEvent.RedirectPlayer.create(registeredServer));
+                    }
+                });
     }
 }
