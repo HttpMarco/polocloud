@@ -52,7 +52,6 @@ public final class VelocityPlatform extends RunningProxyPlatform {
         eventManager.register(this, new PlayerChooseInitialServerListener(this.server));
         eventManager.register(this, new PlayerDisconnectListener());
         eventManager.register(this, new ServerConnectedListener());
-        eventManager.register(this, new PreLoginListener());
         eventManager.register(this, new PostLoginListener());
         eventManager.register(this, new ServerKickListener(this));
 

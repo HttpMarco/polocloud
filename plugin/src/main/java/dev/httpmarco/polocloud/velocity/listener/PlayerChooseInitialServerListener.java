@@ -17,10 +17,13 @@
 package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 
@@ -35,6 +38,15 @@ public final class PlayerChooseInitialServerListener {
             event.getPlayer().disconnect(Component.text("§cNo fallback is available"));
             event.setInitialServer(null);
             return;
+        }
+
+        if (CloudInstance.instance().self().group().properties().has(GroupProperties.MAINTENANCE)) {
+            var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
+
+            if(!(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
+                event.getPlayer().disconnect(Component.text("§cThis service is in maintenance"));
+                return;
+            }
         }
 
         this.server.getServer(service.get(0).name()).ifPresentOrElse(event::setInitialServer, () -> event.setInitialServer(null));
