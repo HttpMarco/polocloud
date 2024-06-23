@@ -17,20 +17,17 @@
 package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
-import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.runner.CloudInstance;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
+import dev.httpmarco.polocloud.velocity.VelocityPlatform;
+import lombok.AllArgsConstructor;
 
-public final class PostLoginListener {
+@AllArgsConstructor
+public class ServerPostConnectListener {
+
+    private final VelocityPlatform platform;
 
     @Subscribe
-    public void onPostLogin(PostLoginEvent event) {
-        var player = event.getPlayer();
-        if (CloudInstance.instance().self().isFull() && !player.hasPermission("polocloud.connect.bypass.maxplayers")) {
-            player.disconnect(MiniMessage.miniMessage().deserialize("<red>This service is full!"));
-        }
-
-        CloudAPI.instance().playerProvider().register(player.getUniqueId(), player.getUsername());
+    public void onPost(ServerPostConnectEvent event) {
+        this.platform.getTabManager().addPlayer(event.getPlayer());
     }
 }
