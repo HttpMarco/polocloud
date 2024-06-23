@@ -18,12 +18,8 @@ package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.connection.PreLoginEvent;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.runner.CloudInstance;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public final class PostLoginListener {
 
