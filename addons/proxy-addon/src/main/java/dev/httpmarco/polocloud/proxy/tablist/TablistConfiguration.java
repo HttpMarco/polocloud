@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.velocity.tablist;
+package dev.httpmarco.polocloud.proxy.tablist;
 
-import dev.httpmarco.polocloud.velocity.VelocityPlatform;
+import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,9 +24,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TablistConfiguration {
 
-    private final static String HEADER = "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient>\n<gray>Simplest and easiest CloudSystem\n<gray>Current Server: <aqua>%server%";
-    private final static String FOOTER = "<gray>Github: <white>HttpMarco <dark_gray>× <gray>Twitch: <light_purple>HttxMarco <dark_gray>× <gray>YouTube: <red>HttxMarco";
-    private final VelocityPlatform platform;
+    private final static String HEADER = "\n          <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>- <gray>Simplest and easiest CloudSystem          \n<gray>Current Server: <aqua>%server%\n";
+    private final static String FOOTER = "\n<gray>Github: <white>github.com/HttpMarco/PoloCloud\n<gray>Discord: <aqua>https://discord.gg/VHjnNBRFBe";
+    private final VelocityPlatformPlugin platform;
     private Tablist tablist;
 
     public void load() {
