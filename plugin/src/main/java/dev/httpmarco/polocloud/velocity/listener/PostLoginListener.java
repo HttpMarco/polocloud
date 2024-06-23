@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -25,9 +26,11 @@ public final class PostLoginListener {
 
     @Subscribe
     public void onPostLogin(PostLoginEvent event) {
-        if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
-            event.getPlayer().disconnect(MiniMessage.miniMessage().deserialize("<red>This service is full!"));
+        var player = event.getPlayer();
+        if (CloudInstance.instance().self().isFull() && !player.hasPermission("polocloud.connect.bypass.maxplayers")) {
+            player.disconnect(MiniMessage.miniMessage().deserialize("<red>This service is full!"));
         }
-        CloudAPI.instance().playerProvider().register(event.getPlayer().getUniqueId(), event.getPlayer().getUsername());
+
+        CloudAPI.instance().playerProvider().register(player.getUniqueId(), player.getUsername());
     }
 }
