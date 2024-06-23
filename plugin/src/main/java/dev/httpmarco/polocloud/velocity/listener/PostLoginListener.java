@@ -22,6 +22,7 @@ import com.velocitypowered.api.event.connection.PreLoginEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public final class PostLoginListener {
@@ -29,7 +30,7 @@ public final class PostLoginListener {
     @Subscribe
     public void onPostLogin(PostLoginEvent event) {
         if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
-            event.getPlayer().disconnect(Component.text("§cThis service is full!"));
+            event.getPlayer().disconnect(MiniMessage.miniMessage().deserialize("<red>This service is full!"));
         }
     }
 }
