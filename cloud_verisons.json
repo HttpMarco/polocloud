@@ -65,6 +65,15 @@
               "content": "false"
             }
           ]
+        },
+        {
+          "file": "eula.txt",
+          "actions": [
+            {
+              "type": "GENERATE_AND_FILL_FILE",
+              "content": "eula=true"
+            }
+          ]
         }
       ],
       "versions": [
