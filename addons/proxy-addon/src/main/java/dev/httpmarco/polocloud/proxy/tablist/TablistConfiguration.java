@@ -37,8 +37,8 @@ public class TablistConfiguration {
             return;
         }
 
-        var loadedHeader = (result.getHeader() == null) ? HEADER : result.getHeader();
-        var loadedFooter = (result.getFooter() == null) ? FOOTER : result.getFooter();
+        var loadedHeader = (result.header() == null) ? HEADER : result.header();
+        var loadedFooter = (result.footer() == null) ? FOOTER : result.footer();
 
         this.tablist = new Tablist(loadedHeader, loadedFooter);
         this.platform.getConfig().save(this.tablist);

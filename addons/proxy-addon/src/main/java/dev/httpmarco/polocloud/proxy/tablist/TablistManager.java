@@ -38,8 +38,8 @@ public class TablistManager {
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
         var server = platform.getServer().getServer(cloudPlayer.currentServerName());
 
-        var header = replaceCommonPlaceholders(configuration.getTablist().getHeader(), player, cloudPlayer);
-        var footer = replaceCommonPlaceholders(configuration.getTablist().getFooter(), player, cloudPlayer);
+        var header = replaceCommonPlaceholders(configuration.getTablist().header(), player, cloudPlayer);
+        var footer = replaceCommonPlaceholders(configuration.getTablist().header(), player, cloudPlayer);
 
         if (server.isPresent()) {
             try {
