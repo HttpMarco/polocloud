@@ -44,11 +44,10 @@ public class TablistManager {
         if (server.isPresent()) {
             try {
                 var ping = server.get().ping().get();
-                var serverMotd = ping.getDescriptionComponent().toString();
-                var serverPing = ping.toString();
+                var serverMotd = ping.getDescriptionComponent();
 
-                header = replaceServerPlaceholders(header, serverMotd, serverPing);
-                footer = replaceServerPlaceholders(footer, serverMotd, serverPing);
+                header = replaceServerPlaceholders(header, MiniMessage.miniMessage().serialize(serverMotd));
+                footer = replaceServerPlaceholders(footer, MiniMessage.miniMessage().serialize(serverMotd));
             } catch (ExecutionException | InterruptedException e) {
                 CloudAPI.instance().logger().error("Error while replacing server placeholders", e);
             }
@@ -58,18 +57,19 @@ public class TablistManager {
         player.sendPlayerListFooter(MiniMessage.miniMessage().deserialize(footer));
     }
 
+    //TODO update method where ping and onlinePlayers get updated
+
     private String replaceCommonPlaceholders(String template, Player player, CloudPlayer cloudPlayer ) {
         return template
                 .replace("%server%", cloudPlayer.currentServerName())
                 .replace("%onlinePlayers%", String.valueOf(this.platform.getServer().getPlayerCount()))
                 .replace("%maxOnlinePlayers%", String.valueOf(this.platform.getServer().getConfiguration().getShowMaxPlayers()))
-                .replace("%proxy_motd%", this.platform.getServer().getConfiguration().getMotd().toString())
-                .replace("%proxy_ping%", String.valueOf(player.getPing()));
+                .replace("%proxy_motd%", MiniMessage.miniMessage().serialize(this.platform.getServer().getConfiguration().getMotd()))
+                .replace("%ping%", String.valueOf(player.getPing()));
     }
 
-    private String replaceServerPlaceholders(String template, String serverMotd, String serverPing) {
+    private String replaceServerPlaceholders(String template, String serverMotd) {
         return template
-                .replace("%server_motd%", serverMotd)
-                .replace("%server_ping%", serverPing);
+                .replace("%server_motd%", serverMotd);
     }
 }
