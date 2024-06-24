@@ -17,7 +17,6 @@
 package dev.httpmarco.polocloud.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
@@ -43,7 +42,7 @@ public final class PlayerChooseInitialServerListener {
         if (CloudInstance.instance().self().group().properties().has(GroupProperties.MAINTENANCE)) {
             var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
 
-            if(!(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
+            if(state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
                 event.getPlayer().disconnect(Component.text("§cThis service is in maintenance"));
                 return;
             }
