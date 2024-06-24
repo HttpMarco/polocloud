@@ -89,9 +89,9 @@
           "file": "spigot.yml",
           "actions": [
             {
-              "type": "UPSERT",
+              "type": "OVERWRITE",
               "parentGroupPlatformPredicate": "bungeecord",
-              "keyword": "settings.bungeecord",
+              "keyword": "bungeecord",
               "content": "true"
             }
           ]
