@@ -84,6 +84,17 @@
               "content": "eula=true"
             }
           ]
+        },
+         {
+          "file": "spigot.yml",
+          "actions": [
+            {
+              "type": "UPSERT",
+              "parentGroupPlatformPredicate": "bungeecord",
+              "keyword": "bungeecord",
+              "content": "true"
+            }
+          ]
         }
       ],
       "versions": [
