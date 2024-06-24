@@ -20,7 +20,6 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.player.CloudPlayerSwitchServerEvent;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerServiceChangePacket;
 import dev.httpmarco.polocloud.runner.CloudInstance;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -34,6 +33,9 @@ public final class ServerConnectedListener implements Listener {
         var cloudService = CloudAPI.instance().serviceProvider().service(player.getServer().getInfo().getName());
         CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
 
+        if (event.getFrom() == null) {
+            return;
+        }
         var previousService = CloudAPI.instance().serviceProvider().service(event.getFrom().getName());
         CloudAPI.instance().globalEventNode().call(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudService, previousService));
     }
