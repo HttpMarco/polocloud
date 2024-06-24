@@ -40,7 +40,7 @@
           "actions": [
             {
               "type": "OVERWRITE",
-              "keyword": "host",
+              "keyword": "  host",
               "content": "%hostname%:%port%"
             }
           ]
