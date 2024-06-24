@@ -18,7 +18,8 @@ package dev.httpmarco.polocloud.bungeecord.listener;
 
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.runner.CloudInstance;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -27,15 +28,19 @@ public final class PlayerPostLoginListener implements Listener {
 
     @EventHandler
     public void handleServerConnect(PostLoginEvent event) {
-        if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
-            event.getPlayer().disconnect(TextComponent.fromLegacy("§cThis service is full!"));
+        var player = event.getPlayer();
+        if (CloudInstance.instance().self().isFull() && !player.hasPermission("polocloud.connect.bypass.maxplayers")) {
+            player.disconnect(BungeeComponentSerializer.get().serialize(
+                    MiniMessage.miniMessage().deserialize("<red>This service is full!")));
+            return;
         }
 
         if (CloudInstance.instance().self().group().properties().has(GroupProperties.MAINTENANCE)) {
             var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
 
-            if (state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
-                event.getPlayer().disconnect(TextComponent.fromLegacy("§cThis service is in maintenance"));
+            if (state && !(player.hasPermission("polocloud.connect.bypass.maintenance"))) {
+                player.disconnect(BungeeComponentSerializer.get().serialize(
+                        MiniMessage.miniMessage().deserialize("<red>This service is in maintenance!")));
                 return;
             }
         }

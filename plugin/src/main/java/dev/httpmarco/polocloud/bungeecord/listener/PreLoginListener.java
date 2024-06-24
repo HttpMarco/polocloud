@@ -16,11 +16,9 @@
 
 package dev.httpmarco.polocloud.bungeecord.listener;
 
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.runner.CloudInstance;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -30,7 +28,8 @@ public final class PreLoginListener implements Listener {
     @EventHandler
     public void handlePreLogin(PreLoginEvent event) {
         if (ProxyServer.getInstance().getServers().isEmpty()) {
-            event.setReason(TextComponent.fromLegacy("§cNo fallback server available"));
+            event.setReason(BungeeComponentSerializer.get().serialize(
+                    MiniMessage.miniMessage().deserialize("<red>No fallback server available"))[0]);
             event.setCancelled(true);
         }
     }
