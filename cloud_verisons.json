@@ -2,11 +2,33 @@
   "platform": [
     {
       "id": "velocity",
+      "buildParser": "lastBuildParser",
       "proxy": true,
+      "configManipulation": [
+        {
+          "file": "velocity.toml",
+          "type": "OVERWRITE",
+          "actions": [
+            {
+              "keyword": "bind",
+              "content": "%hostname%:%port%"
+            }
+          ]
+        },
+        {
+          "file": "forwarding.secret",
+          "actions": [
+            {
+              "type": "GENERATE_AND_FILL_FILE",
+              "content": "%proxy_secret%"
+            }
+          ]
+        }
+      ],
       "versions": [
         {
           "version": "3.3.0-SNAPSHOT",
-          "downloadUrl": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/400/downloads/velocity-3.3.0-SNAPSHOT-400.jar"
+          "downloadUrl": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/%build%/downloads/velocity-3.3.0-SNAPSHOT-%build%.jar"
         }
       ]
     }
