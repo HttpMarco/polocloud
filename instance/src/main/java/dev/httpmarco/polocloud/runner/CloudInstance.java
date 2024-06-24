@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.runner;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
@@ -63,6 +64,17 @@ public class CloudInstance extends CloudAPI {
     @SneakyThrows
     public CloudInstance(String[] args) {
         instance = this;
+
+        Dependency.load("net.kyori", "adventure-text-minimessage", "4.17.0");
+        Dependency.load("net.kyori", "adventure-key", "4.17.0");
+        Dependency.load("net.kyori", "examination-api", "1.3.0");
+        Dependency.load("net.kyori", "adventure-api", "4.17.0");
+        Dependency.load("net.kyori", "adventure-platform-api", "4.3.3");
+        Dependency.load("net.kyori", "adventure-platform-facet", "4.3.3");
+        Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.3");
+        Dependency.load("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2");
+        Dependency.load("net.kyori", "adventure-text-serializer-legacy", "4.13.1");
+        Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.13.1");
 
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 

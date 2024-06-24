@@ -24,6 +24,8 @@ dependencies {
 
     implementation(libs.velocity)
     annotationProcessor(libs.velocity)
+
+    implementation(libs.bungeeminimessage)
 }
 
 tasks.jar {
