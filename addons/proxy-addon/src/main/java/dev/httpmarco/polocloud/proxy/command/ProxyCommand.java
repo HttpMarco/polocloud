@@ -19,7 +19,6 @@ package dev.httpmarco.polocloud.proxy.command;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
