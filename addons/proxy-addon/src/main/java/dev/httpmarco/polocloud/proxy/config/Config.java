@@ -19,6 +19,11 @@ package dev.httpmarco.polocloud.proxy.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.proxy.maintenance.Maintenance;
+import dev.httpmarco.polocloud.proxy.maintenance.MaintenanceManager;
+import dev.httpmarco.polocloud.proxy.tablist.Tablist;
+import dev.httpmarco.polocloud.proxy.tablist.TablistManager;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -33,7 +38,7 @@ public class Config {
         File dir = new File("./plugins/PoloCloud-Proxy");
         if (!dir.exists()) dir.mkdirs();
 
-        this.file = new File(dir,"config.json");
+        this.file = new File(dir, "config.json");
         if (!this.file.exists()) {
             try {
                 this.file.createNewFile();
@@ -62,5 +67,25 @@ public class Config {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ProxyConfig loadOrCreateDefault() {
+        var config = load(ProxyConfig.class);
+        if (config == null) {
+            config = new ProxyConfig(new Maintenance(MaintenanceManager.MOTD), new Tablist(TablistManager.HEADER, TablistManager.FOOTER));
+            save(config);
+            return config;
+        }
+
+        var motd = (config.getMaintenance() == null) ? MaintenanceManager.MOTD : (config.getMaintenance().motd() == null) ? MaintenanceManager.MOTD : config.getMaintenance().motd();
+
+        var header = (config.getTablist() == null) ? TablistManager.HEADER : (config.getTablist().header() == null) ? TablistManager.HEADER : config.getTablist().header();
+        var footer = (config.getTablist() == null) ? TablistManager.FOOTER : (config.getTablist().footer() == null) ? TablistManager.FOOTER : config.getTablist().footer();
+
+        config.setMaintenance(new Maintenance(motd));
+        config.setTablist(new Tablist(header, footer));
+
+        save(config);
+        return config;
     }
 }
