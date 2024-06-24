@@ -63,6 +63,16 @@
               "type": "OVERWRITE",
               "keyword": "online-mode",
               "content": "false"
+            },
+             {
+              "type": "OVERWRITE",
+              "keyword": "server-name",
+              "content": "%server_name%"
+            },
+             {
+              "type": "OVERWRITE",
+              "keyword": "server-port",
+              "content": "%port%"
             }
           ]
         },
