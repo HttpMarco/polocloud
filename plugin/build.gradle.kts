@@ -19,7 +19,7 @@ dependencies {
     implementation(project(":instance"))
     implementation(libs.osgan.netty)
 
-    implementation(libs.spigot)
+    implementation(libs.paper)
     implementation(libs.bungeecord)
 
     implementation(libs.velocity)
