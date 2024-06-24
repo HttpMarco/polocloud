@@ -31,7 +31,7 @@
         }
       ]
     },
-     {
+    {
       "id": "bungeecord",
       "proxy": true,
       "configManipulation": [
@@ -50,6 +50,27 @@
         {
           "version": "latest",
           "downloadUrl": "https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar"
+        }
+      ]
+    },
+    {
+      "id": "paper",
+      "configManipulation": [
+          {
+          "file": "server.properties",
+          "actions": [
+            {
+              "type": "OVERWRITE",
+              "keyword": "online-mode",
+              "content": "false"
+            }
+          ]
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.21",
+          "downloadUrl": "https://api.papermc.io/v2/projects/paper/versions/1.21/builds/37/downloads/paper-1.21-37.jar"
         }
       ]
     }
