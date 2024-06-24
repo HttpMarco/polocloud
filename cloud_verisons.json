@@ -17,9 +17,9 @@
         },
         {
           "file": "forwarding.secret",
+          "type": "GENERATE_AND_FILL_FILE",
           "actions": [
             {
-              "type": "GENERATE_AND_FILL_FILE",
               "content": "%proxy_secret%"
             }
           ]
