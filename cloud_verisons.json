@@ -34,7 +34,18 @@
      {
       "id": "bungeecord",
       "proxy": true,
-      "configManipulation": [],
+      "configManipulation": [
+          {
+          "file": "config.yml",
+          "actions": [
+            {
+              "type": "OVERWRITE",
+              "keyword": "host",
+              "content": "%hostname%:%port%"
+            }
+          ]
+        }
+      ],
       "versions": [
         {
           "version": "latest",
