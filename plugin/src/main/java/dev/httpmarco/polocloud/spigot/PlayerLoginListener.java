@@ -31,7 +31,7 @@ public class PlayerLoginListener implements Listener {
             var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
 
             if (state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
-                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "§cThis service is full!");
+                event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "§cThis service is in maintenance!");
                 return;
             }
         }
