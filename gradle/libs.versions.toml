@@ -16,7 +16,7 @@ bungeeminimessage = "4.3.3"
 
 #platforms
 velocity = "3.3.0-SNAPSHOT"
-spigot = "1.21-R0.1-SNAPSHOT"
+paper = "1.20.4-R0.1-SNAPSHOT"
 bungeecord = "1.20-R0.2"
 
 # publishing
@@ -37,7 +37,7 @@ commons = { group = "commons-io", name = "commons-io", version.ref = "commons" }
 
 #platforms
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
-spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
+paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 
 

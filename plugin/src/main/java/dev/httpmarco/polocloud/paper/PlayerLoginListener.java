@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.spigot;
+package dev.httpmarco.polocloud.paper;
 
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.runner.CloudInstance;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -26,18 +27,17 @@ public class PlayerLoginListener implements Listener {
 
     @EventHandler
     public void handle(PlayerLoginEvent event) {
-
         if (CloudInstance.instance().self().group().properties().has(GroupProperties.MAINTENANCE)) {
             var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
 
             if (state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
-                event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "§cThis service is in maintenance!");
+                event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, MiniMessage.miniMessage().deserialize("<red>This service is in maintenance!"));
                 return;
             }
         }
 
         if (CloudInstance.instance().self().isFull() && !event.getPlayer().hasPermission("polocloud.connect.bypass.maxplayers")) {
-            event.disallow(PlayerLoginEvent.Result.KICK_FULL, "§cThis service is full!");
+            event.disallow(PlayerLoginEvent.Result.KICK_FULL, MiniMessage.miniMessage().deserialize("<red>This service is full!"));
         }
     }
 

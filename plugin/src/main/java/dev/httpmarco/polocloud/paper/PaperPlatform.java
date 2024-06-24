@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.spigot;
+package dev.httpmarco.polocloud.paper;
 
 import dev.httpmarco.polocloud.RunningPlatform;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class SpigotPlatform extends JavaPlugin {
+public final class PaperPlatform extends JavaPlugin {
 
     private final RunningPlatform runningPlatform = new RunningPlatform();
 
