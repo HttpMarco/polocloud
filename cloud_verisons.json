@@ -91,7 +91,7 @@
             {
               "type": "UPSERT",
               "parentGroupPlatformPredicate": "bungeecord",
-              "keyword": "bungeecord",
+              "keyword": "settings.bungeecord",
               "content": "true"
             }
           ]
