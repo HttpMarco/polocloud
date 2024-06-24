@@ -2,7 +2,6 @@
   "platform": [
     {
       "id": "velocity",
-      "buildParser": "lastBuildParser",
       "proxy": true,
       "configManipulation": [
         {
@@ -29,6 +28,17 @@
         {
           "version": "3.3.0-SNAPSHOT",
           "downloadUrl": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/400/downloads/velocity-3.3.0-SNAPSHOT-400.jar"
+        }
+      ]
+    },
+     {
+      "id": "bungeecord",
+      "proxy": true,
+      "configManipulation": [],
+      "versions": [
+        {
+          "version": "latest",
+          "downloadUrl": "https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar"
         }
       ]
     }
