@@ -74,7 +74,7 @@ public class CloudInstance extends CloudAPI {
         Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.3");
         Dependency.load("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2");
         Dependency.load("net.kyori", "adventure-text-serializer-legacy", "4.13.1");
-        Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.13.1");
+        Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.16.0");
 
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
