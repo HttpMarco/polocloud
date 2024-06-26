@@ -49,7 +49,7 @@ jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" 
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
 
 [bundles]
-utils = ["lombok", "osgan-utils", "osgan-files"]
+utils = ["lombok", "osgan-utils", "osgan-files", "annotations"]
 console = ["jline", "jansi", "annotations"]
 
 [plugins]

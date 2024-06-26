@@ -31,36 +31,28 @@ public final class PropertiesPool<T extends Property<?>> implements Serializable
 
     // all properties of cluster
     public static final List<Property<?>> PROPERTY_LIST = new ArrayList<>();
+
     // single properties of current pool
-    private final HashMap<T, Object> properties = new HashMap<>();
+    private final HashMap<String, Object> properties = new HashMap<>();
 
     public boolean has(T key) {
-        return properties.containsKey(key);
+        return properties.containsKey(key.id());
     }
 
     public void appendAll(PropertiesPool<?> propertiesPool) {
-        this.properties.putAll((Map<? extends T, ?>) propertiesPool.properties);
+        this.properties.putAll(propertiesPool.properties);
     }
 
-    @SuppressWarnings("unchecked")
     public <R, P extends Property<R>> void put(P property, R value) {
-        this.properties.put((T) property, value);
-    }
-
-    public void putRaw(Property<?> property, Object value) {
-        this.properties.put((T) property, value);
+        this.properties.put(property.id(), value);
     }
 
     public void remove(T property) {
-        this.properties.remove(property);
+        this.properties.remove(property.id());
     }
 
     @SuppressWarnings("unchecked")
     public <P> P property(Property<P> property) {
-        return (P) this.properties.get(property);
-    }
-
-    public static Property<?> property(String id) {
-        return PROPERTY_LIST.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
+        return (P) this.properties.get(property.id());
     }
 }
