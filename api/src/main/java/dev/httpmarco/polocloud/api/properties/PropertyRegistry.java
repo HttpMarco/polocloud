@@ -16,10 +16,18 @@
 
 package dev.httpmarco.polocloud.api.properties;
 
-public final class CloudProperty<T> {
+import java.util.HashMap;
+import java.util.Map;
 
-    public static Property<String> PROMPT = Property.String("prompt");
+public final class PropertyRegistry {
 
-    public static Property<Integer> MAX_QUEUE_SIZE = Property.Integer("maxQueueSize");
+    private static final Map<String, PropertySupportTypes> registeredTypes = new HashMap<>();
 
+    public static void register(String id, PropertySupportTypes type) {
+        registeredTypes.put(id, type);
+    }
+
+    public static PropertySupportTypes findType(String id) {
+        return registeredTypes.get(id);
+    }
 }

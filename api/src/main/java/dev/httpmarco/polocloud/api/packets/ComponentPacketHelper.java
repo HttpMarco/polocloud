@@ -21,8 +21,8 @@ import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
-import dev.httpmarco.polocloud.api.properties.Property;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
+import dev.httpmarco.polocloud.api.properties.PropertyRegistry;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import org.jetbrains.annotations.NotNull;
@@ -33,13 +33,7 @@ public final class ComponentPacketHelper {
     public static void writeService(CloudService cloudService, PacketBuffer buffer) {
         writeGroup(cloudService.group(), buffer);
 
-        buffer.writeInt(cloudService.orderedId())
-                .writeUniqueId(cloudService.id())
-                .writeInt(cloudService.port())
-                .writeEnum(cloudService.state())
-                .writeString(cloudService.hostname())
-                .writeInt(cloudService.memory())
-                .writeInt(cloudService.maxPlayers());
+        buffer.writeInt(cloudService.orderedId()).writeUniqueId(cloudService.id()).writeInt(cloudService.port()).writeEnum(cloudService.state()).writeString(cloudService.hostname()).writeInt(cloudService.memory()).writeInt(cloudService.maxPlayers());
 
         writeProperties(cloudService.properties(), buffer);
     }
@@ -70,42 +64,23 @@ public final class ComponentPacketHelper {
         writeProperties(group.properties(), codecBuffer);
     }
 
-    private static void writeProperties(PropertiesPool properties, PacketBuffer codecBuffer) {
+    private static void writeProperties(@NotNull PropertyPool properties, @NotNull PacketBuffer codecBuffer) {
         codecBuffer.writeInt(properties.properties().size());
         properties.properties().forEach((id, o) -> writeProperty(id, o, codecBuffer));
     }
 
-    public static void writeProperty(String id, Object value, PacketBuffer buffer) {
+    public static void writeProperty(String id, Object value, @NotNull PacketBuffer buffer) {
         buffer.writeString(id);
-
-        if (value instanceof Integer intValue) {
-            buffer.writeInt(0);
-            buffer.writeInt(intValue);
-        } else if (value instanceof String stringValue) {
-            buffer.writeInt(1);
-            buffer.writeString(stringValue);
-        } else if (value instanceof Boolean booleanValue) {
-            buffer.writeInt(2);
-            buffer.writeBoolean(booleanValue);
-        }
+        PropertyRegistry.findType(id).writer().accept(buffer, value);
     }
 
-    public static @Nullable Pair<String, Object> readProperty(@NotNull PacketBuffer buffer) {
+    public static @NotNull Pair<String, Object> readProperty(@NotNull PacketBuffer buffer) {
         var name = buffer.readString();
-        var typeId = buffer.readInt();
-
-        if (typeId == 0) {
-            return new Pair<>(name, buffer.readInt());
-        } else if (typeId == 1) {
-            return new Pair<>(name, buffer.readBoolean());
-        } else if (typeId == 2) {
-            return new Pair<>(name, buffer.readInt());
-        }
-        return null;
+        return Pair.of(buffer.readString(), PropertyRegistry.findType(name).reader().apply(buffer));
     }
 
-    public static @NotNull PropertiesPool readProperties(@NotNull PacketBuffer buffer) {
-        var properties = new PropertiesPool();
+    public static @NotNull PropertyPool readProperties(@NotNull PacketBuffer buffer) {
+        var properties = new PropertyPool();
         var elementSize = buffer.readInt();
 
         for (int i = 0; i < elementSize; i++) {

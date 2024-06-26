@@ -24,11 +24,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Accessors(fluent = true)
-public final class PropertiesPool implements Serializable {
+public final class PropertyPool implements Serializable {
 
     // all properties of cluster
     public static final List<Property<?>> PROPERTY_LIST = new ArrayList<>();
@@ -40,8 +39,8 @@ public final class PropertiesPool implements Serializable {
         return properties.containsKey(key.id());
     }
 
-    public void appendAll(@NotNull PropertiesPool propertiesPool) {
-        this.properties.putAll(propertiesPool.properties);
+    public void appendAll(@NotNull PropertyPool propertyPool) {
+        this.properties.putAll(propertyPool.properties);
     }
 
     public <R, P extends Property<R>> void put(@NotNull P property, R value) {

@@ -18,9 +18,8 @@ package dev.httpmarco.polocloud.base.terminal;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.LogLevel;
-import dev.httpmarco.polocloud.api.properties.CloudProperty;
+import dev.httpmarco.polocloud.api.CloudProperty;
 import dev.httpmarco.polocloud.base.CloudBase;
-import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import org.fusesource.jansi.Ansi;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;

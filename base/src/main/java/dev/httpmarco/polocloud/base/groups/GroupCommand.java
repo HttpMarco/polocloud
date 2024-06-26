@@ -20,7 +20,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.logging.Logger;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
@@ -59,15 +59,11 @@ public final class GroupCommand {
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
-        var property = PropertiesPool.property(key);
+        var property = PropertyPool.property(key);
 
-        if (property instanceof GroupProperties<?>) {
-            group.properties().putRaw(property, property.cast(value));
-            group.update();
-            logger.success("You add successfully the property " + key + " with value " + value + " to group " + group.name() + "&2.");
-        } else {
-            logger.info("This property does not exists&2!");
-        }
+        group.properties().putRaw(property, property.cast(value));
+        group.update();
+        logger.success("You add successfully the property " + key + " with value " + value + " to group " + group.name() + "&2.");
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "property", "set", "<key>", "<value>"})
@@ -82,21 +78,17 @@ public final class GroupCommand {
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
-        var property = PropertiesPool.property(key);
+        var property = PropertyPool.property(key);
 
-        if (property instanceof GroupProperties<?> groupProperties) {
 
-            if(!group.properties().has(groupProperties)) {
-                logger.info("The group " + group.name() + " doesnt have this property&2.");
-                return;
-            }
-
-            group.properties().remove(groupProperties);
-            group.update();
-            logger.success("You remove successfully the property " + key + " from group " + group.name() + "&2.");
-        } else {
-            logger.info("This property does not exists&2!");
+        if (!group.properties().has(groupProperties)) {
+            logger.info("The group " + group.name() + " doesnt have this property&2.");
+            return;
         }
+
+        group.properties().remove(groupProperties);
+        group.update();
+        logger.success("You remove successfully the property " + key + " from group " + group.name() + "&2.");
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "property", "remove", "<key>"})
@@ -125,8 +117,8 @@ public final class GroupCommand {
         logger.info("Minimum online services&2: &3" + group.minOnlineService());
         logger.info("Properties &2(&1" + group.properties().properties().size() + "&2): &3");
 
-        group.properties().properties().forEach((groupProperties, o) -> {
-            logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString());
+        group.properties().properties().forEach((propertyId, o) -> {
+            logger.info("   &2- &1" + propertyId + " &2= &1" + o.toString());
         });
     }
 
@@ -225,7 +217,7 @@ public final class GroupCommand {
         if (index == 1) {
             candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
         } else if (index == 4) {
-            candidates.addAll(PropertiesPool.PROPERTY_LIST.stream().filter(it -> it instanceof GroupProperties<?>).map(property -> new Candidate(property.id())).toList());
+            candidates.addAll(PropertyPool.PROPERTY_LIST.stream().filter(it -> it instanceof GroupProperties<?>).map(property -> new Candidate(property.id())).toList());
         } else if (index == 5) {
             candidates.addAll(Arrays.asList(new Candidate("true"), new Candidate("false")));
         }

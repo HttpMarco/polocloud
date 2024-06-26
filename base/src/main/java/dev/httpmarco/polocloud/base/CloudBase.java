@@ -23,8 +23,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
-import dev.httpmarco.polocloud.api.properties.CloudProperty;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
@@ -48,7 +47,7 @@ import java.nio.charset.StandardCharsets;
 @Accessors(fluent = true)
 public final class CloudBase extends CloudAPI {
 
-    private final PropertiesPool globalProperties;
+    private final PropertyPool globalProperties;
 
     private final CloudTerminal terminal;
     private final NodeService nodeService;
@@ -56,7 +55,7 @@ public final class CloudBase extends CloudAPI {
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
     private final CloudPlayerProvider playerProvider;
-    private final CloudConfiguration cloudConfiguration = OsganFile.define("config.json").asDocument(new CloudConfiguration(), new Pair<>(PropertiesPool.class, new PropertiesPoolSerializer())).content();
+    private final CloudConfiguration cloudConfiguration = OsganFile.define("config.json").asDocument(new CloudConfiguration(), new Pair<>(PropertyPool.class, new PropertiesPoolSerializer())).content();
     private final GlobalEventNode globalEventNode;
 
     private boolean running = true;

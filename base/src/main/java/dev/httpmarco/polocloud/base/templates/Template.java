@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.templates;
 
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
@@ -31,13 +31,13 @@ public final class Template {
     private final String id;
     private final boolean canUsed;
     private final String[] mergedTemplates;
-    private final PropertiesPool properties;
+    private final PropertyPool properties;
 
     public Template(String id, String... mergedTemplates) {
         this.id = id;
         this.canUsed = true;
         this.mergedTemplates = mergedTemplates;
-        this.properties = new PropertiesPool();
+        this.properties = new PropertyPool();
     }
 
     @SneakyThrows

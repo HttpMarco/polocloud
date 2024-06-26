@@ -21,7 +21,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.runner.CloudInstance;
@@ -49,7 +49,7 @@ public final class InstanceCloudService implements CloudService {
     private CloudGroup group;
 
     private int maxPlayers;
-    private final PropertiesPool<?> properties = new PropertiesPool<>();
+    private final PropertyPool<?> properties = new PropertyPool<>();
 
     @Override
     public List<String> log() {

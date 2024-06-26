@@ -20,8 +20,7 @@ import com.google.gson.*;
 import dev.httpmarco.osgan.files.OsganFile;
 import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -39,8 +38,8 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
     private static final Path GROUP_FOLDER = OsganFile.define("local/groups", OsganFileCreateOption.CREATION).path();
     private final Gson LOADER = new GsonBuilder().setPrettyPrinting().serializeNulls()
             .registerTypeHierarchyAdapter(CloudGroup.class, this)
-            .registerTypeAdapter(PropertiesPool.class, new PropertiesPoolSerializer())
-            .registerTypeHierarchyAdapter(PropertiesPool.class, new PropertiesPoolSerializer())
+            .registerTypeAdapter(PropertyPool.class, new PropertiesPoolSerializer())
+            .registerTypeHierarchyAdapter(PropertyPool.class, new PropertiesPoolSerializer())
             .create();
 
     private final CloudGroupPlatformService platformService;
@@ -82,7 +81,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
         var platform = elements.get("platform").getAsString();
         var memory = elements.get("memory").getAsInt();
         var minOnlineServices = elements.get("minOnlineCount").getAsInt();
-        var properties = (PropertiesPool) jsonDeserializationContext.deserialize(elements.get("properties"), PropertiesPool.class);
+        var properties = (PropertyPool) jsonDeserializationContext.deserialize(elements.get("properties"), PropertyPool.class);
 
         var parentPlatform = platformService.find(platform).possibleVersions().stream().filter(it -> it.version().equals(platform)).findFirst().orElseThrow();
 

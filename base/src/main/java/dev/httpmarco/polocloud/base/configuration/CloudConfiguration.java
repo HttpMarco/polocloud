@@ -16,10 +16,8 @@
 
 package dev.httpmarco.polocloud.base.configuration;
 
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
-import dev.httpmarco.polocloud.api.properties.CloudProperty;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.node.ExternalNode;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -34,7 +32,7 @@ public final class CloudConfiguration {
     private final int maxMemory;
 
     private final ExternalNode[] externalNodes;
-    private final PropertiesPool properties = new PropertiesPool();
+    private final PropertyPool properties = new PropertyPool();
 
     public CloudConfiguration() {
         this.clusterId = UUID.randomUUID();

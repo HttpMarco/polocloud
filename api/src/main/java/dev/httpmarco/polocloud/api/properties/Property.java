@@ -31,25 +31,25 @@ public final class Property<T> {
 
     @Contract("_ -> new")
     public static @NotNull Property<Integer> Integer(String id) {
-        //todo register part
+        PropertyRegistry.register(id, PropertySupportTypes.INTEGER);
         return new Property<>(id);
     }
 
     @Contract("_ -> new")
     public static @NotNull Property<String> String(String id) {
-        //todo register part
+        PropertyRegistry.register(id, PropertySupportTypes.STRING);
         return new Property<>(id);
     }
 
     @Contract("_ -> new")
     public static @NotNull Property<Boolean> Boolean(String id) {
-        //todo register part
+        PropertyRegistry.register(id, PropertySupportTypes.BOOLEAN);
         return new Property<>(id);
     }
 
     @Contract("_ -> new")
     public static @NotNull Property<Long> Long(String id) {
-        //todo register part
+        PropertyRegistry.register(id, PropertySupportTypes.LONG);
         return new Property<>(id);
     }
 }
