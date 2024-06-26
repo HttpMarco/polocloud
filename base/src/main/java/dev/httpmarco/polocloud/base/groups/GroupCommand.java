@@ -21,6 +21,7 @@ import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
+import dev.httpmarco.polocloud.api.properties.PropertyRegistry;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
@@ -59,9 +60,9 @@ public final class GroupCommand {
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
-        var property = PropertyPool.property(key);
+        var property = PropertyRegistry.findType(key);
 
-        group.properties().putRaw(property, property.cast(value));
+        group.properties().put(property, property.cast(value));
         group.update();
         logger.success("You add successfully the property " + key + " with value " + value + " to group " + group.name() + "&2.");
     }
@@ -78,15 +79,14 @@ public final class GroupCommand {
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
-        var property = PropertyPool.property(key);
+        var property = PropertyRegistry.findType(key);
 
-
-        if (!group.properties().has(groupProperties)) {
+        if (property == null) {
             logger.info("The group " + group.name() + " doesnt have this property&2.");
             return;
         }
 
-        group.properties().remove(groupProperties);
+        group.properties().remove(key);
         group.update();
         logger.success("You remove successfully the property " + key + " from group " + group.name() + "&2.");
     }
@@ -217,7 +217,7 @@ public final class GroupCommand {
         if (index == 1) {
             candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
         } else if (index == 4) {
-            candidates.addAll(PropertyPool.PROPERTY_LIST.stream().filter(it -> it instanceof GroupProperties<?>).map(property -> new Candidate(property.id())).toList());
+            candidates.addAll(PropertyPool.PROPERTY_LIST.stream().map(property -> new Candidate(property.id())).toList());
         } else if (index == 5) {
             candidates.addAll(Arrays.asList(new Candidate("true"), new Candidate("false")));
         }

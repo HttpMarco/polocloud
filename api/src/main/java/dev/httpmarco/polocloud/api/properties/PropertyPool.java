@@ -21,16 +21,11 @@ import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @Getter
 @Accessors(fluent = true)
 public final class PropertyPool implements Serializable {
-
-    // all properties of cluster
-    public static final List<Property<?>> PROPERTY_LIST = new ArrayList<>();
 
     // single properties of current pool
     private final HashMap<String, Object> properties = new HashMap<>();
@@ -44,15 +39,19 @@ public final class PropertyPool implements Serializable {
     }
 
     public <R, P extends Property<R>> void put(@NotNull P property, R value) {
-        this.putRaw(property.id(), value);
+        this.put(property.id(), value);
     }
-    public void putRaw(@NotNull String propertyId, Object value) {
+
+    public void put(@NotNull String propertyId, Object value) {
         this.properties.put(propertyId, value);
     }
 
-
     public void remove(@NotNull Property<?> property) {
-        this.properties.remove(property.id());
+        this.remove(property.id());
+    }
+
+    public void remove(@NotNull String propertyId) {
+        this.properties.remove(propertyId);
     }
 
     @SuppressWarnings("unchecked")

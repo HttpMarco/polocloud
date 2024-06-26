@@ -85,7 +85,7 @@ public final class ComponentPacketHelper {
 
         for (int i = 0; i < elementSize; i++) {
             var property = readProperty(buffer);
-            properties.putRaw(property.getKey(), property.getValue());
+            properties.put(property.getKey(), property.getValue());
         }
         return properties;
     }
