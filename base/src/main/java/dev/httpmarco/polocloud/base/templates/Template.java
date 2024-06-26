@@ -31,13 +31,13 @@ public final class Template {
     private final String id;
     private final boolean canUsed;
     private final String[] mergedTemplates;
-    private final PropertiesPool<TemplateProperties<?>> properties;
+    private final PropertiesPool properties;
 
     public Template(String id, String... mergedTemplates) {
         this.id = id;
         this.canUsed = true;
         this.mergedTemplates = mergedTemplates;
-        this.properties = new PropertiesPool<>();
+        this.properties = new PropertiesPool();
     }
 
     @SneakyThrows

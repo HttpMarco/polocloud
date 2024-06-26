@@ -22,18 +22,18 @@ import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 
 import java.lang.reflect.Type;
 
-public final class PropertiesPoolSerializer implements JsonSerializer<PropertiesPool<?>>, JsonDeserializer<PropertiesPool<?>> {
+public final class PropertiesPoolSerializer implements JsonSerializer<PropertiesPool>, JsonDeserializer<PropertiesPool> {
 
     @Override
-    public PropertiesPool<?> deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        var propertiesPool = new PropertiesPool<>();
+    public PropertiesPool deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        var propertiesPool = new PropertiesPool();
 
         jsonElement.getAsJsonObject().asMap()
                 .forEach((s, property) -> PropertiesPool.PROPERTY_LIST
                         .stream()
                         .filter(it -> it.id().equals(s))
                         .findFirst()
-                        .ifPresentOrElse(prop -> propertiesPool.properties().put(prop, jsonDeserializationContext.deserialize(property, prop.type())), () -> {
+                        .ifPresentOrElse(prop -> propertiesPool.properties().put(prop.id(), jsonDeserializationContext.deserialize(property, prop.type())), () -> {
                             CloudAPI.instance().logger().error("Unknown property found: " + s, null);
                         }));
 
@@ -41,9 +41,9 @@ public final class PropertiesPoolSerializer implements JsonSerializer<Properties
     }
 
     @Override
-    public JsonElement serialize(PropertiesPool<?> propertiesPool, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(PropertiesPool propertiesPool, Type type, JsonSerializationContext jsonSerializationContext) {
         var object = new JsonObject();
-        propertiesPool.properties().forEach((property, o) -> object.add(property.id(), jsonSerializationContext.serialize(o)));
+        propertiesPool.properties().forEach((id, o) -> object.add(id, jsonSerializationContext.serialize(o)));
         return object;
     }
 }

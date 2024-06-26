@@ -50,7 +50,7 @@ public class CloudServiceImpl implements CloudService {
     private final int memory;
     private int maxPlayers;
 
-    private final PropertiesPool<?> properties = new PropertiesPool<>();
+    private final PropertiesPool properties = new PropertiesPool();
     private final Set<String> subscribedEvents = new HashSet<>();
 
     @Override

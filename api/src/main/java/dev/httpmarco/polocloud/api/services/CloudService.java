@@ -80,6 +80,6 @@ public interface CloudService extends Serializable {
 
     List<CloudPlayer> onlinePlayers();
 
-    PropertiesPool<?> properties();
+    PropertiesPool properties();
 
 }

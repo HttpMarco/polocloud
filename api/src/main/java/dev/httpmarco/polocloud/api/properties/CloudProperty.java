@@ -16,14 +16,10 @@
 
 package dev.httpmarco.polocloud.api.properties;
 
-public final class CloudProperty<T> extends Property<T> {
+public final class CloudProperty<T> {
 
-    public CloudProperty(String id, Class<T> type) {
-        super(id, type);
-    }
+    public static Property<String> PROMPT = Property.String("prompt");
 
-    public static CloudProperty<String> PROMPT = new CloudProperty<>("prompt", String.class);
-
-    public static CloudProperty<Integer> MAX_QUEUE_SIZE = new CloudProperty<>("maxQueueSize", int.class);
+    public static Property<Integer> MAX_QUEUE_SIZE = Property.Integer("maxQueueSize");
 
 }

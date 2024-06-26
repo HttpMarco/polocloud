@@ -25,6 +25,8 @@ import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ComponentPacketHelper {
 
@@ -68,39 +70,42 @@ public final class ComponentPacketHelper {
         writeProperties(group.properties(), codecBuffer);
     }
 
-    private static void writeProperties(PropertiesPool<?> properties, PacketBuffer codecBuffer) {
+    private static void writeProperties(PropertiesPool properties, PacketBuffer codecBuffer) {
         codecBuffer.writeInt(properties.properties().size());
-        properties.properties().forEach((property, o) -> writeProperty(property, o, codecBuffer));
+        properties.properties().forEach((id, o) -> writeProperty(id, o, codecBuffer));
     }
 
-    public static void writeProperty(Property<?> property, Object value, PacketBuffer buffer) {
-        buffer.writeString(property.id());
+    public static void writeProperty(String id, Object value, PacketBuffer buffer) {
+        buffer.writeString(id);
 
         if (value instanceof Integer intValue) {
+            buffer.writeInt(0);
             buffer.writeInt(intValue);
         } else if (value instanceof String stringValue) {
+            buffer.writeInt(1);
             buffer.writeString(stringValue);
         } else if (value instanceof Boolean booleanValue) {
+            buffer.writeInt(2);
             buffer.writeBoolean(booleanValue);
         }
     }
 
-    public static Pair<Property<?>, ?> readProperty(PacketBuffer buffer) {
+    public static @Nullable Pair<String, Object> readProperty(@NotNull PacketBuffer buffer) {
         var name = buffer.readString();
-        var property = PropertiesPool.property(name);
+        var typeId = buffer.readInt();
 
-        if (property.type().equals(Integer.class) || property.type().equals(int.class)) {
-            return new Pair<>(property, buffer.readInt());
-        } else if (property.type().equals(String.class)) {
-            return new Pair<>(property, buffer.readString());
-        } else if (property.type().equals(Boolean.class) || property.type().equals(boolean.class)) {
-            return new Pair<>(property, buffer.readBoolean());
+        if (typeId == 0) {
+            return new Pair<>(name, buffer.readInt());
+        } else if (typeId == 1) {
+            return new Pair<>(name, buffer.readBoolean());
+        } else if (typeId == 2) {
+            return new Pair<>(name, buffer.readInt());
         }
         return null;
     }
 
-    public static PropertiesPool<?> readProperties(PacketBuffer buffer) {
-        var properties = new PropertiesPool<>();
+    public static @NotNull PropertiesPool readProperties(@NotNull PacketBuffer buffer) {
+        var properties = new PropertiesPool();
         var elementSize = buffer.readInt();
 
         for (int i = 0; i < elementSize; i++) {
@@ -110,14 +115,14 @@ public final class ComponentPacketHelper {
         return properties;
     }
 
-    public static CloudGroup readGroup(PacketBuffer codecBuffer) {
+    public static @NotNull CloudGroup readGroup(PacketBuffer codecBuffer) {
         var group = CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
 
         group.properties().appendAll(readProperties(codecBuffer));
         return group;
     }
 
-    public static void writePlayer(CloudPlayer cloudPlayer, PacketBuffer codecBuffer) {
+    public static void writePlayer(@NotNull CloudPlayer cloudPlayer, @NotNull PacketBuffer codecBuffer) {
         codecBuffer.writeUniqueId(cloudPlayer.uniqueId());
         codecBuffer.writeString(cloudPlayer.name());
         codecBuffer.writeString(cloudPlayer.currentServerName());

@@ -34,7 +34,7 @@ public final class CloudConfiguration {
     private final int maxMemory;
 
     private final ExternalNode[] externalNodes;
-    private final PropertiesPool<CloudProperty<?>> properties = new PropertiesPool<>();
+    private final PropertiesPool properties = new PropertiesPool();
 
     public CloudConfiguration() {
         this.clusterId = UUID.randomUUID();

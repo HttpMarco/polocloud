@@ -48,7 +48,7 @@ import java.nio.charset.StandardCharsets;
 @Accessors(fluent = true)
 public final class CloudBase extends CloudAPI {
 
-    private final PropertiesPool<CloudProperty<?>> globalProperties;
+    private final PropertiesPool globalProperties;
 
     private final CloudTerminal terminal;
     private final NodeService nodeService;

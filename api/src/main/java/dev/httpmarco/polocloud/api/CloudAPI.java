@@ -60,7 +60,7 @@ public abstract class CloudAPI {
 
     public abstract CloudPlayerProvider playerProvider();
 
-    public abstract PropertiesPool<CloudProperty<?>> globalProperties();
+    public abstract PropertiesPool globalProperties();
 
     public abstract EventNode globalEventNode();
 

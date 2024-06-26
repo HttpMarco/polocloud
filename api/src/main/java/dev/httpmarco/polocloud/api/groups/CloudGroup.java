@@ -36,7 +36,7 @@ public abstract class CloudGroup {
     private PlatformVersion platform;
     private int memory;
     private int minOnlineService;
-    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
+    private final PropertiesPool properties = new PropertiesPool();
 
     @SneakyThrows
     public int onlineAmount() {

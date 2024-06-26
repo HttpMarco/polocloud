@@ -16,33 +16,40 @@
 
 package dev.httpmarco.polocloud.api.properties;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
+@AllArgsConstructor
 @Accessors(fluent = true)
-public class Property<T> {
+public final class Property<T> {
 
     private final String id;
-    private final Class<T> type;
 
-    public Property(String id, Class<T> type) {
-        this.id = id;
-        this.type = type;
-
-        PropertiesPool.PROPERTY_LIST.add(this);
+    @Contract("_ -> new")
+    public static @NotNull Property<Integer> Integer(String id) {
+        //todo register part
+        return new Property<>(id);
     }
 
-    public Object cast(String value) {
-        if (type.equals(Boolean.class)) {
-            return Boolean.parseBoolean(value);
-        }
-        if (type.equals(Integer.class)) {
-            return Integer.parseInt(value);
-        }
-        if (type.equals(Long.class)) {
-            return Long.parseLong(value);
-        }
-        return (T) value;
+    @Contract("_ -> new")
+    public static @NotNull Property<String> String(String id) {
+        //todo register part
+        return new Property<>(id);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Property<Boolean> Boolean(String id) {
+        //todo register part
+        return new Property<>(id);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Property<Long> Long(String id) {
+        //todo register part
+        return new Property<>(id);
     }
 }

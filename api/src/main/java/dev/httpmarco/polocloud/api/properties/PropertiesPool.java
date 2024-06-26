@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.api.properties;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 @Getter
 @Accessors(fluent = true)
-public final class PropertiesPool<T extends Property<?>> implements Serializable {
+public final class PropertiesPool implements Serializable {
 
     // all properties of cluster
     public static final List<Property<?>> PROPERTY_LIST = new ArrayList<>();
@@ -35,24 +36,28 @@ public final class PropertiesPool<T extends Property<?>> implements Serializable
     // single properties of current pool
     private final HashMap<String, Object> properties = new HashMap<>();
 
-    public boolean has(T key) {
+    public boolean has(@NotNull Property<?> key) {
         return properties.containsKey(key.id());
     }
 
-    public void appendAll(PropertiesPool<?> propertiesPool) {
+    public void appendAll(@NotNull PropertiesPool propertiesPool) {
         this.properties.putAll(propertiesPool.properties);
     }
 
-    public <R, P extends Property<R>> void put(P property, R value) {
-        this.properties.put(property.id(), value);
+    public <R, P extends Property<R>> void put(@NotNull P property, R value) {
+        this.putRaw(property.id(), value);
+    }
+    public void putRaw(@NotNull String propertyId, Object value) {
+        this.properties.put(propertyId, value);
     }
 
-    public void remove(T property) {
+
+    public void remove(@NotNull Property<?> property) {
         this.properties.remove(property.id());
     }
 
     @SuppressWarnings("unchecked")
-    public <P> P property(Property<P> property) {
+    public <P> P property(@NotNull Property<P> property) {
         return (P) this.properties.get(property.id());
     }
 }
