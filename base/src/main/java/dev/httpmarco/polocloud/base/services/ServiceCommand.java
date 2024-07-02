@@ -70,9 +70,9 @@ public final class ServiceCommand {
         this.logger.info("Maximal players&2: &3" + service.maxPlayers());
         this.logger.info("Port &2: &3" + service.port());
         this.logger.info("State&2: &3" + service.state());
-        this.logger.info("Properties &2(&1" + service.properties().properties().size() + "&2): &3");
+        this.logger.info("Properties &2(&1" + service.properties().pool().size() + "&2): &3");
 
-        service.properties().properties().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties.id() + " &2= &1" + o.toString()));
+        service.properties().pool().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties + " &2= &1" + o.toString()));
     }
 
     @SubCommandCompleter(completionPattern = {"<name>"})

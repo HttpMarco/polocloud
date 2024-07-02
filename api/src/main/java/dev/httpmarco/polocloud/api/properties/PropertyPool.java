@@ -14,30 +14,36 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.base.configuration;
+package dev.httpmarco.polocloud.api.properties;
 
-import dev.httpmarco.polocloud.api.properties.PropertyPool;
-import dev.httpmarco.polocloud.base.node.ExternalNode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudConfiguration {
+public class PropertyPool {
 
-    private final UUID clusterId;
-    private final String clusterName;
-    private final int maxMemory;
+    private final Map<String, String> pool = new HashMap<>();
 
-    private final ExternalNode[] externalNodes;
-    private final PropertyPool properties = new PropertyPool();
-
-    public CloudConfiguration() {
-        this.clusterId = UUID.randomUUID();
-        this.clusterName = "node-1";
-        this.maxMemory = 10000;
-        this.externalNodes = new ExternalNode[0];
+    public <V> void put(@NotNull Property<V> property, @NotNull V value) {
+        this.pool.put(property.id(), value.toString());
     }
+
+    public int size() {
+        return this.pool.size();
+    }
+
+    public boolean has(@NotNull Property<?> property) {
+        return pool.containsKey(property.id());
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T property(@NotNull Property<T> property) {
+        return (T) property.type().parser().apply(pool.get(property.id()));
+    }
+
 }

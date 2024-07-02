@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.property;
+package dev.httpmarco.polocloud.api;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.properties.Property;
 
-public final class GlobalPropertySetEvent implements PropertyEvent{
-    @Override
-    public void read(PacketBuffer buffer) {
+public final class CloudProperty<T> {
 
-    }
+    public static Property<String> PROMPT = Property.String("prompt");
 
-    @Override
-    public void write(PacketBuffer buffer) {
+    public static Property<Integer> MAX_QUEUE_SIZE = Property.Integer("maxQueueSize");
 
-    }
-
-    @Override
-    public Property<?> property() {
-        return null;
-    }
-    //todo: Add changed property
 }

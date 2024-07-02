@@ -22,8 +22,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
-import dev.httpmarco.polocloud.api.properties.CloudProperty;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.runner.event.InstanceGlobalEventNode;
@@ -135,7 +134,7 @@ public class CloudInstance extends CloudAPI {
     }
 
     @Override
-    public PropertiesPool<CloudProperty<?>> globalProperties() {
+    public PropertyPool globalProperties() {
         //todo
         return null;
     }

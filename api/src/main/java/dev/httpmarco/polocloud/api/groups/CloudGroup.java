@@ -18,7 +18,7 @@ package dev.httpmarco.polocloud.api.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -36,7 +36,7 @@ public abstract class CloudGroup {
     private PlatformVersion platform;
     private int memory;
     private int minOnlineService;
-    private final PropertiesPool<GroupProperties<?>> properties = new PropertiesPool<>();
+    private final PropertyPool properties = new PropertyPool();
 
     @SneakyThrows
     public int onlineAmount() {

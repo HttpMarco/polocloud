@@ -18,27 +18,22 @@ package dev.httpmarco.polocloud.api.groups;
 
 import dev.httpmarco.polocloud.api.properties.Property;
 
-import java.io.Serializable;
+public final class GroupProperties {
 
-public final class GroupProperties<T> extends Property<T> implements Serializable {
+    public static Property<String> TEMPLATES = Property.String("templates");
 
-    public GroupProperties(String id, Class<T> type) {
-        super(id, type);
-    }
+    public static Property<Boolean> DEBUG_MODE = Property.Boolean("debugMode");
 
-    public static GroupProperties<String> TEMPLATES = new GroupProperties<>("templates", String.class);
+    public static Property<Boolean> MAINTENANCE = Property.Boolean("maintenance");
 
-    public static GroupProperties<Boolean> DEBUG_MODE = new GroupProperties<>("debugMode", Boolean.class);
+    public static Property<Integer> PORT_RANGE = Property.Integer("portRange");
 
-    public static GroupProperties<Boolean> MAINTENANCE = new GroupProperties<>("maintenance", Boolean.class);
+    public static Property<Integer> MAX_SERVICES = Property.Integer("maxOnlineServices");
 
-    public static GroupProperties<Integer> PORT_RANGE = new GroupProperties<>("portRange", int.class);
+    public static Property<Integer> MAX_PLAYERS = Property.Integer("maxPlayers");
 
-    public static GroupProperties<Integer> MAX_SERVICES = new GroupProperties<>("maxOnlineServices", int.class);
+    public static Property<Boolean> FALLBACK = Property.Boolean("fallback");
 
-    public static GroupProperties<Integer> MAX_PLAYERS = new GroupProperties<>("maxPlayers", int.class);
+    public static Property<Boolean> STATIC = Property.Boolean("static");
 
-    public static GroupProperties<Boolean> FALLBACK = new GroupProperties<>("fallback", boolean.class);
-
-    public static GroupProperties<Boolean> STATIC = new GroupProperties<>("static", boolean.class);
 }

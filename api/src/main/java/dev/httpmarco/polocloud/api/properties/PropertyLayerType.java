@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.events.service;
+package dev.httpmarco.polocloud.api.properties;
 
-import dev.httpmarco.polocloud.api.properties.Property;
-import dev.httpmarco.polocloud.api.services.CloudService;
+public enum PropertyLayerType {
 
-public final class CloudServiceRemovePropertyEvent extends AbstractCloudServicePropertyEvent {
+    GLOBAL,
+    GROUP,
+    SERVICE,
 
-    public CloudServiceRemovePropertyEvent(CloudService cloudService, Property<?> property, Object value) {
-        super(cloudService, property, value);
-    }
 }

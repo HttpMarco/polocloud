@@ -24,8 +24,7 @@ import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
-import dev.httpmarco.polocloud.api.properties.CloudProperty;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -60,7 +59,7 @@ public abstract class CloudAPI {
 
     public abstract CloudPlayerProvider playerProvider();
 
-    public abstract PropertiesPool<CloudProperty<?>> globalProperties();
+    public abstract PropertyPool globalProperties();
 
     public abstract EventNode globalEventNode();
 

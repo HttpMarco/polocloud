@@ -20,7 +20,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import lombok.AccessLevel;
@@ -50,7 +50,7 @@ public class CloudServiceImpl implements CloudService {
     private final int memory;
     private int maxPlayers;
 
-    private final PropertiesPool<?> properties = new PropertiesPool<>();
+    private final PropertyPool properties = new PropertyPool();
     private final Set<String> subscribedEvents = new HashSet<>();
 
     @Override

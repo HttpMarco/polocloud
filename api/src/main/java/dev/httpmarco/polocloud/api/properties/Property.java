@@ -16,33 +16,52 @@
 
 package dev.httpmarco.polocloud.api.properties;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-@Getter
+import java.util.function.Function;
+
 @Accessors(fluent = true)
+@Getter
+@AllArgsConstructor
 public class Property<T> {
 
-    private final String id;
-    private final Class<T> type;
+    private String id;
+    private Type type;
 
-    public Property(String id, Class<T> type) {
-        this.id = id;
-        this.type = type;
-
-        PropertiesPool.PROPERTY_LIST.add(this);
+    @Contract("_ -> new")
+    public static @NotNull Property<String> String(String id) {
+        // todo save
+        return new Property<>(id, Type.STRING);
     }
 
-    public Object cast(String value) {
-        if (type.equals(Boolean.class)) {
-            return Boolean.parseBoolean(value);
+    @Contract("_ -> new")
+    public static @NotNull Property<Integer> Integer(String id) {
+        // todo save
+        return new Property<>(id, Type.INTEGER);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Property<Boolean> Boolean(String id) {
+        // todo save
+        return new Property<>(id, Type.BOOLEAN);
+    }
+
+    @Getter
+    @Accessors(fluent = true)
+    public enum Type {
+        STRING(s -> s),
+        INTEGER(Integer::parseInt),
+        BOOLEAN(Boolean::parseBoolean);
+
+        private final Function<String, Object> parser;
+
+        Type(Function<String, Object> parser) {
+            this.parser = parser;
         }
-        if (type.equals(Integer.class)) {
-            return Integer.parseInt(value);
-        }
-        if (type.equals(Long.class)) {
-            return Long.parseLong(value);
-        }
-        return (T) value;
+
     }
 }

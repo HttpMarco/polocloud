@@ -144,8 +144,8 @@ public class CloudCommand extends Command implements TabExecutor {
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Memory§8: §b" + group.memory()));
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Minimum online services§8: §b" + group.minOnlineService()));
                 if (group.properties() != null) {
-                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Properties §8(§b" + group.properties().properties().size() + "§8): §b"));
-                    group.properties().properties().forEach((groupProperties, o) -> player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString())));
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Properties §8(§b" + group.properties().pool().size() + "§8): §b"));
+                    group.properties().pool().forEach((groupProperties, o) -> player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties + " §8= §b" + o.toString())));
                 }
             }
             case 3 -> {
@@ -193,9 +193,9 @@ public class CloudCommand extends Command implements TabExecutor {
                 player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "State§8: §b" + service.state()));
 
                 if (service.properties() != null) {
-                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Properties §8(§b" + service.properties().properties().size() + "§8): §b"));
-                    service.properties().properties().forEach((groupProperties, o) -> {
-                        player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties.id() + " §8= §b" + o.toString()));
+                    player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "Properties §8(§b" + service.properties().pool().size() + "§8): §b"));
+                    service.properties().pool().forEach((groupProperties, o) -> {
+                        player.sendMessage(TextComponent.fromLegacy("   §8- §b" + groupProperties + " §8= §b" + o));
                     });
                 }
             }
