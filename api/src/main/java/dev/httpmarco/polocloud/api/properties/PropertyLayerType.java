@@ -16,18 +16,10 @@
 
 package dev.httpmarco.polocloud.api.properties;
 
-import java.util.HashMap;
-import java.util.Map;
+public enum PropertyLayerType {
 
-public final class PropertyRegistry {
+    GLOBAL,
+    GROUP,
+    SERVICE,
 
-    private static final Map<String, PropertySupportTypes> registeredTypes = new HashMap<>();
-
-    public static void register(String id, PropertySupportTypes type) {
-        registeredTypes.put(id, type);
-    }
-
-    public static PropertySupportTypes findType(String id) {
-        return registeredTypes.get(id);
-    }
 }

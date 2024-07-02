@@ -128,10 +128,10 @@ public class CloudCommand implements SimpleCommand {
 
                 if (group.properties() != null) {
                     player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Properties <dark_gray>(<aqua>" +
-                            group.properties().properties().size() + "<dark_gray>):"));
-                    group.properties().properties().forEach((groupProperties, o) ->
-                            player.sendMessage(this.miniMessage.deserialize("<dark_gray>   - <aqua>" + groupProperties.id() +
-                                    " <dark_gray>= <aqua>" + o.toString()))
+                            group.properties().pool().size() + "<dark_gray>):"));
+                    group.properties().pool().forEach((groupProperties, o) ->
+                            player.sendMessage(this.miniMessage.deserialize("<dark_gray>   - <aqua>" + groupProperties +
+                                    " <dark_gray>= <aqua>" + o))
                     );
                 }
             }
@@ -182,10 +182,10 @@ public class CloudCommand implements SimpleCommand {
 
                 if (service.properties() != null) {
                     player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "Properties <dark_gray>(<aqua>" +
-                            service.properties().properties().size() + "<dark_gray>):"));
-                    service.properties().properties().forEach((groupProperties, o) ->
-                            player.sendMessage(this.miniMessage.deserialize("<dark_gray>   - <aqua>" + groupProperties.id() +
-                                    " <dark_gray>= <aqua>" + o.toString()))
+                            service.properties().pool().size() + "<dark_gray>):"));
+                    service.properties().pool().forEach((groupProperties, o) ->
+                            player.sendMessage(this.miniMessage.deserialize("<dark_gray>   - <aqua>" + groupProperties +
+                                    " <dark_gray>= <aqua>" + o))
                     );
                 }
             }

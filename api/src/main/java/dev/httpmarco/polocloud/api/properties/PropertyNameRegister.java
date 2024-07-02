@@ -16,34 +16,18 @@
 
 package dev.httpmarco.polocloud.api.properties;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-import org.jetbrains.annotations.NotNull;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-@Getter
-@Accessors(fluent = true)
-public class PropertyPool {
+public final class PropertyNameRegister {
 
-    private final Map<String, String> pool = new HashMap<>();
+    private static final Map<PropertyLayerType, List<String>> nameRegistry = new HashMap<>();
 
-    public <V> void put(@NotNull Property<V> property, @NotNull V value) {
-        this.pool.put(property.id(), value.toString());
+    static {
+        for (var value : PropertyLayerType.values()) {
+            nameRegistry.put(value, new ArrayList<>());
+        }
     }
-
-    public int size() {
-        return this.pool.size();
-    }
-
-    public boolean has(@NotNull Property<?> property) {
-        return pool.containsKey(property.id());
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T property(@NotNull Property<T> property) {
-        return (T) property.type().parser().apply(pool.get(property.id()));
-    }
-
 }

@@ -20,8 +20,6 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.logging.Logger;
-import dev.httpmarco.polocloud.api.properties.PropertyPool;
-import dev.httpmarco.polocloud.api.properties.PropertyRegistry;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
@@ -60,9 +58,10 @@ public final class GroupCommand {
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
-        var property = PropertyRegistry.findType(key);
 
-        group.properties().put(property, property.cast(value));
+        // todo check maybe exist
+
+        group.properties().pool().put(key, value);
         group.update();
         logger.success("You add successfully the property " + key + " with value " + value + " to group " + group.name() + "&2.");
     }
@@ -79,14 +78,9 @@ public final class GroupCommand {
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
-        var property = PropertyRegistry.findType(key);
 
-        if (property == null) {
-            logger.info("The group " + group.name() + " doesnt have this property&2.");
-            return;
-        }
-
-        group.properties().remove(key);
+        // todo check maybe exist
+        group.properties().pool().remove(key);
         group.update();
         logger.success("You remove successfully the property " + key + " from group " + group.name() + "&2.");
     }
@@ -115,10 +109,10 @@ public final class GroupCommand {
         logger.info("Platform&2: &3" + group.platform().version());
         logger.info("Memory&2: &3" + group.memory());
         logger.info("Minimum online services&2: &3" + group.minOnlineService());
-        logger.info("Properties &2(&1" + group.properties().properties().size() + "&2): &3");
+        logger.info("Properties &2(&1" + group.properties().pool().size() + "&2): &3");
 
-        group.properties().properties().forEach((propertyId, o) -> {
-            logger.info("   &2- &1" + propertyId + " &2= &1" + o.toString());
+        group.properties().pool().forEach((propertyId, o) -> {
+            logger.info("   &2- &1" + propertyId + " &2= &1" + o);
         });
     }
 
@@ -217,7 +211,8 @@ public final class GroupCommand {
         if (index == 1) {
             candidates.addAll(CloudAPI.instance().groupProvider().groups().stream().map(it -> new Candidate(it.name())).toList());
         } else if (index == 4) {
-            candidates.addAll(PropertyPool.PROPERTY_LIST.stream().map(property -> new Candidate(property.id())).toList());
+            //todo
+            //candidates.addAll(PropertyPool.PROPERTY_LIST.stream().map(property -> new Candidate(property.id())).toList());
         } else if (index == 5) {
             candidates.addAll(Arrays.asList(new Candidate("true"), new Candidate("false")));
         }

@@ -17,33 +17,24 @@
 package dev.httpmarco.polocloud.base.common;
 
 import com.google.gson.*;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 
 public final class PropertiesPoolSerializer implements JsonSerializer<PropertyPool>, JsonDeserializer<PropertyPool> {
 
     @Override
-    public PropertyPool deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public @NotNull PropertyPool deserialize(@NotNull JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         var propertiesPool = new PropertyPool();
-
-        jsonElement.getAsJsonObject().asMap()
-                .forEach((s, property) -> PropertyPool.PROPERTY_LIST
-                        .stream()
-                        .filter(it -> it.id().equals(s))
-                        .findFirst()
-                        .ifPresentOrElse(prop -> propertiesPool.properties().put(prop.id(), jsonDeserializationContext.deserialize(property, Object.class)), () -> {
-                            CloudAPI.instance().logger().error("Unknown property found: " + s, null);
-                        }));
-
+        jsonElement.getAsJsonObject().asMap().forEach((s, property) -> propertiesPool.pool().put(s, property.getAsJsonPrimitive().getAsString()));
         return propertiesPool;
     }
 
     @Override
-    public JsonElement serialize(PropertyPool propertyPool, Type type, JsonSerializationContext jsonSerializationContext) {
+    public @NotNull JsonElement serialize(@NotNull PropertyPool propertyPool, Type type, JsonSerializationContext jsonSerializationContext) {
         var object = new JsonObject();
-        propertyPool.properties().forEach((id, o) -> object.add(id, jsonSerializationContext.serialize(o)));
+        propertyPool.pool().forEach((id, o) -> object.add(id, new JsonPrimitive(o)));
         return object;
     }
 }

@@ -49,7 +49,7 @@ public final class InstanceCloudService implements CloudService {
     private CloudGroup group;
 
     private int maxPlayers;
-    private final PropertyPool<?> properties = new PropertyPool<>();
+    private final PropertyPool properties = new PropertyPool();
 
     @Override
     public List<String> log() {

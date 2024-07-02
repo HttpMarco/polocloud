@@ -22,34 +22,46 @@ import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Function;
+
+@Accessors(fluent = true)
 @Getter
 @AllArgsConstructor
-@Accessors(fluent = true)
-public final class Property<T> {
+public class Property<T> {
 
-    private final String id;
-
-    @Contract("_ -> new")
-    public static @NotNull Property<Integer> Integer(String id) {
-        PropertyRegistry.register(id, PropertySupportTypes.INTEGER);
-        return new Property<>(id);
-    }
+    private String id;
+    private Type type;
 
     @Contract("_ -> new")
     public static @NotNull Property<String> String(String id) {
-        PropertyRegistry.register(id, PropertySupportTypes.STRING);
-        return new Property<>(id);
+        // todo save
+        return new Property<>(id, Type.STRING);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull Property<Integer> Integer(String id) {
+        // todo save
+        return new Property<>(id, Type.INTEGER);
     }
 
     @Contract("_ -> new")
     public static @NotNull Property<Boolean> Boolean(String id) {
-        PropertyRegistry.register(id, PropertySupportTypes.BOOLEAN);
-        return new Property<>(id);
+        // todo save
+        return new Property<>(id, Type.BOOLEAN);
     }
 
-    @Contract("_ -> new")
-    public static @NotNull Property<Long> Long(String id) {
-        PropertyRegistry.register(id, PropertySupportTypes.LONG);
-        return new Property<>(id);
+    @Getter
+    @Accessors(fluent = true)
+    public enum Type {
+        STRING(s -> s),
+        INTEGER(Integer::parseInt),
+        BOOLEAN(Boolean::parseBoolean);
+
+        private final Function<String, Object> parser;
+
+        Type(Function<String, Object> parser) {
+            this.parser = parser;
+        }
+
     }
 }

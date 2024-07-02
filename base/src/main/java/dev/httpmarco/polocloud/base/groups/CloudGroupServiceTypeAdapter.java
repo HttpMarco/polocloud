@@ -73,7 +73,6 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public CloudGroup deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         var elements = jsonElement.getAsJsonObject();
 
@@ -86,7 +85,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
         var parentPlatform = platformService.find(platform).possibleVersions().stream().filter(it -> it.version().equals(platform)).findFirst().orElseThrow();
 
         var group = new CloudGroupImpl(name, parentPlatform, memory, minOnlineServices);
-        group.properties().appendAll(properties);
+        group.properties().pool().putAll(properties.pool());
         return group;
     }
 

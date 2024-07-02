@@ -21,12 +21,11 @@ import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
+import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
-import dev.httpmarco.polocloud.api.properties.PropertyRegistry;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class ComponentPacketHelper {
 
@@ -50,7 +49,7 @@ public final class ComponentPacketHelper {
         var maxPlayers = buffer.readInt();
 
         var service = CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory, maxPlayers);
-        service.properties().appendAll(readProperties(buffer));
+        service.properties().pool().putAll(readProperties(buffer).pool());
         return service;
     }
 
@@ -65,18 +64,17 @@ public final class ComponentPacketHelper {
     }
 
     private static void writeProperties(@NotNull PropertyPool properties, @NotNull PacketBuffer codecBuffer) {
-        codecBuffer.writeInt(properties.properties().size());
-        properties.properties().forEach((id, o) -> writeProperty(id, o, codecBuffer));
+        codecBuffer.writeInt(properties.size());
+        properties.pool().forEach((id, o) -> writeProperty(id, o, codecBuffer));
     }
 
-    public static void writeProperty(String id, Object value, @NotNull PacketBuffer buffer) {
+    public static void writeProperty(String id, String value, @NotNull PacketBuffer buffer) {
         buffer.writeString(id);
-        PropertyRegistry.findType(id).writer().accept(buffer, value);
+        buffer.writeString(value);
     }
 
-    public static @NotNull Pair<String, Object> readProperty(@NotNull PacketBuffer buffer) {
-        var name = buffer.readString();
-        return Pair.of(buffer.readString(), PropertyRegistry.findType(name).reader().apply(buffer));
+    public static @NotNull Pair<String, String> readProperty(@NotNull PacketBuffer buffer) {
+        return Pair.of(buffer.readString(), buffer.readString());
     }
 
     public static @NotNull PropertyPool readProperties(@NotNull PacketBuffer buffer) {
@@ -85,7 +83,7 @@ public final class ComponentPacketHelper {
 
         for (int i = 0; i < elementSize; i++) {
             var property = readProperty(buffer);
-            properties.put(property.getKey(), property.getValue());
+            properties.pool().put(property.getKey(), property.getValue());
         }
         return properties;
     }
@@ -93,7 +91,7 @@ public final class ComponentPacketHelper {
     public static @NotNull CloudGroup readGroup(PacketBuffer codecBuffer) {
         var group = CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
 
-        group.properties().appendAll(readProperties(codecBuffer));
+        group.properties().pool().putAll(readProperties(codecBuffer).pool());
         return group;
     }
 
