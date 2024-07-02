@@ -1,10 +1,10 @@
 [versions]
-lombok = "1.18.32"
+lombok = "1.18.34"
 annotations = "24.1.0"
 osgan = "1.2.12-SNAPSHOT"
 
 gson = "2.11.0"
-toml = "3.7.2"
+toml = "3.8.0"
 
 jansi = "2.4.1"
 jline = "3.26.2"
@@ -16,7 +16,7 @@ bungeeminimessage = "4.3.3"
 
 #platforms
 velocity = "3.3.0-SNAPSHOT"
-paper = "1.21-R0.1-SNAPSHOT"
+paper = "1.20.4-R0.1-SNAPSHOT"
 bungeecord = "1.20-R0.2"
 
 # publishing
@@ -49,7 +49,7 @@ jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" 
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
 
 [bundles]
-utils = ["lombok", "osgan-utils", "osgan-files"]
+utils = ["lombok", "osgan-utils", "osgan-files", "annotations"]
 console = ["jline", "jansi", "annotations"]
 
 [plugins]

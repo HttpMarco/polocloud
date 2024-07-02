@@ -18,12 +18,7 @@ package dev.httpmarco.polocloud.base.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;

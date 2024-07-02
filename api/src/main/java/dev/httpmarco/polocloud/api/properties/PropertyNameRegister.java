@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.base.templates;
+package dev.httpmarco.polocloud.api.properties;
 
-import dev.httpmarco.polocloud.api.properties.Property;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public final class TemplateProperties<T> extends Property<T> {
+public final class PropertyNameRegister {
 
-    public TemplateProperties(String id, Class<T> type) {
-        super(id, type);
+    private static final Map<PropertyLayerType, List<String>> nameRegistry = new HashMap<>();
+
+    static {
+        for (var value : PropertyLayerType.values()) {
+            nameRegistry.put(value, new ArrayList<>());
+        }
     }
 }

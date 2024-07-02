@@ -22,8 +22,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
-import dev.httpmarco.polocloud.api.properties.CloudProperty;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.runner.event.InstanceGlobalEventNode;
@@ -74,11 +73,17 @@ public class CloudInstance extends CloudAPI {
         Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.3");
         Dependency.load("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2");
         Dependency.load("net.kyori", "adventure-text-serializer-legacy", "4.13.1");
-        Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.16.0");
 
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
-        this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> this.self = service));
+        this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> {
+            this.self = service;
+            if (this.self.group().platform().version().toLowerCase().contains("bungeecord")) {
+                Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.13.1");
+            } else {
+                Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.17.0");
+            }
+        }));
 
         this.client.transmitter().listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> {
             if (self().id().equals(packet.id())) {
@@ -129,7 +134,7 @@ public class CloudInstance extends CloudAPI {
     }
 
     @Override
-    public PropertiesPool<CloudProperty<?>> globalProperties() {
+    public PropertyPool globalProperties() {
         //todo
         return null;
     }
