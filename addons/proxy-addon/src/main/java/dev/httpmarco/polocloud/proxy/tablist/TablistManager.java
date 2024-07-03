@@ -22,12 +22,10 @@ import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.concurrent.ExecutionException;
-
 public class TablistManager {
 
-    public final static String HEADER = "\n          <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>- <gray>Simplest and easiest CloudSystem          \n<gray>Current Server: <aqua>%server%\n";
-    public final static String FOOTER = "\n<gray>Github: <white>github.com/HttpMarco/PoloCloud\n<gray>Discord: <aqua>https://discord.gg/VHjnNBRFBe";
+    public final static String HEADER = "\n          <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>- <gray>Simplest and easiest CloudSystem          \n<gray>Spieler: <aqua>%onlinePlayers%<gray>/<aqua>%maxOnlinePlayers% <dark_gray>| <gray>Current Server: <aqua>%server%\n";
+    public final static String FOOTER = "\n<gray>Github: <white>github.com/HttpMarco/PoloCloud\n<gray>Discord: <aqua>https://discord.gg/VHjnNBRFBe\n";
     private final VelocityPlatformPlugin platform;
     private final Tablist tablist;
 
@@ -37,41 +35,23 @@ public class TablistManager {
     }
 
     public void addPlayer(Player player) {
+        update(player);
+    }
+
+    public void update(Player player) {
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
-        var server = platform.getServer().getServer(cloudPlayer.currentServerName());
 
-        var header = replaceCommonPlaceholders(this.tablist.header(), player, cloudPlayer);
-        var footer = replaceCommonPlaceholders(this.tablist.footer(), player, cloudPlayer);
-
-        if (server.isPresent()) {
-            try {
-                var ping = server.get().ping().get();
-                var serverMotd = ping.getDescriptionComponent();
-
-                header = replaceServerPlaceholders(header, MiniMessage.miniMessage().serialize(serverMotd));
-                footer = replaceServerPlaceholders(footer, MiniMessage.miniMessage().serialize(serverMotd));
-            } catch (ExecutionException | InterruptedException e) {
-                CloudAPI.instance().logger().error("Error while replacing server placeholders", e);
-            }
-        }
+        var header = replaceCommonPlaceholders(this.tablist.header(), cloudPlayer);
+        var footer = replaceCommonPlaceholders(this.tablist.footer(), cloudPlayer);
 
         player.sendPlayerListHeader(MiniMessage.miniMessage().deserialize(header));
         player.sendPlayerListFooter(MiniMessage.miniMessage().deserialize(footer));
     }
 
-    //TODO update method where ping and onlinePlayers get updated
-
-    private String replaceCommonPlaceholders(String template, Player player, CloudPlayer cloudPlayer ) {
+    private String replaceCommonPlaceholders(String template, CloudPlayer cloudPlayer ) {
         return template
                 .replace("%server%", cloudPlayer.currentServerName())
                 .replace("%onlinePlayers%", String.valueOf(this.platform.getServer().getPlayerCount()))
-                .replace("%maxOnlinePlayers%", String.valueOf(this.platform.getServer().getConfiguration().getShowMaxPlayers()))
-                .replace("%proxy_motd%", MiniMessage.miniMessage().serialize(this.platform.getServer().getConfiguration().getMotd()))
-                .replace("%ping%", String.valueOf(player.getPing()));
-    }
-
-    private String replaceServerPlaceholders(String template, String serverMotd) {
-        return template
-                .replace("%server_motd%", serverMotd);
+                .replace("%maxOnlinePlayers%", String.valueOf(this.platform.getServer().getConfiguration().getShowMaxPlayers()));
     }
 }

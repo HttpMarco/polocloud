@@ -20,9 +20,12 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.events.player.CloudPlayerSwitchServerEvent;
 import dev.httpmarco.polocloud.proxy.command.ProxyCommand;
 import dev.httpmarco.polocloud.proxy.config.Config;
 import dev.httpmarco.polocloud.proxy.listener.PingListener;
+import dev.httpmarco.polocloud.proxy.listener.PlayerDisconnectListener;
 import dev.httpmarco.polocloud.proxy.listener.ServerPostConnectListener;
 import dev.httpmarco.polocloud.proxy.maintenance.MaintenanceManager;
 import dev.httpmarco.polocloud.proxy.tablist.TablistManager;
@@ -56,7 +59,11 @@ public final class VelocityPlatformPlugin {
 
         var eventManager = this.server.getEventManager();
         eventManager.register(this, new ServerPostConnectListener(this));
+        eventManager.register(this, new PlayerDisconnectListener(this));
         eventManager.register(this, new PingListener(this));
+
+        var eventNode = CloudAPI.instance().globalEventNode();
+        eventNode.addListener(CloudPlayerSwitchServerEvent.class, it -> this.getServer().getPlayer(it.cloudPlayer().uniqueId()).ifPresent(player -> this.getTabManager().update(player)));
 
         var commandManager = this.server.getCommandManager();
         commandManager.register(commandManager.metaBuilder("proxy").build(), new ProxyCommand());
