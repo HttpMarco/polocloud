@@ -28,7 +28,9 @@ import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,10 +38,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudServiceProviderImpl implements CloudServiceProvider {
+public final class CloudServiceProviderImpl extends CloudServiceProvider {
 
     private final List<CloudService> services = new CopyOnWriteArrayList<>();
     private final CloudServiceFactory factory = new CloudServiceFactoryImpl();
@@ -50,7 +53,9 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
         // send all services back to request
         var transmitter = CloudBase.instance().transmitter();
         transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
-        transmitter.responder("service-find", (properties) -> new CloudServicePacket(find(properties.getUUID("uuid"))));
+        transmitter.responder("services-group", (properties) -> new CloudAllServicesPacket(services(CloudAPI.instance().groupProvider().group(properties.getString("name")))));
+        transmitter.responder("service-find-id", (properties) -> new CloudServicePacket(find(properties.getUUID("id"))));
+        transmitter.responder("service-find-name", (properties) -> new CloudServicePacket(find(properties.getString("name"))));
         transmitter.responder("player-count", (properties) -> new CloudPlayerCountPacket(find(properties.getUUID("id")).onlinePlayersCount()));
         transmitter.responder("services-filtering", property -> new CloudAllServicesPacket(filterService(property.getEnum("filter", ServiceFilter.class))));
 
@@ -99,15 +104,11 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
             case PLAYERS_PRESENT_SERVERS -> services.stream().filter(it -> it.onlinePlayersCount() > 0);
             case FULL_SERVICES -> services.stream().filter(CloudService::isFull);
             case SAME_NODE_SERVICES -> new ArrayList<CloudService>().stream(); // todo
-            case FALLBACKS ->
-                    services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)); //todo
-            case PROXIES -> services.stream().filter(it -> isProxy(it));
+            case FALLBACKS -> fallbackStream();
+            case PROXIES -> services.stream().filter(this::isProxy);
             case SERVERS -> services.stream().filter(it -> !isProxy(it));
-            case LOWEST_FALLBACK -> {
-                var fallback = new ArrayList<CloudService>();
-                services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK)).min(Comparator.comparingInt(CloudService::onlinePlayersCount)).ifPresent(fallback::add);
-                yield fallback.stream();
-            }
+            case LOWEST_FALLBACK ->
+                    fallbackStream().min(Comparator.comparingInt(CloudService::onlinePlayersCount)).stream();
         }).toList());
     }
 
@@ -117,38 +118,33 @@ public final class CloudServiceProviderImpl implements CloudServiceProvider {
     }
 
     @Override
-    public CloudService find(UUID id) {
-        return this.services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
+    public @NotNull CompletableFuture<List<CloudService>> servicesAsync(CloudGroup group) {
+        return CompletableFuture.completedFuture(this.services.stream().filter(it -> it.group().equals(group)).toList());
     }
 
     @Override
-    public CloudService find(String name) {
-        return this.services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null);
+    public @NotNull CompletableFuture<CloudService> findAsync(String name) {
+        return CompletableFuture.completedFuture(this.services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null));
     }
 
     @Override
-    public CompletableFuture<CloudService> findAsync(String name) {
-        return null;
+    public @NotNull CompletableFuture<CloudService> findAsync(UUID id) {
+        return CompletableFuture.completedFuture(this.services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null));
     }
 
+    @Contract(pure = true)
     @Override
-    public CompletableFuture<CloudService> findAsync(UUID id) {
+    public @Nullable CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers) {
         //todo
         return null;
     }
 
-    @Override
-    public CloudService service(String name) {
-        return this.services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null);
+    private Stream<CloudService> fallbackStream() {
+        return services.stream().filter(it -> !isProxy(it) && it.group().properties().has(GroupProperties.FALLBACK));
     }
 
-    @Override
-    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers) {
-        //todo
-        return null;
-    }
 
-    private boolean isProxy(CloudService service) {
+    private boolean isProxy(@NotNull CloudService service) {
         return service.group().platform().proxy();
     }
 }

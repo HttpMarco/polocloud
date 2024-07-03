@@ -31,11 +31,11 @@ public final class ServerConnectedListener {
     public void onPlayerChooseInitialServer(ServerConnectedEvent event) {
         var player = event.getPlayer();
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
-        var cloudService = CloudAPI.instance().serviceProvider().service(event.getServer().getServerInfo().getName());
+        var cloudService = CloudAPI.instance().serviceProvider().find(event.getServer().getServerInfo().getName());
         CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
 
         if (event.getPreviousServer().isEmpty()) return;
-        var previousService = CloudAPI.instance().serviceProvider().service(event.getPreviousServer().get().getServerInfo().getName());
+        var previousService = CloudAPI.instance().serviceProvider().find(event.getPreviousServer().get().getServerInfo().getName());
         CloudAPI.instance().globalEventNode().call(new CloudPlayerSwitchServerEvent(cloudPlayer, cloudService, previousService));
     }
 }

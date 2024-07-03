@@ -21,6 +21,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
+import dev.httpmarco.polocloud.RunningPlatform;
 import dev.httpmarco.polocloud.RunningProxyPlatform;
 import dev.httpmarco.polocloud.velocity.command.CloudCommand;
 import dev.httpmarco.polocloud.velocity.listener.*;
@@ -31,22 +32,26 @@ import java.net.InetSocketAddress;
 
 @Getter
 @Plugin(id = "polocloud", name = "PoloCloud-Plugin", version = "1.0.0", authors = "HttpMarco")
-public final class VelocityPlatform extends RunningProxyPlatform {
+public final class VelocityPlatform {
 
     private final ProxyServer server;
+    private RunningPlatform platform;
 
     @Inject
     public VelocityPlatform(ProxyServer server) {
-        super(it -> server.registerServer(new ServerInfo(it.name(), new InetSocketAddress(it.hostname(), it.port()))),
-                it -> server.getServer(it.name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo())));
         this.server = server;
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
+
         for (var registered : this.server.getAllServers()) {
             this.server.unregisterServer(registered.getServerInfo());
         }
+
+        this.platform = new RunningProxyPlatform(
+                it -> server.registerServer(new ServerInfo(it.name(), new InetSocketAddress(it.hostname(), it.port()))),
+                it -> server.getServer(it.name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo())));
 
         var eventManager = this.server.getEventManager();
         eventManager.register(this, new PlayerChooseInitialServerListener(this.server));
@@ -58,6 +63,6 @@ public final class VelocityPlatform extends RunningProxyPlatform {
         var commandManager = this.server.getCommandManager();
         commandManager.register(commandManager.metaBuilder("cloud").build(), new CloudCommand());
 
-        this.changeToOnline();
+        this.platform.changeToOnline();
     }
 }

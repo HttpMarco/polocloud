@@ -20,6 +20,7 @@ import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
+import dev.httpmarco.polocloud.api.packets.groups.CloudGroupUpdatePacket;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +40,6 @@ public class InstanceGroup extends CloudGroup {
 
     @Override
     public void update() {
-        //todo
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupUpdatePacket(this));
     }
 }

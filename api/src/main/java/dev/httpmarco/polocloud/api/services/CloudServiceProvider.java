@@ -16,7 +16,6 @@
 
 package dev.httpmarco.polocloud.api.services;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import lombok.SneakyThrows;
 
@@ -25,33 +24,45 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public interface CloudServiceProvider {
+public abstract class CloudServiceProvider {
 
-    CloudServiceFactory factory();
-
-    List<CloudService> services();
-
-    CompletableFuture<List<CloudService>> servicesAsync();
+    public abstract CloudServiceFactory factory();
 
     @SneakyThrows
-    default List<CloudService> filterService(ServiceFilter filter) {
+    public List<CloudService> services() {
+        return servicesAsync().get(5, TimeUnit.SECONDS);
+    }
+
+    public abstract CompletableFuture<List<CloudService>> servicesAsync();
+
+    @SneakyThrows
+    public List<CloudService> filterService(ServiceFilter filter) {
         return this.filterServiceAsync(filter).get(5, TimeUnit.SECONDS);
     }
 
-    CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter);
+    public abstract CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter);
 
-    List<CloudService> services(CloudGroup group);
+    @SneakyThrows
+    public List<CloudService> services(CloudGroup group) {
+        return servicesAsync(group).get(5, TimeUnit.SECONDS);
+    }
 
-    CloudService find(UUID id);
+    public abstract CompletableFuture<List<CloudService>> servicesAsync(CloudGroup group);
 
-    CloudService find(String name);
+    @SneakyThrows
+    public CloudService find(UUID id) {
+        return this.findAsync(id).get(5, TimeUnit.SECONDS);
+    }
 
-    CompletableFuture<CloudService> findAsync(String name);
+    @SneakyThrows
+    public CloudService find(String name) {
+        return this.findAsync(name).get(5, TimeUnit.SECONDS);
+    }
 
-    CompletableFuture<CloudService> findAsync(UUID id);
+    public abstract CompletableFuture<CloudService> findAsync(String name);
 
-    CloudService service(String name);
+    public abstract CompletableFuture<CloudService> findAsync(UUID id);
 
-    CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers);
+    public abstract CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers);
 
 }

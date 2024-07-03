@@ -61,7 +61,7 @@ public final class ServiceCommand {
     @SubCommand(args = {"<name>"})
     public void handleInfo(String name) {
         if (serviceNotExists(name)) return;
-        final var service = CloudAPI.instance().serviceProvider().service(name);
+        final var service = CloudAPI.instance().serviceProvider().find(name);
 
         this.logger.info("Name&2: &3" + name);
         this.logger.info("Platform&2: &3" + service.group().platform().version());
@@ -86,7 +86,7 @@ public final class ServiceCommand {
     public void handleLog(String name) {
         if (serviceNotExists(name)) return;
 
-        for (var log : CloudAPI.instance().serviceProvider().service(name).log()) {
+        for (var log : CloudAPI.instance().serviceProvider().find(name).log()) {
             this.logger.info("&3" + name + "&2: &1" + log);
         }
     }
@@ -104,7 +104,7 @@ public final class ServiceCommand {
     public void handleShutdown(String name) {
         if (serviceNotExists(name)) return;
 
-        CloudAPI.instance().serviceProvider().service(name).shutdown();
+        CloudAPI.instance().serviceProvider().find(name).shutdown();
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "shutdown"})
@@ -118,7 +118,7 @@ public final class ServiceCommand {
     public void handelExecuteCommand(String name, String command) {
         if (serviceNotExists(name)) return;
 
-        CloudAPI.instance().serviceProvider().service(name).execute(command);
+        CloudAPI.instance().serviceProvider().find(name).execute(command);
         this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
@@ -139,7 +139,7 @@ public final class ServiceCommand {
             templatesService.createTemplates(template, "every", "every_server");
         }
 
-        var service = CloudAPI.instance().serviceProvider().service(name);
+        var service = CloudAPI.instance().serviceProvider().find(name);
         var runningFolder = ((LocalCloudService) service).runningFolder();
         var templateFolder = Path.of("templates", template);
 
@@ -172,7 +172,7 @@ public final class ServiceCommand {
         var serviceProvider = CloudAPI.instance().serviceProvider();
         if (serviceProvider == null) return true;
 
-        var service = serviceProvider.service(name);
+        var service = serviceProvider.find(name);
         if (service != null) return false;
 
         this.logger.info("This services does not exists&2!");
