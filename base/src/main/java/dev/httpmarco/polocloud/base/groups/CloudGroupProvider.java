@@ -147,6 +147,11 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
         });
     }
 
+    public void reload() {
+        this.groups.clear();
+        this.groups.addAll(groupServiceTypeAdapter.readGroups());
+    }
+
     public CloudGroup fromPacket(PacketBuffer buffer) {
         var name = buffer.readString();
         var platform = buffer.readString();

@@ -40,4 +40,9 @@ public class CloudGroupImpl extends CloudGroup implements Serializable {
                 ", memory=" + memory() +
                 ", minOnlineServices=" + minOnlineService();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.name().equals(((CloudGroup)obj).name());
+    }
 }
