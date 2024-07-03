@@ -56,7 +56,12 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
 
         transmitter.listen(CloudGroupCreatePacket.class, (channelTransmit, packet) -> this.createGroup(packet.name(), packet.platform(), packet.memory(), packet.minOnlineCount()));
         transmitter.listen(CloudGroupDeletePacket.class, (channelTransmit, packet) -> this.deleteGroup(packet.name()));
-        transmitter.listen(CloudGroupUpdatePacket.class, (channelTransmit, packet) -> this.update(packet.group()));
+        transmitter.listen(CloudGroupUpdatePacket.class, (channelTransmit, packet) -> {
+            var group = group(packet.group().name());
+            group.properties().pool().clear();
+            group.properties().pool().putAll(packet.group().properties().pool());
+            this.update(packet.group());
+        });
 
         // load default groups
         this.groups = groupServiceTypeAdapter.readGroups();
