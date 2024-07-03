@@ -166,7 +166,7 @@ public class CloudCommand implements SimpleCommand {
                 }
 
                 var serviceName = args[1];
-                var service = CloudAPI.instance().serviceProvider().service(serviceName);
+                var service = CloudAPI.instance().serviceProvider().find(serviceName);
                 if (service == null) {
                     player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>This service does not exists!"));
                     return;
@@ -196,7 +196,7 @@ public class CloudCommand implements SimpleCommand {
                 }
 
                 var serviceName = args[1];
-                var service = CloudAPI.instance().serviceProvider().service(serviceName);
+                var service = CloudAPI.instance().serviceProvider().find(serviceName);
                 if (service == null) {
                     player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>This service does not exists!"));
                     return;

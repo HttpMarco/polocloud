@@ -178,7 +178,7 @@ public class CloudCommand extends Command implements TabExecutor {
                 }
 
                 final String serviceName = args[1];
-                final CloudService service = CloudAPI.instance().serviceProvider().service(serviceName);
+                final CloudService service = CloudAPI.instance().serviceProvider().find(serviceName);
                 if (service == null) {
                     player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§cThis services does not exists!"));
                     return;
@@ -206,7 +206,7 @@ public class CloudCommand extends Command implements TabExecutor {
                 }
 
                 final String serviceName = args[1];
-                var service = CloudAPI.instance().serviceProvider().service(serviceName);
+                var service = CloudAPI.instance().serviceProvider().find(serviceName);
                 if (service == null) {
                     player.sendMessage(TextComponent.fromLegacy(this.PREFIX + "§cThis services does not exists!"));
                     return;

@@ -34,27 +34,15 @@ import java.util.concurrent.TimeUnit;
 
 @Getter
 @Accessors(fluent = true)
-public final class InstanceServiceProvider implements CloudServiceProvider {
+public final class InstanceServiceProvider extends CloudServiceProvider {
 
     private final CloudServiceFactory factory = new InstanceCloudServiceFactory();
-
-    @Override
-    @SneakyThrows
-    public List<CloudService> services() {
-        return servicesAsync().get(5, TimeUnit.SECONDS);
-    }
 
     @Override
     public CompletableFuture<List<CloudService>> servicesAsync() {
         var future = new FutureResult<List<CloudService>>();
         CloudInstance.instance().client().transmitter().request("services-all", CloudAllServicesPacket.class, it -> future.complete(it.services()));
         return future.toCompletableFuture();
-    }
-
-    @Override
-    @SneakyThrows
-    public List<CloudService> filterService(ServiceFilter filter) {
-        return filterServiceAsync(filter).get(5, TimeUnit.SECONDS);
     }
 
     @Override
@@ -65,37 +53,24 @@ public final class InstanceServiceProvider implements CloudServiceProvider {
     }
 
     @Override
-    public List<CloudService> services(CloudGroup group) {
-        return List.of();
-    }
-
-    @Override
-    @SneakyThrows
-    public CloudService find(UUID id) {
-        return findAsync(id).get(5, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public CloudService find(String name) {
-        return null;
+    public CompletableFuture<List<CloudService>> servicesAsync(CloudGroup group) {
+        var future = new FutureResult<List<CloudService>>();
+        CloudInstance.instance().client().transmitter().request("services-group", new CommunicationProperty().set("name", group.name()), CloudAllServicesPacket.class, it -> future.complete(it.services()));
+        return future.toCompletableFuture();
     }
 
     @Override
     public CompletableFuture<CloudService> findAsync(String name) {
-        return null;
+        var future = new FutureResult<CloudService>();
+        CloudInstance.instance().client().transmitter().request("service-find-name", new CommunicationProperty().set("name", name), CloudServicePacket.class, it -> future.complete(it.service()));
+        return future.toCompletableFuture();
     }
 
     @Override
     public CompletableFuture<CloudService> findAsync(UUID id) {
         var future = new FutureResult<CloudService>();
-        CloudInstance.instance().client().transmitter().request("service-find", new CommunicationProperty().set("uuid", id), CloudServicePacket.class, it -> future.complete(it.service()));
+        CloudInstance.instance().client().transmitter().request("service-find-id", new CommunicationProperty().set("id", id), CloudServicePacket.class, it -> future.complete(it.service()));
         return future.toCompletableFuture();
-    }
-
-    @Override
-    public CloudService service(String name) {
-        //todo
-        return this.services().stream().filter(it -> it.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     @Override
