@@ -20,14 +20,17 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.node.NodeService;
+import dev.httpmarco.polocloud.api.packets.groups.CloudGroupUpdatePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.runner.event.InstanceGlobalEventNode;
+import dev.httpmarco.polocloud.runner.groups.InstanceGroup;
 import dev.httpmarco.polocloud.runner.groups.InstanceGroupProvider;
 import dev.httpmarco.polocloud.runner.player.InstanceCloudPlayerProvider;
+import dev.httpmarco.polocloud.runner.services.InstanceCloudService;
 import dev.httpmarco.polocloud.runner.services.InstanceServiceProvider;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -89,6 +92,10 @@ public class CloudInstance extends CloudAPI {
             if (self().id().equals(packet.id())) {
                 self().maxPlayers(packet.maxPlayers());
             }
+        });
+
+        this.client.transmitter().listen(CloudGroupUpdatePacket.class, (channel, packet) -> {
+            ((InstanceCloudService) this.self).group(packet.group());
         });
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
