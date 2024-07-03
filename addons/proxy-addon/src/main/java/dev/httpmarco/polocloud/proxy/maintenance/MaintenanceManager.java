@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.tablist;
+package dev.httpmarco.polocloud.proxy.maintenance;
 
-import lombok.AllArgsConstructor;
+import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 @Getter
-@AllArgsConstructor
 @Accessors(fluent = true)
-public class Tablist {
+public class MaintenanceManager {
 
-    private String header;
-    private String footer;
+    public final static String VERSION_NAME = "§4§lMaintenance";
+    public final static String MOTD = "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <white>github.com/HttpMarco/polocloud\n<red><bold>CURRENTLY UNDER MAINTENANCE</bold>";
+    private final VelocityPlatformPlugin platform;
+    private final Maintenance maintenance;
 
+    public MaintenanceManager(VelocityPlatformPlugin platform) {
+        this.platform = platform;
+
+        this.maintenance = this.platform.getConfig().loadOrCreateDefault().getMaintenance();
+    }
 }

@@ -26,20 +26,22 @@ import java.util.concurrent.ExecutionException;
 
 public class TablistManager {
 
+    public final static String HEADER = "\n          <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>- <gray>Simplest and easiest CloudSystem          \n<gray>Current Server: <aqua>%server%\n";
+    public final static String FOOTER = "\n<gray>Github: <white>github.com/HttpMarco/PoloCloud\n<gray>Discord: <aqua>https://discord.gg/VHjnNBRFBe";
     private final VelocityPlatformPlugin platform;
-    private final TablistConfiguration configuration;
+    private final Tablist tablist;
 
     public TablistManager(VelocityPlatformPlugin platform) {
-        (this.configuration = new TablistConfiguration(platform, null)).load();
         this.platform = platform;
+        this.tablist = this.platform.getConfig().loadOrCreateDefault().getTablist();
     }
 
     public void addPlayer(Player player) {
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
         var server = platform.getServer().getServer(cloudPlayer.currentServerName());
 
-        var header = replaceCommonPlaceholders(configuration.getTablist().getHeader(), player, cloudPlayer);
-        var footer = replaceCommonPlaceholders(configuration.getTablist().getFooter(), player, cloudPlayer);
+        var header = replaceCommonPlaceholders(this.tablist.header(), player, cloudPlayer);
+        var footer = replaceCommonPlaceholders(this.tablist.footer(), player, cloudPlayer);
 
         if (server.isPresent()) {
             try {

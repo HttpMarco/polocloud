@@ -39,13 +39,11 @@ public final class PlayerChooseInitialServerListener {
             return;
         }
 
-        if (CloudInstance.instance().self().group().properties().has(GroupProperties.MAINTENANCE)) {
-            var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
+        var state = CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE);
 
-            if(state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
-                event.getPlayer().disconnect(Component.text("§cThis service is in maintenance"));
-                return;
-            }
+        if (state && !(event.getPlayer().hasPermission("polocloud.connect.bypass.maintenance"))) {
+            event.getPlayer().disconnect(Component.text("§cThis service is in maintenance"));
+            return;
         }
 
         this.server.getServer(service.get(0).name()).ifPresentOrElse(event::setInitialServer, () -> event.setInitialServer(null));

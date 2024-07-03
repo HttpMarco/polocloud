@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.tablist;
+package dev.httpmarco.polocloud.proxy.config;
 
+import dev.httpmarco.polocloud.proxy.maintenance.Maintenance;
+import dev.httpmarco.polocloud.proxy.tablist.Tablist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Accessors;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
-@Accessors(fluent = true)
-public class Tablist {
+public class ProxyConfig {
 
-    private String header;
-    private String footer;
-
+    private Maintenance maintenance;
+    private Tablist tablist;
 }
