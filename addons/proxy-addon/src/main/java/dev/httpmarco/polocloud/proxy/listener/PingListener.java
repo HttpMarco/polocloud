@@ -19,9 +19,9 @@ package dev.httpmarco.polocloud.proxy.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.server.ServerPing;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -32,7 +32,7 @@ public class PingListener {
 
     @Subscribe
     public void onPing(ProxyPingEvent event) {
-        var proxy = CloudAPI.instance().serviceProvider().find(VelocityPlatformPlugin.SELF_ID).group();
+        var proxy = CloudInstance.instance().self();
         if (!proxy.properties().property(GroupProperties.MAINTENANCE)) return;
 
         final var version = new ServerPing.Version(0, this.platform.getMaintenanceManager().maintenance().versionName());
