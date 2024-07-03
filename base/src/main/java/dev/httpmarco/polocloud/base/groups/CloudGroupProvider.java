@@ -63,14 +63,6 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
             group.properties().pool().clear();
             group.properties().pool().putAll(packet.group().properties().pool());
             this.update(packet.group());
-
-            CloudAPI.instance().serviceProvider().services(group).forEach(service -> {
-                if (service instanceof LocalCloudService localCloudService) {
-                    localCloudService.channelTransmit().sendPacket(new CloudGroupUpdatePacket(group));
-                } else {
-                    // todo
-                }
-            });
         });
 
         // load default groups
@@ -145,6 +137,14 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
 
     public void update(CloudGroup cloudGroup) {
         this.groupServiceTypeAdapter.updateFile(cloudGroup);
+
+        CloudAPI.instance().serviceProvider().services(cloudGroup).forEach(service -> {
+            if (service instanceof LocalCloudService localCloudService) {
+                localCloudService.channelTransmit().sendPacket(new CloudGroupUpdatePacket(cloudGroup));
+            } else {
+                // todo
+            }
+        });
     }
 
     public CloudGroup fromPacket(PacketBuffer buffer) {
