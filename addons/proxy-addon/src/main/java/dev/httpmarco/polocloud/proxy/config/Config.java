@@ -72,17 +72,18 @@ public class Config {
     public ProxyConfig loadOrCreateDefault() {
         var config = load(ProxyConfig.class);
         if (config == null) {
-            config = new ProxyConfig(new Maintenance(MaintenanceManager.MOTD), new Tablist(TablistManager.HEADER, TablistManager.FOOTER));
+            config = new ProxyConfig(new Maintenance(MaintenanceManager.VERSION_NAME, MaintenanceManager.MOTD), new Tablist(TablistManager.HEADER, TablistManager.FOOTER));
             save(config);
             return config;
         }
 
+        var versionName = (config.getMaintenance() == null) ? MaintenanceManager.VERSION_NAME : (config.getMaintenance().versionName() == null) ? MaintenanceManager.VERSION_NAME : config.getMaintenance().versionName();
         var motd = (config.getMaintenance() == null) ? MaintenanceManager.MOTD : (config.getMaintenance().motd() == null) ? MaintenanceManager.MOTD : config.getMaintenance().motd();
 
         var header = (config.getTablist() == null) ? TablistManager.HEADER : (config.getTablist().header() == null) ? TablistManager.HEADER : config.getTablist().header();
         var footer = (config.getTablist() == null) ? TablistManager.FOOTER : (config.getTablist().footer() == null) ? TablistManager.FOOTER : config.getTablist().footer();
 
-        config.setMaintenance(new Maintenance(motd));
+        config.setMaintenance(new Maintenance(versionName, motd));
         config.setTablist(new Tablist(header, footer));
 
         save(config);

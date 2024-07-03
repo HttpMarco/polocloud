@@ -57,7 +57,7 @@ public class ProxyCommand implements SimpleCommand {
         }
 
         var args = invocation.arguments();
-        if (args.length == 1) {
+        if (args.length == 0 || args.length == 1) {
             return List.of("maintenance");
         }
 
@@ -70,8 +70,7 @@ public class ProxyCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        //return invocation.source().hasPermission("proxy.command");
-        return true;
+        return invocation.source().hasPermission("proxy.command");
     }
 
     private void sendUsage(Player player) {
@@ -86,12 +85,10 @@ public class ProxyCommand implements SimpleCommand {
 
         var state = Boolean.parseBoolean(args[1]);
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
-        var group = CloudAPI.instance().serviceProvider().service(cloudPlayer.currentProxyName()).group();
-        group.properties().putRaw(GroupProperties.MAINTENANCE, state);
+        var group = CloudAPI.instance().serviceProvider().find(cloudPlayer.currentProxyName()).group();
+        group.properties().put(GroupProperties.MAINTENANCE, state);
         group.update();
 
-        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<red>Maintenance set to: <gray>" + group.properties().property(GroupProperties.MAINTENANCE)));
+        player.sendMessage(this.miniMessage.deserialize(this.PREFIX + "<gray>You set the property <red>Maintenance <gray>with value <aqua>"+ group.properties().property(GroupProperties.MAINTENANCE) + " <gray>to group <aqua>" + group.name() + "<gray>."));
     }
-
-
 }

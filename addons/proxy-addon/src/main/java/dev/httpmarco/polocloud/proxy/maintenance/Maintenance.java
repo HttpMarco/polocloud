@@ -25,5 +25,6 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class Maintenance {
 
+    private String versionName;
     private String motd;
 }

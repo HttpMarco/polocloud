@@ -18,11 +18,14 @@ package dev.httpmarco.polocloud.proxy.maintenance;
 
 import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 @Getter
+@Accessors(fluent = true)
 public class MaintenanceManager {
 
-    public final static String MOTD = "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <bold><red>Currently under maintenance</bold>\n<white>GitHub <dark_gray>× <white>github.com/HttpMarco/polocloud";
+    public final static String VERSION_NAME = "§4§lMaintenance";
+    public final static String MOTD = "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <white>github.com/HttpMarco/polocloud\n<red><bold>CURRENTLY UNDER MAINTENANCE</bold>";
     private final VelocityPlatformPlugin platform;
     private final Maintenance maintenance;
 
