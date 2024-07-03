@@ -27,6 +27,7 @@ import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -46,6 +47,8 @@ public final class InstanceCloudService implements CloudService {
     private final int memory;
 
     private final ServiceState state;
+    
+    @Setter
     private CloudGroup group;
 
     private int maxPlayers;
@@ -86,4 +89,5 @@ public final class InstanceCloudService implements CloudService {
         //todo
         return List.of();
     }
+
 }
