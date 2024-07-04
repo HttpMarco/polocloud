@@ -16,38 +16,22 @@
 
 package dev.httpmarco.polocloud.addon.sign;
 
-import dev.httpmarco.polocloud.addon.sign.configuration.CloudSignLayoutService;
+import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @Getter
 @Accessors(fluent = true)
-public class CloudSignService {
+public final class CloudSignGroup {
 
-    @Getter
-    private static CloudSignService instance;
+    private final String group;
+    private final int groupTick;
+    private final List<CloudGroup> signs = new ArrayList<>();
 
-    private final List<CloudSign> signs = new ArrayList<>();
 
-    private final CloudSignFactory serviceSignFactory;
-    private final CloudSignLayoutService signLayoutService = new CloudSignLayoutService();
-
-    public CloudSignService(CloudSignFactory factory) {
-        instance = this;
-        this.serviceSignFactory = factory;
-    }
-
-    public void registerSign(String group, String world, int x, int y, int z) {
-        //todo check if present
-        this.signs.add(new CloudSign(group, world, x, y, z));
-    }
-
-    public void tick() {
-        for (var sign : this.signs) {
-            sign.tick();
-        }
-    }
 }
