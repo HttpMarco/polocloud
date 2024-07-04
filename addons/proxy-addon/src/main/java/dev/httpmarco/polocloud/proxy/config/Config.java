@@ -23,11 +23,13 @@ import dev.httpmarco.polocloud.proxy.maintenance.Maintenance;
 import dev.httpmarco.polocloud.proxy.maintenance.MaintenanceManager;
 import dev.httpmarco.polocloud.proxy.tablist.Tablist;
 import dev.httpmarco.polocloud.proxy.tablist.TablistManager;
+import lombok.SneakyThrows;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class Config {
 
@@ -43,30 +45,19 @@ public class Config {
             try {
                 this.file.createNewFile();
             } catch (IOException e) {
-                CloudAPI.instance().logger().error("Execption while creating config.yml for PoloCloud-Plugin", e);
+                CloudAPI.instance().logger().error("Execption while creating config.json for PoloCloud-Plugin", e);
             }
         }
     }
 
+    @SneakyThrows
     public <T> T load(Class<T> clazz) {
-        try {
-            var reader = new FileReader(this.file);
-            var result = GSON.fromJson(reader, clazz);
-            reader.close();
-            return result;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return GSON.fromJson(Files.readString(this.file.toPath()), clazz);
     }
 
+    @SneakyThrows
     public <T> void save(T config) {
-        try {
-            var writer = new FileWriter(this.file);
-            GSON.toJson(config, writer);
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Files.writeString(file.toPath(), GSON.toJson(config));
     }
 
     public ProxyConfig loadOrCreateDefault() {

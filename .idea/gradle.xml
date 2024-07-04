@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/addons" />
             <option value="$PROJECT_DIR$/addons/proxy-addon" />
+            <option value="$PROJECT_DIR$/addons/sign-addon" />
             <option value="$PROJECT_DIR$/api" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/instance" />
