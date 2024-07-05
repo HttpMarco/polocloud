@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.listener;
+package dev.httpmarco.polocloud.proxy.platform.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.ServerPostConnectEvent;
-import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
+import dev.httpmarco.polocloud.proxy.platform.velocity.VelocityPlatformPlugin;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class ServerPostConnectListener {
+public class PlayerDisconnectListener {
 
     private final VelocityPlatformPlugin platform;
 
     @Subscribe
-    public void onPost(ServerPostConnectEvent event) {
-        this.platform.getTabManager().addPlayer(event.getPlayer());
-        this.platform.getServer().getAllPlayers().forEach(player -> this.platform.getTabManager().update(player));
+    public void onDisconnect(DisconnectEvent event) {
+        this.platform.getServer().getAllPlayers().forEach(player -> this.platform.getVelocityTablistHandler().update(player));
     }
-
-
 }

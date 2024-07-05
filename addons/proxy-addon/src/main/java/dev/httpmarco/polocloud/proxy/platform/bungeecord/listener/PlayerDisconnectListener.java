@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.maintenance;
+package dev.httpmarco.polocloud.proxy.platform.bungeecord.listener;
 
+import dev.httpmarco.polocloud.proxy.platform.bungeecord.BungeeCordPlatformPlugin;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
-@Getter()
 @AllArgsConstructor
-@Accessors(fluent = true)
-public class Maintenance {
+public class PlayerDisconnectListener implements Listener {
 
-    private String versionName;
-    private String motd;
+    private final BungeeCordPlatformPlugin platform;
+
+    @EventHandler
+    public void onDisconnect(PlayerDisconnectEvent event) {
+        this.platform.getProxy().getPlayers().forEach(player -> this.platform.getBungeeTablistHandler().update(player));
+    }
 }

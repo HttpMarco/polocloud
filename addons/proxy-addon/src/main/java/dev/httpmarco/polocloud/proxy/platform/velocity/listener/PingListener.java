@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.listener;
+package dev.httpmarco.polocloud.proxy.platform.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.proxy.server.ServerPing;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
+import dev.httpmarco.polocloud.proxy.platform.velocity.VelocityPlatformPlugin;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -32,13 +32,12 @@ public class PingListener {
 
     @Subscribe
     public void onPing(ProxyPingEvent event) {
-        var proxy = CloudInstance.instance().self();
-        if (!proxy.properties().property(GroupProperties.MAINTENANCE)) return;
+        if (!CloudInstance.instance().self().group().properties().property(GroupProperties.MAINTENANCE)) return;
 
-        final var version = new ServerPing.Version(0, this.platform.getMaintenanceManager().maintenance().versionName());
+        final var version = new ServerPing.Version(0, this.platform.getVelocityMaintenanceProvider().maintenance().versionName());
         event.setPing(event.getPing().asBuilder()
                 .version(version)
-                .description(MiniMessage.miniMessage().deserialize(this.platform.getMaintenanceManager().maintenance().motd()))
+                .description(MiniMessage.miniMessage().deserialize(this.platform.getVelocityMaintenanceProvider().maintenance().motd()))
                 .build());
     }
 }

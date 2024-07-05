@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy;
+package dev.httpmarco.polocloud.proxy.config.tablist;
 
-public class VelocityPlatformListeners {
+import dev.httpmarco.polocloud.api.player.CloudPlayer;
+
+public interface TablistFormatter {
+    String formatPlaceholders(String template, CloudPlayer cloudPlayer);
 }

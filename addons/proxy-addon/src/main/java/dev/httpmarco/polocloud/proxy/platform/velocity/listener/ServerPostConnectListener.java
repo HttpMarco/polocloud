@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.config;
+package dev.httpmarco.polocloud.proxy.platform.velocity.listener;
 
-import dev.httpmarco.polocloud.proxy.config.maintenance.Maintenance;
-import dev.httpmarco.polocloud.proxy.config.tablist.Tablist;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
+import dev.httpmarco.polocloud.proxy.platform.velocity.VelocityPlatformPlugin;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @AllArgsConstructor
-public class ProxyConfig {
+public class ServerPostConnectListener {
 
-    private Maintenance maintenance;
-    private Tablist tablist;
+    private final VelocityPlatformPlugin platform;
+
+    @Subscribe
+    public void onPost(ServerPostConnectEvent event) {
+        this.platform.getVelocityTablistHandler().addPlayer(event.getPlayer());
+        this.platform.getServer().getAllPlayers().forEach(player -> this.platform.getVelocityTablistHandler().update(player));
+    }
+
+
 }

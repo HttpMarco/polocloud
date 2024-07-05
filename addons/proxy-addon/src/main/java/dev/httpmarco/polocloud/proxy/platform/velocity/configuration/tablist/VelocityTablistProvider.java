@@ -14,41 +14,31 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.tablist;
+package dev.httpmarco.polocloud.proxy.platform.velocity.configuration.tablist;
 
-import com.velocitypowered.api.proxy.Player;
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
-import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import dev.httpmarco.polocloud.proxy.platform.velocity.VelocityPlatformPlugin;
+import dev.httpmarco.polocloud.proxy.platform.velocity.configuration.Configuration;
+import dev.httpmarco.polocloud.proxy.config.tablist.Tablist;
+import dev.httpmarco.polocloud.proxy.config.tablist.TablistFormatter;
+import lombok.Getter;
 
-public class TablistManager {
+public abstract class VelocityTablistProvider implements TablistFormatter {
 
     public final static String HEADER = "\n          <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>- <gray>Simplest and easiest CloudSystem          \n<gray>Spieler: <aqua>%onlinePlayers%<gray>/<aqua>%maxOnlinePlayers% <dark_gray>| <gray>Current Server: <aqua>%server%\n";
     public final static String FOOTER = "\n<gray>Github: <white>github.com/HttpMarco/PoloCloud\n<gray>Discord: <aqua>https://discord.gg/VHjnNBRFBe\n";
-    private final VelocityPlatformPlugin platform;
+    @Getter
     private final Tablist tablist;
+    private final VelocityPlatformPlugin platform;
 
-    public TablistManager(VelocityPlatformPlugin platform) {
+    public VelocityTablistProvider(VelocityPlatformPlugin platform) {
+        this.tablist = Configuration.loadOrCreateDefault().getTablist();
+
         this.platform = platform;
-        this.tablist = this.platform.getConfig().loadOrCreateDefault().getTablist();
     }
 
-    public void addPlayer(Player player) {
-        update(player);
-    }
-
-    public void update(Player player) {
-        var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
-
-        var header = replaceCommonPlaceholders(this.tablist.header(), cloudPlayer);
-        var footer = replaceCommonPlaceholders(this.tablist.footer(), cloudPlayer);
-
-        player.sendPlayerListHeader(MiniMessage.miniMessage().deserialize(header));
-        player.sendPlayerListFooter(MiniMessage.miniMessage().deserialize(footer));
-    }
-
-    private String replaceCommonPlaceholders(String template, CloudPlayer cloudPlayer ) {
+    @Override
+    public String formatPlaceholders(String template, CloudPlayer cloudPlayer) {
         return template
                 .replace("%server%", cloudPlayer.currentServerName())
                 .replace("%onlinePlayers%", String.valueOf(this.platform.getServer().getPlayerCount()))
