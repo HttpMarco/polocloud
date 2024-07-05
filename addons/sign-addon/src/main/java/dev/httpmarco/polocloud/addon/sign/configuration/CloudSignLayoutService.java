@@ -43,9 +43,4 @@ public final class CloudSignLayoutService {
             this.layoutConfiguration = GSON.fromJson(Files.readString(LAYOUT_PATH), LayoutConfiguration.class);
         }
     }
-
-    public LayoutCategory find(String id) {
-        return this.layoutConfiguration.categories().stream().filter(it -> it.id().equals(id)).findFirst().orElse(null);
-    }
-
 }

@@ -20,18 +20,20 @@ import dev.httpmarco.polocloud.addon.sign.CloudSignState;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Accessors(fluent = true)
 public final class LayoutConfiguration {
 
-    private final List<LayoutCategory> categories = new ArrayList<>();
+    private final Map<CloudSignState, List<LayoutTick>> layouts = new HashMap<>();
 
     public LayoutConfiguration() {
-        var defaultLayout = new LayoutCategory("default");
-        defaultLayout.layouts().put(CloudSignState.SEARCHING, List.of(new LayoutTick(new String[]{" ", "Searching for", "server...", " "}, -1)));
-        this.categories.add(defaultLayout);
+        layouts.put(CloudSignState.SEARCHING, List.of(
+                new LayoutTick(new String[]{" ", "Searching for", "server.", " "}, 20),
+                new LayoutTick(new String[]{" ", "Searching for", "server..", " "}, 20),
+                new LayoutTick(new String[]{" ", "Searching for", "server...", " "}, 20)));
     }
 }

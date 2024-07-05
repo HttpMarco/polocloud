@@ -51,6 +51,11 @@ public final class CloudSignSpigotCommand implements CommandExecutor {
                 return false;
             }
 
+            if (CloudSignService.instance().existsSign(possibleSignBlock.getWorld().getName(), possibleSignBlock.getX(), possibleSignBlock.getY(), possibleSignBlock.getZ())) {
+                player.sendMessage("There already a cloud sign");
+                return false;
+            }
+
             CloudSignService.instance().registerSign(groupName, possibleSignBlock.getWorld().getName(), possibleSignBlock.getX(), possibleSignBlock.getY(), possibleSignBlock.getZ());
             player.sendMessage("Set successfully sign");
             return false;

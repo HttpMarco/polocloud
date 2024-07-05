@@ -26,6 +26,6 @@ import lombok.experimental.Accessors;
 public final class LayoutTick {
 
     private String[] lines;
-    private long holdTime;
+    private long holdingTicks;
 
 }

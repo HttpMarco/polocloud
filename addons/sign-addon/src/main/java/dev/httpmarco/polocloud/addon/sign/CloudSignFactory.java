@@ -16,6 +16,8 @@
 
 package dev.httpmarco.polocloud.addon.sign;
 
+import dev.httpmarco.polocloud.addon.sign.configuration.LayoutTick;
+
 public abstract class CloudSignFactory {
 
     public abstract void print(CloudSign sign);
