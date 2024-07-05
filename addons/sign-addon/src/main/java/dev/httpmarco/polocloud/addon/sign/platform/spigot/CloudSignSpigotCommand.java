@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.addon.sign.platform.spigot;
 
 import dev.httpmarco.polocloud.addon.sign.CloudSignService;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -48,6 +49,11 @@ public final class CloudSignSpigotCommand implements CommandExecutor {
 
             if (!possibleSignBlock.getType().data.equals(WallSign.class)) {
                 player.sendMessage("The detected block is not a wall sign");
+                return false;
+            }
+
+            if (CloudSignService.instance().existsSign(possibleSignBlock.getWorld().getName(), possibleSignBlock.getX(), possibleSignBlock.getY(), possibleSignBlock.getZ())) {
+                player.sendMessage("There already a cloud sign");
                 return false;
             }
 

@@ -33,21 +33,24 @@ public class CloudSignService {
     private final List<CloudSign> signs = new ArrayList<>();
 
     private final CloudSignFactory serviceSignFactory;
+    private final CloudSignAnimationRunner signAnimationRunner;
     private final CloudSignLayoutService signLayoutService = new CloudSignLayoutService();
 
     public CloudSignService(CloudSignFactory factory) {
         instance = this;
         this.serviceSignFactory = factory;
+        this.signAnimationRunner = new CloudSignAnimationRunner();
     }
 
     public void registerSign(String group, String world, int x, int y, int z) {
-        //todo check if present
         this.signs.add(new CloudSign(group, world, x, y, z));
     }
 
+    public boolean existsSign(String world, int x, int y, int z) {
+        return this.signs.stream().anyMatch(it -> it.world().equals(world) && it.x() == x && it.y() == y && it.z() == z);
+    }
+
     public void tick() {
-        for (var sign : this.signs) {
-            sign.tick();
-        }
+        this.signAnimationRunner.tick();
     }
 }

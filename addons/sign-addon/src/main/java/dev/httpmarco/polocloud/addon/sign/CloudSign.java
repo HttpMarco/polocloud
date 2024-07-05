@@ -16,27 +16,23 @@
 
 package dev.httpmarco.polocloud.addon.sign;
 
-import dev.httpmarco.polocloud.addon.sign.configuration.LayoutTick;
+import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Accessors(fluent = true)
 public class CloudSign {
 
     private final String group;
-    private final String layoutId;
-
     private final String world;
     private final int x;
     private final int y;
     private final int z;
 
-    @Setter
-    private long animationTick = 0;
+    private @Nullable CloudService cloudService;
 
     @Setter
     private CloudSignState state = CloudSignState.SEARCHING;
@@ -48,9 +44,7 @@ public class CloudSign {
         this.world = world;
         this.group = group;
 
-        // todo custom
-        this.layoutId = "default";
-
+        CloudSignService.instance().serviceSignFactory().pre(this);
         this.update();
     }
 
@@ -58,27 +52,9 @@ public class CloudSign {
         CloudSignService.instance().serviceSignFactory().print(this);
     }
 
-    public LayoutTick currentLayout() {
-        long currentStep = 0;
-        for (var tick : CloudSignService.instance().signLayoutService().find(this.layoutId()).layouts().get(state)) {
-            currentStep += tick.holdTime();
-
-            if (animationTick <= currentStep) {
-                return tick;
-            }
-        }
-        return null;
-    }
-
-    public void tick() {
-        animationTick++;
-        if (animationTick >= maxAnimationLength()) {
-            animationTick = 0;
-        }
-        update();
-    }
-
-    private long maxAnimationLength() {
-        return CloudSignService.instance().signLayoutService().find(this.layoutId()).layouts().get(state).stream().mapToLong(LayoutTick::holdTime).sum();
+    public void append(CloudService service) {
+        this.cloudService = service;
+        this.state = CloudSignState.ONLINE;
+        this.update();
     }
 }

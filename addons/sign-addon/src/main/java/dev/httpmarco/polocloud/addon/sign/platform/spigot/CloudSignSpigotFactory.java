@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.addon.sign.platform.spigot;
 
 import dev.httpmarco.polocloud.addon.sign.CloudSign;
 import dev.httpmarco.polocloud.addon.sign.CloudSignFactory;
+import dev.httpmarco.polocloud.addon.sign.CloudSignService;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,14 +29,28 @@ import org.jetbrains.annotations.NotNull;
 public final class CloudSignSpigotFactory extends CloudSignFactory {
 
     @Override
+    public void pre(@NotNull CloudSign cloudSign) {
+        //todo duplicated
+        var pos = new Location(Bukkit.getWorld(cloudSign.world()), cloudSign.x(), cloudSign.y(), cloudSign.z());
+
+        var block = pos.getBlock();
+        var sign = (Sign) block.getState();
+
+        //block editing of sign
+        sign.setWaxed(true);
+        sign.update(true, false);
+    }
+
+    @Override
     public void print(@NotNull CloudSign cloudSign) {
         var pos = new Location(Bukkit.getWorld(cloudSign.world()), cloudSign.x(), cloudSign.y(), cloudSign.z());
 
         var block = pos.getBlock();
         var sign = (Sign) block.getState();
 
+        var layout = CloudSignService.instance().signAnimationRunner().currentTickedLayout().get(cloudSign.state());
         for (int i = 0; i < 4; i++) {
-            sign.getSide(Side.FRONT).line(i, Component.text(cloudSign.currentLayout().lines()[i]));
+            sign.getSide(Side.FRONT).line(i, Component.text(layout.lines()[i]));
         }
         sign.update(true, false);
     }
