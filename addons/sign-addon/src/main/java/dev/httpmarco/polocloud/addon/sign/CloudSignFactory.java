@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.addon.sign;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
+import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
 
 public abstract class CloudSignFactory {
 
@@ -25,13 +26,20 @@ public abstract class CloudSignFactory {
         CloudAPI.instance().globalEventNode().addListener(CloudServiceOnlineEvent.class, event -> {
             for (var sign : CloudSignService.instance().signs()) {
 
-                if(!sign.group().equals(event.cloudService().group().name())) {
+                if (!sign.group().equalsIgnoreCase(event.cloudService().group().name())) {
                     continue;
                 }
 
                 if (sign.cloudService() == null && sign.state() == CloudSignState.SEARCHING) {
                     sign.append(event.cloudService());
                     break;
+                }
+            }
+        });
+        CloudAPI.instance().globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> {
+            for (var sign : CloudSignService.instance().signs()) {
+                if (sign.cloudService() != null && sign.cloudService().name().equals(event.cloudService().name())) {
+                    sign.remove();
                 }
             }
         });
