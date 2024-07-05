@@ -16,9 +16,11 @@
 
 package dev.httpmarco.polocloud.addon.sign;
 
+import dev.httpmarco.polocloud.api.services.CloudService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Accessors(fluent = true)
@@ -29,6 +31,8 @@ public class CloudSign {
     private final int x;
     private final int y;
     private final int z;
+
+    private @Nullable CloudService cloudService;
 
     @Setter
     private CloudSignState state = CloudSignState.SEARCHING;
@@ -46,5 +50,11 @@ public class CloudSign {
 
     public void update() {
         CloudSignService.instance().serviceSignFactory().print(this);
+    }
+
+    public void append(CloudService service) {
+        this.cloudService = service;
+        this.state = CloudSignState.ONLINE;
+        this.update();
     }
 }

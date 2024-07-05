@@ -16,7 +16,26 @@
 
 package dev.httpmarco.polocloud.addon.sign;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
+
 public abstract class CloudSignFactory {
+
+    public CloudSignFactory() {
+        CloudAPI.instance().globalEventNode().addListener(CloudServiceOnlineEvent.class, event -> {
+            for (var sign : CloudSignService.instance().signs()) {
+
+                if(!sign.group().equals(event.cloudService().group().name())) {
+                    continue;
+                }
+
+                if (sign.cloudService() == null && sign.state() == CloudSignState.SEARCHING) {
+                    sign.append(event.cloudService());
+                    break;
+                }
+            }
+        });
+    }
 
     public abstract void pre(CloudSign sign);
 

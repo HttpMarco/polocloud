@@ -35,5 +35,7 @@ public final class LayoutConfiguration {
                 new LayoutTick(new String[]{" ", "Searching for", "server.", " "}, 20),
                 new LayoutTick(new String[]{" ", "Searching for", "server..", " "}, 20),
                 new LayoutTick(new String[]{" ", "Searching for", "server...", " "}, 20)));
+
+        layouts.put(CloudSignState.ONLINE, List.of(new LayoutTick(new String[]{" ", "Online", " ", " "}, 1000)));
     }
 }
