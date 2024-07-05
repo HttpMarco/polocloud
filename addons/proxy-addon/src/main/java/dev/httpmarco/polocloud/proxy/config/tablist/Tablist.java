@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.tablist;
+package dev.httpmarco.polocloud.proxy.config.tablist;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

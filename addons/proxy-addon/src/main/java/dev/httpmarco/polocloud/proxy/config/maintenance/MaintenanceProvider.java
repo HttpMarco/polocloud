@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.config;
+package dev.httpmarco.polocloud.proxy.config.maintenance;
 
-import dev.httpmarco.polocloud.proxy.config.maintenance.Maintenance;
-import dev.httpmarco.polocloud.proxy.config.tablist.Tablist;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@AllArgsConstructor
-public class ProxyConfig {
-
-    private Maintenance maintenance;
-    private Tablist tablist;
+public interface MaintenanceProvider {
+    Maintenance maintenance();
 }

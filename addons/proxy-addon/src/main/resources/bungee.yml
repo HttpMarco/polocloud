@@ -1,0 +1,4 @@
+name: PoloCloud-Proxy
+version: 1.0.9-SNAPSHOT
+author: HttpMarco
+main: dev.httpmarco.polocloud.proxy.platform.bungeecord.BungeeCordPlatformPlugin

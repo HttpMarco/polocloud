@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy;
+package dev.httpmarco.polocloud.proxy.platform.velocity;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -22,28 +22,25 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.player.CloudPlayerSwitchServerEvent;
-import dev.httpmarco.polocloud.proxy.command.ProxyCommand;
 import dev.httpmarco.polocloud.proxy.config.Config;
-import dev.httpmarco.polocloud.proxy.listener.PingListener;
-import dev.httpmarco.polocloud.proxy.listener.PlayerDisconnectListener;
-import dev.httpmarco.polocloud.proxy.listener.ServerPostConnectListener;
-import dev.httpmarco.polocloud.proxy.maintenance.MaintenanceManager;
-import dev.httpmarco.polocloud.proxy.tablist.TablistManager;
+import dev.httpmarco.polocloud.proxy.platform.velocity.command.ProxyCommand;
+import dev.httpmarco.polocloud.proxy.platform.velocity.listener.PingListener;
+import dev.httpmarco.polocloud.proxy.platform.velocity.listener.PlayerDisconnectListener;
+import dev.httpmarco.polocloud.proxy.platform.velocity.listener.ServerPostConnectListener;
+import dev.httpmarco.polocloud.proxy.platform.velocity.configuration.maintenance.VelocityMaintenanceProvider;
+import dev.httpmarco.polocloud.proxy.platform.velocity.configuration.tablist.VelocityTablistHandler;
 import lombok.Getter;
 
 import javax.inject.Inject;
-import java.util.UUID;
 
 @Getter
 @Plugin(id = "polocloud-proxy", name = "PoloCloud", version = "1.0.0", authors = "HttpMarco")
 public final class VelocityPlatformPlugin {
 
-    public static final UUID SELF_ID = UUID.fromString(System.getenv("serviceId"));
-
+    private final Config config = new Config();
     private final ProxyServer server;
-    private Config config;
-    private TablistManager tabManager;
-    private MaintenanceManager maintenanceManager;
+    private VelocityTablistHandler velocityTablistHandler;
+    private VelocityMaintenanceProvider velocityMaintenanceProvider;
 
     @Inject
     public VelocityPlatformPlugin(ProxyServer server) {
@@ -52,18 +49,16 @@ public final class VelocityPlatformPlugin {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        this.config = new Config();
-
-        this.tabManager = new TablistManager(this);
-        this.maintenanceManager = new MaintenanceManager(this);
+        this.velocityTablistHandler = new VelocityTablistHandler(this);
+        this.velocityMaintenanceProvider = new VelocityMaintenanceProvider();
 
         var eventManager = this.server.getEventManager();
+        eventManager.register(this, new PingListener(this));
         eventManager.register(this, new ServerPostConnectListener(this));
         eventManager.register(this, new PlayerDisconnectListener(this));
-        eventManager.register(this, new PingListener(this));
 
         var eventNode = CloudAPI.instance().globalEventNode();
-        eventNode.addListener(CloudPlayerSwitchServerEvent.class, it -> this.getServer().getPlayer(it.cloudPlayer().uniqueId()).ifPresent(player -> this.getTabManager().update(player)));
+        eventNode.addListener(CloudPlayerSwitchServerEvent.class, it -> this.getServer().getPlayer(it.cloudPlayer().uniqueId()).ifPresent(player -> this.getVelocityTablistHandler().update(player)));
 
         var commandManager = this.server.getCommandManager();
         commandManager.register(commandManager.metaBuilder("proxy").build(), new ProxyCommand());

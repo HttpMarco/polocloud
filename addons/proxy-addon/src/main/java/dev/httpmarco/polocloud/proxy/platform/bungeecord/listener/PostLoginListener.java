@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.listener;
+package dev.httpmarco.polocloud.proxy.platform.bungeecord.listener;
 
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.DisconnectEvent;
-import dev.httpmarco.polocloud.proxy.VelocityPlatformPlugin;
+import dev.httpmarco.polocloud.proxy.platform.bungeecord.BungeeCordPlatformPlugin;
 import lombok.AllArgsConstructor;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
 
 @AllArgsConstructor
-public class PlayerDisconnectListener {
+public class PostLoginListener implements Listener {
 
-    private final VelocityPlatformPlugin platform;
+    private final BungeeCordPlatformPlugin platform;
 
-    @Subscribe
-    public void onDisconnect(DisconnectEvent event) {
-        this.platform.getServer().getAllPlayers().forEach(player -> this.platform.getTabManager().update(player));
+    @EventHandler
+    public void onLogin(PostLoginEvent event) {
+        this.platform.getBungeeTablistHandler().addPlayer(event.getPlayer());
+        this.platform.getProxy().getPlayers().forEach(player -> this.platform.getBungeeTablistHandler().update(player));
     }
 }
