@@ -29,6 +29,19 @@ import org.jetbrains.annotations.NotNull;
 public final class CloudSignSpigotFactory extends CloudSignFactory {
 
     @Override
+    public void pre(@NotNull CloudSign cloudSign) {
+        //todo duplicated
+        var pos = new Location(Bukkit.getWorld(cloudSign.world()), cloudSign.x(), cloudSign.y(), cloudSign.z());
+
+        var block = pos.getBlock();
+        var sign = (Sign) block.getState();
+
+        //block editing of sign
+        sign.setWaxed(true);
+        sign.update(true, false);
+    }
+
+    @Override
     public void print(@NotNull CloudSign cloudSign) {
         var pos = new Location(Bukkit.getWorld(cloudSign.world()), cloudSign.x(), cloudSign.y(), cloudSign.z());
 

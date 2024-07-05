@@ -40,6 +40,7 @@ public class CloudSign {
         this.world = world;
         this.group = group;
 
+        CloudSignService.instance().serviceSignFactory().pre(this);
         this.update();
     }
 
