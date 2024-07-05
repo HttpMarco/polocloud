@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.proxy.command;
+package dev.httpmarco.polocloud.proxy.platform.velocity.command;
 
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -86,6 +86,7 @@ public class ProxyCommand implements SimpleCommand {
         var state = Boolean.parseBoolean(args[1]);
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
         var group = CloudAPI.instance().serviceProvider().find(cloudPlayer.currentProxyName()).group();
+
         group.properties().put(GroupProperties.MAINTENANCE, state);
         group.update();
 
