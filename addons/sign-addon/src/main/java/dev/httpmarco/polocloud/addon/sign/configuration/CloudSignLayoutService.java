@@ -28,7 +28,7 @@ import java.nio.file.Path;
 public final class CloudSignLayoutService {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path LAYOUT_PATH = Path.of("polocloud-signs/layout.json");
+    private static final Path LAYOUT_PATH = Path.of("./plugins/polocloud-signs/layout.json");
     private final LayoutConfiguration layoutConfiguration;
 
     @SneakyThrows
