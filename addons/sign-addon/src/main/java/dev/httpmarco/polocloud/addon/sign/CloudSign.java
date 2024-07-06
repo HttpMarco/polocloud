@@ -57,4 +57,10 @@ public class CloudSign {
         this.state = CloudSignState.ONLINE;
         this.update();
     }
+
+    public void remove() {
+        this.cloudService = null;
+        this.state = CloudSignState.SEARCHING;
+        this.update();
+    }
 }
