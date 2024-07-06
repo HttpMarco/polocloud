@@ -1,4 +1,5 @@
-# PoloCloud
+<h1 align="center">PoloCloud</h1>
+<h3 align="center">The simplest and easiest Cloud for Minecraft</h3>
 
 ## Installation
 
