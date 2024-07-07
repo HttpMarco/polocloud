@@ -38,6 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
@@ -139,6 +140,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             } else {
                 localCloudService.execute("stop");
             }
+            localCloudService.process().waitFor(5, TimeUnit.SECONDS);
             this.shutdownProcess(localCloudService);
         }
 
@@ -154,7 +156,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         if (!service.group().properties().has(GroupProperties.STATIC)) {
             synchronized (this) {
                 FileUtils.deleteDirectory(service.runningFolder().toFile());
-                java.nio.file.Files.deleteIfExists(service.runningFolder());
+                Files.deleteIfExists(service.runningFolder());
             }
         }
 
