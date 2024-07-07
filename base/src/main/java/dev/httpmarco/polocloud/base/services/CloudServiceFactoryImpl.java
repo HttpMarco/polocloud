@@ -34,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -42,6 +43,14 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
     // todo not used
     private static final Path RUNNING_FOLDER = OsganFile.define("running", OsganFileCreateOption.CREATION).path();
+
+    @SneakyThrows
+    public CloudServiceFactoryImpl() {
+        if (Files.exists(RUNNING_FOLDER)) {
+            FileUtils.deleteDirectory(RUNNING_FOLDER.toFile());
+            Files.createDirectory(RUNNING_FOLDER);
+        }
+    }
 
     @Override
     @SneakyThrows
@@ -64,34 +73,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         // default commands
         args.add("-Djline.terminal=jline.UnsupportedTerminal");
 
-        args.addAll(List.of("-XX:+UseG1GC",
-                "-XX:+ParallelRefProcEnabled",
-                "-XX:MaxGCPauseMillis=200",
-                "-XX:+UnlockExperimentalVMOptions",
-                "-XX:+DisableExplicitGC",
-                "-XX:+AlwaysPreTouch",
-                "-XX:G1NewSizePercent=30",
-                "-XX:G1MaxNewSizePercent=40",
-                "-XX:G1HeapRegionSize=8M",
-                "-XX:G1ReservePercent=20",
-                "-XX:G1HeapWastePercent=5",
-                "-XX:G1MixedGCCountTarget=4",
-                "-XX:InitiatingHeapOccupancyPercent=15",
-                "-XX:G1MixedGCLiveThresholdPercent=90",
-                "-XX:G1RSetUpdatingPauseTimePercent=5",
-                "-XX:SurvivorRatio=32",
-                "-XX:+PerfDisableSharedMem",
-                "-XX:MaxTenuringThreshold=1",
-                "-Dusing.aikars.flags=https://mcflags.emc.gs",
-                "-Daikars.new.flags=true",
-                "-XX:-UseAdaptiveSizePolicy",
-                "-XX:CompileThreshold=100",
-                "-Dio.netty.recycler.maxCapacity=0",
-                "-Dio.netty.recycler.maxCapacity.default=0",
-                "-Djline.terminal=jline.UnsupportedTerminal",
-                "-Dfile.encoding=UTF-8",
-                "-Dclient.encoding.override=UTF-8",
-                "-DIReallyKnowWhatIAmDoingISwear=true"));
+        args.addAll(List.of("-XX:+UseG1GC", "-XX:+ParallelRefProcEnabled", "-XX:MaxGCPauseMillis=200", "-XX:+UnlockExperimentalVMOptions", "-XX:+DisableExplicitGC", "-XX:+AlwaysPreTouch", "-XX:G1NewSizePercent=30", "-XX:G1MaxNewSizePercent=40", "-XX:G1HeapRegionSize=8M", "-XX:G1ReservePercent=20", "-XX:G1HeapWastePercent=5", "-XX:G1MixedGCCountTarget=4", "-XX:InitiatingHeapOccupancyPercent=15", "-XX:G1MixedGCLiveThresholdPercent=90", "-XX:G1RSetUpdatingPauseTimePercent=5", "-XX:SurvivorRatio=32", "-XX:+PerfDisableSharedMem", "-XX:MaxTenuringThreshold=1", "-Dusing.aikars.flags=https://mcflags.emc.gs", "-Daikars.new.flags=true", "-XX:-UseAdaptiveSizePolicy", "-XX:CompileThreshold=100", "-Dio.netty.recycler.maxCapacity=0", "-Dio.netty.recycler.maxCapacity.default=0", "-Djline.terminal=jline.UnsupportedTerminal", "-Dfile.encoding=UTF-8", "-Dclient.encoding.override=UTF-8", "-DIReallyKnowWhatIAmDoingISwear=true"));
 
         args.add("-Xms" + service.memory() + "M");
         args.add("-Xmx" + service.memory() + "M");
