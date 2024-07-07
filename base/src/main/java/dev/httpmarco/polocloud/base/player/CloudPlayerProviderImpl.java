@@ -19,14 +19,11 @@ package dev.httpmarco.polocloud.base.player;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.events.player.CloudPlayerSwitchServerEvent;
-import dev.httpmarco.polocloud.api.packets.player.CloudAllPlayersPacket;
-import dev.httpmarco.polocloud.api.packets.player.CloudPlayerPacket;
-import dev.httpmarco.polocloud.api.packets.player.CloudPlayerRegisterPacket;
-import dev.httpmarco.polocloud.api.packets.player.CloudPlayerServiceChangePacket;
+import dev.httpmarco.polocloud.api.packets.player.*;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.SneakyThrows;
 
 import java.util.List;
@@ -48,6 +45,21 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
         transmitter.listen(CloudPlayerRegisterPacket.class, (channelTransmit, packet) -> {
             this.register(packet.id(), packet.name());
             this.find(packet.id()).currentProxyName(CloudAPI.instance().serviceProvider().find(packet.proxyId()).name());
+        });
+
+        transmitter.listen(CloudPlayerUnregisterPacket.class, (channelTransmit, packet) -> this.unregister(packet.id()));
+
+        transmitter.listen(CloudPlayerConnectToServerPacket.class, (channelTransmit, packet) -> {
+            var name = find(packet.uuid()).currentProxyName();
+            var service = CloudAPI.instance().serviceProvider().find(name);
+
+            if (service != null) {
+                if (service instanceof LocalCloudService localCloudService) {
+                    localCloudService.channelTransmit().sendPacket(packet);
+                } else {
+                    //todo
+                }
+            }
         });
 
         transmitter.listen(CloudPlayerServiceChangePacket.class, (channelTransmit, packet) -> {
