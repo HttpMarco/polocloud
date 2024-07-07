@@ -53,9 +53,9 @@ public final class InstanceServiceProvider extends CloudServiceProvider {
     }
 
     @Override
-    public CompletableFuture<List<CloudService>> servicesAsync(CloudGroup group) {
+    public CompletableFuture<List<CloudService>> servicesAsync(String group) {
         var future = new FutureResult<List<CloudService>>();
-        CloudInstance.instance().client().transmitter().request("services-group", new CommunicationProperty().set("name", group.name()), CloudAllServicesPacket.class, it -> future.complete(it.services()));
+        CloudInstance.instance().client().transmitter().request("services-group", new CommunicationProperty().set("name", group), CloudAllServicesPacket.class, it -> future.complete(it.services()));
         return future.toCompletableFuture();
     }
 

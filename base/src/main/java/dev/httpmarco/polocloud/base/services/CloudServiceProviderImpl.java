@@ -113,13 +113,8 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
     }
 
     @Override
-    public List<CloudService> services(CloudGroup group) {
-        return this.services.stream().filter(it -> it.group().equals(group)).toList();
-    }
-
-    @Override
-    public @NotNull CompletableFuture<List<CloudService>> servicesAsync(CloudGroup group) {
-        return CompletableFuture.completedFuture(this.services.stream().filter(it -> it.group().equals(group)).toList());
+    public @NotNull CompletableFuture<List<CloudService>> servicesAsync(String group) {
+        return CompletableFuture.completedFuture(this.services.stream().filter(it -> it.group().name().equals(group)).toList());
     }
 
     @Override

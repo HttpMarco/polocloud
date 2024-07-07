@@ -47,7 +47,7 @@ public final class InstanceCloudService implements CloudService {
     private final int memory;
 
     private final ServiceState state;
-    
+
     @Setter
     private CloudGroup group;
 
@@ -90,4 +90,11 @@ public final class InstanceCloudService implements CloudService {
         return List.of();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CloudService service) {
+            return this.name().equals(service.name());
+        }
+        return false;
+    }
 }

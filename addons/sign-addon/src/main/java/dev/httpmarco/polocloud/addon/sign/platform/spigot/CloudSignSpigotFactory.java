@@ -50,7 +50,14 @@ public final class CloudSignSpigotFactory extends CloudSignFactory {
 
         var layout = CloudSignService.instance().signAnimationRunner().currentTickedLayout().get(cloudSign.state());
         for (int i = 0; i < 4; i++) {
-            sign.getSide(Side.FRONT).line(i, Component.text(layout.lines()[i]));
+
+            var line = layout.lines()[i];
+            if (cloudSign.cloudService() != null) {
+                line = line.replaceAll("%server%", cloudSign.cloudService().name())
+                        .replaceAll("%players%", String.valueOf(cloudSign.cloudService().onlinePlayersCount()));
+            }
+
+            sign.getSide(Side.FRONT).line(i, Component.text(line));
         }
         sign.update(true, false);
     }

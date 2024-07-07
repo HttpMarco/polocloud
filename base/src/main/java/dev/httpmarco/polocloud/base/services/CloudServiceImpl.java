@@ -93,4 +93,13 @@ public class CloudServiceImpl implements CloudService {
     public String toString() {
         return "group=" + group + ", orderedId=" + orderedId + ", state=" + state + ", id=" + id;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CloudService service) {
+            return this.name().equals(service.name());
+        }
+        return false;
+    }
 }

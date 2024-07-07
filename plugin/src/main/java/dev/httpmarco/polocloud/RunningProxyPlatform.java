@@ -21,6 +21,7 @@ import dev.httpmarco.polocloud.api.common.CloudMemoryCalculator;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
 import dev.httpmarco.polocloud.api.packets.general.OperationDoublePacket;
+import dev.httpmarco.polocloud.api.packets.player.CloudPlayerConnectToServerPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
 import dev.httpmarco.polocloud.api.services.ServiceState;
@@ -28,13 +29,17 @@ import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @Getter
 @Accessors(fluent = true)
 public class RunningProxyPlatform extends RunningPlatform {
 
-    public RunningProxyPlatform(Consumer<CloudService> registerService, Consumer<CloudService> unregisterService) {
+    public RunningProxyPlatform(Consumer<CloudService> registerService,
+                                Consumer<CloudService> unregisterService,
+                                BiConsumer<UUID, String> playerConnect) {
         var instance = CloudAPI.instance();
 
         CloudAPI.instance().serviceProvider().filterServiceAsync(ServiceFilter.SERVERS).whenComplete((cloudServices, throwable) -> {
@@ -51,6 +56,8 @@ public class RunningProxyPlatform extends RunningPlatform {
             }
             registerService.accept(event.cloudService());
         });
+
+        CloudInstance.instance().client().transmitter().listen(CloudPlayerConnectToServerPacket.class, (ch, packet) -> playerConnect.accept(packet.uuid(), packet.serverId()));
 
         instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> unregisterService.accept(event.cloudService()));
     }

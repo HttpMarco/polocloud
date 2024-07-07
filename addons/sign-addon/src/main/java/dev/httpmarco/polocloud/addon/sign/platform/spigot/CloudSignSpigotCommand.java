@@ -18,7 +18,6 @@ package dev.httpmarco.polocloud.addon.sign.platform.spigot;
 
 import dev.httpmarco.polocloud.addon.sign.CloudSignService;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

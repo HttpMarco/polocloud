@@ -51,7 +51,8 @@ public final class VelocityPlatform {
 
         this.platform = new RunningProxyPlatform(
                 it -> server.registerServer(new ServerInfo(it.name(), new InetSocketAddress(it.hostname(), it.port()))),
-                it -> server.getServer(it.name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo())));
+                it -> server.getServer(it.name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo())),
+                (uuid, serverId) -> server.getPlayer(uuid).ifPresent(player -> server.getServer(serverId).ifPresent(it -> player.createConnectionRequest(it).fireAndForget())));
 
         var eventManager = this.server.getEventManager();
         eventManager.register(this, new PlayerChooseInitialServerListener(this.server));

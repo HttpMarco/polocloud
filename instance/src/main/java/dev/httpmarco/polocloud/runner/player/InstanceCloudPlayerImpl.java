@@ -16,10 +16,9 @@
 
 package dev.httpmarco.polocloud.runner.player;
 
+import dev.httpmarco.polocloud.api.packets.player.CloudPlayerConnectToServerPacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import dev.httpmarco.polocloud.runner.CloudInstance;
 
 import java.util.UUID;
 
@@ -47,5 +46,6 @@ public final class InstanceCloudPlayerImpl extends CloudPlayer {
 
     @Override
     public void connectToServer(String serverName) {
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerConnectToServerPacket(uniqueId(), serverName));
     }
 }

@@ -18,16 +18,34 @@ package dev.httpmarco.polocloud.addon.sign.platform.spigot;
 
 import dev.httpmarco.polocloud.addon.sign.CloudSignService;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.WallSign;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
-public final class CloudSignSpigotBootstrap extends JavaPlugin {
+public final class CloudSignSpigotBootstrap extends JavaPlugin implements Listener {
+
+    private CloudSignService signService;
 
     @Override
     public void onEnable() {
-        var signService = new CloudSignService(new CloudSignSpigotFactory());
+        signService = new CloudSignService(new CloudSignSpigotFactory());
 
         getCommand("cloudsign").setExecutor(new CloudSignSpigotCommand());
 
+        Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getScheduler().runTaskTimer(this, signService::tick, 1, 0);
+    }
+
+    @EventHandler
+    public void handle(@NotNull PlayerInteractEvent event) {
+        Block block = event.getClickedBlock();
+
+        if (block != null && block.getType().data.equals(WallSign.class)) {
+            signService.connectPlayer(block.getWorld().getName(), block.getX(), block.getY(), block.getZ(), event.getPlayer().getUniqueId());
+        }
     }
 }

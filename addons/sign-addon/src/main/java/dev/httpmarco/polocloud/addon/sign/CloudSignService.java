@@ -17,11 +17,13 @@
 package dev.httpmarco.polocloud.addon.sign;
 
 import dev.httpmarco.polocloud.addon.sign.configuration.CloudSignLayoutService;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
@@ -44,13 +46,32 @@ public class CloudSignService {
 
     public void registerSign(String group, String world, int x, int y, int z) {
         this.signs.add(new CloudSign(group, world, x, y, z));
+        this.serviceSignFactory.prependSearchingSign(group);
     }
 
     public boolean existsSign(String world, int x, int y, int z) {
         return this.signs.stream().anyMatch(it -> it.world().equals(world) && it.x() == x && it.y() == y && it.z() == z);
     }
 
+    public CloudSign sign(String world, int x, int y, int z) {
+        return this.signs.stream().filter(it -> it.world().equals(world) && it.x() == x && it.y() == y && it.z() == z).findFirst().orElse(null);
+    }
+
     public void tick() {
         this.signAnimationRunner.tick();
+    }
+
+    public void connectPlayer(String world, int x, int y, int z, UUID uuid) {
+        System.out.println("12");
+        if (!existsSign(world, x, y, z)) {
+            return;
+        }        System.out.println("13");
+        var sign = sign(world, x, y, z);
+
+        if (sign.cloudService() == null) {
+            return;
+        }
+        System.out.println("14");
+        CloudAPI.instance().playerProvider().find(uuid).connectToServer(sign.cloudService());
     }
 }

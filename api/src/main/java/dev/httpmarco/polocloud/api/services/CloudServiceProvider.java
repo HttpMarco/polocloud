@@ -43,11 +43,21 @@ public abstract class CloudServiceProvider {
     public abstract CompletableFuture<List<CloudService>> filterServiceAsync(ServiceFilter filter);
 
     @SneakyThrows
+    public CompletableFuture<List<CloudService>> servicesAsync(CloudGroup group) {
+        return servicesAsync(group.name());
+    }
+
+    @SneakyThrows
     public List<CloudService> services(CloudGroup group) {
+        return servicesAsync(group.name()).get(5, TimeUnit.SECONDS);
+    }
+
+    @SneakyThrows
+    public List<CloudService> services(String group) {
         return servicesAsync(group).get(5, TimeUnit.SECONDS);
     }
 
-    public abstract CompletableFuture<List<CloudService>> servicesAsync(CloudGroup group);
+    public abstract CompletableFuture<List<CloudService>> servicesAsync(String group);
 
     @SneakyThrows
     public CloudService find(UUID id) {

@@ -23,6 +23,7 @@ import dev.httpmarco.polocloud.bungeecord.listener.*;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.net.InetSocketAddress;
@@ -56,7 +57,15 @@ public final class BungeeCordPlatform extends Plugin {
 
         this.runningPlatform = new RunningProxyPlatform(
                 it -> registerServer(it.name(), it.hostname(), it.port()),
-                it -> ProxyServer.getInstance().getServers().remove(it.name()));
+                it -> ProxyServer.getInstance().getServers().remove(it.name()),
+                (uuid, serverId) -> {
+
+                    var player = instance.getPlayer(uuid);
+
+                    if (player != null) {
+                        player.connect(instance.getServerInfo(serverId));
+                    }
+                });
 
         this.runningPlatform.changeToOnline();
     }

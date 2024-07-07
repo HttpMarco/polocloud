@@ -63,4 +63,9 @@ public class CloudSign {
         this.state = CloudSignState.SEARCHING;
         this.update();
     }
+
+    public boolean isEmpty() {
+        return this.cloudService == null && state == CloudSignState.SEARCHING;
+    }
+
 }
