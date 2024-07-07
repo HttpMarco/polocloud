@@ -11,3 +11,5 @@ include("addons:sign-addon")
 findProject(":addons:sign-addon")?.name = "sign-addon"
 include("addons:hubcommand-addon")
 findProject(":addons:hubcommand-addon")?.name = "hubcommand-addon"
+include("addons:notify-addon")
+findProject(":addons:notify-addon")?.name = "notify-addon"
