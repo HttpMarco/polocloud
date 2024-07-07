@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.addon.sign.configuration;
+package dev.httpmarco.polocloud.addon.sign;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import dev.httpmarco.polocloud.addon.sign.configuration.LayoutConfiguration;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -27,7 +26,6 @@ import java.nio.file.Path;
 @Getter
 public final class CloudSignLayoutService {
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path LAYOUT_PATH = Path.of("./plugins/polocloud-signs/layout.json");
     private final LayoutConfiguration layoutConfiguration;
 
@@ -38,9 +36,9 @@ public final class CloudSignLayoutService {
             Files.createFile(LAYOUT_PATH);
 
             this.layoutConfiguration = new LayoutConfiguration();
-            Files.writeString(LAYOUT_PATH, GSON.toJson(this.layoutConfiguration));
+            Files.writeString(LAYOUT_PATH, CloudSignService.SIGN_GSON.toJson(this.layoutConfiguration));
         } else {
-            this.layoutConfiguration = GSON.fromJson(Files.readString(LAYOUT_PATH), LayoutConfiguration.class);
+            this.layoutConfiguration = CloudSignService.SIGN_GSON.fromJson(Files.readString(LAYOUT_PATH), LayoutConfiguration.class);
         }
     }
 }

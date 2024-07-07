@@ -66,7 +66,7 @@ public final class CloudSignAnimationRunner {
             }
         }
 
-        CloudSignService.instance().signs().forEach(CloudSign::update);
+        CloudSignService.instance().signConfiguration().signs().forEach(CloudSign::update);
     }
 
     private LayoutTick generateNewFrame(CloudSignState state, long currentTick) {

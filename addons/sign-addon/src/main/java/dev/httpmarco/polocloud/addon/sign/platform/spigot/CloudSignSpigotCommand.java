@@ -75,7 +75,7 @@ public final class CloudSignSpigotCommand implements CommandExecutor {
                 return false;
             }
 
-            //todo
+            CloudSignService.instance().unregisterSign(possibleSignBlock.getWorld().getName(), possibleSignBlock.getX(), possibleSignBlock.getY(), possibleSignBlock.getZ());
             player.sendMessage("Remove successfully sign");
             return false;
         }

@@ -44,8 +44,10 @@ public class CloudSign {
         this.world = world;
         this.group = group;
 
-        CloudSignService.instance().serviceSignFactory().pre(this);
+        var factory = CloudSignService.instance().serviceSignFactory();
+        factory.pre(this);
         this.update();
+        factory.prependSearchingSign(this.group);
     }
 
     public void update() {

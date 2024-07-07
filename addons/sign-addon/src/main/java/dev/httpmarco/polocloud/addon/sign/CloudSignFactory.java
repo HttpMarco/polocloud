@@ -19,7 +19,6 @@ package dev.httpmarco.polocloud.addon.sign;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
-import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 
 public abstract class CloudSignFactory {
@@ -31,7 +30,7 @@ public abstract class CloudSignFactory {
                 return;
             }
 
-            for (var sign : CloudSignService.instance().signs()) {
+            for (var sign : CloudSignService.instance().signConfiguration().signs()) {
 
                 if (!sign.group().equalsIgnoreCase(event.cloudService().group().name())) {
                     continue;
@@ -49,7 +48,7 @@ public abstract class CloudSignFactory {
                 return;
             }
 
-            for (var sign : CloudSignService.instance().signs()) {
+            for (var sign : CloudSignService.instance().signConfiguration().signs()) {
                 if (sign.cloudService() != null && sign.cloudService().name().equals(event.cloudService().name())) {
                     sign.remove();
                 }
@@ -64,11 +63,11 @@ public abstract class CloudSignFactory {
                 continue;
             }
 
-            if (CloudSignService.instance().signs().stream().anyMatch(it -> it.cloudService() != null && it.cloudService().name().equalsIgnoreCase(service.name()))) {
+            if (CloudSignService.instance().signConfiguration().signs().stream().anyMatch(it -> it.cloudService() != null && it.cloudService().name().equalsIgnoreCase(service.name()))) {
                 continue;
             }
 
-            for (var sign : CloudSignService.instance().signs()) {
+            for (var sign : CloudSignService.instance().signConfiguration().signs()) {
                 if (sign.isEmpty()) {
                     sign.append(service);
                     break;
