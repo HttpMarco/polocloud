@@ -45,10 +45,6 @@ public abstract class CloudAPI {
     @SneakyThrows
     public CloudAPI() {
         instance = this;
-
-        //todo better loading of custom properties
-        Class.forName(GroupProperties.class.getName());
-        Class.forName(CloudProperty.class.getName());
     }
 
     public abstract NodeService nodeService();
