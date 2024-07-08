@@ -29,7 +29,6 @@ To install PoloCloud, follow these steps:
 | portRange                        |             | Number            | -1             | //todo      |
 | disablePlatformCache             |             | State             | false          | //todo      |
 | disableConfigurationManipulation |             | State             | false          | //todo      |
-| DEBUG_MODE                      |             | State             | false          | yes         | 
 
 ### Template properties
 | id               | description | type        | default value | implemented |

@@ -79,7 +79,11 @@ public final class GroupCommand {
         }
         var group = CloudAPI.instance().groupProvider().group(name);
 
-        // todo check maybe exist
+        if (!group.properties().pool().containsKey(key)) {
+            logger.info("This property key does not exists in group pool!");
+            return;
+        }
+
         group.properties().pool().remove(key);
         group.update();
         logger.success("You remove successfully the property " + key + " from group " + group.name() + "&2.");
