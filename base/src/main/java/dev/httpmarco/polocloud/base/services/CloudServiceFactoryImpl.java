@@ -79,7 +79,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         args.add("-Xms" + service.memory() + "M");
         args.add("-Xmx" + service.memory() + "M");
 
-        //todo better
         args.addAll(Arrays.stream(platformService.find(cloudGroup.platform().version()).platformsEnvironment()).toList());
         args.add("-javaagent:../../polocloud.jar");
         args.add("-jar");
@@ -89,9 +88,10 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         var processBuilder = new ProcessBuilder().directory(service.runningFolder().toFile()).command(args.toArray(String[]::new));
 
-        processBuilder.redirectError(new File("polo"));
+        if (cloudGroup.properties().has(GroupProperties.DEBUG_MODE)) {
+            processBuilder.redirectError(new File(service.name() + service.id() + ".error-log"));
+        }
 
-        //todo better
         processBuilder.environment().put("hostname", service.hostname());
         processBuilder.environment().put("port", String.valueOf(service.port()));
         processBuilder.environment().put("appendSearchClasspath", String.valueOf(!(platformService.find(service.group().platform().version()) instanceof PaperPlatform)));
