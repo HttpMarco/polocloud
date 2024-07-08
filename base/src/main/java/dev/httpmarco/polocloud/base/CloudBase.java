@@ -84,7 +84,7 @@ public final class CloudBase extends CloudAPI {
         // print cloud header information
 
         terminal.spacer();
-        terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.5-beta");
+        terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.10-snapshot");
         terminal.spacer("   &1node&2: &1" + nodeService.localNode().name() + " &2| &1id&2: &1" + nodeService.localNode().id());
         terminal.spacer();
 
