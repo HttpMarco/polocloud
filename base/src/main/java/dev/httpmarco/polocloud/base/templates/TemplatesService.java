@@ -86,9 +86,8 @@ public final class TemplatesService {
                 return false;
             }
             FileUtils.deleteDirectory(file);
-            //todo check work? String? Object remove?
-            this.templates().remove(name);
-            this.document.content().templates().remove(name);
+            this.templates().removeIf(template -> template.id().equals(name));
+            this.document.content().templates().removeIf(template -> template.id().equals(name));
             this.document.update();
         }
         return true;

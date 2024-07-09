@@ -24,6 +24,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,7 +166,7 @@ public class CloudCommand extends Command implements TabExecutor {
         }
     }
 
-    private void handleServiceCommand(ProxiedPlayer player, String[] args) {
+    private void handleServiceCommand(ProxiedPlayer player, String @NotNull [] args) {
         switch (args.length) {
             case 2 -> {
                 if (args[1].equalsIgnoreCase("list")) {
