@@ -60,6 +60,7 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
         transmitter.responder("services-filtering", property -> new CloudAllServicesPacket(filterService(property.getEnum("filter", ServiceFilter.class))));
 
         transmitter.listen(CloudServiceShutdownPacket.class, (channel, packet) -> factory.stop(find(packet.uuid())));
+        transmitter.listen(CloudServiceStartPacket.class, (channel, packet) -> factory.start(CloudAPI.instance().groupProvider().group(packet.group())));
         transmitter.listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> find(packet.id()).maxPlayers(packet.maxPlayers()));
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
