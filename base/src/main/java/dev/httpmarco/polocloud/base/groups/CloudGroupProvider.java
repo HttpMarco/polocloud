@@ -72,24 +72,19 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
 
     @Override
     public boolean createGroup(String name, String platformVersion, int memory, int minOnlineCount) {
-        //todo remove outpoint
         if (isGroup(name)) {
-            CloudAPI.instance().logger().info("The group already exists!");
             return false;
         }
 
         if (memory <= 0) {
-            CloudAPI.instance().logger().info("The minimum memory value must be higher then 0. ");
             return false;
         }
 
         if (!platformService.isValidPlatform(platformVersion)) {
-            CloudAPI.instance().logger().info("The platform " + platformVersion + " is an invalid type!");
             return false;
         }
 
         var platform = platformService.find(platformVersion);
-
         var group = new CloudGroupImpl(name, new PlatformVersion(platformVersion, platform.proxy()), memory, minOnlineCount);
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);

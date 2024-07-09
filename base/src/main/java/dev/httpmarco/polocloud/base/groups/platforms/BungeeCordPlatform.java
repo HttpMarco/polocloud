@@ -21,6 +21,8 @@ import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
+
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,16 +42,14 @@ public final class BungeeCordPlatform extends Platform {
     @SneakyThrows
     public void download(String version) {
         final var url = URI.create(LATEST_BUNGEECORD).toURL();
-        //todo duplicated code
         var platformPath = Path.of("local").resolve("platforms").resolve(version);
         platformPath.toFile().mkdirs();
-
         Files.copy(url.openConnection().getInputStream(), Path.of(platformPath + "/server.jar"));
     }
 
     @Override
     @SneakyThrows
-    public void prepare(LocalCloudService localCloudService) {
+    public void prepare(@NotNull LocalCloudService localCloudService) {
 
         var configuration = localCloudService.runningFolder().resolve("config.yml");
 

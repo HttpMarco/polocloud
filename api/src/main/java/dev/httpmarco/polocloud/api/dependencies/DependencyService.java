@@ -31,9 +31,7 @@ public final class DependencyService {
             Files.createDirectory(dependenciesPath);
         }
 
-        // todo generate default dependency definitions
         // load default dependencies of base and instance
-        //todo better subversion
         Dependency.load("dev.httpmarco", "osgan-utils", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);;
         Dependency.load("dev.httpmarco", "osgan-reflections", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
         Dependency.load("dev.httpmarco", "osgan-files", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);

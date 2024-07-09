@@ -151,18 +151,35 @@ public final class GroupCommand {
 
     @SubCommand(args = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
     public void handleCreate(String name, String platform, int memory, int minOnlineCount) {
-        if (CloudAPI.instance().groupProvider().createGroup(name, platform, memory, minOnlineCount)) {
-            var group = CloudAPI.instance().groupProvider().group(name);
 
-            // we must create a separate template directory
-            CloudBase.instance().templatesService().createTemplates(name, "every", (group.platform().proxy() ? "every_proxy" : "every_server"));
-            // we set as default value all important templates
-            group.properties().put(GroupProperties.TEMPLATES, name);
-            // send changes to other nodes or update data files
-            group.update();
+        var provider = CloudBase.instance().groupProvider();
 
-            logger.success("Successfully created &3" + name + " &1group&2.");
+        if (provider.isGroup(name)) {
+            CloudAPI.instance().logger().info("The group already exists!");
+            return;
         }
+
+        if (memory <= 0) {
+            CloudAPI.instance().logger().info("The minimum memory value must be higher then 0. ");
+            return;
+        }
+
+        if (!provider.platformService().isValidPlatform(platform)) {
+            CloudAPI.instance().logger().info("The platform " + platform + " is an invalid type!");
+            return;
+        }
+
+        provider.createGroup(name, platform, memory, minOnlineCount);
+        var group = provider.group(name);
+
+        // we must create a separate template directory
+        CloudBase.instance().templatesService().createTemplates(name, "every", (group.platform().proxy() ? "every_proxy" : "every_server"));
+        // we set as default value all important templates
+        group.properties().put(GroupProperties.TEMPLATES, name);
+        // send changes to other nodes or update data files
+        group.update();
+
+        logger.success("Successfully created &3" + name + " &1group&2.");
     }
 
     @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
