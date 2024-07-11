@@ -72,7 +72,7 @@ public final class ServiceCommand {
         this.logger.info("State&2: &3" + service.state());
         this.logger.info("Properties &2(&1" + service.properties().pool().size() + "&2): &3");
 
-        service.properties().pool().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties + " &2= &1" + o.toString()));
+        service.properties().pool().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties + " &2= &1" + o));
     }
 
     @SubCommandCompleter(completionPattern = {"<name>"})

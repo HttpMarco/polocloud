@@ -44,6 +44,7 @@ public final class CommandService {
         this.registerCommand(new HelpCommand());
         this.registerCommand(new ShutdownCommand());
         this.registerCommand(new TemplateCommand());
+        this.registerCommand(new StartCommand());
     }
 
     private void registerCommand(Object command) {
