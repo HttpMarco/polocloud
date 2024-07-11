@@ -73,6 +73,7 @@ public final class CloudBase extends CloudAPI {
         this.globalProperties = this.cloudConfiguration.properties();
 
         this.terminal = new CloudTerminal();
+
         // register logging layers (for general output)
         this.loggerFactory().registerLoggers(new FileLoggerHandler(), terminal);
 
@@ -81,8 +82,8 @@ public final class CloudBase extends CloudAPI {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
         this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.clusterId(), cloudConfiguration.clusterName(), "127.0.0.1", 8192), cloudConfiguration.externalNodes());
-        // print cloud header information
 
+        // print cloud header information
         terminal.spacer();
         terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.10-snapshot");
         terminal.spacer("   &1node&2: &1" + nodeService.localNode().name() + " &2| &1id&2: &1" + nodeService.localNode().id());
