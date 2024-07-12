@@ -36,4 +36,6 @@ public final class GroupProperties {
 
     public static Property<Boolean> STATIC = Property.Boolean("static");
 
+    public static Property<String> DESCRIPTION = Property.String("description");
+
 }
