@@ -60,7 +60,10 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>"})
     public void handleInfo(String name) {
-        if (serviceNotExists(name)) return;
+        if (serviceNotExists(name)) {
+            return;
+        }
+
         final var service = CloudAPI.instance().serviceProvider().find(name);
 
         this.logger.info("Name&2: &3" + name);
@@ -72,7 +75,7 @@ public final class ServiceCommand {
         this.logger.info("State&2: &3" + service.state());
         this.logger.info("Properties &2(&1" + service.properties().pool().size() + "&2): &3");
 
-        service.properties().pool().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties + " &2= &1" + o.toString()));
+        service.properties().pool().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties + " &2= &1" + o));
     }
 
     @SubCommandCompleter(completionPattern = {"<name>"})
@@ -84,7 +87,9 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>", "log"})
     public void handleLog(String name) {
-        if (serviceNotExists(name)) return;
+        if (serviceNotExists(name)) {
+            return;
+        }
 
         for (var log : CloudAPI.instance().serviceProvider().find(name).log()) {
             this.logger.info("&3" + name + "&2: &1" + log);
@@ -102,7 +107,9 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>", "shutdown"})
     public void handleShutdown(String name) {
-        if (serviceNotExists(name)) return;
+        if (serviceNotExists(name)) {
+            return;
+        }
 
         CloudAPI.instance().serviceProvider().find(name).shutdown();
     }
@@ -116,7 +123,9 @@ public final class ServiceCommand {
 
     @SubCommand(args = {"<name>", "execute", "<command...>"})
     public void handelExecuteCommand(String name, String command) {
-        if (serviceNotExists(name)) return;
+        if (serviceNotExists(name)) {
+            return;
+        }
 
         CloudAPI.instance().serviceProvider().find(name).execute(command);
         this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
@@ -132,7 +141,9 @@ public final class ServiceCommand {
     @SneakyThrows
     @SubCommand(args = {"<name>", "copy", "<template>"})
     public void handleCopy(String name, String template) {
-        if (serviceNotExists(name)) return;
+        if (serviceNotExists(name)) {
+            return;
+        }
 
         final var templatesService = CloudBase.instance().templatesService();
         if (templatesService.template(template) == null) {
@@ -170,10 +181,14 @@ public final class ServiceCommand {
 
     private boolean serviceNotExists(String name) {
         var serviceProvider = CloudAPI.instance().serviceProvider();
-        if (serviceProvider == null) return true;
+        if (serviceProvider == null) {
+            return true;
+        }
 
         var service = serviceProvider.find(name);
-        if (service != null) return false;
+        if (service != null) {
+            return false;
+        }
 
         this.logger.info("This services does not exists&2!");
         return true;

@@ -27,7 +27,6 @@ import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.runner.event.InstanceGlobalEventNode;
-import dev.httpmarco.polocloud.runner.groups.InstanceGroup;
 import dev.httpmarco.polocloud.runner.groups.InstanceGroupProvider;
 import dev.httpmarco.polocloud.runner.player.InstanceCloudPlayerProvider;
 import dev.httpmarco.polocloud.runner.services.InstanceCloudService;
@@ -66,25 +65,21 @@ public class CloudInstance extends CloudAPI {
     @SneakyThrows
     public CloudInstance(String[] args) {
         instance = this;
-
-        Dependency.load("net.kyori", "adventure-text-minimessage", "4.17.0");
-        Dependency.load("net.kyori", "adventure-key", "4.17.0");
-        Dependency.load("net.kyori", "examination-api", "1.3.0");
-        Dependency.load("net.kyori", "adventure-api", "4.17.0");
-        Dependency.load("net.kyori", "adventure-platform-api", "4.3.3");
-        Dependency.load("net.kyori", "adventure-platform-facet", "4.3.3");
-        Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.3");
-        Dependency.load("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2");
-        Dependency.load("net.kyori", "adventure-text-serializer-legacy", "4.13.1");
-
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
         this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> {
             this.self = service;
             if (this.self.group().platform().version().toLowerCase().contains("bungeecord")) {
                 Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.13.1");
-            } else {
-                Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.17.0");
+                Dependency.load("net.kyori", "adventure-text-minimessage", "4.17.0");
+                Dependency.load("net.kyori", "adventure-key", "4.17.0");
+                Dependency.load("net.kyori", "examination-api", "1.3.0");
+                Dependency.load("net.kyori", "adventure-api", "4.17.0");
+                Dependency.load("net.kyori", "adventure-platform-api", "4.3.3");
+                Dependency.load("net.kyori", "adventure-platform-facet", "4.3.3");
+                Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.3");
+                Dependency.load("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2");
+                Dependency.load("net.kyori", "adventure-text-serializer-legacy", "4.13.1");
             }
         }));
 

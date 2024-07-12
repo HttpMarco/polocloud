@@ -36,7 +36,6 @@ public final class Logger {
         this.log(LogLevel.WARN, message, null, objects);
     }
 
-
     private void log(LogLevel level, String message, Throwable throwable, Object... objects) {
         CloudAPI.instance().loggerFactory().print(level, message, throwable, objects);
     }
