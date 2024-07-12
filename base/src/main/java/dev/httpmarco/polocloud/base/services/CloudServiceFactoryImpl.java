@@ -31,13 +31,15 @@ import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
@@ -111,18 +113,6 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         CloudAPI.instance().globalEventNode().call(new CloudServiceStartEvent(service));
 
         service.process(processBuilder.start());
-
-        new Thread(() -> {
-            try {
-                service.process().waitFor();
-
-                if (CloudBase.instance().running()) {
-                    this.closeProcess(service);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
     }
 
     @Override
@@ -134,18 +124,26 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         localCloudService.state(ServiceState.STOPPING);
 
-        if (localCloudService.process() != null) {
-            if (localCloudService.group().platform().proxy()) {
-                localCloudService.execute("end");
-            } else {
-                localCloudService.execute("stop");
-            }
-            localCloudService.process().waitFor(5, TimeUnit.SECONDS);
-            this.shutdownProcess(localCloudService);
-        }
+        synchronized (this) {
+            if (localCloudService.process() != null && localCloudService.process().toHandle().isAlive()) {
+                localCloudService.execute(localCloudService.group().platform().proxy() ? "end" : "stop");
 
-        if (!CloudBase.instance().running()) {
-            this.closeProcess(localCloudService);
+                try {
+                    if (localCloudService.process().waitFor(5, TimeUnit.SECONDS)) {
+                        localCloudService.process().exitValue();
+                        localCloudService.process(null);
+
+                        this.closeProcess(localCloudService);
+                        return;
+                    }
+                } catch (InterruptedException ignored) {
+
+                }
+
+                localCloudService.process().toHandle().destroyForcibly();
+                localCloudService.process(null);
+                this.closeProcess(localCloudService);
+            }
         }
     }
 
@@ -159,17 +157,9 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
                 Files.deleteIfExists(service.runningFolder());
             }
         }
-
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
         CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1was successfully stopped");
-    }
-
-
-    @SneakyThrows
-    private void shutdownProcess(@NotNull LocalCloudService service) {
-        service.process().toHandle().destroyForcibly();
-        service.process().waitFor();
-        service.process(null);
+        service.state(ServiceState.STOPPED);
     }
 
     private int nextServiceId(CloudGroup cloudGroup) {
