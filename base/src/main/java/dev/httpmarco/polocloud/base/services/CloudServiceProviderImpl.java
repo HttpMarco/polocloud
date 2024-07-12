@@ -128,9 +128,8 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
         return CompletableFuture.completedFuture(this.services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null));
     }
 
-    @Contract(pure = true)
     @Override
-    public @Nullable CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers) {
+    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers, String node) {
         //todo
         return null;
     }

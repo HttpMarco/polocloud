@@ -47,6 +47,7 @@ public final class InstanceCloudService implements CloudService {
     private final int memory;
 
     private final ServiceState state;
+    private final String runningNode;
 
     @Setter
     private CloudGroup group;

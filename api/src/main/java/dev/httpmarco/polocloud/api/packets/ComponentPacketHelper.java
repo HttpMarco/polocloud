@@ -32,7 +32,14 @@ public final class ComponentPacketHelper {
     public static void writeService(CloudService cloudService, PacketBuffer buffer) {
         writeGroup(cloudService.group(), buffer);
 
-        buffer.writeInt(cloudService.orderedId()).writeUniqueId(cloudService.id()).writeInt(cloudService.port()).writeEnum(cloudService.state()).writeString(cloudService.hostname()).writeInt(cloudService.memory()).writeInt(cloudService.maxPlayers());
+        buffer.writeInt(cloudService.orderedId())
+                .writeUniqueId(cloudService.id())
+                .writeInt(cloudService.port())
+                .writeEnum(cloudService.state())
+                .writeString(cloudService.hostname())
+                .writeInt(cloudService.memory())
+                .writeInt(cloudService.maxPlayers())
+                .writeString(cloudService.runningNode());
 
         writeProperties(cloudService.properties(), buffer);
     }
@@ -47,8 +54,9 @@ public final class ComponentPacketHelper {
         var hostname = buffer.readString();
         var maxMemory = buffer.readInt();
         var maxPlayers = buffer.readInt();
+        var node = buffer.readString();
 
-        var service = CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory, maxPlayers);
+        var service = CloudAPI.instance().serviceProvider().generateService(group, orderedId, id, port, state, hostname, maxMemory, maxPlayers, node);
         service.properties().pool().putAll(readProperties(buffer).pool());
         return service;
     }

@@ -73,6 +73,6 @@ public abstract class CloudServiceProvider {
 
     public abstract CompletableFuture<CloudService> findAsync(UUID id);
 
-    public abstract CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers);
+    public abstract CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers, String node);
 
 }

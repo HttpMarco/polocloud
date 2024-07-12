@@ -56,7 +56,8 @@ public final class LocalCloudService extends CloudServiceImpl {
                 group.platform().proxy() ? "0.0.0.0" : CloudAPI.instance().nodeService().localNode().hostname(),
                 state,
                 group.memory(),
-                group.properties().has(GroupProperties.MAX_PLAYERS) ? group.properties().property(GroupProperties.MAX_PLAYERS) : 100);
+                group.properties().has(GroupProperties.MAX_PLAYERS) ? group.properties().property(GroupProperties.MAX_PLAYERS) : 100,
+                CloudAPI.instance().nodeService().localNode());
 
         if (group.properties().has(GroupProperties.STATIC)) {
             this.runningFolder = OsganFile.define("static/" + name(), OsganFileCreateOption.CREATION).path();

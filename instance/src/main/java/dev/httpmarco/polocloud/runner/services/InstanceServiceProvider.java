@@ -24,13 +24,12 @@ import dev.httpmarco.polocloud.api.packets.service.CloudServicePacket;
 import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 @Accessors(fluent = true)
@@ -73,8 +72,9 @@ public final class InstanceServiceProvider extends CloudServiceProvider {
         return future.toCompletableFuture();
     }
 
+    @Contract("_, _, _, _, _, _, _, _, _ -> new")
     @Override
-    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers) {
-        return new InstanceCloudService(orderedId, id, port, hostname, maxMemory, state, parent, maxPlayers);
+    public @NotNull CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers, String node) {
+        return new InstanceCloudService(orderedId, id, port, hostname, maxMemory, state, node, parent, maxPlayers);
     }
 }
