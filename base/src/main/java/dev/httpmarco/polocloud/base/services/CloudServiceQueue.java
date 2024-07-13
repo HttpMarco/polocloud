@@ -17,8 +17,8 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.CloudProperty;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.base.CloudBase;
@@ -32,7 +32,11 @@ public final class CloudServiceQueue extends Thread {
     @Override
     public void run() {
         while (!isInterrupted()) {
+            if (!CloudBase.instance().running()) {
+                return;
+            }
             for (var group : CloudAPI.instance().groupProvider().groups()) {
+
                 var onlineDiff = group.onlineAmount() - group.minOnlineService();
 
                 if (onlineDiff < 0) {
@@ -58,10 +62,10 @@ public final class CloudServiceQueue extends Thread {
                     }
                 }
             }
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ignore) {
-            }
+        }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ignore) {
         }
     }
 }
