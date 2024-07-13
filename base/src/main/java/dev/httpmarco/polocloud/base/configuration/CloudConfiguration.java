@@ -22,6 +22,7 @@ import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.node.LocalNode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
@@ -35,7 +36,9 @@ public final class CloudConfiguration {
     private final int maxMemory;
 
     private final PropertyPool properties = new PropertyPool();
-    private final Cluster cluster;
+
+    @Setter
+    private Cluster cluster;
 
     public CloudConfiguration() {
         this.localNode = new LocalNode("node-1", "127.0.0.1", 9090);

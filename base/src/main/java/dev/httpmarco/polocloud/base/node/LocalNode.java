@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.stream.Collectors;
+
 @Getter
 @Accessors(fluent = true)
 public class LocalNode extends Node {
@@ -61,7 +63,10 @@ public class LocalNode extends Node {
 
                     cluster.id(packet.clusterId());
                     cluster.token(token);
-                    cluster.endpoints(packet.clusterEndpoints());
+                    cluster.endpoints(packet.clusterEndpoints().stream().filter(it -> !it.id().equalsIgnoreCase(localNode.id())).collect(Collectors.toSet()));
+
+                    CloudBase.instance().cloudConfiguration().content().cluster(cluster);
+                    CloudBase.instance().cloudConfiguration().save();
 
                     CloudAPI.instance().logger().success("Successfully merge into the " + cluster.id() + " cluster!");
                 } else {

@@ -4,8 +4,12 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.packets.nodes.NodeEntryResponsePacket;
+import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+
+import java.util.HashMap;
+import java.util.HashSet;
 
 @Getter
 @Accessors(fluent = true)
@@ -44,7 +48,14 @@ public final class CloudNodeService implements NodeService {
 
             CloudAPI.instance().logger().success("The node endpoint " + id + " is now a part of the cluster " + cluster.id());
             cluster.endpoints().add(new Node(id, hostname, port));
-            return NodeEntryResponsePacket.success(cluster.endpoints(), cluster.id());
+
+            CloudBase.instance().cloudConfiguration().content().cluster(cluster);
+            CloudBase.instance().cloudConfiguration().save();
+
+            var sendingNodes = new HashSet<>(cluster.endpoints());
+            sendingNodes.add(localNode);
+
+            return NodeEntryResponsePacket.success(sendingNodes, cluster.id());
         });
 
         localNode.server().responder("cluster-remove-endpoint", property -> {
