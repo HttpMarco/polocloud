@@ -67,7 +67,10 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
 
         // load default groups
         this.groups = groupServiceTypeAdapter.readGroups();
-        CloudBase.instance().logger().info("Loading following groups&2: &3" + String.join("&2, &3", groups.stream().map(CloudGroup::name).toList()));
+
+        if (!groups.isEmpty()) {
+            CloudBase.instance().logger().info("Loading following groups&2: &3" + String.join("&2, &3", groups.stream().map(CloudGroup::name).toList()));
+        }
     }
 
     @Override

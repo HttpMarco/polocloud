@@ -33,6 +33,7 @@ import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
+import dev.httpmarco.polocloud.base.node.ExternalNode;
 import dev.httpmarco.polocloud.base.node.LocalNode;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
@@ -87,7 +88,7 @@ public final class CloudBase extends CloudAPI {
         // print cloud header information
         terminal.spacer();
         terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.10-snapshot");
-        terminal.spacer("   &1node&2: &1" + nodeService.localNode().name() + " &2| &1id&2: &1" + nodeService.localNode().id());
+        terminal.spacer("   &1Local node&2: &1" + nodeService.localNode().name() + " &2| &1External nodes&2: &1" + String.join(", ", nodeService.externalNodes().stream().map(ExternalNode::name).toList()));
         terminal.spacer();
 
         this.nodeService.localNode().initialize();
