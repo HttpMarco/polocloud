@@ -30,7 +30,7 @@ public class InfoCommand {
         var thisNode = CloudAPI.instance().nodeService().localNode();
 
         //todo
-        CloudAPI.instance().logger().info("Self node Id&2: &3" + thisNode.name());
+        CloudAPI.instance().logger().info("Self node Id&2: &3" + thisNode.id());
         CloudAPI.instance().logger().info("Max node memory&2: &3" + CloudBase.instance().cloudConfiguration().content().maxMemory());
         CloudAPI.instance().logger().info("Registered groups&2: &3" + CloudBase.instance().groupProvider().groups().size());
         CloudAPI.instance().logger().info("Online services&2: &3" + CloudBase.instance().serviceProvider().services().size());

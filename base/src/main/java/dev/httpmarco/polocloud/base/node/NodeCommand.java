@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
@@ -30,20 +31,11 @@ public final class NodeCommand {
     @DefaultCommand
     public void handle() {
         var logger = CloudAPI.instance().logger();
-        logger.info("node list - list all nodes");
-        logger.info("node add <hostname> <port> - node ");
-        logger.info("node remove <name> - test description");
-        logger.info("node status- test description");
+        logger.info("cluster merge <id> <hostname> <port> <token> - Merge your node in an existing cluster.");
     }
 
-    @SubCommand(args = {"list"})
-    public void list() {
-        CloudAPI.instance().logger().info("polo");
+    @SubCommand(args = {"merge", "<hostname>", "<port>", "<token>"})
+    public void add(String hostname, int port, String token) {
+        CloudBase.instance().nodeService().localNode().mergeCluster(new Node(null, hostname, port), token);
     }
-
-    @SubCommand(args = {"add", "<name>", "<id>", "<hostname>", "<port>"})
-    public void add(String name, String id, String hostname, int port) {
-        CloudBase.instance().nodeService().factory().bind(new ExternalNode(UUID.fromString(id), name, hostname, port));
-    }
-
 }

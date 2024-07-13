@@ -19,7 +19,6 @@ package dev.httpmarco.polocloud.api;
 import dev.httpmarco.polocloud.api.dependencies.DependencyService;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
 import dev.httpmarco.polocloud.api.node.NodeService;

@@ -1,46 +1,32 @@
-/*
- * Copyright 2024 Mirco Lindenau | HttpMarco
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.osgan.files.DocumentExclude;
+import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.node.AbstractNode;
+import dev.httpmarco.polocloud.api.node.Node;
+import dev.httpmarco.polocloud.api.packets.nodes.NodeEntryResponsePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
+import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-
-import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
-public final class LocalNode extends AbstractNode implements dev.httpmarco.polocloud.api.node.LocalNode {
+public class LocalNode extends Node {
 
     @DocumentExclude
-    private final CommunicationServer server;
+    private CommunicationServer server;
 
-    public LocalNode(UUID id, String name, String hostname, int port) {
-        super(id, name, hostname, port);
-
-        server = new CommunicationServer(hostname(), port());
+    public LocalNode(String id, String hostname, int port) {
+        super(id, hostname, port);
     }
 
     public void initialize() {
+        server = new CommunicationServer(hostname(), port());
         server.initialize();
 
         server.listen(CloudServiceRegisterPacket.class, (channelTransmit, cloudServiceRegisterPacket) -> {
@@ -54,10 +40,34 @@ public final class LocalNode extends AbstractNode implements dev.httpmarco.poloc
         });
     }
 
-    @Override
     public void close() {
         if (this.server != null) {
             this.server.close();
         }
+    }
+
+    public void mergeCluster(@NotNull Node node, String token) {
+        var localNode = CloudAPI.instance().nodeService().localNode();
+        new CommunicationClient(node.hostname(), node.port(), channelTransmit -> {
+            channelTransmit.request("cluster-add-endpoint", new CommunicationProperty()
+                    .set("id", localNode.id())
+                    .set("hostname", localNode.hostname())
+                    .set("port", localNode.port())
+                    .set("token", token), NodeEntryResponsePacket.class, packet -> {
+
+                if (packet.successfully()) {
+
+                    var cluster = CloudBase.instance().nodeService().cluster();
+
+                    cluster.id(packet.clusterId());
+                    cluster.token(token);
+                    cluster.endpoints(packet.clusterEndpoints());
+
+                    CloudAPI.instance().logger().success("Successfully merge into the " + cluster.id() + " cluster!");
+                } else {
+                    CloudAPI.instance().logger().info("Merge process is failed! Reason: " + packet.reason());
+                }
+            });
+        }).initialize();
     }
 }

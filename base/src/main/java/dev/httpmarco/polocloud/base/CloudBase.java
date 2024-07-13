@@ -22,7 +22,6 @@ import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
-import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -33,8 +32,6 @@ import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.CloudNodeService;
-import dev.httpmarco.polocloud.base.node.ExternalNode;
-import dev.httpmarco.polocloud.base.node.LocalNode;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
 import dev.httpmarco.polocloud.base.templates.TemplatesService;
@@ -83,15 +80,13 @@ public final class CloudBase extends CloudAPI {
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
-        this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.content().clusterId(), cloudConfiguration.content().clusterName(), "127.0.0.1", cloudConfiguration.content().clusterPort()), cloudConfiguration.content().externalNodes());
+        this.nodeService = new CloudNodeService(this.cloudConfiguration.content().localNode(), this.cloudConfiguration.content().cluster());
 
         // print cloud header information
         terminal.spacer();
         terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.10-snapshot");
-        terminal.spacer("   &1Local node&2: &1" + nodeService.localNode().name() + " &2| &1External nodes&2: &1" + String.join(", ", nodeService.externalNodes().stream().map(ExternalNode::name).toList()));
+        terminal.spacer("   &1Local node&2: &1" + nodeService.localNode().id() + " &2| &1External nodes&2: &1" + String.join(", ", nodeService.cluster().endpoints().stream().map(node -> node.id()).toList()));
         terminal.spacer();
-
-        this.nodeService.localNode().initialize();
 
         this.globalEventNode = new GlobalEventNode();
         this.groupProvider = new CloudGroupProvider();
@@ -128,7 +123,7 @@ public final class CloudBase extends CloudAPI {
     }
 
     public CommunicationServer transmitter() {
-        return ((LocalNode) this.nodeService.localNode()).server();
+        return this.nodeService.localNode().server();
     }
 
     public static CloudBase instance() {

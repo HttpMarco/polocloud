@@ -128,7 +128,7 @@ public final class ServiceCommand {
         }
 
         CloudAPI.instance().serviceProvider().find(name).execute(command);
-        this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().name() + "&1 -> &4" + name + " &2 | &1" + command);
+        this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().id() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "execute", "<command...>"})

@@ -108,6 +108,6 @@ public class CloudServiceImpl implements CloudService {
 
     @Override
     public String runningNode() {
-        return this.node.name();
+        return this.node.id();
     }
 }

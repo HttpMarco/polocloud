@@ -22,7 +22,6 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
-import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
@@ -75,17 +74,15 @@ public final class ComponentPacketHelper {
     public static void writeNode(@NotNull Node node, @NotNull PacketBuffer buffer) {
         buffer.writeString(node.hostname());
         buffer.writeInt(node.port());
-        buffer.writeUniqueId(node.id());
-        buffer.writeString(node.name());
+        buffer.writeString(node.id());
     }
 
     public static  Node readNode(@NotNull PacketBuffer buffer) {
         var hostname = buffer.readString();
         var port = buffer.readInt();
-        var id = buffer.readUniqueId();
-        var name = buffer.readString();
+        var id = buffer.readString();
 
-        return CloudAPI.instance().nodeService().generateNode(hostname, port, id, name);
+        return new Node(id, hostname, port);
     }
 
 
