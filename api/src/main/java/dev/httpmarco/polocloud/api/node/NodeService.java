@@ -16,8 +16,12 @@
 
 package dev.httpmarco.polocloud.api.node;
 
+import java.util.UUID;
+
 public interface NodeService {
 
     LocalNode localNode();
+
+    Node generateNode(String hostname, int port, UUID uuid, String name);
 
 }

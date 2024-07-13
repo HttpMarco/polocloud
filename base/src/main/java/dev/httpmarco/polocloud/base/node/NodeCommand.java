@@ -17,9 +17,12 @@
 package dev.httpmarco.polocloud.base.node;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
+
+import java.util.UUID;
 
 @Command(command = "node", aliases = {"nodes"}, description = "Manage all your nodes or connect other ones.")
 public final class NodeCommand {
@@ -37,4 +40,10 @@ public final class NodeCommand {
     public void list() {
         CloudAPI.instance().logger().info("polo");
     }
+
+    @SubCommand(args = {"add", "<name>", "<id>", "<hostname>", "<port>"})
+    public void add(String name, String id, String hostname, int port) {
+        CloudBase.instance().nodeService().factory().bind(new ExternalNode(UUID.fromString(id), name, hostname, port));
+    }
+
 }

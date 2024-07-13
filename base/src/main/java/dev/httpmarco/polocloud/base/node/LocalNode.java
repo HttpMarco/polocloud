@@ -32,14 +32,15 @@ import java.util.UUID;
 public final class LocalNode extends AbstractNode implements dev.httpmarco.polocloud.api.node.LocalNode {
 
     @DocumentExclude
-    private CommunicationServer server;
+    private final CommunicationServer server;
 
     public LocalNode(UUID id, String name, String hostname, int port) {
         super(id, name, hostname, port);
+
+        server = new CommunicationServer(hostname(), port());
     }
 
     public void initialize() {
-        server = new CommunicationServer(hostname(), port());
         server.initialize();
 
         server.listen(CloudServiceRegisterPacket.class, (channelTransmit, cloudServiceRegisterPacket) -> {

@@ -21,6 +21,8 @@ import dev.httpmarco.polocloud.base.node.ExternalNode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -29,15 +31,17 @@ public final class CloudConfiguration {
 
     private final UUID clusterId;
     private final String clusterName;
+    private final int clusterPort;
     private final int maxMemory;
 
-    private final ExternalNode[] externalNodes;
+    private final Set<ExternalNode> externalNodes;
     private final PropertyPool properties = new PropertyPool();
 
     public CloudConfiguration() {
         this.clusterId = UUID.randomUUID();
         this.clusterName = "node-1";
+        this.clusterPort = 9090;
         this.maxMemory = 10000;
-        this.externalNodes = new ExternalNode[0];
+        this.externalNodes = new HashSet<>();
     }
 }

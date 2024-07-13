@@ -24,6 +24,8 @@ public interface Node {
 
     String hostname();
 
+    int port();
+
     String name();
 
     void close();

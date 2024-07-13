@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.base;
 
 import dev.httpmarco.osgan.files.OsganFile;
+import dev.httpmarco.osgan.files.OsganFileDocument;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
@@ -50,12 +51,12 @@ public final class CloudBase extends CloudAPI {
     private final PropertyPool globalProperties;
 
     private final CloudTerminal terminal;
-    private final NodeService nodeService;
+    private final CloudNodeService nodeService;
     private final CloudGroupProvider groupProvider;
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
     private final CloudPlayerProvider playerProvider;
-    private final CloudConfiguration cloudConfiguration = OsganFile.define("config.json").asDocument(new CloudConfiguration(), new Pair<>(PropertyPool.class, new PropertiesPoolSerializer())).content();
+    private final OsganFileDocument<CloudConfiguration> cloudConfiguration = OsganFile.define("config.json").asDocument(new CloudConfiguration(), new Pair<>(PropertyPool.class, new PropertiesPoolSerializer()));
     private final GlobalEventNode globalEventNode;
 
     private boolean running = true;
@@ -70,7 +71,7 @@ public final class CloudBase extends CloudAPI {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
-        this.globalProperties = this.cloudConfiguration.properties();
+        this.globalProperties = this.cloudConfiguration.content().properties();
 
         this.terminal = new CloudTerminal();
 
@@ -81,7 +82,7 @@ public final class CloudBase extends CloudAPI {
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
-        this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.clusterId(), cloudConfiguration.clusterName(), "127.0.0.1", 8192), cloudConfiguration.externalNodes());
+        this.nodeService = new CloudNodeService(new LocalNode(cloudConfiguration.content().clusterId(), cloudConfiguration.content().clusterName(), "127.0.0.1", cloudConfiguration.content().clusterPort()), cloudConfiguration.content().externalNodes());
 
         // print cloud header information
         terminal.spacer();
@@ -132,4 +133,6 @@ public final class CloudBase extends CloudAPI {
     public static CloudBase instance() {
         return (CloudBase) CloudAPI.instance();
     }
+
+
 }

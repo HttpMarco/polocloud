@@ -31,7 +31,7 @@ public class InfoCommand {
 
         //todo
         CloudAPI.instance().logger().info("Self node Id&2: &3" + thisNode.name());
-        CloudAPI.instance().logger().info("Max node memory&2: &3" + CloudBase.instance().cloudConfiguration().maxMemory());
+        CloudAPI.instance().logger().info("Max node memory&2: &3" + CloudBase.instance().cloudConfiguration().content().maxMemory());
         CloudAPI.instance().logger().info("Registered groups&2: &3" + CloudBase.instance().groupProvider().groups().size());
         CloudAPI.instance().logger().info("Online services&2: &3" + CloudBase.instance().serviceProvider().services().size());
         CloudAPI.instance().logger().info("Amount of commands&2: &3" + CloudBase.instance().terminal().commandService().commands().size());
@@ -41,6 +41,6 @@ public class InfoCommand {
         var currentMemory = runtime.totalMemory() - runtime.freeMemory();
         var maxMemory = runtime.maxMemory();
 
-        CloudAPI.instance().logger().info("Memory of node process&2: &3" + (currentMemory/mb)+ "&2/&3" + (maxMemory/mb) + " mb");
+        CloudAPI.instance().logger().info("Memory of node process&2: &3" + (currentMemory / mb) + "&2/&3" + (maxMemory / mb) + " mb");
     }
 }

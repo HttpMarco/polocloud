@@ -20,6 +20,7 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.Property;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
@@ -70,6 +71,23 @@ public final class ComponentPacketHelper {
 
         writeProperties(group.properties(), codecBuffer);
     }
+
+    public static void writeNode(@NotNull Node node, @NotNull PacketBuffer buffer) {
+        buffer.writeString(node.hostname());
+        buffer.writeInt(node.port());
+        buffer.writeUniqueId(node.id());
+        buffer.writeString(node.name());
+    }
+
+    public static  Node readNode(@NotNull PacketBuffer buffer) {
+        var hostname = buffer.readString();
+        var port = buffer.readInt();
+        var id = buffer.readUniqueId();
+        var name = buffer.readString();
+
+        return CloudAPI.instance().nodeService().generateNode(hostname, port, id, name);
+    }
+
 
     private static void writeProperties(@NotNull PropertyPool properties, @NotNull PacketBuffer codecBuffer) {
         codecBuffer.writeInt(properties.size());
