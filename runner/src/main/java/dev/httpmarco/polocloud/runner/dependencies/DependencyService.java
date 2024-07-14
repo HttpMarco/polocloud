@@ -28,7 +28,7 @@ public final class DependencyService {
         var dependenciesPath = RunnerBootstrap.RUNNER.dependencyFolder();
 
         if (!Files.exists(dependenciesPath)) {
-            Files.createDirectory(dependenciesPath);
+            dependenciesPath.toFile().mkdirs();
         }
 
         // load default dependencies of base and instance
