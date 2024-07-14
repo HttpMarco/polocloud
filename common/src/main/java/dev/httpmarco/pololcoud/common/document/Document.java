@@ -1,10 +1,12 @@
 package dev.httpmarco.pololcoud.common.document;
 
+import com.google.gson.Gson;
 import dev.httpmarco.pololcoud.common.GsonUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,14 +15,28 @@ import java.nio.file.Path;
 @Accessors(fluent = true)
 public final class Document<V> {
 
-     private final Path path;
+    private final Gson documentGson;
+    private final Path path;
 
     @Setter
     private V value;
 
-    public Document(Path path, V value) {
+    public Document(Path path, V value, DocumentTypeAdapter<?> @NotNull ... typeAdapters) {
         this.path = path;
         this.value = value;
+
+        if (typeAdapters.length == 0) {
+            documentGson = GsonUtils.GSON;
+        } else {
+            var gsonBuilder = GsonUtils.GSON.newBuilder();
+
+            for (var adapter : typeAdapters) {
+                gsonBuilder.registerTypeHierarchyAdapter(adapter.type(), adapter);
+                gsonBuilder.registerTypeAdapter(adapter.type(), adapter);
+            }
+
+            documentGson = gsonBuilder.create();
+        }
 
         if (Files.exists(path)) {
             this.update();
@@ -37,11 +53,11 @@ public final class Document<V> {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public void update() {
-        this.value = (V) GsonUtils.GSON.fromJson(Files.readString(path), value.getClass());
+        this.value = (V) documentGson.fromJson(Files.readString(path), value.getClass());
     }
 
     @SneakyThrows
     public void save() {
-        Files.writeString(this.path, GsonUtils.GSON.toJson(value));
+        Files.writeString(this.path, documentGson.toJson(value));
     }
 }

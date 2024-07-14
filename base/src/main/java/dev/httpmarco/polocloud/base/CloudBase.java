@@ -21,7 +21,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
-import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
+import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
@@ -51,12 +51,9 @@ public final class CloudBase extends CloudAPI {
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
     private final CloudPlayerProvider playerProvider;
-
-    // todo
-    //PropertyPool.class, new PropertiesPoolSerializer()));
-    private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration());
     private final GlobalEventNode globalEventNode;
 
+    private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration(), PropertiesPoolSerializer.ADAPTER);
     private boolean running = true;
 
     public CloudBase() {

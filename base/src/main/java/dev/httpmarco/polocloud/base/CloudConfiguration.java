@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.base.configuration;
+package dev.httpmarco.polocloud.base;
 
 import dev.httpmarco.polocloud.base.node.Cluster;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;

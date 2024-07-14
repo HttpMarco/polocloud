@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.base.templates;
 
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.pololcoud.common.files.FileUtils;
 import dev.httpmarco.pololcoud.common.document.Document;
@@ -39,7 +40,7 @@ public final class TemplatesService {
     private final Document<TemplatesConfig> document;
 
     public TemplatesService() {
-        this.document = new Document<>(Path.of("templates/templates.json"), new TemplatesConfig());
+        this.document = new Document<>(Path.of("templates/templates.json"), new TemplatesConfig(), PropertiesPoolSerializer.ADAPTER);
 
         //todo check if a static service is present
         FileUtils.createDirectory("static");
