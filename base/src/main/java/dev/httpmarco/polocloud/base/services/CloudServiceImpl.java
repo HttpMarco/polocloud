@@ -18,12 +18,12 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
+import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,7 +51,7 @@ public class CloudServiceImpl implements CloudService {
     private final int memory;
     private int maxPlayers;
 
-    private Node node;
+    private NodeEndpoint node;
 
     private final PropertyPool properties = new PropertyPool();
     private final Set<String> subscribedEvents = new HashSet<>();
@@ -108,6 +108,6 @@ public class CloudServiceImpl implements CloudService {
 
     @Override
     public String runningNode() {
-        return this.node.id();
+        return this.node.data().id();
     }
 }

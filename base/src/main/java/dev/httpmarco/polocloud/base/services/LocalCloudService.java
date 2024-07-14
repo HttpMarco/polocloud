@@ -22,6 +22,7 @@ import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.general.OperationDoublePacket;
 import dev.httpmarco.polocloud.api.services.ServiceState;
+import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,11 +53,11 @@ public final class LocalCloudService extends CloudServiceImpl {
                 orderedId,
                 id,
                 port,
-                group.platform().proxy() ? "0.0.0.0" : CloudAPI.instance().nodeService().localNode().hostname(),
+                group.platform().proxy() ? "0.0.0.0" : CloudBase.instance().nodeHeadProvider().localEndpoint().data().hostname(),
                 state,
                 group.memory(),
                 group.properties().has(GroupProperties.MAX_PLAYERS) ? group.properties().property(GroupProperties.MAX_PLAYERS) : 100,
-                CloudAPI.instance().nodeService().localNode());
+                CloudBase.instance().nodeHeadProvider().localEndpoint());
 
         if (group.properties().has(GroupProperties.STATIC)) {
             this.runningFolder = FileUtils.createDirectory("static/" + name());

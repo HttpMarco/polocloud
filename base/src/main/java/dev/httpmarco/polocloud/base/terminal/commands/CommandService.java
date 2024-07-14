@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base.terminal.commands;
 
 import dev.httpmarco.polocloud.base.groups.GroupCommand;
-import dev.httpmarco.polocloud.base.node.NodeCommand;
+import dev.httpmarco.polocloud.base.terminal.commands.defaults.NodeCommand;
 import dev.httpmarco.polocloud.base.services.ServiceCommand;
 import dev.httpmarco.polocloud.base.templates.TemplateCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.defaults.*;

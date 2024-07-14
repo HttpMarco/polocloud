@@ -27,7 +27,7 @@ public class InfoCommand {
     @DefaultCommand
     public void handle() {
 
-        var thisNode = CloudAPI.instance().nodeService().localNode();
+        var thisNode = CloudBase.instance().nodeHeadProvider().localEndpoint().data();
 
         //todo
         CloudAPI.instance().logger().info("Self node Id&2: &3" + thisNode.id());

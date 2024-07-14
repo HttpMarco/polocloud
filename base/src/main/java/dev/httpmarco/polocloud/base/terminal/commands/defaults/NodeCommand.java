@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.base.node;
+package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
-
-import java.util.UUID;
 
 @Command(command = "node", aliases = {"nodes"}, description = "Manage all your nodes or connect other ones.")
 public final class NodeCommand {
@@ -36,6 +33,6 @@ public final class NodeCommand {
 
     @SubCommand(args = {"merge", "<hostname>", "<port>", "<token>"})
     public void add(String hostname, int port, String token) {
-        CloudBase.instance().nodeService().localNode().mergeCluster(new Node(null, hostname, port), token);
+
     }
 }

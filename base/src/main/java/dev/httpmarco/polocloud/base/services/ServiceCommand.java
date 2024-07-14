@@ -127,7 +127,7 @@ public final class ServiceCommand {
         }
 
         CloudAPI.instance().serviceProvider().find(name).execute(command);
-        this.logger.info("&4" + CloudAPI.instance().nodeService().localNode().id() + "&1 -> &4" + name + " &2 | &1" + command);
+        this.logger.info("&4" + CloudBase.instance().nodeHeadProvider().localEndpoint().data().id() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "execute", "<command...>"})
@@ -163,7 +163,7 @@ public final class ServiceCommand {
 
 
         //todo communicate with other nodes
-       // OsganFile.create(templateFolder);
+        // OsganFile.create(templateFolder);
         //FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile(), filter);
 
         this.logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");

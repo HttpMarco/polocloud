@@ -16,30 +16,31 @@
 
 package dev.httpmarco.polocloud.base;
 
-import dev.httpmarco.polocloud.base.node.Cluster;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
-import dev.httpmarco.polocloud.base.node.LocalNode;
+import dev.httpmarco.polocloud.base.node.data.ClusterData;
+import dev.httpmarco.polocloud.base.node.data.NodeData;
 import dev.httpmarco.pololcoud.common.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
 import java.util.HashSet;
 
 @Getter
 @Accessors(fluent = true)
 public final class CloudConfiguration {
 
-    private final LocalNode localNode;
+    private final NodeData localNode;
     private final int maxMemory;
 
     private final PropertyPool properties = new PropertyPool();
 
     @Setter
-    private Cluster cluster;
+    private ClusterData cluster;
 
     public CloudConfiguration() {
-        this.localNode = new LocalNode("node-1", "127.0.0.1", 9090);
-        this.cluster = new Cluster(null, "default-cluster", StringUtils.randomString(16), new HashSet<>());
+        this.localNode = new NodeData("node-1", "127.0.0.1", 9090);
+        this.cluster = new ClusterData("default-cluster", StringUtils.randomString(16), new HashSet<>());
         this.maxMemory = 10000;
     }
 }

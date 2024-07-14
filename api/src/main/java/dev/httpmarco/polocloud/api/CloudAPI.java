@@ -20,7 +20,6 @@ import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.logging.LoggerFactory;
-import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -42,8 +41,6 @@ public abstract class CloudAPI {
     public CloudAPI() {
         instance = this;
     }
-
-    public abstract NodeService nodeService();
 
     public abstract CloudGroupProvider groupProvider();
 

@@ -20,7 +20,6 @@ import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
-import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.packets.groups.CloudGroupUpdatePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
@@ -138,12 +137,6 @@ public class CloudInstance extends CloudAPI {
             this.client.close();
         }));
         thread.start();
-    }
-
-    @Override
-    public NodeService nodeService() {
-        //todo
-        return null;
     }
 
     @Override
