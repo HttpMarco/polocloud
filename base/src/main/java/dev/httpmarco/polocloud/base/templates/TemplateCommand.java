@@ -23,7 +23,6 @@ import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommandCompleter;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 import org.jline.reader.Candidate;
 
 import java.io.File;
@@ -73,7 +72,8 @@ public final class TemplateCommand {
             CloudBase.instance().templatesService().createTemplates(to);
         }
 
-        FileUtils.copyDirectory(fromTemplate, toTemplate);
+        //todo check with other nodes
+        //FileUtils.copyDirectory(fromTemplate, toTemplate);
         logger.info("The template &2'&4" + from + "&2' &1has been successfully copied to &2'&4" + to + "&2'");
     }
 

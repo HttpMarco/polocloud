@@ -30,12 +30,15 @@ public final class CloudInstanceRunner implements CloudRunner {
     @Override
     @SneakyThrows
     public void run() {
+        var commonFile = LOCAL_PATH.resolve("polocloud-common.jar");
         var apiFile = LOCAL_PATH.resolve("polocloud-api.jar");
         var instanceFile = LOCAL_PATH.resolve("polocloud-instance.jar");
 
+        RunnerBootstrap.LOADER.addURL(commonFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(apiFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(instanceFile.toUri().toURL());
 
+        RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(commonFile.toFile()));
         RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(apiFile.toFile()));
         RunnerBootstrap.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(instanceFile.toFile()));
     }

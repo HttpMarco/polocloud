@@ -16,18 +16,17 @@
 
 package dev.httpmarco.polocloud;
 
-import dev.httpmarco.polocloud.api.common.CloudMemoryCalculator;
 import dev.httpmarco.polocloud.api.packets.general.OperationDoublePacket;
-import dev.httpmarco.polocloud.api.packets.player.CloudPlayerConnectToServerPacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceStateChangePacket;
 import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.runner.CloudInstance;
+import dev.httpmarco.pololcoud.common.MemoryCalculator;
 
 public class RunningPlatform {
 
     // todo trash but works
     public RunningPlatform() {
-        CloudInstance.instance().client().transmitter().responder("service-memory", communicationProperty -> new OperationDoublePacket(CloudMemoryCalculator.usedMemory()));
+        CloudInstance.instance().client().transmitter().responder("service-memory", communicationProperty -> new OperationDoublePacket(MemoryCalculator.usedMemory()));
     }
 
     public void changeToOnline() {

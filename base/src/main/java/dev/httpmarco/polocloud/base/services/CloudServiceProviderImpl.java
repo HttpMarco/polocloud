@@ -16,8 +16,7 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.osgan.utils.executers.FutureResult;
+import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
@@ -28,10 +27,7 @@ import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.base.CloudBase;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -95,7 +91,7 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
 
     @Override
     public @NotNull CompletableFuture<List<CloudService>> servicesAsync() {
-        return FutureResult.completedFuture(this.services);
+        return CommunicationFuture.completedFuture(this.services);
     }
 
     @Override

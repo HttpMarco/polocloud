@@ -1,7 +1,8 @@
 package dev.httpmarco.polocloud.base.node;
 
-import dev.httpmarco.osgan.files.DocumentExclude;
+import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.polocloud.api.node.Node;
+import dev.httpmarco.pololcoud.common.document.DocumentIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Accessors(fluent = true)
 public class Cluster {
 
-    @DocumentExclude
+    @DocumentIgnore
     private final Node headNode;
 
     private String id;
@@ -25,4 +26,10 @@ public class Cluster {
         return endpoints.stream().anyMatch(node -> node.id().equals(id) || (node.hostname().equals(hostname) && node.port() == port));
     }
 
+    public void connectToEndpoints() {
+        for (var endpoint : endpoints) {
+            var client = new CommunicationClient(endpoint.hostname(), endpoint.port());
+            // todo
+        }
+    }
 }

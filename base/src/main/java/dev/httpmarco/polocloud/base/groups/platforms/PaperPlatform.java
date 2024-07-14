@@ -18,16 +18,15 @@ package dev.httpmarco.polocloud.base.groups.platforms;
 
 import com.google.gson.Gson;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.common.YamlValidateWriter;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
+import dev.httpmarco.pololcoud.common.files.FileManipulator;
 import lombok.SneakyThrows;
 
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -90,7 +89,7 @@ public final class PaperPlatform extends PaperMCPlatform {
                                 Files.createFile(globalPaperProperty);
                                 Files.writeString(globalPaperProperty, String.join("\n", List.of("proxies:", " velocity:", "    enabled: true", "    secret: " + CloudGroupPlatformService.PROXY_SECRET)));
                             } else {
-                                YamlValidateWriter.validateYaml(globalPaperProperty.toFile(), s -> {
+                                FileManipulator.manipulate(globalPaperProperty.toFile(), s -> {
                                     if (s.startsWith("    enabled: false")) {
                                         return "    enabled: true";
                                     }
@@ -106,7 +105,7 @@ public final class PaperPlatform extends PaperMCPlatform {
                         if (platform instanceof BungeeCordPlatform) {
                             var globalPaperProperty = localCloudService.runningFolder().resolve("spigot.yml");
 
-                            YamlValidateWriter.validateYaml(globalPaperProperty.toFile(), s -> {
+                            FileManipulator.manipulate(globalPaperProperty.toFile(), s -> {
                                 if (s.replaceAll(" ", "").startsWith("bungeecord:")) {
                                     return "  bungeecord: true";
                                 } else {

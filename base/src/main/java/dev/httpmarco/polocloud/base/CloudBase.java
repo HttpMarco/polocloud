@@ -16,16 +16,12 @@
 
 package dev.httpmarco.polocloud.base;
 
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileDocument;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
-import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
-import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
 import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
@@ -36,11 +32,13 @@ import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
 import dev.httpmarco.polocloud.base.templates.TemplatesService;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
+import dev.httpmarco.pololcoud.common.document.Document;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 @Getter
 @Accessors(fluent = true)
@@ -54,7 +52,10 @@ public final class CloudBase extends CloudAPI {
     private final CloudServiceProvider serviceProvider;
     private final TemplatesService templatesService;
     private final CloudPlayerProvider playerProvider;
-    private final OsganFileDocument<CloudConfiguration> cloudConfiguration = OsganFile.define("config.json").asDocument(new CloudConfiguration(), new Pair<>(PropertyPool.class, new PropertiesPoolSerializer()));
+
+    // todo
+    //PropertyPool.class, new PropertiesPoolSerializer()));
+    private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration());
     private final GlobalEventNode globalEventNode;
 
     private boolean running = true;
@@ -63,13 +64,10 @@ public final class CloudBase extends CloudAPI {
         Dependency.load("com.google.code.gson", "gson", "2.10.1");
         Dependency.load("org.jline", "jline", "3.26.1");
         Dependency.load("org.fusesource.jansi", "jansi", "2.4.1");
-        Dependency.load("commons-io", "commons-io", "2.16.1");
-        Dependency.load("com.electronwill.night-config", "toml", "3.6.7");
-        Dependency.load("com.electronwill.night-config", "core", "3.6.7");
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
-        this.globalProperties = this.cloudConfiguration.content().properties();
+        this.globalProperties = this.cloudConfiguration.value().properties();
 
         this.terminal = new CloudTerminal();
 
@@ -80,7 +78,7 @@ public final class CloudBase extends CloudAPI {
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
-        this.nodeService = new CloudNodeService(this.cloudConfiguration.content().localNode(), this.cloudConfiguration.content().cluster());
+        this.nodeService = new CloudNodeService(this.cloudConfiguration.value().localNode(), this.cloudConfiguration.value().cluster());
 
         // print cloud header information
         terminal.spacer();

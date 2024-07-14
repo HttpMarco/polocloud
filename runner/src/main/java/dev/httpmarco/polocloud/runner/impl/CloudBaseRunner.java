@@ -35,17 +35,20 @@ public final class CloudBaseRunner implements CloudRunner {
 
         LOCAL_PATH.toFile().mkdirs();
 
+        var commonFile = LOCAL_PATH.resolve("polocloud-common.jar");
         var apiFile = LOCAL_PATH.resolve("polocloud-api.jar");
         var baseFile = LOCAL_PATH.resolve("polocloud-base.jar");
         var instanceFile = LOCAL_PATH.resolve("polocloud-instance.jar");
         var pluginFile = LOCAL_PATH.resolve("polocloud-plugin.jar");
 
+        this.convertFileFromClasspath(commonFile, "common");
         this.convertFileFromClasspath(apiFile, "api");
         this.convertFileFromClasspath(baseFile, "base");
         this.convertFileFromClasspath(instanceFile, "instance");
         this.convertFileFromClasspath(pluginFile, "plugin");
 
         // add main cloud to current context classpath
+        RunnerBootstrap.LOADER.addURL(commonFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(apiFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(baseFile.toUri().toURL());
     }

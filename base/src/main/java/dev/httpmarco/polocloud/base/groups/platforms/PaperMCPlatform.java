@@ -17,8 +17,9 @@
 package dev.httpmarco.polocloud.base.groups.platforms;
 
 import com.google.gson.JsonObject;
-import dev.httpmarco.osgan.files.OsganGsonContext;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
+import dev.httpmarco.pololcoud.common.GsonUtils;
+import dev.httpmarco.pololcoud.common.StringUtils;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public abstract class PaperMCPlatform extends Platform {
 
     @SneakyThrows
     private JsonObject readPaperInformation(String link) {
-        return OsganGsonContext.GSON.fromJson(downloadStringContext(link), JsonObject.class);
+        return GsonUtils.GSON.fromJson(StringUtils.downloadStringContext(link), JsonObject.class);
     }
 
     @Override
@@ -63,7 +64,7 @@ public abstract class PaperMCPlatform extends Platform {
         var orgVersion = version.replace(product + "-", "");
 
         // search for the current build version
-        var builds =OsganGsonContext.GSON.fromJson(downloadStringContext(BUILD_URL.formatted(product, orgVersion)), JsonObject.class).get("builds").getAsJsonArray().asList();
+        var builds = GsonUtils.GSON.fromJson(StringUtils.downloadStringContext(BUILD_URL.formatted(product, orgVersion)), JsonObject.class).get("builds").getAsJsonArray().asList();
         var buildIndex = builds.get(builds.size() - 1).getAsJsonObject().get("build").getAsInt();
 
         //todo duplicated code
@@ -95,15 +96,5 @@ public abstract class PaperMCPlatform extends Platform {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-    }
-
-    @SneakyThrows
-    //todo osgan
-    private String downloadStringContext(String link) {
-        var url = new URI(link).toURL();
-        var stream = url.openStream();
-        var context = new String(stream.readAllBytes());
-        stream.close();
-        return context;
     }
 }

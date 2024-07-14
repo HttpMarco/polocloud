@@ -49,7 +49,7 @@ public final class CloudNodeService implements NodeService {
             CloudAPI.instance().logger().success("The node endpoint " + id + " is now a part of the cluster " + cluster.id());
             cluster.endpoints().add(new Node(id, hostname, port));
 
-            CloudBase.instance().cloudConfiguration().content().cluster(cluster);
+            CloudBase.instance().cloudConfiguration().value().cluster(cluster);
             CloudBase.instance().cloudConfiguration().save();
 
             var sendingNodes = new HashSet<>(cluster.endpoints());

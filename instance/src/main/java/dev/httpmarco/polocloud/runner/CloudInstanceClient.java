@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.runner;
 
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
+import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -30,7 +31,9 @@ public final class CloudInstanceClient {
 
     @SneakyThrows
     public CloudInstanceClient(String hostname, int port, Runnable startup) {
-        this.transmitter = new CommunicationClient(hostname, port, channelTransmit -> {
+        this.transmitter = new CommunicationClient(hostname, port);
+
+        transmitter.clientAction(CommunicationClientAction.CONNECTED, channelTransmit -> {
             channelTransmit.sendPacket(new CloudServiceRegisterPacket(CloudInstance.SELF_ID));
             startup.run();
         });

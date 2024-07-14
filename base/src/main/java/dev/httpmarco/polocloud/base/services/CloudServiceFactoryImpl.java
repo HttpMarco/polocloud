@@ -16,8 +16,6 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceStartEvent;
@@ -29,8 +27,8 @@ import dev.httpmarco.polocloud.api.services.ServiceState;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -44,13 +42,12 @@ import java.util.concurrent.TimeUnit;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
-    // todo not used
-    private static final Path RUNNING_FOLDER = OsganFile.define("running", OsganFileCreateOption.CREATION).path();
+    private static final Path RUNNING_FOLDER = FileUtils.createDirectory("running");
 
     @SneakyThrows
     public CloudServiceFactoryImpl() {
         if (Files.exists(RUNNING_FOLDER)) {
-            FileUtils.deleteDirectory(RUNNING_FOLDER.toFile());
+            FileUtils.delete(RUNNING_FOLDER.toFile());
             Files.createDirectory(RUNNING_FOLDER);
         }
     }
@@ -103,7 +100,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         var pluginDirectory = service.runningFolder().resolve("plugins");
 
-        OsganFile.create(pluginDirectory.toString());
+        FileUtils.createDirectory(pluginDirectory.toString());
 
         // copy polocloud plugin
         //todo a better way for minestom
@@ -153,7 +150,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         if (!service.group().properties().has(GroupProperties.STATIC)) {
             synchronized (this) {
-                FileUtils.deleteDirectory(service.runningFolder().toFile());
+                FileUtils.delete(service.runningFolder());
                 Files.deleteIfExists(service.runningFolder());
             }
         }

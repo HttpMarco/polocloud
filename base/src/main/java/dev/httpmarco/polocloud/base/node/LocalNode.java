@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.base.node;
 
-import dev.httpmarco.osgan.files.DocumentExclude;
 import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
+import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.node.Node;
@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.api.packets.nodes.NodeEntryResponsePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
+import dev.httpmarco.pololcoud.common.document.DocumentIgnore;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Accessors(fluent = true)
 public class LocalNode extends Node {
 
-    @DocumentExclude
+    @DocumentIgnore
     private CommunicationServer server;
 
     public LocalNode(String id, String hostname, int port) {
@@ -50,8 +51,11 @@ public class LocalNode extends Node {
 
     public void mergeCluster(@NotNull Node node, String token) {
         var localNode = CloudAPI.instance().nodeService().localNode();
-        new CommunicationClient(node.hostname(), node.port(), channelTransmit -> {
-            channelTransmit.request("cluster-add-endpoint", new CommunicationProperty()
+        var client = new CommunicationClient(node.hostname(), node.port());
+
+
+        client.clientAction(CommunicationClientAction.CONNECTED, (channel) -> {
+            channel.request("cluster-add-endpoint", new CommunicationProperty()
                     .set("id", localNode.id())
                     .set("hostname", localNode.hostname())
                     .set("port", localNode.port())
@@ -65,8 +69,11 @@ public class LocalNode extends Node {
                     cluster.token(token);
                     cluster.endpoints(packet.clusterEndpoints().stream().filter(it -> !it.id().equalsIgnoreCase(localNode.id())).collect(Collectors.toSet()));
 
-                    CloudBase.instance().cloudConfiguration().content().cluster(cluster);
+                    CloudBase.instance().cloudConfiguration().value().cluster(cluster);
                     CloudBase.instance().cloudConfiguration().save();
+
+                    // todo wait for osgan update
+                    //channelTransmit.channel().close();
 
                     CloudAPI.instance().logger().success("Successfully merge into the " + cluster.id() + " cluster!");
                 } else {

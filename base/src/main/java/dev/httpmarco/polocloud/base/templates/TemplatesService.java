@@ -16,17 +16,15 @@
 
 package dev.httpmarco.polocloud.base.templates;
 
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileCreateOption;
-import dev.httpmarco.osgan.files.OsganFileDocument;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
+import dev.httpmarco.pololcoud.common.document.Document;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import org.apache.commons.io.FileUtils;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -35,14 +33,16 @@ import java.util.List;
 @Accessors(fluent = true)
 public final class TemplatesService {
 
-    public static final Path TEMPLATES = OsganFile.define("templates", OsganFileCreateOption.CREATION).path();
-    public static final Path STATIC = OsganFile.define("static", OsganFileCreateOption.CREATION).path();
+    public static final Path TEMPLATES = FileUtils.createDirectory("templates");
 
     @Getter(AccessLevel.PACKAGE)
-    private final OsganFileDocument<TemplatesConfig> document;
+    private final Document<TemplatesConfig> document;
 
     public TemplatesService() {
-        this.document = OsganFile.define("templates/templates.json").asDocument(new TemplatesConfig());
+        this.document = new Document<>(Path.of("templates/templates.json"), new TemplatesConfig());
+
+        //todo check if a static service is present
+        FileUtils.createDirectory("static");
 
         this.createTemplates("every");
         this.createTemplates("every_server");
@@ -54,9 +54,8 @@ public final class TemplatesService {
             return false;
         }
 
-        var directory = TEMPLATES.resolve(name);
         var template = new Template(name, mergedTemplates);
-        OsganFile.create(directory);
+        FileUtils.createDirectory(TEMPLATES.resolve(name));
         templates().add(template);
         this.document.save();
         return true;
@@ -85,16 +84,16 @@ public final class TemplatesService {
             if (!file.getName().equalsIgnoreCase(name)) {
                 return false;
             }
-            FileUtils.deleteDirectory(file);
+            FileUtils.delete(file);
             this.templates().removeIf(template -> template.id().equals(name));
-            this.document.content().templates().removeIf(template -> template.id().equals(name));
+            this.document.value().templates().removeIf(template -> template.id().equals(name));
             this.document.update();
         }
         return true;
     }
 
     public List<Template> templates() {
-        return this.document.content().templates();
+        return this.document.value().templates();
     }
 
     public Template template(String name) {

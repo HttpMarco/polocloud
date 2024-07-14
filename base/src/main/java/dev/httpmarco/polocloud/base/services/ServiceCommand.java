@@ -16,7 +16,6 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.files.OsganFile;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.base.CloudBase;
@@ -25,7 +24,7 @@ import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommandCompleter;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jline.reader.Candidate;
 
 import java.io.File;
@@ -157,13 +156,15 @@ public final class ServiceCommand {
         //add a filter so the session.lock file wont be copied as well otherwise it will throw an error
         var filter = new FileFilter() {
             @Override
-            public boolean accept(File file) {
+            public boolean accept(@NotNull File file) {
                 return !file.getName().equalsIgnoreCase("session.lock");
             }
         };
 
-        OsganFile.create(templateFolder);
-        FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile(), filter);
+
+        //todo communicate with other nodes
+       // OsganFile.create(templateFolder);
+        //FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile(), filter);
 
         this.logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");
     }

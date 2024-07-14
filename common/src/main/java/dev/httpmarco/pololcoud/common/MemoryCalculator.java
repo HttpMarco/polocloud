@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.common;
+package dev.httpmarco.pololcoud.common;
 
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public final class CloudMemoryCalculator {
+public final class MemoryCalculator {
 
     public static double usedMemory() {
         var runtime = Runtime.getRuntime();

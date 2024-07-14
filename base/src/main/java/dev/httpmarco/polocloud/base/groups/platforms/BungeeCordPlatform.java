@@ -16,10 +16,10 @@
 
 package dev.httpmarco.polocloud.base.groups.platforms;
 
-import dev.httpmarco.polocloud.api.common.YamlValidateWriter;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
+import dev.httpmarco.pololcoud.common.files.FileManipulator;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ public final class BungeeCordPlatform extends Platform {
             Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/bungeecord/config.yml")), localCloudService.runningFolder().resolve("config.yml"));
         }
 
-        YamlValidateWriter.validateYaml(configuration.toFile(), s -> {
+        FileManipulator.manipulate(configuration.toFile(), s -> {
             if (s.replaceAll(" ", "").startsWith("host:")) {
                 return "  host: " + localCloudService.hostname() + ":" + localCloudService.port();
             } else {

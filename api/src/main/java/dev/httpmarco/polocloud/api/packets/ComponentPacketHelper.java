@@ -17,7 +17,6 @@
 package dev.httpmarco.polocloud.api.packets;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.osgan.utils.data.Pair;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.node.Node;
@@ -25,6 +24,7 @@ import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceState;
+import dev.httpmarco.pololcoud.common.Pair;
 import org.jetbrains.annotations.NotNull;
 
 public final class ComponentPacketHelper {
@@ -97,7 +97,7 @@ public final class ComponentPacketHelper {
     }
 
     public static @NotNull Pair<String, String> readProperty(@NotNull PacketBuffer buffer) {
-        return Pair.of(buffer.readString(), buffer.readString());
+        return new Pair<>(buffer.readString(), buffer.readString());
     }
 
     public static @NotNull PropertyPool readProperties(@NotNull PacketBuffer buffer) {
@@ -106,7 +106,7 @@ public final class ComponentPacketHelper {
 
         for (int i = 0; i < elementSize; i++) {
             var property = readProperty(buffer);
-            properties.pool().put(property.getKey(), property.getValue());
+            properties.pool().put(property.first(), property.second());
         }
         return properties;
     }

@@ -16,16 +16,13 @@
 
 package dev.httpmarco.polocloud.base.configuration;
 
-import dev.httpmarco.osgan.utils.types.MessageUtils;
 import dev.httpmarco.polocloud.base.node.Cluster;
-import dev.httpmarco.polocloud.api.node.Node;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.node.LocalNode;
+import dev.httpmarco.pololcoud.common.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.ArrayList;
 import java.util.HashSet;
 
 @Getter
@@ -42,7 +39,7 @@ public final class CloudConfiguration {
 
     public CloudConfiguration() {
         this.localNode = new LocalNode("node-1", "127.0.0.1", 9090);
-        this.cluster = new Cluster(null, "default-cluster", MessageUtils.randomString(16), new HashSet<>());
+        this.cluster = new Cluster(null, "default-cluster", StringUtils.randomString(16), new HashSet<>());
         this.maxMemory = 10000;
     }
 }

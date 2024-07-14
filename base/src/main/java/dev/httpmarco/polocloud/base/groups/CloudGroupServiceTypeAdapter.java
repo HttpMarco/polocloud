@@ -17,11 +17,10 @@
 package dev.httpmarco.polocloud.base.groups;
 
 import com.google.gson.*;
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -35,7 +34,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudGroup>, JsonDeserializer<CloudGroup> {
 
-    private static final Path GROUP_FOLDER = OsganFile.define("local/groups", OsganFileCreateOption.CREATION).path();
+    private static final Path GROUP_FOLDER = FileUtils.createDirectory("local/groups");
     private final Gson LOADER = new GsonBuilder().setPrettyPrinting().serializeNulls()
             .registerTypeHierarchyAdapter(CloudGroup.class, this)
             .registerTypeAdapter(PropertyPool.class, new PropertiesPoolSerializer())

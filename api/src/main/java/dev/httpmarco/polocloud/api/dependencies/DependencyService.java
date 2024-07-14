@@ -32,10 +32,7 @@ public final class DependencyService {
         }
 
         // load default dependencies of base and instance
-        Dependency.load("dev.httpmarco", "osgan-utils", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);;
-        Dependency.load("dev.httpmarco", "osgan-reflections", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
-        Dependency.load("dev.httpmarco", "osgan-files", "1.2.12-SNAPSHOT", "1.2.12-20240606.202406-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
-        Dependency.load("dev.httpmarco", "osgan-netty", "1.2.13-SNAPSHOT", "1.2.13-20240713.132815-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
+        Dependency.load("dev.httpmarco", "osgan-netty", "1.2.15-SNAPSHOT", "1.2.15-20240714.095931-1", Dependency.MAVEN_CENTRAL_SNAPSHOT_REPO);
         Dependency.load("io.netty", "netty5-common", "5.0.0.Alpha5");
         Dependency.load("io.netty", "netty5-transport", "5.0.0.Alpha5");
         Dependency.load("io.netty", "netty5-codec", "5.0.0.Alpha5");

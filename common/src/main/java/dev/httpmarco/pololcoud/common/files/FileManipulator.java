@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.common;
+package dev.httpmarco.pololcoud.common.files;
 
 import lombok.experimental.UtilityClass;
 
@@ -22,9 +22,9 @@ import java.io.*;
 import java.util.ArrayList;
 
 @UtilityClass
-public final class YamlValidateWriter {
+public final class FileManipulator {
 
-    public static void validateYaml(final File file, final ConfigReplace configReplace) {
+    public static void manipulate(final File file, final ConfigReplace configReplace) {
         final var lines = new ArrayList<String>();
 
         try (final var bufferedReader = new BufferedReader(new FileReader(file))) {

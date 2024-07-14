@@ -17,8 +17,8 @@
 package dev.httpmarco.polocloud.api.packets.event;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
+import dev.httpmarco.osgan.networking.packet.PacketAllocator;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.osgan.reflections.common.Allocator;
 import dev.httpmarco.polocloud.api.events.Event;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public final class CloudEventCallPacket extends Packet {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public void read(PacketBuffer codecBuffer) {
-        event = Allocator.allocate((Class<Event>) Class.forName(codecBuffer.readString()));
+        event = PacketAllocator.allocate((Class<Event>) Class.forName(codecBuffer.readString()));
         event.read(codecBuffer);
 
     }

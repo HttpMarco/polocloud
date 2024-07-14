@@ -16,14 +16,13 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.general.OperationDoublePacket;
 import dev.httpmarco.polocloud.api.services.ServiceState;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -60,9 +59,9 @@ public final class LocalCloudService extends CloudServiceImpl {
                 CloudAPI.instance().nodeService().localNode());
 
         if (group.properties().has(GroupProperties.STATIC)) {
-            this.runningFolder = OsganFile.define("static/" + name(), OsganFileCreateOption.CREATION).path();
+            this.runningFolder = FileUtils.createDirectory("static/" + name());
         } else {
-            this.runningFolder = OsganFile.define("running/" + name() + "-" + id(), OsganFileCreateOption.CREATION).path();
+            this.runningFolder = FileUtils.createDirectory("running/" + name() + "-" + id());
         }
     }
 
