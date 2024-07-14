@@ -70,13 +70,13 @@ public final class InstanceCloudService implements CloudService {
     @Override
     public void maxPlayers(int slots) {
         this.maxPlayers = slots;
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceMaxPlayersUpdatePacket(id, slots));
+        CloudInstance.instance().client().sendPacket(new CloudServiceMaxPlayersUpdatePacket(id, slots));
     }
 
     @Override
     public CompletableFuture<Integer> onlinePlayersCountAsync() {
         var future = new CompletableFuture<Integer>();
-        CloudInstance.instance().client().transmitter().request("player-count", new CommunicationProperty().set("id", this.id), CloudPlayerCountPacket.class, it -> future.complete(it.amount()));
+        CloudInstance.instance().client().request("player-count", new CommunicationProperty().set("id", this.id), CloudPlayerCountPacket.class, it -> future.complete(it.amount()));
         return future;
     }
 

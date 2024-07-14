@@ -34,12 +34,12 @@ public class InstanceGroup extends CloudGroup {
     @Override
     public CompletableFuture<Integer> onlineAmountAsync() {
         var future = new CompletableFuture<Integer>();
-        CloudInstance.instance().client().transmitter().request("group-service-online", new CommunicationProperty().set("name", name()), OperationNumberPacket.class, it -> future.complete(it.response()));
+        CloudInstance.instance().client().request("group-service-online", new CommunicationProperty().set("name", name()), OperationNumberPacket.class, it -> future.complete(it.response()));
         return future;
     }
 
     @Override
     public void update() {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupUpdatePacket(this));
+        CloudInstance.instance().client().sendPacket(new CloudGroupUpdatePacket(this));
     }
 }

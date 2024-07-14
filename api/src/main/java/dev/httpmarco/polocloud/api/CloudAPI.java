@@ -16,7 +16,6 @@
 
 package dev.httpmarco.polocloud.api;
 
-import dev.httpmarco.polocloud.api.dependencies.DependencyService;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.logging.Logger;
@@ -38,8 +37,6 @@ public abstract class CloudAPI {
 
     private final LoggerFactory loggerFactory = new LoggerFactory();
     private final Logger logger = new Logger();
-
-    private final DependencyService dependencyService = new DependencyService();
 
     @SneakyThrows
     public CloudAPI() {

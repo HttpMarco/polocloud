@@ -30,7 +30,6 @@ import lombok.SneakyThrows;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public final class InstanceCloudPlayerProvider implements CloudPlayerProvider {
@@ -44,18 +43,18 @@ public final class InstanceCloudPlayerProvider implements CloudPlayerProvider {
     @Override
     public CommunicationFuture<List<CloudPlayer>> playersAsync() {
         var future = new CommunicationFuture<List<CloudPlayer>>();
-        CloudInstance.instance().client().transmitter().request("players-all", CloudAllPlayersPacket.class, it -> future.complete(it.players()));
+        CloudInstance.instance().client().request("players-all", CloudAllPlayersPacket.class, it -> future.complete(it.players()));
         return future;
     }
 
     @Override
     public void register(UUID id, String name) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerRegisterPacket(id, name, CloudInstance.SELF_ID));
+        CloudInstance.instance().client().sendPacket(new CloudPlayerRegisterPacket(id, name, CloudInstance.SELF_ID));
     }
 
     @Override
     public void unregister(UUID id) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerUnregisterPacket(id));
+        CloudInstance.instance().client().sendPacket(new CloudPlayerUnregisterPacket(id));
     }
 
     @Override
@@ -67,7 +66,7 @@ public final class InstanceCloudPlayerProvider implements CloudPlayerProvider {
     @Override
     public CommunicationFuture<CloudPlayer> findAsync(UUID id) {
         var future = new CommunicationFuture<CloudPlayer>();
-        CloudInstance.instance().client().transmitter().request("player-get", new CommunicationProperty().set("uniqueId", id), CloudPlayerPacket.class, it -> future.complete(it.cloudPlayer()));
+        CloudInstance.instance().client().request("player-get", new CommunicationProperty().set("uniqueId", id), CloudPlayerPacket.class, it -> future.complete(it.cloudPlayer()));
         return future;
     }
 

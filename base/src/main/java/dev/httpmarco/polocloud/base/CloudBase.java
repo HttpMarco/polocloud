@@ -18,7 +18,6 @@ package dev.httpmarco.polocloud.base;
 
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -61,10 +60,6 @@ public final class CloudBase extends CloudAPI {
     private boolean running = true;
 
     public CloudBase() {
-        Dependency.load("com.google.code.gson", "gson", "2.10.1");
-        Dependency.load("org.jline", "jline", "3.26.1");
-        Dependency.load("org.fusesource.jansi", "jansi", "2.4.1");
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
 
         this.globalProperties = this.cloudConfiguration.value().properties();

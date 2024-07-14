@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.runner.impl;
 
 import dev.httpmarco.polocloud.runner.CloudRunner;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
+import dev.httpmarco.polocloud.runner.dependencies.Dependency;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
@@ -51,6 +52,11 @@ public final class CloudBaseRunner implements CloudRunner {
         RunnerBootstrap.LOADER.addURL(commonFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(apiFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(baseFile.toUri().toURL());
+
+
+        Dependency.load("com.google.code.gson", "gson", "2.10.1");
+        Dependency.load("org.jline", "jline", "3.26.1");
+        Dependency.load("org.fusesource.jansi", "jansi", "2.4.1");
     }
 
 

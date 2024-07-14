@@ -16,6 +16,7 @@
 
 package dev.httpmarco.polocloud.runner;
 
+import dev.httpmarco.polocloud.runner.dependencies.DependencyService;
 import dev.httpmarco.polocloud.runner.loader.CloudClassLoader;
 import dev.httpmarco.polocloud.runner.impl.CloudBaseRunner;
 import dev.httpmarco.polocloud.runner.impl.CloudInstanceRunner;
@@ -39,6 +40,8 @@ public class RunnerBootstrap {
         RUNNER = Arrays.asList(args).contains("--instance") ? new CloudInstanceRunner() : new CloudBaseRunner();
 
         Thread.currentThread().setContextClassLoader(LOADER);
+
+        new DependencyService();
 
         // clone needed runtime files
         RUNNER.run();

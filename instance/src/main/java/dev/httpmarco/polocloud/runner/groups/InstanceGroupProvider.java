@@ -36,7 +36,7 @@ public final class InstanceGroupProvider extends CloudGroupProvider {
     @SneakyThrows
     public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
         var future = new CompletableFuture<Boolean>();
-        CloudInstance.instance().client().transmitter().request("group-create", new CommunicationProperty()
+        CloudInstance.instance().client().request("group-create", new CommunicationProperty()
                         .set("name", name)
                         .set("platform", platform)
                         .set("memory", memory)
@@ -49,34 +49,34 @@ public final class InstanceGroupProvider extends CloudGroupProvider {
     @SneakyThrows
     public boolean deleteGroup(String name) {
         var future = new CompletableFuture<Boolean>();
-        CloudInstance.instance().client().transmitter().request("group-delete", new CommunicationProperty().set("name", name), OperationStatePacket.class, it -> future.complete(it.response()));
+        CloudInstance.instance().client().request("group-delete", new CommunicationProperty().set("name", name), OperationStatePacket.class, it -> future.complete(it.response()));
         return future.get(5, TimeUnit.SECONDS);
     }
 
     @Override
     public CompletableFuture<Boolean> isGroupAsync(String name) {
         var future = new CompletableFuture<Boolean>();
-        CloudInstance.instance().client().transmitter().request("group-exist", new CommunicationProperty().set("name", name), CloudGroupExistResponsePacket.class, it -> future.complete(it.response()));
+        CloudInstance.instance().client().request("group-exist", new CommunicationProperty().set("name", name), CloudGroupExistResponsePacket.class, it -> future.complete(it.response()));
         return future;
     }
 
     @Override
     public CompletableFuture<CloudGroup> groupAsync(String name) {
         var future = new CompletableFuture<CloudGroup>();
-        CloudInstance.instance().client().transmitter().request("group-find", new CommunicationProperty().set("name", name), CloudGroupPacket.class, it -> future.complete(it.group()));
+        CloudInstance.instance().client().request("group-find", new CommunicationProperty().set("name", name), CloudGroupPacket.class, it -> future.complete(it.group()));
         return future;
     }
 
     @Override
     public CompletableFuture<List<CloudGroup>> groupsAsync() {
         var future = new CompletableFuture<List<CloudGroup>>();
-        CloudInstance.instance().client().transmitter().request("groups-all", CloudGroupCollectionPacket.class, it -> future.complete(it.groups()));
+        CloudInstance.instance().client().request("groups-all", CloudGroupCollectionPacket.class, it -> future.complete(it.groups()));
         return future;
     }
 
     @Override
     public void update(CloudGroup cloudGroup) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudGroupUpdatePacket(cloudGroup));
+        CloudInstance.instance().client().sendPacket(new CloudGroupUpdatePacket(cloudGroup));
     }
 
     @Override

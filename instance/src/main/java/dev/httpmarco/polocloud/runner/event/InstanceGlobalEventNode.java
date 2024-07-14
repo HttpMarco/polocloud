@@ -32,7 +32,7 @@ public final class InstanceGlobalEventNode implements EventNode {
     private final HashMap<Class<? extends Event>, List<EventRunnable<? extends Event>>> nodeListeners = new HashMap<>();
 
     public InstanceGlobalEventNode() {
-        CloudInstance.instance().client().transmitter().listen(CloudEventCallPacket.class, (channelTransmit, event) -> {
+        CloudInstance.instance().client().listen(CloudEventCallPacket.class, (channelTransmit, event) -> {
             if (nodeListeners.containsKey(event.event().getClass())) {
                 for (EventRunnable<? extends Event> runnable : nodeListeners.get(event.event().getClass())) {
                     runnable.runMapped(event.event());
@@ -47,7 +47,7 @@ public final class InstanceGlobalEventNode implements EventNode {
         currentListeners.add(runnable);
         this.nodeListeners.put(event, currentListeners);
 
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudEventRegitserPacket(CloudInstance.SELF_ID, event.getName()));
+        CloudInstance.instance().client().sendPacket(new CloudEventRegitserPacket(CloudInstance.SELF_ID, event.getName()));
     }
 
     @Override

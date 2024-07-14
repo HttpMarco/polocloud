@@ -27,11 +27,11 @@ public final class InstanceCloudServiceFactory implements CloudServiceFactory {
 
     @Override
     public void start(CloudGroup cloudGroup) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceStartPacket(cloudGroup.name()));
+        CloudInstance.instance().client().sendPacket(new CloudServiceStartPacket(cloudGroup.name()));
     }
 
     @Override
     public void stop(CloudService service) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceShutdownPacket(service.id()));
+        CloudInstance.instance().client().sendPacket(new CloudServiceShutdownPacket(service.id()));
     }
 }

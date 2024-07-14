@@ -55,7 +55,7 @@ public class RunningProxyPlatform extends RunningPlatform {
             registerService.accept(event.cloudService());
         });
 
-        CloudInstance.instance().client().transmitter().listen(CloudPlayerConnectToServerPacket.class, (ch, packet) -> playerConnect.accept(packet.uuid(), packet.serverId()));
+        CloudInstance.instance().client().listen(CloudPlayerConnectToServerPacket.class, (ch, packet) -> playerConnect.accept(packet.uuid(), packet.serverId()));
 
         instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> unregisterService.accept(event.cloudService()));
     }
