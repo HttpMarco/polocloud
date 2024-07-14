@@ -70,7 +70,7 @@ public class CloudInstance extends CloudAPI {
         instance = this;
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
-
+        // todo set current port of node
         this.client = new CommunicationClient("127.0.0.1", 9090);
 
         client.clientAction(CommunicationClientAction.CONNECTED, channelTransmit -> {
