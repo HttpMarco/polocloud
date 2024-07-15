@@ -8,8 +8,6 @@ import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-
 @UtilityClass
 public class NodeConnectionFactory {
 
@@ -22,7 +20,7 @@ public class NodeConnectionFactory {
         }
 
         // detect head node
-        var headNode = Arrays.stream(headProvider.externalNodeEndpoints()).filter(it -> it.situation() == NodeSituation.REACHABLE).map(it -> (NodeEndpoint) it).findFirst().orElse(headProvider.localEndpoint());
+        var headNode = headProvider.externalNodeEndpoints().stream().filter(it -> it.situation() == NodeSituation.REACHABLE).map(it -> (NodeEndpoint) it).findFirst().orElse(headProvider.localEndpoint());
 
         CloudBase.instance().nodeHeadProvider().headNodeEndpoint(headNode);
 
