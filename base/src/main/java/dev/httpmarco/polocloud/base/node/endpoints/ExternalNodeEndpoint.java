@@ -5,7 +5,7 @@ import dev.httpmarco.polocloud.base.node.NodeSituation;
 
 public final class ExternalNodeEndpoint extends NodeEndpoint {
 
-    public ExternalNodeEndpoint(NodeData data, NodeSituation situation) {
+    public ExternalNodeEndpoint(NodeData data) {
         super(data, NodeSituation.INITIALIZE);
     }
 }

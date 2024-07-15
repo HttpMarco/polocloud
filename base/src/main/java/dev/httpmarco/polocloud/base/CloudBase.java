@@ -27,8 +27,6 @@ import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.NodeHeadProvider;
-import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
-import dev.httpmarco.polocloud.base.node.endpoints.LocalNodeEndpoint;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
 import dev.httpmarco.polocloud.base.templates.TemplatesService;
@@ -46,9 +44,9 @@ import java.util.Arrays;
 @Accessors(fluent = true)
 public final class CloudBase extends CloudAPI {
 
-    private final PropertyPool globalProperties;
-
-    private final CloudTerminal terminal;
+    private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration(), PropertiesPoolSerializer.ADAPTER);
+    private final PropertyPool globalProperties = this.cloudConfiguration.value().properties();
+    private final CloudTerminal terminal = new CloudTerminal();
     private final NodeHeadProvider nodeHeadProvider;
     private final CloudGroupProvider groupProvider;
     private final CloudServiceProvider serviceProvider;
@@ -56,15 +54,10 @@ public final class CloudBase extends CloudAPI {
     private final CloudPlayerProvider playerProvider;
     private final GlobalEventNode globalEventNode;
 
-    private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration(), PropertiesPoolSerializer.ADAPTER);
     private boolean running = true;
 
     public CloudBase() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
-
-        this.globalProperties = this.cloudConfiguration.value().properties();
-
-        this.terminal = new CloudTerminal();
 
         // register logging layers (for general output)
         this.loggerFactory().registerLoggers(new FileLoggerHandler(), terminal);
@@ -73,13 +66,12 @@ public final class CloudBase extends CloudAPI {
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
-        // todo
-        this.nodeHeadProvider = new NodeHeadProvider(new LocalNodeEndpoint(this.cloudConfiguration.value().localNode()), new ExternalNodeEndpoint[0]);
+        this.nodeHeadProvider = new NodeHeadProvider(this.cloudConfiguration.value());
 
         // print cloud header information
         terminal.spacer();
         terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.10-snapshot");
-        terminal.spacer("   &1Local node&2: &1" + nodeHeadProvider.localEndpoint().data().id() + " &2| &1External nodes&2: &1" + String.join(", ", Arrays.stream(nodeHeadProvider.externalNodeEndpoints()).map(node -> node.data().id()).toList()));
+        terminal.spacer("   &1Local node&2: &1" + nodeHeadProvider.localEndpoint().data().id() + " &2| &1External nodes&2: &1" + String.join(", ", nodeHeadProvider.externalNodeEndpoints().stream().map(node -> node.data().id()).toList()));
         terminal.spacer();
 
         this.globalEventNode = new GlobalEventNode();
@@ -106,8 +98,7 @@ public final class CloudBase extends CloudAPI {
             service.shutdown();
         }
 
-        // todo
-        //this.nodeHeadProvider.localEndpoint().close();
+        this.nodeHeadProvider.localEndpoint().server().close();
 
         logger().info("Cloud successfully stopped!");
         this.loggerFactory().close();
@@ -124,6 +115,5 @@ public final class CloudBase extends CloudAPI {
     public static CloudBase instance() {
         return (CloudBase) CloudAPI.instance();
     }
-
 
 }

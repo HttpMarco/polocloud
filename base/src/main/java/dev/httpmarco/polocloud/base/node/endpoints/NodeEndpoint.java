@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.base.node.data.NodeData;
 import dev.httpmarco.polocloud.base.node.NodeSituation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Getter
@@ -12,6 +13,8 @@ import lombok.experimental.Accessors;
 public abstract class NodeEndpoint {
 
     private final NodeData data;
-    private final NodeSituation situation;
+
+    @Setter
+    private NodeSituation situation;
 
 }
