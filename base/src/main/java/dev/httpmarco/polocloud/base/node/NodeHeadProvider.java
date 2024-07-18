@@ -29,5 +29,7 @@ public final class NodeHeadProvider {
     public NodeHeadProvider(@NotNull CloudConfiguration configuration) {
         this.localEndpoint = new LocalNodeEndpoint(configuration.localNode());
         this.externalNodeEndpoints = configuration.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
+
+        NodeConnectionFactory.bindCluster(this);
     }
 }

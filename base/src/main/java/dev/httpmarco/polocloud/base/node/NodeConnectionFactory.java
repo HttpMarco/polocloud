@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.base.node;
 
+import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.base.CloudBase;
@@ -11,43 +12,40 @@ import org.jetbrains.annotations.NotNull;
 @UtilityClass
 public class NodeConnectionFactory {
 
-    public static void bindCluster() {
-        var headProvider = CloudBase.instance().nodeHeadProvider();
+    public static void bindCluster(@NotNull NodeHeadProvider headProvider) {
 
         // start connection of the other nodes
         for (var nodeEndpoint : headProvider.externalNodeEndpoints()) {
-            bind(nodeEndpoint);
+            // we must wait of all connection states
+            bind(nodeEndpoint).sync(null, 5);
         }
 
         // detect head node
         var headNode = headProvider.externalNodeEndpoints().stream().filter(it -> it.situation() == NodeSituation.REACHABLE).map(it -> (NodeEndpoint) it).findFirst().orElse(headProvider.localEndpoint());
 
-        CloudBase.instance().nodeHeadProvider().headNodeEndpoint(headNode);
+        headProvider.headNodeEndpoint(headNode);
+        CloudBase.instance().logger().info("Switch to head node: " + headProvider.headNodeEndpoint().data().id());
 
         if (headNode.equals(headProvider.headNodeEndpoint())) {
             // start factory queue
         }
     }
 
-    public static void bind(@NotNull ExternalNodeEndpoint nodeEndpoint) {
-
+    public static @NotNull CommunicationFuture<Void> bind(@NotNull ExternalNodeEndpoint nodeEndpoint) {
         var client = new CommunicationClient(nodeEndpoint.data().hostname(), nodeEndpoint.data().port());
+        var future = new CommunicationFuture<Void>();
 
-        client.clientAction(CommunicationClientAction.CONNECTED, it -> {
+        client.clientAction(CommunicationClientAction.CONNECTED, channel -> {
             // First we must detect the head node of the current cluster
             nodeEndpoint.situation(NodeSituation.SYNC);
-        });
-
-        client.clientAction(CommunicationClientAction.DISCONNECTED, it -> {
-
-        });
-
-        client.clientAction(CommunicationClientAction.FAILED, it -> {
+            nodeEndpoint.transmit(channel);
+            future.complete(null);
+        }).clientAction(CommunicationClientAction.FAILED, it -> {
+            CloudBase.instance().logger().info("Cluster cannot bind " + nodeEndpoint.data().id() + ". Because endpoint is offline!");
             nodeEndpoint.situation(NodeSituation.NOT_AVAILABLE);
+            future.complete(null);
         });
-
-        client.clientAction(CommunicationClientAction.CLIENT_DISCONNECT, it -> {
-
-        });
+        client.initialize();
+        return future;
     }
 }
