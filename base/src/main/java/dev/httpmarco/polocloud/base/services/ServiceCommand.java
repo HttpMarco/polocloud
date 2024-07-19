@@ -17,8 +17,8 @@
 package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.base.Node;
+import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -35,7 +35,7 @@ import java.util.List;
 @Command(command = "service", aliases = {"services", "ser"}, description = "Manage all your online services")
 public final class ServiceCommand {
 
-    private final Logger logger = CloudAPI.instance().logger();
+    private final Logger logger = Node.instance().logger();
 
     @DefaultCommand
     public void handle() {

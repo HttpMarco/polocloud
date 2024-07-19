@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.logging;
+package dev.httpmarco.polocloud.base.logging;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.logging.Level;
 
 public final class LoggerFactory implements LoggerHandler {
 

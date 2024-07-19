@@ -58,7 +58,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), ServiceState.PREPARED);
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
-        CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is starting now on node &2'&4" + Node.instance().nodeProvider().localEndpoint().data().id() + "&2'");
+        Node.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is starting now on node &2'&4" + Node.instance().nodeProvider().localEndpoint().data().id() + "&2'");
 
         Node.instance().templatesService().cloneTemplate(service);
 
@@ -155,7 +155,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
             }
         }
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
-        CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1was successfully stopped");
+        Node.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1was successfully stopped");
         service.state(ServiceState.STOPPED);
     }
 

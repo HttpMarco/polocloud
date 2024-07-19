@@ -16,8 +16,8 @@
 
 package dev.httpmarco.polocloud.base.terminal;
 
-import dev.httpmarco.polocloud.api.logging.LogLevel;
-import dev.httpmarco.polocloud.api.logging.LoggerHandler;
+import dev.httpmarco.polocloud.base.logging.LogLevel;
+import dev.httpmarco.polocloud.base.logging.LoggerHandler;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandCompleter;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandService;
 import lombok.AccessLevel;
@@ -30,12 +30,9 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
-
-import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.logging.Level;
 
 @Getter(AccessLevel.PACKAGE)
 @Accessors(fluent = true)

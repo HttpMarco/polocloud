@@ -27,6 +27,7 @@ import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
 import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
+import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.NodeProvider;
 import dev.httpmarco.polocloud.base.node.data.NodeData;
@@ -37,6 +38,7 @@ import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
 import dev.httpmarco.pololcoud.common.document.Document;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jline.utils.Log;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -46,6 +48,7 @@ import java.nio.file.Path;
 @Accessors(fluent = true)
 public final class Node extends CloudAPI {
 
+    private final Logger logger = new Logger();
     private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration(), PropertiesPoolSerializer.ADAPTER);
     private final PropertyPool globalProperties = this.cloudConfiguration.value().properties();
     private final CloudTerminal terminal = new CloudTerminal();
@@ -60,7 +63,7 @@ public final class Node extends CloudAPI {
 
     public Node() {
         // register logging layers (for general output)
-        this.loggerFactory().registerLoggers(new FileLoggerHandler(), terminal);
+        logger.factory().registerLoggers(new FileLoggerHandler(), terminal);
 
         System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));

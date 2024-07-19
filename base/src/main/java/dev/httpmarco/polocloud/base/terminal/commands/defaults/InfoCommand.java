@@ -16,7 +16,6 @@
 
 package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
@@ -29,18 +28,16 @@ public class InfoCommand {
 
         var thisNode = Node.instance().nodeProvider().localEndpoint().data();
 
-        //todo
-        CloudAPI.instance().logger().info("Self node Id&2: &3" + thisNode.id());
-        CloudAPI.instance().logger().info("Max node memory&2: &3" + Node.instance().cloudConfiguration().value().maxMemory());
-        CloudAPI.instance().logger().info("Registered groups&2: &3" + Node.instance().groupProvider().groups().size());
-        CloudAPI.instance().logger().info("Online services&2: &3" + Node.instance().serviceProvider().services().size());
-        CloudAPI.instance().logger().info("Amount of commands&2: &3" + Node.instance().terminal().commandService().commands().size());
+        Node.instance().logger().info("Self node Id&2: &3" + thisNode.id());
+        Node.instance().logger().info("Registered groups&2: &3" + Node.instance().groupProvider().groups().size());
+        Node.instance().logger().info("Online services&2: &3" + Node.instance().serviceProvider().services().size());
+        Node.instance().logger().info("Amount of commands&2: &3" + Node.instance().terminal().commandService().commands().size());
 
         var runtime = Runtime.getRuntime();
         int mb = 1024 * 1024;
         var currentMemory = runtime.totalMemory() - runtime.freeMemory();
         var maxMemory = runtime.maxMemory();
 
-        CloudAPI.instance().logger().info("Memory of node process&2: &3" + (currentMemory / mb) + "&2/&3" + (maxMemory / mb) + " mb");
+        Node.instance().logger().info("Memory of node process&2: &3" + (currentMemory / mb) + "&2/&3" + (maxMemory / mb) + " mb");
     }
 }

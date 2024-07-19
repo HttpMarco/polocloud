@@ -22,7 +22,7 @@ public final class NodeShutdownTask {
         node.nodeProvider().localEndpoint().server().close();
 
         node.logger().info("Cloud successfully stopped!");
-        node.loggerFactory().close();
+        node.logger().factory().close();
 
         // close application
         System.exit(0);

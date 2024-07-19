@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.logging;
+package dev.httpmarco.polocloud.base.logging;
 
-public interface LoggerHandler {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-    void print(LogLevel level, String message, Throwable throwable, Object... objects);
+@Getter
+@Accessors(fluent = true)
+@AllArgsConstructor
+public enum LogLevel {
 
-    void close();
+    OFF(""),
+    INFO("&4"),
+    SUCCESS("&8"),
+    WARN("&5"),
+    ERROR("&6");
+
+    private final String colorCode;
 
 }

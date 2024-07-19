@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package dev.httpmarco.polocloud.api.logging;
+package dev.httpmarco.polocloud.base.logging;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
+@Getter
+@Accessors(fluent = true)
 public final class Logger {
+
+    private final LoggerFactory factory = new LoggerFactory();
 
     public void info(String message, Object... objects) {
         this.log(LogLevel.INFO, message, null, objects);
@@ -37,6 +42,6 @@ public final class Logger {
     }
 
     private void log(LogLevel level, String message, Throwable throwable, Object... objects) {
-        CloudAPI.instance().loggerFactory().print(level, message, throwable, objects);
+        factory.print(level, message, throwable, objects);
     }
 }

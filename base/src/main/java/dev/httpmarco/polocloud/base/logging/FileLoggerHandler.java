@@ -16,8 +16,6 @@
 
 package dev.httpmarco.polocloud.base.logging;
 
-import dev.httpmarco.polocloud.api.logging.LogLevel;
-import dev.httpmarco.polocloud.api.logging.LoggerHandler;
 import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.SneakyThrows;
 

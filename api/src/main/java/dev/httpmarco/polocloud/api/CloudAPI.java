@@ -18,8 +18,6 @@ package dev.httpmarco.polocloud.api;
 
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
-import dev.httpmarco.polocloud.api.logging.Logger;
-import dev.httpmarco.polocloud.api.logging.LoggerFactory;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
@@ -33,9 +31,6 @@ public abstract class CloudAPI {
 
     @Getter
     private static CloudAPI instance;
-
-    private final LoggerFactory loggerFactory = new LoggerFactory();
-    private final Logger logger = new Logger();
 
     @SneakyThrows
     public CloudAPI() {

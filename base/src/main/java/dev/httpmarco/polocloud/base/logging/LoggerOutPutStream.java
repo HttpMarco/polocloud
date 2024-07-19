@@ -16,8 +16,7 @@
 
 package dev.httpmarco.polocloud.base.logging;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.logging.Logger;
+import dev.httpmarco.polocloud.base.Node;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -41,9 +40,9 @@ public final class LoggerOutPutStream extends ByteArrayOutputStream {
         if (input != null && !input.isEmpty()) {
             input = input.replace("\n", "");
             if (!errorStream) {
-                CloudAPI.instance().logger().info(input);
+                Node.instance().logger().info(input);
             } else {
-                CloudAPI.instance().logger().error(input, null);
+                Node.instance().logger().error(input, null);
             }
         }
     }

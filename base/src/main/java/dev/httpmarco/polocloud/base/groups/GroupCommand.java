@@ -19,9 +19,9 @@ package dev.httpmarco.polocloud.base.groups;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.base.Node;
+import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -37,7 +37,7 @@ import java.util.Set;
 @Command(command = "group", aliases = {"groups"}, description = "Manage or create your cluster groups")
 public final class GroupCommand {
 
-    private final Logger logger = CloudAPI.instance().logger();
+    private final Logger logger = Node.instance().logger();
 
     @DefaultCommand
     public void handle() {
@@ -155,17 +155,17 @@ public final class GroupCommand {
         var provider = Node.instance().groupProvider();
 
         if (provider.isGroup(name)) {
-            CloudAPI.instance().logger().info("The group already exists!");
+            Node.instance().logger().info("The group already exists!");
             return;
         }
 
         if (memory <= 0) {
-            CloudAPI.instance().logger().info("The minimum memory value must be higher then 0. ");
+            Node.instance().logger().info("The minimum memory value must be higher then 0. ");
             return;
         }
 
         if (!provider.platformService().isValidPlatform(platform)) {
-            CloudAPI.instance().logger().info("The platform " + platform + " is an invalid type!");
+            Node.instance().logger().info("The platform " + platform + " is an invalid type!");
             return;
         }
 
@@ -194,7 +194,7 @@ public final class GroupCommand {
         if (CloudAPI.instance().groupProvider().deleteGroup(name)) {
             logger.success("Successfully deleted &3" + name + "&2!");
         } else {
-            CloudAPI.instance().logger().warn("The group does not exists!");
+            Node.instance().logger().warn("The group does not exists!");
         }
     }
 

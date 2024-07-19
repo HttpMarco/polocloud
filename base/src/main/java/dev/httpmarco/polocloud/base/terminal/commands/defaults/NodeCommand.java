@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -26,7 +27,7 @@ public final class NodeCommand {
 
     @DefaultCommand
     public void handle() {
-        var logger = CloudAPI.instance().logger();
+        var logger = Node.instance().logger();
         logger.info("cluster merge <id> <hostname> <port> <token> - Merge your node in an existing cluster.");
     }
 

@@ -2,7 +2,8 @@ package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.logging.Logger;
+import dev.httpmarco.polocloud.base.Node;
+import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -14,7 +15,7 @@ import java.util.List;
 @Command(command = "start", aliases = "create", description = "Start a new service with a group and a count")
 public class StartCommand {
 
-    private final Logger logger = CloudAPI.instance().logger();
+    private final Logger logger = Node.instance().logger();
 
     @DefaultCommand
     public void handle() {

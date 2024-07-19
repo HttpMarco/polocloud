@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 
@@ -25,7 +25,7 @@ public final class PropertyCommand {
 
     @DefaultCommand
     public void handle() {
-        CloudAPI.instance().logger().info("Global properties");
+        Node.instance().logger().info("Global properties");
         //todo
     }
 

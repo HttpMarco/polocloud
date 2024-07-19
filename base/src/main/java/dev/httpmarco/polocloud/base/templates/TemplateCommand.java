@@ -16,8 +16,8 @@
 
 package dev.httpmarco.polocloud.base.templates;
 
-import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.base.Node;
+import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
