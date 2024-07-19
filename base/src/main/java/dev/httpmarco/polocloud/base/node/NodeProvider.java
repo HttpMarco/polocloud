@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.base.node.data.NodeData;
 import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.LocalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
+import dev.httpmarco.polocloud.base.node.packets.NodeAttachEndpointPacket;
 import dev.httpmarco.polocloud.base.node.packets.NodeSituationCallbackPacket;
 import dev.httpmarco.polocloud.base.node.packets.NodeValidationSyncPacket;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,8 @@ public final class NodeProvider {
     public NodeProvider() {
         var nodeModel = Node.instance().nodeModel();
 
+        this.externalNodeEndpoints = nodeModel.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
+
         this.localEndpoint = new LocalNodeEndpoint(nodeModel.localNode());
         this.localEndpoint.server().responder("cluster-node-situation", property -> new NodeSituationCallbackPacket(localEndpoint.situation()));
         this.localEndpoint.server().responder("cluster-data-sync", property -> {
@@ -47,17 +50,13 @@ public final class NodeProvider {
             }
 
             // we must save the new endpoint
-            nodeModel.cluster().endpoints().add(new NodeData(property.getString("id"), property.getString("hostname"), property.getInteger("port")));
+            var endpoint = new NodeData(property.getString("id"), property.getString("hostname"), property.getInteger("port"));
+            nodeModel.cluster().endpoints().add(endpoint);
             nodeModel.save();
 
-            // todo sync all node endpoint
-            //alertPacket(null);
-
+            alertPacket(new NodeAttachEndpointPacket(endpoint));
             return new NodeValidationSyncPacket(true, nodeModel.cluster().id());
         });
-
-        this.externalNodeEndpoints = nodeModel.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
-
 
         // todo bind
         this.localEndpoint.situation(NodeSituation.REACHABLE);

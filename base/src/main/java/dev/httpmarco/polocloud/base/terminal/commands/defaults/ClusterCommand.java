@@ -57,6 +57,10 @@ public final class ClusterCommand {
                     return;
                 }
 
+                var nodeModel = Node.instance().nodeModel();
+                nodeModel.cluster().endpoints().add(externalNodeEndpoint.data());
+                nodeModel.save();
+
                 Node.instance().logger().success("Synced all endpoint data!");
             });
         });
