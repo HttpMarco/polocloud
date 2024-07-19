@@ -140,6 +140,12 @@ public final class PurpurPlatform extends Platform {
 
     }
 
+
+    @Override
+    public String[] platformsArguments() {
+        return new String[]{"nogui", "noconsole"};
+    }
+
     @SneakyThrows
     private JsonObject readPurpurInformation(String link) {
         return OsganGsonContext.GSON.fromJson(downloadStringContext(link), JsonObject.class);
