@@ -24,7 +24,7 @@ import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
 import dev.httpmarco.polocloud.api.packets.service.*;
 import dev.httpmarco.polocloud.api.services.*;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
     public CloudServiceProviderImpl() {
 
         // send all services back to request
-        var transmitter = CloudBase.instance().transmitter();
+        var transmitter = Node.instance().transmitter();
         transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
         transmitter.responder("services-group", (properties) -> new CloudAllServicesPacket(services(CloudAPI.instance().groupProvider().group(properties.getString("name")))));
         transmitter.responder("service-find-id", (properties) -> new CloudServicePacket(find(properties.getUUID("id"))));

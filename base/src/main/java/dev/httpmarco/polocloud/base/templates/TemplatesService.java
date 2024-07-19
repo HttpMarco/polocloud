@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base.templates;
 
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.pololcoud.common.files.FileUtils;
@@ -68,7 +68,7 @@ public final class TemplatesService {
 
     public void cloneTemplate(LocalCloudService service) {
         if (service.group().properties().has(GroupProperties.TEMPLATES)) {
-            var temp = CloudBase.instance().templatesService().template(service.group().properties().property(GroupProperties.TEMPLATES));
+            var temp = Node.instance().templatesService().template(service.group().properties().property(GroupProperties.TEMPLATES));
             if (temp != null) {
                 temp.copy(service);
             }

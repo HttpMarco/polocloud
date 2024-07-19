@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.base.node;
 import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
 import lombok.experimental.UtilityClass;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @UtilityClass
 public class NodeConnectionFactory {
 
-    public static void bindCluster(@NotNull NodeHeadProvider headProvider) {
+    public static void bindCluster(@NotNull NodeProvider headProvider) {
 
         // start connection of the other nodes
         for (var nodeEndpoint : headProvider.externalNodeEndpoints()) {
@@ -24,11 +24,7 @@ public class NodeConnectionFactory {
         var headNode = headProvider.externalNodeEndpoints().stream().filter(it -> it.situation() == NodeSituation.REACHABLE).map(it -> (NodeEndpoint) it).findFirst().orElse(headProvider.localEndpoint());
 
         headProvider.headNodeEndpoint(headNode);
-        CloudBase.instance().logger().info("Switch to head node: " + headProvider.headNodeEndpoint().data().id());
-
-        if (headNode.equals(headProvider.headNodeEndpoint())) {
-            // start factory queue
-        }
+        Node.instance().logger().info("Switch to head node: " + headProvider.headNodeEndpoint().data().id());
     }
 
     public static @NotNull CommunicationFuture<Void> bind(@NotNull ExternalNodeEndpoint nodeEndpoint) {
@@ -41,7 +37,7 @@ public class NodeConnectionFactory {
             nodeEndpoint.transmit(channel);
             future.complete(null);
         }).clientAction(CommunicationClientAction.FAILED, it -> {
-            CloudBase.instance().logger().info("Cluster cannot bind " + nodeEndpoint.data().id() + ". Because endpoint is offline!");
+            Node.instance().logger().info("Cluster cannot bind " + nodeEndpoint.data().id() + ". Because endpoint is offline!");
             nodeEndpoint.situation(NodeSituation.NOT_AVAILABLE);
             future.complete(null);
         });

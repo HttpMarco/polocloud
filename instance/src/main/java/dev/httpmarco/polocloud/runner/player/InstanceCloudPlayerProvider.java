@@ -27,6 +27,7 @@ import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +42,7 @@ public final class InstanceCloudPlayerProvider implements CloudPlayerProvider {
     }
 
     @Override
-    public CommunicationFuture<List<CloudPlayer>> playersAsync() {
+    public @NotNull CommunicationFuture<List<CloudPlayer>> playersAsync() {
         var future = new CommunicationFuture<List<CloudPlayer>>();
         CloudInstance.instance().client().request("players-all", CloudAllPlayersPacket.class, it -> future.complete(it.players()));
         return future;

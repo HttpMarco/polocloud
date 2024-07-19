@@ -21,12 +21,14 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.base.common.NodeHeader;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
+import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
 import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
-import dev.httpmarco.polocloud.base.node.NodeHeadProvider;
+import dev.httpmarco.polocloud.base.node.NodeProvider;
 import dev.httpmarco.polocloud.base.node.data.NodeData;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
@@ -42,39 +44,29 @@ import java.nio.file.Path;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudBase extends CloudAPI {
+public final class Node extends CloudAPI {
 
     private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration(), PropertiesPoolSerializer.ADAPTER);
     private final PropertyPool globalProperties = this.cloudConfiguration.value().properties();
     private final CloudTerminal terminal = new CloudTerminal();
-    private final NodeHeadProvider nodeHeadProvider;
+    private final NodeProvider nodeProvider = new NodeProvider(this.cloudConfiguration.value());
     private final CloudGroupProvider groupProvider;
-    private final CloudServiceProvider serviceProvider;
+    private final CloudServiceProviderImpl serviceProvider;
     private final TemplatesService templatesService;
     private final CloudPlayerProvider playerProvider;
     private final GlobalEventNode globalEventNode;
 
-    private boolean running = true;
+    boolean running = true;
 
-    public CloudBase() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(true)));
-
+    public Node() {
         // register logging layers (for general output)
         this.loggerFactory().registerLoggers(new FileLoggerHandler(), terminal);
 
         System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
         System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
+        NodeHeader.print(this.terminal);
 
-        // print cloud header information
-        terminal.spacer();
-        terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.10-snapshot");
-        terminal.spacer("   &1Local node&2: &1" + cloudConfiguration.value().localNode().id() + " &2| &1External nodes&2: &1" + String.join(", ",
-                cloudConfiguration.value().cluster().endpoints().stream().map(NodeData::id).toList()));
-        terminal.spacer();
-
-        this.nodeHeadProvider = new NodeHeadProvider(this.cloudConfiguration.value());
         this.globalEventNode = new GlobalEventNode();
         this.groupProvider = new CloudGroupProvider();
         this.templatesService = new TemplatesService();
@@ -86,35 +78,11 @@ public final class CloudBase extends CloudAPI {
         this.terminal.start();
     }
 
-    public void shutdown(boolean shutdownCycle) {
-        if (!running) {
-            return;
-        }
-        running = false;
-
-        logger().info("Shutdown cloud...");
-        ((CloudServiceProviderImpl) serviceProvider).close();
-
-        for (var service : this.serviceProvider.services()) {
-            service.shutdown();
-        }
-
-        this.nodeHeadProvider.localEndpoint().server().close();
-
-        logger().info("Cloud successfully stopped!");
-        this.loggerFactory().close();
-
-        if (!shutdownCycle) {
-            System.exit(0);
-        }
-    }
-
     public CommunicationServer transmitter() {
-        return this.nodeHeadProvider.localEndpoint().server();
+        return this.nodeProvider.localEndpoint().server();
     }
 
-    public static CloudBase instance() {
-        return (CloudBase) CloudAPI.instance();
+    public static Node instance() {
+        return (Node) CloudAPI.instance();
     }
-
 }

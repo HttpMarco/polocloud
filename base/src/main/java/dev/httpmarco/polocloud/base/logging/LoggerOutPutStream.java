@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.base.logging;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.logging.Logger;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

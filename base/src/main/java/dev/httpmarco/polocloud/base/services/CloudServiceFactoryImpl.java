@@ -24,7 +24,7 @@ import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.ServiceState;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
 import dev.httpmarco.pololcoud.common.files.FileUtils;
@@ -58,12 +58,12 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), ServiceState.PREPARED);
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
-        CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is starting now on node &2'&4" + CloudBase.instance().nodeHeadProvider().localEndpoint().data().id() + "&2'");
+        CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is starting now on node &2'&4" + Node.instance().nodeProvider().localEndpoint().data().id() + "&2'");
 
-        CloudBase.instance().templatesService().cloneTemplate(service);
+        Node.instance().templatesService().cloneTemplate(service);
 
         // download and/or copy platform file to service
-        CloudGroupPlatformService platformService = CloudBase.instance().groupProvider().platformService();
+        CloudGroupPlatformService platformService = Node.instance().groupProvider().platformService();
         platformService.preparePlatform(service);
 
         var args = new LinkedList<>();

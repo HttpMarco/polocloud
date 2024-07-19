@@ -18,7 +18,7 @@ package dev.httpmarco.polocloud.base.services;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.logging.Logger;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -127,7 +127,7 @@ public final class ServiceCommand {
         }
 
         CloudAPI.instance().serviceProvider().find(name).execute(command);
-        this.logger.info("&4" + CloudBase.instance().nodeHeadProvider().localEndpoint().data().id() + "&1 -> &4" + name + " &2 | &1" + command);
+        this.logger.info("&4" + Node.instance().nodeProvider().localEndpoint().data().id() + "&1 -> &4" + name + " &2 | &1" + command);
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "execute", "<command...>"})
@@ -144,7 +144,7 @@ public final class ServiceCommand {
             return;
         }
 
-        final var templatesService = CloudBase.instance().templatesService();
+        final var templatesService = Node.instance().templatesService();
         if (templatesService.template(template) == null) {
             templatesService.createTemplates(template, "every", "every_server");
         }
@@ -174,7 +174,7 @@ public final class ServiceCommand {
         if (index == 2) {
             candidates.add(new Candidate("copy"));
         } else if (index == 3) {
-            candidates.addAll(CloudBase.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
+            candidates.addAll(Node.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
         }
     }
 

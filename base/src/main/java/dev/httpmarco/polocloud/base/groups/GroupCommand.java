@@ -21,7 +21,7 @@ import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.logging.Logger;
 import dev.httpmarco.polocloud.api.services.CloudService;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -129,7 +129,7 @@ public final class GroupCommand {
 
     @SubCommand(args = {"versions", "<platform>"})
     public void handleVersions(String platform) {
-        List<String> versions = CloudBase.instance().groupProvider().platformService().validPlatformVersions().stream()
+        List<String> versions = Node.instance().groupProvider().platformService().validPlatformVersions().stream()
                 .map(PlatformVersion::version).filter(version -> version.startsWith(platform.toLowerCase() + "-")).sorted().toList();
 
         if (versions.isEmpty()) {
@@ -144,7 +144,7 @@ public final class GroupCommand {
     public void completeVersionsMethod(int index, List<Candidate> candidates) {
         if (index == 2) {
             Set<String> platformNames = new HashSet<>();
-            CloudBase.instance().groupProvider().platformService().validPlatformVersions().forEach(it -> platformNames.add(it.version().split("-")[0]));
+            Node.instance().groupProvider().platformService().validPlatformVersions().forEach(it -> platformNames.add(it.version().split("-")[0]));
             candidates.addAll(platformNames.stream().map(Candidate::new).toList());
         }
     }
@@ -152,7 +152,7 @@ public final class GroupCommand {
     @SubCommand(args = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
     public void handleCreate(String name, String platform, int memory, int minOnlineCount) {
 
-        var provider = CloudBase.instance().groupProvider();
+        var provider = Node.instance().groupProvider();
 
         if (provider.isGroup(name)) {
             CloudAPI.instance().logger().info("The group already exists!");
@@ -173,7 +173,7 @@ public final class GroupCommand {
         var group = provider.group(name);
 
         // we must create a separate template directory
-        CloudBase.instance().templatesService().createTemplates(name, "every", (group.platform().proxy() ? "every_proxy" : "every_server"));
+        Node.instance().templatesService().createTemplates(name, "every", (group.platform().proxy() ? "every_proxy" : "every_server"));
         // we set as default value all important templates
         group.properties().put(GroupProperties.TEMPLATES, name);
         // send changes to other nodes or update data files

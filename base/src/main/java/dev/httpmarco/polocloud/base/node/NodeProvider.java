@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.base.node;
 
-import dev.httpmarco.polocloud.base.CloudConfiguration;
+import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
 import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.LocalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class NodeHeadProvider {
+public final class NodeProvider {
 
     @Setter
     private @Nullable NodeEndpoint headNodeEndpoint;
@@ -26,10 +26,16 @@ public final class NodeHeadProvider {
     // all other connected nodes with her data and connection (if present)
     private final Set<ExternalNodeEndpoint> externalNodeEndpoints;
 
-    public NodeHeadProvider(@NotNull CloudConfiguration configuration) {
+    public NodeProvider(@NotNull CloudConfiguration configuration) {
         this.localEndpoint = new LocalNodeEndpoint(configuration.localNode());
         this.externalNodeEndpoints = configuration.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
+    }
 
+    public void initialize() {
         NodeConnectionFactory.bindCluster(this);
+    }
+
+    public boolean isHead() {
+        return this.localEndpoint.equals(headNodeEndpoint);
     }
 }

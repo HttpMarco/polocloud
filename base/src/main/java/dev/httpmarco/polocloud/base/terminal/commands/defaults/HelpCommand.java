@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 
@@ -26,7 +26,7 @@ public final class HelpCommand {
 
     @DefaultCommand
     public void handle() {
-        for (var command : CloudBase.instance().terminal().commandService().commands()) {
+        for (var command : Node.instance().terminal().commandService().commands()) {
 
             var commandInfo = command.getClass().getDeclaredAnnotation(Command.class);
 

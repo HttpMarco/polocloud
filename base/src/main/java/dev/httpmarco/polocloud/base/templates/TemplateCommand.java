@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base.templates;
 
 import dev.httpmarco.polocloud.api.logging.Logger;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -31,7 +31,7 @@ import java.util.List;
 @Command(command = "template", aliases = {"templates",}, description = "Manage or merge templates")
 public final class TemplateCommand {
 
-    private final Logger logger = CloudBase.instance().logger();
+    private final Logger logger = Node.instance().logger();
 
     @DefaultCommand
     public void handle() {
@@ -42,7 +42,7 @@ public final class TemplateCommand {
 
     @SubCommand(args = {"delete", "<name>"})
     public void handleDelete(String name) {
-        if (CloudBase.instance().templatesService().deleteTemplate(name)) {
+        if (Node.instance().templatesService().deleteTemplate(name)) {
             logger.success("The template &2'&4" + name + "&2' &1has been deleted successfully");
         } else {
             logger.info("The template &2'&4" + name + "&2' &1does not exists!");
@@ -52,7 +52,7 @@ public final class TemplateCommand {
     @SubCommandCompleter(completionPattern = {"delete", "<name>"})
     public void completeDeleteMethod(int index, List<Candidate> candidates) {
         if (index == 2) {
-            candidates.addAll(CloudBase.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
+            candidates.addAll(Node.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
         }
     }
 
@@ -63,13 +63,13 @@ public final class TemplateCommand {
         var fromTemplate = new File(templatesFolder, from);
         var toTemplate = new File(templatesFolder, to);
 
-        if (!CloudBase.instance().templatesService().isTemplate(from)) {
+        if (!Node.instance().templatesService().isTemplate(from)) {
             logger.info("The template &2'&4" + from + "&2' &1 does not exists!");
             return;
         }
 
-        if (!CloudBase.instance().templatesService().isTemplate(to)) {
-            CloudBase.instance().templatesService().createTemplates(to);
+        if (!Node.instance().templatesService().isTemplate(to)) {
+            Node.instance().templatesService().createTemplates(to);
         }
 
         //todo check with other nodes
@@ -80,17 +80,17 @@ public final class TemplateCommand {
     @SubCommandCompleter(completionPattern = {"copy", "<from>", "<to>"})
     public void completeCopyMethod(int index, List<Candidate> candidates) {
         if (index == 2 || index == 3) {
-            candidates.addAll(CloudBase.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
+            candidates.addAll(Node.instance().templatesService().templates().stream().map(it -> new Candidate(it.id())).toList());
         }
     }
 
     @SubCommand(args = {"list"})
     public void handleList() {
-        if (CloudBase.instance().templatesService().templates() == null) {
+        if (Node.instance().templatesService().templates() == null) {
             logger.info("No templates were found");
         }
         logger.info("Following templates were found&2:");
-        CloudBase.instance().templatesService().templates().forEach(template -> logger.info("&2- &4" + template.id()));
+        Node.instance().templatesService().templates().forEach(template -> logger.info("&2- &4" + template.id()));
     }
 }
 

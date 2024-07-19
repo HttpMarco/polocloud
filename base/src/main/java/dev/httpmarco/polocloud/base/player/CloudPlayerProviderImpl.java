@@ -22,7 +22,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.packets.player.*;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.SneakyThrows;
 
@@ -37,7 +37,7 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
     private final List<CloudPlayer> players = new CopyOnWriteArrayList<>();
 
     public CloudPlayerProviderImpl() {
-        var transmitter = CloudBase.instance().transmitter();
+        var transmitter = Node.instance().transmitter();
 
         transmitter.responder("players-all", property -> new CloudAllPlayersPacket(this.players));
         transmitter.responder("player-get", properties -> new CloudPlayerPacket(this.find(properties.getUUID("uniqueId"))));

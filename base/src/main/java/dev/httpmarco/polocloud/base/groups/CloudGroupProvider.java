@@ -24,7 +24,7 @@ import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
 import dev.httpmarco.polocloud.api.packets.general.OperationStatePacket;
 import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.api.services.CloudService;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -43,7 +43,7 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
     public CloudGroupProvider() {
 
         // register group packet responders
-        var transmitter = CloudBase.instance().transmitter();
+        var transmitter = Node.instance().transmitter();
         transmitter.responder("groups-all", (properties) -> new CloudGroupCollectionPacket(groups()));
         transmitter.responder("group-find", (properties) -> new CloudGroupPacket(group(properties.getString("name"))));
         transmitter.responder("group-exist", (properties) -> new CloudGroupExistResponsePacket(isGroup(properties.getString("name"))));
@@ -69,7 +69,7 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
         this.groups = groupServiceTypeAdapter.readGroups();
 
         if (!groups.isEmpty()) {
-            CloudBase.instance().logger().info("Loading following groups&2: &3" + String.join("&2, &3", groups.stream().map(CloudGroup::name).toList()));
+            Node.instance().logger().info("Loading following groups&2: &3" + String.join("&2, &3", groups.stream().map(CloudGroup::name).toList()));
         }
     }
 

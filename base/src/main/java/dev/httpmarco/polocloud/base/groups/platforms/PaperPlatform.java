@@ -18,7 +18,7 @@ package dev.httpmarco.polocloud.base.groups.platforms;
 
 import com.google.gson.Gson;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
@@ -78,7 +78,7 @@ public final class PaperPlatform extends PaperMCPlatform {
                 .distinct()
                 .forEach(platformVersion -> {
                     try {
-                        var platform = CloudBase.instance().groupProvider().platformService().find(platformVersion);
+                        var platform = Node.instance().groupProvider().platformService().find(platformVersion);
                         if (platform instanceof VelocityPlatform) {
                             // manipulate velocity secret if
                             var configPath = localCloudService.runningFolder().resolve("config");
