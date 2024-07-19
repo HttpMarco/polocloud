@@ -55,7 +55,14 @@ public final class NodeProvider {
             nodeModel.save();
 
             alertPacket(new NodeAttachEndpointPacket(endpoint));
+
+            Node.instance().logger().success("Successfully bind a new node endpoint in the cluster.");
             return new NodeValidationSyncPacket(true, nodeModel.cluster().id());
+        });
+
+        this.localEndpoint.server().listen(NodeAttachEndpointPacket.class, (channelTransmit, nodeAttachEndpointPacket) -> {
+            nodeModel.cluster().endpoints().add(nodeAttachEndpointPacket.nodeData());
+            nodeModel.save();
         });
 
         // todo bind
