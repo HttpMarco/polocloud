@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.base.node;
 
-import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
+import dev.httpmarco.polocloud.base.NodeModel;
 import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.LocalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
@@ -26,7 +26,7 @@ public final class NodeProvider {
     // all other connected nodes with her data and connection (if present)
     private final Set<ExternalNodeEndpoint> externalNodeEndpoints;
 
-    public NodeProvider(@NotNull CloudConfiguration configuration) {
+    public NodeProvider(@NotNull NodeModel configuration) {
         this.localEndpoint = new LocalNodeEndpoint(configuration.localNode());
         this.externalNodeEndpoints = configuration.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
     }

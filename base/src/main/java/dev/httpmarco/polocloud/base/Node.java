@@ -20,39 +20,31 @@ import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
-import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.base.common.NodeHeader;
-import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
-import dev.httpmarco.polocloud.base.configuration.CloudConfiguration;
 import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.NodeProvider;
-import dev.httpmarco.polocloud.base.node.data.NodeData;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
 import dev.httpmarco.polocloud.base.templates.TemplatesService;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
-import dev.httpmarco.pololcoud.common.document.Document;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.jline.utils.Log;
-
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 
 @Getter
 @Accessors(fluent = true)
 public final class Node extends CloudAPI {
 
     private final Logger logger = new Logger();
-    private final Document<CloudConfiguration> cloudConfiguration = new Document<>(Path.of("config.json"), new CloudConfiguration(), PropertiesPoolSerializer.ADAPTER);
-    private final PropertyPool globalProperties = this.cloudConfiguration.value().properties();
+    private final NodeModel nodeModel = NodeModel.read();
+    private final PropertyPool globalProperties = nodeModel.properties();
     private final CloudTerminal terminal = new CloudTerminal();
-    private final NodeProvider nodeProvider = new NodeProvider(this.cloudConfiguration.value());
+    private final NodeProvider nodeProvider = new NodeProvider(nodeModel);
     private final CloudGroupProvider groupProvider;
     private final CloudServiceProviderImpl serviceProvider;
     private final TemplatesService templatesService;
