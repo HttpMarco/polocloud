@@ -19,6 +19,7 @@ package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.node.NodeSituation;
 import dev.httpmarco.polocloud.base.node.tasks.ClusterBindTask;
+import dev.httpmarco.polocloud.base.node.tasks.ClusterDataSyncTask;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
@@ -49,8 +50,15 @@ public final class ClusterCommand {
                 return;
             }
 
+            ClusterDataSyncTask.run(externalNodeEndpoint, token).whenComplete((result, throwable1) -> {
 
-            Node.instance().logger().info("TODO");
+                if (!result) {
+                    Node.instance().logger().warn("The given data is not correct with the given endpoint!");
+                    return;
+                }
+
+                Node.instance().logger().success("Synced all endpoint data!");
+            });
         });
     }
 }
