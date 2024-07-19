@@ -62,7 +62,7 @@ public final class CloudBaseRunner implements CloudRunner {
 
     @Override
     public String mainEntry() {
-        return "dev.httpmarco.polocloud.base.CloudBaseBootstrap";
+        return "dev.httpmarco.polocloud.base.launcher.NodeLauncher";
     }
 
     @Override

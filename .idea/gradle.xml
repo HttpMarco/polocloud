@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/addons" />
+            <option value="$PROJECT_DIR$/addons/hubcommand-addon" />
+            <option value="$PROJECT_DIR$/addons/notify-addon" />
+            <option value="$PROJECT_DIR$/addons/proxy-addon" />
+            <option value="$PROJECT_DIR$/addons/sign-addon" />
+            <option value="$PROJECT_DIR$/api" />
+            <option value="$PROJECT_DIR$/base" />
+            <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/instance" />
+            <option value="$PROJECT_DIR$/plugin" />
+            <option value="$PROJECT_DIR$/runner" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
