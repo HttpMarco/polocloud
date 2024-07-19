@@ -19,11 +19,19 @@ package dev.httpmarco.polocloud.base.logging;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+
 @Getter
 @Accessors(fluent = true)
 public final class Logger {
 
     private final LoggerFactory factory = new LoggerFactory();
+
+    public Logger() {
+        System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
+        System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
+    }
 
     public void info(String message, Object... objects) {
         this.log(LogLevel.INFO, message, null, objects);

@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.base.node;
 
-import dev.httpmarco.polocloud.base.NodeModel;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.LocalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -26,9 +25,11 @@ public final class NodeProvider {
     // all other connected nodes with her data and connection (if present)
     private final Set<ExternalNodeEndpoint> externalNodeEndpoints;
 
-    public NodeProvider(@NotNull NodeModel configuration) {
-        this.localEndpoint = new LocalNodeEndpoint(configuration.localNode());
-        this.externalNodeEndpoints = configuration.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
+    public NodeProvider() {
+        var nodeModel = Node.instance().nodeModel();
+
+        this.localEndpoint = new LocalNodeEndpoint(nodeModel.localNode());
+        this.externalNodeEndpoints = nodeModel.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
     }
 
     public void initialize() {

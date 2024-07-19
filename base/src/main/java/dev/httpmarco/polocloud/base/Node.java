@@ -25,7 +25,6 @@ import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.Logger;
-import dev.httpmarco.polocloud.base.logging.LoggerOutPutStream;
 import dev.httpmarco.polocloud.base.node.NodeProvider;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
@@ -33,8 +32,6 @@ import dev.httpmarco.polocloud.base.templates.TemplatesService;
 import dev.httpmarco.polocloud.base.terminal.CloudTerminal;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 
 @Getter
 @Accessors(fluent = true)
@@ -42,35 +39,29 @@ public final class Node extends CloudAPI {
 
     private final Logger logger = new Logger();
     private final NodeModel nodeModel = NodeModel.read();
-    private final PropertyPool globalProperties = nodeModel.properties();
+
     private final CloudTerminal terminal = new CloudTerminal();
-    private final NodeProvider nodeProvider = new NodeProvider(nodeModel);
-    private final CloudGroupProvider groupProvider;
-    private final CloudServiceProviderImpl serviceProvider;
-    private final TemplatesService templatesService;
-    private final CloudPlayerProvider playerProvider;
-    private final GlobalEventNode globalEventNode;
+    private final NodeProvider nodeProvider = new NodeProvider();
+
+    private final GlobalEventNode globalEventNode = new GlobalEventNode();
+    private final CloudGroupProvider groupProvider = new CloudGroupProvider();
+    private final CloudServiceProviderImpl serviceProvider = new CloudServiceProviderImpl();
+    private final TemplatesService templatesService = new TemplatesService();
+    private final CloudPlayerProvider playerProvider = new CloudPlayerProviderImpl();
 
     boolean running = true;
 
     public Node() {
         // register logging layers (for general output)
         logger.factory().registerLoggers(new FileLoggerHandler(), terminal);
-
-        System.setErr(new PrintStream(new LoggerOutPutStream(true), true, StandardCharsets.UTF_8));
-        System.setOut(new PrintStream(new LoggerOutPutStream(), true, StandardCharsets.UTF_8));
-
         NodeHeader.print(this.terminal);
-
-        this.globalEventNode = new GlobalEventNode();
-        this.groupProvider = new CloudGroupProvider();
-        this.templatesService = new TemplatesService();
-        this.serviceProvider = new CloudServiceProviderImpl();
-        this.playerProvider = new CloudPlayerProviderImpl();
-
         logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
-
         this.terminal.start();
+    }
+
+    @Override
+    public PropertyPool globalProperties() {
+        return nodeModel.properties();
     }
 
     public CommunicationServer transmitter() {
