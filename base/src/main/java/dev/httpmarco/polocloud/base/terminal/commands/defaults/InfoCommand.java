@@ -21,7 +21,7 @@ import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 
 @Command(command = "info", aliases = {"me"})
-public class InfoCommand {
+public final class InfoCommand {
 
     @DefaultCommand
     public void handle() {

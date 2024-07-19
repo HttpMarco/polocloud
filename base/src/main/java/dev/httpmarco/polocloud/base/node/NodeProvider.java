@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.LocalNodeEndpoint;
 import dev.httpmarco.polocloud.base.node.endpoints.NodeEndpoint;
+import dev.httpmarco.polocloud.base.node.packets.NodeSituationCallbackPacket;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,8 @@ public final class NodeProvider {
         var nodeModel = Node.instance().nodeModel();
 
         this.localEndpoint = new LocalNodeEndpoint(nodeModel.localNode());
+        this.localEndpoint.server().responder("cluster-node-situation", property -> new NodeSituationCallbackPacket(localEndpoint.situation()));
+
         this.externalNodeEndpoints = nodeModel.cluster().endpoints().stream().map(ExternalNodeEndpoint::new).collect(Collectors.toSet());
     }
 
