@@ -35,12 +35,12 @@ public final class CloudServiceQueue extends Thread {
 
             // if the node is on the shutdown process
             if (!Node.instance().running()) {
-                return;
+                continue;
             }
 
             // only the head node gives new start impulse
             if (!Node.instance().nodeProvider().isHead()) {
-                return;
+                continue;
             }
 
             System.out.println("we can");
