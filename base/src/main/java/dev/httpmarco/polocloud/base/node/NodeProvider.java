@@ -64,13 +64,6 @@ public final class NodeProvider {
             nodeModel.cluster().endpoints().add(nodeAttachEndpointPacket.nodeData());
             nodeModel.save();
         });
-
-        // todo bind
-        this.localEndpoint.situation(NodeSituation.REACHABLE);
-    }
-
-    public void initialize() {
-        NodeConnectionFactory.bindCluster(this);
     }
 
     public boolean isHead() {

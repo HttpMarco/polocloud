@@ -25,6 +25,9 @@ import dev.httpmarco.polocloud.base.events.GlobalEventNode;
 import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.Logger;
+import dev.httpmarco.polocloud.base.node.NodeHeadCalculator;
+import dev.httpmarco.polocloud.base.node.NodeSituation;
+import dev.httpmarco.polocloud.base.node.tasks.ClusterBindTask;
 import dev.httpmarco.polocloud.base.node.NodeProvider;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
 import dev.httpmarco.polocloud.base.services.CloudServiceProviderImpl;
@@ -55,8 +58,20 @@ public final class Node extends CloudAPI {
         // register logging layers (for general output)
         logger.factory().registerLoggers(new FileLoggerHandler(), terminal);
         NodeHeader.print(this.terminal);
-        logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
-        this.terminal.start();
+
+        ClusterBindTask.bindCluster(this.nodeProvider).whenComplete((unused, throwable) -> {
+            if (NodeHeadCalculator.isSelfHead()) {
+                System.out.println("we are the king");
+                nodeProvider.localEndpoint().situation(NodeSituation.REACHABLE);
+                nodeProvider.headNodeEndpoint(nodeProvider.localEndpoint());
+            } else {
+                System.out.println("we are a slave");
+                //todo sync
+            }
+
+            logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
+            this.terminal.start();
+        });
     }
 
     @Override

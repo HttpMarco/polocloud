@@ -18,7 +18,6 @@ package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
 import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.node.NodeSituation;
-import dev.httpmarco.polocloud.base.node.tasks.ClusterBindTask;
 import dev.httpmarco.polocloud.base.node.tasks.ClusterDataSyncTask;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
@@ -34,9 +33,9 @@ public final class ClusterCommand {
         logger.info("cluster merge <id> <hostname> <port> <token> - Merge your node in an existing cluster.");
     }
 
-    @SneakyThrows
     @SubCommand(args = {"merge", "<id>", "<hostname>", "<port>", "<token>"})
     public void add(String id, String hostname, int port, String token) {
+        /*
         var testingResult = ClusterBindTask.merge(id, hostname, port, token);
 
         testingResult.whenComplete((externalNodeEndpoint, throwable) -> {
@@ -64,5 +63,7 @@ public final class ClusterCommand {
                 Node.instance().logger().success("Synced all endpoint data!");
             });
         });
+
+         */
     }
 }
