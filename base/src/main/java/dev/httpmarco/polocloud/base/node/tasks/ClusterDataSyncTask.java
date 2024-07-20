@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 
 @UtilityClass
+@Deprecated
 public final class ClusterDataSyncTask {
 
     public static @NotNull CompletableFuture<Boolean> run(@NotNull ExternalNodeEndpoint externalNodeEndpoint, String token) {

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
+@Deprecated
 public final class NodeAttachEndpointPacket extends Packet {
 
     private NodeData nodeData;

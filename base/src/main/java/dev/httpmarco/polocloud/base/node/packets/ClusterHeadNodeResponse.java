@@ -10,27 +10,17 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-@Deprecated
-public final class NodeValidationSyncPacket extends Packet {
+public final class ClusterHeadNodeResponse extends Packet {
 
-    private boolean successfully;
-    private String clusterId;
+    private String node;
 
     @Override
     public void read(@NotNull PacketBuffer packetBuffer) {
-        this.successfully = packetBuffer.readBoolean();
-
-        if (successfully) {
-            this.clusterId = packetBuffer.readString();
-        }
+        this.node = packetBuffer.readString();
     }
 
     @Override
     public void write(@NotNull PacketBuffer packetBuffer) {
-        packetBuffer.writeBoolean(successfully);
-
-        if (successfully) {
-            packetBuffer.writeString(clusterId);
-        }
+        packetBuffer.writeString(node);
     }
 }

@@ -16,6 +16,7 @@
 
 package dev.httpmarco.polocloud.base;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
@@ -27,6 +28,7 @@ import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.node.NodeHeadCalculator;
 import dev.httpmarco.polocloud.base.node.NodeSituation;
+import dev.httpmarco.polocloud.base.node.packets.ClusterHeadNodeResponse;
 import dev.httpmarco.polocloud.base.node.tasks.ClusterBindTask;
 import dev.httpmarco.polocloud.base.node.NodeProvider;
 import dev.httpmarco.polocloud.base.player.CloudPlayerProviderImpl;
@@ -64,14 +66,31 @@ public final class Node extends CloudAPI {
                 System.out.println("we are the king");
                 nodeProvider.localEndpoint().situation(NodeSituation.REACHABLE);
                 nodeProvider.headNodeEndpoint(nodeProvider.localEndpoint());
-            } else {
-                System.out.println("we are a slave");
-                //todo sync
-            }
 
-            logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
-            this.terminal.start();
+                startProcess();
+                return;
+            }
+            System.out.println("we are a slave");
+
+            var externalNode = nodeProvider.externalNodeEndpoints().stream().filter(externalNodeEndpoint -> externalNodeEndpoint.situation() == NodeSituation.REACHABLE).findFirst().orElse(null);
+
+            externalNode.transmit().request("cluster-head-node-request", new CommunicationProperty(), ClusterHeadNodeResponse.class, packet -> {
+                this.nodeProvider.headNodeEndpoint(this.nodeProvider.node(packet.node()));
+                System.out.println("The king is" + this.nodeProvider.headNodeEndpoint().data().id());
+
+                // todo sync all data
+                this.nodeProvider.localEndpoint().situation(NodeSituation.REACHABLE);
+                startProcess();
+            });
+
         });
+    }
+
+    private void startProcess() {
+        logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
+
+        this.terminal.start();
+        this.serviceProvider.queue().start();
     }
 
     @Override
@@ -86,4 +105,5 @@ public final class Node extends CloudAPI {
     public static Node instance() {
         return (Node) CloudAPI.instance();
     }
+
 }

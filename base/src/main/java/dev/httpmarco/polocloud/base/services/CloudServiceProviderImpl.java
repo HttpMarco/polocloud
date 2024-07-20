@@ -73,8 +73,6 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
             Node.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is successfully online");
             CloudAPI.instance().globalEventNode().call(new CloudServiceOnlineEvent(service));
         });
-        // allow service to start the process
-        queue.start();
     }
 
     public void close() {

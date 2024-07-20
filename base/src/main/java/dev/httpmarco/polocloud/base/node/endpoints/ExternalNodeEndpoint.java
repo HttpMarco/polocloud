@@ -15,9 +15,15 @@ public final class ExternalNodeEndpoint extends NodeEndpoint {
     private ChannelTransmit transmit;
 
     public ExternalNodeEndpoint(NodeData data) {
-        super(data, NodeSituation.INITIALIZE);
+        super(data);
     }
 
+    @Override
+    public void situation(NodeSituation situation) {
+        super.situation(situation);
 
-
+        if (situation == NodeSituation.NOT_AVAILABLE) {
+            this.transmit = null;
+        }
+    }
 }

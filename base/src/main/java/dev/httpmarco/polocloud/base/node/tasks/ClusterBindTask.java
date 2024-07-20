@@ -5,10 +5,11 @@ import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.base.Node;
+import dev.httpmarco.polocloud.base.node.NodeHeadCalculator;
 import dev.httpmarco.polocloud.base.node.NodeProvider;
 import dev.httpmarco.polocloud.base.node.NodeSituation;
 import dev.httpmarco.polocloud.base.node.endpoints.ExternalNodeEndpoint;
-import dev.httpmarco.polocloud.base.node.packets.NodeSituationCallbackPacket;
+import dev.httpmarco.polocloud.base.node.packets.ClusterEndpointStatePacket;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -32,14 +33,27 @@ public class ClusterBindTask {
             nodeEndpoint.situation(NodeSituation.DETECT_SIT);
             nodeEndpoint.transmit(channel);
 
-            nodeEndpoint.transmit().request("cluster-node-situation", new CommunicationProperty(), NodeSituationCallbackPacket.class, packet -> {
+            nodeEndpoint.transmit().request("cluster-node-endpoint-state", new CommunicationProperty(), ClusterEndpointStatePacket.class, packet -> {
                 nodeEndpoint.situation(packet.nodeSituation());
+                nodeEndpoint.onlineDuration(packet.onlineDuration());
                 future.complete(null);
             });
         }).clientAction(CommunicationClientAction.FAILED, it -> {
             Node.instance().logger().info("Cluster cannot bind " + nodeEndpoint.data().id() + ". Because endpoint is offline!");
             nodeEndpoint.situation(NodeSituation.NOT_AVAILABLE);
             future.complete(null);
+        }).clientAction(CommunicationClientAction.DISCONNECTED, channelTransmit -> {
+            // get the specific node
+            ExternalNodeEndpoint node = Node.instance().nodeProvider().node(channelTransmit);
+
+            Node.instance().logger().info("The " + node.data().id() + " is now offline... ");
+            node.situation(NodeSituation.NOT_AVAILABLE);
+
+            if (Node.instance().nodeProvider().headNodeEndpoint().equals(node)) {
+                var newHead = NodeHeadCalculator.calculateNewHead();
+                Node.instance().nodeProvider().headNodeEndpoint(newHead);
+                Node.instance().logger().warn("This node was the head node of the cluster... calculate a new head node for balance: " + newHead.data().id());
+            }
         });
         client.initialize();
         return future;

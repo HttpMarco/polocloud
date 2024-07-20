@@ -43,6 +43,7 @@ public final class CloudServiceQueue extends Thread {
                 return;
             }
 
+            System.out.println("we can");
             for (var group : CloudAPI.instance().groupProvider().groups()) {
                 var onlineDiff = group.onlineAmount() - group.minOnlineService();
 
@@ -69,10 +70,10 @@ public final class CloudServiceQueue extends Thread {
                     }
                 }
             }
-        }
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException ignore) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ignore) {
+            }
         }
     }
 }

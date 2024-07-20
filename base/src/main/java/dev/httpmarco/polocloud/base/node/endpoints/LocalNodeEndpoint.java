@@ -16,7 +16,7 @@ public final class LocalNodeEndpoint extends NodeEndpoint {
     private final CommunicationServer server;
 
     public LocalNodeEndpoint(NodeData data) {
-        super(data, NodeSituation.INITIALIZE);
+        super(data);
 
         this.server = new CommunicationServer(data.hostname(), data.port());
 
