@@ -104,8 +104,6 @@ public final class CloudTerminal implements LoggerHandler {
         if (level != LogLevel.OFF) {
             terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| " + level.colorCode() + level.name() + "&2: &1" + message)
                     + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
-        } else {
-            terminal.writer().write(message);
         }
         terminal.flush();
 
