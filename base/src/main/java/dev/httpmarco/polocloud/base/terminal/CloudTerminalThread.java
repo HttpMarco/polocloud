@@ -47,26 +47,17 @@ public final class CloudTerminalThread extends Thread {
                     try {
                         final var rawLine = terminal.lineReader().readLine(prompt);
                         final var line = rawLine.split(" ");
-                        resetConsoleInput();
 
                         if (line.length > 0) {
                             terminal.commandService().call(line);
                         }
-                    } catch (EndOfFileException ignore) {
-                        resetConsoleInput();
-                    }
+                    } catch (EndOfFileException ignore) {}
                 } catch (UserInterruptException exception) {
-                    resetConsoleInput();
                     NodeShutdownTask.run();
                 }
             } catch (Exception e) {
-                resetConsoleInput();
                 e.printStackTrace();
             }
         }
-    }
-
-    private void resetConsoleInput() {
-        this.terminal.print(LogLevel.OFF, Ansi.ansi().reset().cursorUp(1).eraseLine().toString(), null);
     }
 }
