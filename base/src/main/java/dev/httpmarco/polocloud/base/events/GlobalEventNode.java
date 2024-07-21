@@ -21,7 +21,7 @@ import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.events.EventRunnable;
 import dev.httpmarco.polocloud.api.packets.event.CloudEventCallPacket;
-import dev.httpmarco.polocloud.api.packets.event.CloudEventRegitserPacket;
+import dev.httpmarco.polocloud.api.packets.event.CloudEventRegisterPacket;
 import dev.httpmarco.polocloud.base.CloudBase;
 import dev.httpmarco.polocloud.base.services.CloudServiceImpl;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
@@ -30,7 +30,7 @@ public class GlobalEventNode implements EventNode {
 
 
     public GlobalEventNode() {
-        CloudBase.instance().transmitter().listen(CloudEventRegitserPacket.class, (transmit, packet) -> {
+        CloudBase.instance().transmitter().listen(CloudEventRegisterPacket.class, (transmit, packet) -> {
             // find channel cloud service
             var service = (CloudServiceImpl) CloudAPI.instance().serviceProvider().find(packet.serviceId());
             // register the new event

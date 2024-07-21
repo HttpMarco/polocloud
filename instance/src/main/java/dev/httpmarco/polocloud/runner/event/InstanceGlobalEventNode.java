@@ -20,7 +20,7 @@ import dev.httpmarco.polocloud.api.events.Event;
 import dev.httpmarco.polocloud.api.events.EventNode;
 import dev.httpmarco.polocloud.api.events.EventRunnable;
 import dev.httpmarco.polocloud.api.packets.event.CloudEventCallPacket;
-import dev.httpmarco.polocloud.api.packets.event.CloudEventRegitserPacket;
+import dev.httpmarco.polocloud.api.packets.event.CloudEventRegisterPacket;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public final class InstanceGlobalEventNode implements EventNode {
         currentListeners.add(runnable);
         this.nodeListeners.put(event, currentListeners);
 
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudEventRegitserPacket(CloudInstance.SELF_ID, event.getName()));
+        CloudInstance.instance().client().transmitter().sendPacket(new CloudEventRegisterPacket(CloudInstance.SELF_ID, event.getName()));
     }
 
     @Override
