@@ -72,7 +72,10 @@ public final class NodeProvider {
         return this.localEndpoint.equals(headNodeEndpoint);
     }
 
-    public ExternalNodeEndpoint node(String id) {
+    public NodeEndpoint node(String id) {
+        if (localEndpoint.data().id().equals(id)) {
+            return localEndpoint;
+        }
         return this.externalNodeEndpoints.stream().filter(it -> it.data().id().equals(id)).findFirst().orElse(null);
     }
 
