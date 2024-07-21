@@ -2,9 +2,8 @@ package dev.httpmarco.polocloud.base.node.endpoints;
 
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
-import dev.httpmarco.polocloud.base.node.data.NodeData;
-import dev.httpmarco.polocloud.base.node.NodeSituation;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;

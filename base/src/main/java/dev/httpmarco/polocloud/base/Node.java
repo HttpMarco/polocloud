@@ -23,7 +23,7 @@ import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.common.NodeHeader;
 import dev.httpmarco.polocloud.base.events.GlobalEventNode;
-import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
+import dev.httpmarco.polocloud.base.groups.CloudGroupProviderImpl;
 import dev.httpmarco.polocloud.base.logging.FileLoggerHandler;
 import dev.httpmarco.polocloud.base.logging.Logger;
 import dev.httpmarco.polocloud.base.node.NodeHeadCalculator;
@@ -49,7 +49,7 @@ public final class Node extends CloudAPI {
     private final NodeProvider nodeProvider = new NodeProvider();
 
     private final GlobalEventNode globalEventNode = new GlobalEventNode();
-    private final CloudGroupProvider groupProvider = new CloudGroupProvider();
+    private final CloudGroupProviderImpl groupProvider = new CloudGroupProviderImpl();
     private final CloudServiceProviderImpl serviceProvider = new CloudServiceProviderImpl();
     private final TemplatesService templatesService = new TemplatesService();
     private final CloudPlayerProvider playerProvider = new CloudPlayerProviderImpl();

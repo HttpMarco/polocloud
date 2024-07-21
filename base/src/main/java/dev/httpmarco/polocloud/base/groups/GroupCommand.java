@@ -28,10 +28,7 @@ import dev.httpmarco.polocloud.base.terminal.commands.SubCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.SubCommandCompleter;
 import org.jline.reader.Candidate;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Command(command = "group", aliases = {"groups"}, description = "Manage or create your cluster groups")
@@ -155,23 +152,27 @@ public final class GroupCommand {
         var provider = Node.instance().groupProvider();
 
         if (provider.isGroup(name)) {
-            Node.instance().logger().info("The group already exists!");
+            logger.info("The group already exists!");
             return;
         }
 
         if (memory <= 0) {
-            Node.instance().logger().info("The minimum memory value must be higher then 0. ");
+            logger.info("The minimum memory value must be higher then 0. ");
             return;
         }
 
         if (!provider.platformService().isValidPlatform(platform)) {
-            Node.instance().logger().info("The platform " + platform + " is an invalid type!");
+            logger.info("The platform " + platform + " is an invalid type!");
             return;
         }
 
-        provider.createGroup(name, platform, memory, minOnlineCount);
-        var group = provider.group(name);
+        var creationResult = provider.createGroup(name, platform, memory, minOnlineCount, "node-1");
+        if (creationResult.isPresent()) {
+            logger.warn(creationResult.get());
+            return;
+        }
 
+        var group = provider.group(name);
         // we must create a separate template directory
         Node.instance().templatesService().createTemplates(name, "every", (group.platform().proxy() ? "every_proxy" : "every_server"));
         // we set as default value all important templates
@@ -185,17 +186,18 @@ public final class GroupCommand {
     @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
     public void completeCreateMethod(int index, List<Candidate> candidates) {
         if (index == 3) {
-            candidates.addAll(((CloudGroupProvider) CloudAPI.instance().groupProvider()).platformService().validPlatformVersions().stream().map(platformVersion -> new Candidate(platformVersion.version())).toList());
+            candidates.addAll(((CloudGroupProviderImpl) CloudAPI.instance().groupProvider()).platformService().validPlatformVersions().stream().map(platformVersion -> new Candidate(platformVersion.version())).toList());
         }
     }
 
     @SubCommand(args = {"delete", "<name>"})
     public void handleDelete(String name) {
-        if (CloudAPI.instance().groupProvider().deleteGroup(name)) {
-            logger.success("Successfully deleted &3" + name + "&2!");
-        } else {
-            Node.instance().logger().warn("The group does not exists!");
+        var deleteResult = CloudAPI.instance().groupProvider().deleteGroup(name);
+        if (deleteResult.isPresent()) {
+            logger.warn(deleteResult.get());
+            return;
         }
+        logger.success("Successfully deleted &3" + name + "&2!");
     }
 
     @SubCommandCompleter(completionPattern = {"delete", "<name>"})
