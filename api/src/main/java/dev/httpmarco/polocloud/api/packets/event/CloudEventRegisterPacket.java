@@ -27,7 +27,7 @@ import java.util.UUID;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class CloudEventRegitserPacket extends Packet {
+public final class CloudEventRegisterPacket extends Packet {
 
     private UUID serviceId;
     private String event;
