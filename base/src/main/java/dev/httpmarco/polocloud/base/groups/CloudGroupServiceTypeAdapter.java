@@ -19,6 +19,7 @@ package dev.httpmarco.polocloud.base.groups;
 import com.google.gson.*;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
         var elements = jsonElement.getAsJsonObject();
 
         var name = elements.get("name").getAsString();
+        var nodeId = elements.get("node").getAsString();
         var platform = elements.get("platform").getAsString();
         var memory = elements.get("memory").getAsInt();
         var minOnlineServices = elements.get("minOnlineCount").getAsInt();
@@ -84,7 +86,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
 
         var parentPlatform = platformService.find(platform).possibleVersions().stream().filter(it -> it.version().equals(platform)).findFirst().orElseThrow();
 
-        var group = new CloudGroupImpl(name, parentPlatform, memory, minOnlineServices);
+        var group = new CloudGroupImpl(name, Node.instance().nodeProvider().node(nodeId).data(), parentPlatform, memory, minOnlineServices);
         group.properties().pool().putAll(properties.pool());
         return group;
     }
@@ -94,6 +96,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
         var object = new JsonObject();
 
         object.addProperty("name", cloudGroup.name());
+        object.addProperty("node", cloudGroup.nodeData().id());
         object.addProperty("platform", cloudGroup.platform().version());
         object.addProperty("memory", cloudGroup.memory());
         object.addProperty("minOnlineCount", cloudGroup.minOnlineService());
