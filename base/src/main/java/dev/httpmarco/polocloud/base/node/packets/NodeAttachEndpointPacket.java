@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.base.node.packets;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.base.node.data.NodeData;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;

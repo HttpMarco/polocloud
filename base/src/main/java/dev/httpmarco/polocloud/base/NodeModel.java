@@ -1,9 +1,9 @@
 package dev.httpmarco.polocloud.base;
 
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.base.node.data.ClusterData;
-import dev.httpmarco.polocloud.base.node.data.NodeData;
 import dev.httpmarco.pololcoud.common.StringUtils;
 import dev.httpmarco.pololcoud.common.document.Document;
 
