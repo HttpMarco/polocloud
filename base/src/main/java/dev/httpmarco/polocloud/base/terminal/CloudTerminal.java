@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.fusesource.jansi.Ansi;
+import org.jetbrains.annotations.NotNull;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
@@ -99,14 +100,10 @@ public final class CloudTerminal implements LoggerHandler {
     }
 
     @Override
-    public void print(LogLevel level, String message, Throwable throwable, Object... objects) {
+    public void print(@NotNull LogLevel level, String message, Throwable throwable, Object... objects) {
         terminal.puts(InfoCmp.Capability.carriage_return);
-        if (level != LogLevel.OFF) {
-            terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| " + level.colorCode() + level.name() + "&2: &1" + message)
-                    + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
-        }
+        terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| " + level.colorCode() + level.name() + "&2: &1" + message) + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         terminal.flush();
-
         this.update();
     }
 
