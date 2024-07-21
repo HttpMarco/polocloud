@@ -42,8 +42,6 @@ public final class CloudServiceQueue extends Thread {
             if (!Node.instance().nodeProvider().isHead()) {
                 continue;
             }
-
-            System.out.println("we can");
             for (var group : CloudAPI.instance().groupProvider().groups()) {
                 var onlineDiff = group.onlineAmount() - group.minOnlineService();
 
