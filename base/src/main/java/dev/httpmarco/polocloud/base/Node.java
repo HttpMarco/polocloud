@@ -63,21 +63,15 @@ public final class Node extends CloudAPI {
 
         ClusterBindTask.bindCluster(this.nodeProvider).whenComplete((unused, throwable) -> {
             if (NodeHeadCalculator.isSelfHead()) {
-                System.out.println("we are the king");
                 nodeProvider.localEndpoint().situation(NodeSituation.REACHABLE);
                 nodeProvider.headNodeEndpoint(nodeProvider.localEndpoint());
 
                 startProcess();
                 return;
             }
-            System.out.println("we are a slave");
-
             var externalNode = nodeProvider.externalNodeEndpoints().stream().filter(externalNodeEndpoint -> externalNodeEndpoint.situation() == NodeSituation.REACHABLE).findFirst().orElse(null);
-
             externalNode.transmit().request("cluster-head-node-request", new CommunicationProperty(), ClusterHeadNodeResponse.class, packet -> {
                 this.nodeProvider.headNodeEndpoint(this.nodeProvider.node(packet.node()));
-                System.out.println("The king is" + this.nodeProvider.headNodeEndpoint().data().id());
-
                 // todo sync all data
                 this.nodeProvider.localEndpoint().situation(NodeSituation.REACHABLE);
                 startProcess();
