@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.base.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 
@@ -25,8 +26,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class CloudGroupImpl extends CloudGroup implements Serializable {
 
-    public CloudGroupImpl(String name, PlatformVersion platform, int memory, int minOnlineService) {
-        super(name, platform, memory, minOnlineService);
+    public CloudGroupImpl(String name, NodeData nodeData, PlatformVersion platform, int memory, int minOnlineService) {
+        super(name, nodeData, platform, memory, minOnlineService);
     }
 
     @Override

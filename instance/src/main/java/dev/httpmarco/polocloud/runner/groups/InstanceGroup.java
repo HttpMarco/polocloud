@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.runner.groups;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
@@ -27,8 +28,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class InstanceGroup extends CloudGroup {
 
-    public InstanceGroup(String name, PlatformVersion platform, int memory, int minOnlineService) {
-        super(name, platform, memory, minOnlineService);
+    public InstanceGroup(String name, NodeData nodeData, PlatformVersion platform, int memory, int minOnlineService) {
+        super(name, nodeData, platform, memory, minOnlineService);
     }
 
     @Override
