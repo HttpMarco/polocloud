@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.base.node.data;
+package dev.httpmarco.polocloud.api.cluster;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

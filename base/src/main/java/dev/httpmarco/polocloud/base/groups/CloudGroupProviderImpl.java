@@ -16,9 +16,10 @@
 
 package dev.httpmarco.polocloud.base.groups;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.packets.general.OperationNumberPacket;
 import dev.httpmarco.polocloud.api.packets.general.OperationStatePacket;
@@ -28,19 +29,21 @@ import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Getter
 @Accessors(fluent = true)
-public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups.CloudGroupProvider {
+public final class CloudGroupProviderImpl extends CloudGroupProvider {
 
     private final List<CloudGroup> groups;
     private final CloudGroupPlatformService platformService = new CloudGroupPlatformService();
     private final CloudGroupServiceTypeAdapter groupServiceTypeAdapter = new CloudGroupServiceTypeAdapter(platformService);
 
-    public CloudGroupProvider() {
+    public CloudGroupProviderImpl() {
 
         // register group packet responders
         var transmitter = Node.instance().transmitter();
@@ -53,9 +56,9 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
         transmitter.responder("group-create", (properties) -> new OperationStatePacket(createGroup(properties.getString("name"),
                 properties.getString("platform"),
                 properties.getInteger("memory"),
-                properties.getInteger("minOnlineCount"))));
+                properties.getInteger("minOnlineCount"),
+                properties.getString("node"))));
 
-        transmitter.listen(CloudGroupCreatePacket.class, (channelTransmit, packet) -> this.createGroup(packet.name(), packet.platform(), packet.memory(), packet.minOnlineCount()));
         transmitter.listen(CloudGroupDeletePacket.class, (channelTransmit, packet) -> this.deleteGroup(packet.name()));
         transmitter.listen(CloudGroupUpdatePacket.class, (channelTransmit, packet) -> {
 
@@ -73,8 +76,9 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
         }
     }
 
+    //todo add reason
     @Override
-    public boolean createGroup(String name, String platformVersion, int memory, int minOnlineCount) {
+    public boolean createGroup(String name, String platformVersion, int memory, int minOnlineCount, String node) {
         if (isGroup(name)) {
             return false;
         }
@@ -87,8 +91,13 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
             return false;
         }
 
+        var nodeEndpoint = Node.instance().nodeProvider().node(name);
+        if (nodeEndpoint == null) {
+            return false;
+        }
+
         var platform = platformService.find(platformVersion);
-        var group = new CloudGroupImpl(name, new PlatformVersion(platformVersion, platform.proxy()), memory, minOnlineCount);
+        var group = new CloudGroupImpl(name, Node.instance().nodeProvider().node(node).data(), new PlatformVersion(platformVersion, platform.proxy()), memory, minOnlineCount);
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);
 
@@ -114,7 +123,7 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
     }
 
     @Override
-    public CompletableFuture<Boolean> isGroupAsync(String name) {
+    public @NotNull CompletableFuture<Boolean> isGroupAsync(String name) {
         return CompletableFuture.completedFuture(isGroup(name));
     }
 
@@ -124,12 +133,12 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
     }
 
     @Override
-    public CompletableFuture<CloudGroup> groupAsync(String name) {
+    public @NotNull CompletableFuture<CloudGroup> groupAsync(String name) {
         return CompletableFuture.completedFuture(group(name));
     }
 
     @Override
-    public CompletableFuture<List<CloudGroup>> groupsAsync() {
+    public @NotNull CompletableFuture<List<CloudGroup>> groupsAsync() {
         return CompletableFuture.completedFuture(groups);
     }
 
@@ -150,13 +159,9 @@ public final class CloudGroupProvider extends dev.httpmarco.polocloud.api.groups
         this.groups.addAll(groupServiceTypeAdapter.readGroups());
     }
 
-    public CloudGroup fromPacket(PacketBuffer buffer) {
-        var name = buffer.readString();
-        var platform = buffer.readString();
-        var platformProxy = buffer.readBoolean();
-        var minOnlineServices = buffer.readInt();
-        var memory = buffer.readInt();
-
-        return new CloudGroupImpl(name, new PlatformVersion(platform, platformProxy), minOnlineServices, memory);
+    @Contract("_, _, _, _, _ -> new")
+    @Override
+    public @NotNull CloudGroup fromPacket(String name, NodeData nodeData, PlatformVersion platform, int minOnlineServices, int memory) {
+        return new CloudGroupImpl(name, nodeData, platform, minOnlineServices, memory);
     }
 }
