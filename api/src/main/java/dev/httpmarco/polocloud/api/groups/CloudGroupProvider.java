@@ -16,18 +16,20 @@
 
 package dev.httpmarco.polocloud.api.groups;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import lombok.SneakyThrows;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public abstract class CloudGroupProvider {
 
-    public abstract boolean createGroup(String name, String platform, int memory, int minOnlineCount);
+    public abstract Optional<String> createGroup(String name, String platform, int memory, int minOnlineCount, String node);
 
-    public abstract boolean deleteGroup(String name);
+    public abstract Optional<String> deleteGroup(String name);
 
     @SneakyThrows
     public boolean isGroup(String name) {
@@ -52,6 +54,6 @@ public abstract class CloudGroupProvider {
 
     public abstract void update(CloudGroup cloudGroup);
 
-    public abstract CloudGroup fromPacket(PacketBuffer buffer);
+    public abstract CloudGroup fromPacket(String name, NodeData nodeData, PlatformVersion platform, int minOnlineServices, int memory);
 
 }

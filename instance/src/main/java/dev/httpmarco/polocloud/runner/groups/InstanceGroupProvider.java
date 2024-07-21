@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.runner.groups;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
@@ -25,8 +26,11 @@ import dev.httpmarco.polocloud.api.packets.general.OperationStatePacket;
 import dev.httpmarco.polocloud.api.packets.groups.*;
 import dev.httpmarco.polocloud.runner.CloudInstance;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -34,41 +38,42 @@ public final class InstanceGroupProvider extends CloudGroupProvider {
 
     @Override
     @SneakyThrows
-    public boolean createGroup(String name, String platform, int memory, int minOnlineCount) {
-        var future = new CompletableFuture<Boolean>();
+    public Optional<String> createGroup(String name, String platform, int memory, int minOnlineCount, String node) {
+        var future = new CompletableFuture<Optional<String>>();
         CloudInstance.instance().client().request("group-create", new CommunicationProperty()
                         .set("name", name)
+                        .set("node", node)
                         .set("platform", platform)
                         .set("memory", memory)
                         .set("minOnlineCount", minOnlineCount)
-                , OperationStatePacket.class, it -> future.complete(it.response()));
+                , OperationStatePacket.class, it -> future.complete(it.asOptional()));
         return future.get(5, TimeUnit.SECONDS);
     }
 
     @Override
     @SneakyThrows
-    public boolean deleteGroup(String name) {
-        var future = new CompletableFuture<Boolean>();
-        CloudInstance.instance().client().request("group-delete", new CommunicationProperty().set("name", name), OperationStatePacket.class, it -> future.complete(it.response()));
+    public Optional<String> deleteGroup(String name) {
+        var future = new CompletableFuture<Optional<String>>();
+        CloudInstance.instance().client().request("group-delete", new CommunicationProperty().set("name", name), OperationStatePacket.class, it -> future.complete(it.asOptional()));
         return future.get(5, TimeUnit.SECONDS);
     }
 
     @Override
-    public CompletableFuture<Boolean> isGroupAsync(String name) {
+    public @NotNull CompletableFuture<Boolean> isGroupAsync(String name) {
         var future = new CompletableFuture<Boolean>();
         CloudInstance.instance().client().request("group-exist", new CommunicationProperty().set("name", name), CloudGroupExistResponsePacket.class, it -> future.complete(it.response()));
         return future;
     }
 
     @Override
-    public CompletableFuture<CloudGroup> groupAsync(String name) {
+    public @NotNull CompletableFuture<CloudGroup> groupAsync(String name) {
         var future = new CompletableFuture<CloudGroup>();
         CloudInstance.instance().client().request("group-find", new CommunicationProperty().set("name", name), CloudGroupPacket.class, it -> future.complete(it.group()));
         return future;
     }
 
     @Override
-    public CompletableFuture<List<CloudGroup>> groupsAsync() {
+    public @NotNull CompletableFuture<List<CloudGroup>> groupsAsync() {
         var future = new CompletableFuture<List<CloudGroup>>();
         CloudInstance.instance().client().request("groups-all", CloudGroupCollectionPacket.class, it -> future.complete(it.groups()));
         return future;
@@ -79,14 +84,9 @@ public final class InstanceGroupProvider extends CloudGroupProvider {
         CloudInstance.instance().client().sendPacket(new CloudGroupUpdatePacket(cloudGroup));
     }
 
+    @Contract("_, _, _, _, _ -> new")
     @Override
-    public CloudGroup fromPacket(PacketBuffer buffer) {
-        var name = buffer.readString();
-        var platform = buffer.readString();
-        var platformProxy = buffer.readBoolean();
-        var minOnlineServices = buffer.readInt();
-        var memory = buffer.readInt();
-
-        return new InstanceGroup(name, new PlatformVersion(platform, platformProxy), minOnlineServices, memory);
+    public @NotNull CloudGroup fromPacket(String name, NodeData nodeData, PlatformVersion platform, int minOnlineServices, int memory) {
+        return new InstanceGroup(name, nodeData, platform, minOnlineServices, memory);
     }
 }

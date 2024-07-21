@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Getter
@@ -76,24 +77,23 @@ public final class CloudGroupProviderImpl extends CloudGroupProvider {
         }
     }
 
-    //todo add reason
     @Override
-    public boolean createGroup(String name, String platformVersion, int memory, int minOnlineCount, String node) {
+    public Optional<String> createGroup(String name, String platformVersion, int memory, int minOnlineCount, String node) {
         if (isGroup(name)) {
-            return false;
+            return Optional.of("The given group already exists!");
         }
 
         if (memory <= 0) {
-            return false;
+            return Optional.of("Memory must be higher than 0mb!");
         }
 
         if (!platformService.isValidPlatform(platformVersion)) {
-            return false;
+            return Optional.of("The given platform is not valid!");
         }
 
-        var nodeEndpoint = Node.instance().nodeProvider().node(name);
+        var nodeEndpoint = Node.instance().nodeProvider().node(node);
         if (nodeEndpoint == null) {
-            return false;
+            return Optional.of("The node is not existing in the cluster! ");
         }
 
         var platform = platformService.find(platformVersion);
@@ -101,20 +101,20 @@ public final class CloudGroupProviderImpl extends CloudGroupProvider {
         this.groupServiceTypeAdapter.includeFile(group);
         this.groups.add(group);
 
-        return true;
+        return Optional.empty();
     }
 
     @Override
-    public boolean deleteGroup(String name) {
+    public Optional<String> deleteGroup(String name) {
         if (!isGroup(name)) {
-            return false;
+            return Optional.of("This group does not exist!");
         }
 
         var group = group(name);
         CloudAPI.instance().serviceProvider().services(group).forEach(CloudService::shutdown);
         this.groupServiceTypeAdapter.excludeFile(group);
         this.groups.remove(group);
-        return true;
+        return Optional.empty();
     }
 
     @Override
