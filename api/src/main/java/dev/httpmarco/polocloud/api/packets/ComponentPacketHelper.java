@@ -18,7 +18,9 @@ package dev.httpmarco.polocloud.api.packets;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
+import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
@@ -67,6 +69,10 @@ public final class ComponentPacketHelper {
         codecBuffer.writeInt(group.minOnlineService());
         codecBuffer.writeInt(group.memory());
 
+        codecBuffer.writeString(group.nodeData().id());
+        codecBuffer.writeString(group.nodeData().hostname());
+        codecBuffer.writeInt(group.nodeData().port());
+
         writeProperties(group.properties(), codecBuffer);
     }
 
@@ -95,10 +101,23 @@ public final class ComponentPacketHelper {
         return properties;
     }
 
-    public static @NotNull CloudGroup readGroup(PacketBuffer codecBuffer) {
-        var group = CloudAPI.instance().groupProvider().fromPacket(codecBuffer);
+    public static @NotNull CloudGroup readGroup(@NotNull PacketBuffer buffer) {
 
-        group.properties().pool().putAll(readProperties(codecBuffer).pool());
+        var name = buffer.readString();
+        var platformVersion = buffer.readString();
+        var platformProxy = buffer.readBoolean();
+        var minOnlineServices = buffer.readInt();
+        var memory = buffer.readInt();
+
+        var id = buffer.readString();
+        var hostname = buffer.readString();
+        var port = buffer.readInt();
+
+        var nodeData = new NodeData(id, hostname, port);
+
+        var group = CloudAPI.instance().groupProvider().fromPacket(name, nodeData, new PlatformVersion(platformVersion, platformProxy), minOnlineServices, memory);
+
+        group.properties().pool().putAll(readProperties(buffer).pool());
         return group;
     }
 
