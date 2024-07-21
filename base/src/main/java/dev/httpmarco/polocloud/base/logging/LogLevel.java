@@ -25,7 +25,6 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public enum LogLevel {
 
-    OFF(""),
     INFO("&4"),
     SUCCESS("&8"),
     WARN("&5"),
