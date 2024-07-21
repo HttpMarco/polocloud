@@ -31,7 +31,7 @@ public class GlobalEventNode implements EventNode {
 
     public GlobalEventNode() {
         Node.instance().transmitter().listen(CloudEventRegisterPacket.class, (transmit, packet) -> {
-            // find channel cloud serviceasd
+            // find channel cloud service
             var service = (CloudServiceImpl) CloudAPI.instance().serviceProvider().find(packet.serviceId());
             // register the new event
             service.subscribedEvents().add(packet.event());
