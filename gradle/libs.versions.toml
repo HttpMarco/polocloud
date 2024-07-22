@@ -6,7 +6,6 @@ osgan = "1.2.16-SNAPSHOT"
 gson = "2.11.0"
 toml = "3.8.0"
 
-jansi = "2.4.1"
 jline = "3.26.3"
 
 minimessage = "4.17.0"
@@ -37,13 +36,10 @@ bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bunge
 minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "minimessage" }
 bungeeminimessage = { group = "net.kyori", name = "adventure-platform-bungeecord", version.ref = "bungeeminimessage" }
 
-
-jansi = { group = "org.fusesource.jansi", name = "jansi", version.ref = "jansi" }
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
 
 [bundles]
 utils = ["lombok", "annotations"]
-console = ["jline", "jansi", "annotations"]
 
 [plugins]
 nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }

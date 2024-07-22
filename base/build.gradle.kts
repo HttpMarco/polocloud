@@ -18,7 +18,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":runner"))
     implementation(project(":common"))
-    implementation(libs.bundles.console)
+    implementation(libs.jline)
     implementation(libs.osgan.netty)
     implementation(libs.gson)
     implementation(libs.toml)

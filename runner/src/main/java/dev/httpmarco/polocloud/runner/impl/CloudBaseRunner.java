@@ -56,7 +56,6 @@ public final class CloudBaseRunner implements CloudRunner {
 
         Dependency.load("com.google.code.gson", "gson", "2.10.1");
         Dependency.load("org.jline", "jline", "3.26.1");
-        Dependency.load("org.fusesource.jansi", "jansi", "2.4.1");
     }
 
 

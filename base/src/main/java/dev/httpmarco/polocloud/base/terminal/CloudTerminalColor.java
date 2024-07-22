@@ -18,7 +18,7 @@ package dev.httpmarco.polocloud.base.terminal;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.fusesource.jansi.Ansi;
+import org.jline.jansi.Ansi;
 
 @Getter
 public enum CloudTerminalColor {
