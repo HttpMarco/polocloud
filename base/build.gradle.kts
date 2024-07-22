@@ -21,7 +21,6 @@ dependencies {
     implementation(libs.jline)
     implementation(libs.osgan.netty)
     implementation(libs.gson)
-    implementation(libs.toml)
 }
 
 tasks.jar {
