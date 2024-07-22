@@ -33,7 +33,7 @@ public class ClusterBindTask {
             nodeEndpoint.situation(NodeSituation.DETECT_SIT);
             nodeEndpoint.transmit(channel);
 
-            nodeEndpoint.transmit().request("cluster-node-endpoint-state", new CommunicationProperty(), ClusterEndpointStatePacket.class, packet -> {
+            nodeEndpoint.transmit().request("cluster-node-endpoint-state", ClusterEndpointStatePacket.class, packet -> {
                 nodeEndpoint.situation(packet.nodeSituation());
                 nodeEndpoint.onlineDuration(packet.onlineDuration());
                 future.complete(null);

@@ -70,7 +70,7 @@ public final class Node extends CloudAPI {
                 return;
             }
             var externalNode = nodeProvider.externalNodeEndpoints().stream().filter(externalNodeEndpoint -> externalNodeEndpoint.situation() == NodeSituation.REACHABLE).findFirst().orElse(null);
-            externalNode.transmit().request("cluster-head-node-request", new CommunicationProperty(), ClusterHeadNodeResponse.class, packet -> {
+            externalNode.transmit().request("cluster-head-node-request", ClusterHeadNodeResponse.class, packet -> {
                 this.nodeProvider.headNodeEndpoint(this.nodeProvider.node(packet.node()));
                 // todo sync all data
                 this.nodeProvider.localEndpoint().situation(NodeSituation.REACHABLE);
