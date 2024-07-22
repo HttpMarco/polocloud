@@ -44,6 +44,8 @@ public interface CloudService extends Serializable {
 
     String hostname();
 
+    String runningNode();
+
     ServiceState state();
 
     List<String> log();

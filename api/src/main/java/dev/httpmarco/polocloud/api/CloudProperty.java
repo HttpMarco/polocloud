@@ -22,6 +22,8 @@ public final class CloudProperty<T> {
 
     public static Property<String> PROMPT = Property.String("prompt");
 
+    public static Property<Integer> NODE_PORT = Property.Integer("nodePort");
+
     public static Property<Integer> MAX_QUEUE_SIZE = Property.Integer("maxQueueSize");
 
 }

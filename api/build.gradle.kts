@@ -16,6 +16,7 @@
 
 dependencies {
     implementation(project(":runner"))
+    implementation(project(":common"))
     compileOnly(libs.osgan.netty)
     api(libs.gson)
 }

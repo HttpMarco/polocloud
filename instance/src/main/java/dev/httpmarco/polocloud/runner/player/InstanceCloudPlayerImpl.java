@@ -46,6 +46,6 @@ public final class InstanceCloudPlayerImpl extends CloudPlayer {
 
     @Override
     public void connectToServer(String serverName) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerConnectToServerPacket(uniqueId(), serverName));
+        CloudInstance.instance().client().sendPacket(new CloudPlayerConnectToServerPacket(uniqueId(), serverName));
     }
 }

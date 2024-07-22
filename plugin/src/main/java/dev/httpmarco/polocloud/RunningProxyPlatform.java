@@ -17,10 +17,8 @@
 package dev.httpmarco.polocloud;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.common.CloudMemoryCalculator;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
-import dev.httpmarco.polocloud.api.packets.general.OperationDoublePacket;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerConnectToServerPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.ServiceFilter;
@@ -57,7 +55,7 @@ public class RunningProxyPlatform extends RunningPlatform {
             registerService.accept(event.cloudService());
         });
 
-        CloudInstance.instance().client().transmitter().listen(CloudPlayerConnectToServerPacket.class, (ch, packet) -> playerConnect.accept(packet.uuid(), packet.serverId()));
+        CloudInstance.instance().client().listen(CloudPlayerConnectToServerPacket.class, (ch, packet) -> playerConnect.accept(packet.uuid(), packet.serverId()));
 
         instance.globalEventNode().addListener(CloudServiceShutdownEvent.class, event -> unregisterService.accept(event.cloudService()));
     }

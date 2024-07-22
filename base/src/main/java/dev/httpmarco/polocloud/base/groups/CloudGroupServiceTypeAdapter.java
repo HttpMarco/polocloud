@@ -17,13 +17,14 @@
 package dev.httpmarco.polocloud.base.groups;
 
 import com.google.gson.*;
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.common.PropertiesPoolSerializer;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -35,7 +36,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudGroup>, JsonDeserializer<CloudGroup> {
 
-    private static final Path GROUP_FOLDER = OsganFile.define("local/groups", OsganFileCreateOption.CREATION).path();
+    private static final Path GROUP_FOLDER = FileUtils.createDirectory("local/groups");
     private final Gson LOADER = new GsonBuilder().setPrettyPrinting().serializeNulls()
             .registerTypeHierarchyAdapter(CloudGroup.class, this)
             .registerTypeAdapter(PropertyPool.class, new PropertiesPoolSerializer())
@@ -45,12 +46,12 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
     private final CloudGroupPlatformService platformService;
 
     @SneakyThrows
-    public void includeFile(CloudGroup cloudGroup) {
+    public void includeFile(@NotNull CloudGroup cloudGroup) {
         Files.writeString(GROUP_FOLDER.resolve(cloudGroup.name() + ".json"), LOADER.toJson(cloudGroup));
     }
 
     @SneakyThrows
-    public void excludeFile(CloudGroup cloudGroup) {
+    public void excludeFile(@NotNull CloudGroup cloudGroup) {
         java.nio.file.Files.delete(GROUP_FOLDER.resolve(cloudGroup.name() + ".json"));
     }
 
@@ -59,7 +60,7 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
     }
 
     @SneakyThrows
-    public List<CloudGroup> readGroups() {
+    public @NotNull List<CloudGroup> readGroups() {
         var groups = new ArrayList<CloudGroup>();
         for (var file : Objects.requireNonNull(GROUP_FOLDER.toFile().listFiles())) {
 
@@ -73,10 +74,11 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
     }
 
     @Override
-    public CloudGroup deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public @NotNull CloudGroup deserialize(@NotNull JsonElement jsonElement, Type type, @NotNull JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         var elements = jsonElement.getAsJsonObject();
 
         var name = elements.get("name").getAsString();
+        var nodeId = elements.get("node").getAsString();
         var platform = elements.get("platform").getAsString();
         var memory = elements.get("memory").getAsInt();
         var minOnlineServices = elements.get("minOnlineCount").getAsInt();
@@ -84,16 +86,17 @@ public final class CloudGroupServiceTypeAdapter implements JsonSerializer<CloudG
 
         var parentPlatform = platformService.find(platform).possibleVersions().stream().filter(it -> it.version().equals(platform)).findFirst().orElseThrow();
 
-        var group = new CloudGroupImpl(name, parentPlatform, memory, minOnlineServices);
+        var group = new CloudGroupImpl(name, Node.instance().nodeProvider().node(nodeId).data(), parentPlatform, memory, minOnlineServices);
         group.properties().pool().putAll(properties.pool());
         return group;
     }
 
     @Override
-    public JsonElement serialize(CloudGroup cloudGroup, Type type, JsonSerializationContext jsonSerializationContext) {
+    public @NotNull JsonElement serialize(@NotNull CloudGroup cloudGroup, Type type, @NotNull JsonSerializationContext jsonSerializationContext) {
         var object = new JsonObject();
 
         object.addProperty("name", cloudGroup.name());
+        object.addProperty("node", cloudGroup.nodeData().id());
         object.addProperty("platform", cloudGroup.platform().version());
         object.addProperty("memory", cloudGroup.memory());
         object.addProperty("minOnlineCount", cloudGroup.minOnlineService());

@@ -17,10 +17,8 @@
 package dev.httpmarco.polocloud.base.terminal;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.logging.LogLevel;
 import dev.httpmarco.polocloud.api.CloudProperty;
-import dev.httpmarco.polocloud.base.CloudBase;
-import org.fusesource.jansi.Ansi;
+import dev.httpmarco.polocloud.base.NodeShutdownTask;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.UserInterruptException;
 
@@ -34,7 +32,7 @@ public final class CloudTerminalThread extends Thread {
         setName("console-reading-thread");
 
         var globalProperties = CloudAPI.instance().globalProperties();
-        this.prompt = this.terminal.includeColorCodes(globalProperties.has(CloudProperty.PROMPT) ? globalProperties.property(CloudProperty.PROMPT) : "&3cloud &2» &1");
+        this.prompt = this.terminal.includeColorCodes(globalProperties.has(CloudProperty.PROMPT) ? globalProperties.property(CloudProperty.PROMPT) : "&7cloud &8» &7");
 
         setContextClassLoader(Thread.currentThread().getContextClassLoader());
     }
@@ -47,26 +45,17 @@ public final class CloudTerminalThread extends Thread {
                     try {
                         final var rawLine = terminal.lineReader().readLine(prompt);
                         final var line = rawLine.split(" ");
-                        resetConsoleInput();
 
                         if (line.length > 0) {
                             terminal.commandService().call(line);
                         }
-                    } catch (EndOfFileException ignore) {
-                        resetConsoleInput();
-                    }
+                    } catch (EndOfFileException ignore) {}
                 } catch (UserInterruptException exception) {
-                    resetConsoleInput();
-                    CloudBase.instance().shutdown(false);
+                    NodeShutdownTask.run();
                 }
             } catch (Exception e) {
-                resetConsoleInput();
                 e.printStackTrace();
             }
         }
-    }
-
-    private void resetConsoleInput() {
-        this.terminal.print(LogLevel.OFF, Ansi.ansi().reset().cursorUp(1).eraseLine().toString(), null);
     }
 }

@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.terminal.commands;
 
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import lombok.SneakyThrows;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
@@ -39,7 +39,7 @@ public final class CommandCompleter implements Completer {
 
         var main = context[0];
 
-        for (var command : CloudBase.instance().terminal().commandService().commands()) {
+        for (var command : Node.instance().terminal().commandService().commands()) {
 
             var data = command.getClass().getDeclaredAnnotation(Command.class);
 

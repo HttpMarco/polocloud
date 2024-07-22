@@ -31,7 +31,7 @@ public final class ServerConnectedListener implements Listener {
         var player = event.getPlayer();
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
         var cloudService = CloudAPI.instance().serviceProvider().find(player.getServer().getInfo().getName());
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
+        CloudInstance.instance().client().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
 
         if (event.getFrom() == null) {
             return;

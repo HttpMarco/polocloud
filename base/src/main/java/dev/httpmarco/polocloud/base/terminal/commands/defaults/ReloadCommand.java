@@ -17,9 +17,8 @@
 package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.groups.CloudGroup;
-import dev.httpmarco.polocloud.base.CloudBase;
-import dev.httpmarco.polocloud.base.groups.CloudGroupProvider;
+import dev.httpmarco.polocloud.base.Node;
+import dev.httpmarco.polocloud.base.groups.CloudGroupProviderImpl;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 
@@ -30,17 +29,17 @@ public final class ReloadCommand {
     public void handle() {
 
         var time = System.currentTimeMillis();
-        CloudBase.instance().logger().info("Reloading network cluster...");
+        Node.instance().logger().info("Reloading network cluster...");
 
-        CloudBase.instance().logger().info("Reloading groups...");
-        ((CloudGroupProvider) CloudAPI.instance().groupProvider()).reload();
+        Node.instance().logger().info("Reloading groups...");
+        ((CloudGroupProviderImpl) CloudAPI.instance().groupProvider()).reload();
 
-        CloudBase.instance().logger().info("Share new cloud group information...");
+        Node.instance().logger().info("Share new cloud group information...");
         for (var group : CloudAPI.instance().groupProvider().groups()) {
             group.update();
         }
 
-        CloudAPI.instance().logger().success("Reload successfully in " + (System.currentTimeMillis() - time) + "ms");
+        Node.instance().logger().success("Reload successfully in " + (System.currentTimeMillis() - time) + "ms");
     }
 
 }

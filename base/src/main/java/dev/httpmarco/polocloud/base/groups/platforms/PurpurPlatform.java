@@ -17,14 +17,14 @@
 package dev.httpmarco.polocloud.base.groups.platforms;
 
 import com.google.gson.JsonObject;
-import dev.httpmarco.osgan.files.OsganGsonContext;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.common.YamlValidateWriter;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
+import dev.httpmarco.pololcoud.common.GsonUtils;
+import dev.httpmarco.pololcoud.common.files.FileManipulator;
 import lombok.SneakyThrows;
 
 import java.io.FileReader;
@@ -98,7 +98,7 @@ public final class PurpurPlatform extends Platform {
                 .distinct()
                 .forEach(platformVersion -> {
                     try {
-                        var platform = CloudBase.instance().groupProvider().platformService().find(platformVersion);
+                        var platform = Node.instance().groupProvider().platformService().find(platformVersion);
                         if (platform instanceof VelocityPlatform) {
                             // manipulate velocity secret if
                             var configPath = localCloudService.runningFolder().resolve("config");
@@ -109,7 +109,7 @@ public final class PurpurPlatform extends Platform {
                                 Files.createFile(globalPaperProperty);
                                 Files.writeString(globalPaperProperty, String.join("\n", List.of("proxies:", " velocity:", "    enabled: true", "    secret: " + CloudGroupPlatformService.PROXY_SECRET)));
                             } else {
-                                YamlValidateWriter.validateYaml(globalPaperProperty.toFile(), s -> {
+                                FileManipulator.manipulate(globalPaperProperty.toFile(), s -> {
                                     if (s.startsWith("    enabled: false")) {
                                         return "    enabled: true";
                                     }
@@ -125,7 +125,7 @@ public final class PurpurPlatform extends Platform {
                         if (platform instanceof BungeeCordPlatform) {
                             var globalPaperProperty = localCloudService.runningFolder().resolve("spigot.yml");
 
-                            YamlValidateWriter.validateYaml(globalPaperProperty.toFile(), s -> {
+                            FileManipulator.manipulate(globalPaperProperty.toFile(), s -> {
                                 if (s.replaceAll(" ", "").startsWith("bungeecord:")) {
                                     return "  bungeecord: true";
                                 } else {
@@ -148,7 +148,7 @@ public final class PurpurPlatform extends Platform {
 
     @SneakyThrows
     private JsonObject readPurpurInformation(String link) {
-        return OsganGsonContext.GSON.fromJson(downloadStringContext(link), JsonObject.class);
+        return GsonUtils.GSON.fromJson(downloadStringContext(link), JsonObject.class);
     }
 
     @SneakyThrows

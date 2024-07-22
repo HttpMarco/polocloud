@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.runner.impl;
 
 import dev.httpmarco.polocloud.runner.CloudRunner;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
+import dev.httpmarco.polocloud.runner.dependencies.Dependency;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
@@ -35,25 +36,32 @@ public final class CloudBaseRunner implements CloudRunner {
 
         LOCAL_PATH.toFile().mkdirs();
 
+        var commonFile = LOCAL_PATH.resolve("polocloud-common.jar");
         var apiFile = LOCAL_PATH.resolve("polocloud-api.jar");
         var baseFile = LOCAL_PATH.resolve("polocloud-base.jar");
         var instanceFile = LOCAL_PATH.resolve("polocloud-instance.jar");
         var pluginFile = LOCAL_PATH.resolve("polocloud-plugin.jar");
 
+        this.convertFileFromClasspath(commonFile, "common");
         this.convertFileFromClasspath(apiFile, "api");
         this.convertFileFromClasspath(baseFile, "base");
         this.convertFileFromClasspath(instanceFile, "instance");
         this.convertFileFromClasspath(pluginFile, "plugin");
 
         // add main cloud to current context classpath
+        RunnerBootstrap.LOADER.addURL(commonFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(apiFile.toUri().toURL());
         RunnerBootstrap.LOADER.addURL(baseFile.toUri().toURL());
+
+
+        Dependency.load("com.google.code.gson", "gson", "2.10.1");
+        Dependency.load("org.jline", "jline", "3.26.1");
     }
 
 
     @Override
     public String mainEntry() {
-        return "dev.httpmarco.polocloud.base.CloudBaseBootstrap";
+        return "dev.httpmarco.polocloud.base.launcher.NodeLauncher";
     }
 
     @Override

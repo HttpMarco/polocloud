@@ -16,14 +16,14 @@
 
 package dev.httpmarco.polocloud.base.groups.platforms;
 
-import com.electronwill.nightconfig.core.file.FileConfig;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
+import dev.httpmarco.pololcoud.common.files.FileManipulator;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 
 public final class VelocityPlatform extends PaperMCPlatform {
@@ -34,7 +34,7 @@ public final class VelocityPlatform extends PaperMCPlatform {
 
     @Override
     @SneakyThrows
-    public void prepare(LocalCloudService localCloudService) {
+    public void prepare(@NotNull LocalCloudService localCloudService) {
         var propertiesPath = localCloudService.runningFolder().resolve("velocity.toml");
 
         Files.writeString(localCloudService.runningFolder().resolve("forwarding.secret"), CloudGroupPlatformService.PROXY_SECRET);
@@ -44,11 +44,11 @@ public final class VelocityPlatform extends PaperMCPlatform {
         }
 
         // we must change the port and hostname
-        FileConfig config = FileConfig.builder(propertiesPath).build();
-        config.load();
-
-        config.set("bind", localCloudService.hostname() + ":" + localCloudService.port());
-        config.save();
-        config.close();
+        FileManipulator.manipulate(propertiesPath.toFile(), s -> {
+            if (s.startsWith("bind")) {
+                return "bind = \"" + localCloudService.hostname() + ":" + localCloudService.port() + "\"";
+            }
+            return s;
+        });
     }
 }

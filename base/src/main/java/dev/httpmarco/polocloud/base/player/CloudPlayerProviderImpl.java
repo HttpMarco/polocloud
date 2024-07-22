@@ -16,13 +16,13 @@
 
 package dev.httpmarco.polocloud.base.player;
 
+import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.osgan.utils.executers.FutureResult;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.packets.player.*;
 import dev.httpmarco.polocloud.api.player.CloudPlayer;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import lombok.SneakyThrows;
 
@@ -37,7 +37,7 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
     private final List<CloudPlayer> players = new CopyOnWriteArrayList<>();
 
     public CloudPlayerProviderImpl() {
-        var transmitter = CloudBase.instance().transmitter();
+        var transmitter = Node.instance().transmitter();
 
         transmitter.responder("players-all", property -> new CloudAllPlayersPacket(this.players));
         transmitter.responder("player-get", properties -> new CloudPlayerPacket(this.find(properties.getUUID("uniqueId"))));
@@ -75,7 +75,7 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
 
     @Override
     public CompletableFuture<List<CloudPlayer>> playersAsync() {
-        return FutureResult.completedFuture(this.players);
+        return CommunicationFuture.completedFuture(this.players);
     }
 
     @Override
@@ -96,7 +96,7 @@ public final class CloudPlayerProviderImpl implements CloudPlayerProvider {
 
     @Override
     public CompletableFuture<CloudPlayer> findAsync(UUID id) {
-        var future = new FutureResult<CloudPlayer>();
+        var future = new CommunicationFuture<CloudPlayer>();
         future.complete(this.players.stream().filter(it -> it.uniqueId().equals(id)).findFirst().orElse(null));
         return future.toCompletableFuture();
     }

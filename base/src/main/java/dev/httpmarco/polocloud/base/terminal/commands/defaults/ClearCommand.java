@@ -16,7 +16,7 @@
 
 package dev.httpmarco.polocloud.base.terminal.commands.defaults;
 
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.terminal.commands.Command;
 import dev.httpmarco.polocloud.base.terminal.commands.DefaultCommand;
 
@@ -25,7 +25,7 @@ public final class ClearCommand {
 
     @DefaultCommand
     public void handle() {
-        CloudBase.instance().terminal().clear();
+        Node.instance().terminal().clear();
     }
 
 }

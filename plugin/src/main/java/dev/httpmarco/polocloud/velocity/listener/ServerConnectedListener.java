@@ -32,7 +32,7 @@ public final class ServerConnectedListener {
         var player = event.getPlayer();
         var cloudPlayer = CloudAPI.instance().playerProvider().find(player.getUniqueId());
         var cloudService = CloudAPI.instance().serviceProvider().find(event.getServer().getServerInfo().getName());
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
+        CloudInstance.instance().client().sendPacket(new CloudPlayerServiceChangePacket(player.getUniqueId(), cloudService.id()));
 
         if (event.getPreviousServer().isEmpty()) return;
         var previousService = CloudAPI.instance().serviceProvider().find(event.getPreviousServer().get().getServerInfo().getName());

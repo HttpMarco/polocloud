@@ -21,7 +21,7 @@ import dev.httpmarco.polocloud.api.CloudProperty;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
 import dev.httpmarco.polocloud.api.services.ServiceState;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -32,40 +32,46 @@ public final class CloudServiceQueue extends Thread {
     @Override
     public void run() {
         while (!isInterrupted()) {
-            if (!CloudBase.instance().running()) {
-                return;
+
+            // if the node is on the shutdown process
+            if (!Node.instance().running()) {
+                continue;
+            }
+
+            // only the head node gives new start impulse
+            if (!Node.instance().nodeProvider().isHead()) {
+                continue;
             }
             for (var group : CloudAPI.instance().groupProvider().groups()) {
-
                 var onlineDiff = group.onlineAmount() - group.minOnlineService();
 
-                if (onlineDiff < 0) {
+                // there are enough server online
+                if (onlineDiff > 0) {
+                    continue;
+                }
 
-                    var maxValue = group.properties().has(GroupProperties.MAX_SERVICES) ? group.properties().property(GroupProperties.MAX_SERVICES) : -1;
+                var maxValue = group.properties().has(GroupProperties.MAX_SERVICES) ? group.properties().property(GroupProperties.MAX_SERVICES) : -1;
+                for (int i = 0; i < (-onlineDiff); i++) {
 
-                    for (int i = 0; i < (-onlineDiff); i++) {
+                    if (maxValue != -1 && (group.onlineAmount() + 1) > maxValue) {
+                        continue;
+                    }
 
-                        if (maxValue != -1 && (group.onlineAmount() + 1) > maxValue) {
-                            continue;
-                        }
+                    var currentStartedServices = CloudAPI.instance().serviceProvider().services().stream().filter(it -> it.state() == ServiceState.STARTING).count();
 
-                        var currentStartedServices = CloudAPI.instance().serviceProvider().services().stream().filter(it -> it.state() == ServiceState.STARTING).count();
-
-                        if (CloudBase.instance().globalProperties().has(CloudProperty.MAX_QUEUE_SIZE)) {
-                            if (CloudBase.instance().globalProperties().property(CloudProperty.MAX_QUEUE_SIZE) > currentStartedServices) {
-                                serviceProvider.factory().start(group);
-                            }
-
-                        } else {
+                    if (Node.instance().globalProperties().has(CloudProperty.MAX_QUEUE_SIZE)) {
+                        if (Node.instance().globalProperties().property(CloudProperty.MAX_QUEUE_SIZE) > currentStartedServices) {
                             serviceProvider.factory().start(group);
                         }
+                    } else {
+                        serviceProvider.factory().start(group);
                     }
                 }
             }
-        }
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException ignore) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ignore) {
+            }
         }
     }
 }

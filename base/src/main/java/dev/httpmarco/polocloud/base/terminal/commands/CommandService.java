@@ -17,7 +17,7 @@
 package dev.httpmarco.polocloud.base.terminal.commands;
 
 import dev.httpmarco.polocloud.base.groups.GroupCommand;
-import dev.httpmarco.polocloud.base.node.NodeCommand;
+import dev.httpmarco.polocloud.base.terminal.commands.defaults.ClusterCommand;
 import dev.httpmarco.polocloud.base.services.ServiceCommand;
 import dev.httpmarco.polocloud.base.templates.TemplateCommand;
 import dev.httpmarco.polocloud.base.terminal.commands.defaults.*;
@@ -34,7 +34,7 @@ public final class CommandService {
     private final List<Object> commands = new ArrayList<>();
 
     public CommandService() {
-        this.registerCommand(new NodeCommand());
+        this.registerCommand(new ClusterCommand());
         this.registerCommand(new GroupCommand());
         this.registerCommand(new ServiceCommand());
         this.registerCommand(new ReloadCommand());

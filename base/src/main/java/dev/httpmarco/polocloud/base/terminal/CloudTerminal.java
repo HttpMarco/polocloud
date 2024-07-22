@@ -16,26 +16,25 @@
 
 package dev.httpmarco.polocloud.base.terminal;
 
-import dev.httpmarco.polocloud.api.logging.LogLevel;
-import dev.httpmarco.polocloud.api.logging.LoggerHandler;
+import dev.httpmarco.polocloud.base.logging.LogLevel;
+import dev.httpmarco.polocloud.base.logging.LoggerHandler;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandCompleter;
 import dev.httpmarco.polocloud.base.terminal.commands.CommandService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import org.fusesource.jansi.Ansi;
+import org.jetbrains.annotations.NotNull;
+import org.jline.jansi.Ansi;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
-import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.logging.Level;
 
 @Getter(AccessLevel.PACKAGE)
 @Accessors(fluent = true)
@@ -102,22 +101,16 @@ public final class CloudTerminal implements LoggerHandler {
     }
 
     @Override
-    public void print(LogLevel level, String message, Throwable throwable, Object... objects) {
+    public void print(@NotNull LogLevel level, String message, Throwable throwable, Object... objects) {
         terminal.puts(InfoCmp.Capability.carriage_return);
-        if (level != LogLevel.OFF) {
-            terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| " + level.colorCode() + level.name() + "&2: &1" + message)
-                    + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
-        } else {
-            terminal.writer().write(message);
-        }
+        terminal.writer().println(includeColorCodes("&7" + dateFormat.format(Calendar.getInstance().getTime()) + " &8| " + level.colorCode() + level.name() + "&8: &7" + message) + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         terminal.flush();
-
         this.update();
     }
 
     String includeColorCodes(String context) {
         for (var color : CloudTerminalColor.colors) {
-            context = context.replace("&" + (color.ordinal() + 1), color.ansiCode());
+            context = context.replace("&" + color.key(), color.ansiCode());
         }
         return context;
     }

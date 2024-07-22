@@ -17,12 +17,12 @@
 package dev.httpmarco.polocloud.base.templates;
 
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import org.apache.commons.io.FileUtils;
 
 @Getter
 @Accessors(fluent = true)
@@ -43,10 +43,10 @@ public final class Template {
     @SneakyThrows
     public void copy(LocalCloudService localCloudService) {
         if (canUsed) {
-            FileUtils.copyDirectory(TemplatesService.TEMPLATES.resolve(id).toFile(), localCloudService.runningFolder().toFile());
+            FileUtils.copyDirectoryContents(TemplatesService.TEMPLATES.resolve(id), localCloudService.runningFolder());
         }
         for (var templateName : this.mergedTemplates) {
-            var template = CloudBase.instance().templatesService().template(templateName);
+            var template = Node.instance().templatesService().template(templateName);
 
             if (template != null) {
                 template.copy(localCloudService);

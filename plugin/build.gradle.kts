@@ -17,6 +17,7 @@
 dependencies {
     implementation(project(":api"))
     implementation(project(":instance"))
+    implementation(project(":common"))
     implementation(libs.osgan.netty)
 
     implementation(libs.paper)

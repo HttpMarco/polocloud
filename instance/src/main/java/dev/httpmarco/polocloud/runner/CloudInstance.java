@@ -16,16 +16,18 @@
 
 package dev.httpmarco.polocloud.runner;
 
+import dev.httpmarco.osgan.networking.client.CommunicationClient;
+import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.dependencies.Dependency;
 import dev.httpmarco.polocloud.api.groups.CloudGroupProvider;
-import dev.httpmarco.polocloud.api.node.NodeService;
 import dev.httpmarco.polocloud.api.packets.groups.CloudGroupUpdatePacket;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceMaxPlayersUpdatePacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceRegisterPacket;
 import dev.httpmarco.polocloud.api.player.CloudPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceProvider;
+import dev.httpmarco.polocloud.runner.dependencies.Dependency;
 import dev.httpmarco.polocloud.runner.event.InstanceGlobalEventNode;
 import dev.httpmarco.polocloud.runner.groups.InstanceGroupProvider;
 import dev.httpmarco.polocloud.runner.player.InstanceCloudPlayerProvider;
@@ -54,7 +56,7 @@ public class CloudInstance extends CloudAPI {
     @Getter
     private static CloudInstance instance;
 
-    private final CloudInstanceClient client;
+    private final CommunicationClient client;
     private final CloudGroupProvider groupProvider = new InstanceGroupProvider();
     private final CloudServiceProvider serviceProvider = new InstanceServiceProvider();
     private final CloudPlayerProvider playerProvider = new InstanceCloudPlayerProvider();
@@ -67,31 +69,39 @@ public class CloudInstance extends CloudAPI {
         instance = this;
         var bootstrapPath = Path.of(System.getenv("bootstrapFile") + ".jar");
 
-        this.client = new CloudInstanceClient("127.0.0.1", 8192, () -> serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> {
-            this.self = service;
-            if (this.self.group().platform().version().toLowerCase().contains("bungeecord")) {
-                Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.13.1");
-                Dependency.load("net.kyori", "adventure-text-minimessage", "4.17.0");
-                Dependency.load("net.kyori", "adventure-key", "4.17.0");
-                Dependency.load("net.kyori", "examination-api", "1.3.0");
-                Dependency.load("net.kyori", "adventure-api", "4.17.0");
-                Dependency.load("net.kyori", "adventure-platform-api", "4.3.3");
-                Dependency.load("net.kyori", "adventure-platform-facet", "4.3.3");
-                Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.3");
-                Dependency.load("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2");
-                Dependency.load("net.kyori", "adventure-text-serializer-legacy", "4.13.1");
-            }
-        }));
+        // todo set current port of node
+        this.client = new CommunicationClient("127.0.0.1", 9090);
 
-        this.client.transmitter().listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> {
+        client.clientAction(CommunicationClientAction.CONNECTED, channelTransmit -> {
+            channelTransmit.sendPacket(new CloudServiceRegisterPacket(CloudInstance.SELF_ID));
+            serviceProvider.findAsync(SELF_ID).whenComplete((service, throwable) -> {
+                this.self = service;
+                if (this.self.group().platform().version().toLowerCase().contains("bungeecord")) {
+                    Dependency.load("net.kyori", "adventure-text-serializer-gson", "4.13.1");
+                    Dependency.load("net.kyori", "adventure-text-minimessage", "4.17.0");
+                    Dependency.load("net.kyori", "adventure-key", "4.17.0");
+                    Dependency.load("net.kyori", "examination-api", "1.3.0");
+                    Dependency.load("net.kyori", "adventure-api", "4.17.0");
+                    Dependency.load("net.kyori", "adventure-platform-api", "4.3.3");
+                    Dependency.load("net.kyori", "adventure-platform-facet", "4.3.3");
+                    Dependency.load("net.kyori", "adventure-platform-bungeecord", "4.3.3");
+                    Dependency.load("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2");
+                    Dependency.load("net.kyori", "adventure-text-serializer-legacy", "4.13.1");
+                }
+            });
+        });
+
+        this.client.listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> {
             if (self().id().equals(packet.id())) {
                 self().maxPlayers(packet.maxPlayers());
             }
         });
 
-        this.client.transmitter().listen(CloudGroupUpdatePacket.class, (channel, packet) -> {
+        this.client.listen(CloudGroupUpdatePacket.class, (channel, packet) -> {
             ((InstanceCloudService) this.self).group(packet.group());
         });
+
+        this.client.initialize();
 
         RunnerBootstrap.LOADER.addURL(bootstrapPath.toUri().toURL());
 
@@ -124,15 +134,9 @@ public class CloudInstance extends CloudAPI {
             if (thread.isAlive()) {
                 thread.interrupt();
             }
-            this.client.transmitter().close();
+            this.client.close();
         }));
         thread.start();
-    }
-
-    @Override
-    public NodeService nodeService() {
-        //todo
-        return null;
     }
 
     @Override

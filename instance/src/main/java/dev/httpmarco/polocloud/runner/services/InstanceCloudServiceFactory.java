@@ -18,6 +18,7 @@ package dev.httpmarco.polocloud.runner.services;
 
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
 import dev.httpmarco.polocloud.api.packets.service.CloudServiceShutdownPacket;
+import dev.httpmarco.polocloud.api.packets.service.CloudServiceStartPacket;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.runner.CloudInstance;
@@ -26,11 +27,11 @@ public final class InstanceCloudServiceFactory implements CloudServiceFactory {
 
     @Override
     public void start(CloudGroup cloudGroup) {
-        //todo
+        CloudInstance.instance().client().sendPacket(new CloudServiceStartPacket(cloudGroup.name()));
     }
 
     @Override
     public void stop(CloudService service) {
-        CloudInstance.instance().client().transmitter().sendPacket(new CloudServiceShutdownPacket(service.id()));
+        CloudInstance.instance().client().sendPacket(new CloudServiceShutdownPacket(service.id()));
     }
 }

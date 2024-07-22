@@ -16,8 +16,7 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.osgan.utils.executers.FutureResult;
+import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.CloudGroup;
@@ -25,13 +24,10 @@ import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packets.player.CloudPlayerCountPacket;
 import dev.httpmarco.polocloud.api.packets.service.*;
 import dev.httpmarco.polocloud.api.services.*;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -51,7 +47,7 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
     public CloudServiceProviderImpl() {
 
         // send all services back to request
-        var transmitter = CloudBase.instance().transmitter();
+        var transmitter = Node.instance().transmitter();
         transmitter.responder("services-all", (properties) -> new CloudAllServicesPacket(services));
         transmitter.responder("services-group", (properties) -> new CloudAllServicesPacket(services(CloudAPI.instance().groupProvider().group(properties.getString("name")))));
         transmitter.responder("service-find-id", (properties) -> new CloudServicePacket(find(properties.getUUID("id"))));
@@ -60,6 +56,7 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
         transmitter.responder("services-filtering", property -> new CloudAllServicesPacket(filterService(property.getEnum("filter", ServiceFilter.class))));
 
         transmitter.listen(CloudServiceShutdownPacket.class, (channel, packet) -> factory.stop(find(packet.uuid())));
+        transmitter.listen(CloudServiceStartPacket.class, (channel, packet) -> factory.start(CloudAPI.instance().groupProvider().group(packet.group())));
         transmitter.listen(CloudServiceMaxPlayersUpdatePacket.class, (channel, packet) -> find(packet.id()).maxPlayers(packet.maxPlayers()));
 
         transmitter.listen(CloudServiceStateChangePacket.class, (channel, packet) -> {
@@ -73,11 +70,9 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
             } else {
                 //todo
             }
-            CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is successfully online");
+            Node.instance().logger().info("The Service &8'&b" + service.name() + "&8' &7is successfully online&8.");
             CloudAPI.instance().globalEventNode().call(new CloudServiceOnlineEvent(service));
         });
-        // allow service to start the process
-        queue.start();
     }
 
     public void close() {
@@ -94,7 +89,7 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
 
     @Override
     public @NotNull CompletableFuture<List<CloudService>> servicesAsync() {
-        return FutureResult.completedFuture(this.services);
+        return CommunicationFuture.completedFuture(this.services);
     }
 
     @Override
@@ -127,9 +122,8 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
         return CompletableFuture.completedFuture(this.services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null));
     }
 
-    @Contract(pure = true)
     @Override
-    public @Nullable CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers) {
+    public CloudService generateService(CloudGroup parent, int orderedId, UUID id, int port, ServiceState state, String hostname, int maxMemory, int maxPlayers, String node) {
         //todo
         return null;
     }

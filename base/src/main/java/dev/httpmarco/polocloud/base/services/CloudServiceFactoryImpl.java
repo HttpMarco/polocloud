@@ -16,8 +16,6 @@
 
 package dev.httpmarco.polocloud.base.services;
 
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileCreateOption;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceShutdownEvent;
 import dev.httpmarco.polocloud.api.events.service.CloudServiceStartEvent;
@@ -26,11 +24,11 @@ import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.CloudService;
 import dev.httpmarco.polocloud.api.services.CloudServiceFactory;
 import dev.httpmarco.polocloud.api.services.ServiceState;
-import dev.httpmarco.polocloud.base.CloudBase;
+import dev.httpmarco.polocloud.base.Node;
 import dev.httpmarco.polocloud.base.groups.CloudGroupPlatformService;
 import dev.httpmarco.polocloud.base.groups.platforms.PaperPlatform;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -44,13 +42,12 @@ import java.util.concurrent.TimeUnit;
 
 public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
-    // todo not used
-    private static final Path RUNNING_FOLDER = OsganFile.define("running", OsganFileCreateOption.CREATION).path();
+    private static final Path RUNNING_FOLDER = FileUtils.createDirectory("running");
 
     @SneakyThrows
     public CloudServiceFactoryImpl() {
         if (Files.exists(RUNNING_FOLDER)) {
-            FileUtils.deleteDirectory(RUNNING_FOLDER.toFile());
+            FileUtils.delete(RUNNING_FOLDER.toFile());
             Files.createDirectory(RUNNING_FOLDER);
         }
     }
@@ -61,12 +58,12 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
         var service = new LocalCloudService(cloudGroup, this.nextServiceId(cloudGroup), UUID.randomUUID(), ServicePortDetector.detectServicePort(cloudGroup), ServiceState.PREPARED);
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).registerService(service);
 
-        CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is starting now on node &2'&4" + CloudAPI.instance().nodeService().localNode().name() + "&2'");
+        Node.instance().logger().info("The Service &8'&b" + service.name() + "&8' &7is starting now on node &7'&b" + Node.instance().nodeProvider().localEndpoint().data().id() + "&8'");
 
-        CloudBase.instance().templatesService().cloneTemplate(service);
+        Node.instance().templatesService().cloneTemplate(service);
 
         // download and/or copy platform file to service
-        CloudGroupPlatformService platformService = CloudBase.instance().groupProvider().platformService();
+        CloudGroupPlatformService platformService = Node.instance().groupProvider().platformService();
         platformService.preparePlatform(service);
 
         var args = new LinkedList<>();
@@ -103,7 +100,7 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         var pluginDirectory = service.runningFolder().resolve("plugins");
 
-        OsganFile.create(pluginDirectory.toString());
+        FileUtils.createDirectory(pluginDirectory.toString());
 
         // copy polocloud plugin
         //todo a better way for minestom
@@ -153,12 +150,12 @@ public final class CloudServiceFactoryImpl implements CloudServiceFactory {
 
         if (!service.group().properties().has(GroupProperties.STATIC)) {
             synchronized (this) {
-                FileUtils.deleteDirectory(service.runningFolder().toFile());
+                FileUtils.delete(service.runningFolder());
                 Files.deleteIfExists(service.runningFolder());
             }
         }
         ((CloudServiceProviderImpl) CloudAPI.instance().serviceProvider()).unregisterService(service);
-        CloudAPI.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1was successfully stopped");
+        Node.instance().logger().info("The Service &8'&b" + service.name() + "&8' &7was successfully stopped&8.");
         service.state(ServiceState.STOPPED);
     }
 

@@ -18,11 +18,18 @@ package dev.httpmarco.polocloud.base.common;
 
 import com.google.gson.*;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
+import dev.httpmarco.pololcoud.common.document.DocumentTypeAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 
-public final class PropertiesPoolSerializer implements JsonSerializer<PropertyPool>, JsonDeserializer<PropertyPool> {
+public final class PropertiesPoolSerializer extends DocumentTypeAdapter<PropertyPool> {
+
+    public static PropertiesPoolSerializer ADAPTER = new PropertiesPoolSerializer();
+
+    public PropertiesPoolSerializer() {
+        super(PropertyPool.class);
+    }
 
     @Override
     public @NotNull PropertyPool deserialize(@NotNull JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {

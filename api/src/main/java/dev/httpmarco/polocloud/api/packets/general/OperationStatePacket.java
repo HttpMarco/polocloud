@@ -21,6 +21,9 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 @Getter
 @Accessors(fluent = true)
@@ -28,14 +31,35 @@ import lombok.experimental.Accessors;
 public final class OperationStatePacket extends Packet {
 
     private Boolean response;
+    private String reason;
+
+    public OperationStatePacket(@NotNull Optional<String> result) {
+        this.response = result.isEmpty();
+
+        if (!response) {
+            this.reason = result.get();
+        }
+    }
 
     @Override
-    public void read(PacketBuffer packetBuffer) {
+    public void read(@NotNull PacketBuffer packetBuffer) {
         this.response = packetBuffer.readBoolean();
+
+        if (!response) {
+            reason = packetBuffer.readString();
+        }
     }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
         packetBuffer.writeBoolean(this.response);
+
+        if (!response) {
+            packetBuffer.writeString(reason);
+        }
+    }
+
+    public Optional<String> asOptional() {
+        return (response ? Optional.empty() : Optional.of(reason));
     }
 }

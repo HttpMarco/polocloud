@@ -17,6 +17,7 @@
 package dev.httpmarco.polocloud.api.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.cluster.NodeData;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.api.properties.PropertyPool;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class CloudGroup {
 
     private String name;
+    private NodeData nodeData;
     private PlatformVersion platform;
     private int memory;
     private int minOnlineService;

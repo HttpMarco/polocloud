@@ -16,23 +16,22 @@
 
 package dev.httpmarco.polocloud.base.groups;
 
-import dev.httpmarco.osgan.files.OsganFile;
-import dev.httpmarco.osgan.files.OsganFileCreateOption;
-import dev.httpmarco.osgan.utils.types.MessageUtils;
 import dev.httpmarco.polocloud.api.groups.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.base.groups.platforms.*;
 import dev.httpmarco.polocloud.base.services.LocalCloudService;
 import dev.httpmarco.polocloud.runner.RunnerBootstrap;
+import dev.httpmarco.pololcoud.common.StringUtils;
+import dev.httpmarco.pololcoud.common.files.FileUtils;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
 public class CloudGroupPlatformService {
 
-    public static final String PROXY_SECRET = MessageUtils.randomString(8);
-    private static final Path PLATFORM_FOLDER = OsganFile.define("local/platforms", OsganFileCreateOption.CREATION).path();
+    public static final String PROXY_SECRET = StringUtils.randomString(8);
+    private static final Path PLATFORM_FOLDER = FileUtils.createDirectory("local/platforms");
     private final Set<Platform> platforms = Set.of(new PaperPlatform(), new VelocityPlatform(), new BungeeCordPlatform(), new MinestomPlatform(), new PurpurPlatform());
 
     public boolean isValidPlatform(String platform) {
@@ -58,12 +57,12 @@ public class CloudGroupPlatformService {
 
         if (!(platform instanceof MinestomPlatform)) {
             var cacheDirectory = PLATFORM_FOLDER.resolve(platformName).resolve("cache");
-            if (java.nio.file.Files.exists(cacheDirectory)) {
-                FileUtils.copyDirectory(cacheDirectory.toFile(), cloudService.runningFolder().toFile());
+            if (Files.exists(cacheDirectory)) {
+                FileUtils.copyDirectoryContents(cacheDirectory, cloudService.runningFolder());
             }
             var platformSource = cloudService.runningFolder().resolve(platformName + ".jar");
-            if (!java.nio.file.Files.exists(platformSource)) {
-                java.nio.file.Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), platformSource);
+            if (!Files.exists(platformSource)) {
+                Files.copy(PLATFORM_FOLDER.resolve(platformName).resolve("server.jar"), platformSource);
             }
         }
 
@@ -71,8 +70,8 @@ public class CloudGroupPlatformService {
 
         // append server icon
         var serverIconPath = cloudService.runningFolder().resolve("server-icon.png");
-        if (!java.nio.file.Files.exists(serverIconPath)) {
-            java.nio.file.Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/server-icon.png")), serverIconPath);
+        if (!Files.exists(serverIconPath)) {
+          Files.copy(Objects.requireNonNull(RunnerBootstrap.LOADER.getResourceAsStream("server-files/server-icon.png")), serverIconPath);
         }
     }
 
