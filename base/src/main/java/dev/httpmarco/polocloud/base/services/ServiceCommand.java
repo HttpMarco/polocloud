@@ -39,22 +39,22 @@ public final class ServiceCommand {
 
     @DefaultCommand
     public void handle() {
-        logger.info("&3service &1list &2- &1List all online services&2.");
-        logger.info("&3service &2<&1name&2> &2- &1All specific information&2.");
-        logger.info("&3service &2<&1name&2> &1log &2- &1Get the last not read log lines&2.");
-        logger.info("&3service &2<&1name&2> &1screen &2- &1Join into a service console&2.");
-        logger.info("&3service &2<&1name&2> &1shutdown &2- &1Shutdown a specific service&2.");
-        logger.info("&3service &2<&1name&2> &1execute &2<&1command...&2> &2- &1Execute a specific command on a service&2.");
-        logger.info("&3service &2<&1name&2> &1copy &2<&1template&2> &2- &1Copy the service into an template&2.");
-        logger.info("&3service &2<&1name&2> &1property set &2<&1key&2> &2<&1value&2> &2- &1Attach a new service property&2.");
-        logger.info("&3service &2<&1name&2> &1property remove &2<&1key&2> &2- &1Remove a existing property&2.");
+        logger.info("&bservice &7list &8- &7List all online services&8.");
+        logger.info("&bservice &8<&7name&8> &8- &7All specific information&8.");
+        logger.info("&bservice &8<&7name&8> &7log &8- &7Get the last not read log lines&8.");
+        logger.info("&bservice &8<&7name&8> &7screen &8- &7Join into a service console&8.");
+        logger.info("&bservice &8<&7name&8> &7shutdown &8- &7Shutdown a specific service&8.");
+        logger.info("&bservice &8<&7name&8> &7execute &8<&7command...&8> &8- &7Execute a specific command on a service&8.");
+        logger.info("&bservice &8<&7name&8> &7copy &8<&7template&8> &8- &7Copy the service into an template&8.");
+        logger.info("&bservice &8<&7name&8> &7property set &8<&7key&8> &8<&7value&8> &8- &7Attach a new service property&8.");
+        logger.info("&bservice &8<&7name&8> &7property remove &8<&7key&8> &8- &7Remove a existing property&8.");
     }
 
     @SubCommand(args = {"list"})
     public void handleList() {
         var services = CloudAPI.instance().serviceProvider().services();
-        logger.info("Following &3" + services.size() + " &1services are online&2:");
-        services.forEach(service -> logger.info("&2- &4" + service.name() + "&2: (&1" + service + "&2)"));
+        logger.info("Following &b" + services.size() + " &7services are online&8:");
+        services.forEach(service -> logger.info("&8- &4" + service.name() + "&8: (&7" + service + "&8)"));
     }
 
     @SubCommand(args = {"<name>"})
@@ -65,16 +65,16 @@ public final class ServiceCommand {
 
         final var service = CloudAPI.instance().serviceProvider().find(name);
 
-        this.logger.info("Name&2: &3" + name);
-        this.logger.info("Platform&2: &3" + service.group().platform().version());
-        this.logger.info("Current memory&2: &3" + service.currentMemory() + "mb");
-        this.logger.info("Players&2: &3" + service.onlinePlayersCount());
-        this.logger.info("Maximal players&2: &3" + service.maxPlayers());
-        this.logger.info("Port &2: &3" + service.port());
-        this.logger.info("State&2: &3" + service.state());
-        this.logger.info("Properties &2(&1" + service.properties().pool().size() + "&2): &3");
+        this.logger.info("Name&8: &b" + name);
+        this.logger.info("Platform&8: &b" + service.group().platform().version());
+        this.logger.info("Current memory&8: &b" + service.currentMemory() + "mb");
+        this.logger.info("Players&8: &b" + service.onlinePlayersCount());
+        this.logger.info("Maximal players&8: &b" + service.maxPlayers());
+        this.logger.info("Port &8: &b" + service.port());
+        this.logger.info("State&8: &b" + service.state());
+        this.logger.info("Properties &8(&7" + service.properties().pool().size() + "&8): &b");
 
-        service.properties().pool().forEach((groupProperties, o) -> this.logger.info("   &2- &1" + groupProperties + " &2= &1" + o));
+        service.properties().pool().forEach((groupProperties, o) -> this.logger.info("   &8- &7" + groupProperties + " &8= &7" + o));
     }
 
     @SubCommandCompleter(completionPattern = {"<name>"})
@@ -91,7 +91,7 @@ public final class ServiceCommand {
         }
 
         for (var log : CloudAPI.instance().serviceProvider().find(name).log()) {
-            this.logger.info("&3" + name + "&2: &1" + log);
+            this.logger.info("&b" + name + "&8: &7" + log);
         }
     }
 
@@ -127,7 +127,7 @@ public final class ServiceCommand {
         }
 
         CloudAPI.instance().serviceProvider().find(name).execute(command);
-        this.logger.info("&4" + Node.instance().nodeProvider().localEndpoint().data().id() + "&1 -> &4" + name + " &2 | &1" + command);
+        this.logger.info("&4" + Node.instance().nodeProvider().localEndpoint().data().id() + "&7 -> &4" + name + " &8 | &7" + command);
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "execute", "<command...>"})
@@ -166,7 +166,7 @@ public final class ServiceCommand {
         // OsganFile.create(templateFolder);
         //FileUtils.copyDirectory(runningFolder.toFile(), templateFolder.toFile(), filter);
 
-        this.logger.success("The Service &2'&4" + service.name() + "&2' &1has been copied to the template &2'&4" + template + "&2'");
+        this.logger.success("The Service &8'&4" + service.name() + "&8' &7has been copied to the template &8'&4" + template + "&8'");
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "copy", "<template>"})
@@ -191,7 +191,7 @@ public final class ServiceCommand {
             return false;
         }
 
-        this.logger.info("This services does not exists&2!");
+        this.logger.info("This services does not exists&8!");
         return true;
     }
 }

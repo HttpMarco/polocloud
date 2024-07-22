@@ -70,7 +70,7 @@ public final class CloudServiceProviderImpl extends CloudServiceProvider {
             } else {
                 //todo
             }
-            Node.instance().logger().info("The Service &2'&4" + service.name() + "&2' &1is successfully online");
+            Node.instance().logger().info("The Service &8'&b" + service.name() + "&8' &7is successfully online&8.");
             CloudAPI.instance().globalEventNode().call(new CloudServiceOnlineEvent(service));
         });
     }

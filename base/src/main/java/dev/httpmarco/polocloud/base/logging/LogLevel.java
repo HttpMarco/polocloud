@@ -25,9 +25,9 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public enum LogLevel {
 
-    INFO("&4"),
-    SUCCESS("&8"),
-    WARN("&5"),
+    INFO("&b"),
+    SUCCESS("&b"),
+    WARN("&c"),
     ERROR("&6");
 
     private final String colorCode;

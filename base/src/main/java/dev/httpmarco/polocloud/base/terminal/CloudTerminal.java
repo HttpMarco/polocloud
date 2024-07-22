@@ -31,6 +31,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
+
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -102,14 +103,14 @@ public final class CloudTerminal implements LoggerHandler {
     @Override
     public void print(@NotNull LogLevel level, String message, Throwable throwable, Object... objects) {
         terminal.puts(InfoCmp.Capability.carriage_return);
-        terminal.writer().println(includeColorCodes("&1" + dateFormat.format(Calendar.getInstance().getTime()) + " &2| " + level.colorCode() + level.name() + "&2: &1" + message) + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
+        terminal.writer().println(includeColorCodes("&7" + dateFormat.format(Calendar.getInstance().getTime()) + " &8| " + level.colorCode() + level.name() + "&8: &7" + message) + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         terminal.flush();
         this.update();
     }
 
     String includeColorCodes(String context) {
         for (var color : CloudTerminalColor.colors) {
-            context = context.replace("&" + (color.ordinal() + 1), color.ansiCode());
+            context = context.replace("&" + color.key(), color.ansiCode());
         }
         return context;
     }

@@ -81,7 +81,7 @@ public final class Node extends CloudAPI {
     }
 
     private void startProcess() {
-        logger().success("Successfully started up&2! (&1Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&2)");
+        logger().success("Successfully started up&8! (&7Took " + (System.currentTimeMillis() - Long.parseLong(System.getProperty("startup"))) + "ms&8)");
 
         this.terminal.start();
         this.serviceProvider.queue().start();

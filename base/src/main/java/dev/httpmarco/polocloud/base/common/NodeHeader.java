@@ -12,8 +12,8 @@ public class NodeHeader {
 
     public static void print(@NotNull CloudTerminal terminal) {
         terminal.spacer();
-        terminal.spacer("   &3PoloCloud &2- &1Simple minecraft cloudsystem &2- &1v1.0.10-snapshot");
-        terminal.spacer("   &1Local node&2: &1" + localId() + " &2| &1External nodes&2: &1" + separateExternalStringList());
+        terminal.spacer("   &7PoloCloud &8- &7Simple minecraft cloudsystem &8- &7v1.0.10-snapshot");
+        terminal.spacer("   &7Local node&8: &7" + localId() + " &8| &7External nodes&8: &7" + separateExternalStringList());
         terminal.spacer();
     }
 

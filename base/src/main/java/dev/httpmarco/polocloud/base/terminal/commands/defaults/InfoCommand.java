@@ -28,16 +28,15 @@ public final class InfoCommand {
 
         var thisNode = Node.instance().nodeProvider().localEndpoint().data();
 
-        Node.instance().logger().info("Self node Id&2: &3" + thisNode.id());
-        Node.instance().logger().info("Registered groups&2: &3" + Node.instance().groupProvider().groups().size());
-        Node.instance().logger().info("Online services&2: &3" + Node.instance().serviceProvider().services().size());
-        Node.instance().logger().info("Amount of commands&2: &3" + Node.instance().terminal().commandService().commands().size());
+        Node.instance().logger().info("Self node Id&8: &b" + thisNode.id());
+        Node.instance().logger().info("Registered groups&8: &b" + Node.instance().groupProvider().groups().size());
+        Node.instance().logger().info("Online services&8: &b" + Node.instance().serviceProvider().services().size());
 
         var runtime = Runtime.getRuntime();
         int mb = 1024 * 1024;
         var currentMemory = runtime.totalMemory() - runtime.freeMemory();
         var maxMemory = runtime.maxMemory();
 
-        Node.instance().logger().info("Memory of node process&2: &3" + (currentMemory / mb) + "&2/&3" + (maxMemory / mb) + " mb");
+        Node.instance().logger().info("Memory of node process&8: &b" + (currentMemory / mb) + "&8/&b" + (maxMemory / mb) + " mb");
     }
 }

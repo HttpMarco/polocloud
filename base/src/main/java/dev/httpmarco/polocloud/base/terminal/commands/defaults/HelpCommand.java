@@ -32,10 +32,10 @@ public final class HelpCommand {
             var aliases = "";
 
             if (commandInfo.aliases().length != 0) {
-                aliases = " &2(&1" + String.join("&2, &1", commandInfo.aliases()) + "&2)";
+                aliases = " &8(&7" + String.join("&8, &7", commandInfo.aliases()) + "&8)";
             }
 
-            Node.instance().logger().info("&3" + commandInfo.command() + aliases +" &2- &1" + commandInfo.description() + "&2.");
+            Node.instance().logger().info("&b" + commandInfo.command() + aliases +" &8- &7" + commandInfo.description() + "&8.");
         }
     }
 }

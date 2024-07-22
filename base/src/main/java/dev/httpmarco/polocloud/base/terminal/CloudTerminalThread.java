@@ -32,7 +32,7 @@ public final class CloudTerminalThread extends Thread {
         setName("console-reading-thread");
 
         var globalProperties = CloudAPI.instance().globalProperties();
-        this.prompt = this.terminal.includeColorCodes(globalProperties.has(CloudProperty.PROMPT) ? globalProperties.property(CloudProperty.PROMPT) : "&3cloud &2» &1");
+        this.prompt = this.terminal.includeColorCodes(globalProperties.has(CloudProperty.PROMPT) ? globalProperties.property(CloudProperty.PROMPT) : "&7cloud &8» &7");
 
         setContextClassLoader(Thread.currentThread().getContextClassLoader());
     }

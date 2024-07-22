@@ -19,8 +19,8 @@ public class StartCommand {
 
     @DefaultCommand
     public void handle() {
-        logger.info("start &2<&1name&2> &2- &1Start a new service of a Group.&2.");
-        logger.info("start &2<&1name&2> <&1count&2> &2- &1Start multiple services of a Group.&2.");
+        logger.info("start &8<&bname&8> &8- &7Start a new service of a Group&8.");
+        logger.info("start &8<&bname&8> <&bcount&8> &8- &7Start multiple services of a Group&8.");
     }
 
     @SubCommand(args = "<name>")

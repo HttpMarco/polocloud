@@ -38,20 +38,20 @@ public final class GroupCommand {
 
     @DefaultCommand
     public void handle() {
-        logger.info("&3groups list &2- &1List all groups&2.");
-        logger.info("&3groups &2<&1name&2> &2- &1Get information about a group&2.");
-        logger.info("&3groups &2<&1name&2> &3property set &2<&1key&2> &2<&1value&2> &2- &1Add a property to a group&2.");
-        logger.info("&3groups versions &2<&1platform&2> &2- &1List all versions of a platform&2.");
-        logger.info("&3groups create &2<&1name&2> &2<&1platform&2> &2<&1memory&2> &2<&1minOnlineCount&2> &2- &1Create a new group&2.");
-        logger.info("&3groups delete &2<&1name&2> &2- &1Delete an existing group&2.");
-        logger.info("&3groups edit &2<&1name&2> &2<&1key&2> &2<&1value&2> &2- &1Edit a value in a group&2.");
-        logger.info("&3groups shutdown &2<&1name&2> &2- &1Shutdown all services of a group&2.");
+        logger.info("&bgroups list &8- &7List all groups&8.");
+        logger.info("&bgroups &8<&7name&8> &8- &7Get information about a group&8.");
+        logger.info("&bgroups &8<&7name&8> &bproperty set &8<&7key&8> &8<&7value&8> &8- &7Add a property to a group&8.");
+        logger.info("&bgroups versions &8<&7platform&8> &8- &7List all versions of a platform&8.");
+        logger.info("&bgroups create &8<&7name&8> &8<&7platform&8> &8<&7memory&8> &8<&7minOnlineCount&8> &8- &7Create a new group&8.");
+        logger.info("&bgroups delete &8<&7name&8> &8- &7Delete an existing group&8.");
+        logger.info("&bgroups edit &8<&7name&8> &8<&7key&8> &8<&7value&8> &8- &7Edit a value in a group&8.");
+        logger.info("&bgroups shutdown &8<&7name&8> &8- &7Shutdown all services of a group&8.");
     }
 
     @SubCommand(args = {"<name>", "property", "set", "<key>", "<value>"})
     public void handlePropertySet(String name, String key, String value) {
         if (!CloudAPI.instance().groupProvider().isGroup(name)) {
-            logger.info("This group does not exists&2!");
+            logger.info("This group does not exists&8!");
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
@@ -60,7 +60,7 @@ public final class GroupCommand {
 
         group.properties().pool().put(key, value);
         group.update();
-        logger.success("You add successfully the property " + key + " with value " + value + " to group " + group.name() + "&2.");
+        logger.success("You add successfully the property " + key + " with value " + value + " to group " + group.name() + "&8.");
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "property", "set", "<key>", "<value>"})
@@ -71,7 +71,7 @@ public final class GroupCommand {
     @SubCommand(args = {"<name>", "property", "remove", "<key>"})
     public void handlePropertyRemove(String name, String key) {
         if (!CloudAPI.instance().groupProvider().isGroup(name)) {
-            logger.info("This group does not exists&2!");
+            logger.info("This group does not exists&8!");
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
@@ -83,7 +83,7 @@ public final class GroupCommand {
 
         group.properties().pool().remove(key);
         group.update();
-        logger.success("You remove successfully the property " + key + " from group " + group.name() + "&2.");
+        logger.success("You remove successfully the property " + key + " from group " + group.name() + "&8.");
     }
 
     @SubCommandCompleter(completionPattern = {"<name>", "property", "remove", "<key>"})
@@ -94,26 +94,26 @@ public final class GroupCommand {
     @SubCommand(args = {"list"})
     public void handleList() {
         var groups = CloudAPI.instance().groupProvider().groups();
-        logger.info("Following &3" + groups.size() + " &1groups are loading&2:");
-        groups.forEach(cloudGroup -> logger.info("&2- &4" + cloudGroup.name() + "&2: (&1" + cloudGroup + "&2)"));
+        logger.info("Following &b" + groups.size() + " &7groups are loading&8:");
+        groups.forEach(cloudGroup -> logger.info("&8- &4" + cloudGroup.name() + "&8: (&7" + cloudGroup + "&8)"));
     }
 
     @SubCommand(args = {"<name>"})
     public void handleInfo(String name) {
         if (!CloudAPI.instance().groupProvider().isGroup(name)) {
-            logger.info("This group does not exists&2!");
+            logger.info("This group does not exists&8!");
             return;
         }
         var group = CloudAPI.instance().groupProvider().group(name);
 
-        logger.info("Name&2: &3" + name);
-        logger.info("Platform&2: &3" + group.platform().version());
-        logger.info("Memory&2: &3" + group.memory());
-        logger.info("Minimum online services&2: &3" + group.minOnlineService());
-        logger.info("Properties &2(&1" + group.properties().pool().size() + "&2): &3");
+        logger.info("Name&8: &b" + name);
+        logger.info("Platform&8: &b" + group.platform().version());
+        logger.info("Memory&8: &b" + group.memory());
+        logger.info("Minimum online services&8: &b" + group.minOnlineService());
+        logger.info("Properties &8(&7" + group.properties().pool().size() + "&8): &b");
 
         group.properties().pool().forEach((propertyId, o) -> {
-            logger.info("   &2- &1" + propertyId + " &2= &1" + o);
+            logger.info("   &8- &7" + propertyId + " &8= &7" + o);
         });
     }
 
@@ -130,7 +130,7 @@ public final class GroupCommand {
                 .map(PlatformVersion::version).filter(version -> version.startsWith(platform.toLowerCase() + "-")).sorted().toList();
 
         if (versions.isEmpty()) {
-            logger.info("No versions found for platform &3" + platform + "&2!");
+            logger.info("No versions found for platform &b" + platform + "&8!");
             return;
         }
 
@@ -180,7 +180,7 @@ public final class GroupCommand {
         // send changes to other nodes or update data files
         group.update();
 
-        logger.success("Successfully created &3" + name + " &1group&2.");
+        logger.success("Successfully created &b" + name + " &7group&8.");
     }
 
     @SubCommandCompleter(completionPattern = {"create", "<name>", "<platform>", "<memory>", "<minOnlineCount>"})
@@ -197,7 +197,7 @@ public final class GroupCommand {
             logger.warn(deleteResult.get());
             return;
         }
-        logger.success("Successfully deleted &3" + name + "&2!");
+        logger.success("Successfully deleted &b" + name + "&8!");
     }
 
     @SubCommandCompleter(completionPattern = {"delete", "<name>"})
@@ -216,11 +216,11 @@ public final class GroupCommand {
     public void handleShutdown(String name) {
         var group = CloudAPI.instance().groupProvider().group(name);
         if (group == null) {
-            logger.info("The group does not exists&2!");
+            logger.info("The group does not exists&8!");
             return;
         }
         CloudAPI.instance().serviceProvider().services(group).forEach(CloudService::shutdown);
-        logger.info("You successfully stopped all services of group &3" + name + "&2!");
+        logger.info("You successfully stopped all services of group &b" + name + "&8!");
     }
 
     @SubCommandCompleter(completionPattern = {"shutdown", "<name>"})
