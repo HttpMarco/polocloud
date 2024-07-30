@@ -38,7 +38,7 @@ public abstract class PaperMCPlatform extends Platform {
     public PaperMCPlatform(String product, boolean proxy) {
         super(proxy);
         this.product = product;
-        for (var version : readPaperInformation(VERSION_URL.formatted(product)).get("versions").getAsJsonArray()) {
+        for (var version : readPaperInformation(VERSION_URL.formatted(product)).get("version_groups").getAsJsonArray()) {
             possibleVersions().add(new PlatformVersion(product + "-" + version.getAsString(), proxy));
         }
     }
@@ -63,7 +63,7 @@ public abstract class PaperMCPlatform extends Platform {
     public void download(String version) {
         var orgVersion = version.replace(product + "-", "");
 
-        // search for the current build version
+        // search for the current build version only up to 1.12
         var builds = GsonUtils.GSON.fromJson(StringUtils.downloadStringContext(BUILD_URL.formatted(product, orgVersion)), JsonObject.class).get("builds").getAsJsonArray().asList();
         var buildIndex = builds.get(builds.size() - 1).getAsJsonObject().get("build").getAsInt();
 
