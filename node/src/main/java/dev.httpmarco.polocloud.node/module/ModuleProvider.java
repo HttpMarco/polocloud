@@ -36,8 +36,6 @@ public class ModuleProvider {
     public void loadAllUnloadedModules() {
         var moduleFiles = getAllModuleJarFiles();
         loadModuleListFromFiles(moduleFiles);
-
-        getLoadedModules().forEach(module -> log.info("Module found&8: &b{} &fby &b{}", module.metadata().name(), module.metadata().author()));
     }
 
     public void unloadAllModules() {
@@ -56,9 +54,13 @@ public class ModuleProvider {
     private void loadModuleFileContent(File file) {
         var metadata = loadModuleMetadata(file);
         var cloudModule = loadModule(file, metadata.main());
+
         if (cloudModule != null) {
             var classLoader = (URLClassLoader) cloudModule.getClass().getClassLoader();
             var loadedModule = new LoadedModule(cloudModule, classLoader, metadata);
+
+            log.info("Module found&8: &b{} &fby &b{}", metadata.name(), metadata.author());
+
             loadedModules.add(loadedModule);
             cloudModule.onEnable();
         }
@@ -89,7 +91,6 @@ public class ModuleProvider {
         loadedModule.cloudModule().onDisable();
         loadedModule.moduleClassLoader().close();
         this.loadedModules.remove(loadedModule);
-        log.info("Successfully stopped Module: \"{}\"", loadedModule.metadata().name());
     }
 
     private List<File> getAllModuleJarFiles() {

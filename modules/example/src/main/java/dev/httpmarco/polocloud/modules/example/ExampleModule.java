@@ -1,4 +1,4 @@
-package dev.httpmarco.modules.example;
+package dev.httpmarco.polocloud.modules.example;
 
 import dev.httpmarco.polocloud.node.module.CloudModule;
 import lombok.extern.log4j.Log4j2;
