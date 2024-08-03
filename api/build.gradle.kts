@@ -13,14 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-dependencies {
-    implementation(project(":runner"))
-    implementation(project(":common"))
-    compileOnly(libs.osgan.netty)
-    api(libs.gson)
-}
-
 tasks.jar {
-    archiveFileName.set("api.jar")
+    archiveFileName.set("polocloud-api.jar")
 }

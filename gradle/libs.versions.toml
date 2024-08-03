@@ -1,42 +1,36 @@
 [versions]
+# utils
 lombok = "1.18.34"
 annotations = "24.1.0"
-osgan = "1.2.16-SNAPSHOT"
 
+# network
+osgan = "1.2.17-SNAPSHOT"
+netty5 = "5.0.0.Alpha5"
+
+#logging
+log4j2 = "2.23.1"
+
+# configuration
 gson = "2.11.0"
 
+# console
 jline = "3.26.3"
 
-minimessage = "4.17.0"
-bungeeminimessage = "4.3.3"
-
-#platforms
-velocity = "3.3.0-SNAPSHOT"
-paper = "1.20.4-R0.1-SNAPSHOT"
-bungeecord = "1.20-R0.2"
-
-# publishing
-nexus-publish = "2.0.0"
-
 [libraries]
+# utils
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
+
+# network
 osgan-netty = { group = "dev.httpmarco", name = "osgan-netty", version.ref = "osgan" }
+netty5 = { group = "io.netty", name = "netty5-all", version.ref = "netty5" }
+
+# logging
+log4j2 = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j2" }
+log4j2-simple = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j2" }
+
+# configuration
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
-#platforms
-velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
-paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
-bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
-
-
-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "minimessage" }
-bungeeminimessage = { group = "net.kyori", name = "adventure-platform-bungeecord", version.ref = "bungeeminimessage" }
-
+# console
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
-
-[bundles]
-utils = ["lombok", "annotations"]
-
-[plugins]
-nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
