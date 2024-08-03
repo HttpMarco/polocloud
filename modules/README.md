@@ -32,9 +32,9 @@ To enable your module, create a `module.json` file in your resources folder with
 
 ```json
 {
-  "name": "REST API",
+  "name": "Example Module",
   "author": "RECHERGG",
-  "main": "dev.httpmarco.polocloud.rest.RestAPI"
+  "main": "dev.httpmarco.polocloud.modules.example.ExampleModule"
 }
 ```
 
