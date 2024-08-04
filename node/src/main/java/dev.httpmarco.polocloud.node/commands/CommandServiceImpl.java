@@ -23,6 +23,7 @@ public final class CommandServiceImpl implements CommandService {
         this.registerCommand(new ReloadCommand());
         this.registerCommand(new HelpCommand());
         this.registerCommand(new InfoCommand());
+        this.registerCommand(new ModuleCommand());
     }
 
     @Contract(pure = true)

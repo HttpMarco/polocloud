@@ -6,7 +6,6 @@ import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -42,7 +41,7 @@ public class ModuleProvider {
         for (var file : moduleFiles) {
             var moduleMetadata = loadModuleMetadata(file);
 
-            if (moduleMetadata.name() == null || moduleMetadata.author() == null || moduleMetadata.main() == null) {
+            if (moduleMetadata.id() == null || moduleMetadata.name() == null || moduleMetadata.description() == null || moduleMetadata.author() == null || moduleMetadata.main() == null) {
                 log.error("Module \"{}\" has an invalid module.json", file.getName());
                 continue;
             }
