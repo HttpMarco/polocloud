@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 @UtilityClass
@@ -19,7 +20,7 @@ public final class PlatformDownloadTask {
     private static final Path PLATFORM_DIR = Path.of("local/platforms");
 
     @SneakyThrows
-    public void download(@NotNull Platform platform, @NotNull PlatformVersion version) {
+    public CompletableFuture<Void> download(@NotNull Platform platform, @NotNull PlatformVersion version) {
         var versionPath = PLATFORM_DIR.resolve(platform.platform()).resolve(version.version());
 
         versionPath.toFile().mkdirs();
@@ -28,10 +29,19 @@ public final class PlatformDownloadTask {
 
         if (!Files.exists(file)) {
             Downloader.download(version.downloadLink(), file);
+        } else if (version.checksum().equals(ChecksumCalculator.checksum(file))) {
+            // all fine we can start
+            return CompletableFuture.completedFuture(null);
         }
 
         if (!version.checksum().equals(ChecksumCalculator.checksum(file))) {
             // todo delete and redownload
         }
+
+        if (platform.platformPatcher() == null) {
+            return CompletableFuture.completedFuture(null);
+        }
+
+        return platform.platformPatcher().patch(file.toFile());
     }
 }

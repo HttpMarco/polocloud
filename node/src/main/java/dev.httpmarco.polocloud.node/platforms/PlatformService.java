@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.node.platforms;
 
+import dev.httpmarco.polocloud.node.platforms.patcher.PaperClipPlatformPatcher;
+import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -20,8 +22,8 @@ import java.util.Objects;
 @Accessors(fluent = true)
 public final class PlatformService {
 
+    public static final List<PlatformPatcher> PATCHERS = List.of(new PaperClipPlatformPatcher());
     private final Platform[] platforms;
-    private final List<PlatformPatcher> patchers = new ArrayList<>();
 
     @SneakyThrows
     public PlatformService() {

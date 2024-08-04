@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.nio.file.Path;
 import java.util.UUID;
 
 @Getter
@@ -13,9 +14,13 @@ import java.util.UUID;
 public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
 
     private Process process;
+    private final Path runningDir;
 
     public ClusterLocalServiceImpl(ClusterGroup group, int orderedId, UUID id, int port, String hostname, String runningNode) {
         super(group, orderedId, id, port, hostname, runningNode);
+
+        this.runningDir = Path.of("running/" + name() + "-" + id);
+        this.runningDir.toFile().mkdirs();
     }
 
     @Override

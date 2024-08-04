@@ -8,8 +8,8 @@ import java.util.concurrent.CompletableFuture;
 
 public final class PaperClipPlatformPatcher extends AbstractPlatformPatcher {
 
-    public PaperClipPlatformPatcher(String patchId) {
-        super(patchId);
+    public PaperClipPlatformPatcher() {
+        super("paperclip");
     }
 
     @Override

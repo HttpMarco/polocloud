@@ -1,7 +1,9 @@
 package dev.httpmarco.polocloud.node.platforms.util;
 
 import com.google.gson.*;
+import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.platforms.Platform;
+import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +33,7 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
         var platform = new Platform(name, type, Set.of(versions));
 
         if (object.has("patcher")) {
-            //todo
-            platform.platformPatcher(null);
+            platform.platformPatcher(PlatformService.PATCHERS.stream().filter(it -> it.patchId().equalsIgnoreCase(object.get("patcher").getAsString())).findFirst().orElse(null));
         }
 
         if (object.has("startArguments")) {
@@ -50,7 +51,7 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
         object.addProperty("type", src.type().name());
 
         if (src.platformPatcher() != null) {
-            //todo add the platform patcher
+            object.addProperty("patcher", src.platformPatcher().patchId());
         }
 
         if (src.startArguments() != null) {
