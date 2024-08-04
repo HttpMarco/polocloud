@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.node.cluster.ClusterServiceImpl;
 import dev.httpmarco.polocloud.node.commands.CommandService;
 import dev.httpmarco.polocloud.node.commands.CommandServiceImpl;
 import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
+import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.services.ClusterServiceProviderImpl;
 import dev.httpmarco.polocloud.node.terminal.JLineTerminal;
@@ -31,6 +32,7 @@ public final class Node {
     private final PlatformService platformService;
     private final ClusterGroupProvider groupService;
     private final ClusterServiceProviderImpl serviceProvider;
+    private final ModuleProvider moduleProvider;
 
     private final JLineTerminal terminal;
     private final CommandService commandService;
@@ -49,11 +51,16 @@ public final class Node {
         this.groupService = new ClusterGroupProviderImpl(clusterService);
         this.serviceProvider = new ClusterServiceProviderImpl();
 
+        this.moduleProvider = new ModuleProvider();
+
         // register provider commands
         this.commandService.registerCommands(new GroupCommand(), new ServiceCommand(), new ClusterCommand(this.clusterService));
 
         // start cluster and check other node
         this.clusterService.initialize();
+
+        // load all Modules
+        this.moduleProvider.loadAllUnloadedModules();
 
         Runtime.getRuntime().addShutdownHook(new Thread(NodeShutdown::nodeShutdown));
 

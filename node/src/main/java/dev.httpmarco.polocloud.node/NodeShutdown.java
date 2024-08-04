@@ -16,6 +16,8 @@ public final class NodeShutdown {
             return;
         }
 
+        Node.instance().moduleProvider().unloadAllModules();
+
         clusterService.localNode().situation(NodeSituation.STOPPING);
 
         clusterService.close();
