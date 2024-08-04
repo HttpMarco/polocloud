@@ -54,7 +54,7 @@ public class ModuleProvider {
         modules.addAll(unloadedModules.stream().map(it -> "&6" + it).toList());
 
         if (!modules.isEmpty()) {
-            log.info("Loaded modules&8: {}", String.join("&8, " + modules));
+            log.info("Loaded modules&8: {}", String.join("&8, ", modules));
             getLoadedModules().forEach(it -> it.cloudModule().onEnable());
         }
     }
