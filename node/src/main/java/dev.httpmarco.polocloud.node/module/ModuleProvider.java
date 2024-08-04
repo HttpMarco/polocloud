@@ -40,12 +40,13 @@ public class ModuleProvider {
         var unloadedModules = new ArrayList<String>();
 
         for (var file : moduleFiles) {
+            var moduleName = loadModuleMetadata(file).name();
             try {
                 loadModuleFileContent(file);
-                loadedModules.add(file.getName());
+                loadedModules.add(moduleName);
             } catch (Exception e) {
-                unloadedModules.add(file.getName());
-                log.error("Failed to load module: {}", file.getName());
+                unloadedModules.add(moduleName);
+                log.error("Failed to load module: {}", moduleName);
                 e.printStackTrace();
             }
         }
