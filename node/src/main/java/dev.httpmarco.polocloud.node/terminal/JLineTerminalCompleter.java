@@ -32,7 +32,7 @@ public final class JLineTerminalCompleter implements Completer {
                 }
 
                 Arrays.stream(command.aliases())
-                        .filter(it -> it.startsWith(parsedLine.word()))
+                        .filter(it -> !parsedLine.word().isEmpty() && it.startsWith(parsedLine.word()))
                         .forEach(alias -> list.add(new Candidate(alias)));
             }
             return;
