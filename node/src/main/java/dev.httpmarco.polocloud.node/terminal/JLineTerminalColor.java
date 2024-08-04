@@ -17,7 +17,6 @@ public enum JLineTerminalColor {
     BLUE('9', Ansi.ansi().reset().fg(Ansi.Color.CYAN)),
     CYAN('b', Ansi.ansi().reset().fg(Ansi.Color.CYAN).bold()),
     YELLOW('e', Ansi.ansi().reset().fg(Ansi.Color.YELLOW)),
-    GREEN('2', Ansi.ansi().reset().fg(Ansi.Color.GREEN).bold()),
     RED('c', Ansi.ansi().reset().fg(Ansi.Color.RED).bold()),
     WHITE('f', Ansi.ansi().reset().fg(Ansi.Color.WHITE).bold());
 

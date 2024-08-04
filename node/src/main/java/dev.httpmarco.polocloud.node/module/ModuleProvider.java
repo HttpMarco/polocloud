@@ -50,7 +50,7 @@ public class ModuleProvider {
         }
 
         var allModulesStatus = new StringBuilder("Module files found: ");
-        loadedModules.forEach(module -> allModulesStatus.append("&2").append(module).append("\u001B[0m, "));
+        loadedModules.forEach(module -> allModulesStatus.append("&7").append(module).append("\u001B[0m, "));
         unloadedModules.forEach(module -> allModulesStatus.append("&c").append(module).append("\u001B[0m, "));
 
         if (!allModulesStatus.isEmpty()) {
