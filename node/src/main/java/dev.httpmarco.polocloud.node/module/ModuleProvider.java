@@ -40,12 +40,13 @@ public class ModuleProvider {
         var unloadedModules = new ArrayList<String>();
 
         for (var file : moduleFiles) {
+            var moduleMetadata = loadModuleMetadata(file);
             try {
-                loadModuleFileContent(file);
-                loadedModules.add(file.getName());
+                loadModuleFileContent(file, moduleMetadata);
+                loadedModules.add(moduleMetadata.name());
             } catch (Exception e) {
-                unloadedModules.add(file.getName());
-                log.error("Failed to load module: {}", file.getName());
+                unloadedModules.add(moduleMetadata.name());
+                log.error("Failed to load module: {}", moduleMetadata.name());
                 e.printStackTrace();
             }
         }
@@ -68,8 +69,7 @@ public class ModuleProvider {
     }
 
     @SneakyThrows
-    private void loadModuleFileContent(File file) {
-        var metadata = loadModuleMetadata(file);
+    private void loadModuleFileContent(File file, ModuleMetadata metadata) {
         var cloudModule = loadModule(file, metadata.main());
 
         if (cloudModule != null) {
