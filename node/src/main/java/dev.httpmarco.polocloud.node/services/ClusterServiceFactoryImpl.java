@@ -7,10 +7,12 @@ import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
+import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -23,6 +25,9 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         var runningNode = Node.instance().clusterService().localNode().data();
 
         var localService = new ClusterLocalServiceImpl(group, generateOrderedId(group), UUID.randomUUID(), ServicePortDetector.detectServicePort(), "0.0.0.0", runningNode.name());
+
+        //todo alert to other nodes
+
         log.info("The service &8'&f{}&8' &7is starting now&8...", localService.name());
         Node.instance().serviceProvider().services().add(localService);
 
@@ -31,17 +36,19 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
         PlatformDownloadTask.download(group).whenComplete((unused, throwable) -> {
 
-            if(throwable != null) {
+            if (throwable != null) {
                 log.warn(throwable.getMessage());
                 return;
             }
 
+            //copy platform jar and maybe patch files
+            DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + group.platform().platform() + "/" + group.platform().version()), localService.runningDir());
 
             // create process
-            var processBuilder = new ProcessBuilder();
+            var processBuilder = new ProcessBuilder("java", "-jar", group.platform().platformJarName()).directory(localService.runningDir().toFile());
 
-
-            //localService.process(processBuilder.start());
+            // run platform
+            localService.start(processBuilder);
         });
     }
 
