@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
+import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -28,11 +29,20 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         // call other nodes
         Node.instance().clusterService().broadcast(new ClusterSyncRegisterServicePacket(localService));
 
-        // create process
-        var processBuilder = new ProcessBuilder();
+        PlatformDownloadTask.download(group).whenComplete((unused, throwable) -> {
+
+            if(throwable != null) {
+                log.warn(throwable.getMessage());
+                return;
+            }
 
 
-        //localService.process(processBuilder.start());
+            // create process
+            var processBuilder = new ProcessBuilder();
+
+
+            //localService.process(processBuilder.start());
+        });
     }
 
     // broadcast service sync

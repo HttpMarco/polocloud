@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -49,16 +50,13 @@ public class ModuleProvider {
             }
         }
 
-        var allModulesStatus = new StringBuilder("Module files found: ");
-        loadedModules.forEach(module -> allModulesStatus.append("&7").append(module).append("\u001B[0m, "));
-        unloadedModules.forEach(module -> allModulesStatus.append("&c").append(module).append("\u001B[0m, "));
+        var modules = new ArrayList<>(loadedModules.stream().map(it -> "&7" + it).toList());
+        modules.addAll(unloadedModules.stream().map(it -> "&6" + it).toList());
 
-        if (!allModulesStatus.isEmpty()) {
-            allModulesStatus.setLength(allModulesStatus.length() - 2); // removes last ","
+        if (!modules.isEmpty()) {
+            log.info("Loaded modules&8: {}", String.join("&8, " + modules));
+            getLoadedModules().forEach(it -> it.cloudModule().onEnable());
         }
-
-        log.info(allModulesStatus.toString());
-        getLoadedModules().forEach(it -> it.cloudModule().onEnable());
     }
 
     public void unloadAllModules() {

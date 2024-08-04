@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.node.platforms.tasks;
 
+import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.node.util.ChecksumCalculator;
@@ -20,7 +22,19 @@ public final class PlatformDownloadTask {
     private static final Path PLATFORM_DIR = Path.of("local/platforms");
 
     @SneakyThrows
-    public CompletableFuture<Void> download(@NotNull Platform platform, @NotNull PlatformVersion version) {
+    public CompletableFuture<Void> download(ClusterGroup group) {
+        var platform = Node.instance().platformService().platform(group.platform().platform());
+
+        if(platform == null) {
+            return CompletableFuture.failedFuture(new NullPointerException("Platform cannot be found!"));
+        }
+
+        var version = platform.versions().stream().filter(it -> it.version().equalsIgnoreCase(group.platform().version())).findFirst().orElse(null);
+
+        if(version == null) {
+            return CompletableFuture.failedFuture(new NullPointerException("Version cannot be found!"));
+        }
+
         var versionPath = PLATFORM_DIR.resolve(platform.platform()).resolve(version.version());
 
         versionPath.toFile().mkdirs();
@@ -42,6 +56,6 @@ public final class PlatformDownloadTask {
             return CompletableFuture.completedFuture(null);
         }
 
-        return platform.platformPatcher().patch(file.toFile());
+        return platform.platformPatcher().patch(group, file.toFile());
     }
 }
