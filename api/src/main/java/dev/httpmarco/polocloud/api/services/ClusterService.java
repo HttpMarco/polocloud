@@ -22,6 +22,10 @@ public interface ClusterService extends Named, Detail {
 
     void shutdown();
 
+    void executeCommand(String command);
+
+    ClusterServiceState state();
+
     @Override
     default String name() {
         return group().name() + "-" + orderedId();

@@ -87,7 +87,6 @@ public final class JLineTerminal implements Closeable {
     @Override
     @SneakyThrows
     public void close() {
-        this.commandReadingThread.interrupt();
         this.terminal.close();
     }
 }

@@ -25,9 +25,12 @@ import java.util.Set;
 @RequiredArgsConstructor
 public final class Platform {
 
+    public static final String DEFAULT_SHUTDOWN_COMMAND = "stop";
+
     private final String platform;
     private final PlatformType type;
     private final Set<PlatformVersion> versions;
+    private final String shutdownCommand;
 
     private @Nullable PlatformPatcher platformPatcher;
     private @Nullable String[] startArguments;

@@ -3,8 +3,10 @@ package dev.httpmarco.polocloud.node.services;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
+import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
+import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
@@ -14,10 +16,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Log4j2
 public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
+
+    public static int PROCESS_TIMEOUT = 5;
 
     @Override
     @SneakyThrows
@@ -52,13 +57,29 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         });
     }
 
-    // broadcast service sync
-    //
-    // boot launcher
-
     @Override
     public void shutdownGroupService(ClusterService clusterService) {
+        if (clusterService instanceof ClusterLocalServiceImpl localService) {
+            localService.state(ClusterServiceState.STOPPING);
+            if (localService.hasProcess()) {
 
+                var platform = Node.instance().platformService().platform(localService.group().platform().platform());
+
+                // try with platform command a clean shutdown
+                localService.executeCommand(platform == null ? Platform.DEFAULT_SHUTDOWN_COMMAND : platform.shutdownCommand());
+
+                try {
+                    if (localService.process().waitFor(PROCESS_TIMEOUT, TimeUnit.SECONDS)) {
+                        localService.process().exitValue();
+                        localService.postShutdownProcess();
+                        return;
+                    }
+                } catch (InterruptedException ignored) {
+                }
+                localService.process().toHandle().destroyForcibly();
+            }
+            localService.postShutdownProcess();
+        }
     }
 
     private int generateOrderedId(ClusterGroup group) {
