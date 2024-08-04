@@ -1,0 +1,5 @@
+{
+  "name": "Example Module",
+  "author": "RECHERGG",
+  "main": "dev.httpmarco.polocloud.modules.example.ExampleModule"
+}
