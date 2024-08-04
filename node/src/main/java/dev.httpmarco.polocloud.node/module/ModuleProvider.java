@@ -41,6 +41,12 @@ public class ModuleProvider {
 
         for (var file : moduleFiles) {
             var moduleMetadata = loadModuleMetadata(file);
+
+            if (moduleMetadata.name() == null || moduleMetadata.author() == null || moduleMetadata.main() == null) {
+                log.error("Module \"{}\" has an invalid module.json", file.getName());
+                continue;
+            }
+
             try {
                 loadModuleFileContent(file, moduleMetadata);
                 loadedModules.add(moduleMetadata.name());
