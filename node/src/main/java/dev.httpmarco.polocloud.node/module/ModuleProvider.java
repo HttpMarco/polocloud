@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.node.module;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
+import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -23,7 +23,7 @@ import java.util.jar.JarFile;
 public class ModuleProvider {
 
     private static final Path MODULE_PATH = Path.of("./local/modules/");
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = JsonUtils.GSON;
     private final List<LoadedModule> loadedModules = new CopyOnWriteArrayList<>();
     private final ClassLoader parentClassLoader;
 
@@ -35,7 +35,30 @@ public class ModuleProvider {
 
     public void loadAllUnloadedModules() {
         var moduleFiles = getAllModuleJarFiles();
-        loadModuleListFromFiles(moduleFiles);
+        var loadedModules = new ArrayList<String>();
+        var unloadedModules = new ArrayList<String>();
+
+        for (var file : moduleFiles) {
+            try {
+                loadModuleFileContent(file);
+                loadedModules.add(file.getName());
+            } catch (Exception e) {
+                unloadedModules.add(file.getName());
+                log.error("Failed to load module: {}", file.getName());
+                e.printStackTrace();
+            }
+        }
+
+        var allModulesStatus = new StringBuilder("Module files found: ");
+        loadedModules.forEach(module -> allModulesStatus.append("&2").append(module).append("\u001B[0m, "));
+        unloadedModules.forEach(module -> allModulesStatus.append("&c").append(module).append("\u001B[0m, "));
+
+        if (!allModulesStatus.isEmpty()) {
+            allModulesStatus.setLength(allModulesStatus.length() - 2); // removes last ","
+        }
+
+        log.info(allModulesStatus.toString());
+        getLoadedModules().forEach(it -> it.cloudModule().onEnable());
     }
 
     public void unloadAllModules() {
@@ -44,10 +67,6 @@ public class ModuleProvider {
 
     public List<LoadedModule> getLoadedModules() {
         return new ArrayList<>(loadedModules);
-    }
-
-    private void loadModuleListFromFiles(List<File> files) {
-        files.forEach(this::loadModuleFileContent);
     }
 
     @SneakyThrows
@@ -59,10 +78,7 @@ public class ModuleProvider {
             var classLoader = (URLClassLoader) cloudModule.getClass().getClassLoader();
             var loadedModule = new LoadedModule(cloudModule, classLoader, metadata);
 
-            log.info("Module found&8: &b{} &fby &b{}", metadata.name(), metadata.author());
-
             loadedModules.add(loadedModule);
-            cloudModule.onEnable();
         }
     }
 
@@ -97,9 +113,9 @@ public class ModuleProvider {
         var files = MODULE_PATH.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
         if (files != null) {
             return List.of(files);
-        } else {
-            return List.of();
         }
+
+        return List.of();
     }
 
 }
