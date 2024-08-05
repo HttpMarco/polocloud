@@ -21,14 +21,7 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
 
         var name = object.get("platform").getAsString();
 
-        //todo remove try catch
-        PlatformType type;
-        try {
-            type = PlatformType.valueOf(object.get("type").getAsString().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            type = PlatformType.SERVER;
-        }
-
+        var type = object.has("type") ? PlatformType.valueOf(object.get("type").getAsString().toUpperCase()) : PlatformType.SERVER;
         var shutdownCommand = object.has("shutdownCommand") ? object.get("shutdownCommand").getAsString() : Platform.DEFAULT_SHUTDOWN_COMMAND;
 
         PlatformVersion[] versions = context.deserialize(object.get("versions"), PlatformVersion[].class);
