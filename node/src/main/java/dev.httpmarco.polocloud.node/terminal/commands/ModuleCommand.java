@@ -24,13 +24,12 @@ public class ModuleCommand extends Command {
 
             var metadata = module.metadata();
 
-            log.info("---------- Module Information ----------");
-            log.info("ID          : {}", metadata.id());
-            log.info("Name        : {}", metadata.name());
-            log.info("Author      : {}", metadata.author());
-            log.info("Description : {}", metadata.description());
-            log.info("Main Class  : {}", metadata.main());
-            log.info("----------------------------------------");
+            log.info("Module Information:");
+            log.info("&8- &fID&8: &7{}", metadata.id());
+            log.info("&8- &fName&8: &7{}", metadata.name());
+            log.info("&8- &fAuthor&8: &7{}", metadata.author());
+            log.info("&8- &fDescription&8: &7{}", metadata.description());
+            log.info("&8- &fMain Class&8: &7{}", metadata.main());
 
         }, "Displays all Information about an Module&8.", moduleIdArgument, CommandArgumentType.Keyword("info"));
     }
