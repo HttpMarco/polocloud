@@ -8,6 +8,11 @@
       "startArguments": [
         "-nogui"
       ],
+      "actions": {
+        "file-creation": {
+          "eula.txt": "eula=true"
+        }
+      },
       "versions": [
         {
           "version": "1.21",

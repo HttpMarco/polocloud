@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.node.platforms.actions.PlatformFileCreationAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -35,7 +36,19 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
             platform.startArguments(context.deserialize(object.getAsJsonArray("startArguments"), String[].class));
         }
 
+        if (object.has("actions")) {
+            var actions = object.getAsJsonObject("actions");
 
+            for (var actionId : actions.keySet()) {
+                if (actionId.equalsIgnoreCase("file-creation")) {
+                    var creationData = actions.get(actionId).getAsJsonObject();
+
+                    for (var fileName : creationData.keySet()) {
+                        platform.actions().add(new PlatformFileCreationAction(fileName, creationData.get(fileName).getAsString()));
+                    }
+                }
+            }
+        }
         return platform;
     }
 
@@ -55,6 +68,12 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
 
         if (src.startArguments() != null) {
             object.add("startArguments", context.serialize(src.startArguments()));
+        }
+
+        if (!src.actions().isEmpty()) {
+            var actions = new JsonObject();
+
+            object.add("actions", actions);
         }
 
         object.add("versions", context.serialize(src.versions()));

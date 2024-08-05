@@ -1,9 +1,12 @@
 package dev.httpmarco.polocloud.node.platforms;
 
+import dev.httpmarco.polocloud.node.platforms.actions.PlatformAction;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -18,6 +21,8 @@ public final class Platform {
     private final PlatformType type;
     private final Set<PlatformVersion> versions;
     private final String shutdownCommand;
+
+    private final List<PlatformAction> actions = new ArrayList<>();
 
     private @Nullable PlatformPatcher platformPatcher;
     private @Nullable String[] startArguments;
