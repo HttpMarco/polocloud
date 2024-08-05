@@ -7,6 +7,8 @@ import dev.httpmarco.polocloud.node.commands.specific.PlatformArgument;
 import dev.httpmarco.polocloud.node.commands.specific.PlatformBindVersionArgument;
 import dev.httpmarco.polocloud.node.commands.type.*;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.node.module.LoadedModule;
+import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
@@ -16,6 +18,10 @@ import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
 public final class CommandArgumentType {
+
+    public @NotNull CommandArgument<LoadedModule> ModuleArgument(ModuleProvider moduleProvider, String key) {
+        return new ModuleArgument(key, moduleProvider);
+    }
 
     public @NotNull CommandArgument<ClusterGroup> ClusterGroup(ClusterGroupProvider groupService, String key) {
         return new GroupArgument(key, groupService);

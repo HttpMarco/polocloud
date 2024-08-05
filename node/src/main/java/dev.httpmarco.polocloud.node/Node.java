@@ -43,6 +43,7 @@ public final class Node {
         var nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
 
         this.clusterService = new ClusterServiceImpl(nodeConfig);
+        this.moduleProvider = new ModuleProvider();
 
         this.commandService = new CommandServiceImpl();
         this.terminal = new JLineTerminal(nodeConfig);
@@ -50,8 +51,6 @@ public final class Node {
         this.platformService = new PlatformService();
         this.groupService = new ClusterGroupProviderImpl(clusterService);
         this.serviceProvider = new ClusterServiceProviderImpl();
-
-        this.moduleProvider = new ModuleProvider();
 
         // register provider commands
         this.commandService.registerCommands(new GroupCommand(), new ServiceCommand(), new ClusterCommand(this.clusterService));

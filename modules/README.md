@@ -59,7 +59,9 @@ public class ExampleModule implements CloudModule {
 To make your module recognized by the system, you need to create a configuration file named `module.json` in your resources folder.
 This file should contain the following parameters:
 
+- `id`: Unique identifier for your module, typically in lowercase
 - `name`: The name of your module
+- `description`: The description of your module
 - `author`: Your name
 - `main`: The fully qualified name of the main class of your module
 
@@ -67,9 +69,11 @@ This file should contain the following parameters:
 Below is an example configuration for a module:
 ```json
 {
-  "name": "Example Module",
-  "author": "RECHERGG",
-  "main": "dev.httpmarco.polocloud.modules.example.ExampleModule"
+   "id":  "example-module",
+   "name": "Example Module",
+   "description": "This is just a simple Example Module!",
+   "author": "RECHERGG",
+   "main": "dev.httpmarco.polocloud.modules.example.ExampleModule"
 }
 ```
 
