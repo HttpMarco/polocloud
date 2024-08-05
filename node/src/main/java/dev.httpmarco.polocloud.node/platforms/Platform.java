@@ -6,19 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-/**
- * paper
- * velocity
- * purpur
- * spigot
- * bungeecord
- * sponge powered
- * minestom
- * multipaper
- * fabric
- * (folia)
- */
-
 @Setter
 @Getter
 @Accessors(fluent = true)
