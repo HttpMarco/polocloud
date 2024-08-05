@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.module;
 
 import com.google.gson.Gson;
+import dev.httpmarco.polocloud.api.Reloadable;
 import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.SneakyThrows;
@@ -21,7 +22,7 @@ import java.util.jar.JarFile;
 
 @Log4j2
 @Accessors(fluent = true)
-public class ModuleProvider {
+public class ModuleProvider implements Reloadable {
 
     private static final Path MODULE_PATH = Path.of("./local/modules/");
     private static final Gson GSON = JsonUtils.GSON;
@@ -116,4 +117,9 @@ public class ModuleProvider {
         return List.of();
     }
 
+    @Override
+    public void reload() {
+        unloadAllModules();
+        loadAllUnloadedModules();
+    }
 }

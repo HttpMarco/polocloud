@@ -25,6 +25,9 @@ public final class ReloadCommand extends Command {
                 clusterService.headNode().transmit().sendPacket(new ClusterRequireReloadPacket());
             }
 
+            // modules are only loaded on the local node side
+            // first unload all modules
+            Node.instance().moduleProvider().reload();
 
             log.info("Successfully reloading&8! (&7Took {}ms&8)", System.currentTimeMillis() - currentTime);
         });
