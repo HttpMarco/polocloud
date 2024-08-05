@@ -88,8 +88,9 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     public void postShutdownProcess() {
         this.process = null;
 
-        if(this.processTracking != null) {
+        if (this.processTracking != null) {
             this.processTracking.interrupt();
+            this.processTracking = null;
         }
 
         synchronized (this) {
