@@ -24,8 +24,7 @@ public class ModuleCommand extends Command {
 
             var metadata = module.metadata();
 
-            log.info("Module Information:");
-            log.info("&8- &fID&8: &7{}", metadata.id());
+            log.info("Module &8(&fID = &b{}&8)&f Information's:", metadata.id());
             log.info("&8- &fName&8: &7{}", metadata.name());
             log.info("&8- &fAuthor&8: &7{}", metadata.author());
             log.info("&8- &fDescription&8: &7{}", metadata.description());
