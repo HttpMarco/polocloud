@@ -99,7 +99,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
         }
 
         log.info("The service &8'&f{}&8' &7is stopped now&8!", name());
-        Node.instance().serviceProvider().services().remove(this);
+       // Node.instance().serviceProvider().services().remove(this);
     }
 
     public boolean hasProcess() {

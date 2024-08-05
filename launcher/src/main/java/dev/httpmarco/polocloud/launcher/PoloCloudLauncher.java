@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 
 public final class PoloCloudLauncher {
 
@@ -32,7 +33,7 @@ public final class PoloCloudLauncher {
         FileSystemUtils.copyClassPathFile(ClassLoader.getSystemClassLoader(), "polocloud-api.jar", apiFile.toString());
         CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
 
-        var boot = Arrays.stream(args).anyMatch(it -> it.equalsIgnoreCase("instance")) ? new InstanceBoot() : new NodeBoot();
+        var boot = Arrays.stream(args).anyMatch(it -> it.equalsIgnoreCase("--instance")) ? new InstanceBoot() : new NodeBoot();
 
         // add boot file to the current classpath
         CLASS_LOADER.addURL(boot.bootFile().toURI().toURL());

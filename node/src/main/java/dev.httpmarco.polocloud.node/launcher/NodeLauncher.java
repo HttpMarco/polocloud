@@ -16,7 +16,7 @@ public class NodeLauncher {
 
         // we read the main file
         var codeSource = PoloCloudLauncher.class.getProtectionDomain().getCodeSource();
-        System.setProperty("bootLauncher", new File(codeSource.getLocation().toURI().getPath()).getParentFile().getPath());
+        System.setProperty("bootLauncher", new File(codeSource.getLocation().toURI().getPath()).getAbsolutePath());
 
         var log4jCoreDependency = new Dependency("org.apache.logging.log4j", "log4j-core", "2.23.1", true);
         var log4jSlf4jDependency = new Dependency("org.apache.logging.log4j", "log4j-slf4j2-impl", "2.23.1");
