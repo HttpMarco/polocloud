@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.Platform;
+import dev.httpmarco.polocloud.node.platforms.actions.PlatformAction;
 import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
@@ -44,6 +45,13 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
             if (throwable != null) {
                 log.warn(throwable.getMessage());
                 return;
+            }
+
+            // run platform actions
+            var platform = Node.instance().platformService().platform(group.platform().platform());
+
+            if (platform != null) {
+                platform.actions().forEach(platformAction -> platformAction.run(localService));
             }
 
             //copy platform jar and maybe patch files
