@@ -35,6 +35,9 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
             platform.startArguments(context.deserialize(object.getAsJsonArray("startArguments"), String[].class));
         }
 
+        if (object.has("actions")) {
+            // todo read all properties
+        }
 
         return platform;
     }
@@ -55,6 +58,12 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
 
         if (src.startArguments() != null) {
             object.add("startArguments", context.serialize(src.startArguments()));
+        }
+
+        if (!src.actions().isEmpty()) {
+            var actions = new JsonObject();
+
+            object.add("actions", actions);
         }
 
         object.add("versions", context.serialize(src.versions()));
