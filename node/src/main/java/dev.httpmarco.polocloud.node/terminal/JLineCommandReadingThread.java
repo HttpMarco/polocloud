@@ -33,7 +33,7 @@ public final class JLineCommandReadingThread extends Thread {
             try {
                 try {
                     try {
-                        var rawLine = terminal.lineReader().readLine(prompt);
+                        var rawLine = terminal.lineReader().readLine(prompt).trim();
 
                         if (rawLine.isEmpty()) {
                             continue;
@@ -47,7 +47,8 @@ public final class JLineCommandReadingThread extends Thread {
                     } catch (EndOfFileException ignore) {
                     }
                 } catch (UserInterruptException exception) {
-                    NodeShutdown.nodeShutdown();
+                    // if a command user use strg + c
+                    NodeShutdown.nodeShutdown(true);
                 }
             } catch (Exception exception) {
                 exception.printStackTrace();

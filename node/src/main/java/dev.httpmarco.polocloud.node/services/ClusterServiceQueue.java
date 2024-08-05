@@ -47,7 +47,7 @@ public final class ClusterServiceQueue extends Thread {
                     Node.instance().serviceProvider().factory().runGroupService(group);
                 }
             }
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         }
     }
 }

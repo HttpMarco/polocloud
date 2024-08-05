@@ -62,7 +62,7 @@ public final class Node {
         // load all Modules
         this.moduleProvider.loadAllUnloadedModules();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(NodeShutdown::nodeShutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> NodeShutdown.nodeShutdown(false)));
 
         log.info("Cluster node boot successfully &8(&7Took {}ms&8)", System.currentTimeMillis() - Long.parseLong(System.getProperty("startup")));
 

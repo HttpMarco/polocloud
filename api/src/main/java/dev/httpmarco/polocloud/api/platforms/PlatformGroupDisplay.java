@@ -11,4 +11,9 @@ public record PlatformGroupDisplay(String platform, String version) implements D
     public @NotNull String details() {
         return platform + "-" + version;
     }
+
+    @Contract(pure = true)
+    public @NotNull String platformJarName() {
+        return details() + ".jar";
+    }
 }

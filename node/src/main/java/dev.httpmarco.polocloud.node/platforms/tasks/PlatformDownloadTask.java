@@ -22,7 +22,7 @@ public final class PlatformDownloadTask {
     private static final Path PLATFORM_DIR = Path.of("local/platforms");
 
     @SneakyThrows
-    public CompletableFuture<Void> download(ClusterGroup group) {
+    public CompletableFuture<Void> download(@NotNull ClusterGroup group) {
         var platform = Node.instance().platformService().platform(group.platform().platform());
 
         if(platform == null) {

@@ -7,6 +7,6 @@ public final class ShutdownCommand extends Command {
 
     public ShutdownCommand() {
         super("shutdown", "Shutdown the cloud and all node services", "stop", "exit");
-        defaultExecution(commandContext -> NodeShutdown.nodeShutdown());
+        defaultExecution(commandContext -> NodeShutdown.nodeShutdown(false));
     }
 }

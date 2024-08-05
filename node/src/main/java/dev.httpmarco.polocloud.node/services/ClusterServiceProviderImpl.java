@@ -14,13 +14,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
 @Getter
 @Accessors(fluent = true)
 public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
 
-    private final List<ClusterService> services = new ArrayList<>();
+    private final List<ClusterService> services = new CopyOnWriteArrayList<>();
     private final ClusterServiceFactory factory = new ClusterServiceFactoryImpl();
     private final ClusterServiceQueue clusterServiceQueue = new ClusterServiceQueue();
 
