@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.api;
 
+import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -15,5 +16,7 @@ public abstract class CloudAPI {
     }
 
     public abstract ClusterServiceProvider serviceProvider();
+
+    public abstract ClusterGroupProvider groupProvider();
 
 }

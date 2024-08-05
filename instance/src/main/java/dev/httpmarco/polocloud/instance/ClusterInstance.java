@@ -1,5 +1,8 @@
 package dev.httpmarco.polocloud.instance;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
 import lombok.SneakyThrows;
 
@@ -8,7 +11,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.jar.JarFile;
 
-public final class ClusterInstance {
+public final class ClusterInstance extends CloudAPI {
 
     @SneakyThrows
     public ClusterInstance(String[] args) {
@@ -35,5 +38,17 @@ public final class ClusterInstance {
         });
         thread.setContextClassLoader(PoloCloudLauncher.CLASS_LOADER);
         thread.start();
+    }
+
+    @Override
+    public ClusterServiceProvider serviceProvider() {
+        //todo
+        return null;
+    }
+
+    @Override
+    public ClusterGroupProvider groupProvider() {
+        //todo
+        return null;
     }
 }

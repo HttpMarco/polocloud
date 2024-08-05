@@ -7,4 +7,5 @@ tasks.jar {
 
 dependencies {
     compileOnly(project(":launcher"))
+    compileOnly(project(":api"))
 }
