@@ -11,26 +11,26 @@ public class ModuleCommand extends Command {
     public ModuleCommand() {
         super("module", "Manage your modules", "mod");
 
-        var moduleIdArgument = CommandArgumentType.Text("id"); //TODO add predication
+        var moduleProvider = Node.instance().moduleProvider();
+
+        var moduleIdArgument = CommandArgumentType.ModuleArgument(moduleProvider, "id");
 
         syntax(context -> {
-            var loadedModules = Node.instance().moduleProvider().getLoadedModules();
-            var moduleId = context.arg(moduleIdArgument);
-            var module = loadedModules.stream().filter(it -> it.metadata().id().equals(moduleId)).findFirst();
-
-            if (module.isEmpty()) {
-                log.info("Module not found&8!");
+            var module = context.arg(moduleIdArgument);
+            if (module == null) {
+                log.warn(moduleIdArgument.wrongReason());
                 return;
             }
 
-            var metadata = module.get().metadata();
+            var metadata = module.metadata();
 
-            log.info("Id: {}", metadata.id());
-            log.info("Name: {}", metadata.name());
-            log.info("Author: {}", metadata.author());
-            log.info("Description: {}", metadata.description());
-            log.info(" ");
-            log.info("Main: {}", metadata.main());
+            log.info("---------- Module Information ----------");
+            log.info("ID          : {}", metadata.id());
+            log.info("Name        : {}", metadata.name());
+            log.info("Author      : {}", metadata.author());
+            log.info("Description : {}", metadata.description());
+            log.info("Main Class  : {}", metadata.main());
+            log.info("----------------------------------------");
 
         }, "Displays all Information about an Module&8.", moduleIdArgument, CommandArgumentType.Keyword("info"));
     }
