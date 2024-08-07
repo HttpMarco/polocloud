@@ -28,14 +28,8 @@ public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
 
         this.server = new CommunicationServer(hostname, port);
 
-        this.server.clientAction(CommunicationServerAction.CLIENT_CONNECT, it -> {
-            //todo
-            log.info("connected");
-        });
-
         this.server.clientAction(CommunicationServerAction.CLIENT_DISCONNECT, it -> {
-            //todo
-            log.info("disconneted");
+            //todo set channel of service null
         });
 
         this.server.listen(ServiceConnectPacket.class, (channel, packet) -> {
