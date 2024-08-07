@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.instance.groups;
 
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
@@ -39,5 +40,10 @@ public class ClusterInstanceGroupProvider extends ClusterGroupProvider {
     @Override
     public void reload() {
 
+    }
+
+    @Override
+    public ClusterGroup read(PacketBuffer buffer) {
+        return null;
     }
 }

@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.api.groups;
 
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Reloadable;
+import dev.httpmarco.polocloud.api.Sendable;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ClusterGroupProvider implements Reloadable {
+public abstract class ClusterGroupProvider implements Reloadable, Sendable<ClusterGroup> {
 
     public abstract CompletableFuture<Set<ClusterGroup>> groupsAsync();
 
@@ -46,5 +48,10 @@ public abstract class ClusterGroupProvider implements Reloadable {
     @SneakyThrows
     public @Nullable ClusterGroup find(@NotNull String group) {
         return this.findAsync(group).get(5, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void write(ClusterGroup value, PacketBuffer buffer) {
+
     }
 }
