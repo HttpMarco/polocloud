@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.node.commands.type;
+package dev.httpmarco.polocloud.node.commands.specific;
 
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;

@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.node.terminal.commands;
 
-import dev.httpmarco.polocloud.node.cluster.ClusterService;
+import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
 import dev.httpmarco.polocloud.node.commands.Command;
 import dev.httpmarco.polocloud.node.commands.CommandArgumentType;
@@ -9,12 +9,12 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class ClusterCommand extends Command {
 
-    public ClusterCommand(ClusterService clusterService) {
+    public ClusterCommand(ClusterProvider clusterProvider) {
         super("cluster", "Manager your cluster");
 
-        var endpoints = clusterService.endpoints();
+        var endpoints = clusterProvider.endpoints();
 
-        var nodeArgument = CommandArgumentType.NodeEndpoint(clusterService, "node");
+        var nodeArgument = CommandArgumentType.NodeEndpoint(clusterProvider, "node");
 
         syntax(context -> {
             if (endpoints.isEmpty()) {

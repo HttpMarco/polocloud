@@ -7,7 +7,7 @@ import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupDeletePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.node.Node;
-import dev.httpmarco.polocloud.node.cluster.ClusterService;
+import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.groups.requests.GroupCreationRequest;
 import dev.httpmarco.polocloud.node.groups.requests.GroupDeletionRequest;
 import dev.httpmarco.polocloud.node.groups.responder.GroupCreationResponder;
@@ -29,16 +29,16 @@ import java.util.concurrent.CompletableFuture;
 public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
 
     private final Set<ClusterGroup> groups;
-    private final ClusterService clusterService;
+    private final ClusterProvider clusterProvider;
 
-    public ClusterGroupProviderImpl(@NotNull ClusterService clusterService) {
-        this.clusterService = clusterService;
+    public ClusterGroupProviderImpl(@NotNull ClusterProvider clusterProvider) {
+        this.clusterProvider = clusterProvider;
 
-        clusterService.localNode().transmit().listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
-        clusterService.localNode().transmit().listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
+        clusterProvider.localNode().transmit().listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
+        clusterProvider.localNode().transmit().listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
 
-        clusterService.localNode().transmit().responder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterService, property));
-        clusterService.localNode().transmit().responder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterService, property));
+        clusterProvider.localNode().transmit().responder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterProvider, property));
+        clusterProvider.localNode().transmit().responder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterProvider, property));
 
         this.groups = ClusterGroupFactory.readGroups();
 
@@ -60,12 +60,12 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
     @Contract(pure = true)
     @Override
     public @Nullable CompletableFuture<Optional<String>> deleteAsync(String group) {
-        return GroupDeletionRequest.request(clusterService, group);
+        return GroupDeletionRequest.request(clusterProvider, group);
     }
 
     @Override
     public CompletableFuture<Optional<String>> createAsync(String name, String[] nodes, PlatformGroupDisplay platform, int minMemory, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
-        return GroupCreationRequest.request(clusterService, name, nodes, platform, minMemory, maxMemory, staticService, minOnline, maxOnline);
+        return GroupCreationRequest.request(clusterProvider, name, nodes, platform, minMemory, maxMemory, staticService, minOnline, maxOnline);
     }
 
     @Override
@@ -77,7 +77,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
     public void reload() {
 
         this.groups.clear();
-        if (Node.instance().clusterService().localHead()) {
+        if (Node.instance().clusterProvider().localHead()) {
             this.groups.addAll(ClusterGroupFactory.readGroups());
         } else {
             //todo request groups from head

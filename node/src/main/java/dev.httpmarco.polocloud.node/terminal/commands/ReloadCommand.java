@@ -12,7 +12,7 @@ public final class ReloadCommand extends Command {
     public ReloadCommand() {
         super("reload", "Reload all configurations and services", "rl");
 
-        var clusterService = Node.instance().clusterService();
+        var clusterService = Node.instance().clusterProvider();
 
         defaultExecution((it) -> {
             long currentTime = System.currentTimeMillis();

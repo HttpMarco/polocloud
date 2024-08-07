@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
-import dev.httpmarco.polocloud.node.cluster.ClusterService;
-import dev.httpmarco.polocloud.node.cluster.ClusterServiceImpl;
+import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
+import dev.httpmarco.polocloud.node.cluster.ClusterProviderImpl;
 import dev.httpmarco.polocloud.node.commands.CommandService;
 import dev.httpmarco.polocloud.node.commands.CommandServiceImpl;
 import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
@@ -28,7 +28,7 @@ public final class Node {
     @Getter
     private static Node instance;
 
-    private final ClusterService clusterService;
+    private final ClusterProvider clusterProvider;
     private final PlatformService platformService;
     private final ClusterGroupProvider groupService;
     private final ClusterServiceProviderImpl serviceProvider;
@@ -42,21 +42,21 @@ public final class Node {
 
         var nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
 
-        this.clusterService = new ClusterServiceImpl(nodeConfig);
+        this.clusterProvider = new ClusterProviderImpl(nodeConfig);
         this.moduleProvider = new ModuleProvider();
 
         this.commandService = new CommandServiceImpl();
         this.terminal = new JLineTerminal(nodeConfig);
 
         this.platformService = new PlatformService();
-        this.groupService = new ClusterGroupProviderImpl(clusterService);
+        this.groupService = new ClusterGroupProviderImpl(clusterProvider);
         this.serviceProvider = new ClusterServiceProviderImpl();
 
         // register provider commands
-        this.commandService.registerCommands(new GroupCommand(), new ServiceCommand(), new ClusterCommand(this.clusterService));
+        this.commandService.registerCommands(new GroupCommand(), new ServiceCommand(), new ClusterCommand(this.clusterProvider));
 
         // start cluster and check other node
-        this.clusterService.initialize();
+        this.clusterProvider.initialize();
 
         // load all Modules
         this.moduleProvider.loadAllUnloadedModules();

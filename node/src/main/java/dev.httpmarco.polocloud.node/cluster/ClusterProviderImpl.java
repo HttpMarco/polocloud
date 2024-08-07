@@ -18,13 +18,13 @@ import java.util.Set;
 @Log4j2
 @Getter
 @Accessors(fluent = true)
-public final class ClusterServiceImpl implements ClusterService {
+public final class ClusterProviderImpl implements ClusterProvider {
 
     private final LocalNode localNode;
     private NodeEndpoint headNode;
     private final Set<NodeEndpoint> endpoints;
 
-    public ClusterServiceImpl(@NotNull NodeConfig config) {
+    public ClusterProviderImpl(@NotNull NodeConfig config) {
         this.localNode = new LocalNodeImpl(config.localNode());
         this.endpoints = new HashSet<>();
 

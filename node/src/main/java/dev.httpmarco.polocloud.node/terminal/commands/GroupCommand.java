@@ -16,7 +16,7 @@ public final class GroupCommand extends Command {
 
         var groupService = Node.instance().groupService();
         var platformService = Node.instance().platformService();
-        var clusterService = Node.instance().clusterService();
+        var clusterService = Node.instance().clusterProvider();
 
         // argument for group name
         var groupIdArgument = CommandArgumentType.Text("name");

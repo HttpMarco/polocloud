@@ -7,7 +7,6 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.Platform;
-import dev.httpmarco.polocloud.node.platforms.actions.PlatformAction;
 import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
@@ -32,7 +31,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
     @Override
     @SneakyThrows
     public void runGroupService(ClusterGroup group) {
-        var runningNode = Node.instance().clusterService().localNode().data();
+        var runningNode = Node.instance().clusterProvider().localNode().data();
 
         var localService = new ClusterLocalServiceImpl(group, generateOrderedId(group), UUID.randomUUID(), ServicePortDetector.detectServicePort(), "0.0.0.0", runningNode.name());
 
@@ -40,7 +39,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         Node.instance().serviceProvider().services().add(localService);
 
         // call other nodes
-        Node.instance().clusterService().broadcast(new ClusterSyncRegisterServicePacket(localService));
+        Node.instance().clusterProvider().broadcast(new ClusterSyncRegisterServicePacket(localService));
 
         PlatformDownloadTask.download(group).whenComplete((unused, throwable) -> {
 
@@ -78,8 +77,11 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
             // send the platform boot jar
             processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
-            processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterService().localNode().data().port()));
+            processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterProvider().localNode().data().port()));
             processBuilder.environment().put("serviceId", localService.id().toString());
+
+            localService.state(ClusterServiceState.STARTING);
+            //todo call update
 
             // run platform
             localService.start(processBuilder);

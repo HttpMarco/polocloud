@@ -5,7 +5,7 @@ import dev.httpmarco.polocloud.api.Closeable;
 
 import java.util.Set;
 
-public interface ClusterService extends Closeable {
+public interface ClusterProvider extends Closeable {
 
     LocalNode localNode();
 

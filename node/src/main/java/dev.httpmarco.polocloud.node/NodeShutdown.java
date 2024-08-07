@@ -11,7 +11,7 @@ public final class NodeShutdown {
 
     public static void nodeShutdown(boolean directShutdown) {
 
-        var clusterService = Node.instance().clusterService();
+        var clusterService = Node.instance().clusterProvider();
 
         if (clusterService.localNode().situation().isStopping()) {
             return;

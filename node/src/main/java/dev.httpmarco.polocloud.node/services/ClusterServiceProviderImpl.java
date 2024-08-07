@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -29,7 +28,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     private final ClusterServiceQueue clusterServiceQueue = new ClusterServiceQueue();
 
     public ClusterServiceProviderImpl() {
-        Node.instance().clusterService().localNode().transmit().listen(ClusterSyncRegisterServicePacket.class, (it, packet) -> {
+        Node.instance().clusterProvider().localNode().transmit().listen(ClusterSyncRegisterServicePacket.class, (it, packet) -> {
             services.add(packet.service());
             log.info("The service &8'&f{}&8' &7is starting now&8...", packet.service().name());
         });
@@ -43,6 +42,11 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     @Override
     public @NotNull CompletableFuture<ClusterService> findAsync(UUID id) {
         return CompletableFuture.completedFuture(services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null));
+    }
+
+    @Override
+    public CompletableFuture<ClusterService> findAsync(String name) {
+        return CompletableFuture.completedFuture(services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null));
     }
 
     @Contract(pure = true)

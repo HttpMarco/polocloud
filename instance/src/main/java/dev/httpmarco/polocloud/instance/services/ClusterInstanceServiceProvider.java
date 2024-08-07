@@ -22,6 +22,11 @@ public class ClusterInstanceServiceProvider extends ClusterServiceProvider {
     }
 
     @Override
+    public CompletableFuture<ClusterService> findAsync(String name) {
+        return null;
+    }
+
+    @Override
     public ClusterServiceFactory factory() {
         return null;
     }

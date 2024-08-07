@@ -6,7 +6,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
 import dev.httpmarco.polocloud.api.packet.MessageResponsePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
-import dev.httpmarco.polocloud.node.cluster.ClusterService;
+import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 @UtilityClass
 public class GroupCreationResponder {
 
-    public Packet handle(@NotNull ClusterGroupProvider groupService, ClusterService clusterService, @NotNull CommunicationProperty property) {
+    public Packet handle(@NotNull ClusterGroupProvider groupService, ClusterProvider clusterProvider, @NotNull CommunicationProperty property) {
 
         var name = property.getString("name");
 
@@ -39,7 +39,7 @@ public class GroupCreationResponder {
         var platform = new PlatformGroupDisplay(property.getString("platform"), property.getString("version"));
 
         // alert on every node the new group
-        clusterService.broadcastAll(new GroupCreatePacket(
+        clusterProvider.broadcastAll(new GroupCreatePacket(
                 name,
                 nodes,
                 platform,

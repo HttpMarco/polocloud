@@ -18,16 +18,16 @@ public final class ClusterServiceQueue extends Thread {
     public void run() {
 
         var groupService = Node.instance().groupService();
-        var localNode = Node.instance().clusterService().localNode();
+        var localNode = Node.instance().clusterProvider().localNode();
 
         while (!localNode.situation().isStopping()) {
 
-            if(Node.instance().clusterService().headNode() == null) {
+            if(Node.instance().clusterProvider().headNode() == null) {
                 // some cloud ticks is the head node null for new calculation
                 continue;
             }
 
-            if(!Node.instance().clusterService().localHead()) {
+            if(!Node.instance().clusterProvider().localHead()) {
                 continue;
             }
 
