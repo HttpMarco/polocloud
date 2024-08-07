@@ -33,6 +33,11 @@ public final class PoloCloudLauncher {
         FileSystemUtils.copyClassPathFile(ClassLoader.getSystemClassLoader(), "polocloud-api.jar", apiFile.toString());
         CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
 
+        // copy cluster plugin in classpath
+        var pluginFile = Path.of("local/dependencies/polocloud-plugin.jar");
+        FileSystemUtils.copyClassPathFile(ClassLoader.getSystemClassLoader(), "polocloud-plugin.jar", pluginFile.toString());
+
+
         var boot = Arrays.stream(args).anyMatch(it -> it.equalsIgnoreCase("--instance")) ? new InstanceBoot() : new NodeBoot();
 
         // add boot file to the current classpath
