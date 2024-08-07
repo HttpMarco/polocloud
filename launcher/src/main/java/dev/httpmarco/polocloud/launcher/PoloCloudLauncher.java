@@ -8,13 +8,20 @@ import dev.httpmarco.polocloud.launcher.dependency.Repository;
 import dev.httpmarco.polocloud.launcher.util.FileSystemUtils;
 import lombok.SneakyThrows;
 
+import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.jar.JarFile;
 
 public final class PoloCloudLauncher {
 
     public static PoloCloudClassLoader CLASS_LOADER = new PoloCloudClassLoader();
+    public static Instrumentation INSTRUMENTATION;
+
+    public static void premain(String args, Instrumentation instrumentation) {
+        INSTRUMENTATION = instrumentation;
+    }
 
     @SneakyThrows
     public static void main(String[] args) {
@@ -33,6 +40,10 @@ public final class PoloCloudLauncher {
         FileSystemUtils.copyClassPathFile(ClassLoader.getSystemClassLoader(), "polocloud-api.jar", apiFile.toString());
         CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
 
+        if (INSTRUMENTATION != null) {
+            INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(apiFile.toFile()));
+        }
+
         // copy cluster plugin in classpath
         var pluginFile = Path.of("local/dependencies/polocloud-plugin.jar");
         FileSystemUtils.copyClassPathFile(ClassLoader.getSystemClassLoader(), "polocloud-plugin.jar", pluginFile.toString());
@@ -44,9 +55,7 @@ public final class PoloCloudLauncher {
         CLASS_LOADER.addURL(boot.bootFile().toURI().toURL());
 
         DependencyDownloader.download(gsonDependency, nettyCommonDependency, nettyTransportDependency, nettyCodecDependency, nettyResolverDependency, nettyBufferDependency, nettyTransportEpollDependency, osganNettyDependency);
-
         Thread.currentThread().setContextClassLoader(CLASS_LOADER);
-
         Class.forName(boot.mainClass(), true, CLASS_LOADER).getMethod("main", String[].class).invoke(null, (Object) args);
     }
 }

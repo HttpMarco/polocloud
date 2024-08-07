@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.jar.JarFile;
 
 @UtilityClass
 public class DependencyDownloader {
@@ -35,13 +36,14 @@ public class DependencyDownloader {
             }
         }
 
-        if (file.exists()) {
-            PoloCloudLauncher.CLASS_LOADER.addURL(file.toURI().toURL());
-            return;
+        if (!file.exists()) {
+            DependencyHelper.download(dependency.downloadUrl(), file);
         }
-
-        DependencyHelper.download(dependency.downloadUrl(), file);
         PoloCloudLauncher.CLASS_LOADER.addURL(file.toURI().toURL());
+
+        if(PoloCloudLauncher.INSTRUMENTATION != null) {
+            PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(file));
+        }
     }
 
 
