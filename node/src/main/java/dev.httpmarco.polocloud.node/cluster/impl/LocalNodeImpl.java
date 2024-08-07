@@ -34,12 +34,12 @@ public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
 
         this.server.listen(ServiceConnectPacket.class, (channel, packet) -> {
 
-            if (Node.instance().serviceProvider().services().stream().noneMatch(it -> it.id().equals(packet.uuid()))) {
+            if (Node.instance().serviceProvider().services().stream().noneMatch(it -> it.id().equals(packet.id()))) {
                 channel.channel().close();
                 return;
             }
 
-            var service = Node.instance().serviceProvider().find(packet.uuid());
+            var service = Node.instance().serviceProvider().find(packet.id());
 
             if (service instanceof ClusterLocalServiceImpl localService) {
                 localService.transmit(channel);
