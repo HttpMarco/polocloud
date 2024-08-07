@@ -3,18 +3,22 @@ package dev.httpmarco.polocloud.instance.groups;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.packet.resources.group.GroupCollectionPacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
+import dev.httpmarco.polocloud.instance.ClusterInstance;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class ClusterInstanceGroupProvider extends ClusterGroupProvider {
+public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
 
     @Override
-    public CompletableFuture<Set<ClusterGroup>> groupsAsync() {
-        return null;
+    public @NotNull CompletableFuture<Set<ClusterGroup>> groupsAsync() {
+        var future = new CompletableFuture<Set<ClusterGroup>>();
+        ClusterInstance.instance().client().request("groups-all", GroupCollectionPacket.class, it -> future.complete(it.groups()));
+        return future;
     }
 
     @Override

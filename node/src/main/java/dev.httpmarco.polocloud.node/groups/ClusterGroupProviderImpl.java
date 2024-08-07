@@ -4,6 +4,7 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.packet.resources.group.GroupCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupDeletePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
@@ -38,6 +39,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
         clusterProvider.localNode().transmit().listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
         clusterProvider.localNode().transmit().listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
 
+        clusterProvider.localNode().transmit().responder("groups-all", property -> new GroupCollectionPacket(groups()));
         clusterProvider.localNode().transmit().responder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterProvider, property));
         clusterProvider.localNode().transmit().responder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterProvider, property));
 
@@ -81,7 +83,11 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
         if (Node.instance().clusterProvider().localHead()) {
             this.groups.addAll(ClusterGroupFactory.readGroups());
         } else {
-            //todo request groups from head
+            Node.instance().clusterProvider().headNode().transmit().request("groups-all", GroupCollectionPacket.class, it -> {
+                this.groups.addAll(it.groups());
+                log.info("Successfully reload all group data.");
+            });
+            return;
         }
 
         log.info("Successfully reload all group data.");

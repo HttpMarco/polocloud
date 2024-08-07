@@ -8,22 +8,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
 public final class GroupCollectionPacket extends Packet {
 
-    private List<ClusterGroup> groups;
+    private Set<ClusterGroup> groups;
 
     @Override
     public void read(@NotNull PacketBuffer packetBuffer) {
         var amount = packetBuffer.readInt();
 
-        this.groups = new ArrayList<>();
+        this.groups = new HashSet<>();
         for (int i = 0; i < amount; i++) {
             this.groups.add(CloudAPI.instance().groupProvider().read(packetBuffer));
         }
