@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
@@ -31,6 +32,16 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
         Node.instance().clusterProvider().localNode().transmit().listen(ClusterSyncRegisterServicePacket.class, (it, packet) -> {
             services.add(packet.service());
             log.info("The service &8'&f{}&8' &7is starting now&8...", packet.service().name());
+        });
+
+        Node.instance().clusterProvider().localNode().transmit().listen(ServiceOnlinePacket.class, (transmit, packet) -> {
+            var service = find(packet.id());
+            if (service == null) {
+                transmit.channel().close();
+                return;
+            }
+            // todo call cluster
+            log.info("The service &8'&f{}&8' &7is online&8.", service.name());
         });
     }
 
