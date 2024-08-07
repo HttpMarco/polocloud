@@ -7,6 +7,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven(url = "https://repo.papermc.io/repository/maven-public/")
     }
 
     tasks.withType<JavaCompile>().configureEach {

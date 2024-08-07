@@ -16,6 +16,9 @@ gson = "2.11.0"
 # console
 jline = "3.26.3"
 
+# platforms
+spigot = "1.20.4-R0.1-SNAPSHOT"
+
 [libraries]
 # utils
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
@@ -34,3 +37,6 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # console
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
+
+# platforms
+spigot = { group = "io.papermc.paper", name = "paper-api", version.ref = "spigot" }
