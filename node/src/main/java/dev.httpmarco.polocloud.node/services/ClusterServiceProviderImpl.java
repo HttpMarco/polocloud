@@ -9,10 +9,13 @@ import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegist
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -38,7 +41,13 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     }
 
     @Override
-    public ClusterService read(PacketBuffer buffer) {
+    public @NotNull CompletableFuture<ClusterService> findAsync(UUID id) {
+        return CompletableFuture.completedFuture(services.stream().filter(it -> it.id().equals(id)).findFirst().orElse(null));
+    }
+
+    @Contract(pure = true)
+    @Override
+    public @Nullable ClusterService read(PacketBuffer buffer) {
         return null;
     }
 }

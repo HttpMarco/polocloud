@@ -1,54 +1,41 @@
 package dev.httpmarco.polocloud.instance;
 
+import dev.httpmarco.osgan.networking.client.CommunicationClient;
+import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
-import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
+import dev.httpmarco.polocloud.instance.groups.ClusterInstanceGroupProvider;
+import dev.httpmarco.polocloud.instance.services.ClusterInstanceServiceProvider;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.jar.JarFile;
+import java.util.UUID;
 
+@Getter
+@Accessors(fluent = true)
 public final class ClusterInstance extends CloudAPI {
+
+    @Getter
+    private static ClusterInstance instance;
+
+    private final ClusterInstanceGroupProvider groupProvider = new ClusterInstanceGroupProvider();
+    private final ClusterServiceProvider serviceProvider = new ClusterInstanceServiceProvider();
+    private final CommunicationClient client;
 
     @SneakyThrows
     public ClusterInstance(String[] args) {
-        var bootPlatformFile = System.getenv("bootstrapFile");
+        instance = this;
 
-        File file = Path.of(bootPlatformFile).toFile();
-        PoloCloudLauncher.CLASS_LOADER.addURL(file.toURI().toURL());
+        this.client = new CommunicationClient("127.0.0.1", Integer.parseInt(System.getenv("nodeEndPointPort")));
+        this.client.initialize();
+        this.client.clientAction(CommunicationClientAction.CONNECTED, transmit -> {
+            transmit.sendPacket(new ServiceConnectPacket(UUID.fromString(System.getenv("serviceId"))));
 
-        final var thread = new Thread(() -> {
-            try (final var jar = new JarFile(file)) {
-
-                final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
-                try {
-                    var main = Class.forName(mainClass, true, PoloCloudLauncher.CLASS_LOADER).getMethod("main", String[].class);
-                    var platformArgs = Arrays.stream(args).filter(it -> !it.equalsIgnoreCase("--instance")).toArray(String[]::new);
-
-                    main.invoke(null, (Object) platformArgs);
-                } catch (Exception e) {
-                    e.printStackTrace(System.err);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            synchronized (this) {
+                ClusterInstanceFactory.startPlatform(args);
             }
         });
-        thread.setContextClassLoader(PoloCloudLauncher.CLASS_LOADER);
-        thread.start();
-    }
-
-    @Override
-    public ClusterServiceProvider serviceProvider() {
-        //todo
-        return null;
-    }
-
-    @Override
-    public ClusterGroupProvider groupProvider() {
-        //todo
-        return null;
     }
 }

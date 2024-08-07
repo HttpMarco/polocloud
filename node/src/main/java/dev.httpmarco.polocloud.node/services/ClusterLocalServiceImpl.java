@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.services;
 
+import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
@@ -26,6 +27,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
 
     private @Nullable Process process;
     private @Nullable Thread processTracking;
+    private @Nullable ChannelTransmit transmit;
 
     private final Path runningDir;
 

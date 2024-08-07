@@ -1,9 +1,13 @@
 package dev.httpmarco.polocloud.node.cluster.impl;
 
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
+import dev.httpmarco.osgan.networking.server.CommunicationServerAction;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
+import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.LocalNode;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.impl.transmit.LocalChannelTransmit;
+import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +27,34 @@ public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
         super(data);
 
         this.server = new CommunicationServer(hostname, port);
+
+        this.server.clientAction(CommunicationServerAction.CLIENT_CONNECT, it -> {
+            //todo
+            log.info("connected");
+        });
+
+        this.server.clientAction(CommunicationServerAction.CLIENT_DISCONNECT, it -> {
+            //todo
+            log.info("disconneted");
+        });
+
+        this.server.listen(ServiceConnectPacket.class, (channel, packet) -> {
+
+            if (Node.instance().serviceProvider().services().stream().noneMatch(it -> it.id().equals(packet.uuid()))) {
+                channel.channel().close();
+                return;
+            }
+
+            var service = Node.instance().serviceProvider().find(packet.uuid());
+
+            if (service instanceof ClusterLocalServiceImpl localService) {
+                localService.transmit(channel);
+                log.info(service.name());
+            } else {
+                channel.channel().close();
+            }
+        });
+
         this.transmit = new LocalChannelTransmit(server);
     }
 

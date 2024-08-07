@@ -78,6 +78,8 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
             // send the platform boot jar
             processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
+            processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterService().localNode().data().port()));
+            processBuilder.environment().put("serviceId", localService.id().toString());
 
             // run platform
             localService.start(processBuilder);

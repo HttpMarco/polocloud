@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +18,14 @@ public abstract class ClusterServiceProvider implements Sendable<ClusterService>
     }
 
     public abstract CompletableFuture<List<ClusterService>> servicesAsync();
+
+
+    @SneakyThrows
+    public ClusterService find(UUID id) {
+        return findAsync(id).get(5, TimeUnit.SECONDS);
+    }
+
+    public abstract CompletableFuture<ClusterService> findAsync(UUID id);
 
     public abstract ClusterServiceFactory factory();
 
