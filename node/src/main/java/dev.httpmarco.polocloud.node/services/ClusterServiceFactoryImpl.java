@@ -44,22 +44,21 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         Node.instance().clusterProvider().broadcast(new ClusterSyncRegisterServicePacket(localService));
 
         PlatformDownloadTask.download(group).whenComplete((unused, throwable) -> {
-
             if (throwable != null) {
                 log.warn(throwable.getMessage());
                 return;
             }
 
             try {
-
                 // run platform actions
                 var platform = Node.instance().platformService().platform(group.platform().platform());
-
 
                 var arguments = new ArrayList<>();
                 var bootJarPath = System.getProperty("bootLauncher");
 
                 arguments.add("java");
+                arguments.add("-Xms" + localService.group().minMemory() + "m");
+                arguments.add("-Xmx" + localService.group().maxMemory() + "m");
                 arguments.addAll(List.of("-Djline.terminal=jline.UnsupportedTerminal", "-XX:+UseG1GC", "-XX:+ParallelRefProcEnabled", "-XX:MaxGCPauseMillis=200", "-XX:+UnlockExperimentalVMOptions", "-XX:+DisableExplicitGC", "-XX:+AlwaysPreTouch", "-XX:G1NewSizePercent=30", "-XX:G1MaxNewSizePercent=40", "-XX:G1HeapRegionSize=8M", "-XX:G1ReservePercent=20", "-XX:G1HeapWastePercent=5", "-XX:G1MixedGCCountTarget=4", "-XX:InitiatingHeapOccupancyPercent=15", "-XX:G1MixedGCLiveThresholdPercent=90", "-XX:G1RSetUpdatingPauseTimePercent=5", "-XX:SurvivorRatio=32", "-XX:+PerfDisableSharedMem", "-XX:MaxTenuringThreshold=1", "-Dusing.aikars.flags=https://mcflags.emc.gs", "-Daikars.new.flags=true", "-XX:-UseAdaptiveSizePolicy", "-XX:CompileThreshold=100", "-Dio.netty.recycler.maxCapacity=0", "-Dio.netty.recycler.maxCapacity.default=0", "-Djline.terminal=jline.UnsupportedTerminal", "-Dfile.encoding=UTF-8", "-Dclient.encoding.override=UTF-8", "-DIReallyKnowWhatIAmDoingISwear=true"));
                 arguments.add("-javaagent:" + bootJarPath);
                 arguments.add("-jar");
@@ -77,7 +76,10 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + group.platform().platform() + "/" + group.platform().version()), localService.runningDir());
 
                 // create process
-                var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).redirectError(new File("dev.log")).redirectOutput(new File("info-dev.log")).directory(localService.runningDir().toFile());
+                var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new))
+                        .redirectError(new File("dev.log"))
+                        .redirectOutput(new File("info-dev.log"))
+                        .directory(localService.runningDir().toFile());
 
                 // send the platform boot jar
                 processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
@@ -88,10 +90,10 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 var pluginDir = localService.runningDir().resolve("plugins");
                 pluginDir.toFile().mkdirs();
 
-
                 Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"));
 
                 localService.state(ClusterServiceState.STARTING);
+
                 //todo call update
 
                 // run platform
