@@ -43,7 +43,6 @@ public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
 
             if (service instanceof ClusterLocalServiceImpl localService) {
                 localService.transmit(channel);
-                log.info(service.name());
             } else {
                 channel.channel().close();
             }
