@@ -28,7 +28,7 @@ public class GroupCreationResponder {
         var maxMemory = property.getInteger("maxMemory");
 
         if (minMemory < 1 || maxMemory < 1) {
-            return MessageResponsePacket.fail("The min and max memory musst be higher than 1 mb.");
+            return MessageResponsePacket.fail("The min and max memory must be higher than 1 mb.");
         }
 
         if (minMemory > maxMemory) {

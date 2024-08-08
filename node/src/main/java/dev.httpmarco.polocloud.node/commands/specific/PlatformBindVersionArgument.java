@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.commands.specific;
 
 import dev.httpmarco.polocloud.node.commands.CommandArgument;
 import dev.httpmarco.polocloud.node.commands.CommandContext;
+import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,6 @@ public final class PlatformBindVersionArgument extends CommandArgument<PlatformV
 
     @Override
     public List<String> defaultArgs(@NotNull CommandContext previousBind) {
-        return previousBind.arg(PlatformArgument.class).versions().stream().map(PlatformVersion::version).toList();
+        return ((Platform) previousBind.arg("platform")).versions().stream().map(PlatformVersion::version).toList();
     }
 }
