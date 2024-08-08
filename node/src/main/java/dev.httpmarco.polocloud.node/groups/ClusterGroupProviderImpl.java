@@ -14,6 +14,7 @@ import dev.httpmarco.polocloud.node.groups.requests.GroupCreationRequest;
 import dev.httpmarco.polocloud.node.groups.requests.GroupDeletionRequest;
 import dev.httpmarco.polocloud.node.groups.responder.GroupCreationResponder;
 import dev.httpmarco.polocloud.node.groups.responder.GroupDeletionResponder;
+import dev.httpmarco.polocloud.node.services.ClusterServiceImpl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -93,8 +94,23 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
         log.info("Successfully reload all group data.");
     }
 
+    @Contract("_ -> new")
     @Override
-    public ClusterGroup read(PacketBuffer buffer) {
-        return null;
+    public @NotNull ClusterGroup read(@NotNull PacketBuffer buffer) {
+        var name = buffer.readString();
+        var minMemory = buffer.readInt();
+        var maxMemory = buffer.readInt();
+        var minOnlineServerInstances = buffer.readInt();
+        var maxOnlineServerInstances = buffer.readInt();
+        var staticService = buffer.readBoolean();
+        var platform = new PlatformGroupDisplay(buffer.readString(), buffer.readString());
+        var amountOfNodes = buffer.readInt();
+        var nodes = new String[amountOfNodes];
+
+        for (int i = 0; i < amountOfNodes; i++) {
+            nodes[i] = buffer.readString();
+        }
+
+        return new ClusterGroupImpl(name, platform, nodes, minMemory, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
     }
 }
