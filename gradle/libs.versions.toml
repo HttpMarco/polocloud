@@ -8,7 +8,7 @@ gson = "2.11.0"
 jline = "3.26.3"
 
 minimessage = "4.17.0"
-bungeeminimessage = "4.3.3"
+bungeeminimessage = "4.3.4"
 
 #platforms
 velocity = "3.3.0-SNAPSHOT"
