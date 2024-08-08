@@ -17,7 +17,7 @@ public final class SingleGroupPacket extends Packet {
 
     @Override
     public void read(PacketBuffer packetBuffer) {
-        this.group = CloudAPI.instance().groupProvider().read(packetBuffer));
+        this.group = CloudAPI.instance().groupProvider().read(packetBuffer);
     }
 
     @Override
