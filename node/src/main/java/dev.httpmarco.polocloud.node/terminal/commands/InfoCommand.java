@@ -11,8 +11,8 @@ public class InfoCommand extends Command {
         super("info", "Displays some information", "me");
 
         defaultExecution(context -> {
-            log.info("Running on Java version&8: &f{}", System.getProperty("java.version"));
-            log.info("Running on Operating System&8: &f{}", System.getProperty("os.name"));
+            log.info("Java version&8: &f{}", System.getProperty("java.version"));
+            log.info("Operating System&8: &f{}", System.getProperty("os.name"));
             log.info("Used Memory of the Node process&8: &f{}", this.usedMemory());
             log.info(" ");
             log.info("Registered Groups&8: &f{}", Node.instance().groupService().groups().size());
