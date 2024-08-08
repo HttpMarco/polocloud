@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupDeletePacket;
+import dev.httpmarco.polocloud.api.packet.resources.group.GroupExistsResponsePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
@@ -40,6 +41,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
         clusterProvider.localNode().transmit().listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
         clusterProvider.localNode().transmit().listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
 
+        clusterProvider.localNode().transmit().responder("group-exists", property -> new GroupExistsResponsePacket(exists(property.getString("name"))));
         clusterProvider.localNode().transmit().responder("groups-all", property -> new GroupCollectionPacket(groups()));
         clusterProvider.localNode().transmit().responder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterProvider, property));
         clusterProvider.localNode().transmit().responder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterProvider, property));

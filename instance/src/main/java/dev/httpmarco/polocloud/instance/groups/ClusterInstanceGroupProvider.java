@@ -1,9 +1,11 @@
 package dev.httpmarco.polocloud.instance.groups;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCollectionPacket;
+import dev.httpmarco.polocloud.api.packet.resources.group.GroupExistsResponsePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import org.jetbrains.annotations.Contract;
@@ -23,8 +25,10 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
     }
 
     @Override
-    public CompletableFuture<Boolean> existsAsync(String group) {
-        return null;
+    public @NotNull CompletableFuture<Boolean> existsAsync(String group) {
+        var future = new CompletableFuture<Boolean>();
+        ClusterInstance.instance().client().request("group-exists", new CommunicationProperty().set("name", group), GroupExistsResponsePacket.class, it -> future.complete(it.value()));
+        return future;
     }
 
     @Override
