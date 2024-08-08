@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.node.module;
 
-import com.google.gson.Gson;
 import dev.httpmarco.polocloud.api.Reloadable;
 import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
@@ -24,31 +23,35 @@ import java.util.jar.JarFile;
 public class ModuleProvider implements Reloadable {
 
     private static final Path MODULE_PATH = Path.of("./local/modules/");
-    private static final Gson GSON = JsonUtils.GSON;
     private final List<LoadedModule> loadedModules = new CopyOnWriteArrayList<>();
     private final ClassLoader parentClassLoader;
 
     @SneakyThrows
     public ModuleProvider() {
         this.parentClassLoader = PoloCloudLauncher.CLASS_LOADER;
-        if (!Files.exists(MODULE_PATH)) Files.createDirectory(MODULE_PATH);
+        if (!Files.exists(MODULE_PATH)) {
+            Files.createDirectory(MODULE_PATH);
+        }
     }
 
+    @SneakyThrows
     public void loadAllUnloadedModules() {
-        var moduleFiles = getAllModuleJarFiles();
+        var moduleFiles = this.getAllModuleJarFiles();
         var loadedModules = new ArrayList<String>();
         var unloadedModules = new ArrayList<String>();
 
         for (var file : moduleFiles) {
-            var moduleMetadata = loadModuleMetadata(file);
+            var jarFile = new JarFile(file);
+            var reader = new InputStreamReader(jarFile.getInputStream(jarFile.getJarEntry("module.json")));
+            var moduleMetadata = JsonUtils.GSON.fromJson(reader, ModuleMetadata.class);
 
-            if (moduleMetadata.id() == null || moduleMetadata.name() == null || moduleMetadata.description() == null || moduleMetadata.author() == null || moduleMetadata.main() == null) {
+            if (moduleMetadata == null) {
                 log.error("Module \"{}\" has an invalid module.json", file.getName());
                 continue;
             }
 
             try {
-                loadModuleFileContent(file, moduleMetadata);
+                this.loadModuleFileContent(file, moduleMetadata);
                 loadedModules.add(moduleMetadata.name());
             } catch (Exception e) {
                 unloadedModules.add(moduleMetadata.name());
@@ -57,12 +60,12 @@ public class ModuleProvider implements Reloadable {
             }
         }
 
-        var modules = new ArrayList<>(loadedModules.stream().map(it -> "&7" + it).toList());
+        final var modules = new ArrayList<>(loadedModules.stream().map(it -> "&7" + it).toList());
         modules.addAll(unloadedModules.stream().map(it -> "&6" + it).toList());
 
         if (!modules.isEmpty()) {
             log.info("Loaded modules&8: {}", String.join("&8, ", modules));
-            getLoadedModules().forEach(it -> it.cloudModule().onEnable());
+            this.getLoadedModules().forEach(it -> it.cloudModule().onEnable());
         }
     }
 
@@ -71,34 +74,23 @@ public class ModuleProvider implements Reloadable {
     }
 
     public List<LoadedModule> getLoadedModules() {
-        return new ArrayList<>(loadedModules);
+        return new ArrayList<>(this.loadedModules);
     }
 
     @SneakyThrows
     private void loadModuleFileContent(File file, ModuleMetadata metadata) {
-        var cloudModule = loadModule(file, metadata.main());
+        var cloudModule = this.loadModule(file, metadata.main());
+        var classLoader = (URLClassLoader) cloudModule.getClass().getClassLoader();
+        var loadedModule = new LoadedModule(cloudModule, classLoader, metadata);
 
-        if (cloudModule != null) {
-            var classLoader = (URLClassLoader) cloudModule.getClass().getClassLoader();
-            var loadedModule = new LoadedModule(cloudModule, classLoader, metadata);
-
-            loadedModules.add(loadedModule);
-        }
-    }
-
-    @SneakyThrows
-    private ModuleMetadata loadModuleMetadata(File file) {
-        var jarFile = new JarFile(file);
-        var reader = new InputStreamReader(jarFile.getInputStream(jarFile.getJarEntry("module.json")));
-        return GSON.fromJson(reader, ModuleMetadata.class);
+        this.loadedModules.add(loadedModule);
     }
 
     @SneakyThrows
     private CloudModule loadModule(File file, String mainClass) {
-        var jarUrl = file.toURI().toURL();
-        var classLoader = new URLClassLoader(new URL[]{jarUrl}, this.parentClassLoader);
+        var classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.parentClassLoader);
 
-        Class<?> clazz = classLoader.loadClass(mainClass);
+        var clazz = classLoader.loadClass(mainClass);
         if (!CloudModule.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException("Class " + mainClass + " does not implement CloudModule");
         }
@@ -115,16 +107,12 @@ public class ModuleProvider implements Reloadable {
 
     private List<File> getAllModuleJarFiles() {
         var files = MODULE_PATH.toFile().listFiles((dir, name) -> name.endsWith(".jar"));
-        if (files != null) {
-            return List.of(files);
-        }
-
-        return List.of();
+        return files != null ? List.of(files) : List.of();
     }
 
     @Override
     public void reload() {
-        unloadAllModules();
-        loadAllUnloadedModules();
+        this.unloadAllModules();
+        this.loadAllUnloadedModules();
     }
 }
