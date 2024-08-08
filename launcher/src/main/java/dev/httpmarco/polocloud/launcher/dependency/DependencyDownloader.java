@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.launcher.dependency;
 import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -41,7 +42,7 @@ public class DependencyDownloader {
         }
         PoloCloudLauncher.CLASS_LOADER.addURL(file.toURI().toURL());
 
-        if(PoloCloudLauncher.INSTRUMENTATION != null) {
+        if (PoloCloudLauncher.INSTRUMENTATION != null) {
             PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(file));
         }
     }
@@ -51,7 +52,7 @@ public class DependencyDownloader {
         downloadDependenciesWithProgress(List.of(dependencies));
     }
 
-    private void downloadDependenciesWithProgress(List<Dependency> dependencies) {
+    private void downloadDependenciesWithProgress(@NotNull List<Dependency> dependencies) {
         int totalDependencies = dependencies.size();
         for (int i = 0; i < totalDependencies; i++) {
             var dependency = dependencies.get(i);
@@ -74,12 +75,16 @@ public class DependencyDownloader {
     }
 
     private void clearTerminal() {
-        System.out.print("\r");
-        System.out.print(" ".repeat(80));
-        System.out.print("\r");
+        defaultSys("\r", " ".repeat(80), "\r");
     }
 
-    private File findDependency(Dependency dependency) {
+    private void defaultSys(String @NotNull ... messages) {
+        for (var message : messages) {
+            System.out.print(message);
+        }
+    }
+
+    private @NotNull File findDependency(Dependency dependency) {
         return DOWNLOAD_DIR.resolve(dependency + ".jar").toFile();
     }
 }
