@@ -33,7 +33,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
         localNode.transmit().listen(ClusterReloadCallPacket.class, (transmit, packet) -> {
 
             // reloading first all groups
-            Node.instance().groupService().reload();
+            Node.instance().groupProvider().reload();
         });
     }
 

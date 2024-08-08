@@ -17,7 +17,7 @@ public final class ClusterServiceQueue extends Thread {
     @Override
     public void run() {
 
-        var groupService = Node.instance().groupService();
+        var groupService = Node.instance().groupProvider();
         var localNode = Node.instance().clusterProvider().localNode();
 
         while (!localNode.situation().isStopping()) {

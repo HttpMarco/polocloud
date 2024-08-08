@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node;
 
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.ClusterProviderImpl;
@@ -23,14 +24,14 @@ import java.nio.file.Path;
 @Log4j2
 @Getter
 @Accessors(fluent = true)
-public final class Node {
+public final class Node extends CloudAPI {
 
     @Getter
     private static Node instance;
 
     private final ClusterProvider clusterProvider;
     private final PlatformService platformService;
-    private final ClusterGroupProvider groupService;
+    private final ClusterGroupProvider groupProvider;
     private final ClusterServiceProviderImpl serviceProvider;
     private final ModuleProvider moduleProvider;
 
@@ -49,7 +50,7 @@ public final class Node {
         this.terminal = new JLineTerminal(nodeConfig);
 
         this.platformService = new PlatformService();
-        this.groupService = new ClusterGroupProviderImpl(clusterProvider);
+        this.groupProvider = new ClusterGroupProviderImpl(clusterProvider);
         this.serviceProvider = new ClusterServiceProviderImpl();
 
         // register provider commands

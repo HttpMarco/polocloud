@@ -51,7 +51,20 @@ public abstract class ClusterGroupProvider implements Reloadable, Sendable<Clust
     }
 
     @Override
-    public void write(ClusterGroup value, PacketBuffer buffer) {
+    public void write(@NotNull ClusterGroup group, @NotNull PacketBuffer buffer) {
+        buffer.writeString(group.name());
+        buffer.writeInt(group.minMemory());
+        buffer.writeInt(group.maxMemory());
+        buffer.writeInt(group.minOnlineServerInstances());
+        buffer.writeInt(group.maxOnlineServerInstances());
+        buffer.writeBoolean(group.staticService());
 
+        buffer.writeString(group.platform().platform());
+        buffer.writeString(group.platform().version());
+
+        buffer.writeInt(group.nodes().length);
+        for (String node : group.nodes()) {
+            buffer.writeString(node);
+        }
     }
 }

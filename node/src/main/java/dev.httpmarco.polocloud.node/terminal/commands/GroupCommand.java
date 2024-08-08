@@ -14,7 +14,7 @@ public final class GroupCommand extends Command {
     public GroupCommand() {
         super("group", "Manage or create your cluster groups", "groups");
 
-        var groupService = Node.instance().groupService();
+        var groupService = Node.instance().groupProvider();
         var platformService = Node.instance().platformService();
         var clusterService = Node.instance().clusterProvider();
 

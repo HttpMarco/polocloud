@@ -15,7 +15,7 @@ public class InfoCommand extends Command {
             log.info("Operating System&8: &f{}", System.getProperty("os.name"));
             log.info("Used Memory of the Node process&8: &f{}", this.usedMemory());
             log.info(" ");
-            log.info("Registered Groups&8: &f{}", Node.instance().groupService().groups().size());
+            log.info("Registered Groups&8: &f{}", Node.instance().groupProvider().groups().size());
             log.info("Online Services&8: &f{}", Node.instance().serviceProvider().services().size());
             log.info("Registered Platforms: &f{} &8(&f{} versions&8)", Node.instance().platformService().platforms().length, Node.instance().platformService().versionsAmount());
             log.info("Node endpoints&8: &f{}", Node.instance().clusterProvider().endpoints().size());
