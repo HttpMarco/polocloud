@@ -109,24 +109,26 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
     public void shutdownGroupService(ClusterService clusterService) {
         if (clusterService instanceof ClusterLocalServiceImpl localService) {
             localService.state(ClusterServiceState.STOPPING);
-            if (localService.hasProcess()) {
 
-                var platform = Node.instance().platformService().platform(localService.group().platform().platform());
+            new Thread(() -> {
+                if (localService.hasProcess()) {
+                    var platform = Node.instance().platformService().platform(localService.group().platform().platform());
 
-                // try with platform command a clean shutdown
-                localService.executeCommand(platform == null ? Platform.DEFAULT_SHUTDOWN_COMMAND : platform.shutdownCommand());
+                    // try with platform command a clean shutdown
+                    localService.executeCommand(platform == null ? Platform.DEFAULT_SHUTDOWN_COMMAND : platform.shutdownCommand());
 
-                try {
-                    if (localService.process().waitFor(PROCESS_TIMEOUT, TimeUnit.SECONDS)) {
-                        localService.process().exitValue();
-                        localService.postShutdownProcess();
-                        return;
+                    try {
+                        if (localService.process().waitFor(PROCESS_TIMEOUT, TimeUnit.SECONDS)) {
+                            localService.process().exitValue();
+                            localService.postShutdownProcess();
+                            return;
+                        }
+                    } catch (InterruptedException ignored) {
                     }
-                } catch (InterruptedException ignored) {
+                    localService.process().toHandle().destroyForcibly();
                 }
-                localService.process().toHandle().destroyForcibly();
-            }
-            localService.postShutdownProcess();
+                localService.postShutdownProcess();
+            }).start();
         }
     }
 
