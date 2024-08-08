@@ -6,10 +6,12 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupExistsResponsePacket;
+import dev.httpmarco.polocloud.api.packet.resources.group.SingleGroupPacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.Set;
@@ -31,24 +33,31 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
         return future;
     }
 
+    @Contract(pure = true)
     @Override
-    public CompletableFuture<Optional<String>> deleteAsync(String group) {
+    public @Nullable CompletableFuture<Optional<String>> deleteAsync(String group) {
+        // todo
         return null;
     }
 
+    @Contract(pure = true)
     @Override
-    public CompletableFuture<Optional<String>> createAsync(String name, String[] nodes, PlatformGroupDisplay platform, int minMemory, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
+    public @Nullable CompletableFuture<Optional<String>> createAsync(String name, String[] nodes, PlatformGroupDisplay platform, int minMemory, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
+        // todo
         return null;
     }
 
+    @Contract(pure = true)
     @Override
-    public CompletableFuture<ClusterGroup> findAsync(@NotNull String group) {
-        return null;
+    public @NotNull CompletableFuture<ClusterGroup> findAsync(@NotNull String group) {
+        var future = new CompletableFuture<ClusterGroup>();
+        ClusterInstance.instance().client().request("group-finding", new CommunicationProperty().set("name", group), SingleGroupPacket.class, it -> future.complete(it.group()));
+        return future;
     }
 
     @Override
     public void reload() {
-
+        // todo
     }
 
     @Contract("_ -> new")
