@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.cluster.impl;
 
+import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.osgan.networking.server.CommunicationServerAction;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
@@ -29,7 +30,14 @@ public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
         this.server = new CommunicationServer(hostname, port);
 
         this.server.clientAction(CommunicationServerAction.CLIENT_DISCONNECT, it -> {
-            //todo set channel of service null
+            var possibleService = findLocalService(it);
+
+            if (possibleService != null) {
+                // service is unregistered
+                return;
+            }
+
+            //todo: check the connection was a node
         });
 
         this.server.listen(ServiceConnectPacket.class, (channel, packet) -> {
@@ -49,6 +57,19 @@ public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
         });
 
         this.transmit = new LocalChannelTransmit(server);
+    }
+
+
+    private ClusterLocalServiceImpl findLocalService(ChannelTransmit transmit) {
+        return Node.instance().serviceProvider()
+                .services()
+                .stream()
+                .filter(clusterService -> clusterService instanceof ClusterLocalServiceImpl)
+                .map(clusterService -> (ClusterLocalServiceImpl) clusterService)
+                .filter(localService -> localService.transmit() != null)
+                .filter(localService -> localService.transmit().channel().equals(transmit.channel()))
+                .findFirst()
+                .orElse(null);
     }
 
     public void initialize() {
