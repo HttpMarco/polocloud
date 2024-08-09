@@ -13,6 +13,8 @@ public interface ClusterProvider extends Closeable {
 
     boolean localHead();
 
+    NodeEndpoint find(String nodeId);
+
     void broadcast(Packet packet);
 
     void broadcastAll(Packet packet);

@@ -43,6 +43,11 @@ public final class ClusterProviderImpl implements ClusterProvider {
     }
 
     @Override
+    public NodeEndpoint find(String nodeId) {
+        return localNode.data().name().equalsIgnoreCase(nodeId) ? localNode : endpoints.stream().filter(it -> it.data().name().equalsIgnoreCase(nodeId)).findFirst().orElse(null);
+    }
+
+    @Override
     public void broadcast(Packet packet) {
         for (var endpoint : this.endpoints) {
             endpoint.transmit().sendPacket(packet);

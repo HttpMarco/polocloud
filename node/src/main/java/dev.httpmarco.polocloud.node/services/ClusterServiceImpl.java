@@ -1,8 +1,11 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
+import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +36,26 @@ public class ClusterServiceImpl implements ClusterService {
 
     @Override
     public void shutdown() {
-        // todo find node and send him shutdown call
+        var node = node();
+
+        if (node == null) {
+            return;
+        }
+
+        node.transmit().sendPacket(new ServiceShutdownCallPacket(id));
     }
 
     @Override
     public void executeCommand(String command) {
         // todo bridge
+    }
+
+    @Override
+    public void update() {
+        // todo call head node and broadcast this to all nodes
+    }
+
+    public NodeEndpoint node() {
+        return Node.instance().clusterProvider().find(runningNode);
     }
 }

@@ -26,6 +26,8 @@ public interface ClusterService extends Named, Detail {
 
     ClusterServiceState state();
 
+    void update();
+
     @Override
     default String name() {
         return group().name() + "-" + orderedId();
