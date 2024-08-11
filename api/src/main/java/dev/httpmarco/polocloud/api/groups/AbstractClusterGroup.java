@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.api.groups;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,8 @@ public abstract class AbstractClusterGroup implements ClusterGroup {
     private boolean staticService;
     private int minOnlineServerInstances;
     private int maxOnlineServerInstances;
+
+    private final PropertiesPool properties = new PropertiesPool();
 
     @Override
     public String details() {

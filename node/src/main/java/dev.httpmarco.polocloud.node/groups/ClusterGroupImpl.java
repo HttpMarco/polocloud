@@ -14,7 +14,6 @@ import java.util.List;
 
 public class ClusterGroupImpl extends AbstractClusterGroup {
 
-
     public ClusterGroupImpl(String name, PlatformGroupDisplay platform, String[] templates, String[] nodes, int minMemory, int maxMemory, boolean staticService, int minOnlineServerInstances, int maxOnlineServerInstances) {
         super(name, platform, templates, nodes, minMemory, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
     }
