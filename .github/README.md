@@ -13,3 +13,11 @@ To install PoloCloud, follow these steps:
 3. Create a Proxy and Lobby Group using 'group create'
 4. Set lobby as a fallback service with 'group lobby property set fallback true'
 5. Connect to your Server using ip-address:DEFAULT-PROXY-PORT
+
+
+
+Properties example:
+```java
+PropertyRegister.register(Property.ofInteger("max_players"));
+```
+
