@@ -9,8 +9,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 
-import java.util.UUID;
-
 @Plugin(id = "polocloud", name = "PoloCloud-Plugin", version = "1.0.0", authors = "HttpMarco")
 public final class VelocityPlatformBootstrap {
 
@@ -31,6 +29,6 @@ public final class VelocityPlatformBootstrap {
 
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        ClusterInstance.instance().client().sendPacket(new ServiceOnlinePacket(UUID.fromString(System.getenv("serviceId"))));
+        ClusterInstance.instance().client().sendPacket(new ServiceOnlinePacket(ClusterInstance.instance().selfServiceId()));
     }
 }
