@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.terminal.commands;
 
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.commands.Command;
+import dev.httpmarco.polocloud.node.properties.PropertyRegister;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -19,6 +20,8 @@ public class InfoCommand extends Command {
             log.info("Online Services&8: &f{}", Node.instance().serviceProvider().services().size());
             log.info("Registered Platforms: &f{} &8(&f{} versions&8)", Node.instance().platformService().platforms().length, Node.instance().platformService().versionsAmount());
             log.info("Node endpoints&8: &f{}", Node.instance().clusterProvider().endpoints().size());
+            log.info(" ");
+            log.info("Registered properties&8: &f{}", PropertyRegister.propertiesAmount());
         });
     }
 
