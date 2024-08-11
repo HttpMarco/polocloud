@@ -63,8 +63,13 @@ public abstract class ClusterGroupProvider implements Reloadable, Sendable<Clust
         buffer.writeString(group.platform().version());
 
         buffer.writeInt(group.nodes().length);
-        for (String node : group.nodes()) {
+        for (var node : group.nodes()) {
             buffer.writeString(node);
+        }
+
+        buffer.writeInt(group.templates().length);
+        for (var template : group.templates()) {
+            buffer.writeString(template);
         }
     }
 }
