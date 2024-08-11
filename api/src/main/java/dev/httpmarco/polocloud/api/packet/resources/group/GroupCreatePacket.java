@@ -16,6 +16,7 @@ import java.util.HashSet;
 public final class GroupCreatePacket extends Packet {
 
     private String name;
+    private String[] templates;
     private String[] nodes;
     private PlatformGroupDisplay platformGroupDisplay;
     private int minMemory;
@@ -28,13 +29,21 @@ public final class GroupCreatePacket extends Packet {
     public void read(@NotNull PacketBuffer packetBuffer) {
         this.name = packetBuffer.readString();
 
-        var nodeSide = packetBuffer.readInt();
+        var nodeSize = packetBuffer.readInt();
         var nodes = new HashSet<String>();
 
-        for (int i = 0; i < nodeSide; i++) {
+        for (int i = 0; i < nodeSize; i++) {
             nodes.add(packetBuffer.readString());
         }
         this.nodes = nodes.toArray(String[]::new);
+
+        var templateSize = packetBuffer.readInt();
+        var templates = new HashSet<String>();
+
+        for (int i = 0; i < templateSize; i++) {
+            templates.add(packetBuffer.readString());
+        }
+        this.templates = templates.toArray(String[]::new);
 
         var platform = packetBuffer.readString();
         var version = packetBuffer.readString();
@@ -55,6 +64,12 @@ public final class GroupCreatePacket extends Packet {
 
         for (String node : nodes) {
             packetBuffer.writeString(node);
+        }
+
+        packetBuffer.writeInt(templates.length);
+
+        for (String template : templates) {
+            packetBuffer.writeString(template);
         }
 
         packetBuffer.writeString(platformGroupDisplay.platform());

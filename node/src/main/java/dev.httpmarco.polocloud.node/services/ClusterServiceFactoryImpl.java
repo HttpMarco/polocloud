@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegist
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
+import dev.httpmarco.polocloud.node.templates.TemplateFactory;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -42,6 +43,8 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
         // call other nodes
         Node.instance().clusterProvider().broadcast(new ClusterSyncRegisterServicePacket(localService));
+
+        TemplateFactory.cloneTemplate(localService);
 
         PlatformDownloadTask.download(group).whenComplete((unused, throwable) -> {
             if (throwable != null) {

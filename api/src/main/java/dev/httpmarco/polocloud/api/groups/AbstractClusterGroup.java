@@ -18,6 +18,7 @@ public abstract class AbstractClusterGroup implements ClusterGroup {
     private final String name;
     private final PlatformGroupDisplay platform;
 
+    private String[] templates;
     private String[] nodes;
     private int minMemory;
     private int maxMemory;

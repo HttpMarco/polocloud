@@ -77,6 +77,13 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
             nodes[i] = buffer.readString();
         }
 
-        return new ClusterInstanceGroupImpl(name, platform, nodes, minMemory, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
+        var amountOfTemplates = buffer.readInt();
+        var templates = new String[amountOfTemplates];
+
+        for (int i = 0; i < amountOfTemplates; i++) {
+            templates[i] = buffer.readString();
+        }
+
+        return new ClusterInstanceGroupImpl(name, platform, templates, nodes, minMemory, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
     }
 }

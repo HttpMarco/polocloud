@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
 import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.services.ClusterServiceProviderImpl;
+import dev.httpmarco.polocloud.node.templates.TemplatesProvider;
 import dev.httpmarco.polocloud.node.terminal.JLineTerminal;
 import dev.httpmarco.polocloud.node.terminal.commands.ClusterCommand;
 import dev.httpmarco.polocloud.node.terminal.commands.GroupCommand;
@@ -30,6 +31,7 @@ public final class Node extends CloudAPI {
     private static Node instance;
 
     private final ClusterProvider clusterProvider;
+    private final TemplatesProvider templatesProvider;
     private final PlatformService platformService;
     private final ClusterGroupProvider groupProvider;
     private final ClusterServiceProviderImpl serviceProvider;
@@ -43,6 +45,7 @@ public final class Node extends CloudAPI {
 
         var nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
 
+        this.templatesProvider = new TemplatesProvider();
         this.clusterProvider = new ClusterProviderImpl(nodeConfig);
         this.moduleProvider = new ModuleProvider();
 

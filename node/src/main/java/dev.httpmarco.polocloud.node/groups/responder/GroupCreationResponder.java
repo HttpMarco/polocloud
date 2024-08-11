@@ -41,6 +41,7 @@ public class GroupCreationResponder {
         // alert on every node the new group
         clusterProvider.broadcastAll(new GroupCreatePacket(
                 name,
+                new String[]{name, "every", "every_server"},
                 nodes,
                 platform,
                 minMemory,
