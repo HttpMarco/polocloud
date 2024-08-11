@@ -1,17 +1,19 @@
 package dev.httpmarco.polocloud.node.platforms.util;
 
 import com.google.gson.*;
-import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.node.platforms.actions.PlatformFileCreationAction;
+import dev.httpmarco.polocloud.node.platforms.actions.PlatformFileUpdateOrCopyAction;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.Set;
 
+@Slf4j
 public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSerializer<Platform> {
 
     public static final PlatformTypeAdapter INSTANCE = new PlatformTypeAdapter();
@@ -47,6 +49,13 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
 
                     for (var fileName : creationData.keySet()) {
                         platform.actions().add(new PlatformFileCreationAction(fileName, creationData.get(fileName).getAsString()));
+                    }
+                } else if (actionId.equalsIgnoreCase("file-update-or-copy")) {
+                    var updateData = actions.get(actionId).getAsJsonObject();
+
+                    for (var key : updateData.keySet()) {
+                        var data = updateData.get(key).getAsJsonObject();
+                        data.keySet().stream().findFirst().ifPresent(element -> platform.actions().add(new PlatformFileUpdateOrCopyAction(key, element, data.get(element).getAsString())));
                     }
                 }
             }

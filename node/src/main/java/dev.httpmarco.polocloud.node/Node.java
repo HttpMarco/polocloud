@@ -40,7 +40,7 @@ public final class Node extends CloudAPI {
     private final ModuleProvider moduleProvider;
 
     // only all properties of this local cluster node instance
-    private final PropertiesPool nodeProperties = new PropertiesPool();
+    private final PropertiesPool nodeProperties;
 
     private final JLineTerminal terminal;
     private final CommandService commandService;
@@ -53,6 +53,7 @@ public final class Node extends CloudAPI {
 
         var nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
 
+        this.nodeProperties = nodeConfig.propertiesPool();
         this.templatesProvider = new TemplatesProvider();
         this.clusterProvider = new ClusterProviderImpl(nodeConfig);
         this.moduleProvider = new ModuleProvider();

@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.properties.PropertiesPoolSerializer;
+import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +25,6 @@ import java.util.*;
 public final class ClusterGroupFactory {
 
     private static final Path GROUP_DIR = Path.of("local/groups");
-    private static final Gson GROUP_GSON = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(PropertiesPool.class, new PropertiesPoolSerializer()).create();
 
     @SneakyThrows
     public void createLocalStorageGroup(@NotNull GroupCreatePacket packet, @NotNull ClusterGroupProvider clusterGroupProvider) {
@@ -44,7 +44,7 @@ public final class ClusterGroupFactory {
         // check every creation, if directory exists
         GROUP_DIR.toFile().mkdirs();
         var groupFile = GROUP_DIR.resolve(group.name() + ".json");
-        Files.writeString(groupFile, GROUP_GSON.toJson(group));
+        Files.writeString(groupFile, JsonUtils.GSON.toJson(group));
 
         Node.instance().templatesProvider().prepareTemplate(group.templates());
 
@@ -75,7 +75,7 @@ public final class ClusterGroupFactory {
         }
 
         for (File file : Objects.requireNonNull(GROUP_DIR.toFile().listFiles())) {
-            groups.add(GROUP_GSON.fromJson(Files.readString(file.toPath()), ClusterGroupImpl.class));
+            groups.add(JsonUtils.GSON.fromJson(Files.readString(file.toPath()), ClusterGroupImpl.class));
         }
         return groups;
     }

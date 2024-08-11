@@ -11,6 +11,11 @@
       "actions": {
         "file-creation": {
           "eula.txt": "eula=true"
+        },
+        "file-update-or-copy": {
+          "server.properties": {
+              "server-port=": "server-port=%port%"
+          }
         }
       },
       "versions": [

@@ -102,7 +102,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 localService.start(processBuilder);
 
             } catch (IOException e) {
-                log.error(e.getMessage());
+                e.printStackTrace();
             }
         });
     }
