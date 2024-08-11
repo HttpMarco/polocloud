@@ -5,8 +5,10 @@ import com.google.gson.GsonBuilder;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.properties.PropertiesPoolSerializer;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +24,7 @@ import java.util.*;
 public final class ClusterGroupFactory {
 
     private static final Path GROUP_DIR = Path.of("local/groups");
-    private static final Gson GROUP_GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GROUP_GSON = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(PropertiesPool.class, new PropertiesPoolSerializer()).create();
 
     @SneakyThrows
     public void createLocalStorageGroup(@NotNull GroupCreatePacket packet, @NotNull ClusterGroupProvider clusterGroupProvider) {
