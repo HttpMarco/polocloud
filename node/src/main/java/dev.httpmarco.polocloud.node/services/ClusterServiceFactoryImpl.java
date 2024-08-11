@@ -113,25 +113,23 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         if (clusterService instanceof ClusterLocalServiceImpl localService) {
             localService.state(ClusterServiceState.STOPPING);
 
-            new Thread(() -> {
-                if (localService.hasProcess()) {
-                    var platform = Node.instance().platformService().platform(localService.group().platform().platform());
+            if (localService.hasProcess()) {
+                var platform = Node.instance().platformService().platform(localService.group().platform().platform());
 
-                    // try with platform command a clean shutdown
-                    localService.executeCommand(platform == null ? Platform.DEFAULT_SHUTDOWN_COMMAND : platform.shutdownCommand());
+                // try with platform command a clean shutdown
+                localService.executeCommand(platform == null ? Platform.DEFAULT_SHUTDOWN_COMMAND : platform.shutdownCommand());
 
-                    try {
-                        if (localService.process().waitFor(PROCESS_TIMEOUT, TimeUnit.SECONDS)) {
-                            localService.process().exitValue();
-                            localService.postShutdownProcess();
-                            return;
-                        }
-                    } catch (InterruptedException ignored) {
+                try {
+                    if (localService.process().waitFor(PROCESS_TIMEOUT, TimeUnit.SECONDS)) {
+                        localService.process().exitValue();
+                        localService.postShutdownProcess();
+                        return;
                     }
-                    localService.process().toHandle().destroyForcibly();
+                } catch (InterruptedException ignored) {
                 }
-                localService.postShutdownProcess();
-            }).start();
+                localService.process().toHandle().destroyForcibly();
+            }
+            localService.postShutdownProcess();
         }
     }
 
