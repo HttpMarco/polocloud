@@ -18,7 +18,7 @@ public class ClusterCommand extends Command {
 
         syntax(context -> {
             if (endpoints.isEmpty()) {
-                log.info("There are no endpoints registered&!");
+                log.info("There are no endpoints registered&8!");
                 return;
             }
 
