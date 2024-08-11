@@ -32,10 +32,7 @@ public final class PlatformFileUpdateOrCopyAction extends AbstractPlatformAction
     public void run(@NotNull ClusterLocalServiceImpl service) {
         var file = service.runningDir().resolve(fileName).toFile();
 
-        log.info("test");
         if (!file.exists()) {
-            log.info("platforms/files/" + fileName);
-            log.info(file.getAbsolutePath());
             FileSystemUtils.copyClassPathFile(this.getClass().getClassLoader(), "platforms/files/" + fileName, file.getAbsolutePath());
         }
 
