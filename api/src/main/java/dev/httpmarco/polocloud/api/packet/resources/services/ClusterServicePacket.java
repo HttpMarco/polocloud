@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Getter
 @Accessors(fluent = true)
-public abstract class AbstractClusterServicePacket extends Packet {
+public class ClusterServicePacket extends Packet {
 
     private ClusterService service;
 

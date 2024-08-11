@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.api.services;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.Sendable;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -43,5 +44,10 @@ public abstract class ClusterServiceProvider implements Sendable<ClusterService>
         buffer.writeInt(value.orderedId());
         buffer.writeString(value.hostname());
         buffer.writeInt(value.port());
+        buffer.writeString(value.runningNode());
+        buffer.writeEnum(value.state());
+
+        // we add also all group information
+        CloudAPI.instance().groupProvider().write(value.group(), buffer);
     }
 }

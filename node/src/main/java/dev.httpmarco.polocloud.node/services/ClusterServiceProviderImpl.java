@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.packet.resources.services.ClusterServicePacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
 import dev.httpmarco.polocloud.api.services.ClusterService;
@@ -8,7 +9,6 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
-import dev.httpmarco.polocloud.node.cluster.LocalNode;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +38,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
             log.info("The service &8'&f{}&8' &7is starting now&8...", packet.service().name());
         });
 
+        localNode.transmit().responder("service-find", property -> new ClusterServicePacket(property.has("id") ? find(property.getUUID("id")) : find(property.getString("name"))));
         localNode.transmit().listen(ServiceShutdownCallPacket.class, (transmit, packet) -> {
             ClusterService service = Node.instance().serviceProvider().find(packet.id());
 
@@ -84,7 +84,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     }
 
     @Override
-    public CompletableFuture<ClusterService> findAsync(String name) {
+    public @NotNull CompletableFuture<ClusterService> findAsync(String name) {
         return CompletableFuture.completedFuture(services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null));
     }
 
