@@ -3,6 +3,9 @@ dependencies {
 
     implementation(project(":instance"))
     implementation(project(":api"))
+
+    implementation(libs.velocity)
+    annotationProcessor(libs.velocity)
 }
 
 tasks.jar {
