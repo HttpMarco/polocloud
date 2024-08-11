@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.ClusterProviderImpl;
 import dev.httpmarco.polocloud.node.commands.CommandService;
@@ -9,6 +10,7 @@ import dev.httpmarco.polocloud.node.commands.CommandServiceImpl;
 import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
 import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
+import dev.httpmarco.polocloud.node.properties.PropertyRegister;
 import dev.httpmarco.polocloud.node.services.ClusterServiceProviderImpl;
 import dev.httpmarco.polocloud.node.templates.TemplatesProvider;
 import dev.httpmarco.polocloud.node.terminal.JLineTerminal;
@@ -37,11 +39,17 @@ public final class Node extends CloudAPI {
     private final ClusterServiceProviderImpl serviceProvider;
     private final ModuleProvider moduleProvider;
 
+    // only all properties of this local cluster node instance
+    private final PropertiesPool nodeProperties = new PropertiesPool();
+
     private final JLineTerminal terminal;
     private final CommandService commandService;
 
     public Node() {
         instance = this;
+
+        //register all local node properties
+        PropertyRegister.register(NodeProperties.PROXY_PORT_START_RANGE, NodeProperties.SERVICE_PORT_START_RANGE, NodeProperties.SERVER_PORT_START_RANGE);
 
         var nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
 

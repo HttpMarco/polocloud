@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node;
 
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
@@ -17,10 +18,14 @@ public final class NodeConfig {
     private final NodeEndpointData localNode;
     private final Set<NodeEndpointData> nodes;
 
+    private final PropertiesPool propertiesPool;
+
     public NodeConfig() {
         this.clusterId = "polocloud-cluster";
         this.clusterToken = StringUtils.randomString(8);
         this.localNode = new NodeEndpointData("node-" + StringUtils.randomString(4), "127.0.0.1", 9090);
         this.nodes = new HashSet<>();
+
+        this.propertiesPool = new PropertiesPool();
     }
 }

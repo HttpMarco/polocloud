@@ -34,6 +34,8 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
 
         if (object.has("startArguments")) {
             platform.startArguments(context.deserialize(object.getAsJsonArray("startArguments"), String[].class));
+        } else {
+            platform.startArguments(new String[0]);
         }
 
         if (object.has("actions")) {

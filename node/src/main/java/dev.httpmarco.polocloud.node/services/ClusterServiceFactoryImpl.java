@@ -96,14 +96,13 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"));
 
                 localService.state(ClusterServiceState.STARTING);
-
                 //todo call update
 
                 // run platform
                 localService.start(processBuilder);
 
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                log.error(e.getMessage());
             }
         });
     }
