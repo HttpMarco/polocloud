@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.node.terminal.commands;
 
-import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.commands.Command;
 import dev.httpmarco.polocloud.node.commands.CommandArgumentType;
@@ -35,9 +34,8 @@ public final class ServiceCommand extends Command {
             var service = it.arg(serviceArgument);
             log.info("Try shutdown of &8'&f{}'&8", service.name());
 
-            synchronized (this) {
-                service.shutdown();
-            }
+            // todo
+            service.shutdown();
         }, serviceArgument, CommandArgumentType.Keyword("shutdown"));
     }
 }
