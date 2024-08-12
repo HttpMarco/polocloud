@@ -12,8 +12,14 @@ public final class PropertiesPoolSerializer implements JsonDeserializer<Properti
     @Contract("_, _, _ -> new")
     @Override
     public @NotNull PropertiesPool deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        //todo
-        return new PropertiesPool();
+        var object = (JsonObject) json;
+        var propertiesPool = new PropertiesPool();
+
+        for (var key : object.keySet()) {
+            var property = PropertyRegister.byName(key);
+            propertiesPool.properties().put(property, context.deserialize(object.get(key), property.clazz()));
+        }
+        return propertiesPool;
     }
 
     @Override

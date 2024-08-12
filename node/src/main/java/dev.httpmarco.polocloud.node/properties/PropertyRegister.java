@@ -21,6 +21,10 @@ public final class PropertyRegister {
         log.debug("Register a new node property: {}", property.name());
     }
 
+    public Property<?> byName(String id) {
+        return properties.stream().filter(it -> it.name().equals(id)).findFirst().orElse(null);
+    }
+
     public int propertiesAmount() {
         return properties.size();
     }
