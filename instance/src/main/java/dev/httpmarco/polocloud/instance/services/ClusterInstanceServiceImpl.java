@@ -1,8 +1,10 @@
 package dev.httpmarco.polocloud.instance.services;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
+import dev.httpmarco.polocloud.instance.ClusterInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -29,7 +31,7 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
 
     @Override
     public void executeCommand(String command) {
-        //todo
+        ClusterInstance.instance().client().sendPacket(new ServiceCommandPacket(id, command));
     }
 
     @Override

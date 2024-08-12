@@ -1,7 +1,9 @@
 package dev.httpmarco.polocloud.node.services;
 
+import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.packet.resources.services.ClusterServicePacket;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
 import dev.httpmarco.polocloud.api.services.ClusterService;
@@ -16,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +42,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
         });
 
         localNode.transmit().responder("service-find", property -> new ClusterServicePacket(property.has("id") ? find(property.getUUID("id")) : find(property.getString("name"))));
+
         localNode.transmit().listen(ServiceShutdownCallPacket.class, (transmit, packet) -> {
             ClusterService service = Node.instance().serviceProvider().find(packet.id());
 
@@ -71,6 +75,22 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
 
             log.info("The service &8'&f{}&8' &7is online&8.", service.name());
         });
+
+        localNode.transmit().listen(ServiceCommandPacket.class, (transmit, packet) -> {
+            var service = find(packet.id());
+
+            if (isServiceChannel(transmit)) {
+                // we know that we get the request from a node
+                // now we can check in the local storage
+                if (service instanceof ClusterLocalServiceImpl localService) {
+                    localService.executeCommand(packet.command());
+                } else {
+                    log.error("A node send a command data for {} , but not a local instance.", packet.id());
+                }
+                return;
+            }
+            Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(packet);
+        });
     }
 
     @Override
@@ -93,4 +113,14 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     public @Nullable ClusterService read(PacketBuffer buffer) {
         return null;
     }
+
+
+    private boolean isServiceChannel(ChannelTransmit transmit) {
+        return this.services.stream().anyMatch(it -> it instanceof ClusterLocalServiceImpl localService && localService.transmit() != null && localService.transmit().equals(transmit));
+    }
+
+    private ClusterService service(ChannelTransmit transmit) {
+        return this.services.stream().filter(it -> it instanceof ClusterLocalServiceImpl localService && localService.transmit() != null && localService.transmit().equals(transmit)).findFirst().orElse(null);
+    }
+
 }
