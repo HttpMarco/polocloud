@@ -108,7 +108,3 @@ public class ExampleModule implements CloudModule {
     }
 }
 ```
-
-//TODO create commands<br>
-//TODO use events
-//TODO dependency

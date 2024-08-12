@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
@@ -47,7 +48,7 @@ public class ClusterServiceImpl implements ClusterService {
 
     @Override
     public void executeCommand(String command) {
-        // todo bridge
+        node().transmit().sendPacket(new ServiceCommandPacket(this.id, command));
     }
 
     @Override
