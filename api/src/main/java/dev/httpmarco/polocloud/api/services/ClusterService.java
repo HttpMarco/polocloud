@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.api.Detail;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ClusterService extends Named, Detail {
@@ -25,6 +26,8 @@ public interface ClusterService extends Named, Detail {
     void executeCommand(String command);
 
     ClusterServiceState state();
+
+    List<String> logs();
 
     void update();
 

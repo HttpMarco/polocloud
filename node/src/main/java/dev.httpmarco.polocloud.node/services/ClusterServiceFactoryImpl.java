@@ -79,10 +79,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + group.platform().platform() + "/" + group.platform().version()), localService.runningDir());
 
                 // create process
-                var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new))
-                        .redirectError(new File("dev.log"))
-                        .redirectOutput(new File("info-dev.log"))
-                        .directory(localService.runningDir().toFile());
+                var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile());
 
                 // send the platform boot jar
                 processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());

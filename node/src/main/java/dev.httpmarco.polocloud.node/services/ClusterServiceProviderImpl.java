@@ -2,10 +2,7 @@ package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
-import dev.httpmarco.polocloud.api.packet.resources.services.ClusterServicePacket;
-import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
-import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
-import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
+import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
@@ -21,8 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 @Log4j2
 @Getter
@@ -32,6 +28,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     private final List<ClusterService> services = new CopyOnWriteArrayList<>();
     private final ClusterServiceFactory factory = new ClusterServiceFactoryImpl();
     private final ClusterServiceQueue clusterServiceQueue = new ClusterServiceQueue();
+
 
     public ClusterServiceProviderImpl() {
         var localNode = Node.instance().clusterProvider().localNode();
@@ -87,6 +84,27 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
             }
             Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(packet);
         });
+
+        localNode.transmit().responder("service-log", property -> {
+            var id = property.getUUID("id");
+            var service = Node.instance().serviceProvider().find(id);
+
+            if (service instanceof ClusterLocalServiceImpl localService) {
+                return new ServiceLogPacket(localService.logs());
+            }
+
+            var future = new CompletableFuture<List<String>>();
+            Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-log", property, ServiceLogPacket.class, packet -> {
+                future.complete(packet.logs());
+            });
+
+            try {
+                return new ServiceLogPacket(future.get(5, TimeUnit.SECONDS));
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     @Override

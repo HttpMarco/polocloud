@@ -6,7 +6,7 @@ import dev.httpmarco.polocloud.node.commands.CommandArgumentType;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class ModuleCommand extends Command {
+public final class ModuleCommand extends Command {
 
     public ModuleCommand() {
         super("module", "Manage your modules", "mod");

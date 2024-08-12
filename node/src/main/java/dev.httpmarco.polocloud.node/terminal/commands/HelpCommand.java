@@ -5,7 +5,7 @@ import dev.httpmarco.polocloud.node.commands.Command;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class HelpCommand extends Command {
+public final class HelpCommand extends Command {
 
     public HelpCommand() {
         super("help", "Help you with all commands", "?");

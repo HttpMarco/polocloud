@@ -6,7 +6,7 @@ import dev.httpmarco.polocloud.node.properties.PropertyRegister;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class InfoCommand extends Command {
+public final class InfoCommand extends Command {
 
     public InfoCommand() {
         super("info", "Displays some information", "me");

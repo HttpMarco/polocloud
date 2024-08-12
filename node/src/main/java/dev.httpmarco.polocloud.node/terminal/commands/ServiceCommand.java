@@ -37,5 +37,16 @@ public final class ServiceCommand extends Command {
             // todo
             service.shutdown();
         }, serviceArgument, CommandArgumentType.Keyword("shutdown"));
+
+
+        syntax(it -> {
+            var service = it.arg(serviceArgument);
+            Node.instance().terminal().clear();
+            log.info("Logs of service {}&8: ", service.name());
+
+            for (var logLine : service.logs()) {
+                log.info(logLine);
+            }
+        }, serviceArgument, CommandArgumentType.Keyword("log"));
     }
 }

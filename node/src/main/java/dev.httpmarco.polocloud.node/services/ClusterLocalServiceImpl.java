@@ -13,10 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -41,6 +44,21 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     @Override
     public void shutdown() {
         Node.instance().serviceProvider().factory().shutdownGroupService(this);
+    }
+
+    @Override
+    @SneakyThrows
+    public @NotNull List<String> logs() {
+        var logs = new ArrayList<String>();
+        var inputStream = this.process.getInputStream();
+
+
+        var bytes = new byte[2048];
+        int length;
+        while (inputStream.available() > 0 && (length = inputStream.read(bytes, 0, bytes.length)) != -1) {
+            logs.addAll(Arrays.asList(new String(bytes, 0, length, StandardCharsets.UTF_8).split("\n")));
+        }
+        return logs;
     }
 
     @SneakyThrows

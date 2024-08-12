@@ -1,19 +1,21 @@
 package dev.httpmarco.polocloud.node.services;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceLogPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @Accessors(fluent = true)
@@ -33,6 +35,14 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     public String details() {
         return "id&8=&7" + id + "&8, &7hostname&8=&7" + hostname + ", &7port&8=&7" + port + "&8, &7node&8=&7" + runningNode;
+    }
+
+    @Override
+    @SneakyThrows
+    public List<String> logs() {
+        var future = new CompletableFuture<List<String>>();
+        node().transmit().request("service-log", new CommunicationProperty().set("id", id), ServiceLogPacket.class, serviceLogPacket -> future.complete(serviceLogPacket.logs()));
+        return future.get(5, TimeUnit.SECONDS);
     }
 
     @Override

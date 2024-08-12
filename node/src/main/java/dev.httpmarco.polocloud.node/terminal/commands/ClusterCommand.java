@@ -5,11 +5,12 @@ import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
 import dev.httpmarco.polocloud.node.commands.Command;
 import dev.httpmarco.polocloud.node.commands.CommandArgumentType;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 
 @Log4j2
-public class ClusterCommand extends Command {
+public final class ClusterCommand extends Command {
 
-    public ClusterCommand(ClusterProvider clusterProvider) {
+    public ClusterCommand(@NotNull ClusterProvider clusterProvider) {
         super("cluster", "Manager your cluster");
 
         var endpoints = clusterProvider.endpoints();

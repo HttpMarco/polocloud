@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -33,6 +34,12 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     @Override
     public void executeCommand(String command) {
         ClusterInstance.instance().client().sendPacket(new ServiceCommandPacket(id, command));
+    }
+
+    @Override
+    public List<String> logs() {
+        // todo
+        return List.of();
     }
 
     @Override
