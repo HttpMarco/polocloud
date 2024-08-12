@@ -35,15 +35,16 @@ public final class GroupCommand extends Command {
         var maxOnlineArgument = CommandArgumentType.Integer("maxOnline");
         var staticService = CommandArgumentType.Boolean("staticService");
 
-        syntax(context -> groupService.create(context.arg(groupIdArgument),
-                        new String[]{clusterService.localNode().data().name()},
-                        new PlatformGroupDisplay(context.arg(platformArgument).platform(), context.arg(platformVersionArgument).version()),
-                        context.arg(minMemoryArgument),
-                        context.arg(maxMemoryArgument),
-                        context.arg(staticService),
-                        context.arg(minOnlineArgument),
-                        context.arg(maxOnlineArgument)
-                ).ifPresentOrElse(s -> log.warn("Cannot create group: {}", s), () -> log.info("Successfully create group {}", context.arg(groupIdArgument)))
+        syntax(context ->
+                        groupService.create(context.arg(groupIdArgument),
+                                new String[]{clusterService.localNode().data().name()},
+                                new PlatformGroupDisplay(context.arg(platformArgument).platform(), context.arg(platformVersionArgument).version(), context.arg(platformArgument).type()),
+                                context.arg(minMemoryArgument),
+                                context.arg(maxMemoryArgument),
+                                context.arg(staticService),
+                                context.arg(minOnlineArgument),
+                                context.arg(maxOnlineArgument)
+                        ).ifPresentOrElse(s -> log.warn("Cannot create group: {}", s), () -> log.info("Successfully create group {}", context.arg(groupIdArgument)))
                 , "Create a new cluster group.",
                 CommandArgumentType.Keyword("create"),
                 groupIdArgument,

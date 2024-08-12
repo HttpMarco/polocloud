@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.services.util;
-
+import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import lombok.experimental.UtilityClass;
 
 import java.net.InetSocketAddress;
@@ -9,7 +10,8 @@ import java.net.ServerSocket;
 @UtilityClass
 public final class ServicePortDetector {
 
-    public int detectServicePort() {
+
+    public int detectServicePort(ClusterGroup group) {
         var serverPort = 30000;
 
         while (isUsed(serverPort)) {

@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.api.Detail;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public record PlatformGroupDisplay(String platform, String version) implements Detail {
+public record PlatformGroupDisplay(String platform, String version, PlatformType type) implements Detail {
 
     @Contract(pure = true)
     @Override

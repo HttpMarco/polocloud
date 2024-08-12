@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.api.packet.resources.group;
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
+import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -47,7 +48,8 @@ public final class GroupCreatePacket extends Packet {
 
         var platform = packetBuffer.readString();
         var version = packetBuffer.readString();
-        this.platformGroupDisplay = new PlatformGroupDisplay(platform, version);
+        var type = packetBuffer.readEnum(PlatformType.class);
+        this.platformGroupDisplay = new PlatformGroupDisplay(platform, version, type);
 
         this.minMemory = packetBuffer.readInt();
         this.maxMemory = packetBuffer.readInt();

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.platforms;
 
+import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.platforms.actions.PlatformAction;
 import lombok.*;
 import lombok.experimental.Accessors;

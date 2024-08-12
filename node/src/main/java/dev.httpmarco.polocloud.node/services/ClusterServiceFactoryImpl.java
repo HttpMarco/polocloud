@@ -36,7 +36,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
     public void runGroupService(ClusterGroup group) {
         var runningNode = Node.instance().clusterProvider().localNode().data();
 
-        var localService = new ClusterLocalServiceImpl(group, generateOrderedId(group), UUID.randomUUID(), ServicePortDetector.detectServicePort(), "0.0.0.0", runningNode.name());
+        var localService = new ClusterLocalServiceImpl(group, generateOrderedId(group), UUID.randomUUID(), ServicePortDetector.detectServicePort(group), "0.0.0.0", runningNode.name());
 
         log.info("The service &8'&f{}&8' &7is starting now&8...", localService.name());
         Node.instance().serviceProvider().services().add(localService);

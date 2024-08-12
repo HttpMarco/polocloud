@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
+import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.groups.requests.GroupCreationRequest;
@@ -113,7 +114,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
         var minOnlineServerInstances = buffer.readInt();
         var maxOnlineServerInstances = buffer.readInt();
         var staticService = buffer.readBoolean();
-        var platform = new PlatformGroupDisplay(buffer.readString(), buffer.readString());
+        var platform = new PlatformGroupDisplay(buffer.readString(), buffer.readString(), buffer.readEnum(PlatformType.class));
         var amountOfNodes = buffer.readInt();
         var nodes = new String[amountOfNodes];
 

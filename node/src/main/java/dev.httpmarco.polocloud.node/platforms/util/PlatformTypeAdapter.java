@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.node.platforms.util;
 import com.google.gson.*;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
-import dev.httpmarco.polocloud.node.platforms.PlatformType;
+import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.node.platforms.actions.PlatformFileCreationAction;
 import dev.httpmarco.polocloud.node.platforms.actions.PlatformFileUpdateOrCopyAction;

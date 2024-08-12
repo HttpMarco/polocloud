@@ -61,6 +61,7 @@ public abstract class ClusterGroupProvider implements Sendable<ClusterGroup> {
 
         buffer.writeString(group.platform().platform());
         buffer.writeString(group.platform().version());
+        buffer.writeEnum(group.platform().type());
 
         buffer.writeInt(group.nodes().length);
         for (var node : group.nodes()) {

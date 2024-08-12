@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
 import dev.httpmarco.polocloud.api.packet.MessageResponsePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
+import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.experimental.UtilityClass;
@@ -36,14 +37,15 @@ public class GroupCreationResponder {
         }
 
         var nodes = JsonUtils.GSON.fromJson(property.getString("nodes"), String[].class);
-        var platform = new PlatformGroupDisplay(property.getString("platform"), property.getString("version"));
+        var platform = Node.instance().platformService().platform(property.getString("platform"));
+        var groupDisplay = new PlatformGroupDisplay(platform.platform(), property.getString("version"), platform.type());
 
         // alert on every node the new group
         clusterProvider.broadcastAll(new GroupCreatePacket(
                 name,
                 new String[]{name, "every", "every_server"},
                 nodes,
-                platform,
+                groupDisplay,
                 minMemory,
                 maxMemory,
                 property.getBoolean("staticService"),
