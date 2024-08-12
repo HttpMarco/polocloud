@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.platforms.actions;
 
 
 import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
+import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -27,6 +28,6 @@ public final class PlatformFileCreationAction extends AbstractPlatformAction {
     @SneakyThrows
     public void run(@NotNull ClusterLocalServiceImpl service) {
         log.debug("Write new file {} for service {} with content&8: {}", fileName, service.name(), content);
-        Files.writeString(service.runningDir().resolve(fileName), content);
+        Files.writeString(service.runningDir().resolve(fileName), content.replaceAll("%forwarding_secret%", StringUtils.randomString(8)));
     }
 }

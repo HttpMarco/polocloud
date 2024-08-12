@@ -42,7 +42,7 @@ public final class PlatformFileUpdateOrCopyAction extends AbstractPlatformAction
             for (var line : lines) {
 
                 if (line.startsWith(key)) {
-                    line = value.replaceAll("%port%", String.valueOf(service.port()))
+                     line = value.replaceAll("%port%", String.valueOf(service.port()))
                             .replaceAll("%hostname%", service.hostname());
                 }
 
