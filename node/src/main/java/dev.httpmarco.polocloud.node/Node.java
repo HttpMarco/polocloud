@@ -35,7 +35,7 @@ public final class Node extends CloudAPI {
     private final ClusterProvider clusterProvider;
     private final TemplatesProvider templatesProvider;
     private final PlatformService platformService;
-    private final ClusterGroupProvider groupProvider;
+    private final ClusterGroupProviderImpl groupProvider;
     private final ClusterServiceProviderImpl serviceProvider;
     private final ModuleProvider moduleProvider;
 

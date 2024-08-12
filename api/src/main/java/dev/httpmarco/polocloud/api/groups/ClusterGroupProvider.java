@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ClusterGroupProvider implements Reloadable, Sendable<ClusterGroup> {
+public abstract class ClusterGroupProvider implements Sendable<ClusterGroup> {
 
     public abstract CompletableFuture<Set<ClusterGroup>> groupsAsync();
 

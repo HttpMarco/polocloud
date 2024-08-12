@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.groups;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Named;
+import dev.httpmarco.polocloud.api.Reloadable;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.*;
@@ -28,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 @Getter
 @Accessors(fluent = true)
-public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
+public final class ClusterGroupProviderImpl extends ClusterGroupProvider implements Reloadable {
 
     private final Set<ClusterGroup> groups;
     private final ClusterProvider clusterProvider;

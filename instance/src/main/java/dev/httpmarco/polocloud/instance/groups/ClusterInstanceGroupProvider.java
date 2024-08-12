@@ -57,11 +57,6 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
         return future;
     }
 
-    @Override
-    public void reload() {
-        // todo
-    }
-
     @Contract("_ -> new")
     @Override
     public @NotNull ClusterGroup read(@NotNull PacketBuffer buffer) {
