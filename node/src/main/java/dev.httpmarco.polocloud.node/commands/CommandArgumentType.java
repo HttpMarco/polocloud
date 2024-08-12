@@ -53,6 +53,11 @@ public final class CommandArgumentType {
     }
 
     @Contract("_ -> new")
+    public @NotNull CommandArgument<String> StringArray(String key) {
+        return new StringArrayArgument(key);
+    }
+
+    @Contract("_ -> new")
     public @NotNull CommandArgument<Boolean> Boolean(String key) {
         return new BooleanArgument(key);
     }

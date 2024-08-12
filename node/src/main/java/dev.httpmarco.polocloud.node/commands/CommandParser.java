@@ -1,10 +1,12 @@
 package dev.httpmarco.polocloud.node.commands;
 
 import dev.httpmarco.polocloud.node.commands.type.KeywordArgument;
+import dev.httpmarco.polocloud.node.commands.type.StringArrayArgument;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +17,6 @@ public class CommandParser {
     public void serializer(@NotNull CommandService commandService, String name, String[] args) {
         // all command with same start name
         List<Command> commands = commandService.commandsByName(name);
-
 
         if (executeCommand(commands, args)) {
             return;
@@ -42,7 +43,7 @@ public class CommandParser {
 
             for (var syntaxCommand : command.commandSyntaxes()) {
 
-                if (args.length != syntaxCommand.arguments().length) {
+                if (args.length != syntaxCommand.arguments().length && Arrays.stream(syntaxCommand.arguments()).noneMatch(it -> it instanceof StringArrayArgument)) {
                     continue;
                 }
 
@@ -55,7 +56,10 @@ public class CommandParser {
                     var argument = syntaxCommand.arguments()[i];
                     var rawInput = args[i];
 
-                    if (argument instanceof KeywordArgument keywordArgument) {
+                    if(argument instanceof StringArrayArgument arrayArgument) {
+                        commandContext.append(arrayArgument, argument.buildResult(String.join(" ", Arrays.copyOfRange(args, i, args.length))));
+                        break;
+                    }else if (argument instanceof KeywordArgument keywordArgument) {
                         if (!keywordArgument.key().equalsIgnoreCase(rawInput)) {
                             provedSyntax = false;
                             break;

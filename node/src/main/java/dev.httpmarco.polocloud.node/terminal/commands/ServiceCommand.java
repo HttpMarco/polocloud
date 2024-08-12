@@ -48,5 +48,15 @@ public final class ServiceCommand extends Command {
                 log.info(logLine);
             }
         }, serviceArgument, CommandArgumentType.Keyword("log"));
+
+
+        var commandArg = CommandArgumentType.StringArray("command");
+        syntax(it -> {
+            var service = it.arg(serviceArgument);
+            var command = it.arg(commandArg);
+
+            service.executeCommand(command);
+            log.info("Successfully execute the command &8'&f{}&8' &7on server&8: &7{}", command, service.name());
+        }, serviceArgument, CommandArgumentType.Keyword("execute"), commandArg);
     }
 }

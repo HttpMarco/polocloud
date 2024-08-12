@@ -85,7 +85,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     @Override
     @SneakyThrows
     public void executeCommand(String command) {
-        if (!hasProcess()) {
+        if (!hasProcess() || command == null || command.isEmpty()) {
             return;
         }
         var writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
