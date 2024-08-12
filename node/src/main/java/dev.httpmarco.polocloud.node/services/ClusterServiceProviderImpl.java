@@ -44,18 +44,14 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
         localNode.transmit().responder("service-find", property -> new ClusterServicePacket(property.has("id") ? find(property.getUUID("id")) : find(property.getString("name"))));
 
         localNode.transmit().listen(ServiceShutdownCallPacket.class, (transmit, packet) -> {
-            ClusterService service = Node.instance().serviceProvider().find(packet.id());
+            var service = Node.instance().serviceProvider().find(packet.id());
 
             if (service == null) {
                 log.error("Tried to shut down a service, but the service is not present in the cluster. {}", packet.id());
                 return;
             }
 
-            if (service instanceof ClusterLocalServiceImpl localService) {
-                localService.shutdown();
-            } else {
-                log.warn("Try to shutdown a service that is not present on this node! {}", service.name());
-            }
+            service.shutdown();
         });
 
         localNode.transmit().listen(ServiceOnlinePacket.class, (transmit, packet) -> {
