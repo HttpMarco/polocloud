@@ -33,6 +33,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     private @Nullable ChannelTransmit transmit;
 
     private final Path runningDir;
+    private final List<String> logs = new ArrayList<>();
 
     public ClusterLocalServiceImpl(ClusterGroup group, int orderedId, UUID id, int port, String hostname, String runningNode) {
         super(group, orderedId, id, port, hostname, runningNode);
@@ -49,10 +50,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     @Override
     @SneakyThrows
     public @NotNull List<String> logs() {
-        var logs = new ArrayList<String>();
         var inputStream = this.process.getInputStream();
-
-
         var bytes = new byte[2048];
         int length;
         while (inputStream.available() > 0 && (length = inputStream.read(bytes, 0, bytes.length)) != -1) {
