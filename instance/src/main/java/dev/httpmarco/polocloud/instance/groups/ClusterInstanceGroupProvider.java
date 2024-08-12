@@ -5,6 +5,7 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCollectionPacket;
+import dev.httpmarco.polocloud.api.packet.resources.group.GroupDeletePacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupExistsResponsePacket;
 import dev.httpmarco.polocloud.api.packet.resources.group.SingleGroupPacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
@@ -35,9 +36,10 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
 
     @Contract(pure = true)
     @Override
-    public @Nullable CompletableFuture<Optional<String>> deleteAsync(String group) {
-        // todo
-        return null;
+    public @NotNull CompletableFuture<Optional<String>> deleteAsync(String group) {
+        var future = new CompletableFuture<Optional<String>>();
+        ClusterInstance.instance().client().request("group-delete", new CommunicationProperty().set("name", group), GroupDeletePacket.class, it -> future.complete(Optional.of(it.content())));
+        return future;
     }
 
     @Contract(pure = true)

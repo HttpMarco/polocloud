@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Getter
@@ -37,6 +38,14 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider {
 
         clusterProvider.localNode().transmit().listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
         clusterProvider.localNode().transmit().listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
+
+        clusterProvider.localNode().transmit().responder("group-delete", property -> {
+            try {
+                return new GroupDeletePacket(GroupDeletionRequest.request(clusterProvider, property.getString("name")).get().get());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         clusterProvider.localNode().transmit().responder("group-finding", property -> new SingleGroupPacket(find(property.getString("name"))));
         clusterProvider.localNode().transmit().responder("group-exists", property -> new GroupExistsResponsePacket(exists(property.getString("name"))));
