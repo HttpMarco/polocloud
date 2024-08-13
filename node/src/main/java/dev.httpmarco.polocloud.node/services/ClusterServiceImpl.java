@@ -1,10 +1,12 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceLogPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
+import dev.httpmarco.polocloud.api.players.ClusterPlayer;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
@@ -20,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Accessors(fluent = true)
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class ClusterServiceImpl implements ClusterService {
 
     private final ClusterGroup group;
@@ -64,6 +67,19 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     public void update() {
         // todo call head node and broadcast this to all nodes
+    }
+
+    @Override
+    public CompletableFuture<Integer> onlinePlayersCountAsync() {
+        return CompletableFuture.completedFuture(onlinePlayers().size());
+    }
+
+    @Override
+    public CompletableFuture<List<ClusterPlayer>> onlinePlayersAsync() {
+        return CompletableFuture.completedFuture(CloudAPI.instance().playerProvider().players()
+                .stream()
+                .filter(it -> it.currentServer() != null && it.currentServer().id().equals(id) || it.currentProxy().id().equals(id))
+                .toList());
     }
 
     public NodeEndpoint node() {

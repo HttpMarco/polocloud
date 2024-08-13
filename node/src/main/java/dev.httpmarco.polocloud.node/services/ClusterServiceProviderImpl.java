@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.FallbackClusterGroup;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
@@ -18,8 +19,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Log4j2
@@ -134,26 +134,31 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     @Override
     public @NotNull CompletableFuture<List<ClusterService>> findAsync(@NotNull ClusterServiceFilter filter) {
         return CompletableFuture.completedFuture((switch (filter) {
-            //todo
-            case EMPTY_SERVICES -> services.stream();
-            //todo
-            case PLAYERS_PRESENT_SERVERS -> services.stream();
-            //todo
-            case FULL_SERVICES -> services.stream();
+            case EMPTY_SERVICES -> services.stream().filter(ClusterService::isEmpty);
+            case PLAYERS_PRESENT_SERVERS -> services.stream().filter(service -> !service.isEmpty());
             case SAME_NODE_SERVICES -> services.stream().filter(it -> Node.instance().clusterProvider().localNode().data().name().equals(it.runningNode()));
             case FALLBACKS -> services.stream().filter(service -> service.group().fallback());
             case PROXIES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.PROXY);
             case SERVERS -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER);
             case SERVICES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER_MASTER);
-            //todo
-            case LOWEST_FALLBACK -> services.stream().filter(service -> service.group().fallback());
+            case LOWEST_FALLBACK -> services.stream().filter(service -> service.group().fallback()).min(Comparator.comparingInt(ClusterService::onlinePlayersCount)).stream();
         }).toList());
     }
 
     @Contract(pure = true)
     @Override
-    public @Nullable ClusterService read(PacketBuffer buffer) {
-        return null;
+    public @NotNull ClusterService read(@NotNull PacketBuffer buffer) {
+        var id = buffer.readUniqueId();
+        var orderedId = buffer.readInt();
+        var hostname = buffer.readString();
+        var port = buffer.readInt();
+        var runningNode = buffer.readString();
+        var state = buffer.readEnum(ClusterServiceState.class);
+
+        // we add also all group information
+        var group = CloudAPI.instance().groupProvider().read(buffer);
+
+        return new ClusterServiceImpl(group, orderedId, id, port, hostname, runningNode, state);
     }
 
     public boolean isServiceChannel(ChannelTransmit transmit) {
