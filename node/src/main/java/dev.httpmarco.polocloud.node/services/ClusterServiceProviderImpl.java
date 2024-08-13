@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
@@ -67,6 +68,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
             }
 
             log.info("The service &8'&f{}&8' &7is online&8.", service.name());
+            Node.instance().eventProvider().factory().call(new ServiceOnlineEvent(service));
         });
 
         localNode.transmit().listen(ServiceCommandPacket.class, (transmit, packet) -> {
@@ -128,13 +130,11 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
         return null;
     }
 
-
-    private boolean isServiceChannel(ChannelTransmit transmit) {
+    public boolean isServiceChannel(ChannelTransmit transmit) {
         return this.services.stream().anyMatch(it -> it instanceof ClusterLocalServiceImpl localService && localService.transmit() != null && localService.transmit().equals(transmit));
     }
 
-    private ClusterService service(ChannelTransmit transmit) {
+    public ClusterService find(ChannelTransmit transmit) {
         return this.services.stream().filter(it -> it instanceof ClusterLocalServiceImpl localService && localService.transmit() != null && localService.transmit().equals(transmit)).findFirst().orElse(null);
     }
-
 }
