@@ -13,8 +13,10 @@ import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
-import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.velocity.listener.PlayerDisconnectListener;
+import dev.httpmarco.polocloud.plugin.velocity.listener.PostLoginListener;
+import dev.httpmarco.polocloud.plugin.velocity.listener.ServerConnectedListener;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,12 +50,16 @@ public final class VelocityPlatformBootstrap {
             server.getServer(event.service().name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo()));
         });
 
-        // todo add filter
+        // todo add filter and check state
         for (var service : CloudAPI.instance().serviceProvider().services()) {
             if (service.group().platform().type() == PlatformType.SERVER) {
                 server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(service.hostname(), service.port())));
             }
         }
+
+        server.getEventManager().register(this, new PostLoginListener());
+        server.getEventManager().register(this, new ServerConnectedListener());
+        server.getEventManager().register(this, new PlayerDisconnectListener());
     }
 
     @Subscribe(order = PostOrder.LAST)
