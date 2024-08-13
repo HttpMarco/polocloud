@@ -20,6 +20,7 @@ import dev.httpmarco.polocloud.node.terminal.commands.ClusterCommand;
 import dev.httpmarco.polocloud.node.terminal.commands.GroupCommand;
 import dev.httpmarco.polocloud.node.terminal.commands.ServiceCommand;
 import dev.httpmarco.polocloud.node.util.Configurations;
+import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -75,12 +76,15 @@ public final class Node extends CloudAPI {
         // start cluster and check other node
         this.clusterProvider.initialize();
 
+        // set cluster proxy token or sync with head
+        this.serviceProvider.serviceProxyToken(Node.instance().clusterProvider().localHead() ? StringUtils.randomString(8) : "TODO");
+
         // load all Modules
         this.moduleProvider.loadAllUnloadedModules();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> NodeShutdown.nodeShutdown(false)));
 
-        log.info("Cluster node boot successfully &8(&7Took {}ms&8)", System.currentTimeMillis() - Long.parseLong(System.getProperty("startup")));
+        Node.log.info("Cluster node boot successfully &8(&7Took {}ms&8)", System.currentTimeMillis() - Long.parseLong(System.getProperty("startup")));
 
         this.terminal.allowInput();
         this.serviceProvider.clusterServiceQueue().start();

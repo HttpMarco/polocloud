@@ -11,7 +11,9 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncUnregisterServicePacket;
+import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
@@ -27,6 +29,8 @@ import java.util.concurrent.*;
 @Accessors(fluent = true)
 public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
 
+    @Setter
+    private String serviceProxyToken;
     private final List<ClusterService> services = new CopyOnWriteArrayList<>();
     private final ClusterServiceFactory factory = new ClusterServiceFactoryImpl();
     private final ClusterServiceQueue clusterServiceQueue = new ClusterServiceQueue();
@@ -109,7 +113,6 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
         });
 
         localNode.transmit().listen(ClusterSyncUnregisterServicePacket.class, (transmit, packet) -> Node.instance().serviceProvider().services().removeIf(service -> service.id().equals(packet.id())));
-
     }
 
     @Override
