@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+
 import java.nio.file.Files;
 
 @Slf4j
@@ -19,7 +20,7 @@ public final class PlatformFileCreationAction extends AbstractPlatformAction {
     private final String content;
 
     public PlatformFileCreationAction(String fileName, String content) {
-        super("file-creation");
+        super("GENERATE_NEW_FILE");
         this.fileName = fileName;
         this.content = content;
     }
@@ -28,6 +29,12 @@ public final class PlatformFileCreationAction extends AbstractPlatformAction {
     @SneakyThrows
     public void run(@NotNull ClusterLocalServiceImpl service) {
         log.debug("Write new file {} for service {} with content&8: {}", fileName, service.name(), content);
-        Files.writeString(service.runningDir().resolve(fileName), content.replaceAll("%forwarding_secret%", Node.instance().serviceProvider().serviceProxyToken()));
+
+        if (!Files.exists(service.runningDir().resolve(fileName))) {
+            //todo check velo support
+
+            service.runningDir().resolve(fileName).getParent().toFile().mkdirs();
+            Files.writeString(service.runningDir().resolve(fileName), content.replaceAll("%forwarding_secret%", Node.instance().serviceProvider().serviceProxyToken()).replaceAll("%velocity_use%", "true"));
+        }
     }
 }

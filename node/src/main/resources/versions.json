@@ -9,12 +9,13 @@
         "-nogui"
       ],
       "actions": {
-        "file-creation": {
-          "eula.txt": "eula=true"
+        "GENERATE_NEW_FILE": {
+          "eula.txt": "eula=true",
+          "config/paper-global.yml": "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
         },
-        "file-update-or-copy": {
+        "UPDATE_OR_COPY_FILE": {
           "server.properties": {
-              "server-port=": "server-port=%port%"
+            "server-port=": "server-port=%port%"
           }
         }
       },
@@ -35,7 +36,7 @@
       "platform": "velocity",
       "type": "PROXY",
       "actions": {
-        "file-creation": {
+        "GENERATE_NEW_FILE": {
           "forwarding.secret": "%forwarding_secret%"
         },
         "file-update-or-copy": {

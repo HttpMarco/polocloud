@@ -21,7 +21,7 @@ public final class PlatformFileUpdateOrCopyAction extends AbstractPlatformAction
     private final String value;
 
     public PlatformFileUpdateOrCopyAction(String fileName, String key, String value) {
-        super("file-update-or-copy");
+        super("UPDATE_OR_COPY_FILE");
         this.fileName = fileName;
         this.key = key;
         this.value = value;
