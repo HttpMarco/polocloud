@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
+import dev.httpmarco.polocloud.api.event.EventPoolRegister;
+import dev.httpmarco.polocloud.api.event.EventSubscribePool;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
@@ -35,6 +37,8 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     private final Path runningDir;
     private final List<String> logs = new ArrayList<>();
 
+    private final EventSubscribePool eventSubscribePool = new EventSubscribePool(this.name());
+
     public ClusterLocalServiceImpl(ClusterGroup group, int orderedId, UUID id, int port, String hostname, String runningNode) {
         super(group, orderedId, id, port, hostname, runningNode);
 
@@ -61,6 +65,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
 
     @SneakyThrows
     public void start(@NotNull ProcessBuilder builder) {
+        builder.redirectError(new File("Test" + id()));
         this.process = builder.start();
 
         this.processTracking = new Thread(() -> {
@@ -115,6 +120,9 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
             DirectoryActions.delete(runningDir);
             Files.deleteIfExists(runningDir);
         }
+
+        // unregister event pool
+        EventPoolRegister.remove(eventSubscribePool);
 
         log.info("The service &8'&f{}&8' &7is stopped now&8!", name());
         Node.instance().serviceProvider().services().remove(this);

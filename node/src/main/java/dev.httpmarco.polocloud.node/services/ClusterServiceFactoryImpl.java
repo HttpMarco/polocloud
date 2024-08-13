@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.services;
 
+import dev.httpmarco.polocloud.api.event.impl.services.ServiceStartEvent;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
@@ -37,6 +38,8 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         var runningNode = Node.instance().clusterProvider().localNode().data();
 
         var localService = new ClusterLocalServiceImpl(group, generateOrderedId(group), UUID.randomUUID(), ServicePortDetector.detectServicePort(group), "0.0.0.0", runningNode.name());
+
+        Node.instance().eventProvider().factory().call(new ServiceStartEvent(localService));
 
         log.info("The service &8'&f{}&8' &7is starting now&8...", localService.name());
         Node.instance().serviceProvider().services().add(localService);
