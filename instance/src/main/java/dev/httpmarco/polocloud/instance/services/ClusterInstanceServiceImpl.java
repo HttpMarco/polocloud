@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.instance.services;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
+import dev.httpmarco.polocloud.api.players.ClusterPlayer;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
@@ -12,6 +13,7 @@ import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @AllArgsConstructor
 @Getter
@@ -45,6 +47,18 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     @Override
     public void update() {
         //todo
+    }
+
+    @Override
+    public CompletableFuture<Integer> onlinePlayersCountAsync() {
+        //todo
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<List<ClusterPlayer>> onlinePlayersAsync() {
+        //todo
+        return null;
     }
 
     @Override
