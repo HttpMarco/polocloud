@@ -1,13 +1,16 @@
 package dev.httpmarco.polocloud.api.players;
 
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.Sendable;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ClusterPlayerProvider {
+public abstract class ClusterPlayerProvider implements Sendable<ClusterPlayer> {
 
     public abstract CompletableFuture<Integer> playersCountAsync();
 
@@ -16,6 +19,14 @@ public abstract class ClusterPlayerProvider {
     public abstract CompletableFuture<ClusterPlayer> findAsync(UUID uuid);
 
     public abstract CompletableFuture<ClusterPlayer> findAsync(String name);
+
+    @Override
+    public void write(@NotNull ClusterPlayer value, @NotNull PacketBuffer buffer) {
+        buffer.writeString(value.name());
+        buffer.writeUniqueId(value.uniqueId());
+        buffer.writeString(value.currentServerName());
+        buffer.writeString(value.currentProxyName());
+    }
 
     @SneakyThrows
     public ClusterPlayer find(String name) {

@@ -1,8 +1,9 @@
 package dev.httpmarco.polocloud.node.players;
 
-import dev.httpmarco.polocloud.api.packet.resources.player.PlayerRegisterPacket;
-import dev.httpmarco.polocloud.api.packet.resources.player.PlayerServiceChangePacket;
-import dev.httpmarco.polocloud.api.packet.resources.player.PlayerUnregisterPacket;
+import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.packet.IntPacket;
+import dev.httpmarco.polocloud.api.packet.resources.player.*;
+import dev.httpmarco.polocloud.api.packet.resources.services.ClusterServicePacket;
 import dev.httpmarco.polocloud.api.players.ClusterPlayer;
 import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.services.ClusterService;
@@ -11,6 +12,7 @@ import dev.httpmarco.polocloud.node.NodeProperties;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -69,6 +71,10 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
             }
             playersPool.remove(packet.uuid());
         });
+
+        Node.instance().clusterProvider().localNode().transmit().responder("player-all", property -> new PlayerCollectionPacket(players()));
+        Node.instance().clusterProvider().localNode().transmit().responder("player-count", property -> new IntPacket(playersCount()));
+        Node.instance().clusterProvider().localNode().transmit().responder("player-find", property -> new PlayerPacket(property.has("uuid") ? find(property.getUUID("uuid")) : find(property.getString("name"))));
     }
 
     @Override
@@ -89,5 +95,14 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
     @Override
     public @NotNull CompletableFuture<ClusterPlayer> findAsync(String name) {
         return CompletableFuture.completedFuture(this.playersPool.values().stream().filter(it -> it.name().equals(name)).findFirst().orElse(null));
+    }
+
+    @Contract("_ -> new")
+    @Override
+    public @NotNull ClusterPlayer read(@NotNull PacketBuffer buffer) {
+        return new ClusterPlayerImpl(buffer.readString(),
+                buffer.readUniqueId(),
+                Node.instance().serviceProvider().find(buffer.readString()),
+                Node.instance().serviceProvider().find(buffer.readString()));
     }
 }

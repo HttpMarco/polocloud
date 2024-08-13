@@ -26,6 +26,12 @@ public final class ClusterPlayerImpl extends AbstractClusterPlayer {
         this.currentProxy = currentProxy;
     }
 
+    public ClusterPlayerImpl(String name, UUID uniqueId, ClusterService currentProxy, @Nullable ClusterService currentServer) {
+        super(name, uniqueId, currentServer.name(), currentProxy.name());
+        this.currentProxy = currentProxy;
+        this.currentServer = currentServer;
+    }
+
     @Override
     public String currentProxyName() {
         return this.currentProxy.name();
