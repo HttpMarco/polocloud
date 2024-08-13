@@ -30,4 +30,9 @@ public final class Property<T> implements Named {
     public static @NotNull Property<Integer> ofInteger(String id) {
         return new Property<>(id, Integer.class);
     }
+
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Property<Boolean> ofBoolean(String id) {
+        return new Property<>(id, Boolean.class);
+    }
 }
