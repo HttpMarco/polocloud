@@ -32,4 +32,8 @@ public interface ClusterGroup extends Named, Detail {
 
     PropertiesPool properties();
 
+    default boolean fallback() {
+        return this instanceof FallbackClusterGroup;
+    }
+
 }
