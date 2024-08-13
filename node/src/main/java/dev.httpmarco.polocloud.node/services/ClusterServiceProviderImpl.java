@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
+import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncUnregisterServicePacket;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -106,6 +107,8 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
                 throw new RuntimeException(e);
             }
         });
+
+        localNode.transmit().listen(ClusterSyncUnregisterServicePacket.class, (transmit, packet) -> Node.instance().serviceProvider().services().removeIf(service -> service.id().equals(packet.id())));
 
     }
 

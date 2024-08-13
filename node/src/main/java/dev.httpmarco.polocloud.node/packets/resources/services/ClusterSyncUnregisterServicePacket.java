@@ -1,14 +1,11 @@
 package dev.httpmarco.polocloud.node.packets.resources.services;
 
-import dev.httpmarco.polocloud.api.packet.AbstractStringComponentPacket;
+import dev.httpmarco.polocloud.api.packet.resources.services.AbstractClusterServiceIdPacket;
+import java.util.UUID;
 
-public final class ClusterSyncUnregisterServicePacket extends AbstractStringComponentPacket {
+public final class ClusterSyncUnregisterServicePacket extends AbstractClusterServiceIdPacket {
 
-    public ClusterSyncUnregisterServicePacket(String serviceId) {
-        super(serviceId);
-    }
-
-    public String serviceId() {
-        return this.content();
+    public ClusterSyncUnregisterServicePacket(UUID id) {
+        super(id);
     }
 }

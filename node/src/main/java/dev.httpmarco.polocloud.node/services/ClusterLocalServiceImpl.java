@@ -3,9 +3,12 @@ package dev.httpmarco.polocloud.node.services;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.api.event.EventPoolRegister;
 import dev.httpmarco.polocloud.api.event.EventSubscribePool;
+import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppedEvent;
+import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncUnregisterServicePacket;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.Getter;
 import lombok.Setter;
@@ -76,6 +79,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
             }
 
             if (state() != ClusterServiceState.STOPPING) {
+                Node.instance().eventProvider().factory().call(new ServiceStoppingEvent(this));
                 state(ClusterServiceState.STOPPING);
                 if (process != null) {
                     this.process.exitValue();
@@ -125,7 +129,11 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
         EventPoolRegister.remove(eventSubscribePool);
 
         log.info("The service &8'&f{}&8' &7is stopped now&8!", name());
-        Node.instance().serviceProvider().services().remove(this);
+
+        // alert the event before remove it from the local cache
+        Node.instance().eventProvider().factory().call(new ServiceStoppedEvent(this));
+
+        Node.instance().clusterProvider().broadcastAll(new ClusterSyncUnregisterServicePacket(id()));
     }
 
     public boolean hasProcess() {

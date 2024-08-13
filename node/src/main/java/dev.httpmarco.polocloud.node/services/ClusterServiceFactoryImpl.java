@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStartEvent;
+import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
@@ -15,8 +16,6 @@ import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -111,6 +110,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
     public void shutdownGroupService(ClusterService clusterService) {
         if (clusterService instanceof ClusterLocalServiceImpl localService) {
             localService.state(ClusterServiceState.STOPPING);
+            Node.instance().eventProvider().factory().call(new ServiceStoppingEvent(clusterService));
 
             if (localService.hasProcess()) {
                 var platform = Node.instance().platformService().platform(localService.group().platform().platform());
