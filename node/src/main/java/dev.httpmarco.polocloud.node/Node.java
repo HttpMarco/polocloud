@@ -42,7 +42,7 @@ public final class Node extends CloudAPI {
     private final PlatformService platformService;
     private final ClusterGroupProviderImpl groupProvider;
     private final ClusterServiceProviderImpl serviceProvider;
-    private final ClusterPlayerProvider playerProvider;
+    private final ClusterPlayerProviderImpl playerProvider;
     private final ModuleProvider moduleProvider;
 
     // only all properties of this local cluster node instance
