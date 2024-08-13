@@ -14,11 +14,11 @@ import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.velocity.listener.PlayerChooseInitialServerListener;
 import dev.httpmarco.polocloud.plugin.velocity.listener.PlayerDisconnectListener;
 import dev.httpmarco.polocloud.plugin.velocity.listener.PostLoginListener;
 import dev.httpmarco.polocloud.plugin.velocity.listener.ServerConnectedListener;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
 
@@ -36,6 +36,12 @@ public final class VelocityPlatformBootstrap {
 
     @Subscribe(order = PostOrder.FIRST)
     public void prepareProxy(ProxyInitializeEvent proxyEvent) {
+
+        server.getEventManager().register(this, new PostLoginListener());
+        server.getEventManager().register(this, new ServerConnectedListener());
+        server.getEventManager().register(this, new PlayerDisconnectListener());
+        server.getEventManager().register(this, new PlayerChooseInitialServerListener(this.server));
+
         for (var registered : this.server.getAllServers()) {
             this.server.unregisterServer(registered.getServerInfo());
         }
@@ -56,19 +62,10 @@ public final class VelocityPlatformBootstrap {
                 server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(service.hostname(), service.port())));
             }
         }
-
-        server.getEventManager().register(this, new PostLoginListener());
-        server.getEventManager().register(this, new ServerConnectedListener());
-        server.getEventManager().register(this, new PlayerDisconnectListener());
     }
 
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialize(ProxyInitializeEvent event) {
         ClusterInstance.instance().client().sendPacket(new ServiceOnlinePacket(ClusterInstance.instance().selfServiceId()));
-    }
-
-    @Subscribe
-    public void onPlayerChooseInitialServer(@NotNull PlayerChooseInitialServerEvent event) {
-        event.setInitialServer(server.getAllServers().stream().findFirst().orElse(null));
     }
 }
