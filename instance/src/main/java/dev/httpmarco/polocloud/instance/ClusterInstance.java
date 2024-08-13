@@ -4,10 +4,13 @@ import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
+import dev.httpmarco.polocloud.api.players.ClusterPlayer;
+import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.instance.events.EventProviderImpl;
 import dev.httpmarco.polocloud.instance.groups.ClusterInstanceGroupProvider;
+import dev.httpmarco.polocloud.instance.players.ClusterPlayerProviderImpl;
 import dev.httpmarco.polocloud.instance.services.ClusterInstanceServiceProvider;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -28,6 +31,7 @@ public final class ClusterInstance extends CloudAPI {
     private final EventProviderImpl eventProvider;
     private final ClusterInstanceGroupProvider groupProvider = new ClusterInstanceGroupProvider();
     private final ClusterServiceProvider serviceProvider = new ClusterInstanceServiceProvider();
+    private final ClusterPlayerProvider playerProvider = new ClusterPlayerProviderImpl();
     private final CommunicationClient client;
 
     @SneakyThrows

@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
-import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.ClusterProviderImpl;
@@ -12,6 +12,7 @@ import dev.httpmarco.polocloud.node.events.EventProviderImpl;
 import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
 import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
+import dev.httpmarco.polocloud.node.players.ClusterPlayerProviderImpl;
 import dev.httpmarco.polocloud.node.properties.PropertyRegister;
 import dev.httpmarco.polocloud.node.services.ClusterServiceProviderImpl;
 import dev.httpmarco.polocloud.node.templates.TemplatesProvider;
@@ -41,6 +42,7 @@ public final class Node extends CloudAPI {
     private final PlatformService platformService;
     private final ClusterGroupProviderImpl groupProvider;
     private final ClusterServiceProviderImpl serviceProvider;
+    private final ClusterPlayerProvider playerProvider;
     private final ModuleProvider moduleProvider;
 
     // only all properties of this local cluster node instance
@@ -69,6 +71,7 @@ public final class Node extends CloudAPI {
         this.platformService = new PlatformService();
         this.groupProvider = new ClusterGroupProviderImpl(clusterProvider);
         this.serviceProvider = new ClusterServiceProviderImpl();
+        this.playerProvider = new ClusterPlayerProviderImpl();
 
         // register provider commands
         this.commandService.registerCommands(new GroupCommand(), new ServiceCommand(), new ClusterCommand(this.clusterProvider));
