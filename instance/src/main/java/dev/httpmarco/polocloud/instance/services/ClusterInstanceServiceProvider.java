@@ -5,15 +5,11 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.packet.resources.services.ClusterServicePacket;
-import dev.httpmarco.polocloud.api.services.ClusterService;
-import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
-import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
-import dev.httpmarco.polocloud.api.services.ClusterServiceState;
+import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCollectionPacket;
+import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -22,8 +18,10 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
 
     @Contract(pure = true)
     @Override
-    public @Nullable CompletableFuture<List<ClusterService>> servicesAsync() {
-        return null;
+    public @NotNull CompletableFuture<List<ClusterService>> servicesAsync() {
+        var future = new CompletableFuture<List<ClusterService>>();
+        ClusterInstance.instance().client().request("service-all", ServiceCollectionPacket.class, packet -> future.complete(packet.services()));
+        return future;
     }
 
     @Override
@@ -34,6 +32,13 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
     @Override
     public @NotNull CompletableFuture<ClusterService> findAsync(String name) {
         return findService("name", name);
+    }
+
+    @Override
+    public @NotNull CompletableFuture<List<ClusterService>> findAsync(ClusterServiceFilter filter) {
+        var future = new CompletableFuture<List<ClusterService>>();
+        ClusterInstance.instance().client().request("service-filtering", new CommunicationProperty().set("filter", filter), ServiceCollectionPacket.class, packet -> future.complete(packet.services()));
+        return future;
     }
 
     @Override

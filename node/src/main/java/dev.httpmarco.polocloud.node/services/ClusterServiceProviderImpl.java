@@ -3,15 +3,13 @@ package dev.httpmarco.polocloud.node.services;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
+import dev.httpmarco.polocloud.api.groups.FallbackClusterGroup;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
-import dev.httpmarco.polocloud.api.services.ClusterService;
-import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
-import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
-import dev.httpmarco.polocloud.api.services.ClusterServiceState;
+import dev.httpmarco.polocloud.api.platforms.PlatformType;
+import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncUnregisterServicePacket;
-import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -112,6 +110,9 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
             }
         });
 
+        localNode.transmit().responder("service-all", property -> new ServiceCollectionPacket(services));
+        localNode.transmit().responder("service-filtering", property -> new ServiceCollectionPacket(find(property.getEnum("filter", ClusterServiceFilter.class))));
+
         localNode.transmit().listen(ClusterSyncUnregisterServicePacket.class, (transmit, packet) -> Node.instance().serviceProvider().services().removeIf(service -> service.id().equals(packet.id())));
     }
 
@@ -128,6 +129,25 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     @Override
     public @NotNull CompletableFuture<ClusterService> findAsync(String name) {
         return CompletableFuture.completedFuture(services.stream().filter(it -> it.name().equals(name)).findFirst().orElse(null));
+    }
+
+    @Override
+    public @NotNull CompletableFuture<List<ClusterService>> findAsync(@NotNull ClusterServiceFilter filter) {
+        return CompletableFuture.completedFuture((switch (filter) {
+            //todo
+            case EMPTY_SERVICES -> services.stream();
+            //todo
+            case PLAYERS_PRESENT_SERVERS -> services.stream();
+            //todo
+            case FULL_SERVICES -> services.stream();
+            case SAME_NODE_SERVICES -> services.stream().filter(it -> Node.instance().clusterProvider().localNode().data().name().equals(it.runningNode()));
+            case FALLBACKS -> services.stream().filter(service -> service.group().fallback());
+            case PROXIES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.PROXY);
+            case SERVERS -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER);
+            case SERVICES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER_MASTER);
+            //todo
+            case LOWEST_FALLBACK -> services.stream().filter(service -> service.group().fallback());
+        }).toList());
     }
 
     @Contract(pure = true)

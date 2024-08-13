@@ -35,6 +35,12 @@ public abstract class ClusterServiceProvider implements Sendable<ClusterService>
 
     public abstract CompletableFuture<ClusterService> findAsync(String name);
 
+    @SneakyThrows
+    public List<ClusterService> find(ClusterServiceFilter filter) {
+        return findAsync(filter).get(5, TimeUnit.SECONDS);
+    }
+
+    public abstract CompletableFuture<List<ClusterService>> findAsync(ClusterServiceFilter filter);
 
     public abstract ClusterServiceFactory factory();
 
