@@ -26,14 +26,11 @@ public final class JLineCommandReadingThread extends Thread {
 
     @Override
     public void run() {
-
-        var prompt = TerminalColorUtil.replaceColorCodes("&9" + localNodeImpl.localNode().name() + "&8@&7cloud &8» &7");
-
         while (!isInterrupted()) {
             try {
                 try {
                     try {
-                        var rawLine = terminal.lineReader().readLine(prompt).trim();
+                        var rawLine = terminal.lineReader().readLine( TerminalColorUtil.replaceColorCodes(terminal.hasSetup() ? "&8» &7" : "&9" + localNodeImpl.localNode().name() + "&8@&7cloud &8» &7")).trim();
 
                         if (rawLine.isEmpty()) {
                             continue;
@@ -46,6 +43,11 @@ public final class JLineCommandReadingThread extends Thread {
 
                                 if(rawLine.equalsIgnoreCase("exit")) {
                                     terminal.setup().exit();
+                                    continue;
+                                }
+
+                                if(rawLine.equalsIgnoreCase("back")) {
+                                    terminal.setup().previousQuestion();
                                     continue;
                                 }
 

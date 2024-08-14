@@ -17,7 +17,7 @@ public final class GroupSetup extends Setup {
                 it -> Arrays.stream(Node.instance().platformService().platforms()).map(Platform::platform).toList(),
                 rawInput -> Node.instance().platformService().exists(rawInput.first()));
 
-        question("platform", "Select a version&8?",
+        question("version", "Select a version&8?",
                 it -> Node.instance().platformService().platform(it.get("platform"))
                         .versions()
                         .stream().map(PlatformVersion::version).toList(),

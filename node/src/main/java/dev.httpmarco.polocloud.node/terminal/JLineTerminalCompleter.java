@@ -23,6 +23,21 @@ public final class JLineTerminalCompleter implements Completer {
         var commandService = Node.instance().commandService();
 
         if (parsedLine.wordIndex() == 0) {
+
+            if (Node.instance().terminal().hasSetup()) {
+
+                for (var input : Node.instance().terminal().setup().possibleAnswers()) {
+                    list.add(new Candidate(input));
+                }
+
+                list.add(new Candidate("exit"));
+
+                if (Node.instance().terminal().setup().index() > 0) {
+                    list.add(new Candidate("back"));
+                }
+                return;
+            }
+
             // we only display the command names -> not aliases
 
             for (var command : commandService.commands()) {
@@ -35,6 +50,10 @@ public final class JLineTerminalCompleter implements Completer {
                         .filter(it -> !parsedLine.word().isEmpty() && it.startsWith(parsedLine.word()))
                         .forEach(alias -> list.add(new Candidate(alias)));
             }
+            return;
+        }
+
+        if (Node.instance().terminal().hasSetup()) {
             return;
         }
 

@@ -33,7 +33,7 @@ public abstract class Setup implements Named {
 
     public void displayQuestion(String remark) {
         var terminal = Node.instance().terminal();
-        terminal.updatePrompt("&8»");
+        terminal.updatePrompt("&8» &7");
         terminal.clear();
 
         var question = question();
@@ -43,6 +43,10 @@ public abstract class Setup implements Named {
             terminal.printLine("&ePossible answers: " + String.join(", ", question.possibleAnswers().apply(answers)));
         }
 
+        if(answers.containsKey(question.answerKey())) {
+            terminal.printLine("&7The previous response was&8: &f" + answers.get(question.answerKey()));
+        }
+
         if (remark != null) {
             terminal.printLine(remark);
         }
@@ -50,7 +54,7 @@ public abstract class Setup implements Named {
         // we write an empty placeholder
         terminal.printLine(" ");
         terminal.printLine(" ");
-        terminal.printLine("If you want to exit the setup&8, &7you need to enter &8'&7exit&8'.");
+        terminal.printLine("Enter &8'&7exit&8' &7for leave the setup or enter &8'&7back&8' &7for see the previous question&8!");
     }
 
     public void displayQuestion() {
@@ -63,6 +67,9 @@ public abstract class Setup implements Named {
         displayQuestion();
     }
 
+    public List<String> possibleAnswers() {
+        return this.question().possibleAnswers().apply(answers);
+    }
 
     public SetupQuestion question() {
         return questions().get(index);
@@ -83,6 +90,15 @@ public abstract class Setup implements Named {
             return;
         }
         this.displayQuestion();
+    }
+
+    public void previousQuestion() {
+        if(index == 0) {
+            displayQuestion();
+            return;
+        }
+        index--;
+        displayQuestion();
     }
 
     public void exit() {
