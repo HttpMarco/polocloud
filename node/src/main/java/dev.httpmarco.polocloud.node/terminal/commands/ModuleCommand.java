@@ -13,7 +13,7 @@ public final class ModuleCommand extends Command {
 
         var moduleProvider = Node.instance().moduleProvider();
 
-        var moduleIdArgument = CommandArgumentType.ModuleArgument(moduleProvider, "id");
+        var moduleIdArgument = CommandArgumentType.ModuleArgument("id");
 
         syntax(context -> {
             var module = context.arg(moduleIdArgument);
