@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
 import dev.httpmarco.polocloud.api.packet.MessageResponsePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
+import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
@@ -43,7 +44,7 @@ public class GroupCreationResponder {
         // alert on every node the new group
         clusterProvider.broadcastAll(new GroupCreatePacket(
                 name,
-                new String[]{name, "every", "every_server"},
+                new String[]{name, "every", groupDisplay.type().defaultTemplateSpace()},
                 nodes,
                 groupDisplay,
                 minMemory,
