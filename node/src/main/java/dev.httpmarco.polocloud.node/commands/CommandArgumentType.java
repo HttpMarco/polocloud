@@ -38,16 +38,16 @@ public final class CommandArgumentType {
         return new PlayerArgument(key);
     }
 
-    public @NotNull CommandArgument<Platform> Platform(PlatformService platformService, String key) {
-        return new PlatformArgument(key, platformService);
+    public @NotNull CommandArgument<Platform> Platform(String key) {
+        return new PlatformArgument(key);
     }
 
     public @NotNull <E extends Enum<E>> CommandArgument<E> Enum(Class<E> enumClass, String key) {
         return new EnumArgument<>(enumClass, key);
     }
 
-    public @NotNull CommandArgument<NodeEndpoint> NodeEndpoint(ClusterProvider clusterProvider, String key) {
-        return new NodeEndpointArgument(key, clusterProvider);
+    public @NotNull CommandArgument<NodeEndpoint> NodeEndpoint(String key) {
+        return new NodeEndpointArgument(key);
     }
 
     @Contract("_ -> new")

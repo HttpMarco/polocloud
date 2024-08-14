@@ -14,8 +14,7 @@ public final class ClusterCommand extends Command {
         super("cluster", "Manager your cluster");
 
         var endpoints = clusterProvider.endpoints();
-
-        var nodeArgument = CommandArgumentType.NodeEndpoint(clusterProvider, "node");
+        var nodeArgument = CommandArgumentType.NodeEndpoint("node");
 
         syntax(context -> {
             if (endpoints.isEmpty()) {

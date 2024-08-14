@@ -27,7 +27,7 @@ public final class GroupCommand extends Command {
             groupService.groups().forEach(group -> log.info("&8- &f{}&8: (&7{}&8)", group.name(), group.details()));
         }, "List all registered groups&8.", CommandArgumentType.Keyword("list"));
 
-        var platformArgument = CommandArgumentType.Platform(platformService, "platform");
+        var platformArgument = CommandArgumentType.Platform("platform");
         var platformVersionArgument = CommandArgumentType.PlatformVersion("version");
         var minMemoryArgument = CommandArgumentType.Integer("minMemory");
         var maxMemoryArgument = CommandArgumentType.Integer("maxMemory");
