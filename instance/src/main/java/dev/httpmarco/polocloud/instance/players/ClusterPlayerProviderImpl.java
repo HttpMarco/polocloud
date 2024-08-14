@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.instance.players;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.packet.BooleanPacket;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerPacket;
@@ -18,15 +19,17 @@ import java.util.concurrent.CompletableFuture;
 public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
 
     @Override
-    public CompletableFuture<Boolean> onlineAsync(UUID uuid) {
-        //todo
-        return null;
+    public @NotNull CompletableFuture<Boolean> onlineAsync(UUID uuid) {
+        var future = new CompletableFuture<Boolean>();
+        ClusterInstance.instance().client().request("player-online", new CommunicationProperty().set("uuid", uuid), BooleanPacket.class, packet -> future.complete(packet.value()));
+        return future;
     }
 
     @Override
-    public CompletableFuture<Boolean> onlineAsync(String name) {
-        //todo
-        return null;
+    public @NotNull CompletableFuture<Boolean> onlineAsync(String name) {
+        var future = new CompletableFuture<Boolean>();
+        ClusterInstance.instance().client().request("player-online", new CommunicationProperty().set("name", name), BooleanPacket.class, packet -> future.complete(packet.value()));
+        return future;
     }
 
     @Override

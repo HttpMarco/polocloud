@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.players;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.packet.BooleanPacket;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.*;
 import dev.httpmarco.polocloud.api.players.ClusterPlayer;
@@ -73,6 +74,7 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
         Node.instance().clusterProvider().localNode().transmit().responder("player-all", property -> new PlayerCollectionPacket(players()));
         Node.instance().clusterProvider().localNode().transmit().responder("player-count", property -> new IntPacket(playersCount()));
         Node.instance().clusterProvider().localNode().transmit().responder("player-find", property -> new PlayerPacket(property.has("uuid") ? find(property.getUUID("uuid")) : find(property.getString("name"))));
+        Node.instance().clusterProvider().localNode().transmit().responder("player-online", property -> new BooleanPacket(property.has("uuid") ? online(property.getUUID("uuid")) : online(property.getString("name"))));
     }
 
     @Override
