@@ -13,7 +13,7 @@ public final class PlayerCommand extends Command {
 
         syntax(commandContext -> {
             var playerProvider = Node.instance().playerProvider();
-            log.info("Following &b{} &7groups are loaded&8:", playerProvider.players().size());
+            log.info("Following &b{} &7players are online&8:", playerProvider.players().size());
             playerProvider.players().forEach(player -> log.info("&8- &f{}&8: (&7{}&8)", player.name(), player.details()));
         }, CommandArgumentType.Keyword("list"));
 

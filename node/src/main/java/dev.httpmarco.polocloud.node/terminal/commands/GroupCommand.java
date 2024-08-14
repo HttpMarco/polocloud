@@ -1,11 +1,11 @@
 package dev.httpmarco.polocloud.node.terminal.commands;
 
-import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.commands.Command;
 import dev.httpmarco.polocloud.node.commands.CommandArgumentType;
 import dev.httpmarco.polocloud.node.groups.ClusterGroupEditFields;
+import dev.httpmarco.polocloud.node.terminal.setup.impl.GroupSetup;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -15,11 +15,8 @@ public final class GroupCommand extends Command {
         super("group", "Manage or create your cluster groups", "groups");
 
         var groupService = Node.instance().groupProvider();
-        var platformService = Node.instance().platformService();
-        var clusterService = Node.instance().clusterProvider();
 
         // argument for group name
-        var groupIdArgument = CommandArgumentType.Text("name");
         var groupArgument = CommandArgumentType.ClusterGroup("group");
 
         syntax(context -> {
@@ -27,38 +24,9 @@ public final class GroupCommand extends Command {
             groupService.groups().forEach(group -> log.info("&8- &f{}&8: (&7{}&8)", group.name(), group.details()));
         }, "List all registered groups&8.", CommandArgumentType.Keyword("list"));
 
-        var platformArgument = CommandArgumentType.Platform("platform");
-        var platformVersionArgument = CommandArgumentType.PlatformVersion("version");
-        var minMemoryArgument = CommandArgumentType.Integer("minMemory");
-        var maxMemoryArgument = CommandArgumentType.Integer("maxMemory");
-        var minOnlineArgument = CommandArgumentType.Integer("minOnline");
-        var maxOnlineArgument = CommandArgumentType.Integer("maxOnline");
-        var staticService = CommandArgumentType.Boolean("staticService");
+        syntax(context -> new GroupSetup().run(), "Create a new cluster group.", CommandArgumentType.Keyword("create"));
 
-        syntax(context ->
-                        groupService.create(context.arg(groupIdArgument),
-                                new String[]{clusterService.localNode().data().name()},
-                                new PlatformGroupDisplay(context.arg(platformArgument).platform(), context.arg(platformVersionArgument).version(), context.arg(platformArgument).type()),
-                                context.arg(minMemoryArgument),
-                                context.arg(maxMemoryArgument),
-                                context.arg(staticService),
-                                context.arg(minOnlineArgument),
-                                context.arg(maxOnlineArgument)
-                        ).ifPresentOrElse(s -> log.warn("Cannot create group: {}", s), () -> log.info("Successfully create group {}", context.arg(groupIdArgument)))
-                , "Create a new cluster group.",
-                CommandArgumentType.Keyword("create"),
-                groupIdArgument,
-                platformArgument,
-                platformVersionArgument,
-                minMemoryArgument,
-                maxMemoryArgument,
-                staticService,
-                minOnlineArgument,
-                maxOnlineArgument
-        );
-
-        syntax(context ->
-                groupService.delete(context.arg(groupArgument).name())
+        syntax(context -> groupService.delete(context.arg(groupArgument).name())
                         .ifPresentOrElse(
                                 s -> log.warn("Cannot delete group: {}", s),
                                 () -> log.info("Successfully delete group {} in cluster!", context.arg(groupArgument).name())

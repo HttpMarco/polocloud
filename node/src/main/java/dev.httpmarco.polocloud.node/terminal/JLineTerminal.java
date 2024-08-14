@@ -3,15 +3,19 @@ package dev.httpmarco.polocloud.node.terminal;
 import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.node.NodeConfig;
 import dev.httpmarco.polocloud.node.logging.Log4j2Stream;
+import dev.httpmarco.polocloud.node.terminal.setup.Setup;
 import dev.httpmarco.polocloud.node.terminal.util.TerminalColorUtil;
 import dev.httpmarco.polocloud.node.terminal.util.TerminalHeader;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Nullable;
 import org.jline.jansi.Ansi;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
@@ -24,8 +28,11 @@ import java.nio.charset.StandardCharsets;
 public final class JLineTerminal implements Closeable {
 
     private final Terminal terminal;
-    private final LineReader lineReader;
+    private final LineReaderImpl lineReader;
     private final JLineCommandReadingThread commandReadingThread;
+
+    @Setter
+    private @Nullable Setup setup;
 
     @SneakyThrows
     public JLineTerminal(NodeConfig config) {
@@ -36,7 +43,7 @@ public final class JLineTerminal implements Closeable {
                 .jansi(true)
                 .build();
 
-        this.lineReader = LineReaderBuilder.builder()
+        this.lineReader = (LineReaderImpl) LineReaderBuilder.builder()
                 .terminal(terminal)
                 .completer(new JLineTerminalCompleter())
 
@@ -88,5 +95,13 @@ public final class JLineTerminal implements Closeable {
     @SneakyThrows
     public void close() {
         this.terminal.close();
+    }
+
+    public void updatePrompt(String prompt) {
+        this.lineReader.setPrompt(TerminalColorUtil.replaceColorCodes(prompt));
+    }
+
+    public boolean hasSetup() {
+        return this.setup != null;
     }
 }

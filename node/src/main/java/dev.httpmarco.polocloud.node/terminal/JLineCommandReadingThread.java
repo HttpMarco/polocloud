@@ -42,7 +42,17 @@ public final class JLineCommandReadingThread extends Thread {
                         final var line = rawLine.split(" ");
 
                         if (line.length > 0) {
-                            Node.instance().commandService().call(line[0], Arrays.copyOfRange(line, 1, line.length));
+                            if (terminal.hasSetup()) {
+
+                                if(rawLine.equalsIgnoreCase("exit")) {
+                                    terminal.setup().exit();
+                                    continue;
+                                }
+
+                                terminal.setup().answer(rawLine);
+                            } else {
+                                Node.instance().commandService().call(line[0], Arrays.copyOfRange(line, 1, line.length));
+                            }
                         }
                     } catch (EndOfFileException ignore) {
                     }
