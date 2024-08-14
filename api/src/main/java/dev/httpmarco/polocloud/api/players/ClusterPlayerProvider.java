@@ -12,6 +12,10 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class ClusterPlayerProvider implements Sendable<ClusterPlayer> {
 
+    public abstract CompletableFuture<Boolean> onlineAsync(UUID uuid);
+
+    public abstract CompletableFuture<Boolean> onlineAsync(String name);
+
     public abstract CompletableFuture<Integer> playersCountAsync();
 
     public abstract CompletableFuture<List<ClusterPlayer>> playersAsync();
@@ -36,6 +40,16 @@ public abstract class ClusterPlayerProvider implements Sendable<ClusterPlayer> {
     @SneakyThrows
     public ClusterPlayer find(UUID uuid) {
         return findAsync(uuid).get(5, TimeUnit.SECONDS);
+    }
+
+    @SneakyThrows
+    public boolean online(String name) {
+        return onlineAsync(name).get(5, TimeUnit.SECONDS);
+    }
+
+    @SneakyThrows
+    public boolean online(UUID uuid) {
+        return onlineAsync(uuid).get(5, TimeUnit.SECONDS);
     }
 
     @SneakyThrows

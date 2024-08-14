@@ -20,7 +20,7 @@ public final class GroupCommand extends Command {
 
         // argument for group name
         var groupIdArgument = CommandArgumentType.Text("name");
-        var groupArgument = CommandArgumentType.ClusterGroup(groupService, "group");
+        var groupArgument = CommandArgumentType.ClusterGroup("group");
 
         syntax(context -> {
             log.info("Following &b{} &7groups are loaded&8:", groupService.groups().size());

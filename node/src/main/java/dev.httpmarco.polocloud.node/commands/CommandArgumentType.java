@@ -1,14 +1,13 @@
 package dev.httpmarco.polocloud.node.commands;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.players.ClusterPlayer;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
 import dev.httpmarco.polocloud.node.commands.specific.*;
 import dev.httpmarco.polocloud.node.commands.type.*;
-import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.node.module.LoadedModule;
-import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
@@ -19,12 +18,12 @@ import org.jetbrains.annotations.NotNull;
 @UtilityClass
 public final class CommandArgumentType {
 
-    public @NotNull CommandArgument<LoadedModule> ModuleArgument(ModuleProvider moduleProvider, String key) {
-        return new ModuleArgument(key, moduleProvider);
+    public @NotNull CommandArgument<LoadedModule> ModuleArgument(String key) {
+        return new ModuleArgument(key);
     }
 
-    public @NotNull CommandArgument<ClusterGroup> ClusterGroup(ClusterGroupProvider groupService, String key) {
-        return new GroupArgument(key, groupService);
+    public @NotNull CommandArgument<ClusterGroup> ClusterGroup(String key) {
+        return new GroupArgument(key);
     }
 
     public @NotNull CommandArgument<ClusterService> ClusterService(String key) {
@@ -33,6 +32,10 @@ public final class CommandArgumentType {
 
     public @NotNull CommandArgument<PlatformVersion> PlatformVersion(String key) {
         return new PlatformBindVersionArgument(key);
+    }
+
+    public @NotNull CommandArgument<ClusterPlayer> Player(String key) {
+        return new PlayerArgument(key);
     }
 
     public @NotNull CommandArgument<Platform> Platform(PlatformService platformService, String key) {

@@ -18,6 +18,18 @@ import java.util.concurrent.CompletableFuture;
 public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
 
     @Override
+    public CompletableFuture<Boolean> onlineAsync(UUID uuid) {
+        //todo
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> onlineAsync(String name) {
+        //todo
+        return null;
+    }
+
+    @Override
     public @NotNull CompletableFuture<Integer> playersCountAsync() {
         var future = new CompletableFuture<Integer>();
         ClusterInstance.instance().client().request("player-count", IntPacket.class, packet -> future.complete(packet.value()));
