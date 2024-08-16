@@ -78,7 +78,7 @@ public final class ClusterGroupFactory {
         }
 
         for (File file : Objects.requireNonNull(GROUP_DIR.toFile().listFiles())) {
-            groups.add(JsonUtils.GSON.fromJson(Files.readString(file.toPath()), ClusterGroupImpl.class));
+            groups.add(JsonUtils.GSON.fromJson(Files.readString(file.toPath()), ClusterGroup.class));
         }
         return groups;
     }

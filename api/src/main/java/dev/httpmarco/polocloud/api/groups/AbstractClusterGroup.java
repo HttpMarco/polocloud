@@ -31,7 +31,13 @@ public abstract class AbstractClusterGroup implements ClusterGroup {
 
     @Override
     public String details() {
-        return "platform&8=&7" + platform.details() + "&8, &7nodes&8=&7" + Arrays.toString(nodes) + ", &7minMemory&8=&7" + minMemory + "&8, &7maxMemory&8=&7" + maxMemory + "&8, &7static&8=&7" + staticService;
+        var defaultDetail = "platform&8=&7" + platform.details() + "&8, &7nodes&8=&7" + Arrays.toString(nodes) + ", &7minMemory&8=&7" + minMemory + "&8, &7maxMemory&8=&7" + maxMemory + "&8, &7static&8=&7" + staticService;
+
+        if(this instanceof FallbackClusterGroup) {
+            defaultDetail += " &8--fallback";
+        }
+
+        return defaultDetail;
     }
 
     @Override
