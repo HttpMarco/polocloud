@@ -134,6 +134,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
     @Override
     public @NotNull CompletableFuture<List<ClusterService>> findAsync(@NotNull ClusterServiceFilter filter) {
         return CompletableFuture.completedFuture((switch (filter) {
+            case ONLINE_SERVICES -> services.stream().filter(service -> service.state() == ClusterServiceState.ONLINE);
             case EMPTY_SERVICES -> services.stream().filter(ClusterService::isEmpty);
             case PLAYERS_PRESENT_SERVERS -> services.stream().filter(service -> !service.isEmpty());
             case SAME_NODE_SERVICES -> services.stream().filter(it -> Node.instance().clusterProvider().localNode().data().name().equals(it.runningNode()));

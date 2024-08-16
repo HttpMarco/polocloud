@@ -9,6 +9,8 @@ public enum ClusterServiceFilter {
     FALLBACKS,
     LOWEST_FALLBACK,
 
+    ONLINE_SERVICES,
+
     PROXIES,
     SERVICES,
     SERVERS

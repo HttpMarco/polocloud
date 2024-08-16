@@ -13,6 +13,7 @@ import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
+import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.velocity.listener.PlayerChooseInitialServerListener;
 import dev.httpmarco.polocloud.plugin.velocity.listener.PlayerDisconnectListener;
@@ -56,8 +57,7 @@ public final class VelocityPlatformBootstrap {
             server.getServer(event.service().name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo()));
         });
 
-        // todo add filter and check state
-        for (var service : CloudAPI.instance().serviceProvider().services()) {
+        for (var service : CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.ONLINE_SERVICES)) {
             if (service.group().platform().type() == PlatformType.SERVER) {
                 server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(service.hostname(), service.port())));
             }
