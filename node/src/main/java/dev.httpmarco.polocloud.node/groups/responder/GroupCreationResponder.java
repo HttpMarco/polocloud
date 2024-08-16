@@ -51,7 +51,8 @@ public class GroupCreationResponder {
                 maxMemory,
                 property.getBoolean("staticService"),
                 property.getInteger("minOnline"),
-                property.getInteger("maxOnline"))
+                property.getInteger("maxOnline"),
+                property.has("fallback") && property.getBoolean("fallback"))
         );
 
         return MessageResponsePacket.success();

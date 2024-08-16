@@ -25,6 +25,7 @@ public final class GroupCreatePacket extends Packet {
     private boolean staticService;
     private int minOnline;
     private int maxOnline;
+    private boolean fallbackGroup;
 
     @Override
     public void read(@NotNull PacketBuffer packetBuffer) {
@@ -56,7 +57,7 @@ public final class GroupCreatePacket extends Packet {
         this.staticService = packetBuffer.readBoolean();
         this.minOnline = packetBuffer.readInt();
         this.maxOnline = packetBuffer.readInt();
-
+        this.fallbackGroup = packetBuffer.readBoolean();
     }
 
     @Override
@@ -82,5 +83,6 @@ public final class GroupCreatePacket extends Packet {
         packetBuffer.writeBoolean(staticService);
         packetBuffer.writeInt(minOnline);
         packetBuffer.writeInt(maxOnline);
+        packetBuffer.writeBoolean(fallbackGroup);
     }
 }

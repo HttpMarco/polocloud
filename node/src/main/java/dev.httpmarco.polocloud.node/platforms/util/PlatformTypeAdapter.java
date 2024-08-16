@@ -44,13 +44,13 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
             var actions = object.getAsJsonObject("actions");
 
             for (var actionId : actions.keySet()) {
-                if (actionId.equalsIgnoreCase("file-creation")) {
+                if (actionId.equalsIgnoreCase("GENERATE_NEW_FILE")) {
                     var creationData = actions.get(actionId).getAsJsonObject();
 
                     for (var fileName : creationData.keySet()) {
                         platform.actions().add(new PlatformFileCreationAction(fileName, creationData.get(fileName).getAsString()));
                     }
-                } else if (actionId.equalsIgnoreCase("file-update-or-copy")) {
+                } else if (actionId.equalsIgnoreCase("FILE_UPDATE_OR_COPY")) {
                     var updateData = actions.get(actionId).getAsJsonObject();
 
                     for (var key : updateData.keySet()) {

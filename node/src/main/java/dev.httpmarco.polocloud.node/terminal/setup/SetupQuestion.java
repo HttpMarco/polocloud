@@ -18,7 +18,6 @@ public final class SetupQuestion {
     private String answerKey;
     private String question;
     private final Function<Map<String, String>, List<String>> possibleAnswers;
-
     private @Nullable Function<Pair<String, Map<String, String>>, Boolean> predicate;
 
 }

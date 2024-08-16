@@ -40,6 +40,9 @@ public final class ClusterGroupFactory {
                 packet.maxOnline()
         );
 
+        if (packet.fallbackGroup()) {
+            group = new ClusterGroupFallbackImpl(group);
+        }
 
         // check every creation, if directory exists
         GROUP_DIR.toFile().mkdirs();

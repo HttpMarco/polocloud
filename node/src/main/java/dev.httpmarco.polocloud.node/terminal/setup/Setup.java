@@ -7,11 +7,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Getter
 @Accessors(fluent = true)
@@ -31,6 +29,8 @@ public abstract class Setup implements Named {
         this.questions.add(new SetupQuestion(answerKey, question, stringStringMap -> List.of(), prediction));
     }
 
+    public abstract void complete(Map<String, String> context);
+
     public void displayQuestion(String remark) {
         var terminal = Node.instance().terminal();
         terminal.updatePrompt("&8» &7");
@@ -40,10 +40,10 @@ public abstract class Setup implements Named {
         terminal.printLine("&b" + name + " &8- &7Question &8(&7" + (index + 1) + "&8/&7" + questions.size() + "&8) &7" + question.question());
 
         if (!question.possibleAnswers().apply(answers).isEmpty()) {
-            terminal.printLine("&ePossible answers: " + String.join(", ", question.possibleAnswers().apply(answers)));
+            terminal.printLine("&7Possible answers&8: &f" + String.join("&8, &f", question.possibleAnswers().apply(answers)));
         }
 
-        if(answers.containsKey(question.answerKey())) {
+        if (answers.containsKey(question.answerKey())) {
             terminal.printLine("&7The previous response was&8: &f" + answers.get(question.answerKey()));
         }
 
@@ -52,7 +52,6 @@ public abstract class Setup implements Named {
         }
 
         // we write an empty placeholder
-        terminal.printLine(" ");
         terminal.printLine(" ");
         terminal.printLine("Enter &8'&7exit&8' &7for leave the setup or enter &8'&7back&8' &7for see the previous question&8!");
     }
@@ -85,6 +84,7 @@ public abstract class Setup implements Named {
         answers.put(question().answerKey(), answer);
 
         index++;
+
         if (index >= questions.size()) {
             exit();
             return;
@@ -93,7 +93,7 @@ public abstract class Setup implements Named {
     }
 
     public void previousQuestion() {
-        if(index == 0) {
+        if (index == 0) {
             displayQuestion();
             return;
         }
@@ -102,9 +102,8 @@ public abstract class Setup implements Named {
     }
 
     public void exit() {
-        Node.instance().terminal().clear();
-        //todo add a result builder
         Node.instance().terminal().setup(null);
+        Node.instance().terminal().clear();
+        complete(this.answers);
     }
-
 }

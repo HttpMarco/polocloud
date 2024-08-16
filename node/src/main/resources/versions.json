@@ -13,7 +13,7 @@
           "eula.txt": "eula=true",
           "config/paper-global.yml": "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
         },
-        "UPDATE_OR_COPY_FILE": {
+        "FILE_UPDATE_OR_COPY": {
           "server.properties": {
             "server-port=": "server-port=%port%"
           }
@@ -39,7 +39,7 @@
         "GENERATE_NEW_FILE": {
           "forwarding.secret": "%forwarding_secret%"
         },
-        "file-update-or-copy": {
+        "FILE_UPDATE_OR_COPY": {
           "velocity.toml": {
             "bind": "bind = \"%hostname%:%port%\""
           }
