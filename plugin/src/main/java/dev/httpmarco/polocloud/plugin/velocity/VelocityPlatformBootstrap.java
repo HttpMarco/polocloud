@@ -15,10 +15,7 @@ import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
-import dev.httpmarco.polocloud.plugin.velocity.listener.PlayerChooseInitialServerListener;
-import dev.httpmarco.polocloud.plugin.velocity.listener.PlayerDisconnectListener;
-import dev.httpmarco.polocloud.plugin.velocity.listener.PostLoginListener;
-import dev.httpmarco.polocloud.plugin.velocity.listener.ServerConnectedListener;
+import dev.httpmarco.polocloud.plugin.velocity.listener.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
@@ -41,6 +38,7 @@ public final class VelocityPlatformBootstrap {
         server.getEventManager().register(this, new PostLoginListener());
         server.getEventManager().register(this, new ServerConnectedListener());
         server.getEventManager().register(this, new PlayerDisconnectListener());
+        server.getEventManager().register(this, new ServerKickListener(this.server));
         server.getEventManager().register(this, new PlayerChooseInitialServerListener(this.server));
 
         for (var registered : this.server.getAllServers()) {
