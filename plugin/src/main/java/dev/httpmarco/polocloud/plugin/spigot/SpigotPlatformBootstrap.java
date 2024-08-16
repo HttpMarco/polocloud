@@ -10,9 +10,4 @@ public final class SpigotPlatformBootstrap extends JavaPlugin {
     public void onEnable() {
         ClusterInstance.instance().client().sendPacket(new ServiceOnlinePacket(ClusterInstance.instance().selfServiceId()));
     }
-
-    @Override
-    public void onDisable() {
-
-    }
 }

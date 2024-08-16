@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +93,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 var pluginDir = localService.runningDir().resolve("plugins");
                 pluginDir.toFile().mkdirs();
 
-                Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"));
+                Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
 
                 localService.state(ClusterServiceState.STARTING);
                 localService.update();

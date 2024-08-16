@@ -57,6 +57,7 @@
       "platform": "bungeecord",
       "type": "PROXY",
       "actions": {},
+      "shutdownCommand": "end",
       "versions": [
         {
           "version": "latest",

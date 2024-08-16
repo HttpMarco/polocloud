@@ -45,7 +45,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     public ClusterLocalServiceImpl(ClusterGroup group, int orderedId, UUID id, int port, String hostname, String runningNode) {
         super(group, orderedId, id, port, hostname, runningNode);
 
-        this.runningDir = Path.of("running/" + name() + "-" + id);
+        this.runningDir = group.staticService() ? Path.of("static/" + group.name() + "-" + orderedId) : Path.of("running/" + name() + "-" + id);
         this.runningDir.toFile().mkdirs();
     }
 
@@ -121,9 +121,11 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
             this.processTracking = null;
         }
 
-        synchronized (this) {
-            DirectoryActions.delete(runningDir);
-            Files.deleteIfExists(runningDir);
+        if (!group().staticService()) {
+            synchronized (this) {
+                DirectoryActions.delete(runningDir);
+                Files.deleteIfExists(runningDir);
+            }
         }
 
         // unregister event pool
