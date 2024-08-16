@@ -1,10 +1,13 @@
 package dev.httpmarco.polocloud.node.services;
 
+import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.groups.FallbackClusterGroup;
+import dev.httpmarco.polocloud.api.packet.IntPacket;
+import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.api.services.*;
@@ -99,9 +102,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
             }
 
             var future = new CompletableFuture<List<String>>();
-            Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-log", property, ServiceLogPacket.class, packet -> {
-                future.complete(packet.logs());
-            });
+            Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-log", property, ServiceLogPacket.class, packet -> future.complete(packet.logs()));
 
             try {
                 return new ServiceLogPacket(future.get(5, TimeUnit.SECONDS));
@@ -110,10 +111,25 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
             }
         });
 
+        localNode.transmit().responder("service-players-count", property -> {
+            var service = find(property.getUUID("id"));
+
+            if (service instanceof ClusterLocalServiceImpl) {
+                return new IntPacket(service.onlinePlayersCount());
+            }
+
+            var future = new CommunicationFuture<Integer>();
+            Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-players-count", property, IntPacket.class, packet -> future.complete(packet.value()));
+            return new IntPacket((future.sync(-1)));
+        });
+
+        localNode.transmit().responder("service-players", property -> new PlayerCollectionPacket(find(property.getUUID("id")).onlinePlayers()));
         localNode.transmit().responder("service-all", property -> new ServiceCollectionPacket(services));
         localNode.transmit().responder("service-filtering", property -> new ServiceCollectionPacket(find(property.getEnum("filter", ClusterServiceFilter.class))));
 
         localNode.transmit().listen(ClusterSyncUnregisterServicePacket.class, (transmit, packet) -> Node.instance().serviceProvider().services().removeIf(service -> service.id().equals(packet.id())));
+
+
     }
 
     @Override
@@ -137,12 +153,14 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
             case ONLINE_SERVICES -> services.stream().filter(service -> service.state() == ClusterServiceState.ONLINE);
             case EMPTY_SERVICES -> services.stream().filter(ClusterService::isEmpty);
             case PLAYERS_PRESENT_SERVERS -> services.stream().filter(service -> !service.isEmpty());
-            case SAME_NODE_SERVICES -> services.stream().filter(it -> Node.instance().clusterProvider().localNode().data().name().equals(it.runningNode()));
+            case SAME_NODE_SERVICES ->
+                    services.stream().filter(it -> Node.instance().clusterProvider().localNode().data().name().equals(it.runningNode()));
             case FALLBACKS -> services.stream().filter(service -> service.group().fallback());
             case PROXIES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.PROXY);
             case SERVERS -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER);
             case SERVICES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER_MASTER);
-            case LOWEST_FALLBACK -> services.stream().filter(service -> service.group().fallback()).min(Comparator.comparingInt(ClusterService::onlinePlayersCount)).stream();
+            case LOWEST_FALLBACK ->
+                    services.stream().filter(service -> service.group().fallback()).min(Comparator.comparingInt(ClusterService::onlinePlayersCount)).stream();
         }).toList());
     }
 
