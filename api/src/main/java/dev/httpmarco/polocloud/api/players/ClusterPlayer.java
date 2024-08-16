@@ -34,4 +34,17 @@ public interface ClusterPlayer extends Named, Detail {
     default String details() {
         return "uniqueId&8=&7" + uniqueId() + "&8, &7current proxy&8=&7" + currentProxyName() + ", &7 current server&8=&7" + currentServerName();
     }
+
+    void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut);
+
+    void sendTitle(String title, String subtitle);
+
+    void sendMessage(String message);
+
+    void sendActionBar(String message);
+
+    void connect(ClusterService service);
+
+    void connect(String serviceId);
+
 }

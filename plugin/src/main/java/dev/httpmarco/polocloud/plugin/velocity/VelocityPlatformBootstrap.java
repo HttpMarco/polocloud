@@ -6,17 +6,22 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
+import dev.httpmarco.polocloud.api.packet.resources.player.PlayerActionBarPacket;
+import dev.httpmarco.polocloud.api.packet.resources.player.PlayerMessagePacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.velocity.listener.*;
 import lombok.extern.slf4j.Slf4j;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.net.InetSocketAddress;
 
@@ -54,6 +59,10 @@ public final class VelocityPlatformBootstrap {
         CloudAPI.instance().eventProvider().listen(ServiceStoppingEvent.class, event -> {
             server.getServer(event.service().name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo()));
         });
+
+        ClusterInstance.instance().client().listen(PlayerMessagePacket.class, (transmit, packet) -> server.getPlayer(packet.uuid()).ifPresent(player -> player.sendMessage(MiniMessage.miniMessage().deserialize(packet.message()))));
+        ClusterInstance.instance().client().listen(PlayerActionBarPacket.class, (transmit, packet) -> server.getPlayer(packet.uuid()).ifPresent(player -> player.sendActionBar(MiniMessage.miniMessage().deserialize(packet.message()))));
+
 
         for (var service : CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.ONLINE_SERVICES)) {
             if (service.group().platform().type() == PlatformType.SERVER) {

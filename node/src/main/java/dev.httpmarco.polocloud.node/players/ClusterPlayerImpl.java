@@ -1,7 +1,11 @@
 package dev.httpmarco.polocloud.node.players;
 
+import dev.httpmarco.polocloud.api.packet.resources.player.PlayerActionBarPacket;
+import dev.httpmarco.polocloud.api.packet.resources.player.PlayerMessagePacket;
 import dev.httpmarco.polocloud.api.players.AbstractClusterPlayer;
 import dev.httpmarco.polocloud.api.services.ClusterService;
+import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -50,5 +54,47 @@ public final class ClusterPlayerImpl extends AbstractClusterPlayer {
     @Override
     public CompletableFuture<ClusterService> currentServerAsync() {
         return CompletableFuture.completedFuture(currentServer);
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle) {
+
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        //todo duplicated code
+        var packet = new PlayerMessagePacket(uniqueId(), message);
+        if(currentProxy instanceof ClusterLocalServiceImpl service) {
+            service.transmit().sendPacket(packet);
+            return;
+        }
+        Node.instance().clusterProvider().find(currentProxy.runningNode()).transmit().sendPacket(packet);
+    }
+
+    @Override
+    public void sendActionBar(String message) {
+        //todo duplicated code
+        var packet = new PlayerActionBarPacket(uniqueId(), message);
+        if(currentProxy instanceof ClusterLocalServiceImpl service) {
+            service.transmit().sendPacket(packet);
+            return;
+        }
+        Node.instance().clusterProvider().find(currentProxy.runningNode()).transmit().sendPacket(packet);
+    }
+
+    @Override
+    public void connect(ClusterService service) {
+
+    }
+
+    @Override
+    public void connect(String serviceId) {
+
     }
 }

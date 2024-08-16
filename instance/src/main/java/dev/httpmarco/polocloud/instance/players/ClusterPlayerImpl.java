@@ -22,4 +22,34 @@ public final class ClusterPlayerImpl extends AbstractClusterPlayer {
     public CompletableFuture<ClusterService> currentServerAsync() {
         return CloudAPI.instance().serviceProvider().findAsync(currentServerName());
     }
+
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        // todo
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle) {
+        // todo
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        // todo
+    }
+
+    @Override
+    public void sendActionBar(String message) {
+        // todo
+    }
+
+    @Override
+    public void connect(ClusterService service) {
+        // todo
+    }
+
+    @Override
+    public void connect(String serviceId) {
+        // todo
+    }
 }
