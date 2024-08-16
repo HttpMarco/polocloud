@@ -19,6 +19,7 @@ jline = "3.26.3"
 # platforms
 spigot = "1.20.4-R0.1-SNAPSHOT"
 velocity = "3.3.0-SNAPSHOT"
+bungeecord = "1.20-R0.2"
 
 [libraries]
 # utils
@@ -42,3 +43,4 @@ jline = { group = "org.jline", name = "jline", version.ref = "jline" }
 # platforms
 spigot = { group = "io.papermc.paper", name = "paper-api", version.ref = "spigot" }
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }

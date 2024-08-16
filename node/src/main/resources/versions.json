@@ -52,6 +52,18 @@
           "downloadLink": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/413/downloads/velocity-3.3.0-SNAPSHOT-413.jar"
         }
       ]
+    },
+    {
+      "platform": "bungeecord",
+      "type": "PROXY",
+      "actions": {},
+      "versions": [
+        {
+          "version": "latest",
+          "checksum": "e037de53c36f54866ec61a6a87bcab3e914a5acd7fb2fb634de0a88a371208f1",
+          "downloadLink": "https://ci.md-5.net/job/BungeeCord/1858/artifact/bootstrap/target/BungeeCord.jar"
+        }
+      ]
     }
   ]
 }

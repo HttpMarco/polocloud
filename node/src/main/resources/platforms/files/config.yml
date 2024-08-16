@@ -1,0 +1,49 @@
+connection_throttle: 4000
+connection_throttle_limit: 3
+timeout: 30000
+stats: bb2d5e13-b7f4-4a8b-80e5-23fd6a122193
+permissions:
+  default:
+    - bungeecord.command.server
+    - bungeecord.command.list
+  admin:
+    - bungeecord.command.alert
+    - bungeecord.command.end
+    - bungeecord.command.ip
+    - bungeecord.command.reload
+    - bungeecord.command.kick
+network_compression_threshold: 256
+servers:
+player_limit: -1
+prevent_proxy_connections: false
+reject_transfers: false
+server_connect_timeout: 5000
+enforce_secure_profile: false
+remote_ping_timeout: 5000
+forge_support: false
+remote_ping_cache: -1
+log_commands: false
+log_pings: true
+ip_forward: true
+disabled_commands:
+  - disabledcommandhere
+groups:
+  md_5:
+    - admin
+listeners:
+  - host: 0.0.0.0:25565
+    motd: "§b§lPoloCloud §8» §7Simple Cloudsystem§8 [§b1.8 §7- §b1.20.x§8]\n§fGitHub §8× §fgithub.com/HttpMarco/polocloud"
+    max_players: 1
+    force_default_server: false
+    tab_size: 60
+    forced_hosts:
+      pvp.md-5.net: pvp
+    tab_list: GLOBAL_PING
+    bind_local_address: true
+    ping_passthrough: false
+    query_enabled: false
+    query_port: 25577
+    proxy_protocol: false
+    priorities:
+      - lobby
+online_mode: true

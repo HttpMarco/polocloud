@@ -6,6 +6,7 @@ dependencies {
 
     implementation(libs.velocity)
     annotationProcessor(libs.velocity)
+    implementation(libs.bungeecord)
 }
 
 tasks.jar {
