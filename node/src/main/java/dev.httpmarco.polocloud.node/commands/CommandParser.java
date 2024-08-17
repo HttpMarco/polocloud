@@ -25,8 +25,13 @@ public class CommandParser {
         // we must calculate the usage, because no command was found
 
         for (var command : commands) {
-            for (var syntaxCommand : command.commandSyntaxes()) {
-                log.info("{} {}", command.name(), syntaxCommand.usage());
+
+            if (command.defaultExecution() != null) {
+                command.defaultExecution().execute(new CommandContext());
+            }  else {
+                for (var syntaxCommand : command.commandSyntaxes()) {
+                    log.info("{} {}", command.name(), syntaxCommand.usage());
+                }
             }
         }
     }
@@ -34,11 +39,8 @@ public class CommandParser {
     private boolean executeCommand(@NotNull List<Command> commands, String[] args) {
         for (var command : commands) {
 
-            if (!command.hasSyntaxCommands()) {
-                if (command.defaultExecution() != null) {
-                    command.defaultExecution().execute(new CommandContext());
-                }
-                return true;
+            if ((!command.hasSyntaxCommands()) || args.length == 0) {
+                return false;
             }
 
             for (var syntaxCommand : command.commandSyntaxes()) {
