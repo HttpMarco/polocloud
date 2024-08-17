@@ -86,7 +86,7 @@ public abstract class Setup implements Named {
         index++;
 
         if (index >= questions.size()) {
-            exit();
+            exit(true);
             return;
         }
         this.displayQuestion();
@@ -101,9 +101,12 @@ public abstract class Setup implements Named {
         displayQuestion();
     }
 
-    public void exit() {
+    public void exit(boolean completed) {
         Node.instance().terminal().setup(null);
         Node.instance().terminal().clear();
-        complete(this.answers);
+
+        if (completed) {
+            complete(this.answers);
+        }
     }
 }

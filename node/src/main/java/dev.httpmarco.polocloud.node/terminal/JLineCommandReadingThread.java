@@ -42,7 +42,7 @@ public final class JLineCommandReadingThread extends Thread {
                             if (terminal.hasSetup()) {
 
                                 if(rawLine.equalsIgnoreCase("exit")) {
-                                    terminal.setup().exit();
+                                    terminal.setup().exit(false);
                                     continue;
                                 }
 
