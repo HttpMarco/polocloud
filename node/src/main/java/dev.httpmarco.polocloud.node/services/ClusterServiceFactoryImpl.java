@@ -16,6 +16,8 @@ import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -83,6 +85,10 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
                 // create process
                 var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile());
+
+                // todo remove but the log stops if not present
+                processBuilder.redirectOutput(localService.runningDir().resolve("polocloud_info_log.txt").toFile());
+                processBuilder.redirectError(localService.runningDir().resolve("polocloud_error_log.txt").toFile());
 
                 // send the platform boot jar
                 processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
