@@ -20,7 +20,6 @@ public final class GroupCommand extends Command {
         var groupArgument = CommandArgumentType.ClusterGroup("group");
 
         syntax(context -> {
-            Node.instance().playerProvider().find("HttpMarco").sendActionBar("du bist ein lappen!");
             log.info("Following &b{} &7groups are loaded&8:", groupService.groups().size());
             groupService.groups().forEach(group -> log.info("&8- &f{}&8: (&7{}&8)", group.name(), group.details()));
         }, "List all registered groups&8.", CommandArgumentType.Keyword("list"));
