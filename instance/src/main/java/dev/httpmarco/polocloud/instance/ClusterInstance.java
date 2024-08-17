@@ -4,7 +4,6 @@ import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
-import dev.httpmarco.polocloud.api.players.ClusterPlayer;
 import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
@@ -43,18 +42,12 @@ public final class ClusterInstance extends CloudAPI {
 
         this.eventProvider = new EventProviderImpl();
 
-        this.updateSelfService();
-
         this.client.clientAction(CommunicationClientAction.CONNECTED, transmit -> {
             transmit.sendPacket(new ServiceConnectPacket(selfServiceId));
 
-            synchronized (this) {
-                ClusterInstanceFactory.startPlatform(args);
-            }
+            serviceProvider().findAsync(selfServiceId).whenComplete((clusterService, throwable) -> this.selfService = clusterService);
         });
-    }
 
-    public void updateSelfService() {
-        serviceProvider().findAsync(selfServiceId).whenComplete((clusterService, throwable) -> this.selfService = clusterService);
+        ClusterInstanceFactory.startPlatform(args);
     }
 }

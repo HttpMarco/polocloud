@@ -29,7 +29,7 @@ public final class ClusterInstanceFactory {
 
                     main.invoke(null, (Object) platformArgs);
                 } catch (Exception e) {
-                    e.printStackTrace(System.err);
+                    e.printStackTrace();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
