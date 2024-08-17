@@ -10,24 +10,24 @@ import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
-public final class PlayerActionBarPacket extends AbstractUUIDPacket {
+public final class PlayerConnectPacket extends AbstractUUIDPacket {
 
-    private String message;
+    private String serverId;
 
-    public PlayerActionBarPacket(UUID uuid, String message) {
+    public PlayerConnectPacket(UUID uuid, String serverId) {
         super(uuid);
-        this.message = message;
+        this.serverId = serverId;
     }
 
     @Override
     public void read(@NotNull PacketBuffer packetBuffer) {
         super.read(packetBuffer);
-        this.message = packetBuffer.readString();
+        this.serverId = packetBuffer.readString();
     }
 
     @Override
     public void write(@NotNull PacketBuffer packetBuffer) {
         super.write(packetBuffer);
-        packetBuffer.writeString(message);
+        packetBuffer.writeString(serverId);
     }
 }

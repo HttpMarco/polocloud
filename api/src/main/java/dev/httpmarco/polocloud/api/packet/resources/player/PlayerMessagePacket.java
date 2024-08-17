@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Accessors(fluent = true)
-public class PlayerMessagePacket extends AbstractUUIDPacket {
+public final class PlayerMessagePacket extends AbstractUUIDPacket {
 
     private String message;
 
