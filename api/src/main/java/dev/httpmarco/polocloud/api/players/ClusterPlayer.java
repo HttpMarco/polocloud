@@ -43,7 +43,9 @@ public interface ClusterPlayer extends Named, Detail {
 
     void sendActionBar(String message);
 
-    void connect(ClusterService service);
+    default void connect(ClusterService service){
+        this.connect(service.name());
+    }
 
     void connect(String serviceId);
 

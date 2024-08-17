@@ -3,16 +3,15 @@ package dev.httpmarco.polocloud.plugin.velocity;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerActionBarPacket;
+import dev.httpmarco.polocloud.api.packet.resources.player.PlayerConnectPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerMessagePacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
@@ -20,7 +19,6 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.velocity.listener.*;
 import lombok.extern.slf4j.Slf4j;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.net.InetSocketAddress;
@@ -62,6 +60,7 @@ public final class VelocityPlatformBootstrap {
 
         ClusterInstance.instance().client().listen(PlayerMessagePacket.class, (transmit, packet) -> server.getPlayer(packet.uuid()).ifPresent(player -> player.sendMessage(MiniMessage.miniMessage().deserialize(packet.message()))));
         ClusterInstance.instance().client().listen(PlayerActionBarPacket.class, (transmit, packet) -> server.getPlayer(packet.uuid()).ifPresent(player -> player.sendActionBar(MiniMessage.miniMessage().deserialize(packet.message()))));
+        ClusterInstance.instance().client().listen(PlayerConnectPacket.class, (transmit, packet) -> server.getPlayer(packet.uuid()).ifPresent(player -> server.getServer(packet.serverId()).ifPresent(it -> player.createConnectionRequest(it).fireAndForget())));
 
 
         for (var service : CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.ONLINE_SERVICES)) {

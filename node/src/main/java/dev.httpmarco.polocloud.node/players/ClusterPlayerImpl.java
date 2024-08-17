@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.players;
 
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerActionBarPacket;
+import dev.httpmarco.polocloud.api.packet.resources.player.PlayerConnectPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerMessagePacket;
 import dev.httpmarco.polocloud.api.players.AbstractClusterPlayer;
 import dev.httpmarco.polocloud.api.services.ClusterService;
@@ -89,12 +90,13 @@ public final class ClusterPlayerImpl extends AbstractClusterPlayer {
     }
 
     @Override
-    public void connect(ClusterService service) {
-
-    }
-
-    @Override
     public void connect(String serviceId) {
-
+        //todo duplicated code
+        var packet = new PlayerConnectPacket(uniqueId(), serviceId);
+        if(currentProxy instanceof ClusterLocalServiceImpl service) {
+            service.transmit().sendPacket(packet);
+            return;
+        }
+        Node.instance().clusterProvider().find(currentProxy.runningNode()).transmit().sendPacket(packet);
     }
 }
