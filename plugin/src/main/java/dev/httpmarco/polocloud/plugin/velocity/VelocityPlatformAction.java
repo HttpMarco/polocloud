@@ -5,7 +5,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.plugin.PluginPlatformAction;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
+import net.kyori.adventure.util.Ticks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -31,6 +33,7 @@ public final class VelocityPlatformAction implements PluginPlatformAction {
 
         player.sendTitlePart(TitlePart.TITLE, MiniMessage.miniMessage().deserialize(title));
         player.sendTitlePart(TitlePart.SUBTITLE, MiniMessage.miniMessage().deserialize(subTitle));
+        player.sendTitlePart(TitlePart.TIMES, Title.Times.times(Ticks.duration(fadeInt), Ticks.duration(stay), Ticks.duration(fadeOut)));
     }
 
     @Override
