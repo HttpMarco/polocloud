@@ -33,14 +33,13 @@ public final class GroupSetup extends Setup {
                         .versions()
                         .stream().map(PlatformVersion::version).toList(),
                 context -> {
-
-                    var proof = Node.instance().platformService().platform(context.second().get("platform"))
-                            .versions()
-                            .stream()
-                            .anyMatch(it -> it.version().equals(context.first()));
+                    var platform = Node.instance().platformService().platform(context.second().get("platform"));
+                    var proof = platform.versions().stream().anyMatch(it -> it.version().equals(context.first()));
 
                     // add the fallback question
-                    question("fallback", "Is the given group a fallback group?", it -> List.of("false", "true"), it -> it.first().equalsIgnoreCase("true") || it.first().equalsIgnoreCase("false"));
+                    if (proof && platform.type() == PlatformType.SERVER) {
+                        question("fallback", "Is the given group a fallback group?", it -> List.of("false", "true"), it -> it.first().equalsIgnoreCase("true") || it.first().equalsIgnoreCase("false"));
+                    }
                     return proof;
                 });
 
