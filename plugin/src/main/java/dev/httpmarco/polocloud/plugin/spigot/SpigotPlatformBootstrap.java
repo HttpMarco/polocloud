@@ -1,13 +1,14 @@
 package dev.httpmarco.polocloud.plugin.spigot;
 
-import dev.httpmarco.polocloud.api.packet.resources.services.ServiceOnlinePacket;
-import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.PluginPlatform;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SpigotPlatformBootstrap extends JavaPlugin {
 
+    private final PluginPlatform platform = new PluginPlatform();
+
     @Override
     public void onEnable() {
-        ClusterInstance.instance().client().sendPacket(new ServiceOnlinePacket(ClusterInstance.instance().selfServiceId()));
+        platform.presentServiceAsOnline();
     }
 }
