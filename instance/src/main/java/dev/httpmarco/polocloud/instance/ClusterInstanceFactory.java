@@ -17,10 +17,11 @@ public final class ClusterInstanceFactory {
         var bootPlatformFile = System.getenv("bootstrapFile");
 
         File file = Path.of(bootPlatformFile).toFile();
-        PoloCloudLauncher.CLASS_LOADER.addURL(file.toURI().toURL());
 
         final var thread = new Thread(() -> {
             try (final var jar = new JarFile(file)) {
+
+                PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(jar);
 
                 final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
                 try {

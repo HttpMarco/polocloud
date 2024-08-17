@@ -40,6 +40,8 @@ public final class ClusterInstance extends CloudAPI {
         this.client = new CommunicationClient("127.0.0.1", Integer.parseInt(System.getenv("nodeEndPointPort")));
         this.client.initialize();
 
+        Runtime.getRuntime().addShutdownHook(new Thread(ClusterInstanceShutdown::shutdown));
+
         this.eventProvider = new EventProviderImpl();
 
         this.client.clientAction(CommunicationClientAction.CONNECTED, transmit -> {

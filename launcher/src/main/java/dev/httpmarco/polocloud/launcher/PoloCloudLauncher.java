@@ -34,6 +34,7 @@ public final class PoloCloudLauncher {
             apiFile = Path.of("../../local/dependencies/polocloud-api.jar");
         }
 
+        Thread.currentThread().setContextClassLoader(CLASS_LOADER);
         PoloCloudLauncher.CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
 
         if (PoloCloudLauncher.INSTRUMENTATION != null) {
@@ -53,7 +54,7 @@ public final class PoloCloudLauncher {
         CLASS_LOADER.addURL(boot.bootFile().toURI().toURL());
 
         DependencyDownloader.download(gsonDependency, nettyCommonDependency, nettyTransportDependency, nettyCodecDependency, nettyResolverDependency, nettyBufferDependency, nettyTransportEpollDependency, osganNettyDependency);
-        Thread.currentThread().setContextClassLoader(CLASS_LOADER);
+
         Class.forName(boot.mainClass(), true, CLASS_LOADER).getMethod("main", String[].class).invoke(null, (Object) args);
     }
 }
