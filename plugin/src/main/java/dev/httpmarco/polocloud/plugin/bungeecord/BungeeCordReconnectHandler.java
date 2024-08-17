@@ -8,7 +8,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public final class BungeecordReconnectHandler implements ReconnectHandler {
+public final class BungeeCordReconnectHandler implements ReconnectHandler {
 
     @Override
     public ServerInfo getServer(ProxiedPlayer proxiedPlayer) {

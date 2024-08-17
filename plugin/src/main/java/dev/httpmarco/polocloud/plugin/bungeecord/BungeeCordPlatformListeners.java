@@ -1,0 +1,42 @@
+package dev.httpmarco.polocloud.plugin.bungeecord;
+
+import com.velocitypowered.api.event.connection.PostLoginEvent;
+import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
+import lombok.AllArgsConstructor;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.ServerSwitchEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import org.jetbrains.annotations.NotNull;
+
+@AllArgsConstructor
+public final class BungeeCordPlatformListeners implements Listener {
+
+    private final ProxyPluginPlatform platform;
+
+    @EventHandler
+    public void handlePlayerDisconnect(@NotNull PlayerDisconnectEvent event) {
+        platform.unregisterPlayer(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void handleServerConnect(@NotNull PostLoginEvent event) {
+        platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getUsername());
+    }
+
+    @EventHandler
+    public void handleServerConnect(@NotNull ServerSwitchEvent event) {
+        platform.playerChangeServer(event.getPlayer().getUniqueId(), event.getPlayer().getServer().getInfo().getName());
+    }
+
+    @EventHandler
+    public void handlePreLogin(PreLoginEvent event) {
+        if (ProxyServer.getInstance().getServers().isEmpty()) {
+            event.setReason(new TextComponent("§cNo fallback server available"));
+            event.setCancelled(true);
+        }
+    }
+}
