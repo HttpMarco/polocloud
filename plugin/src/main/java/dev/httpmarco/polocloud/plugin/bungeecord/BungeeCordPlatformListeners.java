@@ -1,11 +1,11 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
-import com.velocitypowered.api.event.connection.PostLoginEvent;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -24,7 +24,7 @@ public final class BungeeCordPlatformListeners implements Listener {
 
     @EventHandler
     public void handleServerConnect(@NotNull PostLoginEvent event) {
-        platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getUsername());
+        platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getName());
     }
 
     @EventHandler
