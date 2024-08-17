@@ -65,7 +65,11 @@ public final class VelocityPlatformBootstrap {
 
         for (var service : CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.ONLINE_SERVICES)) {
             if (service.group().platform().type() == PlatformType.SERVER) {
-                server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(service.hostname(), service.port())));
+                var hostname = service.hostname();
+                if (service.runningNode().equalsIgnoreCase(ClusterInstance.instance().selfService().runningNode())) {
+                    hostname = "127.0.0.1";
+                }
+                server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(hostname, service.port())));
             }
         }
     }
