@@ -1,7 +1,9 @@
 package dev.httpmarco.polocloud.launcher.dependency;
 
 import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,24 +12,18 @@ import java.nio.file.Path;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.jar.JarFile;
 
 @UtilityClass
+@Accessors(fluent = true)
 public class DependencyDownloader {
 
-    private static final Path DOWNLOAD_DIR = Path.of("local/dependencies");
-    private static final ExecutorService DOWNLOAD_TASK = Executors.newCachedThreadPool();
-
-    static {
-        DOWNLOAD_DIR.toFile().mkdirs();
-
-        Runtime.getRuntime().addShutdownHook(new Thread(DOWNLOAD_TASK::shutdown));
-    }
+    @Setter
+    private static Path DOWNLOAD_DIR = Path.of("local/dependencies");
 
     @SneakyThrows
-    public void download(Dependency dependency) {
+    public void download(@NotNull Dependency dependency) {
+        DOWNLOAD_DIR.toFile().mkdirs();
         var file = DOWNLOAD_DIR.resolve(dependency + ".jar").toFile();
 
         if (dependency.withSubDependencies()) {

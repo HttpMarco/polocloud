@@ -20,7 +20,7 @@ public final class InstanceBoot extends AbstractBoot {
     @SneakyThrows
     @Override
     public @NotNull File bootFile() {
-        var instancePath = Path.of("local/dependencies/polocloud-instance.jar");
+        var instancePath = Path.of("../../local/dependencies/polocloud-instance.jar");
 
         if (!Files.exists(instancePath)) {
             // create path if not exists

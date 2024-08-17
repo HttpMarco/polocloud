@@ -26,6 +26,20 @@ public final class PoloCloudLauncher {
     @SneakyThrows
     public static void main(String[] args) {
 
+        var boot = Arrays.stream(args).anyMatch(it -> it.equalsIgnoreCase("--instance")) ? new InstanceBoot() : new NodeBoot();
+
+        var apiFile = Path.of("local/dependencies/polocloud-api.jar");
+        if (boot instanceof InstanceBoot) {
+            DependencyDownloader.DOWNLOAD_DIR(Path.of("../../local/dependencies"));
+            apiFile = Path.of("../../local/dependencies/polocloud-api.jar");
+        }
+
+        PoloCloudLauncher.CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
+
+        if (PoloCloudLauncher.INSTRUMENTATION != null) {
+            PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(apiFile.toFile()));
+        }
+
         var gsonDependency = new Dependency("com.google.code.gson", "gson", "2.11.0");
         var nettyCommonDependency = new Dependency("io.netty", "netty5-common", "5.0.0.Alpha5");
         var nettyTransportDependency = new Dependency("io.netty", "netty5-transport", "5.0.0.Alpha5");
@@ -34,22 +48,6 @@ public final class PoloCloudLauncher {
         var nettyBufferDependency = new Dependency("io.netty", "netty5-buffer", "5.0.0.Alpha5");
         var nettyTransportEpollDependency = new Dependency("io.netty", "netty5-transport-classes-epoll", "5.0.0.Alpha5");
         var osganNettyDependency = new Dependency("dev.httpmarco", "osgan-netty", "1.2.19-SNAPSHOT", "1.2.19-20240811.183812-1", Repository.MAVEN_CENTRAL_SNAPSHOT);
-
-        // copy cluster api in classpath
-        var apiFile = Path.of("local/dependencies/polocloud-api.jar");
-        FileSystemUtils.copyClassPathFile(ClassLoader.getSystemClassLoader(), "polocloud-api.jar", apiFile.toString());
-        CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
-
-        if (INSTRUMENTATION != null) {
-            INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(apiFile.toFile()));
-        }
-
-        // copy cluster plugin in classpath
-        var pluginFile = Path.of("local/dependencies/polocloud-plugin.jar");
-        FileSystemUtils.copyClassPathFile(ClassLoader.getSystemClassLoader(), "polocloud-plugin.jar", pluginFile.toString());
-
-
-        var boot = Arrays.stream(args).anyMatch(it -> it.equalsIgnoreCase("--instance")) ? new InstanceBoot() : new NodeBoot();
 
         // add boot file to the current classpath
         CLASS_LOADER.addURL(boot.bootFile().toURI().toURL());
