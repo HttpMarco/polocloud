@@ -99,6 +99,6 @@ public final class GroupSetup extends Setup {
                 maxOnlineServices,
                 fallbackGroup));
 
-        log.info("You successfully create the group &8'&f{}&8'", name);
+        log.info("You successfully created the group &8'&f{}&8'", name);
     }
 }
