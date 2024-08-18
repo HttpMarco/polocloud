@@ -29,7 +29,10 @@ public final class InstanceBoot extends AbstractBoot {
             FileSystemUtils.copyClassPathFile(this.getClass().getClassLoader(), "polocloud-instance.jar", instancePath.toString());
         }
 
-        PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(instancePath.toFile()));
+        if(PoloCloudLauncher.INSTRUMENTATION != null) {
+            PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(instancePath.toFile()));
+        }
+
         return instancePath.toFile();
     }
 }
