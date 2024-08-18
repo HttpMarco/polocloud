@@ -22,6 +22,9 @@ public final class ClusterInstanceFactory {
         final var thread = new Thread(() -> {
             try (final var jar = new JarFile(file)) {
 
+                // todo only need bungeecord
+                //PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(jar);
+
                 final var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
                 try {
                     var main = Class.forName(mainClass, true, PoloCloudLauncher.CLASS_LOADER).getMethod("main", String[].class);
