@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -123,8 +124,15 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
 
         if (!group().staticService()) {
             synchronized (this) {
-                DirectoryActions.delete(runningDir);
-                Files.deleteIfExists(runningDir);
+                try {
+                    if (DirectoryActions.delete(runningDir)) {
+                        Files.deleteIfExists(runningDir);
+                    } else {
+                        log.info("Cannot shutdown {} cleanly! Files are already exists", name());
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 

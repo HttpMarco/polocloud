@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
+import dev.httpmarco.polocloud.node.services.util.ClusterDefaultArgs;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.templates.TemplateFactory;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
@@ -17,9 +18,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -60,7 +59,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 // run platform actions
                 var platform = Node.instance().platformService().platform(group.platform().platform());
 
-                var arguments = generateServiceArguments();
+                var arguments = generateServiceArguments(localService);
 
                 if (platform != null) {
                     platform.actions().forEach(platformAction -> platformAction.run(localService));
@@ -76,6 +75,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
                 //copy platform jar and maybe patch files
                 DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + group.platform().platform() + "/" + group.platform().version()), localService.runningDir());
+
 
                 // create process
                 var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile());
@@ -107,10 +107,15 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         });
     }
 
-    public @NotNull List<String> generateServiceArguments() {
+    public @NotNull List<String> generateServiceArguments(ClusterService clusterService) {
         var arguments = new LinkedList<String>();
 
         arguments.add("java");
+
+        arguments.addAll(ClusterDefaultArgs.ARGUMENTS);
+
+        arguments.add("-Xms" + clusterService.group().minMemory() + "M");
+        arguments.add("-Xmx" + clusterService.group().maxMemory() + "M");
 
         arguments.add("-cp");
 
@@ -137,6 +142,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 localService.executeCommand(platform == null ? Platform.DEFAULT_SHUTDOWN_COMMAND : platform.shutdownCommand());
 
                 try {
+                    assert localService.process() != null;
                     if (localService.process().waitFor(PROCESS_TIMEOUT, TimeUnit.SECONDS)) {
                         localService.process().exitValue();
                         localService.postShutdownProcess();

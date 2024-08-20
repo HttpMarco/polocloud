@@ -28,7 +28,7 @@ public class DirectoryActions {
         for (File file : files) {
             success &= deleteRecursively(file);
         }
-        Files.delete(directoryPath.toPath());
+        Files.deleteIfExists(directoryPath.toPath());
         return success;
     }
 
@@ -50,8 +50,8 @@ public class DirectoryActions {
         deleteDirectoryContents(file);
     }
 
-    public static void delete(@NotNull Path file) {
-        deleteDirectoryContents(file.toFile());
+    public static boolean delete(@NotNull Path file) {
+        return deleteDirectoryContents(file.toFile());
     }
 
     @SneakyThrows

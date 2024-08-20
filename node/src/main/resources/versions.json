@@ -36,6 +36,7 @@
     {
       "platform": "velocity",
       "type": "PROXY",
+      "shutdownCommand": "end",
       "actions": {
         "GENERATE_NEW_FILE": {
           "forwarding.secret": "%forwarding_secret%"
