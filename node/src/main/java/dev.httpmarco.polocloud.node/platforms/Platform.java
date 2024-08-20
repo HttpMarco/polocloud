@@ -22,6 +22,7 @@ public final class Platform {
     private final PlatformType type;
     private final Set<PlatformVersion> versions;
     private final String shutdownCommand;
+    private final boolean separateClassLoader;
 
     private final List<PlatformAction> actions = new ArrayList<>();
 

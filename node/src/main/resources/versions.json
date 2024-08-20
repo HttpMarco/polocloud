@@ -5,6 +5,7 @@
       "platform": "paper",
       "type": "SERVER",
       "patcher": "paperclip",
+      "separateClassLoader": true,
       "startArguments": [
         "-nogui"
       ],

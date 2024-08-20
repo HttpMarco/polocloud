@@ -27,8 +27,10 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
         var type = object.has("type") ? PlatformType.valueOf(object.get("type").getAsString().toUpperCase()) : PlatformType.SERVER;
         var shutdownCommand = object.has("shutdownCommand") ? object.get("shutdownCommand").getAsString() : Platform.DEFAULT_SHUTDOWN_COMMAND;
 
+        var separateClassLoader = object.has("separateClassLoader") && object.get("separateClassLoader").getAsBoolean();
+
         PlatformVersion[] versions = context.deserialize(object.get("versions"), PlatformVersion[].class);
-        var platform = new Platform(name, type, Set.of(versions), shutdownCommand);
+        var platform = new Platform(name, type, Set.of(versions), shutdownCommand, separateClassLoader);
 
         if (object.has("patcher")) {
             platform.platformPatcher(PlatformService.PATCHERS.stream().filter(it -> it.patchId().equalsIgnoreCase(object.get("patcher").getAsString())).findFirst().orElse(null));
@@ -79,6 +81,10 @@ public class PlatformTypeAdapter implements JsonDeserializer<Platform>, JsonSeri
 
         if (src.startArguments() != null) {
             object.add("startArguments", context.serialize(src.startArguments()));
+        }
+
+        if(src.separateClassLoader()) {
+            object.addProperty("separateClassLoader", true);
         }
 
         if (!src.actions().isEmpty()) {

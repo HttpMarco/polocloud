@@ -15,11 +15,9 @@ import java.util.List;
 import java.util.jar.JarFile;
 
 @UtilityClass
-@Accessors(fluent = true)
 public class DependencyDownloader {
 
-    @Setter
-    private static Path DOWNLOAD_DIR = Path.of("local/dependencies");
+    private static final Path DOWNLOAD_DIR = Path.of("local/dependencies");
 
     @SneakyThrows
     public void download(@NotNull Dependency dependency) {
@@ -37,10 +35,6 @@ public class DependencyDownloader {
             DependencyHelper.download(dependency.downloadUrl(), file);
         }
         PoloCloudLauncher.CLASS_LOADER.addURL(file.toURI().toURL());
-
-        if (PoloCloudLauncher.INSTRUMENTATION != null) {
-            PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(file));
-        }
     }
 
 

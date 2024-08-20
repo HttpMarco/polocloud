@@ -20,6 +20,7 @@ public final class GroupCreatePacket extends Packet {
     private String[] templates;
     private String[] nodes;
     private PlatformGroupDisplay platformGroupDisplay;
+    @Deprecated
     private int minMemory;
     private int maxMemory;
     private boolean staticService;

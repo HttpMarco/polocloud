@@ -19,13 +19,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -33,6 +31,7 @@ import java.util.stream.IntStream;
 public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
     public static int PROCESS_TIMEOUT = 5;
+
 
     @Override
     @SneakyThrows
@@ -61,24 +60,19 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 // run platform actions
                 var platform = Node.instance().platformService().platform(group.platform().platform());
 
-                var arguments = new ArrayList<>();
-                var bootJarPath = System.getProperty("bootLauncher");
-
-                arguments.add("java");
-                arguments.add("-Xms" + localService.group().minMemory() + "m");
-                arguments.add("-Xmx" + localService.group().maxMemory() + "m");
-                arguments.addAll(List.of("-Djline.terminal=jline.UnsupportedTerminal", "-XX:+UseG1GC", "-XX:+ParallelRefProcEnabled", "-XX:MaxGCPauseMillis=200", "-XX:+UnlockExperimentalVMOptions", "-XX:+DisableExplicitGC", "-XX:+AlwaysPreTouch", "-XX:G1NewSizePercent=30", "-XX:G1MaxNewSizePercent=40", "-XX:G1HeapRegionSize=8M", "-XX:G1ReservePercent=20", "-XX:G1HeapWastePercent=5", "-XX:G1MixedGCCountTarget=4", "-XX:InitiatingHeapOccupancyPercent=15", "-XX:G1MixedGCLiveThresholdPercent=90", "-XX:G1RSetUpdatingPauseTimePercent=5", "-XX:SurvivorRatio=32", "-XX:+PerfDisableSharedMem", "-XX:MaxTenuringThreshold=1", "-Dusing.aikars.flags=https://mcflags.emc.gs", "-Daikars.new.flags=true", "-XX:-UseAdaptiveSizePolicy", "-XX:CompileThreshold=100", "-Dio.netty.recycler.maxCapacity=0", "-Dio.netty.recycler.maxCapacity.default=0", "-Djline.terminal=jline.UnsupportedTerminal", "-Dfile.encoding=UTF-8", "-Dclient.encoding.override=UTF-8", "-DIReallyKnowWhatIAmDoingISwear=true"));
-                arguments.add("-javaagent:" + bootJarPath);
-                arguments.add("-jar");
-                arguments.add(bootJarPath);
+                var arguments = generateServiceArguments();
 
                 if (platform != null) {
                     platform.actions().forEach(platformAction -> platformAction.run(localService));
-                    arguments.addAll(Arrays.stream(platform.startArguments()).toList());
-                }
 
-                // mark process as a services
-                arguments.add("--instance");
+                    // add default platform args
+                    arguments.addAll(Arrays.stream(platform.startArguments()).toList());
+
+                    // check if separate class loader is an option
+                    if (platform.separateClassLoader()) {
+                        arguments.add("--separateClassLoader");
+                    }
+                }
 
                 //copy platform jar and maybe patch files
                 DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + group.platform().platform() + "/" + group.platform().version()), localService.runningDir());
@@ -111,6 +105,23 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
                 e.printStackTrace();
             }
         });
+    }
+
+    public @NotNull List<String> generateServiceArguments() {
+        var arguments = new LinkedList<String>();
+
+        arguments.add("java");
+
+        arguments.add("-cp");
+
+        var path = "../../local/dependencies/";
+        var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.2.19-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
+
+        arguments.add(String.join(";", neededDependencies.stream().map(it -> path + it).toList()));
+
+        arguments.add("-javaagent:../../local/dependencies/polocloud-instance.jar");
+        arguments.add("dev.httpmarco.polocloud.instance.ClusterInstanceLauncher");
+        return arguments;
     }
 
     @Override

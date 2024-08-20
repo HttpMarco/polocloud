@@ -1,44 +1,25 @@
 package dev.httpmarco.polocloud.launcher;
 
-import dev.httpmarco.polocloud.launcher.boot.InstanceBoot;
-import dev.httpmarco.polocloud.launcher.boot.NodeBoot;
 import dev.httpmarco.polocloud.launcher.dependency.Dependency;
 import dev.httpmarco.polocloud.launcher.dependency.DependencyDownloader;
 import dev.httpmarco.polocloud.launcher.dependency.Repository;
-import dev.httpmarco.polocloud.launcher.util.FileSystemUtils;
 import lombok.SneakyThrows;
 
 import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
-import java.util.jar.JarFile;
 
 public final class PoloCloudLauncher {
 
     public static PoloCloudClassLoader CLASS_LOADER = new PoloCloudClassLoader();
-    public static Instrumentation INSTRUMENTATION;
-
-    public static void premain(String args, Instrumentation instrumentation) {
-        INSTRUMENTATION = instrumentation;
-    }
 
     @SneakyThrows
     public static void main(String[] args) {
 
-        var boot = Arrays.stream(args).anyMatch(it -> it.equalsIgnoreCase("--instance")) ? new InstanceBoot() : new NodeBoot();
-
+        var boot = new PoloCloudBoot();
         var apiFile = Path.of("local/dependencies/polocloud-api.jar");
-        if (boot instanceof InstanceBoot) {
-            DependencyDownloader.DOWNLOAD_DIR(Path.of("../../local/dependencies"));
-            apiFile = Path.of("../../local/dependencies/polocloud-api.jar");
-        }
 
         PoloCloudLauncher.CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
-
-        if (PoloCloudLauncher.INSTRUMENTATION != null) {
-            PoloCloudLauncher.INSTRUMENTATION.appendToSystemClassLoaderSearch(new JarFile(apiFile.toFile()));
-        }
 
         var gsonDependency = new Dependency("com.google.code.gson", "gson", "2.11.0");
         var nettyCommonDependency = new Dependency("io.netty", "netty5-common", "5.0.0.Alpha5");
