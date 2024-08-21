@@ -1,0 +1,67 @@
+{
+  "version": "1.0",
+  "platforms": [
+    {
+      "id": "paper",
+      "type": "SERVER",
+      "options": [
+        {
+          "id": "separateClassLoader",
+          "value": true
+        },
+        {
+          "id": "patcher",
+          "value": "paperclip"
+        },
+        {
+          "id": "startArguments",
+          "value": [
+            "-nogui"
+          ]
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.21",
+          "downloadLink": "https://api.papermc.io/v2/projects/paper/versions/1.21/builds/109/downloads/paper-1.21-109.jar"
+        },
+        {
+          "version": "1.20.6",
+          "downloadLink": "https://api.papermc.io/v2/projects/paper/versions/1.20.6/builds/148/downloads/paper-1.20.6-148.jar"
+        }
+      ]
+    },
+    {
+      "id": "velocity",
+      "type": "PROXY",
+      "options": [
+        {
+          "id": "shutdownCommand",
+          "value": "end"
+        }
+      ],
+      "versions": [
+        {
+          "version": "3.3.0-SNAPSHOT",
+          "downloadLink": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/413/downloads/velocity-3.3.0-SNAPSHOT-413.ja"
+        }
+      ]
+    },
+    {
+      "id": "bungeecord",
+      "type": "PROXY",
+      "options": [
+        {
+          "id": "shutdownCommand",
+          "value": "end"
+        }
+      ],
+      "versions": [
+        {
+          "version": "latest",
+          "downloadLink": "https://ci.md-5.net/job/BungeeCord/1858/artifact/bootstrap/target/BungeeCord.jar"
+        }
+      ]
+    }
+  ]
+}
