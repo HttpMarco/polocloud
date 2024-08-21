@@ -122,7 +122,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         var path = "../../local/dependencies/";
         var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.2.19-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
 
-        arguments.add(String.join(";", neededDependencies.stream().map(it -> path + it).toList()));
+        arguments.add(String.join(System.getProperty("os.name").toLowerCase().contains("win") ? ";" : ":", neededDependencies.stream().map(it -> path + it).toList()));
 
         arguments.add("-javaagent:../../local/dependencies/polocloud-instance.jar");
         arguments.add("dev.httpmarco.polocloud.instance.ClusterInstanceLauncher");
