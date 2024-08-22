@@ -4,22 +4,12 @@
     {
       "id": "paper",
       "type": "SERVER",
-      "options": [
-        {
-          "id": "separateClassLoader",
-          "value": true
-        },
-        {
-          "id": "patcher",
-          "value": "paperclip"
-        },
-        {
-          "id": "startArguments",
-          "value": [
-            "-nogui"
-          ]
-        }
-      ],
+      "options": {
+        "separateClassLoader": true,
+        "startArguments": [
+          "-nogui"
+        ]
+      },
       "versions": [
         {
           "version": "1.21",
@@ -34,12 +24,7 @@
     {
       "id": "velocity",
       "type": "PROXY",
-      "options": [
-        {
-          "id": "shutdownCommand",
-          "value": "end"
-        }
-      ],
+      "options": [],
       "versions": [
         {
           "version": "3.3.0-SNAPSHOT",
@@ -66,12 +51,7 @@
     {
       "id": "pandaspigot",
       "type": "SERVER",
-      "options": [
-        {
-          "id": "patcher",
-          "value": "ZIP"
-        }
-      ],
+      "options": [],
       "versions": [
         {
           "version": "1.8.9",
