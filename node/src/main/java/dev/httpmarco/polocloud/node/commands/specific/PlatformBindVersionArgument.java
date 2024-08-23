@@ -18,7 +18,7 @@ public final class PlatformBindVersionArgument extends CommandArgument<PlatformV
     @Contract(pure = true)
     @Override
     public @NotNull PlatformVersion buildResult(String input) {
-        return new PlatformVersion(input, null, null);
+        return new PlatformVersion(input, null);
     }
 
     @Override

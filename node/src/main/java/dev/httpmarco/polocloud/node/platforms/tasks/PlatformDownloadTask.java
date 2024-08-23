@@ -43,19 +43,11 @@ public final class PlatformDownloadTask {
 
         if (!Files.exists(file)) {
             Downloader.download(version.downloadLink(), file);
-        } else if (version.checksum().equals(ChecksumCalculator.checksum(file))) {
-            // all fine we can start
-            return CompletableFuture.completedFuture(null);
-        }
 
-        if (!version.checksum().equals(ChecksumCalculator.checksum(file))) {
-            // todo delete and redownload
+            if (platform.platformPatcher() != null) {
+                return platform.platformPatcher().patch(group, file.toFile());
+            }
         }
-
-        if (platform.platformPatcher() == null) {
-            return CompletableFuture.completedFuture(null);
-        }
-
-        return platform.platformPatcher().patch(group, file.toFile());
+        return CompletableFuture.completedFuture(null);
     }
 }
