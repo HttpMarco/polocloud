@@ -36,11 +36,11 @@ public abstract class ClusterGroupProvider implements Sendable<ClusterGroup> {
         return deleteAsync(group).get(5, TimeUnit.SECONDS);
     }
 
-    public abstract CompletableFuture<Optional<String>> createAsync(String name, String[] nodes, PlatformGroupDisplay platform, int minMemory, int maxMemory, boolean staticService, int minOnline, int maxOnline);
+    public abstract CompletableFuture<Optional<String>> createAsync(String name, String[] nodes, PlatformGroupDisplay platform, int maxMemory, boolean staticService, int minOnline, int maxOnline);
 
     @SneakyThrows
-    public Optional<String> create(String name, String[] nodes, PlatformGroupDisplay platform, int minMemory, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
-        return this.createAsync(name, nodes, platform, minMemory, maxMemory, staticService, minOnline, maxOnline).get(5, TimeUnit.SECONDS);
+    public Optional<String> create(String name, String[] nodes, PlatformGroupDisplay platform, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
+        return this.createAsync(name, nodes, platform, maxMemory, staticService, minOnline, maxOnline).get(5, TimeUnit.SECONDS);
     }
 
     public abstract CompletableFuture<ClusterGroup> findAsync(@NotNull String group);
@@ -53,7 +53,6 @@ public abstract class ClusterGroupProvider implements Sendable<ClusterGroup> {
     @Override
     public void write(@NotNull ClusterGroup group, @NotNull PacketBuffer buffer) {
         buffer.writeString(group.name());
-        buffer.writeInt(group.minMemory());
         buffer.writeInt(group.maxMemory());
         buffer.writeInt(group.minOnlineServerInstances());
         buffer.writeInt(group.maxOnlineServerInstances());

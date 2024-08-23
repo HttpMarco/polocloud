@@ -20,8 +20,6 @@ public final class GroupCreatePacket extends Packet {
     private String[] templates;
     private String[] nodes;
     private PlatformGroupDisplay platformGroupDisplay;
-    @Deprecated
-    private int minMemory;
     private int maxMemory;
     private boolean staticService;
     private int minOnline;
@@ -53,7 +51,6 @@ public final class GroupCreatePacket extends Packet {
         var type = packetBuffer.readEnum(PlatformType.class);
         this.platformGroupDisplay = new PlatformGroupDisplay(platform, version, type);
 
-        this.minMemory = packetBuffer.readInt();
         this.maxMemory = packetBuffer.readInt();
         this.staticService = packetBuffer.readBoolean();
         this.minOnline = packetBuffer.readInt();
@@ -79,7 +76,6 @@ public final class GroupCreatePacket extends Packet {
         packetBuffer.writeString(platformGroupDisplay.platform());
         packetBuffer.writeString(platformGroupDisplay.version());
 
-        packetBuffer.writeInt(minMemory);
         packetBuffer.writeInt(maxMemory);
         packetBuffer.writeBoolean(staticService);
         packetBuffer.writeInt(minOnline);

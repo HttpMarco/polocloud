@@ -13,7 +13,6 @@ public enum ClusterGroupEditFields {
     STATIC(new BooleanArgument("static")),
     MIN_ONLINE_SERVICES(new IntArgument("minOnlineServices")),
     MAX_ONLINE_SERVICES(new IntArgument("maxOnlineServices")),
-    MIN_MEMORY(new IntArgument("minMemory")),
     MAX_MEMORY(new IntArgument("maxMemory")),
   //  PLATFORM(new PlatformArgument("", "")),
     //PLATFORM_VERSION,

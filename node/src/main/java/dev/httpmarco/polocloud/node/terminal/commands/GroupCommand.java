@@ -38,7 +38,6 @@ public final class GroupCommand extends Command {
             log.info("Runtime nodes&8: &b{}", String.join("&8, &b", group.nodes()));
             log.info("Platform&8: &b{}", group.platform().details());
             log.info("Static service&8: &b{}", group.staticService());
-            log.info("Minimum memory&8: &b{}mb", group.minMemory());
             log.info("Maximum memory&8: &b{}mb", group.maxMemory());
             log.info("Minimum online services&8: &b{}", group.minOnlineServerInstances());
             log.info("Maximum online services&8: &b{}", group.maxOnlineServerInstances());

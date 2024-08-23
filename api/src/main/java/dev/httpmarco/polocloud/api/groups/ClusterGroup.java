@@ -14,8 +14,6 @@ public interface ClusterGroup extends Named, Detail {
 
     String[] templates();
 
-    int minMemory();
-
     int maxMemory();
 
     boolean staticService();

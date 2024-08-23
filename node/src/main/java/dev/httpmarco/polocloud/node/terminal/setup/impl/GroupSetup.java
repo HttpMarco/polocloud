@@ -43,25 +43,7 @@ public final class GroupSetup extends Setup {
                     return proof;
                 });
 
-        question("minMemory", "Select the value of the minimal memory of one service (mb)", it -> List.of("512", "1024", "256", "2048"), it -> isNumber(it.first()));
-        question("maxMemory", "Select the value of the maximum memory of one service (mb)", it -> {
-            var minMemory = Integer.parseInt(it.get("minMemory"));
-            var results = new ArrayList<String>();
-            if (minMemory <= 512) {
-                results.add("512");
-            }
-            if (minMemory <= 1024) {
-                results.add("1024");
-            }
-            if (minMemory <= 256) {
-                results.add("256");
-            }
-            if (minMemory <= 2048) {
-                results.add("2048");
-            }
-            return results;
-        }, it -> isNumber(it.first()) && Integer.parseInt(it.second().get("minMemory")) <= Integer.parseInt(it.first()));
-
+        question("maxMemory", "Select the value of the maximum memory of one service (mb)", it -> List.of("512", "1024", "2048", "4096"), it -> isNumber(it.first()));
         question("staticService", "Is the service a static Service? (Static services are not be reset on a restart)", it -> List.of("true", "false"), it -> it.first().equalsIgnoreCase("true") || it.first().equalsIgnoreCase("false"));
         question("minOnlineServices", "How many service should be minimal online?", it -> List.of(), it -> isNumber(it.first()));
         question("maxOnlineServices", "How many service should be maximal online?", it -> List.of(), it -> isNumber(it.first()));
@@ -81,7 +63,6 @@ public final class GroupSetup extends Setup {
         var name = context.get("name");
         var platform = Node.instance().platformService().platform(context.get("platform"));
         var version = platform.versions().stream().filter(it -> it.version().equalsIgnoreCase(context.get("version"))).findFirst().orElseThrow();
-        var minMemory = Integer.parseInt(context.get("minMemory"));
         var maxMemory = Integer.parseInt(context.get("maxMemory"));
         var staticService = Boolean.parseBoolean(context.get("staticService"));
         var minOnlineServices = Integer.parseInt(context.get("minOnlineServices"));
@@ -92,7 +73,6 @@ public final class GroupSetup extends Setup {
                 new String[]{"every", platform.type().defaultTemplateSpace(), name},
                 new String[]{Node.instance().clusterProvider().localNode().data().name()},
                 new PlatformGroupDisplay(platform.platform(), version.version(), platform.type()),
-                minMemory,
                 maxMemory,
                 staticService,
                 minOnlineServices,

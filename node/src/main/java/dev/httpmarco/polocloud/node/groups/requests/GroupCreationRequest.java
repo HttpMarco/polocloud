@@ -18,14 +18,13 @@ public class GroupCreationRequest {
 
     public static String TAG = "group-creation";
 
-    public CompletableFuture<Optional<String>> request(@NotNull ClusterProvider clusterProvider, String name, String[] nodes, @NotNull PlatformGroupDisplay platform, int minMemory, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
+    public CompletableFuture<Optional<String>> request(@NotNull ClusterProvider clusterProvider, String name, String[] nodes, @NotNull PlatformGroupDisplay platform, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
         var groupFuture = new CompletableFuture<Optional<String>>();
         clusterProvider.headNode().transmit().request(GroupCreationRequest.TAG, new CommunicationProperty()
                         .set("name", name)
                         .set("nodes", JsonUtils.GSON.toJson(nodes))
                         .set("platform", platform.platform())
                         .set("version", platform.version())
-                        .set("minMemory", minMemory)
                         .set("maxMemory", maxMemory)
                         .set("staticService", staticService)
                         .set("minOnline", minOnline)

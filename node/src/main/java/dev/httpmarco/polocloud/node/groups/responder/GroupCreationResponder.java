@@ -26,16 +26,12 @@ public class GroupCreationResponder {
             return MessageResponsePacket.fail("Group already exists!");
         }
 
-        var minMemory = property.getInteger("minMemory");
         var maxMemory = property.getInteger("maxMemory");
 
-        if (minMemory < 1 || maxMemory < 1) {
-            return MessageResponsePacket.fail("The min and max memory must be higher than 1 mb.");
+        if (maxMemory < 1) {
+            return MessageResponsePacket.fail("The max memory must be higher than 1 mb.");
         }
 
-        if (minMemory > maxMemory) {
-            return MessageResponsePacket.fail("The min memory cannot be higher than max memory.");
-        }
 
         var nodes = JsonUtils.GSON.fromJson(property.getString("nodes"), String[].class);
         var platform = Node.instance().platformService().platform(property.getString("platform"));
@@ -47,7 +43,6 @@ public class GroupCreationResponder {
                 new String[]{name, "every", groupDisplay.type().defaultTemplateSpace()},
                 nodes,
                 groupDisplay,
-                minMemory,
                 maxMemory,
                 property.getBoolean("staticService"),
                 property.getInteger("minOnline"),

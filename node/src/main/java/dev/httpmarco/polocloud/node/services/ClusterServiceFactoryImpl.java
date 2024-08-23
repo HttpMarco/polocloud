@@ -114,7 +114,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
         arguments.addAll(ClusterDefaultArgs.ARGUMENTS);
 
-        arguments.add("-Xms" + clusterService.group().minMemory() + "M");
+        arguments.add("-Xms" + clusterService.group().maxMemory() + "M");
         arguments.add("-Xmx" + clusterService.group().maxMemory() + "M");
 
         arguments.add("-cp");

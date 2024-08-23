@@ -79,8 +79,8 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
     }
 
     @Override
-    public CompletableFuture<Optional<String>> createAsync(String name, String[] nodes, PlatformGroupDisplay platform, int minMemory, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
-        return GroupCreationRequest.request(clusterProvider, name, nodes, platform, minMemory, maxMemory, staticService, minOnline, maxOnline);
+    public CompletableFuture<Optional<String>> createAsync(String name, String[] nodes, PlatformGroupDisplay platform, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
+        return GroupCreationRequest.request(clusterProvider, name, nodes, platform, maxMemory, staticService, minOnline, maxOnline);
     }
 
     @Override
@@ -109,7 +109,6 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
     @Override
     public @NotNull ClusterGroup read(@NotNull PacketBuffer buffer) {
         var name = buffer.readString();
-        var minMemory = buffer.readInt();
         var maxMemory = buffer.readInt();
         var minOnlineServerInstances = buffer.readInt();
         var maxOnlineServerInstances = buffer.readInt();
@@ -129,6 +128,6 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
             templates[i] = buffer.readString();
         }
 
-        return new ClusterGroupImpl(name, platform, templates, nodes, minMemory, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
+        return new ClusterGroupImpl(name, platform, templates, nodes, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
     }
 }

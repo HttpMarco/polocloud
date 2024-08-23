@@ -1,14 +1,10 @@
 package dev.httpmarco.polocloud.node.groups;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
-import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.node.Node;
-import dev.httpmarco.polocloud.node.properties.PropertiesPoolSerializer;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -33,7 +29,6 @@ public final class ClusterGroupFactory {
                 packet.platformGroupDisplay(),
                 packet.templates(),
                 packet.nodes(),
-                packet.minMemory(),
                 packet.maxMemory(),
                 packet.staticService(),
                 packet.minOnline(),
