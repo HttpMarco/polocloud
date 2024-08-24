@@ -12,6 +12,16 @@
           "version": "1.20.6",
           "url": "https://api.papermc.io/v2/projects/paper/versions/1.20.6/builds/148/downloads/paper-1.20.6-148.jar"
         }
+      ],
+      "files": [
+        {
+          "file": "eula.txt",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "eula=true"
+          ]
+        }
       ]
     },
     {
