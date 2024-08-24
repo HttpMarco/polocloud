@@ -51,7 +51,7 @@
           "replacements": [
             {
               "indicator": "  bungeecord",
-              "value": "%use_bungeecord%"
+              "value": "%bungeecord_use%"
             }
           ],
           "appends": []
