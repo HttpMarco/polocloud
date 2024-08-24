@@ -21,6 +21,14 @@
           "appends": [
             "eula=true"
           ]
+        },
+        {
+          "file": "config/paper-global.yml",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
+          ]
         }
       ],
       "arguments": [
