@@ -125,6 +125,64 @@
       ]
     },
     {
+      "id": "paper",
+      "type": "SERVER",
+      "versions": [
+        {
+          "version": "1.21",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.21.jar"
+        },
+        {
+          "version": "1.20.6",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.20.6.jar"
+        },
+        {
+          "version": "1.20.4",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.20.4.jar"
+        }
+      ],
+      "files": [
+        {
+          "file": "eula.txt",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "eula=true"
+          ]
+        },
+        {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            },
+            {
+              "indicator": "online-mode",
+              "value": "false"
+            }
+          ],
+          "appends": []
+        },
+        {
+          "file": "spigot.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "  bungeecord",
+              "value": "%bungeecord_use%"
+            }
+          ],
+          "appends": []
+        }
+      ],
+      "arguments": [
+        "-nogui",
+        "--separateClassLoader"
+      ]
+    },
+    {
       "id": "pandaspigot",
       "type": "SERVER",
       "versions": [
