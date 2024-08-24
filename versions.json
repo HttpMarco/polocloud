@@ -22,6 +22,9 @@
             "eula=true"
           ]
         }
+      ],
+      "arguments": [
+        "-nogui"
       ]
     },
     {
