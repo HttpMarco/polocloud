@@ -174,7 +174,19 @@
           "url": "https://ci.md-5.net/job/BungeeCord/1858/artifact/bootstrap/target/BungeeCord.jar"
         }
       ],
-      "files": []
+      "files": [
+        {
+          "file": "config.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "    host",
+              "value": "%hostname%:%port%"
+            }
+          ],
+          "appends": []
+        }
+      ]
     }
   ]
 }
