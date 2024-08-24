@@ -126,11 +126,11 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
         if (!group().staticService()) {
             synchronized (this) {
                 try {
-                   // if (DirectoryActions.delete(runningDir)) {
-                       // Files.deleteIfExists(runningDir);
-                   // } else {
-                      //  log.info("Cannot shutdown {} cleanly! Files are already exists", name());
-                  //  }
+                    if (DirectoryActions.delete(runningDir)) {
+                        Files.deleteIfExists(runningDir);
+                    } else {
+                        log.info("Cannot shutdown {} cleanly! Files are already exists", name());
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

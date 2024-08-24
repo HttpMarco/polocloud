@@ -65,7 +65,8 @@ public final class Platform {
                 for (var replacement : file.replacements()) {
                     var content = replacement.value()
                             .replaceAll("%hostname%", service.hostname())
-                            .replaceAll("%port%", String.valueOf(service.port()));
+                            .replaceAll("%port%", String.valueOf(service.port()))
+                            .replaceAll("%bungeecord_use%", String.valueOf(Node.instance().groupProvider().groups().stream().anyMatch(it -> it.platform().platform().equalsIgnoreCase("bungeecord"))));
 
                     replacer.rewrite(s -> s.startsWith(replacement.indicator()), fileType.replacer().apply(new Pair<>(replacement.indicator(), content)));
                 }
@@ -73,7 +74,9 @@ public final class Platform {
             }
 
             for (String append : file.appends()) {
-                var content = append.replaceAll("%forwarding_secret%", PlatformService.FORWARDING_SECRET).replaceAll("%velocity_use%", String.valueOf(Node.instance().groupProvider().groups().stream().anyMatch(it -> it.platform().platform().equalsIgnoreCase("velocity"))));
+                var content = append
+                        .replaceAll("%forwarding_secret%", PlatformService.FORWARDING_SECRET)
+                        .replaceAll("%velocity_use%", String.valueOf(Node.instance().groupProvider().groups().stream().anyMatch(it -> it.platform().platform().equalsIgnoreCase("velocity"))));
                 Files.writeString(target, Files.readString(target) + content);
             }
         }
