@@ -44,6 +44,17 @@
           "appends": [
             "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
           ]
+        },
+        {
+          "file": "spigot.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "  bungeecord",
+              "value": "%use_bungeecord%"
+            }
+          ],
+          "appends": []
         }
       ],
       "arguments": [
