@@ -67,14 +67,13 @@ public final class Platform {
                             .replaceAll("%hostname%", service.hostname())
                             .replaceAll("%port%", String.valueOf(service.port()));
 
-                    log.info(replacement.indicator() + "################################");
                     replacer.rewrite(s -> s.startsWith(replacement.indicator()), fileType.replacer().apply(new Pair<>(replacement.indicator(), content)));
                 }
                 replacer.write();
             }
 
             for (String append : file.appends()) {
-                var content = append.replaceAll("%forwarding_secret%", PlatformService.FORWARDING_SECRET).replaceAll("%velocity_use%", String.valueOf(Node.instance().platformService().platforms().stream().anyMatch(it -> it.id().equalsIgnoreCase("velocity"))));
+                var content = append.replaceAll("%forwarding_secret%", PlatformService.FORWARDING_SECRET).replaceAll("%velocity_use%", String.valueOf(Node.instance().groupProvider().groups().stream().anyMatch(it -> it.platform().platform().equalsIgnoreCase("velocity"))));
                 Files.writeString(target, Files.readString(target) + content);
             }
         }
