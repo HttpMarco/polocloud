@@ -23,6 +23,17 @@
           ]
         },
         {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            }
+          ],
+          "appends": []
+        },
+        {
           "file": "config/paper-global.yml",
           "strategy": "DIRECT_CREATE",
           "replacements": [],
