@@ -15,6 +15,16 @@
       ]
     },
     {
+      "id": "pandaspigot",
+      "type": "SERVER",
+      "versions": [
+        {
+          "version": "1.8.9",
+          "url": "https://nightly.link/hpfxd/PandaSpigot/actions/runs/10435425633/Server%20JAR.zip"
+        }
+      ]
+    },
+    {
       "id": "velocity",
       "type": "PROXY",
       "versions": [
