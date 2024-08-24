@@ -24,7 +24,8 @@
         }
       ],
       "arguments": [
-        "-nogui"
+        "-nogui",
+        "--separateClassLoader"
       ]
     },
     {
