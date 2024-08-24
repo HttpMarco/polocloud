@@ -56,20 +56,6 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
         Node.instance().serviceProvider().factory().shutdownGroupService(this);
     }
 
-    @Override
-    @SneakyThrows
-    public @NotNull List<String> logs() {
-        if (process != null) {
-            var inputStream = this.process.getInputStream();
-            var bytes = new byte[2048];
-            int length;
-            while (inputStream.available() > 0 && (length = inputStream.read(bytes, 0, bytes.length)) != -1) {
-                logs.addAll(Arrays.asList(new String(bytes, 0, length, StandardCharsets.UTF_8).split("\n")));
-            }
-        }
-        return logs;
-    }
-
     @SneakyThrows
     public void start(@NotNull ProcessBuilder builder) {
         this.process = builder.start();

@@ -56,6 +56,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
         var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile());
 
+       // processBuilder.redirectErrorStream(true);
         // todo remove but the log stops if not present
         processBuilder.redirectOutput(localService.runningDir().resolve("polocloud_info_log.txt").toFile());
         processBuilder.redirectError(localService.runningDir().resolve("polocloud_error_log.txt").toFile());
