@@ -100,7 +100,8 @@
           "version": "latest",
           "url": "https://ci.md-5.net/job/BungeeCord/1858/artifact/bootstrap/target/BungeeCord.jar"
         }
-      ]
+      ],
+      "files": []
     }
   ]
 }
