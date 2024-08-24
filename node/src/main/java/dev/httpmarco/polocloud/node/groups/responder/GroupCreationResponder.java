@@ -34,8 +34,8 @@ public class GroupCreationResponder {
 
 
         var nodes = JsonUtils.GSON.fromJson(property.getString("nodes"), String[].class);
-        var platform = Node.instance().platformService().platform(property.getString("platform"));
-        var groupDisplay = new PlatformGroupDisplay(platform.platform(), property.getString("version"), platform.type());
+        var platform = Node.instance().platformService().find(property.getString("platform"));
+        var groupDisplay = new PlatformGroupDisplay(platform.id(), property.getString("version"), platform.type());
 
         // alert on every node the new group
         clusterProvider.broadcastAll(new GroupCreatePacket(

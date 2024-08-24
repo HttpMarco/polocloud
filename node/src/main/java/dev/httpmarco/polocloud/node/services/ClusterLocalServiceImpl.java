@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncUnregisterServicePacket;
+import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.Getter;
 import lombok.Setter;
@@ -125,12 +126,12 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
         if (!group().staticService()) {
             synchronized (this) {
                 try {
-                    if (DirectoryActions.delete(runningDir)) {
-                        Files.deleteIfExists(runningDir);
-                    } else {
-                        log.info("Cannot shutdown {} cleanly! Files are already exists", name());
-                    }
-                }catch (Exception e) {
+                   // if (DirectoryActions.delete(runningDir)) {
+                       // Files.deleteIfExists(runningDir);
+                   // } else {
+                      //  log.info("Cannot shutdown {} cleanly! Files are already exists", name());
+                  //  }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -149,5 +150,9 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
 
     public boolean hasProcess() {
         return this.process != null;
+    }
+
+    public Platform platform() {
+        return Node.instance().platformService().find(this.group().platform().platform());
     }
 }

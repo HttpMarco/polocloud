@@ -18,7 +18,7 @@ public final class InfoCommand extends Command {
             log.info(" ");
             log.info("Registered Groups&8: &f{}", Node.instance().groupProvider().groups().size());
             log.info("Online Services&8: &f{}", Node.instance().serviceProvider().services().size());
-            log.info("Registered Platforms: &f{} &8(&f{} versions&8)", Node.instance().platformService().platforms().length, Node.instance().platformService().versionsAmount());
+            log.info("Registered Platforms: &f{} &8(&f{} versions&8)", Node.instance().platformService().platforms().size(), Node.instance().platformService().versionsAmount());
             log.info("Node endpoints&8: &f{}", Node.instance().clusterProvider().endpoints().size());
             log.info(" ");
             log.info("Registered properties&8: &f{}", PropertyRegister.propertiesAmount());

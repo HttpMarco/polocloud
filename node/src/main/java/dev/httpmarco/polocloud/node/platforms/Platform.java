@@ -1,32 +1,103 @@
 package dev.httpmarco.polocloud.node.platforms;
 
+import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
-import dev.httpmarco.polocloud.node.platforms.actions.PlatformAction;
-import lombok.*;
+import dev.httpmarco.polocloud.launcher.util.FileSystemUtils;
+import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
+import dev.httpmarco.polocloud.node.util.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.nio.file.*;
 import java.util.List;
-import java.util.Set;
 
-@Setter
+@Slf4j
 @Getter
 @Accessors(fluent = true)
-@RequiredArgsConstructor
+@AllArgsConstructor
 public final class Platform {
 
-    public static final String DEFAULT_SHUTDOWN_COMMAND = "stop";
+    private String id;
+    private PlatformType type;
 
-    private final String platform;
-    private final PlatformType type;
-    private final Set<PlatformVersion> versions;
-    private final String shutdownCommand;
-    private final boolean separateClassLoader;
+    private final @Nullable List<String> arguments;
+    private final List<PlatformVersion> versions;
+    private final List<PlatformFile> files;
 
-    private final List<PlatformAction> actions = new ArrayList<>();
+    @SneakyThrows
+    public void prepare(@NotNull PlatformGroupDisplay display, @NotNull ClusterLocalServiceImpl service) {
+        var platform = service.group().platform();
 
-    private @Nullable PlatformPatcher platformPatcher;
-    private @Nullable String[] startArguments;
+        // download only if not exists
+        this.download(display);
 
+        //copy platform jar and maybe patch files
+        DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + platform.platform() + "/" + platform.version()), service.runningDir());
+
+        for (var file : files) {
+            var strategy = file.strategy();
+            var target = service.runningDir().resolve(file.file());
+            var fileType = FileType.define(file.file());
+
+            switch (strategy) {
+                case COPY_FROM_CLASSPATH_IF_NOT_EXISTS -> {
+                    if (!Files.exists(target)) {
+                        FileSystemUtils.copyClassPathFile(this.getClass().getClassLoader(), "platforms/" + platform.platform() + "/" + file.file(), target.toString());
+                    }
+                }
+                case DIRECT_CREATE -> {
+                    Files.deleteIfExists(target);
+
+                    target.getParent().toFile().mkdirs();
+                    Files.createFile(target);
+                }
+            }
+
+
+            if (!file.replacements().isEmpty()) {
+                var replacer = new ConfigManipulator(target.toFile());
+                for (var replacement : file.replacements()) {
+                    var content = replacement.value()
+                            .replaceAll("%hostname%", service.hostname())
+                            .replaceAll("%port%", String.valueOf(service.port()));
+
+                    log.info(replacement.indicator() + "################################");
+                    replacer.rewrite(s -> s.startsWith(replacement.indicator()), fileType.replacer().apply(new Pair<>(replacement.indicator(), content)));
+                }
+                replacer.write();
+            }
+
+            for (String append : file.appends()) {
+                var content = append.replaceAll("%forwarding_secret%", PlatformService.FORWARDING_SECRET).replaceAll("%velocity_use%", String.valueOf(Node.instance().platformService().platforms().stream().anyMatch(it -> it.id().equalsIgnoreCase("velocity"))));
+                Files.writeString(target, Files.readString(target) + content);
+            }
+        }
+    }
+
+
+    @SneakyThrows
+    public void download(@NotNull PlatformGroupDisplay display) {
+        var version = versions.stream().filter(it -> it.version().equalsIgnoreCase(display.version())).findFirst().orElseThrow();
+
+        var platformDir = Path.of("local/platforms/" + display.platform() + "/" + display.version());
+
+        if (!Files.exists(platformDir)) {
+            platformDir.toFile().mkdirs();
+        }
+
+        var file = platformDir.resolve(display.details() + ".jar");
+
+        if (!Files.exists(file)) {
+            //copy bytes into the file
+            Downloader.download(version.url(), file);
+        }
+
+        // todo check patcher
+    }
 }

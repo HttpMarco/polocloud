@@ -9,7 +9,6 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.Platform;
-import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.services.util.ClusterDefaultArgs;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.templates.TemplateFactory;
@@ -18,7 +17,6 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -40,74 +38,47 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         var localService = new ClusterLocalServiceImpl(group, generateOrderedId(group), UUID.randomUUID(), ServicePortDetector.detectServicePort(group), "0.0.0.0", runningNode.name());
 
         Node.instance().eventProvider().factory().call(new ServiceStartEvent(localService));
-
         log.info("The service &8'&f{}&8' &7is starting now&8...", localService.name());
         Node.instance().serviceProvider().services().add(localService);
 
         // call other nodes
         Node.instance().clusterProvider().broadcast(new ClusterSyncRegisterServicePacket(localService));
-
         TemplateFactory.cloneTemplate(localService);
 
-        PlatformDownloadTask.download(group).whenComplete((unused, throwable) -> {
-            if (throwable != null) {
-                log.warn(throwable.getMessage());
-                return;
-            }
+        localService.platform().prepare(group.platform(), localService);
 
-            try {
-                // run platform actions
-                var platform = Node.instance().platformService().platform(group.platform().platform());
+        var arguments = generateServiceArguments(localService);
 
-                var arguments = generateServiceArguments(localService);
+        var platformArgs = localService.platform().arguments();
+        if (platformArgs != null) {
+            arguments.addAll(platformArgs);
+        }
 
-                if (platform != null) {
-                    platform.actions().forEach(platformAction -> platformAction.run(localService));
+        var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile());
 
-                    // add default platform args
-                    arguments.addAll(Arrays.stream(platform.startArguments()).toList());
+        // todo remove but the log stops if not present
+        processBuilder.redirectOutput(localService.runningDir().resolve("polocloud_info_log.txt").toFile());
+        processBuilder.redirectError(localService.runningDir().resolve("polocloud_error_log.txt").toFile());
 
-                    // check if separate class loader is an option
-                    if (platform.separateClassLoader()) {
-                        arguments.add("--separateClassLoader");
-                    }
-                }
+        // send the platform boot jar
+        processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
+        processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterProvider().localNode().data().port()));
+        processBuilder.environment().put("serviceId", localService.id().toString());
 
-                //copy platform jar and maybe patch files
-                DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + group.platform().platform() + "/" + group.platform().version()), localService.runningDir());
+        // copy platform plugin for have a better control of service
+        var pluginDir = localService.runningDir().resolve("plugins");
+        pluginDir.toFile().mkdirs();
 
+        Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
 
-                // create process
-                var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile());
+        localService.state(ClusterServiceState.STARTING);
+        localService.update();
 
-                // todo remove but the log stops if not present
-                processBuilder.redirectOutput(localService.runningDir().resolve("polocloud_info_log.txt").toFile());
-                processBuilder.redirectError(localService.runningDir().resolve("polocloud_error_log.txt").toFile());
-
-                // send the platform boot jar
-                processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
-                processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterProvider().localNode().data().port()));
-                processBuilder.environment().put("serviceId", localService.id().toString());
-
-                // copy platform plugin for have a better control of service
-                var pluginDir = localService.runningDir().resolve("plugins");
-                pluginDir.toFile().mkdirs();
-
-                Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
-
-                localService.state(ClusterServiceState.STARTING);
-                localService.update();
-
-                // run platform
-                localService.start(processBuilder);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        // run platform
+        localService.start(processBuilder);
     }
 
-    public @NotNull List<String> generateServiceArguments(ClusterService clusterService) {
+    public @NotNull List<String> generateServiceArguments(@NotNull ClusterService clusterService) {
         var arguments = new LinkedList<String>();
 
         arguments.add("java");
@@ -136,10 +107,8 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
             Node.instance().eventProvider().factory().call(new ServiceStoppingEvent(clusterService));
 
             if (localService.hasProcess()) {
-                var platform = Node.instance().platformService().platform(localService.group().platform().platform());
-
                 // try with platform command a clean shutdown
-                localService.executeCommand(platform == null ? Platform.DEFAULT_SHUTDOWN_COMMAND : platform.shutdownCommand());
+                localService.executeCommand(localService.platform().type().shutdownTypeCommand());
 
                 try {
                     assert localService.process() != null;

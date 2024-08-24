@@ -20,17 +20,17 @@ public final class PlatformArgument extends CommandArgument<Platform> {
 
     @Override
     public boolean predication(@NotNull String rawInput) {
-        return Node.instance().platformService().exists(rawInput);
+        return Node.instance().platformService().find(rawInput) != null;
     }
 
     @Override
     public List<String> defaultArgs(CommandContext context) {
-        return Arrays.stream(Node.instance().platformService().platforms()).map(Platform::platform).toList();
+        return Node.instance().platformService().platforms().stream().map(Platform::id).toList();
     }
 
     @Contract(pure = true)
     @Override
     public @Nullable Platform buildResult(String input) {
-        return Node.instance().platformService().platform(input);
+        return Node.instance().platformService().find(input);
     }
 }

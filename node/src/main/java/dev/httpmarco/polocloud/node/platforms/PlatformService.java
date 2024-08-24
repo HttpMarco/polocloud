@@ -1,67 +1,36 @@
 package dev.httpmarco.polocloud.node.platforms;
 
-import dev.httpmarco.polocloud.node.platforms.patcher.PaperClipPlatformPatcher;
-import dev.httpmarco.polocloud.node.platforms.tasks.PlatformDownloadTask;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
+import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.Nullable;
+import lombok.extern.slf4j.Slf4j;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.List;
-import java.util.Objects;
 
-@Log4j2
+@Slf4j
 @Getter
 @Accessors(fluent = true)
 public final class PlatformService {
 
-    public static final List<PlatformPatcher> PATCHERS = List.of(new PaperClipPlatformPatcher());
-    private final Platform[] platforms;
+    public static String FORWARDING_SECRET = StringUtils.randomString(8);
+    private static final String VERSIONS_URL = "https://raw.githubusercontent.com/HttpMarco/polocloud/dev/release/versions.json";
+    private final List<Platform> platforms;
 
     @SneakyThrows
     public PlatformService() {
-        var versionFile = Path.of("local/versions.json");
-
-        if (!Files.exists(versionFile.getParent())) {
-            Files.createDirectory(versionFile.getParent());
-        }
-
-        if (Files.exists(versionFile)) {
-            // todo check new update (compare versions id)
-        } else {
-            this.loadLatestVersionFromClasspath(versionFile);
-        }
-
-        this.platforms = this.readLocalPlatformConfig(versionFile).platforms();
-        log.info("Loading {} cluster platforms with {} versions&8.", platforms.length, versionsAmount());
+        this.platforms = JsonUtils.GSON.fromJson(new InputStreamReader(new URL(VERSIONS_URL).openStream()), PlatformConfig.class).platforms();
+        log.info("Loading {} platforms with {} versions.", platforms.size(), versionsAmount());
     }
 
-    @SneakyThrows
-    private PlatformConfig readLocalPlatformConfig(Path versionFile) {
-        return JsonUtils.GSON.fromJson(Files.readString(versionFile), PlatformConfig.class);
-    }
-
-    public @Nullable Platform platform(String platform) {
-        return Arrays.stream(this.platforms).filter(it -> it.platform().equalsIgnoreCase(platform)).findFirst().orElse(null);
-    }
-
-    public boolean exists(String platform) {
-        return Arrays.stream(this.platforms).anyMatch(it -> it.platform().equalsIgnoreCase(platform));
-    }
-
-    @SneakyThrows
-    private void loadLatestVersionFromClasspath(Path versionFile) {
-        Files.copy(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("versions.json")), versionFile, StandardCopyOption.REPLACE_EXISTING);
+    public Platform find(String platformId) {
+        return this.platforms.stream().filter(it -> it.id().equalsIgnoreCase(platformId)).findFirst().orElse(null);
     }
 
     public int versionsAmount() {
-        return Arrays.stream(this.platforms).mapToInt(it -> it.versions().size()).sum();
+        return this.platforms.stream().mapToInt(it -> it.versions().size()).sum();
     }
 }

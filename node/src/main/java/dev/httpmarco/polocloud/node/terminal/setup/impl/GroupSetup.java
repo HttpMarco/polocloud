@@ -25,15 +25,15 @@ public final class GroupSetup extends Setup {
         question("name", "What is the name of the group&8?", s -> !Node.instance().groupProvider().exists(s.first()));
 
         question("platform", "Which platform do you like to use&8?",
-                it -> Arrays.stream(Node.instance().platformService().platforms()).map(Platform::platform).toList(),
-                rawInput -> Node.instance().platformService().exists(rawInput.first()));
+                it -> Node.instance().platformService().platforms().stream().map(Platform::id).toList(),
+                rawInput -> Node.instance().platformService().find(rawInput.first()) != null);
 
         question("version", "Select a version&8?",
-                it -> Node.instance().platformService().platform(it.get("platform"))
+                it -> Node.instance().platformService().find(it.get("platform"))
                         .versions()
                         .stream().map(PlatformVersion::version).toList(),
                 context -> {
-                    var platform = Node.instance().platformService().platform(context.second().get("platform"));
+                    var platform = Node.instance().platformService().find(context.second().get("platform"));
                     var proof = platform.versions().stream().anyMatch(it -> it.version().equals(context.first()));
 
                     // add the fallback question
@@ -61,7 +61,7 @@ public final class GroupSetup extends Setup {
     @Override
     public void complete(@NotNull Map<String, String> context) {
         var name = context.get("name");
-        var platform = Node.instance().platformService().platform(context.get("platform"));
+        var platform = Node.instance().platformService().find(context.get("platform"));
         var version = platform.versions().stream().filter(it -> it.version().equalsIgnoreCase(context.get("version"))).findFirst().orElseThrow();
         var maxMemory = Integer.parseInt(context.get("maxMemory"));
         var staticService = Boolean.parseBoolean(context.get("staticService"));
@@ -72,7 +72,7 @@ public final class GroupSetup extends Setup {
         Node.instance().clusterProvider().broadcastAll(new GroupCreatePacket(name,
                 new String[]{"every", platform.type().defaultTemplateSpace(), name},
                 new String[]{Node.instance().clusterProvider().localNode().data().name()},
-                new PlatformGroupDisplay(platform.platform(), version.version(), platform.type()),
+                new PlatformGroupDisplay(platform.id(), version.version(), platform.type()),
                 maxMemory,
                 staticService,
                 minOnlineServices,

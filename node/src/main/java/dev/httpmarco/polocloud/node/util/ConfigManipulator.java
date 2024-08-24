@@ -22,9 +22,8 @@ public final class ConfigManipulator {
         return new ConfigManipulator(file);
     }
 
-    public ConfigManipulator rewrite(Predicate<String> predicate, String line) {
+    public void rewrite(Predicate<String> predicate, String line) {
         this.replacements.put(predicate, line);
-        return this;
     }
 
     @SneakyThrows
@@ -40,11 +39,17 @@ public final class ConfigManipulator {
         try (final var fileWriter = new FileWriter(file)) {
             for (var line : lines) {
 
+                boolean found = false;
                 for (var predicate : replacements.keySet()) {
                     if (!predicate.test(line)) {
                         continue;
                     }
+                    found = true;
                     fileWriter.write(replacements.get(predicate) + "\n");
+                }
+
+                if (!found) {
+                    fileWriter.write(line + "\n");
                 }
             }
         }
