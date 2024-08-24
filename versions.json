@@ -29,6 +29,10 @@
             {
               "indicator": "server-port",
               "value": "%port%"
+            },
+            {
+              "indicator": "online-mode",
+              "value": "false"
             }
           ],
           "appends": []
