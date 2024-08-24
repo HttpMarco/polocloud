@@ -36,7 +36,7 @@
       "files": [
         {
           "file": "velocity.toml",
-          "strategy": "COPY_FROM_CLASSPATH",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
           "replacements": [
             {
               "indicator": "bind",
