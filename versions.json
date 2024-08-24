@@ -32,6 +32,19 @@
           "version": "3.3.0-SNAPSHOT",
           "url": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/413/downloads/velocity-3.3.0-SNAPSHOT-413.jar"
         }
+      ],
+      "files": [
+        {
+          "file": "velocity.toml",
+          "strategy": "COPY_FROM_CLASSPATH",
+          "replacements": [
+            {
+              "indicator": "bind",
+              "value": "%hostname%:%port%"
+            }
+          ],
+          "appends": []
+        }
       ]
     },
     {
