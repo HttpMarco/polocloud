@@ -63,6 +63,68 @@
       ]
     },
     {
+      "id": "purpur",
+      "type": "SERVER",
+      "versions": [
+        {
+          "version": "1.21",
+          "url": "https://api.purpurmc.org/v2/purpur/1.21.1/latest/download"
+        },
+        {
+          "version": "1.21",
+          "url": "https://api.purpurmc.org/v2/purpur/1.21/latest/download"
+        }
+      ],
+      "files": [
+        {
+          "file": "eula.txt",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "eula=true"
+          ]
+        },
+        {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            },
+            {
+              "indicator": "online-mode",
+              "value": "false"
+            }
+          ],
+          "appends": []
+        },
+        {
+          "file": "config/paper-global.yml",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
+          ]
+        },
+        {
+          "file": "spigot.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "  bungeecord",
+              "value": "%bungeecord_use%"
+            }
+          ],
+          "appends": []
+        }
+      ],
+      "arguments": [
+        "-nogui",
+        "--separateClassLoader"
+      ]
+    },
+    {
       "id": "pandaspigot",
       "type": "SERVER",
       "versions": [
