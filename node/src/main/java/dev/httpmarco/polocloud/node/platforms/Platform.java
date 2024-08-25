@@ -106,6 +106,6 @@ public final class Platform implements Detail {
 
     @Override
     public String details() {
-        return "";
+        return versions.size() + " versions&8, &7type &8= &7" + type;
     }
 }
