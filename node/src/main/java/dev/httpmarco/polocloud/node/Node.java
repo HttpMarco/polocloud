@@ -14,6 +14,7 @@ import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.players.ClusterPlayerProviderImpl;
 import dev.httpmarco.polocloud.node.properties.PropertyRegister;
+import dev.httpmarco.polocloud.node.screens.ScreenProvider;
 import dev.httpmarco.polocloud.node.services.ClusterServiceProviderImpl;
 import dev.httpmarco.polocloud.node.templates.TemplatesProvider;
 import dev.httpmarco.polocloud.node.terminal.JLineTerminal;
@@ -43,6 +44,7 @@ public final class Node extends CloudAPI {
     private final ClusterGroupProviderImpl groupProvider;
     private final ClusterServiceProviderImpl serviceProvider;
     private final ClusterPlayerProviderImpl playerProvider;
+    private final ScreenProvider screenProvider;
     private final ModuleProvider moduleProvider;
 
     // only all properties of this local cluster node instance
@@ -72,6 +74,7 @@ public final class Node extends CloudAPI {
         this.groupProvider = new ClusterGroupProviderImpl(clusterProvider);
         this.serviceProvider = new ClusterServiceProviderImpl();
         this.playerProvider = new ClusterPlayerProviderImpl();
+        this.screenProvider = new ScreenProvider();
 
         // register provider commands
         this.commandService.registerCommands(new GroupCommand(), new ServiceCommand(), new ClusterCommand(this.clusterProvider));

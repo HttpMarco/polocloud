@@ -49,6 +49,7 @@ public final class ServiceCommand extends Command {
             }
         }, serviceArgument, CommandArgumentType.Keyword("log"));
 
+        syntax(it -> Node.instance().screenProvider().display(it.arg(serviceArgument)), serviceArgument, CommandArgumentType.Keyword("screen"));
 
         var commandArg = CommandArgumentType.StringArray("command");
         syntax(it -> {
