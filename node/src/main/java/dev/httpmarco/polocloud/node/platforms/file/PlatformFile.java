@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.node.platforms;
+package dev.httpmarco.polocloud.node.platforms.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
