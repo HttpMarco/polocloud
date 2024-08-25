@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.platforms;
 
+import dev.httpmarco.polocloud.api.Detail;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.launcher.util.FileSystemUtils;
@@ -21,7 +22,7 @@ import java.util.List;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class Platform {
+public final class Platform implements Detail {
 
     private String id;
     private PlatformType type;
@@ -101,5 +102,10 @@ public final class Platform {
         }
 
         // todo check patcher
+    }
+
+    @Override
+    public String details() {
+        return "";
     }
 }
