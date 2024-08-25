@@ -35,9 +35,8 @@ public final class NodeShutdown {
                     }
                 });
 
-
+        Node.instance().serviceProvider().close();
         Node.instance().moduleProvider().unloadAllModules();
-
         clusterService.close();
 
         Node.instance().terminal().close();

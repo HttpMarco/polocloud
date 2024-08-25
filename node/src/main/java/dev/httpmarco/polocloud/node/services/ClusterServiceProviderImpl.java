@@ -3,9 +3,9 @@ package dev.httpmarco.polocloud.node.services;
 import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
-import dev.httpmarco.polocloud.api.groups.FallbackClusterGroup;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
@@ -20,7 +20,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -28,14 +27,14 @@ import java.util.concurrent.*;
 @Log4j2
 @Getter
 @Accessors(fluent = true)
-public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
+public final class ClusterServiceProviderImpl extends ClusterServiceProvider implements Closeable {
 
     @Setter
     private String serviceProxyToken;
     private final List<ClusterService> services = new CopyOnWriteArrayList<>();
     private final ClusterServiceFactory factory = new ClusterServiceFactoryImpl();
     private final ClusterServiceQueue clusterServiceQueue = new ClusterServiceQueue();
-
+    private final ClusterLocalServiceReadingThread logReadingThread = new ClusterLocalServiceReadingThread();
 
     public ClusterServiceProviderImpl() {
         var localNode = Node.instance().clusterProvider().localNode();
@@ -128,8 +127,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
         localNode.transmit().responder("service-filtering", property -> new ServiceCollectionPacket(find(property.getEnum("filter", ClusterServiceFilter.class))));
 
         localNode.transmit().listen(ClusterSyncUnregisterServicePacket.class, (transmit, packet) -> Node.instance().serviceProvider().services().removeIf(service -> service.id().equals(packet.id())));
-
-
+        logReadingThread.start();
     }
 
     @Override
@@ -186,5 +184,10 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider {
 
     public ClusterService find(ChannelTransmit transmit) {
         return this.services.stream().filter(it -> it instanceof ClusterLocalServiceImpl localService && localService.transmit() != null && localService.transmit().equals(transmit)).findFirst().orElse(null);
+    }
+
+    @Override
+    public void close() {
+        this.logReadingThread.interrupt();
     }
 }

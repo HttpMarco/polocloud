@@ -8,11 +8,9 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
-import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.services.util.ClusterDefaultArgs;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.templates.TemplateFactory;
-import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
@@ -54,12 +52,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
             arguments.addAll(platformArgs);
         }
 
-        var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile());
-
-       // processBuilder.redirectErrorStream(true);
-        // todo remove but the log stops if not present
-        processBuilder.redirectOutput(localService.runningDir().resolve("polocloud_info_log.txt").toFile());
-        processBuilder.redirectError(localService.runningDir().resolve("polocloud_error_log.txt").toFile());
+        var processBuilder = new ProcessBuilder(arguments.toArray(String[]::new)).directory(localService.runningDir().toFile()).redirectErrorStream(true);
 
         // send the platform boot jar
         processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
