@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.node.commands.CommandArgument;
 import dev.httpmarco.polocloud.node.commands.CommandContext;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.node.platforms.versions.PlatformUrlVersion;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ public final class PlatformBindVersionArgument extends CommandArgument<PlatformV
     @Contract(pure = true)
     @Override
     public @NotNull PlatformVersion buildResult(String input) {
-        return new PlatformVersion(input, null);
+        return new PlatformUrlVersion(input, null);
     }
 
     @Override
