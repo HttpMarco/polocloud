@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncUnregisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.Platform;
+import dev.httpmarco.polocloud.node.screens.ScreenProvider;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.Getter;
 import lombok.Setter;
@@ -107,6 +108,13 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
         if (this.processTracking != null) {
             this.processTracking.interrupt();
             this.processTracking = null;
+        }
+
+        var screenedProvider = Node.instance().screenProvider();
+        if(screenedProvider.isUsed()) {
+            if(screenedProvider.current().equals(this)){
+                screenedProvider.redraw();
+            }
         }
 
         if (!group().staticService()) {

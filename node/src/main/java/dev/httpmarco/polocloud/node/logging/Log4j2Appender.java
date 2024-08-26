@@ -44,7 +44,7 @@ public final class Log4j2Appender extends AbstractAppender {
         var message = event.getMessage().getFormattedMessage();
         var layout = "&7" + TERMINAL_LAYOUT.format(Calendar.getInstance().getTime()) + " &8| " + Log4jColorTranslate.translate(event.getLevel()) + event.getLevel().name() + "&8: &7" + message;
 
-        if(!Node.instance().terminal().hasSetup()) {
+        if(!Node.instance().terminal().hasSetup() && !(Node.instance().screenProvider() != null && Node.instance().screenProvider().isUsed())) {
             // todo cache latest message
             System.out.println(layout);
         }

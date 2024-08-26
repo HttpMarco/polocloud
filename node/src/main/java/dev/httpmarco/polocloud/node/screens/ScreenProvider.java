@@ -63,14 +63,23 @@ public final class ScreenProvider implements Closeable {
         }
 
         for (var endpoint : externalSubscribes.keySet()) {
-            if(externalSubscribes.get(endpoint).equals(service)) {
+            if (externalSubscribes.get(endpoint).equals(service)) {
                 //todo send new log
             }
         }
     }
 
+    public void redraw() {
+        if (!(current instanceof ClusterLocalServiceImpl)) {
+            // todo send unsubscribe packet
+        }
+
+        this.current = null;
+        Node.instance().terminal().clear();
+    }
+
     public boolean isUsed() {
-        return this.current == null;
+        return this.current != null;
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public final class ClusterLocalServiceReadingThread extends Thread {
 
-    private static final long LOG_UPDATE_CYCLE = 1000;
+    private static final long LOG_UPDATE_CYCLE = 100;
 
     @Override
     @SneakyThrows
