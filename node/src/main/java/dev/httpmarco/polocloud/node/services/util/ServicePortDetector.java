@@ -24,7 +24,7 @@ public final class ServicePortDetector {
             serverPort = pool.property(NodeProperties.PROXY_PORT_START_RANGE);
         } else if (platformType == PlatformType.SERVER && pool.has(NodeProperties.SERVER_PORT_START_RANGE)) {
             serverPort = pool.property(NodeProperties.SERVER_PORT_START_RANGE);
-        } else if (platformType == PlatformType.SERVER_MASTER && pool.has(NodeProperties.SERVICE_PORT_START_RANGE)) {
+        } else if (platformType == PlatformType.SERVICE && pool.has(NodeProperties.SERVICE_PORT_START_RANGE)) {
             serverPort = pool.property(NodeProperties.SERVICE_PORT_START_RANGE);
         }
 

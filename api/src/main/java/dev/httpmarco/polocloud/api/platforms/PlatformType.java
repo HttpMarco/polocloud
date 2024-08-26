@@ -12,7 +12,7 @@ public enum PlatformType {
 
     PROXY(25565, "every_proxy", "end"),
     SERVER(20000, "every_server", "stop"),
-    SERVER_MASTER(30000, "every_service", null);
+    SERVICE(30000, "every_service", null);
 
     final int defaultRuntimePort;
     final String defaultTemplateSpace;
