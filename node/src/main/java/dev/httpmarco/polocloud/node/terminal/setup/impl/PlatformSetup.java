@@ -3,12 +3,16 @@ package dev.httpmarco.polocloud.node.terminal.setup.impl;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.platforms.Platform;
+import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.node.platforms.versions.PlatformPathVersion;
+import dev.httpmarco.polocloud.node.platforms.versions.PlatformUrlVersion;
 import dev.httpmarco.polocloud.node.terminal.setup.Setup;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +32,7 @@ public final class PlatformSetup extends Setup {
 
             if (result.equalsIgnoreCase("yes")) {
                 // add new version questions
-                question("first-version-number", "What is the id of the new version?", s -> {
+                question("first-version-id", "What is the id of the new version?", s -> {
                     Path.of("local/platforms/" + it.second().get("id") + "/" + s.first() + "/").toFile().mkdirs();
                     return true;
                 });
@@ -36,12 +40,12 @@ public final class PlatformSetup extends Setup {
                     var resultType = s.first();
 
                     if (resultType.equalsIgnoreCase("url")) {
-                        question("first-version-number", "What the url of the new version jar?", url -> url.first().startsWith("http"));
+                        question("first-version-url", "What the url of the new version jar?", url -> url.first().startsWith("http"));
                         return true;
                     }
 
                     if (resultType.equalsIgnoreCase("file")) {
-                        question("first-version-file", "What is the name of the jar file? Current location dir &8'&flocal/platforms/" + it.second().get("id") + "/" + it.second().get("first-version-number") + "&8'&7", pathContext -> pathContext.first().endsWith(".jar") && Files.exists(Path.of("local/platforms/" + it.second().get("id") + "/" + pathContext.second().get("first-version-number") + "/" + pathContext.first())));
+                        question("first-version-file", "What is the name of the jar file? Current location dir &8'&flocal/platforms/" + it.second().get("id") + "/" + it.second().get("first-version-id") + "&8'&7", pathContext -> pathContext.first().endsWith(".jar") && Files.exists(Path.of("local/platforms/" + it.second().get("id") + "/" + pathContext.second().get("first-version-id") + "/" + pathContext.first())));
                         return true;
                     }
                     return false;
@@ -56,13 +60,24 @@ public final class PlatformSetup extends Setup {
         var id = context.get("id");
         var type = PlatformType.valueOf(context.get("type"));
 
-        var platform = new Platform(id, type, List.of(), List.of(), List.of());
+        var platform = new Platform(id, type, List.of(), new ArrayList<>(), List.of());
         var platformService = Node.instance().platformService();
 
-        if (Boolean.parseBoolean(context.get("first-version"))) {
+        if (context.get("first-version").equalsIgnoreCase("yes")) {
             // the user want the first version of this platform
             var versionType = context.get("first-version-type");
+            var versionId = context.get("first-version-id");
 
+            PlatformVersion platformVersion;
+
+            if (versionType.equalsIgnoreCase("url")) {
+                platformVersion = new PlatformUrlVersion(versionId, context.get("first-version-url"));
+            } else if (versionType.equalsIgnoreCase("file")) {
+                platformVersion = new PlatformPathVersion(versionId, context.get("first-version-file"));
+            } else {
+                throw new IllegalArgumentException();
+            }
+            platform.versions().add(platformVersion);
         }
 
         platformService.platforms().add(platform);
