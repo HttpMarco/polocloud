@@ -32,7 +32,7 @@ public final class ServiceCommand extends Command {
 
         syntax(it -> {
             var service = it.arg(serviceArgument);
-            log.info("Try shutdown of &8'&f{}'&8", service.name());
+            log.info("Trying to shutdown &8'&f{}'&8", service.name());
 
             // todo
             service.shutdown();
@@ -57,7 +57,7 @@ public final class ServiceCommand extends Command {
             var command = it.arg(commandArg);
 
             service.executeCommand(command);
-            log.info("Successfully execute the command &8'&f{}&8' &7on server&8: &7{}", command, service.name());
+            log.info("&b{} &8-> &b{} &8| &7{}", Node.instance().clusterProvider().localNode().data().name(), service.name(), command);
         }, serviceArgument, CommandArgumentType.Keyword("execute"), commandArg);
     }
 }
