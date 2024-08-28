@@ -27,6 +27,7 @@ public final class ServiceCommand extends Command {
             log.info("Group&8: &b{}", service.group().name());
             log.info("Bind&8: &b{}&8:&b{}", service.hostname(), service.port());
             log.info("State&8: &b{}", service.state());
+            log.info("Online players&8: &b{}", service.onlinePlayersCount());
         }, serviceArgument, CommandArgumentType.Keyword("info"));
 
 
