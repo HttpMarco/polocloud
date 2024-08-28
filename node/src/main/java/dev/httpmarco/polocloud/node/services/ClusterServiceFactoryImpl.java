@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
+import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.services.util.ClusterDefaultArgs;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.templates.TemplateFactory;
@@ -57,6 +58,10 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
         processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterProvider().localNode().data().port()));
         processBuilder.environment().put("serviceId", localService.id().toString());
+        processBuilder.environment().put("forwarding_secret", PlatformService.FORWARDING_SECRET);
+
+        processBuilder.environment().put("hostname", localService.hostname());
+        processBuilder.environment().put("port", String.valueOf(localService.port()));
 
         // copy platform plugin for have a better control of service
         var pluginDir = localService.runningDir().resolve("plugins");
