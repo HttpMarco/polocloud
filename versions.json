@@ -73,6 +73,50 @@
         {
           "version": "1.21",
           "url": "https://api.purpurmc.org/v2/purpur/1.21/latest/download"
+        },
+        {
+          "version": "1.20.6",
+          "url": "https://api.purpurmc.org/v2/purpur/1.20.6/latest/download"
+        },
+        {
+          "version": "1.20.5",
+          "url": "https://api.purpurmc.org/v2/purpur/1.20.5/latest/download"
+        },
+        {
+          "version": "1.20.4",
+          "url": "https://api.purpurmc.org/v2/purpur/1.20.4/latest/download"
+        },
+        {
+          "version": "1.20.2",
+          "url": "https://api.purpurmc.org/v2/purpur/1.20.2/latest/download"
+        },
+        {
+          "version": "1.20.1",
+          "url": "https://api.purpurmc.org/v2/purpur/1.20.1/latest/download"
+        },
+        {
+          "version": "1.19.4",
+          "url": "https://api.purpurmc.org/v2/purpur/1.19.4/latest/download"
+        },
+        {
+          "version": "1.19.3",
+          "url": "https://api.purpurmc.org/v2/purpur/1.19.3/latest/download"
+        },
+        {
+          "version": "1.19.2",
+          "url": "https://api.purpurmc.org/v2/purpur/1.19.2/latest/download"
+        },
+        {
+          "version": "1.18.2",
+          "url": "https://api.purpurmc.org/v2/purpur/1.18.2/latest/download"
+        },
+        {
+          "version": "1.17.1",
+          "url": "https://api.purpurmc.org/v2/purpur/1.17.1/latest/download"
+        },
+        {
+          "version": "1.16.5",
+          "url": "https://api.purpurmc.org/v2/purpur/1.16.5/latest/download"
         }
       ],
       "files": [
