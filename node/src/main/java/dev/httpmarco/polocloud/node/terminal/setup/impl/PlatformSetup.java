@@ -45,7 +45,10 @@ public final class PlatformSetup extends Setup {
                     }
 
                     if (resultType.equalsIgnoreCase("file")) {
-                        question("first-version-file", "What is the name of the jar file? Current location dir &8'&flocal/platforms/" + it.second().get("id") + "/" + it.second().get("first-version-id") + "&8'&7", pathContext -> pathContext.first().endsWith(".jar") && Files.exists(Path.of("local/platforms/" + it.second().get("id") + "/" + pathContext.second().get("first-version-id") + "/" + pathContext.first())));
+                        question("first-version-file",
+                                "Copy the current &8'&f" + it.second().get("id") + "-" + it.second().get("first-version-id") + ".jar&8' &7into &8'&flocal/platforms/" + it.second().get("id") + "/" + it.second().get("first-version-id") + "&8'&7"
+                                , ignore -> List.of("confirm"),
+                                pathContext -> pathContext.first().equalsIgnoreCase("confirm") && Files.exists(Path.of("local/platforms/" + it.second().get("id") + "/" + pathContext.second().get("first-version-id") + "/" + it.second().get("id") + "-" + it.second().get("first-version-id") + ".jar")));
                         return true;
                     }
                     return false;

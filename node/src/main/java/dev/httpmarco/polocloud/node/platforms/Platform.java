@@ -105,8 +105,6 @@ public final class Platform implements Detail {
             if(version instanceof PlatformUrlVersion urlVersion) {
                 //copy bytes into the file
                 Downloader.download(urlVersion.url(), file);
-            } else if(version instanceof PlatformPathVersion pathVersion){
-                //todo
             }
         }
 
