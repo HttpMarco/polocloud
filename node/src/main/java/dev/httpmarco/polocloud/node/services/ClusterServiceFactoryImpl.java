@@ -27,7 +27,6 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
     public static int PROCESS_TIMEOUT = 5;
 
-
     @Override
     @SneakyThrows
     public void runGroupService(ClusterGroup group) {

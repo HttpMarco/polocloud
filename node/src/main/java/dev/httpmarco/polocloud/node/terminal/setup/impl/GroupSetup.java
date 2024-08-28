@@ -4,8 +4,6 @@ import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.node.Node;
-import dev.httpmarco.polocloud.node.groups.ClusterGroupFallbackImpl;
-import dev.httpmarco.polocloud.node.groups.ClusterGroupImpl;
 import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.node.terminal.setup.Setup;
@@ -28,7 +26,7 @@ public final class GroupSetup extends Setup {
                 it -> Node.instance().platformService().platforms().stream().map(Platform::id).toList(),
                 rawInput -> Node.instance().platformService().find(rawInput.first()) != null);
 
-        question("version", "Select a version&8?",
+        question("version", "Select a version&8",
                 it -> Node.instance().platformService().find(it.get("platform"))
                         .versions()
                         .stream().map(PlatformVersion::version).toList(),
