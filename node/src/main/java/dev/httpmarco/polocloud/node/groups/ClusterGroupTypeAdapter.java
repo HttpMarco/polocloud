@@ -9,7 +9,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
-public final class ClusterGroupTypeAdapter implements JsonDeserializer<ClusterGroup>, JsonSerializer<ClusterGroup> {
+public final class ClusterGroupTypeAdapter implements JsonDeserializer<ClusterGroup>, JsonSerializer<FallbackClusterGroup> {
+
+    private static final Gson SILENT_GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     @Override
     public ClusterGroup deserialize(JsonElement json, Type typeOfT, @NotNull JsonDeserializationContext context) throws JsonParseException {
@@ -19,17 +21,15 @@ public final class ClusterGroupTypeAdapter implements JsonDeserializer<ClusterGr
         if (object.has("fallback") && object.get("fallback").getAsBoolean()) {
             return new ClusterGroupFallbackImpl(group);
         }
-
         return group;
     }
 
     @Override
-    public @Nullable JsonElement serialize(ClusterGroup src, Type typeOfSrc, @NotNull JsonSerializationContext context) {
-
-        var group = (JsonObject) context.serialize(src);
+    public @Nullable JsonElement serialize(FallbackClusterGroup src, Type typeOfSrc, @NotNull JsonSerializationContext context) {
+        var group = (JsonObject) SILENT_GSON.toJsonTree(src);
 
         if (src.platform().type() == PlatformType.SERVER) {
-            group.addProperty("fallback", (src instanceof FallbackClusterGroup));
+            group.addProperty("fallback", true);
         }
 
         return group;
