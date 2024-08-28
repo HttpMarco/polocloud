@@ -119,6 +119,10 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
 
         if (!group().staticService()) {
             synchronized (this) {
+                // todo check for windows directory not empty exception
+                try {
+                    Thread.sleep(200);
+                }catch (InterruptedException ignore) {}
                 try {
                     if (DirectoryActions.delete(runningDir)) {
                         Files.deleteIfExists(runningDir);
