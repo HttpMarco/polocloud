@@ -90,7 +90,7 @@ public final class Node extends CloudAPI {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> NodeShutdown.nodeShutdown(false)));
 
-        Node.log.info("Cluster node boot successfully &8(&7Took {}ms&8)", System.currentTimeMillis() - Long.parseLong(System.getProperty("startup")));
+        log.info("Cluster node boot successfully &8(&7Took {}ms&8)", System.currentTimeMillis() - Long.parseLong(System.getProperty("startup")));
 
         this.terminal.allowInput();
         this.serviceProvider.clusterServiceQueue().start();
