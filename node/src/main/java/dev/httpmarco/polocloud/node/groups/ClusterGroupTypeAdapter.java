@@ -4,6 +4,10 @@ import com.google.gson.*;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.FallbackClusterGroup;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.node.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.node.platforms.PlatformVersionTypeAdapter;
+import dev.httpmarco.polocloud.node.properties.PropertiesPoolSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +15,7 @@ import java.lang.reflect.Type;
 
 public final class ClusterGroupTypeAdapter implements JsonDeserializer<ClusterGroup>, JsonSerializer<FallbackClusterGroup> {
 
-    private static final Gson SILENT_GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Gson SILENT_GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().registerTypeAdapter(PlatformVersion.class, new PlatformVersionTypeAdapter()).registerTypeAdapter(PropertiesPool.class, new PropertiesPoolSerializer()).create();
 
     @Override
     public ClusterGroup deserialize(JsonElement json, Type typeOfT, @NotNull JsonDeserializationContext context) throws JsonParseException {
