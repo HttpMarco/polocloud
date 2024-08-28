@@ -183,6 +183,38 @@
         {
           "version": "1.20.4",
           "url": "https://download.getbukkit.org/spigot/spigot-1.20.4.jar"
+        },
+        {
+          "version": "1.20.2",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.20.2.jar"
+        },
+        {
+          "version": "1.20.1",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.20.1.jar"
+        },
+        {
+          "version": "1.19.4",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.19.4.jar"
+        },
+        {
+          "version": "1.19.3",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.19.3.jar"
+        },
+        {
+          "version": "1.19.2",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.19.2.jar"
+        },
+        {
+          "version": "1.18.2",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.18.2.jar"
+        },
+        {
+          "version": "1.17.1",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.17.1.jar"
+        },
+        {
+          "version": "1.16.5",
+          "url": "https://download.getbukkit.org/spigot/spigot-1.16.5.jar"
         }
       ],
       "files": [
