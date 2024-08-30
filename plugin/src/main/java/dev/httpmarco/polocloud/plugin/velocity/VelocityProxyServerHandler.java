@@ -15,7 +15,8 @@ public final class VelocityProxyServerHandler implements ProxyServerHandler {
 
     @Override
     public void registerServer(String name, String hostname, int port) {
-        proxyServer.registerServer(new ServerInfo(name, new InetSocketAddress(hostname, port)));
+        // todo check with minestom... "0.0.0.0" not work
+        proxyServer.registerServer(new ServerInfo(name, new InetSocketAddress("127.0.0.1", port)));
     }
 
     @Override
