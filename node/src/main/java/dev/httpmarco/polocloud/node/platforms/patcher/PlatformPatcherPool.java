@@ -12,6 +12,7 @@ public final class PlatformPatcherPool {
 
     static {
         register(new PlatformZipPatcher());
+        register(new PlatformPaperPatcher());
     }
 
     public void register(PlatformPatcher patcher) {
