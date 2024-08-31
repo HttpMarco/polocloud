@@ -58,7 +58,8 @@ public class CommandParser {
                     var argument = syntaxCommand.arguments()[i];
 
                     if (i >= args.length) {
-                        return false;
+                        provedSyntax = false;
+                        break;
                     }
 
                     var rawInput = args[i];
