@@ -21,14 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
 @Getter
@@ -41,7 +38,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     private @Nullable ChannelTransmit transmit;
 
     private final Path runningDir;
-    private final List<String> logs = new ArrayList<>();
+    private final List<String> logs = new CopyOnWriteArrayList<>();
 
     private final EventSubscribePool eventSubscribePool = new EventSubscribePool(this.name());
 
