@@ -6,16 +6,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @UtilityClass
-public final class PlatformPool {
+public final class PlatformPatcherPool {
 
     private static final Map<String, PlatformPatcher> patcherList = new HashMap<>();
 
     static {
-        register("zip", new PlatformZipPatcher());
+        register(new PlatformZipPatcher());
     }
 
-    public void register(String id, PlatformPatcher patcher) {
-        patcherList.put(id, patcher);
+    public void register(PlatformPatcher patcher) {
+        patcherList.put(patcher.id(), patcher);
     }
 
     public PlatformPatcher patcher(String id) {
