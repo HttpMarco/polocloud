@@ -8,4 +8,6 @@ public interface PlatformPatcher {
 
     void patch(File serverFile, ClusterLocalServiceImpl clusterLocalService);
 
+    String id();
+
 }
