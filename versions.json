@@ -3,7 +3,9 @@
     {
       "id": "paper",
       "type": "SERVER",
-      "patchers": [],
+      "patchers": [
+        "paperclip"
+      ],
       "versions": [
         {
           "version": "1.21",
