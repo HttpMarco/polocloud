@@ -4,12 +4,17 @@ import dev.httpmarco.polocloud.instance.context.DefaultInstanceContext;
 import dev.httpmarco.polocloud.instance.context.SeparateInstanceContext;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+
+import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.jar.JarFile;
 
 @UtilityClass
 public final class ClusterInstanceFactory {
+
+    private static final String PREMAIN_CLASS = "Premain-Class";
+    private static final String LAUNCHER_AGENT_CLASS = "Launcher-Agent-Class";
 
     @SneakyThrows
     public void startPlatform(String[] args) {
@@ -19,6 +24,16 @@ public final class ClusterInstanceFactory {
 
         final var thread = new Thread(() -> {
             try (final var jar = new JarFile(file)) {
+
+                if (jar.getManifest().getMainAttributes().containsKey(new java.util.jar.Attributes.Name(PREMAIN_CLASS))) {
+                    var premainClass = Class.forName(jar.getManifest().getMainAttributes().getValue(PREMAIN_CLASS), true, contextClassloader);
+                    premainClass.getMethod("premain", String.class, Instrumentation.class).invoke(null, null, ClusterPremain.INSTRUMENTATION);
+                }
+
+                if (jar.getManifest().getMainAttributes().containsKey(new java.util.jar.Attributes.Name(LAUNCHER_AGENT_CLASS))) {
+                    var launcherAgentClass = Class.forName(jar.getManifest().getMainAttributes().getValue(LAUNCHER_AGENT_CLASS), true, contextClassloader);
+                    launcherAgentClass.getMethod("premain", String.class, Instrumentation.class).invoke(null, null, ClusterPremain.INSTRUMENTATION);
+                }
 
                 var mainClass = jar.getManifest().getMainAttributes().getValue("Main-Class");
                 var main = Class.forName(mainClass, true, contextClassloader).getMethod("main", String[].class);
