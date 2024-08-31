@@ -6,7 +6,7 @@ import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.launcher.util.FileSystemUtils;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.platforms.file.PlatformFile;
-import dev.httpmarco.polocloud.node.platforms.versions.PlatformPathVersion;
+import dev.httpmarco.polocloud.node.platforms.patcher.PlatformPatcher;
 import dev.httpmarco.polocloud.node.platforms.versions.PlatformUrlVersion;
 import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import dev.httpmarco.polocloud.node.util.*;
@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -32,6 +31,8 @@ public final class Platform implements Detail {
     private PlatformType type;
 
     private final @Nullable List<String> arguments;
+    private final List<PlatformPatcher> patchers;
+
     private final List<PlatformVersion> versions;
     private final List<PlatformFile> files;
 
@@ -40,7 +41,7 @@ public final class Platform implements Detail {
         var platform = service.group().platform();
 
         // download only if not exists
-        this.download(display);
+        this.download(display, service);
 
         //copy platform jar and maybe patch files
         DirectoryActions.copyDirectoryContents(Path.of("local/platforms/" + platform.platform() + "/" + platform.version()), service.runningDir());
@@ -89,7 +90,7 @@ public final class Platform implements Detail {
 
 
     @SneakyThrows
-    public void download(@NotNull PlatformGroupDisplay display) {
+    public void download(@NotNull PlatformGroupDisplay display, ClusterLocalServiceImpl localService) {
         var version = versions.stream().filter(it -> it.version().equalsIgnoreCase(display.version())).findFirst().orElseThrow();
 
         var platformDir = Path.of("local/platforms/" + display.platform() + "/" + display.version());
@@ -100,15 +101,18 @@ public final class Platform implements Detail {
 
         var file = platformDir.resolve(display.details() + ".jar");
 
+
         if (!Files.exists(file)) {
 
             if(version instanceof PlatformUrlVersion urlVersion) {
                 //copy bytes into the file
                 Downloader.download(urlVersion.url(), file);
             }
-        }
 
-        // todo check patcher
+            for (var patcher : patchers) {
+                patcher.patch(file.toFile(), localService);
+            }
+        }
     }
 
     @Override
