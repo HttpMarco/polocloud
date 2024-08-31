@@ -56,6 +56,12 @@ public class CommandParser {
 
                 for (int i = 0; i < syntaxCommand.arguments().length; i++) {
                     var argument = syntaxCommand.arguments()[i];
+
+                    if (i >= args.length) {
+                        provedSyntax = false;
+                        break;
+                    }
+
                     var rawInput = args[i];
 
                     if(argument instanceof StringArrayArgument arrayArgument) {
