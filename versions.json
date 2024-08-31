@@ -275,6 +275,21 @@
           "appends": [
             "eula=true"
           ]
+        },
+        {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            },
+            {
+              "indicator": "online-mode",
+              "value": "false"
+            }
+          ],
+          "appends": []
         }
       ],
       "versions": [
@@ -339,6 +354,18 @@
           "appends": []
         }
       ]
+    },
+    {
+      "id": "waterdogpe",
+      "type": "PROXY",
+      "patchers": [],
+      "versions": [
+        {
+          "version": "latest",
+          "url": "https://github.com/WaterdogPE/WaterdogPE/releases/download/latest/Waterdog.jar"
+        }
+      ],
+      "files": []
     }
   ]
 }
