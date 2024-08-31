@@ -24,7 +24,12 @@ public final class PlayerCommand extends Command {
             log.info("Username&8: &b{}", player.name());
             log.info("UniqueId&8: &b{}", player.uniqueId());
             log.info("Current proxy&8: &b{}", player.currentProxyName());
-            log.info("Current server&8: &b{}", player.currentServerName());
+
+            if (player.currentServer() == null) {
+                log.info("Current server&8: &bSearching...");
+            } else {
+                log.info("Current server&8: &b{}", player.currentServerName());
+            }
         }, playerArgument, CommandArgumentType.Keyword("info"));
     }
 }
