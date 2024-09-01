@@ -12,10 +12,10 @@ import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.services.util.ClusterDefaultArgs;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
 import dev.httpmarco.polocloud.node.templates.TemplateFactory;
+import dev.httpmarco.polocloud.node.util.JavaFileAttach;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -68,6 +68,11 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         pluginDir.toFile().mkdirs();
 
         Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
+
+        // add the platform plugin data
+        if (localService.platform().pluginData() != null) {
+            JavaFileAttach.append(pluginDir.resolve("polocloud-plugin.jar").toFile(), localService.platform().pluginData());
+        }
 
         localService.state(ClusterServiceState.STARTING);
         localService.update();

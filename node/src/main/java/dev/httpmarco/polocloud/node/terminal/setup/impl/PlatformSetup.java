@@ -63,7 +63,8 @@ public final class PlatformSetup extends Setup {
         var id = context.get("id");
         var type = PlatformType.valueOf(context.get("type"));
 
-        var platform = new Platform(id, type, List.of(), List.of(), new ArrayList<>(), List.of());
+        //todo add question
+        var platform = new Platform(id, type, "", List.of(), List.of(), new ArrayList<>(), List.of());
         var platformService = Node.instance().platformService();
 
         if (context.get("first-version").equalsIgnoreCase("yes")) {
