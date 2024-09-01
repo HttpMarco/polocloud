@@ -3,6 +3,7 @@
     {
       "id": "paper",
       "type": "SERVER",
+      "pluginData": "paper/paper-plugin.yml",
       "patchers": [
         "paperclip"
       ],
@@ -68,6 +69,7 @@
     {
       "id": "purpur",
       "type": "SERVER",
+      "pluginData": "spigot/plugin.yml",
       "patchers": [],
       "versions": [
         {
@@ -175,6 +177,7 @@
     {
       "id": "spigot",
       "type": "SERVER",
+      "pluginData": "spigot/plugin.yml",
       "patchers": [],
       "versions": [
         {
@@ -266,6 +269,7 @@
     {
       "id": "pandaspigot",
       "type": "SERVER",
+      "pluginData": "spigot/plugin.yml",
       "patchers": [
         "zip"
       ],
@@ -336,6 +340,7 @@
     {
       "id": "bungeecord",
       "type": "PROXY",
+      "pluginData": "bungeecord/bungee.yml",
       "patchers": [],
       "versions": [
         {
@@ -359,6 +364,7 @@
     },
     {
       "id": "waterdogpe",
+      "pluginData": "waterdogpe/plugin.yml",
       "type": "PROXY",
       "patchers": [],
       "versions": [
