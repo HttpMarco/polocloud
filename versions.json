@@ -373,7 +373,19 @@
           "url": "https://github.com/WaterdogPE/WaterdogPE/releases/download/latest/Waterdog.jar"
         }
       ],
-      "files": []
+      "files": [
+        {
+          "file": "config.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "  host",
+              "value": "%hostname%:%port%"
+            }
+          ],
+          "appends": []
+        }
+      ]
     }
   ]
 }
