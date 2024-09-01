@@ -6,8 +6,14 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/")
-        maven(url = "https://repo.papermc.io/repository/maven-public/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://repo.papermc.io/repository/maven-public/")
+
+        // waterdog ref links
+        maven("https://repo.waterdog.dev/releases/")
+        maven("https://repo.waterdog.dev/snapshots/")
+        maven("https://repo.opencollab.dev/maven-releases/")
+        maven("https://repo.opencollab.dev/maven-snapshots/")
     }
 
     tasks.withType<JavaCompile>().configureEach {

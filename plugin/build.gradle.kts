@@ -1,12 +1,13 @@
 dependencies {
-    implementation(libs.spigot)
+    compileOnly(libs.spigot)
 
-    implementation(project(":instance"))
-    implementation(project(":api"))
+    compileOnly(project(":instance"))
+    compileOnly(project(":api"))
 
-    implementation(libs.velocity)
+    compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
-    implementation(libs.bungeecord)
+    compileOnly(libs.bungeecord)
+    compileOnly(libs.waterdogpe)
 }
 
 tasks.jar {
