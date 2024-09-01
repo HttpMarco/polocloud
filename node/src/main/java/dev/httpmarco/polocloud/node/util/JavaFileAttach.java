@@ -20,7 +20,6 @@ public final class JavaFileAttach {
 
         var pathSeparators = file.split("/", -1);
         var name = pathSeparators[pathSeparators.length - 1];
-        log.info("testing here wit name: " + name);
 
         try {
             File tempJarFile = File.createTempFile("tempJar", ".jar");
@@ -44,7 +43,6 @@ public final class JavaFileAttach {
                     jos.closeEntry();
                 }
 
-                log.info("platforms/" + file);
                 try (InputStream is = Node.class.getClassLoader().getResourceAsStream("platforms/" + file)) {
                     jos.putNextEntry(new JarEntry(name));
                     byte[] buffer = new byte[1024];
