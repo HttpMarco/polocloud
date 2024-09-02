@@ -11,7 +11,6 @@ public final class PlatformPatcherPool {
     private static final Map<String, PlatformPatcher> patcherList = new HashMap<>();
 
     static {
-        register(new PlatformZipPatcher());
         register(new PlatformPaperPatcher());
     }
 
