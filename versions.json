@@ -270,9 +270,7 @@
       "id": "pandaspigot",
       "type": "SERVER",
       "pluginData": "spigot/plugin.yml",
-      "patchers": [
-        "zip"
-      ],
+      "patchers": [],
       "files": [
         {
           "file": "eula.txt",
@@ -301,7 +299,7 @@
       "versions": [
         {
           "version": "1.8.9",
-          "url": "https://nightly.link/hpfxd/PandaSpigot/actions/runs/10435425633/Server%20JAR.zip"
+          "url": "https://downloads.hpfxd.com/v2/projects/pandaspigot/versions/1.8.8/builds/latest/downloads/paperclip"
         }
       ]
     },
