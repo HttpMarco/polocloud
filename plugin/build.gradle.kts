@@ -8,6 +8,7 @@ dependencies {
     annotationProcessor(libs.velocity)
     compileOnly(libs.bungeecord)
     compileOnly(libs.waterdogpe)
+    compileOnly(libs.nukkit)
 }
 
 tasks.jar {
