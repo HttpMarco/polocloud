@@ -391,7 +391,14 @@
       "id": "nukkit",
       "pluginData": "nukkit/plugin.yml",
       "type": "SERVER",
-      "patchers": [
+      "patchers": [],
+      "versions": [
+        {
+          "version": "latest",
+          "url": "https://ci.opencollab.dev/job/NukkitX/job/Nukkit/job/master/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar"
+        }
+      ],
+      "files": [
         {
           "file": "nukkit.yml",
           "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
@@ -413,14 +420,7 @@
           ],
           "appends": []
         }
-      ],
-      "versions": [
-        {
-          "version": "latest",
-          "url": "https://ci.opencollab.dev/job/NukkitX/job/Nukkit/job/master/lastSuccessfulBuild/artifact/target/nukkit-1.0-SNAPSHOT.jar"
-        }
-      ],
-      "files": []
+      ]
     }
   ]
 }
