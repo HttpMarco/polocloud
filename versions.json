@@ -294,6 +294,17 @@
             }
           ],
           "appends": []
+        },
+        {
+          "file": "spigot.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "  bungeecord",
+              "value": "%bungeecord_use%"
+            }
+          ],
+          "appends": []
         }
       ],
       "versions": [
