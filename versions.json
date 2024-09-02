@@ -391,7 +391,29 @@
       "id": "nukkit",
       "pluginData": "nukkit/plugin.yml",
       "type": "SERVER",
-      "patchers": [],
+      "patchers": [
+        {
+          "file": "nukkit.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [],
+          "appends": []
+        },
+        {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            },
+            {
+              "indicator": "server-ip",
+              "value": "%hostname%"
+            }
+          ],
+          "appends": []
+        }
+      ],
       "versions": [
         {
           "version": "latest",
