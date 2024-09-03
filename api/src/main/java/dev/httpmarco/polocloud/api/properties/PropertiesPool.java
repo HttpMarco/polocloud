@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.api.properties;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,5 +23,9 @@ public final class PropertiesPool {
     @SuppressWarnings("unchecked")
     public <T> T property(Property<T> property) {
         return (T) this.properties.get(property);
+    }
+
+    public void extendsProperties(@NotNull PropertiesPool pool) {
+        this.properties.putAll(pool.properties);
     }
 }

@@ -1,16 +1,12 @@
-package dev.httpmarco.polocloud.node.properties;
+package dev.httpmarco.polocloud.api.properties;
 
-
-import dev.httpmarco.polocloud.api.properties.Property;
 import lombok.experimental.UtilityClass;
-import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Log4j2
 @UtilityClass
 public final class PropertyRegister {
 
@@ -18,7 +14,7 @@ public final class PropertyRegister {
 
     public void register(Property<?> property) {
         properties.add(property);
-        log.debug("Register a new node property: {}", property.name());
+        System.out.println("Register a new node property: " + property.name());
     }
 
     public Property<?> byName(String id) {

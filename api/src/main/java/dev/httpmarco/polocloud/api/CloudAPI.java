@@ -2,8 +2,10 @@ package dev.httpmarco.polocloud.api;
 
 import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.players.ClusterPlayer;
 import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
+import dev.httpmarco.polocloud.api.properties.PropertyRegister;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -16,6 +18,8 @@ public abstract class CloudAPI {
 
     public CloudAPI() {
         instance = this;
+
+        PropertyRegister.register(GroupProperties.MAX_PLAYERS);
     }
 
     public abstract ClusterServiceProvider serviceProvider();

@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.properties;
 
 import com.google.gson.*;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
+import dev.httpmarco.polocloud.api.properties.PropertyRegister;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
