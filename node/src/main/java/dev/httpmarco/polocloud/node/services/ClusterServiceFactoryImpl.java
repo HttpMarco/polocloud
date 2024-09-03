@@ -80,6 +80,9 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
             FileSystemUtils.copyClassPathFile(this.getClass().getClassLoader(), "server-icon.png", serverIconPath.toString());
         }
 
+        // clone group arguments
+        localService.properties().extendsProperties(localService.group().properties());
+
         localService.state(ClusterServiceState.STARTING);
         localService.update();
 
