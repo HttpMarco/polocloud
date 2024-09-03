@@ -9,6 +9,7 @@ import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent;
 import dev.waterdog.waterdogpe.event.defaults.TransferCompleteEvent;
+import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import org.jetbrains.annotations.NotNull;
 
 public final class WaterdogPlatformListeners {
@@ -40,7 +41,14 @@ public final class WaterdogPlatformListeners {
     }
 
     public void handleTransfer(@NotNull TransferCompleteEvent event) {
-        this.platform.playerChangeServer(event.getPlayer().getUniqueId(), event.getNewClient().getServerInfo().getServerName());
+        var serverInfo = event.getNewClient().getServerInfo();
+
+        if(serverInfo.getPlayers().size() >= ClusterInstance.instance().serviceProvider().find(serverInfo.getServerName()).maxPlayers()) {
+            event.setCancelled();
+            return;
+        }
+
+        this.platform.playerChangeServer(event.getPlayer().getUniqueId(), serverInfo.getServerName());
     }
 
     public void handleInitialize(@NotNull InitialServerConnectedEvent event) {

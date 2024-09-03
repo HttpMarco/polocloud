@@ -1,14 +1,12 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.PreLoginEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +32,13 @@ public final class BungeeCordPlatformListeners implements Listener {
         }
 
         platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getName());
+    }
+
+    @EventHandler
+    public void handleServerConnect(@NotNull ServerConnectEvent event) {
+        if (event.getTarget().getPlayers().size() >= ClusterInstance.instance().serviceProvider().find(event.getTarget().getName()).maxPlayers()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler

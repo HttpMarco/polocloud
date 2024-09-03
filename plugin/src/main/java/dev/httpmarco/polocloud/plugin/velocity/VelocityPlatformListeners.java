@@ -7,7 +7,9 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
@@ -42,12 +44,23 @@ public final class VelocityPlatformListeners {
     @Subscribe(order = PostOrder.LATE)
     public void onPostLogin(@NotNull PostLoginEvent event) {
 
-        if(server.getPlayerCount() >= ClusterInstance.instance().selfService().maxPlayers()) {
+        if (server.getPlayerCount() >= ClusterInstance.instance().selfService().maxPlayers()) {
             event.getPlayer().disconnect(Component.text("&cThe service is full!"));
             return;
         }
 
         this.platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getUsername());
+    }
+
+    @Subscribe
+    public void serverConnectedEvent(@NotNull ServerPreConnectEvent event) {
+        var serverOptional = event.getResult();
+
+        serverOptional.getServer().ifPresent(server -> {
+            if (server.getPlayersConnected().size() >= ClusterInstance.instance().serviceProvider().find(server.getServerInfo().getName()).maxPlayers()) {
+                event.setResult(ServerPreConnectEvent.ServerResult.denied());
+            }
+        });
     }
 
     @Subscribe
