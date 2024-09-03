@@ -26,7 +26,7 @@ public abstract class AbstractClusterGroup implements ClusterGroup {
     private int minOnlineServerInstances;
     private int maxOnlineServerInstances;
 
-    private final PropertiesPool properties = new PropertiesPool();
+    private final PropertiesPool properties;
 
     @Override
     public String details() {

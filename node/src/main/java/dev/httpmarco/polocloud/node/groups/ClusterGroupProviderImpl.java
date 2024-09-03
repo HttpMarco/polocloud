@@ -8,13 +8,14 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
+import dev.httpmarco.polocloud.api.properties.PropertiesBuffer;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.groups.requests.GroupCreationRequest;
 import dev.httpmarco.polocloud.node.groups.requests.GroupDeletionRequest;
 import dev.httpmarco.polocloud.node.groups.responder.GroupCreationResponder;
 import dev.httpmarco.polocloud.node.groups.responder.GroupDeletionResponder;
-import dev.httpmarco.polocloud.node.services.ClusterServiceImpl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -128,6 +129,9 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
             templates[i] = buffer.readString();
         }
 
-        return new ClusterGroupImpl(name, platform, templates, nodes, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
+        var propertiesPool = new PropertiesPool();
+        PropertiesBuffer.read(buffer, propertiesPool);
+
+        return new ClusterGroupImpl(name, platform, templates, nodes, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances, propertiesPool);
     }
 }

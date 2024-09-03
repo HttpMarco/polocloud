@@ -4,6 +4,7 @@ import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Reloadable;
 import dev.httpmarco.polocloud.api.Sendable;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
+import dev.httpmarco.polocloud.api.properties.PropertiesBuffer;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,5 +72,7 @@ public abstract class ClusterGroupProvider implements Sendable<ClusterGroup> {
         for (var template : group.templates()) {
             buffer.writeString(template);
         }
+
+        PropertiesBuffer.write(group.properties(), buffer);
     }
 }

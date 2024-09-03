@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.api.services;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.Sendable;
+import dev.httpmarco.polocloud.api.properties.PropertiesBuffer;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,5 +56,8 @@ public abstract class ClusterServiceProvider implements Sendable<ClusterService>
 
         // we add also all group information
         CloudAPI.instance().groupProvider().write(value.group(), buffer);
+
+        // sync properties
+        PropertiesBuffer.write(value.properties(), buffer);
     }
 }

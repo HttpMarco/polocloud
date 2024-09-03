@@ -10,6 +10,8 @@ import dev.httpmarco.polocloud.api.packet.resources.group.GroupExistsResponsePac
 import dev.httpmarco.polocloud.api.packet.resources.group.SingleGroupPacket;
 import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
+import dev.httpmarco.polocloud.api.properties.PropertiesBuffer;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -80,6 +82,9 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
         for (int i = 0; i < amountOfTemplates; i++) {
             templates[i] = buffer.readString();
         }
+
+        var propertiesPool = new PropertiesPool();
+        PropertiesBuffer.read(buffer, propertiesPool);
 
         return new ClusterInstanceGroupImpl(name, platform, templates, nodes, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
     }
