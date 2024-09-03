@@ -28,6 +28,8 @@ public final class ServiceCommand extends Command {
             log.info("Bind&8: &b{}&8:&b{}", service.hostname(), service.port());
             log.info("State&8: &b{}", service.state());
             log.info("Online players&8: &b{}", service.onlinePlayersCount());
+            log.info("Properties&8(&b{}&8):", service.properties().properties().size());
+            service.properties().properties().forEach((property, o) -> log.info("&8 - &7{}&8 = &7{}", property.name(), o));
         }, serviceArgument, CommandArgumentType.Keyword("info"));
 
 

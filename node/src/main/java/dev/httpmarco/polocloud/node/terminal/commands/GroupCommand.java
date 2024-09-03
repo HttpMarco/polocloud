@@ -27,10 +27,10 @@ public final class GroupCommand extends Command {
         syntax(context -> new GroupSetup().run(), "Create a new cluster group.", CommandArgumentType.Keyword("create"));
 
         syntax(context -> groupService.delete(context.arg(groupArgument).name())
-                        .ifPresentOrElse(
-                                s -> log.warn("Cannot delete group: {}", s),
-                                () -> log.info("Successfully delete group {} in cluster!", context.arg(groupArgument).name())
-                        ), "Delete the selected group&8.", groupArgument, CommandArgumentType.Keyword("delete"));
+                .ifPresentOrElse(
+                        s -> log.warn("Cannot delete group: {}", s),
+                        () -> log.info("Successfully delete group {} in cluster!", context.arg(groupArgument).name())
+                ), "Delete the selected group&8.", groupArgument, CommandArgumentType.Keyword("delete"));
 
         syntax(context -> {
             var group = context.arg(groupArgument);
@@ -41,6 +41,9 @@ public final class GroupCommand extends Command {
             log.info("Maximum memory&8: &b{}mb", group.maxMemory());
             log.info("Minimum online services&8: &b{}", group.minOnlineServerInstances());
             log.info("Maximum online services&8: &b{}", group.maxOnlineServerInstances());
+            log.info("Properties&8(&b{}&8):", group.properties().properties().size());
+
+            group.properties().properties().forEach((property, o) -> log.info("&8 - &7{}&8 = &7{}", property.name(), o));
         }, "Show all information about a group&8.", groupArgument, CommandArgumentType.Keyword("info"));
 
         syntax(context -> {
