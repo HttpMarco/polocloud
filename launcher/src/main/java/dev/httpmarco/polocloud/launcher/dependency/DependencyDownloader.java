@@ -54,14 +54,10 @@ public class DependencyDownloader {
     }
 
     private void logProgress(int total, int current, Dependency dependency) {
-        var time = LocalTime.now();
-        var formattedTime = DateTimeFormatter.ofPattern("HH:mm:ss").format(time);
-
         if (findDependency(dependency).exists()) {
-            System.out.printf("\r%s \u001B[90m| \u001B[36mINFO\u001B[90m:\u001B[0m Found Dependency - %s (\u001B[36m%d\u001B[0m/\u001B[36m%d\u001B[0m)", formattedTime, dependency.artifactId(), current, total);
             return;
         }
-        System.out.printf("\r%s \u001B[90m| \u001B[36mINFO\u001B[90m:\u001B[0m Downloading Dependencies - %s (\u001B[36m%d\u001B[0m/\u001B[36m%d\u001B[0m)", formattedTime, dependency.artifactId(), current, total);
+        System.out.printf("Downloading Dependency - %s %d %d \n", dependency.artifactId(), current, total);
     }
 
     private void clearTerminal() {
