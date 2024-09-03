@@ -55,6 +55,7 @@ public abstract class ClusterGroupProvider implements Sendable<ClusterGroup> {
     public void write(@NotNull ClusterGroup group, @NotNull PacketBuffer buffer) {
         buffer.writeString(group.name());
         buffer.writeInt(group.maxMemory());
+        buffer.writeInt(group.maxPlayers());
         buffer.writeInt(group.minOnlineServerInstances());
         buffer.writeInt(group.maxOnlineServerInstances());
         buffer.writeBoolean(group.staticService());

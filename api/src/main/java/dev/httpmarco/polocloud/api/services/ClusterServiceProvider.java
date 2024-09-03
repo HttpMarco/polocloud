@@ -51,6 +51,7 @@ public abstract class ClusterServiceProvider implements Sendable<ClusterService>
         buffer.writeInt(value.orderedId());
         buffer.writeString(value.hostname());
         buffer.writeInt(value.port());
+        buffer.writeInt(value.maxPlayers());
         buffer.writeString(value.runningNode());
         buffer.writeEnum(value.state());
 

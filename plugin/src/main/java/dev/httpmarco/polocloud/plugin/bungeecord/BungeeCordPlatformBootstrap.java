@@ -13,7 +13,7 @@ public final class BungeeCordPlatformBootstrap extends Plugin {
         var instance = ProxyServer.getInstance();
 
         instance.getConfigurationAdapter().getServers().clear();
-        instance.getPluginManager().registerListener(this, new BungeeCordPlatformListeners(platform));
+        instance.getPluginManager().registerListener(this, new BungeeCordPlatformListeners(ProxyServer.getInstance(), platform));
         instance.setReconnectHandler(new BungeeCordReconnectHandler());
 
         platform.presentServiceAsOnline();
