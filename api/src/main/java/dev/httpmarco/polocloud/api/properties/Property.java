@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.api.properties;
 
 import dev.httpmarco.polocloud.api.Named;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
@@ -9,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
+@AllArgsConstructor
 public final class Property<T> implements Named {
 
     private final String name;
@@ -34,5 +36,10 @@ public final class Property<T> implements Named {
     @Contract(value = "_ -> new", pure = true)
     public static @NotNull Property<Boolean> ofBoolean(String id) {
         return new Property<>(id, Boolean.class);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Property<?> property && property.name.equalsIgnoreCase(this.name);
     }
 }
