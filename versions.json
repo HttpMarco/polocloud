@@ -9,12 +9,32 @@
       ],
       "versions": [
         {
+          "version": "1.21.1",
+          "url": "https://api.papermc.io/v2/projects/paper/versions/1.21.1/builds/57/downloads/paper-1.21.1-57.jar"
+        },
+        {
           "version": "1.21",
           "url": "https://api.papermc.io/v2/projects/paper/versions/1.21/builds/109/downloads/paper-1.21-109.jar"
         },
         {
           "version": "1.20.6",
           "url": "https://api.papermc.io/v2/projects/paper/versions/1.20.6/builds/148/downloads/paper-1.20.6-148.jar"
+        },
+        {
+          "version": "1.20.4",
+          "url": "https://api.papermc.io/v2/projects/paper/versions/1.20.4/builds/497/downloads/paper-1.20.4-497.jar"
+        },
+        {
+          "version": "1.20.2",
+          "url": "https://api.papermc.io/v2/projects/paper/versions/1.20.2/builds/318/downloads/paper-1.20.2-318.jar"
+        },
+        {
+          "version": "1.20.1",
+          "url": "https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/196/downloads/paper-1.20.1-196.jar"
+        },
+        {
+          "version": "1.20",
+          "url": "https://api.papermc.io/v2/projects/paper/versions/1.20/builds/17/downloads/paper-1.20-17.jar"
         }
       ],
       "files": [
@@ -379,7 +399,7 @@
       "versions": [
         {
           "version": "latest",
-          "url": "https://github.com/WaterdogPE/WaterdogPE/releases/download/latest/Waterdog.jar"
+          "url": "https://jenkins.waterdog.dev/job/Waterdog/job/WaterdogPE/job/master/lastSuccessfulBuild/artifact/target/Waterdog.jar"
         }
       ],
       "files": [
