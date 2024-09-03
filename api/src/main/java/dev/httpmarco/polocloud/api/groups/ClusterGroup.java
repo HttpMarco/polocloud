@@ -16,6 +16,8 @@ public interface ClusterGroup extends Named, Detail {
 
     int maxMemory();
 
+    int maxPlayers();
+
     boolean staticService();
 
     PlatformGroupDisplay platform();

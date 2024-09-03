@@ -171,6 +171,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
         var orderedId = buffer.readInt();
         var hostname = buffer.readString();
         var port = buffer.readInt();
+        var maxPlayers = buffer.readInt();
         var runningNode = buffer.readString();
         var state = buffer.readEnum(ClusterServiceState.class);
 
@@ -180,7 +181,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
         var propertiesPool = new PropertiesPool();
         PropertiesBuffer.read(buffer, propertiesPool);
 
-        return new ClusterServiceImpl(group, orderedId, id, port, hostname, runningNode, propertiesPool, state);
+        return new ClusterServiceImpl(group, orderedId, id, port, hostname, runningNode, propertiesPool, maxPlayers, state);
     }
 
     public boolean isServiceChannel(ChannelTransmit transmit) {

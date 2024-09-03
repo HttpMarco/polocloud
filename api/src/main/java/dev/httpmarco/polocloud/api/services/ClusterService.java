@@ -36,6 +36,8 @@ public interface ClusterService extends Named, Detail {
 
     void update();
 
+    int maxPlayers();
+
     CompletableFuture<Integer> onlinePlayersCountAsync();
 
     CompletableFuture<List<ClusterPlayer>> onlinePlayersAsync();

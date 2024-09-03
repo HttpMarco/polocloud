@@ -41,6 +41,7 @@ public final class GroupCommand extends Command {
             log.info("Maximum memory&8: &b{}mb", group.maxMemory());
             log.info("Minimum online services&8: &b{}", group.minOnlineServerInstances());
             log.info("Maximum online services&8: &b{}", group.maxOnlineServerInstances());
+            log.info("Maximal players: &b{}" , group.maxPlayers());
             log.info("Properties&8(&b{}&8):", group.properties().properties().size());
 
             group.properties().properties().forEach((property, o) -> log.info("&8 - &7{}&8 = &7{}", property.name(), o));

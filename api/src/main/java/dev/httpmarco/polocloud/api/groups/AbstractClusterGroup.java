@@ -22,6 +22,7 @@ public abstract class AbstractClusterGroup implements ClusterGroup {
     private String[] templates;
     private String[] nodes;
     private int maxMemory;
+    private int maxPlayers;
     private boolean staticService;
     private int minOnlineServerInstances;
     private int maxOnlineServerInstances;

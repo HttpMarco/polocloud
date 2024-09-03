@@ -13,7 +13,9 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
@@ -39,6 +41,12 @@ public final class VelocityPlatformListeners {
 
     @Subscribe(order = PostOrder.LATE)
     public void onPostLogin(@NotNull PostLoginEvent event) {
+
+        if(server.getPlayerCount() >= ClusterInstance.instance().selfService().maxPlayers()) {
+            event.getPlayer().disconnect(Component.text("&cThe service is full!"));
+            return;
+        }
+
         this.platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getUsername());
     }
 

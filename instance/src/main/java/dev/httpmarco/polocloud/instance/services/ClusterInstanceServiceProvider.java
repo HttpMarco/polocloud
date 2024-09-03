@@ -55,6 +55,7 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
         var orderedId = buffer.readInt();
         var hostname = buffer.readString();
         var port = buffer.readInt();
+        var maxPlayers = buffer.readInt();
         var runningNode = buffer.readString();
         var state = buffer.readEnum(ClusterServiceState.class);
 
@@ -64,7 +65,7 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
         var propertiesPool = new PropertiesPool();
         PropertiesBuffer.read(buffer, propertiesPool);
 
-        return new ClusterInstanceServiceImpl(id, orderedId, port, hostname, runningNode, state, group, propertiesPool);
+        return new ClusterInstanceServiceImpl(id, orderedId, port, hostname, runningNode, state, group, propertiesPool, maxPlayers);
     }
 
     @Override

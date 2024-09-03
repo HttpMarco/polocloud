@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.plugin.waterdog;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
+import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import dev.waterdog.waterdogpe.ProxyServer;
 import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent;
@@ -25,6 +26,12 @@ public final class WaterdogPlatformListeners {
     }
 
     public void handleConnect(@NotNull PlayerLoginEvent event) {
+
+        if (server.getPlayers().size() >= ClusterInstance.instance().selfService().maxPlayers()) {
+            event.getPlayer().disconnect("&cThe service is full!");
+            return;
+        }
+
         this.platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getName());
     }
 

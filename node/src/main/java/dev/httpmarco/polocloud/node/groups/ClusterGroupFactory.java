@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.node.groups;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.packet.resources.group.GroupCreatePacket;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
@@ -30,9 +31,11 @@ public final class ClusterGroupFactory {
                 packet.templates(),
                 packet.nodes(),
                 packet.maxMemory(),
+                100,
                 packet.staticService(),
                 packet.minOnline(),
-                packet.maxOnline()
+                packet.maxOnline(),
+                new PropertiesPool()
         );
 
         if (packet.fallbackGroup()) {

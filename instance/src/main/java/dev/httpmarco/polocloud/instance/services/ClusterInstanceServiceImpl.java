@@ -34,8 +34,10 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     private final String hostname;
     private final String runningNode;
     private final ClusterServiceState state;
-    private ClusterGroup group;
+    private final ClusterGroup group;
     private final PropertiesPool properties;
+
+    private int maxPlayers;
 
     @Override
     public void shutdown() {

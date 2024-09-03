@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
+import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 public final class BungeeCordPlatformListeners implements Listener {
 
+    private final ProxyServer server;
     private final ProxyPluginPlatform platform;
 
     @EventHandler
@@ -22,8 +24,15 @@ public final class BungeeCordPlatformListeners implements Listener {
         platform.unregisterPlayer(event.getPlayer().getUniqueId());
     }
 
+
     @EventHandler
     public void handleServerConnect(@NotNull PostLoginEvent event) {
+
+        if(server.getOnlineCount() >= ClusterInstance.instance().selfService().maxPlayers()) {
+            event.getPlayer().disconnect(new TextComponent("&cThe service is full!"));
+            return;
+        }
+
         platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getName());
     }
 

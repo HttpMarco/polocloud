@@ -18,8 +18,6 @@ public abstract class CloudAPI {
 
     public CloudAPI() {
         instance = this;
-
-        PropertyRegister.register(GroupProperties.MAX_PLAYERS);
     }
 
     public abstract ClusterServiceProvider serviceProvider();

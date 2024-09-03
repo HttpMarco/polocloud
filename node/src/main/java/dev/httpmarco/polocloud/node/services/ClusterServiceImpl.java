@@ -35,6 +35,9 @@ public class ClusterServiceImpl implements ClusterService {
     private final PropertiesPool properties;
 
     @Setter
+    private int maxPlayers;
+
+    @Setter
     private ClusterServiceState state = ClusterServiceState.PREPARED;
 
     @Override

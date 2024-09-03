@@ -65,6 +65,7 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
     public @NotNull ClusterGroup read(@NotNull PacketBuffer buffer) {
         var name = buffer.readString();
         var maxMemory = buffer.readInt();
+        var maxPlayers = buffer.readInt();
         var minOnlineServerInstances = buffer.readInt();
         var maxOnlineServerInstances = buffer.readInt();
         var staticService = buffer.readBoolean();
@@ -86,6 +87,6 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
         var propertiesPool = new PropertiesPool();
         PropertiesBuffer.read(buffer, propertiesPool);
 
-        return new ClusterInstanceGroupImpl(name, platform, templates, nodes, maxMemory, staticService, minOnlineServerInstances, maxOnlineServerInstances);
+        return new ClusterInstanceGroupImpl(name, platform, templates, nodes, maxMemory, maxPlayers, staticService, minOnlineServerInstances, maxOnlineServerInstances, propertiesPool);
     }
 }
