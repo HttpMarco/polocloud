@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacke
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceLogPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
 import dev.httpmarco.polocloud.api.players.ClusterPlayer;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
@@ -34,6 +35,7 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     private final String runningNode;
     private final ClusterServiceState state;
     private ClusterGroup group;
+    private final PropertiesPool properties;
 
     @Override
     public void shutdown() {

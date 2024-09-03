@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.api.Detail;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.players.ClusterPlayer;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import lombok.SneakyThrows;
 
 import java.util.List;
@@ -38,6 +39,8 @@ public interface ClusterService extends Named, Detail {
     CompletableFuture<Integer> onlinePlayersCountAsync();
 
     CompletableFuture<List<ClusterPlayer>> onlinePlayersAsync();
+
+    PropertiesPool properties();
 
     default boolean isEmpty() {
         return this.onlinePlayersCount() == 0;

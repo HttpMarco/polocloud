@@ -6,11 +6,11 @@ import dev.httpmarco.polocloud.api.event.EventSubscribePool;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppedEvent;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncUnregisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.Platform;
-import dev.httpmarco.polocloud.node.screens.ScreenProvider;
 import dev.httpmarco.polocloud.node.util.DirectoryActions;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,7 +43,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     private final EventSubscribePool eventSubscribePool = new EventSubscribePool(this.name());
 
     public ClusterLocalServiceImpl(ClusterGroup group, int orderedId, UUID id, int port, String hostname, String runningNode) {
-        super(group, orderedId, id, port, hostname, runningNode);
+        super(group, orderedId, id, port, hostname, runningNode, new PropertiesPool());
 
         this.runningDir = group.staticService() ? Path.of("static/" + group.name() + "-" + orderedId) : Path.of("running/" + name() + "-" + id);
         this.runningDir.toFile().mkdirs();

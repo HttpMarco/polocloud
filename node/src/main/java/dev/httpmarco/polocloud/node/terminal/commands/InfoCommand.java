@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.node.terminal.commands;
 
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.commands.Command;
-import dev.httpmarco.polocloud.node.properties.PropertyRegister;
+import dev.httpmarco.polocloud.api.properties.PropertyRegister;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2

@@ -2,7 +2,6 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
-import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.ClusterProviderImpl;
@@ -13,7 +12,7 @@ import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
 import dev.httpmarco.polocloud.node.module.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.players.ClusterPlayerProviderImpl;
-import dev.httpmarco.polocloud.node.properties.PropertyRegister;
+import dev.httpmarco.polocloud.api.properties.PropertyRegister;
 import dev.httpmarco.polocloud.node.screens.ScreenProvider;
 import dev.httpmarco.polocloud.node.services.ClusterServiceProviderImpl;
 import dev.httpmarco.polocloud.node.templates.TemplatesProvider;

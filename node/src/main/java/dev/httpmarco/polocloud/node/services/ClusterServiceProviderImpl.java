@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
@@ -175,7 +176,8 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
         // we add also all group information
         var group = CloudAPI.instance().groupProvider().read(buffer);
 
-        return new ClusterServiceImpl(group, orderedId, id, port, hostname, runningNode, state);
+        //todo sync properties
+        return new ClusterServiceImpl(group, orderedId, id, port, hostname, runningNode, new PropertiesPool(), state);
     }
 
     public boolean isServiceChannel(ChannelTransmit transmit) {

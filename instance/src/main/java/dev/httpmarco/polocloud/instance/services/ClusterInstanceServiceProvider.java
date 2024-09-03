@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.packet.resources.services.ClusterServicePacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCollectionPacket;
+import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import org.jetbrains.annotations.Contract;
@@ -59,7 +60,7 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
         // we add also all group information
         var group = CloudAPI.instance().groupProvider().read(buffer);
 
-        return new ClusterInstanceServiceImpl(id, orderedId, port, hostname, runningNode, state, group);
+        return new ClusterInstanceServiceImpl(id, orderedId, port, hostname, runningNode, state, group, new PropertiesPool());
     }
 
     @Override
