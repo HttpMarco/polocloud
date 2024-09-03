@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFactory;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
+import dev.httpmarco.polocloud.launcher.util.FileSystemUtils;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
@@ -72,6 +73,11 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         // add the platform plugin data
         if (localService.platform().pluginData() != null) {
             JavaFileAttach.append(pluginDir.resolve("polocloud-plugin.jar").toFile(), localService.platform().pluginData());
+        }
+
+        var serverIconPath = localService.runningDir().resolve("server-icon.png");
+        if (!Files.exists(serverIconPath)) {
+            FileSystemUtils.copyClassPathFile(this.getClass().getClassLoader(), "server-icon.png", serverIconPath.toString());
         }
 
         localService.state(ClusterServiceState.STARTING);
