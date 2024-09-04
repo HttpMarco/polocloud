@@ -3,6 +3,7 @@
     {
       "id": "paper",
       "type": "SERVER",
+      "pluginDir": "plugins",
       "pluginData": "paper/paper-plugin.yml",
       "patchers": [
         "paperclip"
@@ -89,6 +90,7 @@
     {
       "id": "purpur",
       "type": "SERVER",
+      "pluginDir": "plugins",
       "pluginData": "spigot/plugin.yml",
       "patchers": [],
       "versions": [
@@ -197,6 +199,7 @@
     {
       "id": "spigot",
       "type": "SERVER",
+      "pluginDir": "plugins",
       "pluginData": "spigot/plugin.yml",
       "patchers": [],
       "versions": [
@@ -289,6 +292,7 @@
     {
       "id": "pandaspigot",
       "type": "SERVER",
+      "pluginDir": "plugins",
       "pluginData": "spigot/plugin.yml",
       "patchers": [],
       "files": [
@@ -337,6 +341,7 @@
     {
       "id": "velocity",
       "type": "PROXY",
+      "pluginDir": "plugins",
       "patchers": [],
       "versions": [
         {
@@ -369,6 +374,7 @@
     {
       "id": "bungeecord",
       "type": "PROXY",
+      "pluginDir": "plugins",
       "pluginData": "bungeecord/bungee.yml",
       "patchers": [],
       "versions": [
@@ -393,6 +399,7 @@
     },
     {
       "id": "waterdogpe",
+      "pluginDir": "plugins",
       "pluginData": "waterdogpe/plugin.yml",
       "type": "PROXY",
       "patchers": [],
@@ -418,6 +425,7 @@
     },
     {
       "id": "nukkit",
+      "pluginDir": "plugins",
       "pluginData": "nukkit/plugin.yml",
       "type": "SERVER",
       "patchers": [],
@@ -453,6 +461,7 @@
     },
     {
       "id": "fabric",
+      "pluginDir": "mods",
       "pluginData": "spigot/plugin.yml",
       "type": "SERVER",
       "patchers": [],

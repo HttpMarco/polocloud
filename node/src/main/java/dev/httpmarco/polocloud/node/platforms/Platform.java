@@ -30,7 +30,9 @@ public final class Platform implements Detail {
     private String id;
     private PlatformType type;
 
+    private final String pluginDir;
     private final String pluginData;
+
     private final @Nullable List<String> arguments;
     private final List<PlatformPatcher> patchers;
 
