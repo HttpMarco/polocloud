@@ -585,7 +585,7 @@
     {
       "id": "fabric",
       "pluginDir": "mods",
-      "pluginData": "spigot/plugin.yml",
+      "pluginData": "fabric/fabric.mod.json",
       "type": "SERVER",
       "patchers": [],
       "arguments": [

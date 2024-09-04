@@ -15,7 +15,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "com.example.ExampleMod"
+      "dev.httpmarco.polocloud.plugin.fabric.FabricPlatformBootstrap"
     ]
   }
 }

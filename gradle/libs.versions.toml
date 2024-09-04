@@ -22,6 +22,7 @@ velocity = "3.3.0-SNAPSHOT"
 bungeecord = "1.20-R0.2"
 waterdogpe = "1.2.4"
 nukkit = "1.0-SNAPSHOT"
+fabric = "0.16.2"
 
 [libraries]
 # utils
@@ -48,3 +49,4 @@ velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref =
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 waterdogpe = { group = "dev.waterdog.waterdogpe", name = "waterdog", version.ref = "waterdogpe" }
 nukkit = { group = "cn.nukkit", name = "nukkit", version.ref = "nukkit" }
+fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }

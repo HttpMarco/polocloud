@@ -9,6 +9,7 @@ dependencies {
     compileOnly(libs.bungeecord)
     compileOnly(libs.waterdogpe)
     compileOnly(libs.nukkit)
+    compileOnly(libs.fabric)
 }
 
 tasks.jar {

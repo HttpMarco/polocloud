@@ -65,7 +65,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         processBuilder.environment().put("port", String.valueOf(localService.port()));
 
         // copy platform plugin for have a better control of service
-        var pluginDir = localService.runningDir().resolve("plugins");
+        var pluginDir = localService.runningDir().resolve(localService.platform().pluginDir());
         pluginDir.toFile().mkdirs();
 
         Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
