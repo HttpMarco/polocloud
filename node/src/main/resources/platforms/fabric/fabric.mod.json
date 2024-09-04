@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "polocloud-plugin",
+  "version": "1.0.0",
+  "name": "Example mod",
+  "description": "External polocloud platform communication mod",
+  "authors": [
+    "PoloCloud", "HttpMarco"
+  ],
+  "contact": {
+    "homepage": "https://github.com/HttpMarco",
+    "sources": "https://github.com/HttpMarco/polocloud"
+  },
+  "icon": "logo.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.example.ExampleMod"
+    ]
+  }
+}
