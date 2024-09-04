@@ -88,6 +88,85 @@
       ]
     },
     {
+      "id": "folia",
+      "type": "SERVER",
+      "pluginDir": "plugins",
+      "pluginData": "paper/paper-plugin.yml",
+      "patchers": [
+        "paperclip"
+      ],
+      "versions": [
+        {
+          "version": "1.20.6",
+          "url": "https://api.papermc.io/v2/projects/folia/versions/1.20.6/builds/6/downloads/folia-1.20.6-6.jar"
+        },
+        {
+          "version": "1.20.4",
+          "url": "https://api.papermc.io/v2/projects/folia/versions/1.20.4/builds/31/downloads/folia-1.20.4-31.jar"
+        },
+        {
+          "version": "1.20.2",
+          "url": "https://api.papermc.io/v2/projects/folia/versions/1.20.2/builds/20/downloads/folia-1.20.2-20.jar"
+        },
+        {
+          "version": "1.20.1",
+          "url": "https://api.papermc.io/v2/projects/folia/versions/1.20.1/builds/17/downloads/folia-1.20.1-17.jar"
+        },
+        {
+          "version": "1.19.4",
+          "url": "https://api.papermc.io/v2/projects/folia/versions/1.19.4/builds/39/downloads/folia-1.19.4-39.jar"
+        }
+      ],
+      "files": [
+        {
+          "file": "eula.txt",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "eula=true"
+          ]
+        },
+        {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            },
+            {
+              "indicator": "online-mode",
+              "value": "false"
+            }
+          ],
+          "appends": []
+        },
+        {
+          "file": "config/paper-global.yml",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
+          ]
+        },
+        {
+          "file": "spigot.yml",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "  bungeecord",
+              "value": "%bungeecord_use%"
+            }
+          ],
+          "appends": []
+        }
+      ],
+      "arguments": [
+        "-nogui",
+        "--separateClassLoader"
+      ]
+    },
+    {
       "id": "purpur",
       "type": "SERVER",
       "pluginDir": "plugins",
