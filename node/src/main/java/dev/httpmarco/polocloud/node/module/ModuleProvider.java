@@ -24,11 +24,9 @@ public class ModuleProvider implements Reloadable {
 
     private static final Path MODULE_PATH = Path.of("./local/modules/");
     private final List<LoadedModule> loadedModules = new CopyOnWriteArrayList<>();
-    private final ClassLoader parentClassLoader;
 
     @SneakyThrows
     public ModuleProvider() {
-        this.parentClassLoader = PoloCloudLauncher.CLASS_LOADER;
         if (!Files.exists(MODULE_PATH)) {
             Files.createDirectory(MODULE_PATH);
         }
@@ -88,7 +86,7 @@ public class ModuleProvider implements Reloadable {
 
     @SneakyThrows
     private CloudModule loadModule(File file, String mainClass) {
-        var classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.parentClassLoader);
+        var classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()},  PoloCloudLauncher.CLASS_LOADER);
 
         var clazz = classLoader.loadClass(mainClass);
         if (!CloudModule.class.isAssignableFrom(clazz)) {
