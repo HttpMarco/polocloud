@@ -11,6 +11,8 @@ import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -44,8 +46,14 @@ public final class VelocityPlatformListeners {
     @Subscribe(order = PostOrder.LATE)
     public void onPostLogin(@NotNull PostLoginEvent event) {
 
-        if (server.getPlayerCount() >= ClusterInstance.instance().selfService().maxPlayers()) {
+        var service = ClusterInstance.instance().selfService();
+        if (server.getPlayerCount() >= service.maxPlayers()) {
             event.getPlayer().disconnect(Component.text("&cThe service is full!"));
+            return;
+        }
+
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
+            event.getPlayer().disconnect(Component.text("&cThe service is in maintenance!"));
             return;
         }
 
@@ -57,7 +65,12 @@ public final class VelocityPlatformListeners {
         var serverOptional = event.getResult();
 
         serverOptional.getServer().ifPresent(server -> {
-            if (server.getPlayersConnected().size() >= ClusterInstance.instance().serviceProvider().find(server.getServerInfo().getName()).maxPlayers()) {
+            var service = ClusterInstance.instance().serviceProvider().find(server.getServerInfo().getName());
+            if (server.getPlayersConnected().size() >= service.maxPlayers()) {
+                event.setResult(ServerPreConnectEvent.ServerResult.denied());
+            }
+
+            if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
                 event.setResult(ServerPreConnectEvent.ServerResult.denied());
             }
         });
