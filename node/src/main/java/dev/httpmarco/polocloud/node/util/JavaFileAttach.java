@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.node.Node;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.Enumeration;
@@ -16,7 +17,7 @@ import java.util.jar.JarOutputStream;
 public final class JavaFileAttach {
 
     @SneakyThrows
-    public void append(File inputJarPath, String file) {
+    public void append(File inputJarPath, String file, @Nullable String pluginDataPath) {
 
         var pathSeparators = file.split("/", -1);
         var name = pathSeparators[pathSeparators.length - 1];
@@ -44,7 +45,7 @@ public final class JavaFileAttach {
                 }
 
                 try (InputStream is = Node.class.getClassLoader().getResourceAsStream("platforms/" + file)) {
-                    jos.putNextEntry(new JarEntry(name));
+                    jos.putNextEntry(new JarEntry((pluginDataPath == null ? "" : pluginDataPath + "/" ) +name));
                     byte[] buffer = new byte[1024];
                     int length;
                     while ((length = is.read(buffer)) > 0) {

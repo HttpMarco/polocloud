@@ -674,6 +674,48 @@
           "appends": []
         }
       ]
+    },
+    {
+      "id": "sponge",
+      "pluginDir": "mods/plugins",
+      "pluginData": "sponge/sponge_plugins.json",
+      "pluginDataPath": "META-INF",
+      "type": "SERVER",
+      "patchers": [],
+      "arguments": [
+        "-nogui"
+      ],
+      "versions": [
+        {
+          "version": "1.21.1",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.21.1-12.0.0-RC1791/spongevanilla-1.21.1-12.0.0-RC1791-universal.jar"
+        }
+      ],
+      "files": [
+        {
+          "file": "eula.txt",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "eula=true"
+          ]
+        },
+        {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            },
+            {
+              "indicator": "online-mode",
+              "value": "false"
+            }
+          ],
+          "appends": []
+        }
+      ]
     }
   ]
 }
