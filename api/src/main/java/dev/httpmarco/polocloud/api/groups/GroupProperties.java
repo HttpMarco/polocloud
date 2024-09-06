@@ -8,4 +8,6 @@ public class GroupProperties {
 
     public static final Property<Double> PERCENTAGE_TO_START_NEW_SERVER = Property.of("percentageToStartNewService", Double.class);
 
+    public static final Property<Boolean> MAINTENANCE = Property.of("maintenance", Boolean.class);
+
 }
