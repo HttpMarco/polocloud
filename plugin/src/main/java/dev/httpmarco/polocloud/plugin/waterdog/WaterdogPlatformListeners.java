@@ -1,6 +1,9 @@
 package dev.httpmarco.polocloud.plugin.waterdog;
 
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -9,7 +12,6 @@ import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent;
 import dev.waterdog.waterdogpe.event.defaults.TransferCompleteEvent;
-import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import org.jetbrains.annotations.NotNull;
 
 public final class WaterdogPlatformListeners {
@@ -28,8 +30,14 @@ public final class WaterdogPlatformListeners {
 
     public void handleConnect(@NotNull PlayerLoginEvent event) {
 
-        if (server.getPlayers().size() >= ClusterInstance.instance().selfService().maxPlayers()) {
+        var service = ClusterInstance.instance().selfService();
+        if (server.getPlayers().size() >= service.maxPlayers()) {
             event.getPlayer().disconnect("&cThe service is full!");
+            return;
+        }
+
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
+            event.getPlayer().disconnect("&cThe service is in maintenance!");
             return;
         }
 
@@ -43,7 +51,13 @@ public final class WaterdogPlatformListeners {
     public void handleTransfer(@NotNull TransferCompleteEvent event) {
         var serverInfo = event.getNewClient().getServerInfo();
 
-        if(serverInfo.getPlayers().size() >= ClusterInstance.instance().serviceProvider().find(serverInfo.getServerName()).maxPlayers()) {
+        var service = ClusterInstance.instance().serviceProvider().find(serverInfo.getServerName());
+        if(serverInfo.getPlayers().size() >= service.maxPlayers()) {
+            event.setCancelled();
+            return;
+        }
+
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
             event.setCancelled();
             return;
         }
