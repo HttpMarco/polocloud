@@ -135,7 +135,7 @@
       "id": "folia",
       "type": "SERVER",
       "pluginDir": "plugins",
-      "pluginData": "paper/paper-plugin.yml",
+      "pluginData": "folia/plugin.yml",
       "patchers": [
         "paperclip"
       ],
