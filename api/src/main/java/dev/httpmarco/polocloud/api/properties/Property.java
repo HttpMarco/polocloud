@@ -28,14 +28,8 @@ public final class Property<T> implements Named {
         return (Class<T>) Class.forName(classType);
     }
 
-    @Contract(value = "_ -> new", pure = true)
-    public static @NotNull Property<Integer> ofInteger(String id) {
-        return new Property<>(id, Integer.class);
-    }
-
-    @Contract(value = "_ -> new", pure = true)
-    public static @NotNull Property<Boolean> ofBoolean(String id) {
-        return new Property<>(id, Boolean.class);
+    public static <T> Property<T> of(String id, Class<T> clazz) {
+        return new Property<>(id, clazz);
     }
 
     @Override
