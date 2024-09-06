@@ -32,6 +32,8 @@ public final class Platform implements Detail {
 
     private final String pluginDir;
     private final String pluginData;
+    // the possible plugin dir, if not the main folder is enough
+    private @Nullable String pluginDataPath;
 
     private final @Nullable List<String> arguments;
     private final List<PlatformPatcher> patchers;

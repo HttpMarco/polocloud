@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
@@ -26,8 +28,14 @@ public final class BungeeCordPlatformListeners implements Listener {
     @EventHandler
     public void handleServerConnect(@NotNull PostLoginEvent event) {
 
-        if(server.getOnlineCount() >= ClusterInstance.instance().selfService().maxPlayers()) {
+        var service = ClusterInstance.instance().selfService();
+        if(server.getOnlineCount() >= service.maxPlayers()) {
             event.getPlayer().disconnect(new TextComponent("&cThe service is full!"));
+            return;
+        }
+
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
+            event.getPlayer().disconnect(new TextComponent("&cThe service is in maintenance!"));
             return;
         }
 
@@ -36,7 +44,13 @@ public final class BungeeCordPlatformListeners implements Listener {
 
     @EventHandler
     public void handleServerConnect(@NotNull ServerConnectEvent event) {
-        if (event.getTarget().getPlayers().size() >= ClusterInstance.instance().serviceProvider().find(event.getTarget().getName()).maxPlayers()) {
+        var service = ClusterInstance.instance().serviceProvider().find(event.getTarget().getName());
+        if (event.getTarget().getPlayers().size() >= service.maxPlayers()) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
             event.setCancelled(true);
         }
     }

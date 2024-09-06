@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.launcher.util.FileSystemUtils;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.packets.resources.services.ClusterSyncRegisterServicePacket;
+import dev.httpmarco.polocloud.node.platforms.Platform;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.services.util.ClusterDefaultArgs;
 import dev.httpmarco.polocloud.node.services.util.ServicePortDetector;
@@ -17,6 +18,7 @@ import dev.httpmarco.polocloud.node.util.JavaFileAttach;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -35,6 +37,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         var runningNode = Node.instance().clusterProvider().localNode().data();
 
         var localService = new ClusterLocalServiceImpl(group, generateOrderedId(group), UUID.randomUUID(), ServicePortDetector.detectServicePort(group), "0.0.0.0", runningNode.name());
+        var platform = localService.platform();
 
         Node.instance().eventProvider().factory().call(new ServiceStartEvent(localService));
         log.info("The service &8'&f{}&8' &7is starting now&8...", localService.name());
@@ -44,11 +47,11 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         Node.instance().clusterProvider().broadcast(new ClusterSyncRegisterServicePacket(localService));
         TemplateFactory.cloneTemplate(localService);
 
-        localService.platform().prepare(group.platform(), localService);
+        platform.prepare(group.platform(), localService);
 
         var arguments = generateServiceArguments(localService);
 
-        var platformArgs = localService.platform().arguments();
+        var platformArgs = platform.arguments();
         if (platformArgs != null) {
             arguments.addAll(platformArgs);
         }
@@ -60,19 +63,18 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterProvider().localNode().data().port()));
         processBuilder.environment().put("serviceId", localService.id().toString());
         processBuilder.environment().put("forwarding_secret", PlatformService.FORWARDING_SECRET);
-
         processBuilder.environment().put("hostname", localService.hostname());
         processBuilder.environment().put("port", String.valueOf(localService.port()));
 
         // copy platform plugin for have a better control of service
-        var pluginDir = localService.runningDir().resolve(localService.platform().pluginDir());
+        var pluginDir = localService.runningDir().resolve(platform.pluginDir());
         pluginDir.toFile().mkdirs();
 
         Files.copy(Path.of("local/dependencies/polocloud-plugin.jar"), pluginDir.resolve("polocloud-plugin.jar"), StandardCopyOption.REPLACE_EXISTING);
 
         // add the platform plugin data
-        if (localService.platform().pluginData() != null) {
-            JavaFileAttach.append(pluginDir.resolve("polocloud-plugin.jar").toFile(), localService.platform().pluginData());
+        if (platform.pluginData() != null) {
+            JavaFileAttach.append(pluginDir.resolve("polocloud-plugin.jar").toFile(), platform.pluginData(), platform.pluginDataPath());
         }
 
         var serverIconPath = localService.runningDir().resolve("server-icon.png");

@@ -10,6 +10,7 @@ dependencies {
     compileOnly(libs.waterdogpe)
     compileOnly(libs.nukkit)
     compileOnly(libs.fabric)
+    compileOnly(libs.sponge)
 }
 
 tasks.jar {

@@ -23,6 +23,7 @@ bungeecord = "1.20-R0.2"
 waterdogpe = "1.2.4"
 nukkit = "1.0-SNAPSHOT"
 fabric = "0.16.2"
+sponge = "9.0.0"
 
 [libraries]
 # utils
@@ -50,3 +51,4 @@ bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bunge
 waterdogpe = { group = "dev.waterdog.waterdogpe", name = "waterdog", version.ref = "waterdogpe" }
 nukkit = { group = "cn.nukkit", name = "nukkit", version.ref = "nukkit" }
 fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
+sponge = { group = "org.spongepowered", name = "spongeapi", version.ref = "sponge" }

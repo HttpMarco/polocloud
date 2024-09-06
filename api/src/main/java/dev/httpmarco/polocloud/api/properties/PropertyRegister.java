@@ -14,7 +14,6 @@ public final class PropertyRegister {
 
     public void register(Property<?> property) {
         properties.add(property);
-        System.out.println("Register a new node property: " + property.name());
     }
 
     public Property<?> byName(String id) {

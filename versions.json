@@ -135,7 +135,7 @@
       "id": "folia",
       "type": "SERVER",
       "pluginDir": "plugins",
-      "pluginData": "paper/paper-plugin.yml",
+      "pluginData": "folia/plugin.yml",
       "patchers": [
         "paperclip"
       ],
@@ -647,6 +647,92 @@
         {
           "version": "1.18",
           "url": "https://meta.fabricmc.net/v2/versions/loader/1.18/0.16.4/1.0.1/server/jar"
+        }
+      ],
+      "files": [
+        {
+          "file": "eula.txt",
+          "strategy": "DIRECT_CREATE",
+          "replacements": [],
+          "appends": [
+            "eula=true"
+          ]
+        },
+        {
+          "file": "server.properties",
+          "strategy": "COPY_FROM_CLASSPATH_IF_NOT_EXISTS",
+          "replacements": [
+            {
+              "indicator": "server-port",
+              "value": "%port%"
+            },
+            {
+              "indicator": "online-mode",
+              "value": "false"
+            }
+          ],
+          "appends": []
+        }
+      ]
+    },
+    {
+      "id": "sponge",
+      "pluginDir": "mods/plugins",
+      "pluginData": "sponge/sponge_plugins.json",
+      "pluginDataPath": "META-INF",
+      "type": "SERVER",
+      "patchers": [],
+      "arguments": [
+        "-nogui"
+      ],
+      "versions": [
+        {
+          "version": "1.21.1",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.21.1-12.0.0-RC1791/spongevanilla-1.21.1-12.0.0-RC1791-universal.jar"
+        },
+        {
+          "version": "1.21",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.21-12.0.0-RC1781/spongevanilla-1.21-12.0.0-RC1781-universal.jar"
+        },
+        {
+          "version": "1.20.6",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.20.6-11.0.0/spongevanilla-1.20.6-11.0.0-universal.jar"
+        },
+        {
+          "version": "1.20.4",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.20.4-11.0.0-RC1589/spongevanilla-1.20.4-11.0.0-RC1589-universal.jar"
+        },
+        {
+          "version": "1.20.2",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.20.2-11.0.0-RC1478/spongevanilla-1.20.2-11.0.0-RC1478-universal.jar"
+        },
+        {
+          "version": "1.20.1",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.20.1-11.0.0-RC1365/spongevanilla-1.20.1-11.0.0-RC1365-universal.jar"
+        },
+        {
+          "version": "1.20",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.20-11.0.0-RC1348/spongevanilla-1.20-11.0.0-RC1348-universal.jar"
+        },
+        {
+          "version": "1.19.4",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.19.4-10.0.0-RC1588/spongevanilla-1.19.4-10.0.0-RC1588-universal.jar"
+        },
+        {
+          "version": "1.19.3",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.19.3-10.0.0-RC1277/spongevanilla-1.19.3-10.0.0-RC1277-universal.jar"
+        },
+        {
+          "version": "1.19.2",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.19.2-10.0.0-RC1239/spongevanilla-1.19.2-10.0.0-RC1239-universal.jar"
+        },
+        {
+          "version": "1.18.2",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.18.2-9.0.0-RC1306/spongevanilla-1.18.2-9.0.0-RC1306-universal.jar"
+        },
+        {
+          "version": "1.18.1",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.18.1-9.0.0-RC1119/spongevanilla-1.18.1-9.0.0-RC1119-universal.jar"
         }
       ],
       "files": [
