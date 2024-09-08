@@ -1,67 +1,39 @@
-/*
- * Copyright 2024 Mirco Lindenau | HttpMarco
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package dev.httpmarco.polocloud.api.properties;
 
+import dev.httpmarco.polocloud.api.Named;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
-
-@Accessors(fluent = true)
 @Getter
+@Accessors(fluent = true)
 @AllArgsConstructor
-public class Property<T> {
+public final class Property<T> implements Named {
 
-    private String id;
-    private Type type;
+    private final String name;
+    private final String classType;
 
-    @Contract("_ -> new")
-    public static @NotNull Property<String> String(String id) {
-        // todo save
-        return new Property<>(id, Type.STRING);
+    @Contract(pure = true)
+    public Property(String name, @NotNull Class<?> classType) {
+        this.name = name;
+        this.classType = classType.getName();
     }
 
-    @Contract("_ -> new")
-    public static @NotNull Property<Integer> Integer(String id) {
-        // todo save
-        return new Property<>(id, Type.INTEGER);
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    public @NotNull Class<T> clazz() {
+        return (Class<T>) Class.forName(classType);
     }
 
-    @Contract("_ -> new")
-    public static @NotNull Property<Boolean> Boolean(String id) {
-        // todo save
-        return new Property<>(id, Type.BOOLEAN);
+    public static <T> Property<T> of(String id, Class<T> clazz) {
+        return new Property<>(id, clazz);
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    public enum Type {
-        STRING(s -> s),
-        INTEGER(Integer::parseInt),
-        BOOLEAN(Boolean::parseBoolean);
-
-        private final Function<String, Object> parser;
-
-        Type(Function<String, Object> parser) {
-            this.parser = parser;
-        }
-
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Property<?> property && property.name.equalsIgnoreCase(this.name);
     }
 }

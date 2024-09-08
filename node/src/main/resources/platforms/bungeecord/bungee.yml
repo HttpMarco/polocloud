@@ -1,0 +1,4 @@
+name: PoloCloud-Plugin
+version: 1.0.11-SNAPSHOT
+author: HttpMarco
+main: dev.httpmarco.polocloud.plugin.bungeecord.BungeeCordPlatformBootstrap

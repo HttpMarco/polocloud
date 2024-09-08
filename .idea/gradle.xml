@@ -5,20 +5,17 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="temurin-17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/addons" />
-            <option value="$PROJECT_DIR$/addons/hubcommand-addon" />
-            <option value="$PROJECT_DIR$/addons/notify-addon" />
-            <option value="$PROJECT_DIR$/addons/proxy-addon" />
-            <option value="$PROJECT_DIR$/addons/sign-addon" />
             <option value="$PROJECT_DIR$/api" />
-            <option value="$PROJECT_DIR$/base" />
-            <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/instance" />
+            <option value="$PROJECT_DIR$/launcher" />
+            <option value="$PROJECT_DIR$/modules" />
+            <option value="$PROJECT_DIR$/modules/example" />
+            <option value="$PROJECT_DIR$/node" />
             <option value="$PROJECT_DIR$/plugin" />
-            <option value="$PROJECT_DIR$/runner" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,5 +1,0 @@
-name: PoloCloud-Plugin
-author: HttpMarco
-api-version: 1.13
-version: 1.0.0
-main: dev.httpmarco.polocloud.paper.PaperPlatform

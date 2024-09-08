@@ -1,0 +1,7 @@
+name: PoloCloud-Plugin
+main: dev.httpmarco.polocloud.plugin.nukkit.NukkitPlatformBootstrap
+version: "1.0.0"
+api: ["1.0.0"]
+author: PoloCloud
+description: PoloCloud cluster management plugin
+website: https://github.com/HttpMarco/polocloud
