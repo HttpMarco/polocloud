@@ -8,7 +8,7 @@ osgan = "1.2.20-SNAPSHOT"
 netty5 = "5.0.0.Alpha5"
 
 #logging
-log4j2 = "2.23.1"
+log4j2 = "2.24.0"
 
 # configuration
 gson = "2.11.0"
@@ -23,7 +23,7 @@ bungeecord = "1.20-R0.2"
 waterdogpe = "1.2.4"
 nukkit = "1.0-SNAPSHOT"
 fabric = "0.16.2"
-sponge = "9.0.0"
+sponge = "11.0.0"
 
 # rest
 javalin = "6.3.0"
