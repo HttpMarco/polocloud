@@ -26,7 +26,7 @@ public class UserService {
             return null;
         }
 
-        return this.restModule.jwtProvider().provider().generateToken(new TokenInformation(user.uuid(), ip, userAgent)); //TODO token vailed endpoint
+        return this.restModule.jwtProvider().provider().generateToken(new TokenInformation(user.uuid(), ip, userAgent));
     }
 
     public String create(User user, String ip, String userAgent) {
