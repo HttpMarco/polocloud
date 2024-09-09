@@ -36,7 +36,7 @@ public class Config {
             return;
         }
 
-        this.usersConfiguration = load(UsersConfiguration.class);
+        this.usersConfiguration = load(UsersConfiguration.class, USERS_PATH);
     }
 
     @SneakyThrows
@@ -52,12 +52,12 @@ public class Config {
             return;
         }
 
-        this.javalinConfiguration = load(JavalinConfiguration.class);
+        this.javalinConfiguration = load(JavalinConfiguration.class, CONFIG_PATH);
     }
 
     @SneakyThrows
-    public static <T> T load(Class<T> clazz) {
-        return JsonUtils.GSON.fromJson(Files.readString(CONFIG_PATH), clazz);
+    public static <T> T load(Class<T> clazz, Path path) {
+        return JsonUtils.GSON.fromJson(Files.readString(path), clazz);
     }
 
     @SneakyThrows
