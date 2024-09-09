@@ -8,9 +8,9 @@ import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
 import io.javalin.http.Context;
 
-public class GroupController extends Controller {
+public class GroupsController extends Controller {
 
-    public GroupController(RestModule restModule) {
+    public GroupsController(RestModule restModule) {
         super("/groups", restModule);
     }
 

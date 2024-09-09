@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.modules.rest.RestModule;
 import dev.httpmarco.polocloud.modules.rest.auth.AuthService;
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint.AuthController;
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint.UserController;
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint.groups.GroupController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint.groups.GroupsController;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.*;
 import io.javalin.http.Context;
 import io.javalin.http.HandlerType;
@@ -39,7 +39,7 @@ public class ControllerService {
         registerControllers(
                 new UserController(this.restModule),
                 new AuthController(this.restModule),
-                new GroupController(this.restModule)
+                new GroupsController(this.restModule)
         );
 
         for (var controller : this.controllers) {
