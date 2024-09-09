@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/launcher" />
             <option value="$PROJECT_DIR$/modules" />
             <option value="$PROJECT_DIR$/modules/example" />
+            <option value="$PROJECT_DIR$/modules/rest" />
             <option value="$PROJECT_DIR$/node" />
             <option value="$PROJECT_DIR$/plugin" />
           </set>

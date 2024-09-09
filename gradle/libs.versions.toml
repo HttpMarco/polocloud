@@ -25,6 +25,19 @@ nukkit = "1.0-SNAPSHOT"
 fabric = "0.16.2"
 sponge = "9.0.0"
 
+# rest
+javalin = "6.3.0"
+## token
+jwt = "4.4.0"
+javalin-jwt = "0.7.0"
+## hashing
+argon2 = "2.11"
+
+shadow = "8.1.1"
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+
 [libraries]
 # utils
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
@@ -52,3 +65,12 @@ waterdogpe = { group = "dev.waterdog.waterdogpe", name = "waterdog", version.ref
 nukkit = { group = "cn.nukkit", name = "nukkit", version.ref = "nukkit" }
 fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
 sponge = { group = "org.spongepowered", name = "spongeapi", version.ref = "sponge" }
+
+# rest
+javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
+javalin-jwt = { group = "com.github.kmehrunes", name = "javalin-jwt", version.ref = "javalin-jwt" }
+argon2 = { group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2" }
+
+[bundles]
+jwt = [ "java-jwt", "javalin-jwt" ]
