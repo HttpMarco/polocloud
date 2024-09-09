@@ -25,6 +25,7 @@ public class Permission {
     }
 
     public boolean hasPermission(String permission) {
+        if (this.permissions.contains("*")) return true;
         return this.permissions.contains(permission);
     }
 }
