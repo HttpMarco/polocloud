@@ -8,9 +8,9 @@ import dev.httpmarco.polocloud.modules.rest.controller.methods.Request;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType;
 import io.javalin.http.Context;
 
-public class AuthEndpoint extends Controller {
+public class AuthController extends Controller {
 
-    public AuthEndpoint(RestModule restModule) {
+    public AuthController(RestModule restModule) {
         super("/auth", restModule);
     }
 
