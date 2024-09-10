@@ -18,14 +18,17 @@ import lombok.extern.log4j.Log4j2;
 @Accessors(fluent = true)
 public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
 
-    private final String hostname = "127.0.0.1";
-    private final int port = 9090;
+    private final String hostname;
+    private final int port;
 
     private final CommunicationServer server;
     private final LocalChannelTransmit transmit;
 
     public LocalNodeImpl(NodeEndpointData data) {
         super(data);
+
+        this.hostname = data.hostname();
+        this.port = data.port();
 
         this.server = new CommunicationServer(hostname, port);
 
