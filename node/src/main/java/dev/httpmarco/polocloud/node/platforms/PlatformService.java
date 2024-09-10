@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -20,7 +19,7 @@ public final class PlatformService {
 
     public static String FORWARDING_SECRET = StringUtils.randomString(8);
 
-    private static final String VERSIONS_URL = "https://raw.githubusercontent.com/HttpMarco/polocloud/dev/release/versions.json";
+    private static final String VERSIONS_URL = "https://raw.githubusercontent.com/HttpMarco/polocloud/master/versions.json";
     private static final Path VERISON_PATH = Path.of("local/versions.json");
 
     private final List<Platform> platforms;

@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint;
+package dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller;
 
 import com.google.gson.JsonObject;
 import dev.httpmarco.polocloud.modules.rest.RestModule;
