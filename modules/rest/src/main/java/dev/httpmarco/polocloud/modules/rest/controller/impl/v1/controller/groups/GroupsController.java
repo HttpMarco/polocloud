@@ -76,7 +76,7 @@ public class GroupsController extends Controller {
         var version = platformVersion.get();
         var name = request.name();
 
-        context.status(200);
+        context.status(202);
         CompletableFuture.runAsync(() -> Node.instance().clusterProvider().broadcastAll(new GroupCreatePacket(name,
                 new String[]{"every", platform.type().defaultTemplateSpace(), name},
                 new String[]{Node.instance().clusterProvider().localNode().data().name()},
@@ -98,7 +98,7 @@ public class GroupsController extends Controller {
             return;
         }
 
-        context.status(200);
+        context.status(202);
         CompletableFuture.runAsync(() -> Node.instance().groupProvider().delete(group.name()));
     }
 
