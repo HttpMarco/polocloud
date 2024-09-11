@@ -13,6 +13,7 @@ import io.javalin.http.Context;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 public class GroupsController extends Controller {
@@ -27,7 +28,7 @@ public class GroupsController extends Controller {
         context.status(200).result(JsonUtils.GSON.toJson(groups));
     }
 
-    @Request(requestType = RequestType.GET, path = "/{groupName}", permission = "polocloud.groups.view")
+    @Request(requestType = RequestType.GET, path = "/{groupName}", permission = "polocloud.group.view")
     public void getGroup(Context context) {
         var groupName = context.pathParam("groupName");
 
@@ -40,7 +41,7 @@ public class GroupsController extends Controller {
         context.status(200).result(JsonUtils.GSON.toJson(groupOptional.get()));
     }
 
-    @Request(requestType = RequestType.POST, path = "/", permission = "polocloud.groups.create")
+    @Request(requestType = RequestType.POST, path = "/", permission = "polocloud.group.create")
     public void createGroup(Context context) {
         CreateGroupModel request;
         try {
@@ -77,7 +78,8 @@ public class GroupsController extends Controller {
         var version = platformVersion.get();
         var name = request.name();
 
-        Node.instance().clusterProvider().broadcastAll(new GroupCreatePacket(name,
+        context.status(200);
+        CompletableFuture.runAsync(() -> Node.instance().clusterProvider().broadcastAll(new GroupCreatePacket(name,
                 new String[]{"every", platform.type().defaultTemplateSpace(), name},
                 new String[]{Node.instance().clusterProvider().localNode().data().name()},
                 new PlatformGroupDisplay(platform.id(), version.version(), platform.type()),
@@ -85,6 +87,20 @@ public class GroupsController extends Controller {
                 request.staticService(),
                 request.minOnlineServices(),
                 request.maxOnlineServices(),
-                request.fallback()));
+                request.fallback())));
+    }
+
+    @Request(requestType = RequestType.DELETE, path = "/{groupName}", permission = "polocloud.group .delete")
+    public void deleteGroup(Context context) {
+        var groupName = context.pathParam("groupName");
+        var group = Node.instance().groupProvider().find(groupName);
+
+        if (group == null) {
+            context.status(404).result(failMessage("Group not found"));
+            return;
+        }
+
+        context.status(200);
+        CompletableFuture.runAsync(() -> Node.instance().groupProvider().delete(group.name()));
     }
 }
