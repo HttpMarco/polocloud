@@ -88,7 +88,7 @@ public class GroupsController extends Controller {
                 request.fallback())));
     }
 
-    @Request(requestType = RequestType.DELETE, path = "/{groupName}", permission = "polocloud.group .delete")
+    @Request(requestType = RequestType.DELETE, path = "/{groupName}", permission = "polocloud.group.delete")
     public void deleteGroup(Context context) {
         var groupName = context.pathParam("groupName");
         var group = Node.instance().groupProvider().find(groupName);
@@ -101,6 +101,7 @@ public class GroupsController extends Controller {
         context.status(202);
         CompletableFuture.runAsync(() -> Node.instance().groupProvider().delete(group.name()));
     }
+
 
 
 }
