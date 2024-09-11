@@ -10,12 +10,10 @@ import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.util.JsonUtils;
 import io.javalin.http.Context;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-@Log4j2
 public class GroupsController extends Controller {
 
     public GroupsController(RestModule restModule) {
@@ -103,4 +101,6 @@ public class GroupsController extends Controller {
         context.status(200);
         CompletableFuture.runAsync(() -> Node.instance().groupProvider().delete(group.name()));
     }
+
+
 }
