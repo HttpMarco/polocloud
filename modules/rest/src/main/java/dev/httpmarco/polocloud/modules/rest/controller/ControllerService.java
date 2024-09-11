@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.AuthCo
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.UserController;
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.groups.GroupsController;
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.nodes.NodesController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.platforms.PlatformsController;
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.players.PlayersController;
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.services.ServicesController;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.*;
@@ -45,7 +46,8 @@ public class ControllerService {
                 new GroupsController(this.restModule),
                 new NodesController(this.restModule),
                 new ServicesController(this.restModule),
-                new PlayersController(this.restModule)
+                new PlayersController(this.restModule),
+                new PlatformsController(this.restModule)
         );
 
         for (var controller : this.controllers) {
