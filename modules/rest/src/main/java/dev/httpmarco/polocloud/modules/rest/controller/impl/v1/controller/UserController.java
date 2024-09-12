@@ -19,7 +19,7 @@ public class UserController extends Controller {
         super("/user", restModule);
     }
 
-    @Request(requestType = RequestType.POST, path = "/create")
+    @Request(requestType = RequestType.POST, path = "/")
     public void createUser(Context context) {
         UserModel userModel;
         try {

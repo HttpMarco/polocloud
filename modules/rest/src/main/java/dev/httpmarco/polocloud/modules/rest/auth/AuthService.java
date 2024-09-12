@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.modules.rest.auth.user.User;
 import dev.httpmarco.polocloud.modules.rest.controller.ControllerService;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData;
 import io.javalin.http.Context;
+import io.javalin.http.HandlerType;
 import javalinjwt.JavalinJWT;
 import lombok.AllArgsConstructor;
 
@@ -37,7 +38,7 @@ public class AuthService {
     }
 
     private boolean isUserCreationAllowed(Context context) {
-        return context.path().equals(ControllerService.API_PATH + "/user/create")
+        return context.path().equals(ControllerService.API_PATH + "/user") && context.method().equals(HandlerType.POST)
                 && this.restModule.config().usersConfiguration().users().isEmpty();
     }
 
