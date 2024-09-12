@@ -101,7 +101,6 @@ public class GroupsController extends Controller {
         context.status(202);
         CompletableFuture.runAsync(() -> Node.instance().groupProvider().delete(group.name()));
     }
-
-
-
+    
+    //TODO put method to update
 }
