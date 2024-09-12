@@ -120,6 +120,8 @@ public class ServicesController extends Controller {
         context.status(202).result("Service is stopping");
     }
 
+    //TODO add service update endpoint
+
     private void start(ClusterGroup group, int amount) {
         for (int i = 0; i < amount; i++) {
             Node.instance().serviceProvider().factory().runGroupService(group);
