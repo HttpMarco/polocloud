@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.api.platforms.PlatformGroupDisplay;
 import dev.httpmarco.polocloud.modules.rest.RestModule;
 import dev.httpmarco.polocloud.modules.rest.controller.Controller;
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.model.groups.CreateGroupModel;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.model.groups.GroupShutdownModel;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType;
 import dev.httpmarco.polocloud.node.Node;
@@ -100,6 +101,36 @@ public class GroupsController extends Controller {
 
         context.status(202);
         CompletableFuture.runAsync(() -> Node.instance().groupProvider().delete(group.name()));
+    }
+
+    @Request(requestType = RequestType.POST, path = "/shutdown", permission = "polocloud.group.shutdown")
+    public void shutdownGroup(Context context) {
+        GroupShutdownModel request;
+        try {
+            request = context.bodyAsClass(GroupShutdownModel.class);
+        } catch (Exception e) {
+            context.status(400).result(failMessage("Invalid body"));
+            return;
+        }
+
+        if (request.groupName() == null || request.groupName().isEmpty()) {
+            context.status(400).result(failMessage("Group name cannot be empty"));
+            return;
+        }
+
+        var group = Node.instance().groupProvider().find(request.groupName());
+        if (group == null) {
+            context.status(404).result(failMessage("Group not found"));
+            return;
+        }
+
+        CompletableFuture.runAsync(() -> {
+            for (var service : group.services()) {
+                service.shutdown();
+            }
+        });
+
+        context.status(200).result("Stopping all services of the group " + request.groupName());
     }
     
     //TODO put method to update
