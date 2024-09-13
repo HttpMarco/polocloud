@@ -31,12 +31,12 @@ public final class WaterdogPlatformListeners {
 
         var service = ClusterInstance.instance().selfService();
         if (server.getPlayers().size() >= service.maxPlayers()  && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
-            event.getPlayer().disconnect("&cThe service is full!");
+            event.getPlayer().disconnect("§cThe service is full!");
             return;
         }
 
         if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
-            event.getPlayer().disconnect("&cThe service is in maintenance!");
+            event.getPlayer().disconnect("§cThe service is in maintenance!");
             return;
         }
 

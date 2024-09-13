@@ -46,12 +46,12 @@ public final class VelocityPlatformListeners {
 
         var service = ClusterInstance.instance().selfService();
         if (server.getPlayerCount() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
-            event.getPlayer().disconnect(Component.text("&cThe service is full!"));
+            event.getPlayer().disconnect(Component.text("§cThe service is full!"));
             return;
         }
 
         if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
-            event.getPlayer().disconnect(Component.text("&cThe service is in maintenance!"));
+            event.getPlayer().disconnect(Component.text("§cThe service is in maintenance!"));
             return;
         }
 

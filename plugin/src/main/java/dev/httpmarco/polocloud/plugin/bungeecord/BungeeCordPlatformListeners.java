@@ -28,12 +28,12 @@ public final class BungeeCordPlatformListeners implements Listener {
 
         var service = ClusterInstance.instance().selfService();
         if(server.getOnlineCount() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
-            event.getPlayer().disconnect(new TextComponent("&cThe service is full!"));
+            event.getPlayer().disconnect(new TextComponent("§cThe service is full!"));
             return;
         }
 
         if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
-            event.getPlayer().disconnect(new TextComponent("&cThe service is in maintenance!"));
+            event.getPlayer().disconnect(new TextComponent("§cThe service is in maintenance!"));
             return;
         }
 
