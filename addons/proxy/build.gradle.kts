@@ -13,4 +13,5 @@ dependencies {
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
     compileOnly(libs.bungeecord)
+    compileOnly(project(":api"))
 }
