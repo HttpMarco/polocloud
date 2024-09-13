@@ -19,6 +19,5 @@ public final class BungeeCordProxyCommand extends Command {
 
             return;
         }
-
     }
 }
