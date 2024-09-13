@@ -2,9 +2,13 @@ package dev.httpmarco.polocloud.modules.rest.controller;
 
 import dev.httpmarco.polocloud.modules.rest.RestModule;
 import dev.httpmarco.polocloud.modules.rest.auth.AuthService;
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint.AuthController;
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint.UserController;
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.endpoint.groups.GroupsController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.AuthController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.UserController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.groups.GroupsController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.nodes.NodesController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.platforms.PlatformsController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.players.PlayersController;
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.services.ServicesController;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.*;
 import io.javalin.http.Context;
 import io.javalin.http.HandlerType;
@@ -39,7 +43,11 @@ public class ControllerService {
         registerControllers(
                 new UserController(this.restModule),
                 new AuthController(this.restModule),
-                new GroupsController(this.restModule)
+                new GroupsController(this.restModule),
+                new NodesController(this.restModule),
+                new ServicesController(this.restModule),
+                new PlayersController(this.restModule),
+                new PlatformsController(this.restModule)
         );
 
         for (var controller : this.controllers) {
