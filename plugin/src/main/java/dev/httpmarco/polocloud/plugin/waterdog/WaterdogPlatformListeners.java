@@ -1,11 +1,10 @@
 package dev.httpmarco.polocloud.plugin.waterdog;
 
-import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.PluginPermissions;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import dev.waterdog.waterdogpe.ProxyServer;
 import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent;
@@ -31,12 +30,12 @@ public final class WaterdogPlatformListeners {
     public void handleConnect(@NotNull PlayerLoginEvent event) {
 
         var service = ClusterInstance.instance().selfService();
-        if (server.getPlayers().size() >= service.maxPlayers()) {
+        if (server.getPlayers().size() >= service.maxPlayers()  && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
             event.getPlayer().disconnect("&cThe service is full!");
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
             event.getPlayer().disconnect("&cThe service is in maintenance!");
             return;
         }
@@ -52,12 +51,12 @@ public final class WaterdogPlatformListeners {
         var serverInfo = event.getNewClient().getServerInfo();
 
         var service = ClusterInstance.instance().serviceProvider().find(serverInfo.getServerName());
-        if(serverInfo.getPlayers().size() >= service.maxPlayers()) {
+        if(serverInfo.getPlayers().size() >= service.maxPlayers()  && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
             event.setCancelled();
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
             event.setCancelled();
             return;
         }

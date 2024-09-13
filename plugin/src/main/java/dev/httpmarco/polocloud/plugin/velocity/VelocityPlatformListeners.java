@@ -9,17 +9,15 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.PluginPermissions;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
@@ -47,12 +45,12 @@ public final class VelocityPlatformListeners {
     public void onPostLogin(@NotNull PostLoginEvent event) {
 
         var service = ClusterInstance.instance().selfService();
-        if (server.getPlayerCount() >= service.maxPlayers()) {
+        if (server.getPlayerCount() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
             event.getPlayer().disconnect(Component.text("&cThe service is full!"));
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
+        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
             event.getPlayer().disconnect(Component.text("&cThe service is in maintenance!"));
             return;
         }
@@ -66,11 +64,11 @@ public final class VelocityPlatformListeners {
 
         serverOptional.getServer().ifPresent(server -> {
             var service = ClusterInstance.instance().serviceProvider().find(server.getServerInfo().getName());
-            if (server.getPlayersConnected().size() >= service.maxPlayers()) {
+            if (server.getPlayersConnected().size() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
                 event.setResult(ServerPreConnectEvent.ServerResult.denied());
             }
 
-            if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE)) {
+            if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
                 event.setResult(ServerPreConnectEvent.ServerResult.denied());
             }
         });
