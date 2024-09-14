@@ -8,12 +8,20 @@ import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
-public final class ProxyPluginPlatform extends PluginPlatform {
+@Getter
+@Accessors(fluent = true)
+public final class ProxyPluginPlatform<T> extends PluginPlatform {
 
-    public ProxyPluginPlatform(PluginPlatformAction platformAction, ProxyServerHandler proxyServerHandler) {
+    private final ProxyPlatformParameterAdapter<T> parameterAdapter;
+
+    public ProxyPluginPlatform(PluginPlatformAction platformAction, @NotNull ProxyServerHandler proxyServerHandler, ProxyPlatformParameterAdapter<T> parameterAdapter) {
+        this.parameterAdapter = parameterAdapter;
         var client = ClusterInstance.instance().client();
 
         // listen on players messages

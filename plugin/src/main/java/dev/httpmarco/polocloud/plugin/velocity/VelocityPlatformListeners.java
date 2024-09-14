@@ -8,11 +8,13 @@ import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.player.ServerPreConnectEvent;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.PlatformValueChecker;
 import dev.httpmarco.polocloud.plugin.PluginPermissions;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 public final class VelocityPlatformListeners {
 
     private final ProxyServer server;
-    private final ProxyPluginPlatform platform;
+    private final ProxyPluginPlatform<Player> platform;
 
     @Subscribe
     public void onPlayerChooseInitialServer(@NotNull PlayerChooseInitialServerEvent event) {
@@ -44,13 +46,12 @@ public final class VelocityPlatformListeners {
     @Subscribe(order = PostOrder.LATE)
     public void onPostLogin(@NotNull PostLoginEvent event) {
 
-        var service = ClusterInstance.instance().selfService();
-        if (server.getPlayerCount() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
+        if (PlatformValueChecker.reachMaxPlayers(platform, event.getPlayer())) {
             event.getPlayer().disconnect(Component.text("§cThe service is full!"));
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
+        if (PlatformValueChecker.maintenanceEnabled(platform, event.getPlayer())) {
             event.getPlayer().disconnect(Component.text("§cThe service is in maintenance!"));
             return;
         }
@@ -64,11 +65,11 @@ public final class VelocityPlatformListeners {
 
         serverOptional.getServer().ifPresent(server -> {
             var service = ClusterInstance.instance().serviceProvider().find(server.getServerInfo().getName());
-            if (server.getPlayersConnected().size() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
+            if (PlatformValueChecker.reachMaxPlayers(service.onlinePlayersCount(), server.getPlayersConnected().size(), platform, event.getPlayer())) {
                 event.setResult(ServerPreConnectEvent.ServerResult.denied());
             }
 
-            if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
+            if (PlatformValueChecker.maintenanceEnabled(service, platform, event.getPlayer())) {
                 event.setResult(ServerPreConnectEvent.ServerResult.denied());
             }
         });

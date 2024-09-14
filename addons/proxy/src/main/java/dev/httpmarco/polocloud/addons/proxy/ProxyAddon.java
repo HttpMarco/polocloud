@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.addons.proxy;
 
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
-import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ public final class ProxyAddon {
     public ProxyAddon() {
         instance = this;
 
-        this.config = new ProxyConfig(new Motd[]{new Motd("Poo", "ist toll"), new Motd("Poo", "ist 2")}, new Motd[]{new Motd("polo", "mainteannce")}, new Tablist("a", "b"));
+        this.config = new ProxyConfig(new Motd[]{new Motd("Poo", "ist toll"), new Motd("Poo", "ist 2")}, new Motd[]{new Motd("polo", "mainteannce")}, "maintenance", new Tablist("a", "b"));
     }
 
     public int getOnline() {

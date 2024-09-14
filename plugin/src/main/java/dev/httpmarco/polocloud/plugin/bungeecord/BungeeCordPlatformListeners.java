@@ -2,11 +2,12 @@ package dev.httpmarco.polocloud.plugin.bungeecord;
 
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
-import dev.httpmarco.polocloud.plugin.PluginPermissions;
+import dev.httpmarco.polocloud.plugin.PlatformValueChecker;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import lombok.AllArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public final class BungeeCordPlatformListeners implements Listener {
 
     private final ProxyServer server;
-    private final ProxyPluginPlatform platform;
+    private final ProxyPluginPlatform<ProxiedPlayer> platform;
 
     @EventHandler
     public void handlePlayerDisconnect(@NotNull PlayerDisconnectEvent event) {
@@ -25,14 +26,12 @@ public final class BungeeCordPlatformListeners implements Listener {
 
     @EventHandler
     public void handleServerConnect(@NotNull PostLoginEvent event) {
-
-        var service = ClusterInstance.instance().selfService();
-        if(server.getOnlineCount() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
+        if (PlatformValueChecker.reachMaxPlayers(platform, event.getPlayer())) {
             event.getPlayer().disconnect(new TextComponent("§cThe service is full!"));
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
+        if (PlatformValueChecker.reachMaxPlayers(platform, event.getPlayer())) {
             event.getPlayer().disconnect(new TextComponent("§cThe service is in maintenance!"));
             return;
         }
@@ -43,12 +42,13 @@ public final class BungeeCordPlatformListeners implements Listener {
     @EventHandler
     public void handleServerConnect(@NotNull ServerConnectEvent event) {
         var service = ClusterInstance.instance().serviceProvider().find(event.getTarget().getName());
-        if (event.getTarget().getPlayers().size() >= service.maxPlayers() && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
+
+        if (PlatformValueChecker.reachMaxPlayers(service.onlinePlayersCount(), event.getTarget().getPlayers().size(), platform, event.getPlayer())) {
             event.setCancelled(true);
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
+        if (PlatformValueChecker.maintenanceEnabled(service, platform, event.getPlayer())) {
             event.setCancelled(true);
         }
     }

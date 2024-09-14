@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.PlatformValueChecker;
 import dev.httpmarco.polocloud.plugin.PluginPermissions;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import dev.waterdog.waterdogpe.ProxyServer;
@@ -11,14 +12,15 @@ import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent;
 import dev.waterdog.waterdogpe.event.defaults.TransferCompleteEvent;
+import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public final class WaterdogPlatformListeners {
 
     private final ProxyServer server;
-    private final ProxyPluginPlatform platform;
+    private final ProxyPluginPlatform<ProxiedPlayer> platform;
 
-    public WaterdogPlatformListeners(@NotNull ProxyServer server, ProxyPluginPlatform platform) {
+    public WaterdogPlatformListeners(@NotNull ProxyServer server, ProxyPluginPlatform<ProxiedPlayer> platform) {
         server.getEventManager().subscribe(PlayerDisconnectEvent.class, this::handleDisconnect);
         server.getEventManager().subscribe(PlayerLoginEvent.class, this::handleConnect);
         server.getEventManager().subscribe(TransferCompleteEvent.class, this::handleTransfer);
@@ -28,14 +30,12 @@ public final class WaterdogPlatformListeners {
     }
 
     public void handleConnect(@NotNull PlayerLoginEvent event) {
-
-        var service = ClusterInstance.instance().selfService();
-        if (server.getPlayers().size() >= service.maxPlayers()  && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
+        if (PlatformValueChecker.reachMaxPlayers(platform, event.getPlayer())) {
             event.getPlayer().disconnect("§cThe service is full!");
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
+        if (PlatformValueChecker.reachMaxPlayers(platform, event.getPlayer())) {
             event.getPlayer().disconnect("§cThe service is in maintenance!");
             return;
         }
@@ -51,12 +51,13 @@ public final class WaterdogPlatformListeners {
         var serverInfo = event.getNewClient().getServerInfo();
 
         var service = ClusterInstance.instance().serviceProvider().find(serverInfo.getServerName());
-        if(serverInfo.getPlayers().size() >= service.maxPlayers()  && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAX_PLAYERS)) {
+        if (PlatformValueChecker.reachMaxPlayers(service.onlinePlayersCount(), serverInfo.getPlayers().size(), platform, event.getPlayer())) {
             event.setCancelled();
             return;
         }
 
-        if (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !event.getPlayer().hasPermission(PluginPermissions.BYPASS_MAINTENANCE)) {
+        if (PlatformValueChecker.maintenanceEnabled(service, platform, event.getPlayer())) {
+            event.setCancelled();
             event.setCancelled();
             return;
         }

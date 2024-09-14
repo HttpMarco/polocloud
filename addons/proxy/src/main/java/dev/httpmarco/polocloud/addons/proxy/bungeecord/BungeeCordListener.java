@@ -18,6 +18,8 @@ public final class BungeeCordListener implements Listener {
         players.setOnline(proxyAddon.getOnline());
         players.setMax(proxyAddon.getMaxPlayers());
 
+        // todo add maintenance tag on players
+
         response.setDescriptionComponent(new TextComponent(proxyAddon.maintenance() ? proxyAddon.maintenanceMotd().toString() : proxyAddon.motd().toString()));
         response.setPlayers(players);
         event.setResponse(response);
