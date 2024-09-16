@@ -43,7 +43,7 @@ public final class BungeeCordPlatformListeners implements Listener {
     public void handleServerConnect(@NotNull ServerConnectEvent event) {
         var service = ClusterInstance.instance().serviceProvider().find(event.getTarget().getName());
 
-        if (PlatformValueChecker.reachMaxPlayers(service.onlinePlayersCount(), event.getTarget().getPlayers().size(), platform, event.getPlayer())) {
+        if (PlatformValueChecker.reachMaxPlayers(event.getTarget().getPlayers().size(), service.maxPlayers(), platform, event.getPlayer())) {
             event.setCancelled(true);
             return;
         }

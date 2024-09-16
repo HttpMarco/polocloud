@@ -51,7 +51,7 @@ public final class WaterdogPlatformListeners {
         var serverInfo = event.getNewClient().getServerInfo();
 
         var service = ClusterInstance.instance().serviceProvider().find(serverInfo.getServerName());
-        if (PlatformValueChecker.reachMaxPlayers(service.onlinePlayersCount(), serverInfo.getPlayers().size(), platform, event.getPlayer())) {
+        if (PlatformValueChecker.reachMaxPlayers(serverInfo.getPlayers().size(), service.maxPlayers(), platform, event.getPlayer())) {
             event.setCancelled();
             return;
         }
