@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.modules.rest.auth.JwtProvider;
 import dev.httpmarco.polocloud.modules.rest.configuration.Config;
 import dev.httpmarco.polocloud.modules.rest.controller.ControllerService;
 import dev.httpmarco.polocloud.modules.rest.auth.user.UserService;
+import dev.httpmarco.polocloud.modules.rest.socket.web.WebSocketService;
 import dev.httpmarco.polocloud.node.module.CloudModule;
 import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
@@ -19,6 +20,7 @@ public class RestModule implements CloudModule {
     public static RestModule instance;
     private Config config;
     private Javalin app;
+    private WebSocketService webSocketService;
     private JwtProvider jwtProvider;
     private UserService userService;
     private ControllerService controllerService;
@@ -34,7 +36,9 @@ public class RestModule implements CloudModule {
         instance = this;
 
         this.config = new Config();
+
         startUpJavalin();
+        this.webSocketService = new WebSocketService(this);
 
         this.jwtProvider = new JwtProvider(this.config.usersConfiguration().secret());
         this.userService = new UserService(this);
