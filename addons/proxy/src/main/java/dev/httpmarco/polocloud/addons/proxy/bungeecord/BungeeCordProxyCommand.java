@@ -31,11 +31,10 @@ public final class BungeeCordProxyCommand extends Command {
 
                 if (state.equalsIgnoreCase("on") || state.equalsIgnoreCase("false")) {
                     var service = ClusterInstance.instance().selfService();
-                    service.properties().put(GroupProperties.MAINTENANCE, state.equalsIgnoreCase("on"));
-                    service.update();
+                    service.group().properties().put(GroupProperties.MAINTENANCE, state.equalsIgnoreCase("on"));
+                    service.group().update();
 
                     // todo kick all players without the permission
-
                     sender.sendMessage(new TextComponent("You update the maintenance mode!"));
                     return;
                 }
