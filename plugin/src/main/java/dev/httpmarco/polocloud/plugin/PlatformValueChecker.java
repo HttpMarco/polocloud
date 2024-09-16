@@ -19,12 +19,12 @@ public class PlatformValueChecker {
 
 
     public <T> boolean maintenanceEnabled(@NotNull ClusterService service, ProxyPluginPlatform<T> platform, T player) {
-        // todo check group
-        return service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) && !platform.parameterAdapter().hasPermission(player, PluginPermissions.BYPASS_MAINTENANCE);
+        return (service.properties().has(GroupProperties.MAINTENANCE) && service.properties().property(GroupProperties.MAINTENANCE) ||
+                service.group().properties().has(GroupProperties.MAINTENANCE) && service.group().properties().property(GroupProperties.MAINTENANCE)
+        ) && !platform.parameterAdapter().hasPermission(player, PluginPermissions.BYPASS_MAINTENANCE);
     }
 
     public <T> boolean maintenanceEnabled(@NotNull ProxyPluginPlatform<T> platform, T player) {
-        // todo check group
         return maintenanceEnabled(self(), platform, player);
     }
 
