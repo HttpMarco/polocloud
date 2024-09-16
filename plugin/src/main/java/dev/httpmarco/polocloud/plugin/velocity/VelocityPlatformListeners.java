@@ -45,17 +45,14 @@ public final class VelocityPlatformListeners {
 
     @Subscribe(order = PostOrder.LATE)
     public void onPostLogin(@NotNull PostLoginEvent event) {
-
         if (PlatformValueChecker.reachMaxPlayers(platform, event.getPlayer())) {
             event.getPlayer().disconnect(Component.text("§cThe service is full!"));
             return;
         }
-
         if (PlatformValueChecker.maintenanceEnabled(platform, event.getPlayer())) {
             event.getPlayer().disconnect(Component.text("§cThe service is in maintenance!"));
             return;
         }
-
         this.platform.registerPlayer(event.getPlayer().getUniqueId(), event.getPlayer().getUsername());
     }
 
@@ -65,8 +62,11 @@ public final class VelocityPlatformListeners {
 
         serverOptional.getServer().ifPresent(server -> {
             var service = ClusterInstance.instance().serviceProvider().find(server.getServerInfo().getName());
-            if (PlatformValueChecker.reachMaxPlayers(service.onlinePlayersCount(), server.getPlayersConnected().size(), platform, event.getPlayer())) {
+            if (PlatformValueChecker.reachMaxPlayers(server.getPlayersConnected().size(), service.maxPlayers(), platform, event.getPlayer())) {
+                //todo no good player output
+                System.out.println(service.onlinePlayersCount() + ":" + server.getPlayersConnected().size());
                 event.setResult(ServerPreConnectEvent.ServerResult.denied());
+                return;
             }
 
             if (PlatformValueChecker.maintenanceEnabled(service, platform, event.getPlayer())) {
