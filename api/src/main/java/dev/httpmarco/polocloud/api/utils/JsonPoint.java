@@ -8,5 +8,6 @@ import lombok.experimental.UtilityClass;
 public class JsonPoint {
 
     public final Gson GSON = new GsonBuilder().serializeNulls().create();
+    public final Gson PRETTY_JSON = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
 }

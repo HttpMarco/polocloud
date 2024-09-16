@@ -9,3 +9,6 @@ findProject(":modules:example")?.name = "example"
 include("plugin")
 include("modules:rest")
 findProject(":modules:rest")?.name = "rest"
+include("addons")
+include("addons:proxy")
+findProject(":addons:proxy")?.name = "proxy"

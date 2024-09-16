@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public final class PropertiesBuffer {
 
     public void write(@NotNull PropertiesPool pool, @NotNull PacketBuffer buffer) {
-        buffer.writeInt(pool.properties().size());
-        pool.properties().forEach((property, o) -> {
+        buffer.writeInt(pool.pool().size());
+        pool.pool().forEach((property, o) -> {
             buffer.writeString(property.name());
             buffer.writeString(property.classType());
             buffer.writeString(JsonPoint.GSON.toJson(o));
@@ -22,7 +22,7 @@ public final class PropertiesBuffer {
 
         for (int i = 0; i < size; i++) {
             var property = new Property<>(buffer.readString(), buffer.readString());
-            pool.properties().put(property, JsonPoint.GSON.fromJson(buffer.readString(), property.clazz()));
+            pool.pool().put(property, JsonPoint.GSON.fromJson(buffer.readString(), property.clazz()));
         }
     }
 

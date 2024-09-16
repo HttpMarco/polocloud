@@ -42,9 +42,9 @@ public final class GroupCommand extends Command {
             log.info("Minimum online services&8: &b{}", group.minOnlineServerInstances());
             log.info("Maximum online services&8: &b{}", group.maxOnlineServerInstances());
             log.info("Maximal players: &b{}" , group.maxPlayers());
-            log.info("Properties&8(&b{}&8):", group.properties().properties().size());
+            log.info("Properties&8(&b{}&8):", group.properties().pool().size());
 
-            group.properties().properties().forEach((property, o) -> log.info("&8 - &7{}&8 = &7{}", property.name(), o));
+            group.properties().pool().forEach((property, o) -> log.info("&8 - &7{}&8 = &7{}", property.name(), o));
         }, "Show all information about a group&8.", groupArgument, CommandArgumentType.Keyword("info"));
 
         syntax(context -> {
