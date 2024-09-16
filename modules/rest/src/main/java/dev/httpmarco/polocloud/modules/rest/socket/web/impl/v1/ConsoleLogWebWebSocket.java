@@ -1,16 +1,16 @@
 package dev.httpmarco.polocloud.modules.rest.socket.web.impl.v1;
 
 import dev.httpmarco.polocloud.modules.rest.RestModule;
-import dev.httpmarco.polocloud.modules.rest.socket.SocketService;
+import dev.httpmarco.polocloud.modules.rest.socket.WebSocket;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsErrorContext;
 import io.javalin.websocket.WsMessageContext;
 
 
-public class ConsoleLogWebSocket extends SocketService {
+public class ConsoleLogWebWebSocket extends WebSocket {
 
-    public ConsoleLogWebSocket(RestModule restModule) {
+    public ConsoleLogWebWebSocket(RestModule restModule) {
         super("/log", restModule);
     }
 

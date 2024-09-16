@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.modules.rest.socket.web;
 
 import dev.httpmarco.polocloud.modules.rest.RestModule;
-import dev.httpmarco.polocloud.modules.rest.socket.SocketService;
-import dev.httpmarco.polocloud.modules.rest.socket.web.impl.v1.ConsoleLogWebSocket;
+import dev.httpmarco.polocloud.modules.rest.socket.WebSocket;
+import dev.httpmarco.polocloud.modules.rest.socket.web.impl.v1.ConsoleLogWebWebSocket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class WebSocketService {
 
     public static final String API_PATH = "/polocloud/api/v1";
     private final RestModule restModule;
-    private final List<SocketService> webSockets;
+    private final List<WebSocket> webSockets;
 
     public WebSocketService(RestModule restModule) {
         this.restModule = restModule;
@@ -21,13 +21,13 @@ public class WebSocketService {
         invoke();
     }
 
-    private void registerWebSockets(SocketService... webSocket) {
+    private void registerWebSockets(WebSocket... webSocket) {
         this.webSockets.addAll(List.of(webSocket));
     }
 
     public void invoke() {
         registerWebSockets(
-                new ConsoleLogWebSocket(this.restModule)
+                new ConsoleLogWebWebSocket(this.restModule)
         );
         //TODO auth
         for (var webSocket : this.webSockets) {

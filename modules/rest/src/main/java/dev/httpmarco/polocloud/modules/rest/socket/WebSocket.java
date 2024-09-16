@@ -10,12 +10,12 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
-public abstract class SocketService {
+public abstract class WebSocket {
 
     protected final RestModule restModule;
     private final String path;
 
-    public SocketService(String path, RestModule restModule) {
+    public WebSocket(String path, RestModule restModule) {
         this.path = path;
         this.restModule = restModule;
     }
