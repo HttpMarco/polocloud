@@ -44,8 +44,7 @@ public final class ClusterGroupFactory {
 
         // check every creation, if directory exists
         GROUP_DIR.toFile().mkdirs();
-        var groupFile = GROUP_DIR.resolve(group.name() + ".json");
-        Files.writeString(groupFile, JsonUtils.GSON.toJson(group));
+        updateLocalStorageGroup(group);
 
         Node.instance().templatesProvider().prepareTemplate(group.templates());
 
@@ -65,6 +64,12 @@ public final class ClusterGroupFactory {
 
         clusterGroup.services().forEach(ClusterService::shutdown);
         clusterGroupProvider.groups().removeIf(group -> group.name().equalsIgnoreCase(name));
+    }
+
+    @SneakyThrows
+    public void updateLocalStorageGroup(@NotNull ClusterGroup group) {
+        var groupFile = GROUP_DIR.resolve(group.name() + ".json");
+        Files.writeString(groupFile, JsonUtils.GSON.toJson(group));
     }
 
     @SneakyThrows
