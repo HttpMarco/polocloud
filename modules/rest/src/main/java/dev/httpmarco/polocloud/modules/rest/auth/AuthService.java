@@ -43,7 +43,7 @@ public class AuthService {
     }
 
     private boolean isUserCreationAllowed(Context context) {
-        return context.path().equals(ControllerService.API_PATH + "/user") && context.method().equals(HandlerType.POST)
+        return context.path().replaceAll("/$", "").equals(ControllerService.API_PATH + "/user") && context.method().equals(HandlerType.POST)
                 && this.restModule.config().usersConfiguration().users().isEmpty();
     }
 
