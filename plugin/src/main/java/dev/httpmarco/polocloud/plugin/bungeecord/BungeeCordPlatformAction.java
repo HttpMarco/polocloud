@@ -30,6 +30,11 @@ public final class BungeeCordPlatformAction implements PluginPlatformAction {
         player(uuid).connect(ProxyServer.getInstance().getServerInfo(serverId));
     }
 
+    @Override
+    public void sendTablist(UUID uuid, String header, String footer) {
+        player(uuid).setTabHeader(new TextComponent(header), new TextComponent(footer));
+    }
+
     public ProxiedPlayer player(UUID uuid) {
         return ProxyServer.getInstance().getPlayer(uuid);
     }
