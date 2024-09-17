@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.api.Detail;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -21,6 +22,16 @@ public interface ClusterPlayer extends Named, Detail {
 
     CompletableFuture<ClusterService> currentServerAsync();
 
+    void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut);
+
+    void sendTablist(String header, String footer);
+
+    void sendMessage(String message);
+
+    void sendActionBar(String message);
+
+    void connect(String serviceId);
+
     @SneakyThrows
     default ClusterService currentProxy() {
         return this.currentProxyAsync().get(5, TimeUnit.SECONDS);
@@ -36,21 +47,12 @@ public interface ClusterPlayer extends Named, Detail {
         return "uniqueId&8=&7" + uniqueId() + "&8, &7current proxy&8=&7" + currentProxyName() + ", &7 current server&8=&7" + currentServerName();
     }
 
-    void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut);
-
     default void sendTitle(String title, String subtitle) {
         //default minecraft values
         this.sendTitle(title, subtitle, 10, 70, 20);
     }
 
-    void sendMessage(String message);
-
-    void sendActionBar(String message);
-
-    default void connect(ClusterService service) {
+    default void connect(@NotNull ClusterService service) {
         this.connect(service.name());
     }
-
-    void connect(String serviceId);
-
 }

@@ -65,6 +65,11 @@ public final class ClusterPlayerImpl extends AbstractClusterPlayer {
     }
 
     @Override
+    public void sendTablist(String header, String footer) {
+
+    }
+
+    @Override
     public void sendMessage(String message) {
         sendPlayerAction(new PlayerMessagePacket(uniqueId(), message));
     }
