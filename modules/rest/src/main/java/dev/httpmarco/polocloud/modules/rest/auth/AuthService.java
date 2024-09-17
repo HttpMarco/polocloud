@@ -23,8 +23,13 @@ public class AuthService {
             if (!isLogin(context)) {
 
                 var user = userByContext(context);
-                if (!isPermitted(user)) {
+                if (user == null) {
                     context.status(401).result("Unauthorized");
+                    return;
+                }
+
+                if (!isPermitted(user)) {
+                    context.status(403).result("Forbidden");
                     return;
                 }
             }
@@ -57,6 +62,7 @@ public class AuthService {
     }
 
     private boolean isPermitted(User user) {
-        return user != null && (requestMethodData.permission().isEmpty() || user.hasPermission(requestMethodData.permission()));
+        return !requestMethodData.permission().isEmpty() || user.hasPermission(requestMethodData.permission());
     }
+
 }
