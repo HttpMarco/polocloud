@@ -12,11 +12,13 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public abstract class WebSocket {
 
-    protected final RestModule restModule;
     private final String path;
+    private final String permission;
+    protected final RestModule restModule;
 
-    public WebSocket(String path, RestModule restModule) {
+    public WebSocket(String path, String permission, RestModule restModule) {
         this.path = path;
+        this.permission = permission;
         this.restModule = restModule;
     }
 

@@ -6,17 +6,18 @@ import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsErrorContext;
 import io.javalin.websocket.WsMessageContext;
+import lombok.extern.log4j.Log4j2;
 
-
+@Log4j2
 public class ConsoleLogWebWebSocket extends WebSocket {
 
     public ConsoleLogWebWebSocket(RestModule restModule) {
-        super("/log", restModule);
+        super("/log", "", restModule);
     }
 
     @Override
     public void onConnect(WsConnectContext context) {
-
+        context.send("Connected to the console log websocket!");
     }
 
     @Override
