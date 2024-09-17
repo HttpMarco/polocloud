@@ -1,11 +1,9 @@
 package dev.httpmarco.polocloud.plugin.waterdog;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.PlatformValueChecker;
-import dev.httpmarco.polocloud.plugin.PluginPermissions;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import dev.waterdog.waterdogpe.ProxyServer;
 import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent;
