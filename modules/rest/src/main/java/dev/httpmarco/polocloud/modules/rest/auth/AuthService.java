@@ -39,7 +39,7 @@ public class AuthService {
     }
 
     private boolean isLogin(Context context) {
-        return context.header("Authorization") == null && context.path().equals(ControllerService.API_PATH + "/auth/login");
+        return context.header("Authorization") == null && context.path().replaceAll("/$", "").equals(ControllerService.API_PATH + "/auth/login");
     }
 
     private boolean isUserCreationAllowed(Context context) {
