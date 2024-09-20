@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller;
 
-import com.google.gson.JsonObject;
 import dev.httpmarco.polocloud.modules.rest.RestModule;
 import dev.httpmarco.polocloud.modules.rest.auth.user.User;
 import dev.httpmarco.polocloud.modules.rest.controller.Controller;
@@ -9,9 +8,11 @@ import dev.httpmarco.polocloud.modules.rest.controller.methods.Request;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType;
 import dev.httpmarco.polocloud.modules.rest.util.EncryptionUtil;
 import io.javalin.http.Context;
+import io.javalin.http.Cookie;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class UserController extends Controller {
 
@@ -42,10 +43,12 @@ public class UserController extends Controller {
             return;
         }
 
-        var response = new JsonObject();
-        response.addProperty("token", token);
+        var cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge((int) TimeUnit.DAYS.toSeconds(7));
+        cookie.setSecure(true);
 
-        context.status(201).result(response.toString());
+        context.status(201).cookie(cookie);
 
         CompletableFuture.runAsync(() -> {
             user.passwordHash(EncryptionUtil.encrypt(userModel.password()));
