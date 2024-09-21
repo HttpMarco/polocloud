@@ -2,7 +2,7 @@ allprojects {
     apply(plugin = "java-library")
 
     group = "dev.httpmarco.polocloud.node"
-    version = "1.0-SNAPSHOT"
+    version = "1.0.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
