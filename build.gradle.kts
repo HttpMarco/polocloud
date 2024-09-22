@@ -1,5 +1,10 @@
+plugins {
+    id("maven-publish")
+}
+
 allprojects {
     apply(plugin = "java-library")
+    apply(plugin = "maven-publish")
 
     group = "dev.httpmarco.polocloud.node"
     version = "1.0.0-SNAPSHOT"
@@ -31,5 +36,35 @@ allprojects {
         "implementation"(rootProject.libs.log4j2.simple)
         "implementation"(rootProject.libs.gson)
         "implementation"(rootProject.libs.osgan.netty)
+    }
+
+
+    if (hasProperty("PUBLISH_USERNAME") && (project.name == "api" || project.name == "instance")) {
+        publishing {
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    this.groupId = group.toString()
+                    this.artifactId = artifactId
+                    this.version = version.toString()
+
+                    from(components["java"])
+                }
+            }
+            repositories {
+                maven {
+                    name = "polocloud"
+                    url = if (version.toString().endsWith("SNAPSHOT")) {
+                        uri(property("PUBLISH_URL_SNAPSHOTS").toString())
+                    } else {
+                        uri(property("PUBLISH_URL_RELEASES").toString())
+                    }
+                    isAllowInsecureProtocol=true
+                    credentials {
+                        username = property("PUBLISH_USERNAME").toString()
+                        password = property("PUBLISH_PASSWORD").toString()
+                    }
+                }
+            }
+        }
     }
 }

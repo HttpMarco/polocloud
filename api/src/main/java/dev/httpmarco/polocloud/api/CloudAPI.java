@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.api;
 
+import dev.httpmarco.polocloud.api.config.ConfigProvider;
 import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
@@ -27,5 +28,7 @@ public abstract class CloudAPI {
     public abstract EventProvider eventProvider();
 
     public abstract ClusterPlayerProvider playerProvider();
+
+    public abstract ConfigProvider configProvider();
 
 }
