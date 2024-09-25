@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
+import dev.httpmarco.polocloud.api.packet.RedirectPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
@@ -122,6 +123,19 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             var future = new CommunicationFuture<Integer>();
             Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-players-count", property, IntPacket.class, packet -> future.complete(packet.value()));
             return new IntPacket((future.sync(-1)));
+        });
+
+
+        localNode.transmit().listen(RedirectPacket.class, (transmit, redirectPacket) -> {
+            var target = redirectPacket.target();
+            var service = find(target);
+
+            if(service instanceof ClusterLocalServiceImpl localService) {
+                localService.transmit().sendPacket(redirectPacket.packet());
+                return;
+            }
+
+            Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(redirectPacket);
         });
 
         localNode.transmit().responder("service-players", property -> new PlayerCollectionPacket(find(property.getUUID("id")).onlinePlayers()));
