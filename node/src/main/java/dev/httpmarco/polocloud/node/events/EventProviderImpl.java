@@ -1,9 +1,6 @@
 package dev.httpmarco.polocloud.node.events;
 
-import dev.httpmarco.polocloud.api.event.Event;
-import dev.httpmarco.polocloud.api.event.EventFactory;
-import dev.httpmarco.polocloud.api.event.EventPoolRegister;
-import dev.httpmarco.polocloud.api.event.EventProvider;
+import dev.httpmarco.polocloud.api.event.*;
 import dev.httpmarco.polocloud.api.packet.resources.event.EventCallPacket;
 import dev.httpmarco.polocloud.api.packet.resources.event.EventSubscribePacket;
 import dev.httpmarco.polocloud.node.Node;
@@ -11,6 +8,7 @@ import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -19,10 +17,10 @@ import java.util.function.Consumer;
 @Accessors(fluent = true)
 public final class EventProviderImpl implements EventProvider {
 
+    private final EventSubscribePool pool = new EventSubscribePool("local");
     private final EventFactory factory = new EventFactoryImpl();
 
     public EventProviderImpl() {
-
         Node.instance().clusterProvider().localNode().transmit().listen(EventCallPacket.class, (transmit, packet) -> {
             if(Node.instance().serviceProvider().isServiceChannel(transmit)){
                 factory.call(packet.event());
@@ -47,7 +45,8 @@ public final class EventProviderImpl implements EventProvider {
     }
 
     @Override
-    public <T extends Event> void listen(Class<T> eventClazz, Consumer<T> event) {
-
+    @SuppressWarnings("unchecked")
+    public <T extends Event> void listen(@NotNull Class<T> eventClazz, Consumer<T> event) {
+        pool.subscribe(eventClazz.getName(), event1 -> event.accept((T) event1));
     }
 }
