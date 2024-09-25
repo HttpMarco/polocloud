@@ -4,12 +4,10 @@ import dev.httpmarco.polocloud.modules.rest.RestModule;
 import dev.httpmarco.polocloud.modules.rest.socket.WebSocket;
 import io.javalin.websocket.WsConnectContext;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Log4j2
 @AllArgsConstructor
 public class WebSocketAuthService {
 
@@ -41,14 +39,6 @@ public class WebSocketAuthService {
     }
 
     private Optional<String> tokenFromWebSocketHeader(WsConnectContext context) {
-        return Optional.ofNullable(context.header("Authorization"))
-                .flatMap(header -> {
-                    String[] split = header.split(" ");
-                    if (split.length != 2 || !split[0].equals("Bearer")) {
-                        return Optional.empty();
-                    }
-
-                    return Optional.of(split[1]);
-                });
+        return Optional.ofNullable(context.cookie("token"));
     }
 }

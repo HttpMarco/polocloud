@@ -1,13 +1,16 @@
 package dev.httpmarco.polocloud.node.services;
 
+import dev.httpmarco.polocloud.api.event.impl.services.log.ServiceLogEvent;
 import dev.httpmarco.polocloud.node.Node;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Log4j2
 public final class ClusterLocalServiceReadingThread extends Thread {
 
     private static final long LOG_UPDATE_CYCLE = 100;
@@ -42,6 +45,9 @@ public final class ClusterLocalServiceReadingThread extends Thread {
 
             service.logs().addAll(logs);
             Node.instance().screenProvider().publish(service, logs);
+
+            if (logs.isEmpty()) return;
+            Node.instance().eventProvider().factory().call(new ServiceLogEvent(service, logs));
         }
     }
 }
