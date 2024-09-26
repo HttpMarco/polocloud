@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
-import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.PlatformValueChecker;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -31,7 +30,7 @@ public final class BungeeCordPlatformListeners implements Listener {
             return;
         }
 
-        if (PlatformValueChecker.reachMaxPlayers(platform, event.getPlayer())) {
+        if (PlatformValueChecker.maintenanceEnabled(platform, event.getPlayer())) {
             event.getPlayer().disconnect(new TextComponent("§cThe service is in maintenance!"));
             return;
         }
