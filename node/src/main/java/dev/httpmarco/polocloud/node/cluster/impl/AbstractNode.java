@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Objects;
+
 @Getter
 @Accessors(fluent = true)
 @RequiredArgsConstructor
@@ -22,6 +24,6 @@ public abstract class AbstractNode implements NodeEndpoint {
 
     @Override
     public void close() {
-        transmit().channel().close();
+        Objects.requireNonNull(transmit()).channel().close();
     }
 }
