@@ -60,15 +60,23 @@ public final class ClusterCommand extends Command {
             var data = new NodeEndpointData(name, hostname, port);
             var endpoint = new ExternalNode(data);
 
-            // register the new endpoint and
-            clusterProvider.endpoints().add(endpoint);
-            // update global node configuration
-            Node.instance().nodeConfig().nodes().add(endpoint.data());
-            Node.instance().updateNodeConfig();
 
-            // todo test connection
+            endpoint.connect(transmit -> {
+                // register the new endpoint and
+                clusterProvider.endpoints().add(endpoint);
 
-            log.info("Successfully registered &b{}&8!", name);
+
+                // update global node configuration
+                Node.instance().nodeConfig().nodes().add(endpoint.data());
+                Node.instance().updateNodeConfig();
+
+                // todo test the token
+
+                log.info("Successfully registered &b{}&8!", name);
+            }, transmit -> {
+                // the connection is failed -> not save anything
+                log.error("Failed to register &b{}&8! The required node endpoint is offline!", name);
+            });
         }, "Register a new node in own cluster&8.", CommandArgumentType.Keyword("merge"), nameArgument, hostnameArgument, portArgument);
     }
 }
