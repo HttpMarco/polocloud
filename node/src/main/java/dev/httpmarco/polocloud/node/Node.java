@@ -22,6 +22,7 @@ import dev.httpmarco.polocloud.node.terminal.commands.GroupCommand;
 import dev.httpmarco.polocloud.node.terminal.commands.ServiceCommand;
 import dev.httpmarco.polocloud.node.util.Configurations;
 import dev.httpmarco.polocloud.node.util.StringUtils;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +37,7 @@ public final class Node extends CloudAPI {
     @Getter
     private static Node instance;
 
+    private final NodeConfig nodeConfig;
     private final ClusterProvider clusterProvider;
     private final TemplatesProvider templatesProvider;
     private final EventProvider eventProvider;
@@ -58,8 +60,7 @@ public final class Node extends CloudAPI {
         //register all local node properties
         PropertyRegister.register(NodeProperties.PROXY_PORT_START_RANGE, NodeProperties.SERVICE_PORT_START_RANGE, NodeProperties.SERVER_PORT_START_RANGE);
 
-        var nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
-
+        this.nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
         this.nodeProperties = nodeConfig.propertiesPool();
         this.templatesProvider = new TemplatesProvider();
         this.clusterProvider = new ClusterProviderImpl(nodeConfig);
@@ -93,5 +94,9 @@ public final class Node extends CloudAPI {
 
         this.terminal.allowInput();
         this.serviceProvider.clusterServiceQueue().start();
+    }
+
+    public void updateNodeConfig(){
+        Configurations.writeContent(Path.of("config.json"), this.nodeConfig);
     }
 }
