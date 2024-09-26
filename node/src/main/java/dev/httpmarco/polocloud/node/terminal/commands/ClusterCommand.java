@@ -42,14 +42,14 @@ public final class ClusterCommand extends Command {
 
         var nameArgument = CommandArgumentType.Text("name");
         var hostnameArgument = CommandArgumentType.Text("hostname");
-        var portArgument = CommandArgumentType.Integer("hostname");
-        var nodeToken = CommandArgumentType.Text("token");
+        var portArgument = CommandArgumentType.Integer("port");
+        var nodeToken = CommandArgumentType.Text("externalToken");
 
         syntax(commandContext -> {
             var name = commandContext.arg(nameArgument);
             var hostname = commandContext.arg(hostnameArgument);
             var port = commandContext.arg(portArgument);
-            var token = commandContext.arg(portArgument);
+            var token = commandContext.arg(nodeToken);
 
             // check if a node already exists
             if(clusterProvider.find(name) != null) {
@@ -77,6 +77,6 @@ public final class ClusterCommand extends Command {
                 // the connection is failed -> not save anything
                 log.error("Failed to register &b{}&8! The required node endpoint is offline!", name);
             });
-        }, "Register a new node in own cluster&8.", CommandArgumentType.Keyword("merge"), nameArgument, hostnameArgument, portArgument);
+        }, "Register a new node in own cluster&8.", CommandArgumentType.Keyword("merge"), nameArgument, hostnameArgument, portArgument, nodeToken);
     }
 }
