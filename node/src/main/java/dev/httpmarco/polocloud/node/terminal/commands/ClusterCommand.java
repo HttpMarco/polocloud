@@ -75,7 +75,7 @@ public final class ClusterCommand extends Command {
                 log.info("Successfully registered &b{}&8!", name);
             }, transmit -> {
                 // the connection is failed -> not save anything
-                log.error("Failed to register &b{}&8! The required node endpoint is offline!", name);
+                log.error("Failed to register &b{}&8! &7The required node endpoint is offline!", name);
             });
         }, "Register a new node in own cluster&8.", CommandArgumentType.Keyword("merge"), nameArgument, hostnameArgument, portArgument, nodeToken);
     }
