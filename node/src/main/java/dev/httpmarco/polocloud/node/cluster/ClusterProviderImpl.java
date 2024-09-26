@@ -5,6 +5,8 @@ import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.NodeConfig;
 import dev.httpmarco.polocloud.node.cluster.impl.LocalNodeImpl;
 import dev.httpmarco.polocloud.node.cluster.tasks.HeadNodeDetection;
+import dev.httpmarco.polocloud.node.packets.ClusterAuthTokenPacket;
+import dev.httpmarco.polocloud.node.packets.ClusterMergeFamilyPacket;
 import dev.httpmarco.polocloud.node.packets.ClusterReloadCallPacket;
 import dev.httpmarco.polocloud.node.packets.ClusterRequireReloadPacket;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Log4j2
@@ -28,7 +31,21 @@ public final class ClusterProviderImpl implements ClusterProvider {
         this.localNode = new LocalNodeImpl(config.localNode());
         this.endpoints = new HashSet<>();
 
+        localNode.transmit().responder("auth-cluster-token", property -> {
+            boolean value = config.clusterToken().equals(property.getString("token"));
+            // todo close connection here and check all incoming packets !!! important
+            log.warn("External try to authenticate with the cluster token&8. The result is &b{}&8.", value);
+            return new ClusterAuthTokenPacket(value);
+        });
 
+        localNode.transmit().listen(ClusterMergeFamilyPacket.class, (transmit, packet) -> {
+            // todo security issue
+            config.clusterId(packet.clusterId());
+            config.clusterToken(packet.clusterToken());
+
+            Node.instance().updateNodeConfig();
+            log.info("The cluster has been merged with the family&8. The cluster id is now &b{}&8.", packet.clusterId());
+        });
         localNode.transmit().listen(ClusterRequireReloadPacket.class, (transmit, packet) -> broadcastAll(new ClusterReloadCallPacket()));
         localNode.transmit().listen(ClusterReloadCallPacket.class, (transmit, packet) -> {
 
@@ -50,15 +67,15 @@ public final class ClusterProviderImpl implements ClusterProvider {
     @Override
     public void broadcast(Packet packet) {
         for (var endpoint : this.endpoints) {
-            endpoint.transmit().sendPacket(packet);
+            Objects.requireNonNull(endpoint.transmit()).sendPacket(packet);
         }
     }
 
     @Override
     public void broadcastAll(Packet packet) {
-        this.localNode.transmit().sendPacket(packet);
+        Objects.requireNonNull(this.localNode.transmit()).sendPacket(packet);
         for (var endpoint : this.endpoints) {
-            endpoint.transmit().sendPacket(packet);
+            Objects.requireNonNull(endpoint.transmit()).sendPacket(packet);
         }
     }
 

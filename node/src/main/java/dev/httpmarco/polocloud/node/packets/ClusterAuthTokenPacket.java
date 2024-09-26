@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.api.packet.resources.cluster;
+package dev.httpmarco.polocloud.node.packets;
 
 import dev.httpmarco.polocloud.api.packet.BooleanPacket;
 
