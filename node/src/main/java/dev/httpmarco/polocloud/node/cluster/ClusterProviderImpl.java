@@ -42,9 +42,13 @@ public final class ClusterProviderImpl implements ClusterProvider {
             // todo security issue
             config.clusterId(packet.clusterId());
             config.clusterToken(packet.clusterToken());
+            config.nodes().clear();
+            config.nodes().addAll(packet.allClusterEndpoints());
 
             Node.instance().updateNodeConfig();
             log.info("The cluster has been merged with the family&8. The cluster id is now &b{}&8.", packet.clusterId());
+
+            //todo connect with all other new endpoints
         });
         localNode.transmit().listen(ClusterRequireReloadPacket.class, (transmit, packet) -> broadcastAll(new ClusterReloadCallPacket()));
         localNode.transmit().listen(ClusterReloadCallPacket.class, (transmit, packet) -> {
