@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.update;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.httpmarco.polocloud.node.util.DownloadUtil;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedReader;
@@ -40,7 +41,45 @@ public class AutoUpdater {
     }
 
     public void update() {
+        var release = latestRelease();
+        if (release == null) {
+            return;
+        }
 
+        var releaseVersion = releaseVersion(release);
+        var currentVersion = System.getProperty("Polocloud-Version");
+
+        if (!VersionVerifier.isNewerVersion(currentVersion, releaseVersion)) {
+            log.warn("You are already using the latest version of PoloCloud.");
+            return;
+        }
+
+        var asset = findReleaseAsset(release, releaseVersion);
+        if (asset == null) {
+            log.warn("No suitable asset found for version: {}", releaseVersion);
+            return;
+        }
+
+        var downloadUrl = asset.get("browser_download_url").getAsString();
+        var downloadName = asset.get("name").getAsString();
+
+        log.info("Downloading new Update...");
+        DownloadUtil.downloadFile(downloadUrl, downloadName, null);
+    }
+
+    private JsonObject findReleaseAsset(JsonObject release, String releaseVersion) {
+        var assets = release.get("assets").getAsJsonArray();
+
+        for (int i = 0; i < assets.size(); i++) {
+            var asset = assets.get(i).getAsJsonObject();
+            var assetName = asset.get("name").getAsString();
+
+            if (assetName.equals("polocloud-" + releaseVersion + ".jar")) {
+                return asset;
+            }
+        }
+
+        return null;
     }
 
     public String releaseVersion(JsonObject release) {
