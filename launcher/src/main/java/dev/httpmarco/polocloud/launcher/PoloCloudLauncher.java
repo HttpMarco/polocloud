@@ -3,11 +3,10 @@ package dev.httpmarco.polocloud.launcher;
 import dev.httpmarco.polocloud.launcher.dependency.Dependency;
 import dev.httpmarco.polocloud.launcher.dependency.DependencyDownloader;
 import dev.httpmarco.polocloud.launcher.dependency.Repository;
+import dev.httpmarco.polocloud.launcher.util.VersionUtil;
 import lombok.SneakyThrows;
 
-import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 public final class PoloCloudLauncher {
 
@@ -15,6 +14,11 @@ public final class PoloCloudLauncher {
 
     @SneakyThrows
     public static void main(String[] args) {
+        var versionUtil = (new VersionUtil()).checkVersion();
+        if (!versionUtil) {
+            System.exit(0);
+            return;
+        }
 
         var boot = new PoloCloudBoot();
         var apiFile = Path.of("local/dependencies/polocloud-api.jar");
