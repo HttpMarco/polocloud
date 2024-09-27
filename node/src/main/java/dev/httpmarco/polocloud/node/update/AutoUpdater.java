@@ -2,14 +2,17 @@ package dev.httpmarco.polocloud.node.update;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.httpmarco.polocloud.node.util.DownloadUtil;
+import dev.httpmarco.polocloud.launcher.update.AutoUpdateInstaller;
+import dev.httpmarco.polocloud.node.util.Downloader;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Path;
 
 @Log4j2
 public class AutoUpdater {
@@ -64,7 +67,10 @@ public class AutoUpdater {
         var downloadName = asset.get("name").getAsString();
 
         log.info("Downloading new Update...");
-        DownloadUtil.downloadFile(downloadUrl, downloadName, null);
+        Downloader.download(downloadUrl, Path.of(downloadName).toAbsolutePath());
+
+        var oldFileName = "polocloud-" + currentVersion + ".jar";
+        AutoUpdateInstaller.installUpdate(new File(oldFileName), new File(downloadName));
     }
 
     private JsonObject findReleaseAsset(JsonObject release, String releaseVersion) {

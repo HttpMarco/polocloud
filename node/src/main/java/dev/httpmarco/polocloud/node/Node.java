@@ -103,7 +103,7 @@ public final class Node extends CloudAPI {
         // load all Modules
         this.moduleProvider.loadAllUnloadedModules();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> NodeShutdown.nodeShutdown(false)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> NodeShutdown.nodeShutdownTotal(false)));
 
         log.info("Cluster node boot successfully &8(&7Took {}ms&8)", System.currentTimeMillis() - Long.parseLong(System.getProperty("startup")));
 
