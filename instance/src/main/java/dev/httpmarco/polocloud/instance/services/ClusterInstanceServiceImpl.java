@@ -1,8 +1,10 @@
 package dev.httpmarco.polocloud.instance.services;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
+import dev.httpmarco.polocloud.api.packet.RedirectPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceLogPacket;
@@ -79,5 +81,15 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     @Override
     public String details() {
         return this.toString();
+    }
+
+    @Override
+    public void sendPacket(Packet packet) {
+        if (id.equals(ClusterInstance.instance().selfServiceId())) {
+            // here we are allow to call the packet directly because we are on the same instance
+            ClusterInstance.instance().client().call(packet, null);
+            return;
+        }
+        ClusterInstance.instance().client().sendPacket(new RedirectPacket(packet));
     }
 }

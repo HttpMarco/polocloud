@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacke
 import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
+import dev.httpmarco.polocloud.instance.config.ConfigProviderImpl;
 import dev.httpmarco.polocloud.instance.events.EventProviderImpl;
 import dev.httpmarco.polocloud.instance.groups.ClusterInstanceGroupProvider;
 import dev.httpmarco.polocloud.instance.players.ClusterPlayerProviderImpl;
@@ -28,6 +29,7 @@ public final class ClusterInstance extends CloudAPI {
     private ClusterService selfService;
 
     private final EventProviderImpl eventProvider;
+    private final ConfigProviderImpl configProvider;
     private final ClusterInstanceGroupProvider groupProvider = new ClusterInstanceGroupProvider();
     private final ClusterServiceProvider serviceProvider = new ClusterInstanceServiceProvider();
     private final ClusterPlayerProvider playerProvider = new ClusterPlayerProviderImpl();
@@ -43,6 +45,7 @@ public final class ClusterInstance extends CloudAPI {
         Runtime.getRuntime().addShutdownHook(new Thread(ClusterInstanceShutdown::shutdown));
 
         this.eventProvider = new EventProviderImpl();
+        this.configProvider = new ConfigProviderImpl();
 
         this.client.clientAction(CommunicationClientAction.CONNECTED, transmit -> {
             transmit.sendPacket(new ServiceConnectPacket(selfServiceId));

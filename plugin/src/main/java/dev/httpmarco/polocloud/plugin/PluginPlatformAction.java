@@ -12,4 +12,6 @@ public interface PluginPlatformAction {
 
     void connect(UUID uuid, String serverId);
 
+    void sendTablist(UUID uuid, String header, String footer);
+
 }

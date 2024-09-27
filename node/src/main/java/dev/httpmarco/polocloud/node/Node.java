@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.ClusterProviderImpl;
@@ -58,7 +59,13 @@ public final class Node extends CloudAPI {
         instance = this;
 
         //register all local node properties
-        PropertyRegister.register(NodeProperties.PROXY_PORT_START_RANGE, NodeProperties.SERVICE_PORT_START_RANGE, NodeProperties.SERVER_PORT_START_RANGE);
+        PropertyRegister.register(
+                NodeProperties.PROXY_PORT_START_RANGE,
+                NodeProperties.SERVICE_PORT_START_RANGE,
+                NodeProperties.SERVER_PORT_START_RANGE,
+                GroupProperties.MAINTENANCE,
+                GroupProperties.PERCENTAGE_TO_START_NEW_SERVER
+        );
 
         this.nodeConfig = Configurations.readContent(Path.of("config.json"), new NodeConfig());
         this.nodeProperties = nodeConfig.propertiesPool();

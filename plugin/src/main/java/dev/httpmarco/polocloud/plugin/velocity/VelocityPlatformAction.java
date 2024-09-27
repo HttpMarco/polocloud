@@ -4,6 +4,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.plugin.PluginPlatformAction;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
@@ -39,6 +40,11 @@ public final class VelocityPlatformAction implements PluginPlatformAction {
     @Override
     public void connect(UUID uuid, String serverId) {
         proxyServer.getServer(serverId).ifPresent(it -> player(uuid).createConnectionRequest(it).fireAndForget());
+    }
+
+    @Override
+    public void sendTablist(UUID uuid, String header, String footer) {
+        player(uuid).sendPlayerListHeaderAndFooter(Component.text(header), Component.text(footer));
     }
 
     private @NotNull Player player(UUID uuid) {

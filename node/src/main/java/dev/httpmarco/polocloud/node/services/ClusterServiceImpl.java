@@ -1,8 +1,10 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.packet.RedirectPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceLogPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceShutdownCallPacket;
@@ -89,5 +91,11 @@ public class ClusterServiceImpl implements ClusterService {
 
     public NodeEndpoint node() {
         return Node.instance().clusterProvider().find(runningNode);
+    }
+
+    @Override
+    public void sendPacket(Packet packet) {
+        // we know that this is not a local service, so we need to redirect the packet to the correct node
+        node().transmit().sendPacket(new RedirectPacket(packet));
     }
 }

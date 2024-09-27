@@ -29,6 +29,11 @@ public final class ClusterPlayerImpl extends AbstractClusterPlayer {
     }
 
     @Override
+    public void sendTablist(String header, String footer) {
+        // todo
+    }
+
+    @Override
     public void sendTitle(String title, String subtitle) {
         // todo
     }

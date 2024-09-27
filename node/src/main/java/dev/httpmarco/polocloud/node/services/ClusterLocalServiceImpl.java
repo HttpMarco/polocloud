@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.polocloud.api.event.EventPoolRegister;
 import dev.httpmarco.polocloud.api.event.EventSubscribePool;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppedEvent;
@@ -55,6 +56,15 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
     @Override
     public void shutdown() {
         Node.instance().serviceProvider().factory().shutdownGroupService(this);
+    }
+
+    @Override
+    public void sendPacket(Packet packet) {
+        if(transmit == null) {
+            log.error("Trying to send packet to service {} but the transmit is null", name());
+            return;
+        }
+        this.transmit.sendPacket(packet);
     }
 
     @SneakyThrows

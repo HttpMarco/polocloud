@@ -29,4 +29,9 @@ public final class WaterdogPlatformAction implements PluginPlatformAction {
     public void connect(UUID uuid, String serverId) {
         proxyServer.getPlayer(uuid).connect(proxyServer.getServerInfo(serverId));
     }
+
+    @Override
+    public void sendTablist(UUID uuid, String header, String footer) {
+        // todo not found
+    }
 }
