@@ -21,6 +21,7 @@ public final class NodeConfig {
     private final Set<NodeEndpointData> nodes;
 
     private final PropertiesPool propertiesPool;
+    private final boolean checkForUpdates;
 
     public NodeConfig() {
         this.clusterId = "polocloud-cluster";
@@ -29,5 +30,6 @@ public final class NodeConfig {
         this.nodes = new HashSet<>();
 
         this.propertiesPool = new PropertiesPool();
+        this.checkForUpdates = true;
     }
 }
