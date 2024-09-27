@@ -39,6 +39,10 @@ public class AutoUpdater {
         log.warn(" ");
     }
 
+    public void update() {
+
+    }
+
     public String releaseVersion(JsonObject release) {
         return release.get("tag_name").getAsString();
     }
