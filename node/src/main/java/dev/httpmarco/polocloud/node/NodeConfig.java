@@ -4,17 +4,19 @@ import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@Setter
 @Accessors(fluent = true)
 public final class NodeConfig {
 
-    private final String clusterId;
-    private final String clusterToken;
+    private String clusterId;
+    private String clusterToken;
     private final NodeEndpointData localNode;
     private final Set<NodeEndpointData> nodes;
 

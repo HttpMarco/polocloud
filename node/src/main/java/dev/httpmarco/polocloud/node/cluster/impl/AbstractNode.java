@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.node.cluster.impl;
 
-import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.NodeSituation;
@@ -8,18 +7,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Objects;
+
 @Getter
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public class NodeEndpointImpl implements NodeEndpoint {
+public abstract class AbstractNode implements NodeEndpoint {
 
     private final NodeEndpointData data;
     private NodeSituation situation = NodeSituation.INITIALIZE;
-
-    @Override
-    public ChannelTransmit transmit() {
-        return null;
-    }
 
     @Override
     public void situation(NodeSituation situation) {
@@ -28,6 +24,6 @@ public class NodeEndpointImpl implements NodeEndpoint {
 
     @Override
     public void close() {
-        transmit().channel().close();
+        Objects.requireNonNull(transmit()).channel().close();
     }
 }

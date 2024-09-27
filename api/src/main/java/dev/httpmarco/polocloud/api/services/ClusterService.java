@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.api.services;
 
+import dev.httpmarco.polocloud.api.ChannelAppender;
 import dev.httpmarco.polocloud.api.Detail;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
@@ -12,7 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public interface ClusterService extends Named, Detail {
+public interface ClusterService extends Named, Detail, ChannelAppender {
 
     ClusterGroup group();
 
@@ -20,9 +21,9 @@ public interface ClusterService extends Named, Detail {
 
     UUID id();
 
-    int port();
-
     String hostname();
+
+    int port();
 
     String runningNode();
 

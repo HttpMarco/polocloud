@@ -18,7 +18,7 @@ public final class PropertiesPoolSerializer implements JsonDeserializer<Properti
 
         for (var key : object.keySet()) {
             var property = PropertyRegister.byName(key);
-            propertiesPool.properties().put(property, context.deserialize(object.get(key), property.clazz()));
+            propertiesPool.pool().put(property, context.deserialize(object.get(key), property.clazz()));
         }
         return propertiesPool;
     }
@@ -26,7 +26,7 @@ public final class PropertiesPoolSerializer implements JsonDeserializer<Properti
     @Override
     public @NotNull JsonElement serialize(@NotNull PropertiesPool pool, Type typeOfSrc, JsonSerializationContext context) {
         var object = new JsonObject();
-        pool.properties().forEach((property, o) -> object.add(property.name(), context.serialize(o)));
+        pool.pool().forEach((property, o) -> object.add(property.name(), context.serialize(o)));
         return object;
     }
 }

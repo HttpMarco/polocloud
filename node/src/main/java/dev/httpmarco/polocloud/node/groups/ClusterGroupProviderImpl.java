@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.groups;
 
+import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.Reloadable;
@@ -39,10 +40,11 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
     public ClusterGroupProviderImpl(@NotNull ClusterProvider clusterProvider) {
         this.clusterProvider = clusterProvider;
 
-        clusterProvider.localNode().transmit().listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
-        clusterProvider.localNode().transmit().listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
+        var channelTransmit = clusterProvider.localNode().transmit();
+        channelTransmit.listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
+        channelTransmit.listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
 
-        clusterProvider.localNode().transmit().responder("group-delete", property -> {
+        channelTransmit.responder("group-delete", property -> {
             try {
                 return new GroupDeletePacket(GroupDeletionRequest.request(clusterProvider, property.getString("name")).get().get());
             } catch (InterruptedException | ExecutionException e) {
@@ -50,11 +52,31 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
             }
         });
 
-        clusterProvider.localNode().transmit().responder("group-finding", property -> new SingleGroupPacket(find(property.getString("name"))));
-        clusterProvider.localNode().transmit().responder("group-exists", property -> new GroupExistsResponsePacket(exists(property.getString("name"))));
-        clusterProvider.localNode().transmit().responder("groups-all", property -> new GroupCollectionPacket(groups()));
-        clusterProvider.localNode().transmit().responder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterProvider, property));
-        clusterProvider.localNode().transmit().responder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterProvider, property));
+        channelTransmit.responder("group-finding", property -> new SingleGroupPacket(find(property.getString("name"))));
+        channelTransmit.responder("group-exists", property -> new GroupExistsResponsePacket(exists(property.getString("name"))));
+        channelTransmit.responder("groups-all", property -> new GroupCollectionPacket(groups()));
+        channelTransmit.responder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterProvider, property));
+        channelTransmit.responder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterProvider, property));
+
+        channelTransmit.listen(GroupRequestUpdatePacket.class, (transmit, groupRequestUpdatePacket) -> {
+            if (Node.instance().clusterProvider().localHead()) {
+                Node.instance().clusterProvider().broadcastAll(new GroupUpdatePacket(groupRequestUpdatePacket.group()));
+                return;
+            }
+            Node.instance().clusterProvider().headNode().transmit().sendPacket(groupRequestUpdatePacket);
+        });
+
+        channelTransmit.listen(GroupUpdatePacket.class, (transmit, groupUpdatePacket) -> {
+            // change only the right things
+            var current = find(groupUpdatePacket.group().name());
+
+            // update all properties
+            current.properties().pool().clear();
+            current.properties().pool().putAll(groupUpdatePacket.group().properties().pool());
+
+            // update all configs
+            ClusterGroupFactory.updateLocalStorageGroup(current);
+        });
 
         this.groups = ClusterGroupFactory.readGroups();
 

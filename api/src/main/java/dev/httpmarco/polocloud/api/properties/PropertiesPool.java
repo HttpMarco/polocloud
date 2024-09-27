@@ -12,20 +12,29 @@ import java.util.Map;
 @Accessors(fluent = true)
 public final class PropertiesPool {
 
-    private final Map<Property<?>, Object> properties = new HashMap<>();
+    private final Map<Property<?>, Object> pool = new HashMap<>();
 
     public boolean has(Property<?> property) {
-        return this.properties.containsKey(property);
+        return this.pool.keySet().stream().anyMatch(it -> property.name().equalsIgnoreCase(it.name()));
     }
 
+    public <T> void put(Property<T> property, T value) {
+        this.pool.put(property, value);
+    }
 
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public <T> T property(Property<T> property) {
-        return (T) this.properties.get(property);
+        var key = this.pool.keySet().stream().filter(it -> property.name().equalsIgnoreCase(it.name())).findFirst().orElse(null);
+
+        if (key == null) {
+            return null;
+        }
+
+        return (T) this.pool.get(key);
     }
 
     public void extendsProperties(@NotNull PropertiesPool pool) {
-        this.properties.putAll(pool.properties);
+        this.pool.putAll(pool.pool);
     }
 }

@@ -36,4 +36,6 @@ public interface ClusterGroup extends Named, Detail {
         return this instanceof FallbackClusterGroup;
     }
 
+    void update();
+
 }

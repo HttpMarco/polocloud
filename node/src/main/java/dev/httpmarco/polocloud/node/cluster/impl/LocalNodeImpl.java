@@ -16,7 +16,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Getter
 @Accessors(fluent = true)
-public final class LocalNodeImpl extends NodeEndpointImpl implements LocalNode {
+public final class LocalNodeImpl extends AbstractNode implements LocalNode {
 
     private final String hostname;
     private final int port;
