@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -23,6 +24,7 @@ public final class ClusterMergeFamilyPacket extends Packet {
         this.clusterId = packetBuffer.readString();
         this.clusterToken = packetBuffer.readString();
 
+        this.allClusterEndpoints =  new HashSet<>();
         var size = packetBuffer.readInt();
         for (int i = 0; i < size; i++) {
             this.allClusterEndpoints.add(new NodeEndpointData(packetBuffer.readString(), packetBuffer.readString(), packetBuffer.readInt()));
