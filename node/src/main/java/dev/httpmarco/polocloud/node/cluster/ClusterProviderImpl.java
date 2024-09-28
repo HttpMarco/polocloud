@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.node.cluster;
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.NodeConfig;
+import dev.httpmarco.polocloud.node.cluster.impl.ExternalNode;
 import dev.httpmarco.polocloud.node.cluster.impl.LocalNodeImpl;
 import dev.httpmarco.polocloud.node.cluster.tasks.HeadNodeDetection;
 import dev.httpmarco.polocloud.node.packets.ClusterAuthTokenPacket;
@@ -45,9 +46,13 @@ public final class ClusterProviderImpl implements ClusterProvider {
             config.nodes().clear();
             config.nodes().addAll(packet.allClusterEndpoints());
 
+            // append connection to all other nodes
+            endpoints.addAll(packet.allClusterEndpoints().stream().map(ExternalNode::new).toList());
             Node.instance().updateNodeConfig();
-            log.info("The cluster has been merged with the family&8. The cluster id is now &b{}&8.", packet.clusterId());
 
+            //todo sync all this things
+
+            log.info("The cluster has been merged with the family&8. The cluster id is now &b{}&8.", packet.clusterId());
             //todo connect with all other new endpoints
         });
         localNode.transmit().listen(ClusterRequireReloadPacket.class, (transmit, packet) -> broadcastAll(new ClusterReloadCallPacket()));
