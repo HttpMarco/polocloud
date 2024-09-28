@@ -13,6 +13,8 @@ import dev.httpmarco.polocloud.node.packets.ClusterMergeFamilyPacket;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+
 @Log4j2
 public final class ClusterCommand extends Command {
 
@@ -71,8 +73,10 @@ public final class ClusterCommand extends Command {
 
                     if(result) {
                         var clusterConfig = Node.instance().nodeConfig();
+                        var nodes = new HashSet<>(clusterConfig.nodes());
+                        nodes.add(Node.instance().nodeConfig().localNode());
 
-                        transmit.sendPacket(new ClusterMergeFamilyPacket(clusterConfig.clusterId(), clusterConfig.clusterToken(), clusterConfig.nodes()));
+                        transmit.sendPacket(new ClusterMergeFamilyPacket(clusterConfig.clusterId(), clusterConfig.clusterToken(),nodes));
 
                         // register the new endpoint and
                         clusterProvider.endpoints().add(endpoint);
