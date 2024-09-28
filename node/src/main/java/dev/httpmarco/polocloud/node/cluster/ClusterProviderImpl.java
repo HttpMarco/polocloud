@@ -34,7 +34,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
         localNode.transmit().responder("auth-cluster-token", property -> {
             boolean value = config.clusterToken().equals(property.getString("token"));
             // todo close connection here and check all incoming packets !!! important
-            log.warn("External try to authenticate with the cluster token&8. The result is &b{}&8.", value);
+            log.warn("External try to authenticate with the cluster token&8. &7The result is &b{}&8.", value);
             return new ClusterAuthTokenPacket(value);
         });
 
