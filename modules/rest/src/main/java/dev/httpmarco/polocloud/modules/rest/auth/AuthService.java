@@ -39,7 +39,7 @@ public class AuthService {
     }
 
     private boolean isLogin(Context context) {
-        return context.header("Authorization") == null && context.path().equals(ControllerService.API_PATH + "/auth/login");
+        return context.path().replaceAll("/$", "").equals(ControllerService.API_PATH + "/auth/login");
     }
 
     private boolean isUserCreationAllowed(Context context) {
@@ -48,7 +48,7 @@ public class AuthService {
     }
 
     private User userByContext(Context context) {
-        var decodedToken = JavalinJWT.getTokenFromHeader(context).flatMap(this.restModule.jwtProvider().provider()::validateToken);
+        var decodedToken = JavalinJWT.getTokenFromCookie(context).flatMap(this.restModule.jwtProvider().provider()::validateToken);
 
         if (decodedToken.isEmpty()) {
             context.status(401).result("Missing or invalid token");
