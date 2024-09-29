@@ -23,6 +23,8 @@ public interface ClusterService extends Named, Detail, ChannelAppender {
 
     String hostname();
 
+    int port();
+
     String runningNode();
 
     void shutdown();

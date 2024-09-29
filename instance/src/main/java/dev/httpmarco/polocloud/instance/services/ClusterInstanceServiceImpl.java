@@ -90,6 +90,6 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
             ClusterInstance.instance().client().call(packet, null);
             return;
         }
-        ClusterInstance.instance().client().sendPacket(new RedirectPacket(packet));
+        ClusterInstance.instance().client().sendPacket(new RedirectPacket(id, packet));
     }
 }

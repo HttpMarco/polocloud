@@ -96,6 +96,6 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     public void sendPacket(Packet packet) {
         // we know that this is not a local service, so we need to redirect the packet to the correct node
-        node().transmit().sendPacket(new RedirectPacket(packet));
+        node().transmit().sendPacket(new RedirectPacket(id, packet));
     }
 }
