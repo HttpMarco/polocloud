@@ -21,6 +21,7 @@ import dev.httpmarco.polocloud.node.terminal.JLineTerminal;
 import dev.httpmarco.polocloud.node.terminal.commands.ClusterCommand;
 import dev.httpmarco.polocloud.node.terminal.commands.GroupCommand;
 import dev.httpmarco.polocloud.node.terminal.commands.ServiceCommand;
+import dev.httpmarco.polocloud.node.update.AutoUpdater;
 import dev.httpmarco.polocloud.node.util.Configurations;
 import dev.httpmarco.polocloud.node.util.StringUtils;
 import lombok.Getter;
@@ -28,6 +29,8 @@ import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Log4j2
 @Getter
@@ -47,6 +50,7 @@ public final class Node extends CloudAPI {
     private final ClusterPlayerProviderImpl playerProvider;
     private final ScreenProvider screenProvider;
     private final ModuleProvider moduleProvider;
+    private final AutoUpdater autoUpdater;
 
     // only all properties of this local cluster node instance
     private final PropertiesPool nodeProperties;
@@ -82,6 +86,11 @@ public final class Node extends CloudAPI {
         this.playerProvider = new ClusterPlayerProviderImpl();
         this.screenProvider = new ScreenProvider();
 
+        this.autoUpdater = new AutoUpdater();
+        if (nodeConfig.checkForUpdates()) {
+            startUpdateLoop();
+        }
+
         // register provider commands
         this.commandService.registerCommands(new GroupCommand(), new ServiceCommand(), new ClusterCommand(this.clusterProvider));
 
@@ -89,12 +98,12 @@ public final class Node extends CloudAPI {
         this.clusterProvider.initialize();
 
         // set cluster proxy token or sync with head
-        this.serviceProvider.serviceProxyToken(Node.instance().clusterProvider().localHead() ? StringUtils.randomString(8) : "TODO");
+        this.serviceProvider.serviceProxyToken(StringUtils.randomString(8));
 
         // load all Modules
         this.moduleProvider.loadAllUnloadedModules();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> NodeShutdown.nodeShutdown(false)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> NodeShutdown.nodeShutdownTotal(false)));
 
         log.info("Cluster node boot successfully &8(&7Took {}ms&8)", System.currentTimeMillis() - Long.parseLong(System.getProperty("startup")));
 
@@ -102,7 +111,21 @@ public final class Node extends CloudAPI {
         this.serviceProvider.clusterServiceQueue().start();
     }
 
-    public void updateNodeConfig(){
+    public void updateNodeConfig() {
         Configurations.writeContent(Path.of("config.json"), this.nodeConfig);
+    }
+
+    private void startUpdateLoop() {
+        CompletableFuture.runAsync(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    this.autoUpdater.notifyIfUpdateAvailable();
+                    Thread.sleep(TimeUnit.HOURS.toMillis(1));
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
     }
 }

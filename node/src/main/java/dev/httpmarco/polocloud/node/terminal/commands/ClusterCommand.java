@@ -66,8 +66,6 @@ public final class ClusterCommand extends Command {
 
 
             endpoint.connect(transmit -> {
-
-
                 transmit.request("auth-cluster-token", new CommunicationProperty().set("token", token), ClusterAuthTokenPacket.class, response -> {
                     var result = response.value();
 

@@ -5,6 +5,7 @@ tasks.jar {
     from(project(":plugin").tasks.jar)
 
     manifest {
+        attributes["Polocloud-Version"] = version
         attributes["Main-Class"] = "dev.httpmarco.polocloud.launcher.PoloCloudLauncher"
     }
 
