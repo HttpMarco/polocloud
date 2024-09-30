@@ -68,9 +68,7 @@ public class AutoUpdater {
 
         log.info("Downloading new Update...");
         Downloader.download(downloadUrl, Path.of(downloadName).toAbsolutePath());
-
-        var oldFileName = "polocloud-" + currentVersion + ".jar";
-        AutoUpdateInstaller.installUpdate(new File(oldFileName), new File(downloadName));
+        AutoUpdateInstaller.installUpdate(new File(downloadName));
     }
 
     private JsonObject findReleaseAsset(JsonObject release, String releaseVersion) {
