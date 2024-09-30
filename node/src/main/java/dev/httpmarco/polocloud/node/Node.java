@@ -98,7 +98,7 @@ public final class Node extends CloudAPI {
         this.clusterProvider.initialize();
 
         // set cluster proxy token or sync with head
-        this.serviceProvider.serviceProxyToken(Node.instance().clusterProvider().localHead() ? StringUtils.randomString(8) : "TODO");
+        this.serviceProvider.serviceProxyToken(StringUtils.randomString(8));
 
         // load all Modules
         this.moduleProvider.loadAllUnloadedModules();
