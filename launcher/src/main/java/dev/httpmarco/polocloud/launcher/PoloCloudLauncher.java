@@ -4,10 +4,7 @@ import dev.httpmarco.polocloud.launcher.dependency.Dependency;
 import dev.httpmarco.polocloud.launcher.dependency.DependencyDownloader;
 import dev.httpmarco.polocloud.launcher.dependency.Repository;
 import lombok.SneakyThrows;
-
-import java.lang.instrument.Instrumentation;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 public final class PoloCloudLauncher {
 
@@ -28,7 +25,7 @@ public final class PoloCloudLauncher {
         var nettyResolverDependency = new Dependency("io.netty", "netty5-resolver", "5.0.0.Alpha5");
         var nettyBufferDependency = new Dependency("io.netty", "netty5-buffer", "5.0.0.Alpha5");
         var nettyTransportEpollDependency = new Dependency("io.netty", "netty5-transport-classes-epoll", "5.0.0.Alpha5");
-        var osganNettyDependency = new Dependency("dev.httpmarco", "osgan-netty", "1.2.20-SNAPSHOT", "1.2.20-20240828.205611-1", Repository.MAVEN_CENTRAL_SNAPSHOT);
+        var osganNettyDependency = new Dependency("dev.httpmarco", "osgan-netty", "1.0.30-SNAPSHOT", "1.0.30-20241001.164418-1", Repository.MAVEN_CENTRAL_SNAPSHOT);
 
         // add boot file to the current classpath
         CLASS_LOADER.addURL(boot.bootFile().toURI().toURL());
