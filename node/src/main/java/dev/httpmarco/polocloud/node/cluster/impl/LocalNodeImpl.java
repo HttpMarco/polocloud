@@ -6,6 +6,7 @@ import dev.httpmarco.osgan.networking.server.CommunicationServerAction;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.LocalNode;
+import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.impl.transmit.LocalChannelTransmit;
 import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
@@ -41,7 +42,18 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
                 return;
             }
 
-            //todo: check the connection was a node
+            var possibleNode = findChannelNode(it);
+
+            if(possibleNode != null) {
+
+                if(Node.instance().clusterProvider().headNode().equals(possibleNode)) {
+                    //todo detect a new head node !!! important
+                }
+
+                // this is a node
+                possibleNode.close();
+                log.info("The Node @&b{} &7disconnected from cluster!", possibleNode.data().name());
+            }
         });
 
         this.server.listen(NodeConnectPacket.class, (it, packet) -> {
@@ -58,8 +70,7 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
             }
 
             if(node instanceof ExternalNode externalNode) {
-                externalNode.setTransmit(it);
-
+                externalNode.transmit(it);
                 log.info("Node @{} connected", externalNode.data().name());
             } else {
                 it.channel().close();
@@ -92,10 +103,13 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
                 .stream()
                 .filter(clusterService -> clusterService instanceof ClusterLocalServiceImpl)
                 .map(clusterService -> (ClusterLocalServiceImpl) clusterService)
-                .filter(localService -> localService.transmit() != null)
-                .filter(localService -> localService.transmit().channel().equals(transmit.channel()))
+                .filter(localService -> localService.transmit() != null && localService.transmit().equals(transmit))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private ExternalNode findChannelNode(ChannelTransmit transmit) {
+        return Node.instance().clusterProvider().endpoints().stream().filter(it -> it.transmit() != null && it.transmit().equals(transmit)).findFirst().map(nodeEndpoint -> (ExternalNode) nodeEndpoint).orElse(null);
     }
 
     public void initialize() {

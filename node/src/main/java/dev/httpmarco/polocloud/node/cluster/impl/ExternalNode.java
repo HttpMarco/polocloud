@@ -5,12 +5,15 @@ import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
+import dev.httpmarco.polocloud.node.cluster.NodeSituation;
 import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+@Accessors(fluent = true)
 public class ExternalNode extends AbstractNode {
 
     @Setter
@@ -39,5 +42,12 @@ public class ExternalNode extends AbstractNode {
             goodResponse.accept(it);
         });
         this.client.initialize();
+    }
+
+    public void close() {
+        situation(NodeSituation.STOPPING);
+
+        transmit(null);
+        situation(NodeSituation.STOPPED);
     }
 }
