@@ -115,7 +115,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
         }
         this.headNode = HeadNodeDetection.detect(this);
         // detect head node
-        log.info("The cluster use &b{} as the head node&8.", localHead() ? "his self&7" : this.headNode.data().name());
+        log.info("The cluster use &b{} &7as the head node&8.", localHead() ? "his self&7" : this.headNode.data().name());
 
         if (!localHead()) {
             // todo sync
