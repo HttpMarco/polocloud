@@ -105,7 +105,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
         var path = "../../local/dependencies/";
         //todo use dynamic queue
-        var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.0.29-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
+        var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.0.30-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
 
         arguments.add(String.join(System.getProperty("os.name").toLowerCase().contains("win") ? ";" : ":", neededDependencies.stream().map(it -> path + it).toList()));
 

@@ -24,6 +24,7 @@ public final class CommandServiceImpl implements CommandService {
         this.registerCommand(new HelpCommand());
         this.registerCommand(new InfoCommand());
         this.registerCommand(new ModuleCommand());
+        this.registerCommand(new NodeCommand());
         this.registerCommand(new PlayerCommand());
         this.registerCommand(new PlatformCommand());
         this.registerCommand(new StartCommand());

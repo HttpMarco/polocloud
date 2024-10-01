@@ -10,6 +10,8 @@ import dev.httpmarco.polocloud.node.packets.ClusterAuthTokenPacket;
 import dev.httpmarco.polocloud.node.packets.ClusterMergeFamilyPacket;
 import dev.httpmarco.polocloud.node.packets.ClusterReloadCallPacket;
 import dev.httpmarco.polocloud.node.packets.ClusterRequireReloadPacket;
+import dev.httpmarco.polocloud.node.packets.node.NodeHeadRequestPacket;
+import dev.httpmarco.polocloud.node.packets.node.NodeSituationResponsePacket;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 @Getter
@@ -32,12 +35,16 @@ public final class ClusterProviderImpl implements ClusterProvider {
         this.localNode = new LocalNodeImpl(config.localNode());
         this.endpoints = new HashSet<>();
 
+        localNode.transmit().responder("node-state", property -> new NodeSituationResponsePacket(localNode.situation()));
+
         localNode.transmit().responder("auth-cluster-token", property -> {
             boolean value = config.clusterToken().equals(property.getString("token"));
             // todo close connection here and check all incoming packets !!! important
             log.warn("External try to authenticate with the cluster token&8. &7The result is &b{}&8.", value);
             return new ClusterAuthTokenPacket(value);
         });
+
+        localNode.transmit().responder("node-head-request", property -> new NodeHeadRequestPacket(headNode.data().name()));
 
         localNode.transmit().listen(ClusterMergeFamilyPacket.class, (transmit, packet) -> {
             // todo security issue
@@ -76,25 +83,41 @@ public final class ClusterProviderImpl implements ClusterProvider {
     @Override
     public void broadcast(Packet packet) {
         for (var endpoint : this.endpoints) {
-            Objects.requireNonNull(endpoint.transmit()).sendPacket(packet);
+            if(endpoint.situation() == NodeSituation.RECHEABLE) { // todo maybe initialize queue packets
+                Objects.requireNonNull(endpoint.transmit()).sendPacket(packet);
+            }
         }
     }
 
     @Override
     public void broadcastAll(Packet packet) {
         Objects.requireNonNull(this.localNode.transmit()).sendPacket(packet);
-        for (var endpoint : this.endpoints) {
-            Objects.requireNonNull(endpoint.transmit()).sendPacket(packet);
-        }
+        this.broadcast(packet);
     }
 
 
     public void initialize() {
-        // detect head node
-        this.headNode = HeadNodeDetection.detect(this);
-        log.info("The cluster use {} as the head node&8.", this.headNode.data().name());
+        for (var data : Node.instance().nodeConfig().nodes()) {
+            var externalNode = new ExternalNode(data);
+            var future = new CompletableFuture<>();
 
-        if (!headNode.equals(localNode)) {
+            externalNode.connect(transmit -> {
+                transmit.request("node-state", NodeSituationResponsePacket.class, (it) -> {
+                    externalNode.situation(it.situation());
+                    future.complete(true);
+                });
+            }, transmit -> {
+                externalNode.situation(NodeSituation.STOPPED);
+                future.complete(false);
+            });
+            this.endpoints.add(externalNode);
+            future.join();
+        }
+        this.headNode = HeadNodeDetection.detect(this);
+        // detect head node
+        log.info("The cluster use &b{} &7as the head node&8.", localHead() ? "his self&7" : this.headNode.data().name());
+
+        if (!localHead()) {
             // todo sync
         } else {
             localNode.initialize();

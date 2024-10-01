@@ -67,7 +67,7 @@ public final class JLineCommandReadingThread extends Thread {
                     }
                 } catch (UserInterruptException exception) {
                     // if a command user use strg + c
-                    NodeShutdown.nodeShutdown(true);
+                    NodeShutdown.nodeShutdownTotal(true);
                 }
             } catch (Exception exception) {
                 exception.printStackTrace();
