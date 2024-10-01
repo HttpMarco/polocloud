@@ -52,7 +52,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
 
             //todo sync all this things
 
-            log.info("The cluster has been merged with the family&8. The cluster id is now &b{}&8.", packet.clusterId());
+            log.info("The cluster has been merged with the family&8. &7The cluster id is now &b{}&8.", packet.clusterId());
             //todo connect with all other new endpoints
         });
         localNode.transmit().listen(ClusterRequireReloadPacket.class, (transmit, packet) -> broadcastAll(new ClusterReloadCallPacket()));

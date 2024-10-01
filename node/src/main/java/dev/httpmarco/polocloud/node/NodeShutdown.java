@@ -9,8 +9,15 @@ import lombok.extern.log4j.Log4j2;
 @UtilityClass
 public final class NodeShutdown {
 
-    public static void nodeShutdown(boolean directShutdown) {
+    public void nodeShutdownTotal(boolean directShutdown) {
+        shutdownCloud(directShutdown, true);
+    }
 
+    public void nodeShutdown(boolean directShutdown) {
+        shutdownCloud(directShutdown, false);
+    }
+    
+    private void shutdownCloud(boolean directShutdown, boolean completely) {
         var clusterService = Node.instance().clusterProvider();
 
         if (clusterService.localNode().situation().isStopping()) {
@@ -42,6 +49,9 @@ public final class NodeShutdown {
         Node.instance().terminal().close();
 
         clusterService.localNode().situation(NodeSituation.STOPPED);
-        System.exit(0);
+
+        if (completely) {
+            System.exit(0);
+        }
     }
 }
