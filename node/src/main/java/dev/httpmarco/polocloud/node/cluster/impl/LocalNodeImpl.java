@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.LocalNode;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.impl.transmit.LocalChannelTransmit;
+import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
 import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -41,6 +42,28 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
             }
 
             //todo: check the connection was a node
+        });
+
+        this.server.listen(NodeConnectPacket.class, (it, packet) -> {
+            if(!Node.instance().nodeConfig().clusterToken().equals(packet.clusterToken())) {
+                it.channel().close();
+                return;
+            }
+
+            var node = Node.instance().clusterProvider().find(packet.selfId());
+
+            if(node == null) {
+                it.channel().close();
+                return;
+            }
+
+            if(node instanceof ExternalNode externalNode) {
+                externalNode.setTransmit(it);
+
+                log.info("Node @{} connected", externalNode.data().name());
+            } else {
+                it.channel().close();
+            }
         });
 
         this.server.listen(ServiceConnectPacket.class, (channel, packet) -> {
