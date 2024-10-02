@@ -102,23 +102,21 @@ public class AutoUpdater {
                 return null;
             }
 
-            var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            var response = new StringBuilder();
-            String line;
+            try (var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                var response = new StringBuilder();
+                String line;
 
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                var releases = JsonParser.parseString(response.toString()).getAsJsonArray();
+                if (releases.isEmpty()) {
+                    return null;
+                }
+
+                return releases.get(0).getAsJsonObject();
             }
-            reader.close();
-
-            var releases = JsonParser.parseString(response.toString()).getAsJsonArray();
-            connection.getInputStream().close();
-
-            if (releases.isEmpty()) {
-                return null;
-            }
-
-            return releases.get(0).getAsJsonObject();
         } catch (IOException e) {
             log.error("Failed to fetch a new Update");
             e.printStackTrace();
