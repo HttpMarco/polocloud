@@ -39,22 +39,29 @@ public class ModuleProvider implements Reloadable {
         var unloadedModules = new ArrayList<String>();
 
         for (var file : moduleFiles) {
-            var jarFile = new JarFile(file);
-            var reader = new InputStreamReader(jarFile.getInputStream(jarFile.getJarEntry("module.json")));
-            var moduleMetadata = JsonUtils.GSON.fromJson(reader, ModuleMetadata.class);
+            try (var jarFile = new JarFile(file)) {
+                var json = jarFile.getJarEntry("module.json");
+                if (json == null) {
+                    log.error("Module &b\"{}\" &7does not contain a module.json", file.getName());
+                    return;
+                }
 
-            if (moduleMetadata == null) {
-                log.error("Module \"{}\" has an invalid module.json", file.getName());
-                continue;
-            }
+                var reader = new InputStreamReader(jarFile.getInputStream(json));
+                var moduleMetadata = JsonUtils.GSON.fromJson(reader, ModuleMetadata.class);
 
-            try {
-                this.loadModuleFileContent(file, moduleMetadata);
-                loadedModules.add(moduleMetadata.name());
-            } catch (Exception e) {
-                unloadedModules.add(moduleMetadata.name());
-                log.error("Failed to load module: {}", moduleMetadata.name());
-                e.printStackTrace();
+                if (moduleMetadata == null) {
+                    log.error("Module &b\"{}\" &7has an invalid module.json", file.getName());
+                    continue;
+                }
+
+                try {
+                    this.loadModuleFileContent(file, moduleMetadata);
+                    loadedModules.add(moduleMetadata.name());
+                } catch (Exception e) {
+                    unloadedModules.add(moduleMetadata.name());
+                    log.error("Failed to load module: {}", moduleMetadata.name());
+                    e.printStackTrace();
+                }
             }
         }
 
