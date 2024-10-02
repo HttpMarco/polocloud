@@ -9,10 +9,12 @@ import dev.httpmarco.polocloud.node.cluster.NodeSituation;
 import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+@Slf4j
 @Accessors(fluent = true)
 public class ExternalNode extends AbstractNode {
 
@@ -41,6 +43,18 @@ public class ExternalNode extends AbstractNode {
 
             goodResponse.accept(it);
         });
+
+        this.client.clientAction(CommunicationClientAction.DISCONNECTED, it -> {
+            transmit = null;
+
+            if(Node.instance().clusterProvider().headNode().data().name().equals(this.data().name())) {
+                log.error("Head node disconnected! Search new one...");
+            }
+
+            situation(NodeSituation.STOPPED);
+            log.info("The node &b{} is disconnected.", data().name());
+        });
+
         this.client.initialize();
     }
 

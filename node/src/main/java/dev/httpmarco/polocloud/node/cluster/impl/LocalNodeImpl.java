@@ -48,6 +48,7 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
 
                 if(Node.instance().clusterProvider().headNode().equals(possibleNode)) {
                     //todo detect a new head node !!! important
+                    log.error("Head node disconnected! Search new one...");
                 }
 
                 // this is a node
