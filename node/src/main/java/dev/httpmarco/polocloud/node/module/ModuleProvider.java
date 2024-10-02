@@ -42,7 +42,7 @@ public class ModuleProvider implements Reloadable {
             try (var jarFile = new JarFile(file)) {
                 var json = jarFile.getJarEntry("module.json");
                 if (json == null) {
-                    log.error("Module &b\"{}\" &7does not contain a module.json", file.getName());
+                    log.error("File &b\"{}\" &7is in the modules path but does not contain a module.json", file.getName());
                     return;
                 }
 
