@@ -6,11 +6,13 @@ import dev.httpmarco.polocloud.modules.rest.controller.ControllerService;
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData;
 import io.javalin.http.Context;
 import io.javalin.http.HandlerType;
-import javalinjwt.JavalinJWT;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+import java.util.Optional;
 import java.util.UUID;
 
+@Log4j2
 @AllArgsConstructor
 public class AuthService {
 
@@ -48,7 +50,7 @@ public class AuthService {
     }
 
     private User userByContext(Context context) {
-        var decodedToken = JavalinJWT.getTokenFromCookie(context).flatMap(this.restModule.jwtProvider().provider()::validateToken);
+        var decodedToken = Optional.ofNullable(context.cookie("token")).flatMap(this.restModule.jwtProvider().provider()::validateToken);
 
         if (decodedToken.isEmpty()) {
             context.status(401).result("Missing or invalid token");
