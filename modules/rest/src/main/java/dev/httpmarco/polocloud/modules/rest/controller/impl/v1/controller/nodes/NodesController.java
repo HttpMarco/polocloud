@@ -41,7 +41,7 @@ public class NodesController extends Controller {
             response.addProperty("endpoints", node); //TODO
         });
 
-        context.status(200).result(response.toString());
+        context.status(200).json(response.toString());
     }
 
 }

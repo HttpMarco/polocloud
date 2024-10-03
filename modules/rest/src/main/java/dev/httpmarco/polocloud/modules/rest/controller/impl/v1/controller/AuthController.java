@@ -22,18 +22,18 @@ public class AuthController extends Controller {
         try {
             authModel = context.bodyAsClass(AuthModel.class);
         } catch (Exception e) {
-            context.status(400).result(failMessage("Invalid body"));
+            context.status(400).json(message("Invalid body"));
             return;
         }
 
         if (authModel.username() == null || authModel.password() == null) {
-            context.status(400).result(failMessage("Invalid body: Missing fields"));
+            context.status(400).json(message("Invalid body: Missing fields"));
             return;
         }
 
         var token = restModule().userService().login(authModel.username(), authModel.password(), context.ip(), context.userAgent());
         if (token == null) {
-            context.status(401).result(failMessage("Invalid credentials"));
+            context.status(401).json(message("Invalid credentials"));
             return;
         }
 
@@ -48,6 +48,6 @@ public class AuthController extends Controller {
     // Verify the token
     @Request(requestType = RequestType.GET, path = "/token")
     public void checkToken(Context context) {
-        context.status(200); // if the user gets through the auth, the token is valid
+        context.status(200).json(message("Token is valid")); // if the user gets through the auth, the token is valid
     }
 }

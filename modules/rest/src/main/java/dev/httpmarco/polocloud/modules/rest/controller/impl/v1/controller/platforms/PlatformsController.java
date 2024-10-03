@@ -23,7 +23,7 @@ public class PlatformsController extends Controller {
         Node.instance().platformService().platforms().forEach(platform -> platforms.add(platform.id()));
         response.add("platforms", platforms);
 
-        context.status(200).result(response.toString());
+        context.status(200).json(response.toString());
     }
 
     @Request(requestType = RequestType.GET, path = "/{platform}", permission = "polocloud.platform.view")
@@ -32,7 +32,7 @@ public class PlatformsController extends Controller {
 
         var platform = Node.instance().platformService().find(platformId);
         if (platform == null) {
-            context.status(404).result(failMessage("Platform not found"));
+            context.status(404).json(message("Platform not found"));
             return;
         }
 
@@ -44,6 +44,6 @@ public class PlatformsController extends Controller {
         response.addProperty("id", platform.id());
         response.add("versions", versions);
 
-        context.status(200).result(response.toString());
+        context.status(200).json(response.toString());
     }
 }

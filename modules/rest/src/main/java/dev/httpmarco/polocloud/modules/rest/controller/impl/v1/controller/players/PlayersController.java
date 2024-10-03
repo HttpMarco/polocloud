@@ -26,7 +26,7 @@ public class PlayersController extends Controller {
         Node.instance().playerProvider().players().forEach(clusterPlayer -> players.add(clusterPlayer.name()));
         response.add("players", players);
 
-        context.status(200).result(response.toString());
+        context.status(200).json(response.toString());
     }
 
     @Request(requestType = RequestType.GET, path = "/{playerName}", permission = "polocloud.player.view")
@@ -36,7 +36,7 @@ public class PlayersController extends Controller {
 
         var player = Node.instance().playerProvider().find(playerName);
         if (player == null) {
-            context.status(404).result(failMessage("Player not found"));
+            context.status(404).json(message("Player not found"));
             return;
         }
 
@@ -45,6 +45,6 @@ public class PlayersController extends Controller {
         response.addProperty("currentProxyName", player.currentProxyName());
         response.addProperty("currentServerName", player.currentServerName());
 
-        context.status(200).result(response.toString());
+        context.status(200).json(response.toString());
     }
 }

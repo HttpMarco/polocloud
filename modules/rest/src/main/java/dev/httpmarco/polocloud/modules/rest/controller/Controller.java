@@ -14,7 +14,7 @@ public abstract class Controller {
     private final String path;
     private RestModule restModule;
 
-    public String failMessage(String message) {
+    public String message(String message) {
         var response = new JsonObject();
         response.addProperty("message", message);
         return response.toString();
