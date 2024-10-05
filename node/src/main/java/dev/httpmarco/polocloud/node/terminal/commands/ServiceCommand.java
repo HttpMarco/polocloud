@@ -3,6 +3,8 @@ package dev.httpmarco.polocloud.node.terminal.commands;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.commands.Command;
 import dev.httpmarco.polocloud.node.commands.CommandArgumentType;
+import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
+import dev.httpmarco.polocloud.node.templates.TemplateFactory;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -63,5 +65,23 @@ public final class ServiceCommand extends Command {
             service.executeCommand(command);
             log.info("&b{} &8-> &b{} &8| &7{}", Node.instance().clusterProvider().localNode().data().name(), service.name(), command);
         }, serviceArgument, CommandArgumentType.Keyword("execute"), commandArg);
+
+
+        var templateArg = CommandArgumentType.TemplateArgument("template");
+        syntax(it -> {
+            var service = it.arg(serviceArgument);
+            var template = it.arg(templateArg);
+
+            if (service instanceof ClusterLocalServiceImpl localService) {
+                Node.instance().templatesProvider().prepareTemplate(template.templateId());
+                TemplateFactory.copyService(localService, template);
+
+                log.info("Service &b{} &7copied to template &b{}", service.name(),"/templates/" + template.templateId());
+            }
+
+            //TODO add copy to other node
+
+
+        }, serviceArgument, CommandArgumentType.Keyword("copy"), templateArg);
     }
 }

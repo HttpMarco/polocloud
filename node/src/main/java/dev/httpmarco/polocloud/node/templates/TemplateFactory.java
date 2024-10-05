@@ -21,4 +21,12 @@ public final class TemplateFactory {
             DirectoryActions.copyDirectoryContents(templatePath, localService.runningDir());
         }
     }
+
+    public void copyService(@NotNull ClusterLocalServiceImpl localService, @NotNull Template template) {
+        var templatePath = Path.of("templates/" + template.templateId());
+        var servicePath = localService.runningDir();
+
+        log.debug("Copy service {} to {}", localService.name(), templatePath);
+        DirectoryActions.copyDirectoryContents(servicePath, templatePath);
+    }
 }
