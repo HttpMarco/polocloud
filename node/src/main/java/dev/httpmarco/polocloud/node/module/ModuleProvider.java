@@ -43,13 +43,13 @@ public class ModuleProvider implements Reloadable {
                 var json = jarFile.getJarEntry("module.json");
                 if (json == null) {
                     log.error("File &b\"{}\" &7is in the modules path but does not contain a module.json", file.getName());
-                    return;
+                    continue;
                 }
 
                 var reader = new InputStreamReader(jarFile.getInputStream(json));
                 var moduleMetadata = JsonUtils.GSON.fromJson(reader, ModuleMetadata.class);
 
-                if (moduleMetadata == null) {
+                if (moduleMetadata == null || !moduleMetadata.isValid()) {
                     log.error("Module &b\"{}\" &7has an invalid module.json", file.getName());
                     continue;
                 }

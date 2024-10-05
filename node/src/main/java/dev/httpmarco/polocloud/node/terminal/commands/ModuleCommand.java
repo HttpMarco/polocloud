@@ -11,8 +11,6 @@ public final class ModuleCommand extends Command {
     public ModuleCommand() {
         super("module", "Manage your modules", "mod");
 
-        var moduleProvider = Node.instance().moduleProvider();
-
         var moduleIdArgument = CommandArgumentType.ModuleArgument("id");
 
         syntax(context -> {
@@ -25,8 +23,9 @@ public final class ModuleCommand extends Command {
             var metadata = module.metadata();
 
             log.info("Module &8(&fID = &b{}&8)&f Information's:", metadata.id());
-            log.info("&8- &fName&8: &7{}", metadata.name());
             log.info("&8- &fAuthor&8: &7{}", metadata.author());
+            log.info("&8- &fName&8: &7{}", metadata.name());
+            log.info("&8- &fVersion&8: &7{}", metadata.version());
             log.info("&8- &fDescription&8: &7{}", metadata.description());
             log.info("&8- &fMain Class&8: &7{}", metadata.main());
 
