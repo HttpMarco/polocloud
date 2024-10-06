@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.node.groups;
 
-import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.Reloadable;
@@ -46,7 +45,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
 
         channelTransmit.responder("group-delete", property -> {
             try {
-                return new GroupDeletePacket(GroupDeletionRequest.request(clusterProvider, property.getString("name")).get().get());
+                return new GroupDeletePacket(GroupDeletionRequest.request(clusterProvider, property.getString("name")).get().get()); //TODO returns maybe null
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }

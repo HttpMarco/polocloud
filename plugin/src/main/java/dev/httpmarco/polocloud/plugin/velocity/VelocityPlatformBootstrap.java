@@ -26,6 +26,7 @@ public final class VelocityPlatformBootstrap implements ProxyPlatformParameterAd
     @Subscribe(order = PostOrder.FIRST)
     public void prepareProxy(ProxyInitializeEvent proxyEvent) {
         server.getEventManager().register(this, new VelocityPlatformListeners(this.server, this.platform));
+        server.getCommandManager().register(server.getCommandManager().metaBuilder("cloud").plugin(this).build(), new VelocityCloudCommand());
     }
 
     @Subscribe(order = PostOrder.LAST)
