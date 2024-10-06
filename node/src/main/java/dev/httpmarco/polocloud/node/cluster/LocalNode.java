@@ -4,4 +4,6 @@ public interface LocalNode extends NodeEndpoint {
 
     void initialize();
 
+    String localServiceBindingAddress();
+
 }
