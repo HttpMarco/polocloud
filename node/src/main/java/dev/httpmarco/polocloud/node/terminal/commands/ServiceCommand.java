@@ -16,7 +16,7 @@ public final class ServiceCommand extends Command {
         syntax(it -> {
             var serviceProvider = Node.instance().serviceProvider();
 
-            log.info("Following &b{} &7groups are loading&8:", serviceProvider.services().size());
+            log.info("Following &b{} &7services are running&8:", serviceProvider.services().size());
             serviceProvider.services().forEach(group -> log.info("&8- &f{}&8: (&7{}&8)", group.name(), group.details()));
         }, CommandArgumentType.Keyword("list"));
 
