@@ -14,12 +14,11 @@ import org.jetbrains.annotations.NotNull;
 @Accessors(fluent = true)
 public class ClusterServicePacket extends Packet {
 
-    private boolean nullState;
     private ClusterService service;
 
     @Override
     public void read(@NotNull PacketBuffer packetBuffer) {
-        this.nullState = packetBuffer.readBoolean();
+        var nullState = packetBuffer.readBoolean();
 
         if(!nullState){
             this.service = CloudAPI.instance().serviceProvider().read(packetBuffer);
