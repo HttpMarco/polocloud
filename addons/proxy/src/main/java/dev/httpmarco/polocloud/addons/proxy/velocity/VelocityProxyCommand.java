@@ -36,8 +36,7 @@ public final class VelocityProxyCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        //return invocation.source().hasPermission("polocloud.addon.proxy.command");
-        return true;
+        return invocation.source().hasPermission("polocloud.addon.proxy.command");
     }
 
     @Override
