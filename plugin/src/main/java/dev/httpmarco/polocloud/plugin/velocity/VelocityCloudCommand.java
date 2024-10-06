@@ -46,7 +46,7 @@ public class VelocityCloudCommand implements SimpleCommand {
                 }
 
                 if (args[2].equalsIgnoreCase("delete")) {
-                    CloudAPI.instance().groupProvider().delete(group.name()); //TODO throwing an error
+                    CloudAPI.instance().groupProvider().delete(group.name());
                     sendMessage(invocation,"The group <aqua>" + group.name() + "<gray> has been <red>deleted <gray>successfully.");
                     return;
                 }
