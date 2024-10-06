@@ -24,7 +24,7 @@ public class GroupsController extends Controller {
     @Request(requestType = RequestType.GET, path = "s/", permission = "polocloud.groups.list")
     public void list(Context context) {
         var groups = Node.instance().groupProvider().groups();
-        context.status(200).result(JsonUtils.GSON.toJson(groups));
+        context.status(200).json(JsonUtils.GSON.toJson(groups));
     }
 
     @Request(requestType = RequestType.GET, path = "/{groupName}", permission = "polocloud.group.view")
@@ -33,11 +33,11 @@ public class GroupsController extends Controller {
 
         var groupOptional = Optional.ofNullable(Node.instance().groupProvider().find(groupName));
         if (groupOptional.isEmpty()) {
-            context.status(404).result(failMessage("Group not found"));
+            context.status(404).json(message("Group not found"));
             return;
         }
 
-        context.status(200).result(JsonUtils.GSON.toJson(groupOptional.get()));
+        context.status(200).json(JsonUtils.GSON.toJson(groupOptional.get()));
     }
 
     @Request(requestType = RequestType.POST, path = "/", permission = "polocloud.group.create")
@@ -46,18 +46,18 @@ public class GroupsController extends Controller {
         try {
             request = context.bodyAsClass(CreateGroupModel.class);
         } catch (Exception e) {
-            context.status(400).result(failMessage("Invalid body"));
+            context.status(400).json(message("Invalid body"));
             return;
         }
 
         if (request.name() == null || request.name().isEmpty()) {
-            context.status(400).result("Name cannot be empty");
+            context.status(400).json(message("Name cannot be empty"));
             return;
         }
 
         var platform = Node.instance().platformService().find(request.platform());
         if (platform == null) {
-            context.status(400).result("Invalid platform ID");
+            context.status(400).json(message("Invalid platform ID"));
             return;
         }
 
@@ -65,19 +65,19 @@ public class GroupsController extends Controller {
                 .filter(it -> it.version().equalsIgnoreCase(request.version()))
                 .findFirst();
         if (platformVersion.isEmpty()) {
-            context.status(400).result("Invalid platform version");
+            context.status(400).json(message("Invalid platform version"));
             return;
         }
 
         if (request.maxMemory() < 512) {
-            context.status(400).result("Max memory must be at least 512MB");
+            context.status(400).json(message("Max memory must be at least 512MB"));
             return;
         }
 
         var version = platformVersion.get();
         var name = request.name();
 
-        context.status(202);
+        context.status(202).json(message("Group is being created"));
         CompletableFuture.runAsync(() -> Node.instance().clusterProvider().broadcastAll(new GroupCreatePacket(name,
                 new String[]{"every", platform.type().defaultTemplateSpace(), name},
                 new String[]{Node.instance().clusterProvider().localNode().data().name()},
@@ -95,11 +95,11 @@ public class GroupsController extends Controller {
         var group = Node.instance().groupProvider().find(groupName);
 
         if (group == null) {
-            context.status(404).result(failMessage("Group not found"));
+            context.status(404).json(message("Group not found"));
             return;
         }
 
-        context.status(202);
+        context.status(202).json(message("Group is being deleted"));
         CompletableFuture.runAsync(() -> Node.instance().groupProvider().delete(group.name()));
     }
 
@@ -109,18 +109,18 @@ public class GroupsController extends Controller {
         try {
             request = context.bodyAsClass(GroupShutdownModel.class);
         } catch (Exception e) {
-            context.status(400).result(failMessage("Invalid body"));
+            context.status(400).json(message("Invalid body"));
             return;
         }
 
         if (request.groupName() == null || request.groupName().isEmpty()) {
-            context.status(400).result(failMessage("Group name cannot be empty"));
+            context.status(400).json(message("Group name cannot be empty"));
             return;
         }
 
         var group = Node.instance().groupProvider().find(request.groupName());
         if (group == null) {
-            context.status(404).result(failMessage("Group not found"));
+            context.status(404).json(message("Group not found"));
             return;
         }
 
@@ -130,7 +130,7 @@ public class GroupsController extends Controller {
             }
         });
 
-        context.status(200).result("Stopping all services of the group " + request.groupName());
+        context.status(200).json(message("Stopping all services of the group " + request.groupName()));
     }
     
     //TODO put method to update

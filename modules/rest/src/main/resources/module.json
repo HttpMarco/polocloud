@@ -1,6 +1,7 @@
 {
   "id":  "rest-module",
   "name": "REST API",
+  "version": "1.0.0-alpha-1",
   "description": "This is the official Rest API for the Polocloud.",
   "author": "RECHERGG",
   "main": "dev.httpmarco.polocloud.modules.rest.RestModule"

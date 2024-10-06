@@ -26,12 +26,12 @@ public class UserController extends Controller {
         try {
             userModel = context.bodyAsClass(UserModel.class);
         } catch (Exception e) {
-            context.status(400).result(failMessage("Invalid body"));
+            context.status(400).json(message("Invalid body"));
             return;
         }
 
         if (userModel.username() == null || userModel.password() == null) {
-            context.status(400).result(failMessage("Invalid body: Missing fields"));
+            context.status(400).json(message("Invalid body: Missing fields"));
             return;
         }
 
@@ -39,7 +39,7 @@ public class UserController extends Controller {
         var token = restModule().userService().create(user, context.ip(), context.userAgent());
 
         if (token == null) {
-            context.status(400).result(failMessage("User already exists"));
+            context.status(400).json(message("User already exists"));
             return;
         }
 
