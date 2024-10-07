@@ -102,7 +102,7 @@ public final class AutoUpdater {
                 return null;
             }
 
-            try (var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            try (var inputStream = new InputStreamReader(connection.getInputStream()); var reader = new BufferedReader(inputStream)) {
                 var response = new StringBuilder();
                 String line;
 
