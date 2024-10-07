@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.httpmarco.polocloud.modules.rest"
-version = "1.0.0-alpha"
+version = "1.0.0-alpha-1"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ dependencies {
 tasks {
     named<ShadowJar>("shadowJar") {
         mergeServiceFiles()
-        archiveFileName.set("rest-module_$version-all.jar")
+        archiveFileName.set("rest-module-$version-all.jar")
     }
 }
 

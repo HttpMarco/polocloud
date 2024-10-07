@@ -1,5 +1,7 @@
 plugins {
     id("maven-publish")
+
+    alias(libs.plugins.nexusPublish)
 }
 
 allprojects {
@@ -38,33 +40,40 @@ allprojects {
         "implementation"(rootProject.libs.osgan.netty)
     }
 
+    extensions.configure<PublishingExtension> {
+        publications {
+            create("library", MavenPublication::class.java) {
+                from(project.components.getByName("java"))
 
-    if (hasProperty("PUBLISH_USERNAME") && (project.name == "api" || project.name == "instance")) {
-        publishing {
-            publications {
-                create<MavenPublication>("mavenJava") {
-                    this.groupId = group.toString()
-                    this.artifactId = artifactId
-                    this.version = version.toString()
-
-                    from(components["java"])
-                }
-            }
-            repositories {
-                maven {
-                    name = "polocloud"
-                    url = if (version.toString().endsWith("SNAPSHOT")) {
-                        uri(property("PUBLISH_URL_SNAPSHOTS").toString())
-                    } else {
-                        uri(property("PUBLISH_URL_RELEASES").toString())
+                pom {
+                    name.set(project.name)
+                    url.set("https://github.com/httpmarco/polocloud")
+                    description.set("A simple minecraft cloud system")
+                    licenses {
+                        license {
+                            name.set("Apache License 2.0")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                        }
                     }
-                    isAllowInsecureProtocol=true
-                    credentials {
-                        username = property("PUBLISH_USERNAME").toString()
-                        password = property("PUBLISH_PASSWORD").toString()
+                    scm {
+                        url.set("https://github.com/httpmarco/polocloud")
+                        connection.set("https://github.com/httpmarco/osgon.git")
                     }
                 }
             }
         }
     }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+
+            username.set(System.getenv("ossrhUsername")?.toString() ?: "")
+            password.set(System.getenv("ossrhPassword")?.toString() ?: "")
+        }
+    }
+    useStaging.set(!project.rootProject.version.toString().endsWith("-SNAPSHOT"))
 }

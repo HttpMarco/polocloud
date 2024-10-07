@@ -26,14 +26,14 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
     @Override
     public @NotNull CompletableFuture<Set<ClusterGroup>> groupsAsync() {
         var future = new CompletableFuture<Set<ClusterGroup>>();
-        ClusterInstance.instance().client().request("groups-all", GroupCollectionPacket.class, it -> future.complete(it.groups()));
+        ClusterInstance.instance().client().requestAsync("groups-all", GroupCollectionPacket.class).whenComplete((it, t) -> future.complete(it.groups()));
         return future;
     }
 
     @Override
     public @NotNull CompletableFuture<Boolean> existsAsync(String group) {
         var future = new CompletableFuture<Boolean>();
-        ClusterInstance.instance().client().request("group-exists", new CommunicationProperty().set("name", group), GroupExistsResponsePacket.class, it -> future.complete(it.value()));
+        ClusterInstance.instance().client().requestAsync("group-exists", GroupExistsResponsePacket.class, new CommunicationProperty().set("name", group)).whenComplete((it, t) -> future.complete(it.value()));
         return future;
     }
 
@@ -41,7 +41,7 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
     @Override
     public @NotNull CompletableFuture<Optional<String>> deleteAsync(String group) {
         var future = new CompletableFuture<Optional<String>>();
-        ClusterInstance.instance().client().request("group-delete", new CommunicationProperty().set("name", group), GroupDeletePacket.class, it -> future.complete(Optional.of(it.content())));
+        ClusterInstance.instance().client().requestAsync("group-delete", GroupDeletePacket.class, new CommunicationProperty().set("name", group)).whenComplete((it, t) -> future.complete(Optional.of(it.content())));
         return future;
     }
 
@@ -56,7 +56,7 @@ public final class ClusterInstanceGroupProvider extends ClusterGroupProvider {
     @Override
     public @NotNull CompletableFuture<ClusterGroup> findAsync(@NotNull String group) {
         var future = new CompletableFuture<ClusterGroup>();
-        ClusterInstance.instance().client().request("group-finding", new CommunicationProperty().set("name", group), SingleGroupPacket.class, it -> future.complete(it.group()));
+        ClusterInstance.instance().client().requestAsync("group-finding", SingleGroupPacket.class, new CommunicationProperty().set("name", group)).whenComplete((it, t) -> future.complete(it.group()));
         return future;
     }
 

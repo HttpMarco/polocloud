@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v1.controller.services;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.modules.rest.RestModule;
@@ -22,18 +23,19 @@ public class ServicesController extends Controller {
 
     @Request(requestType = RequestType.GET, path = "s/", permission = "polocloud.services.list")
     public void list(Context context) {
-        var response = new JsonObject();
+        var services = new JsonArray();
 
         Node.instance().serviceProvider().services().forEach(service -> {
-            var services = new JsonObject();
+            var serviceJson = new JsonObject();
 
-            services.addProperty("orderedId", service.orderedId());
-            services.addProperty("name", service.name());
-            services.addProperty("id", service.id().toString());
+            serviceJson.addProperty("orderedId", service.orderedId());
+            serviceJson.addProperty("name", service.name());
+            serviceJson.addProperty("id", service.id().toString());
 
-            response.add(service.name(), services);
+            services.add(serviceJson);
         });
-        context.status(200).result(response.toString());
+
+        context.status(200).json(services.toString());
     }
 
     @Request(requestType = RequestType.GET, path = "/{serviceName}", permission = "polocloud.service.view")
@@ -43,7 +45,7 @@ public class ServicesController extends Controller {
 
         var service = Node.instance().serviceProvider().find(serviceName);
         if (service == null) {
-            context.status(404).result(failMessage("Service not found"));
+            context.status(404).json(message("Service not found"));
             return;
         }
 
@@ -61,7 +63,7 @@ public class ServicesController extends Controller {
         response.add("onlinePlayers", JsonUtils.GSON.toJsonTree(service.onlinePlayers()));
         response.add("properties", JsonUtils.GSON.toJsonTree(service.properties()));
 
-        context.status(200).result(response.toString());
+        context.status(200).json(response.toString());
     }
 
     @Request(requestType = RequestType.POST, path = "/start", permission = "polocloud.service.start")
@@ -70,29 +72,33 @@ public class ServicesController extends Controller {
         try {
             request = context.bodyAsClass(StartServiceModel.class);
         } catch (Exception e) {
-            context.status(400).result(failMessage("Invalid request body"));
+            context.status(400).json(message("Invalid request body"));
             return;
         }
 
         if (request.group() == null || request.group().isEmpty()) {
-            context.status(400).result(failMessage("Group cannot be empty"));
+            context.status(400).json(message("Group cannot be empty"));
             return;
         }
 
         if (request.amount() <= 0) {
-            context.status(400).result(failMessage("Amount must be higher than 0"));
+            context.status(400).json(message("Amount must be higher than 0"));
             return;
         }
 
         var group = Node.instance().groupProvider().find(request.group());
         if (group == null) {
-            context.status(404).result(failMessage("Group not found"));
+            context.status(404).json(message("Group not found"));
             return;
         }
 
         // Service starten
         CompletableFuture.runAsync(() -> start(group, request.amount()));
-        context.status(202).result("Service is starting");
+
+        var response = new JsonObject();
+        response.addProperty("message", "Service is starting");
+
+        context.status(202).json(response.toString());
     }
 
     @Request(requestType = RequestType.POST, path = "/{serviceName}/stop", permission = "polocloud.service.stop")
@@ -101,23 +107,27 @@ public class ServicesController extends Controller {
         try {
             request = context.bodyAsClass(StopServiceModel.class);
         } catch (Exception e) {
-            context.status(400).result(failMessage("Invalid request body"));
+            context.status(400).json(message("Invalid request body"));
             return;
         }
 
         if (request.serviceName() == null || request.serviceName().isEmpty()) {
-            context.status(400).result(failMessage("Service name cannot be empty"));
+            context.status(400).json(message("Service name cannot be empty"));
             return;
         }
 
         var service = Node.instance().serviceProvider().find(request.serviceName());
         if (service == null) {
-            context.status(404).result(failMessage("Service not found"));
+            context.status(404).json(message("Service not found"));
             return;
         }
 
         CompletableFuture.runAsync(service::shutdown);
-        context.status(202).result("Service is stopping");
+
+        var response = new JsonObject();
+        response.addProperty("message", "Service is stopping");
+
+        context.status(202).json(response.toString());
     }
 
     //TODO add service update endpoint

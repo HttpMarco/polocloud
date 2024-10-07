@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
@@ -16,13 +17,20 @@ public class AbstractGroupPacket extends Packet {
     private ClusterGroup group;
 
     @Override
-    public void read(PacketBuffer packetBuffer) {
-        this.group = CloudAPI.instance().groupProvider().read(packetBuffer);
+    public void read(@NotNull PacketBuffer packetBuffer) {
+        var nullResult = packetBuffer.readBoolean();
+
+        if(!nullResult) {
+            this.group = CloudAPI.instance().groupProvider().read(packetBuffer);
+        }
     }
 
     @Override
-    public void write(PacketBuffer packetBuffer) {
-        CloudAPI.instance().groupProvider().write(group, packetBuffer);
-    }
+    public void write(@NotNull PacketBuffer packetBuffer) {
+        packetBuffer.writeBoolean(this.group == null);
 
+        if(this.group != null) {
+            CloudAPI.instance().groupProvider().write(group, packetBuffer);
+        }
+    }
 }

@@ -93,30 +93,30 @@ public class AutoUpdater {
     public JsonObject latestRelease() {
         try {
             var url = new URL(REPO_URL);
-            var conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
+            var connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
 
-            if (conn.getResponseCode() != 200) {
-                log.error("Failed to fetch a new Update, Github request response code: {}", conn.getResponseCode());
+            if (connection.getResponseCode() != 200) {
+                log.error("Failed to fetch a new Update, Github request response code: {}", connection.getResponseCode());
                 return null;
             }
 
-            var reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            var response = new StringBuilder();
-            String line;
+            try (var reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                var response = new StringBuilder();
+                String line;
 
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                var releases = JsonParser.parseString(response.toString()).getAsJsonArray();
+                if (releases.isEmpty()) {
+                    return null;
+                }
+
+                return releases.get(0).getAsJsonObject();
             }
-            reader.close();
-
-            var releases = JsonParser.parseString(response.toString()).getAsJsonArray();
-            if (releases.isEmpty()) {
-                return null;
-            }
-
-            return releases.get(0).getAsJsonObject();
         } catch (IOException e) {
             log.error("Failed to fetch a new Update");
             e.printStackTrace();

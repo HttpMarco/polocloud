@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.api.services.ClusterService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 @Getter
@@ -16,12 +17,20 @@ public class ClusterServicePacket extends Packet {
     private ClusterService service;
 
     @Override
-    public void read(PacketBuffer packetBuffer) {
-        this.service = CloudAPI.instance().serviceProvider().read(packetBuffer);
+    public void read(@NotNull PacketBuffer packetBuffer) {
+        var nullState = packetBuffer.readBoolean();
+
+        if(!nullState){
+            this.service = CloudAPI.instance().serviceProvider().read(packetBuffer);
+        }
     }
 
     @Override
-    public void write(PacketBuffer packetBuffer) {
-        CloudAPI.instance().serviceProvider().write(service, packetBuffer);
+    public void write(@NotNull PacketBuffer packetBuffer) {
+        packetBuffer.writeBoolean(service == null);
+
+        if(service != null) {
+            CloudAPI.instance().serviceProvider().write(service, packetBuffer);
+        }
     }
 }

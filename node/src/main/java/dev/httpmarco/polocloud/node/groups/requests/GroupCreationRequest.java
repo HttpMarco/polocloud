@@ -20,7 +20,7 @@ public class GroupCreationRequest {
 
     public CompletableFuture<Optional<String>> request(@NotNull ClusterProvider clusterProvider, String name, String[] nodes, @NotNull PlatformGroupDisplay platform, int maxMemory, boolean staticService, int minOnline, int maxOnline) {
         var groupFuture = new CompletableFuture<Optional<String>>();
-        clusterProvider.headNode().transmit().request(GroupCreationRequest.TAG, new CommunicationProperty()
+        clusterProvider.headNode().transmit().requestAsync(GroupCreationRequest.TAG, MessageResponsePacket.class, new CommunicationProperty()
                         .set("name", name)
                         .set("nodes", JsonUtils.GSON.toJson(nodes))
                         .set("platform", platform.platform())
@@ -29,7 +29,7 @@ public class GroupCreationRequest {
                         .set("staticService", staticService)
                         .set("minOnline", minOnline)
                         .set("maxOnline", maxOnline)
-                , MessageResponsePacket.class, packet -> groupFuture.complete(packet.successfully() ? Optional.empty() : Optional.of(packet.reason())));
+                ).whenComplete((it, t) -> groupFuture.complete(it.successfully() ? Optional.empty() : Optional.of(it.reason())));
         return groupFuture;
     }
 

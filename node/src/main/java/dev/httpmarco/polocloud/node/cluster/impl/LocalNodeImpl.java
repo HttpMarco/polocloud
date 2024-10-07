@@ -6,11 +6,11 @@ import dev.httpmarco.osgan.networking.server.CommunicationServerAction;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.LocalNode;
-import dev.httpmarco.polocloud.node.cluster.NodeEndpoint;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.impl.transmit.LocalChannelTransmit;
 import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
 import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
+import dev.httpmarco.polocloud.node.util.Address;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +23,8 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
     private final String hostname;
     private final int port;
 
+    private final String localServiceBindingAddress;
+
     private final CommunicationServer server;
     private final LocalChannelTransmit transmit;
 
@@ -31,8 +33,8 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
 
         this.hostname = data.hostname();
         this.port = data.port();
-
         this.server = new CommunicationServer(hostname, port);
+        this.localServiceBindingAddress = hostname.equals(Address.WILDCARD_ADDRESS) ? Address.LOOPBACK_ADDRESS : hostname;
 
         this.server.clientAction(CommunicationServerAction.CLIENT_DISCONNECT, it -> {
             var possibleService = findLocalService(it);
@@ -44,34 +46,35 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
 
             var possibleNode = findChannelNode(it);
 
-            if(possibleNode != null) {
+            if (possibleNode != null) {
 
-                if(Node.instance().clusterProvider().headNode().equals(possibleNode)) {
+                if (Node.instance().clusterProvider().headNode().equals(possibleNode)) {
                     //todo detect a new head node !!! important
+                    log.error("Head node disconnected! Search new one...");
                 }
 
                 // this is a node
                 possibleNode.close();
-                log.info("The Node @&b{} &7disconnected from cluster!", possibleNode.data().name());
+                log.info("The Node &8'&7@&b{}' &7disconnected from cluster!", possibleNode.data().name());
             }
         });
 
         this.server.listen(NodeConnectPacket.class, (it, packet) -> {
-            if(!Node.instance().nodeConfig().clusterToken().equals(packet.clusterToken())) {
+            if (!Node.instance().nodeConfig().clusterToken().equals(packet.clusterToken())) {
                 it.channel().close();
                 return;
             }
 
             var node = Node.instance().clusterProvider().find(packet.selfId());
 
-            if(node == null) {
+            if (node == null) {
                 it.channel().close();
                 return;
             }
 
-            if(node instanceof ExternalNode externalNode) {
+            if (node instanceof ExternalNode externalNode) {
                 externalNode.transmit(it);
-                log.info("Node @{} connected", externalNode.data().name());
+                log.info("The Node &8'&7@&8{}&8' &7connected to the cluster&8!", externalNode.data().name());
             } else {
                 it.channel().close();
             }

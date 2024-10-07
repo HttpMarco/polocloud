@@ -26,7 +26,7 @@ public final class PlatformSetup extends Setup {
         question("id", "What is the name of the new platform?", it -> Node.instance().platformService().find(it.first()) == null);
         question("type", "Which type have the new platform?", stringMapPair -> Arrays.stream(PlatformType.values()).map(Enum::name).toList(), it -> Arrays.stream(PlatformType.values()).anyMatch(s -> s.name().equalsIgnoreCase(it.first())));
 
-        question("first-version", "Do you want to add the fist version", it -> List.of("yes", "no"), it -> {
+        question("first-version", "Do you want to add the first version", it -> List.of("yes", "no"), it -> {
 
             var result = it.first();
 

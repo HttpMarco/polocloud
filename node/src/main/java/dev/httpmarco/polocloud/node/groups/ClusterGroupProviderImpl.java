@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.node.groups;
 
-import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.Reloadable;
@@ -46,7 +45,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
 
         channelTransmit.responder("group-delete", property -> {
             try {
-                return new GroupDeletePacket(GroupDeletionRequest.request(clusterProvider, property.getString("name")).get().get());
+                return new GroupDeletePacket(GroupDeletionRequest.request(clusterProvider, property.getString("name")).get().get()); //TODO returns maybe null
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -118,7 +117,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
         if (Node.instance().clusterProvider().localHead()) {
             this.groups.addAll(ClusterGroupFactory.readGroups());
         } else {
-            Node.instance().clusterProvider().headNode().transmit().request("groups-all", GroupCollectionPacket.class, it -> {
+            Node.instance().clusterProvider().headNode().transmit().requestAsync("groups-all", GroupCollectionPacket.class).whenComplete((it, t) -> {
                 this.groups.addAll(it.groups());
                 log.info("Successfully reload all group data.");
             });

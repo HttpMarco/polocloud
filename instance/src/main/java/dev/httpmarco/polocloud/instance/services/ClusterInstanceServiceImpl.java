@@ -55,7 +55,7 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     @SneakyThrows
     public List<String> logs() {
         var future = new CompletableFuture<List<String>>();
-        ClusterInstance.instance().client().request("service-log", new CommunicationProperty().set("id", id), ServiceLogPacket.class, serviceLogPacket -> future.complete(serviceLogPacket.logs()));
+        ClusterInstance.instance().client().requestAsync("service-log", ServiceLogPacket.class, new CommunicationProperty().set("id", id)).whenComplete((it, t) -> future.complete(it.logs()));
         return future.get(5, TimeUnit.SECONDS);
     }
 
@@ -67,14 +67,14 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     @Override
     public @NotNull CompletableFuture<Integer> onlinePlayersCountAsync() {
         var future = new CompletableFuture<Integer>();
-        ClusterInstance.instance().client().request("service-players-count", new CommunicationProperty().set("id", id), IntPacket.class, packet -> future.complete(packet.value()));
+        ClusterInstance.instance().client().requestAsync("service-players-count", IntPacket.class, new CommunicationProperty().set("id", id)).whenComplete((it, t) -> future.complete(it.value()));
         return future;
     }
 
     @Override
     public @NotNull CompletableFuture<List<ClusterPlayer>> onlinePlayersAsync() {
         var future = new CompletableFuture<List<ClusterPlayer>>();
-        ClusterInstance.instance().client().request("service-players", new CommunicationProperty().set("id", id), PlayerCollectionPacket.class, packet -> future.complete(packet.players()));
+        ClusterInstance.instance().client().requestAsync("service-players", PlayerCollectionPacket.class, new CommunicationProperty().set("id", id)).whenComplete((it, t) -> future.complete(it.players()));
         return future;
     }
 

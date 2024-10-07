@@ -1,4 +1,8 @@
 package dev.httpmarco.polocloud.node.module;
 
-public record ModuleMetadata(String id, String name, String description, String author, String main) {
+public record ModuleMetadata(String id, String name, String version, String description, String author, String main) {
+
+    public boolean isValid() {
+        return id != null && name != null && version != null && description != null && author != null && main != null;
+    }
 }

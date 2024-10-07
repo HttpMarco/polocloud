@@ -102,7 +102,10 @@ public final class ClusterProviderImpl implements ClusterProvider {
             var future = new CompletableFuture<>();
 
             externalNode.connect(transmit -> {
-                transmit.request("node-state", NodeSituationResponsePacket.class, (it) -> {
+
+
+
+                transmit.requestAsync("node-state", NodeSituationResponsePacket.class).whenComplete((it, t) -> {
                     externalNode.situation(it.situation());
                     future.complete(true);
                 });
