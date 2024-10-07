@@ -2,12 +2,12 @@ package dev.httpmarco.polocloud.node.update;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.httpmarco.polocloud.launcher.update.AutoUpdateInstaller;
 import dev.httpmarco.polocloud.node.util.Downloader;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -15,9 +15,13 @@ import java.net.URL;
 import java.nio.file.Path;
 
 @Log4j2
+@Getter
+@Accessors(fluent = true)
 public final class AutoUpdater {
 
     private static final String REPO_URL = "https://api.github.com/repos/HttpMarco/polocloud/releases";
+    private boolean isInstalled = false;
+    private String downloadName;
 
     public void notifyIfUpdateAvailable() {
         var release = latestRelease();
@@ -40,6 +44,13 @@ public final class AutoUpdater {
         log.warn("A new version of PoloCloud is available: &bv{}", releaseVersion);
         log.warn("You can download it via the \"node update\" command or from the official repository.");
         log.warn(releaseUrl);
+        log.warn(" ");
+    }
+
+    private void notifyConfirm() {
+        log.warn(" ");
+        log.warn("The new version of PoloCloud has been downloaded successfully.");
+        log.warn("Please confirm the installation by executing the \"node update confirm\" command.");
         log.warn(" ");
     }
 
@@ -68,7 +79,11 @@ public final class AutoUpdater {
 
         log.info("Downloading new Update...");
         Downloader.download(downloadUrl, Path.of(downloadName).toAbsolutePath());
-        AutoUpdateInstaller.installUpdate(new File(downloadName));
+
+        this.downloadName = downloadName;
+        this.isInstalled = true;
+
+        notifyConfirm();
     }
 
     private JsonObject findReleaseAsset(JsonObject release, String releaseVersion) {
