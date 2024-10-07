@@ -15,7 +15,7 @@ import java.net.URL;
 import java.nio.file.Path;
 
 @Log4j2
-public class AutoUpdater {
+public final class AutoUpdater {
 
     private static final String REPO_URL = "https://api.github.com/repos/HttpMarco/polocloud/releases";
 
