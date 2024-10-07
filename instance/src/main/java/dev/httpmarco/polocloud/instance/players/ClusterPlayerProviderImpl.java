@@ -21,42 +21,42 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
     @Override
     public @NotNull CompletableFuture<Boolean> onlineAsync(UUID uuid) {
         var future = new CompletableFuture<Boolean>();
-        ClusterInstance.instance().client().request("player-online", new CommunicationProperty().set("uuid", uuid), BooleanPacket.class, packet -> future.complete(packet.value()));
+        ClusterInstance.instance().client().requestAsync("player-online", BooleanPacket.class, new CommunicationProperty().set("uuid", uuid)).whenComplete((it, t) -> future.complete(it.value()));
         return future;
     }
 
     @Override
     public @NotNull CompletableFuture<Boolean> onlineAsync(String name) {
         var future = new CompletableFuture<Boolean>();
-        ClusterInstance.instance().client().request("player-online", new CommunicationProperty().set("name", name), BooleanPacket.class, packet -> future.complete(packet.value()));
+        ClusterInstance.instance().client().requestAsync("player-online", BooleanPacket.class, new CommunicationProperty().set("name", name)).whenComplete((it, t) -> future.complete(it.value()));
         return future;
     }
 
     @Override
     public @NotNull CompletableFuture<Integer> playersCountAsync() {
         var future = new CompletableFuture<Integer>();
-        ClusterInstance.instance().client().request("player-count", IntPacket.class, packet -> future.complete(packet.value()));
+        ClusterInstance.instance().client().requestAsync("player-count", IntPacket.class).whenComplete((it, t) ->  future.complete(it.value()));
         return future;
     }
 
     @Override
     public @NotNull CompletableFuture<List<ClusterPlayer>> playersAsync() {
         var future = new CompletableFuture<List<ClusterPlayer>>();
-        ClusterInstance.instance().client().request("player-all", PlayerCollectionPacket.class, packet -> future.complete(packet.players()));
+        ClusterInstance.instance().client().requestAsync("player-all", PlayerCollectionPacket.class).whenComplete((it, t) -> future.complete(it.players()));
         return future;
     }
 
     @Override
     public @NotNull CompletableFuture<ClusterPlayer> findAsync(UUID uuid) {
         var future = new CompletableFuture<ClusterPlayer>();
-        ClusterInstance.instance().client().request("player-find", new CommunicationProperty().set("uuid", uuid), PlayerPacket.class, packet -> future.complete(packet.player()));
+        ClusterInstance.instance().client().requestAsync("player-find", PlayerPacket.class, new CommunicationProperty().set("uuid", uuid)).whenComplete((it, t) -> future.complete(it.player()));
         return future;
     }
 
     @Override
     public @NotNull CompletableFuture<ClusterPlayer> findAsync(String name) {
         var future = new CompletableFuture<ClusterPlayer>();
-        ClusterInstance.instance().client().request("player-find", new CommunicationProperty().set("name", name), PlayerPacket.class, packet -> future.complete(packet.player()));
+        ClusterInstance.instance().client().requestAsync("player-find", PlayerPacket.class, new CommunicationProperty().set("name", name)).whenComplete((it, t) -> future.complete(it.player()));
         return future;
     }
 

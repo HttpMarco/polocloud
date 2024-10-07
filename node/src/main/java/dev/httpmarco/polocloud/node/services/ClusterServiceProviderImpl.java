@@ -103,14 +103,8 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
                 return new ServiceLogPacket(localService.logs());
             }
 
-            var future = new CompletableFuture<List<String>>();
-            Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-log", property, ServiceLogPacket.class, packet -> future.complete(packet.logs()));
-
-            try {
-                return new ServiceLogPacket(future.get(5, TimeUnit.SECONDS));
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                throw new RuntimeException(e);
-            }
+            var logs = Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-log", ServiceLogPacket.class, property).logs();
+            return new ServiceLogPacket(logs);
         });
 
         localNode.transmit().responder("service-players-count", property -> {
@@ -120,9 +114,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
                 return new IntPacket(service.onlinePlayersCount());
             }
 
-            var future = new CommunicationFuture<Integer>();
-            Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-players-count", property, IntPacket.class, packet -> future.complete(packet.value()));
-            return new IntPacket((future.sync(-1)));
+            return new IntPacket(Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-players-count",  IntPacket.class, property).value());
         });
 
 
@@ -130,7 +122,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             var target = redirectPacket.target();
             var service = find(target);
 
-            if(service instanceof ClusterLocalServiceImpl localService) {
+            if (service instanceof ClusterLocalServiceImpl localService) {
                 localService.transmit().sendPacket(redirectPacket.packet());
                 return;
             }

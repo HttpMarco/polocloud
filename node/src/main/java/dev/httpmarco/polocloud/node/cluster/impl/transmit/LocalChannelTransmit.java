@@ -8,6 +8,7 @@ import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -42,11 +43,5 @@ public class LocalChannelTransmit extends ChannelTransmit {
         this.server.responder(id, packetFunction);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <P extends Packet> void request(String id, CommunicationProperty property, Class<P> packet, Consumer<P> packetCallback) {
-        var uuid = UUID.randomUUID();
-        server.requests().put(uuid, (Consumer<Packet>) packetCallback);
-        this.sendPacket(new RequestPacket(id, uuid, property));
-    }
+    // todo import request method
 }

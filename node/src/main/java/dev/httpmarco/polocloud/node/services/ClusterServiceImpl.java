@@ -50,9 +50,7 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     @SneakyThrows
     public List<String> logs() {
-        var future = new CompletableFuture<List<String>>();
-        node().transmit().request("service-log", new CommunicationProperty().set("id", id), ServiceLogPacket.class, serviceLogPacket -> future.complete(serviceLogPacket.logs()));
-        return future.get(5, TimeUnit.SECONDS);
+        return node().transmit().request("service-log", ServiceLogPacket.class, new CommunicationProperty().set("id", id)).logs();
     }
 
     @Override

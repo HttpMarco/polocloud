@@ -12,6 +12,7 @@ import dev.httpmarco.polocloud.api.services.*;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -22,7 +23,7 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
     @Override
     public @NotNull CompletableFuture<List<ClusterService>> servicesAsync() {
         var future = new CompletableFuture<List<ClusterService>>();
-        ClusterInstance.instance().client().request("service-all", ServiceCollectionPacket.class, packet -> future.complete(packet.services()));
+        ClusterInstance.instance().client().requestAsync("service-all", ServiceCollectionPacket.class).whenComplete((it, t) -> future.complete(it.services()));
         return future;
     }
 
@@ -39,7 +40,7 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
     @Override
     public @NotNull CompletableFuture<List<ClusterService>> findAsync(ClusterServiceFilter filter) {
         var future = new CompletableFuture<List<ClusterService>>();
-        ClusterInstance.instance().client().request("service-filtering", new CommunicationProperty().set("filter", filter), ServiceCollectionPacket.class, packet -> future.complete(packet.services()));
+        ClusterInstance.instance().client().requestAsync("service-filtering", ServiceCollectionPacket.class, new CommunicationProperty().set("filter", filter)).whenComplete((it, t) -> future.complete(it.services()));
         return future;
     }
 
@@ -86,7 +87,7 @@ public final class ClusterInstanceServiceProvider extends ClusterServiceProvider
             property.set(id, key.toString());
         }
         var future = new CompletableFuture<ClusterService>();
-        ClusterInstance.instance().client().request("service-find", property, ClusterServicePacket.class, clusterServicePacket -> future.complete(clusterServicePacket.service()));
+        ClusterInstance.instance().client().requestAsync("service-find", ClusterServicePacket.class, property).whenComplete((it, t) -> future.complete(it.service()));
         return future;
     }
 

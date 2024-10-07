@@ -117,7 +117,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
         if (Node.instance().clusterProvider().localHead()) {
             this.groups.addAll(ClusterGroupFactory.readGroups());
         } else {
-            Node.instance().clusterProvider().headNode().transmit().request("groups-all", GroupCollectionPacket.class, it -> {
+            Node.instance().clusterProvider().headNode().transmit().requestAsync("groups-all", GroupCollectionPacket.class).whenComplete((it, t) -> {
                 this.groups.addAll(it.groups());
                 log.info("Successfully reload all group data.");
             });

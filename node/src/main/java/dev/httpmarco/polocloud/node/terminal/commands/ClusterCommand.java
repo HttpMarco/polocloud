@@ -66,31 +66,30 @@ public final class ClusterCommand extends Command {
 
 
             endpoint.connect(transmit -> {
-                transmit.request("auth-cluster-token", new CommunicationProperty().set("token", token), ClusterAuthTokenPacket.class, response -> {
-                    var result = response.value();
 
-                    if(result) {
-                        var clusterConfig = Node.instance().nodeConfig();
-                        var nodes = new HashSet<>(clusterConfig.nodes());
-                        nodes.add(Node.instance().nodeConfig().localNode());
+                var auth = transmit.request("auth-cluster-token", ClusterAuthTokenPacket.class, new CommunicationProperty().set("token", token)).value();
 
-                        transmit.sendPacket(new ClusterMergeFamilyPacket(clusterConfig.clusterId(), clusterConfig.clusterToken(),nodes));
+                if (auth) {
+                    var clusterConfig = Node.instance().nodeConfig();
+                    var nodes = new HashSet<>(clusterConfig.nodes());
+                    nodes.add(Node.instance().nodeConfig().localNode());
 
-                        // register the new endpoint and
-                        clusterProvider.endpoints().add(endpoint);
+                    transmit.sendPacket(new ClusterMergeFamilyPacket(clusterConfig.clusterId(), clusterConfig.clusterToken(), nodes));
 
-                        // update global node configuration
-                        Node.instance().nodeConfig().nodes().add(endpoint.data());
-                        Node.instance().updateNodeConfig();
+                    // register the new endpoint and
+                    clusterProvider.endpoints().add(endpoint);
 
-                        // todo test the token
+                    // update global node configuration
+                    Node.instance().nodeConfig().nodes().add(endpoint.data());
+                    Node.instance().updateNodeConfig();
 
-                        log.info("Successfully registered &b{}&8!", name);
-                        return;
-                    }
-                    // token is invalid -> channel is now closed!
-                    log.warn("Failed to register &b{}&8! &7The provided token is invalid!", name);
-                });
+                    // todo test the token
+                    log.info("Successfully registered &b{}&8!", name);
+                    return;
+                }
+                // token is invalid -> channel is now closed!
+                log.warn("Failed to register &b{}&8! &7The provided token is invalid!", name);
+
             }, transmit -> {
                 // the connection is failed -> not save anything
                 log.error("Failed to register &b{}&8! &7The required node endpoint is offline!", name);

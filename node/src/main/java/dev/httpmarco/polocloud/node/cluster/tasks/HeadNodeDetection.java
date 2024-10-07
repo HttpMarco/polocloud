@@ -21,13 +21,9 @@ public class HeadNodeDetection {
 
         for (NodeEndpoint endpoint : service.endpoints()) {
             if (endpoint.situation() == NodeSituation.RECHEABLE) {
-                var futureStep = new CompletableFuture<String>();
-
                 // request head node data
-                Objects.requireNonNull(endpoint.transmit()).request("node-head-request", NodeHeadRequestPacket.class, (response) -> futureStep.complete(response.headNode()));
-
-                var result = futureStep.join();
-                var nodeEndpoint = service.find(result);
+                var headNode = Objects.requireNonNull(endpoint.transmit()).request("node-head-request", NodeHeadRequestPacket.class).headNode();
+                var nodeEndpoint = service.find(headNode);
 
                 if (nodeEndpoint.situation() != NodeSituation.RECHEABLE || nodeEndpoint.transmit() == null) {
                     //todo here we have a big problem bro

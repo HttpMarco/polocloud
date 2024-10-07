@@ -3,6 +3,8 @@
 lombok = "1.18.34"
 annotations = "25.0.0"
 
+nexusPublish = "2.0.0"
+
 # network
 osgan = "1.0.31-SNAPSHOT"
 netty5 = "5.0.0.Alpha5"
@@ -36,6 +38,7 @@ argon2 = "2.11"
 shadow = "8.1.1"
 
 [plugins]
+nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 
 [libraries]
