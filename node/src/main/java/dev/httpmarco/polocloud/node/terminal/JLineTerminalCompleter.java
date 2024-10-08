@@ -38,6 +38,11 @@ public final class JLineTerminalCompleter implements Completer {
                 return;
             }
 
+            if (Node.instance().screenProvider().isUsed()) {
+                list.add(new Candidate("exit"));
+                return;
+            }
+
             // we only display the command names -> not aliases
 
             for (var command : commandService.commands()) {
