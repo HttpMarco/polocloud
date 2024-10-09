@@ -23,12 +23,38 @@ public final class PlatformCommand extends Command {
 
         var platformArg = CommandArgumentType.Platform("platform");
         syntax(it -> {
-            //todo
+            //todo check if service exists with platform
+            var platform = it.arg(platformArg);
+            var platformService = Node.instance().platformService();
+
+            if (platform == null) {
+                log.info("The giving platform is not existing!");
+                return;
+            }
+
+            platformService.platforms().remove(platform);
+            platformService.update();
         }, platformArg, CommandArgumentType.Keyword("remove"));
 
-        var versionArg = CommandArgumentType.Platform("version");
+        var versionArg = CommandArgumentType.PlatformVersion("version");
         syntax(it -> {
-            //todo
+            //todo check if service exists with platform
+            var platform = it.arg(platformArg);
+            var platformVersion = it.arg(versionArg);
+            var platformService = Node.instance().platformService();
+
+            if (platform == null) {
+                log.info("The giving platform is not existing!");
+                return;
+            }
+
+            if (platformVersion == null) {
+                log.info("The giving version is not existing!");
+                return;
+            }
+
+            platform.versions().removeIf(version -> version.version().equalsIgnoreCase(platformVersion.version()));
+            platformService.update();
         }, platformArg, CommandArgumentType.Keyword("version"), versionArg, CommandArgumentType.Keyword("remove"));
     }
 }
