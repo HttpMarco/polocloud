@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.cluster;
 
+import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.NodeConfig;
@@ -102,9 +103,6 @@ public final class ClusterProviderImpl implements ClusterProvider {
             var future = new CompletableFuture<>();
 
             externalNode.connect(transmit -> {
-
-
-
                 transmit.requestAsync("node-state", NodeSituationResponsePacket.class).whenComplete((it, t) -> {
                     externalNode.situation(it.situation());
                     future.complete(true);
@@ -131,5 +129,9 @@ public final class ClusterProviderImpl implements ClusterProvider {
     @Override
     public void close() {
         this.localNode.close();
+    }
+
+    public boolean isNodeChannel(ChannelTransmit transmit) {
+        return this.endpoints.stream().anyMatch(it -> it.transmit() != null && Objects.equals(it.transmit(), transmit));
     }
 }

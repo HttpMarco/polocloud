@@ -3,10 +3,10 @@ package dev.httpmarco.polocloud.node.cluster.impl;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
+import dev.httpmarco.polocloud.api.packet.ConnectionAuthPacket;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.NodeSituation;
-import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class ExternalNode extends AbstractNode {
             this.transmit = it;
 
             // todo wait for response
-            transmit.sendPacket(new NodeConnectPacket(Node.instance().nodeConfig().clusterToken(), Node.instance().nodeConfig().localNode().name()));
+            transmit.sendPacket(new ConnectionAuthPacket(Node.instance().nodeConfig().clusterToken(), Node.instance().nodeConfig().localNode().name(), ConnectionAuthPacket.Reason.NODE));
 
             goodResponse.accept(it);
         });
