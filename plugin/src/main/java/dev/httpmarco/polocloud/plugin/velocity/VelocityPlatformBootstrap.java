@@ -7,14 +7,14 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import dev.httpmarco.polocloud.plugin.PluginClassSupplier;
+import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.ProxyPlatformParameterAdapter;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import org.jetbrains.annotations.NotNull;
 
 @Plugin(id = "polocloud", name = "PoloCloud-Plugin", version = "1.0.0", authors = "HttpMarco")
-public final class VelocityPlatformBootstrap extends PluginClassSupplier implements ProxyPlatformParameterAdapter<Player> {
-
+public final class VelocityPlatformBootstrap implements ProxyPlatformParameterAdapter<Player>, ClassSupplier {
     private final ProxyServer server;
     private final ProxyPluginPlatform<Player> platform;
 
@@ -22,6 +22,8 @@ public final class VelocityPlatformBootstrap extends PluginClassSupplier impleme
     public VelocityPlatformBootstrap(ProxyServer server) {
         this.server = server;
         this.platform = new ProxyPluginPlatform<>(new VelocityPlatformAction(this.server), new VelocityProxyServerHandler(this.server), this);
+
+        CloudAPI.classSupplier(this);
     }
 
     @Subscribe(order = PostOrder.FIRST)
@@ -43,5 +45,10 @@ public final class VelocityPlatformBootstrap extends PluginClassSupplier impleme
     @Override
     public int onlinePlayers() {
         return server.getPlayerCount();
+    }
+
+    @Override
+    public Class<?> classByName(String name) throws ClassNotFoundException {
+        return Class.forName(name);
     }
 }
