@@ -16,7 +16,12 @@ public final class EventProviderImpl implements EventProvider, EventFactory {
     private final EventSubscribePool pool = new EventSubscribePool("local");
 
     public EventProviderImpl() {
-        ClusterInstance.instance().client().listen(EventCallPacket.class, (transmit, packet) -> pool.acceptActor(packet.event()));
+        ClusterInstance.instance().client().listen(EventCallPacket.class, (transmit, packet) -> {
+            try {
+                pool.acceptActor(packet.buildEvent());
+            } catch (ClassNotFoundException ignored) {
+            }
+        });
     }
 
     @Override

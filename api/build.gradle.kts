@@ -16,3 +16,7 @@
 tasks.jar {
     archiveFileName.set("polocloud-api.jar")
 }
+
+dependencies {
+    compileOnly(libs.netty5)
+}

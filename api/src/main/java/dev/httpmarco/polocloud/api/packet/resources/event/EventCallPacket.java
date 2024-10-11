@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.api.packet.resources.event;
 
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.Event;
 import dev.httpmarco.polocloud.api.event.util.PacketAllocator;
 import lombok.AllArgsConstructor;
@@ -13,21 +14,30 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @AllArgsConstructor
 public class EventCallPacket extends Packet {
+    private String className;
+    private PacketBuffer buffer;
 
-    private Event event;
+    public EventCallPacket(Event event) {
+        this.className = event.getClass().getName();
+        this.buffer = PacketBuffer.allocate();
+        event.write(this.buffer);
+    }
+
+    public Event buildEvent() throws ClassNotFoundException {
+        var event = (Event) PacketAllocator.allocate(CloudAPI.instance().classByName(this.className));
+        event.read(this.buffer);
+        return event;
+    }
 
     @Override
-    @SneakyThrows
     public void read(PacketBuffer packetBuffer) {
-        var clazz = Class.forName(packetBuffer.readString());
-
-        this.event = (Event) PacketAllocator.allocate(clazz);
-        this.event.read(packetBuffer);
+        this.className = packetBuffer.readString();
+        this.buffer = new PacketBuffer(packetBuffer.getOrigin().copy());
     }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
-        packetBuffer.writeString(event.getClass().getName());
-        event.write(packetBuffer);
+        packetBuffer.writeString(this.className);
+        packetBuffer.writeBytes(this.buffer.getOrigin());
     }
 }

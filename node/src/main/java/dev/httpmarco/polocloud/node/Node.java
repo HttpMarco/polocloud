@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node;
 
+import dev.httpmarco.polocloud.api.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 @Log4j2
 @Getter
 @Accessors(fluent = true)
-public final class Node extends CloudAPI {
+public final class Node extends CloudAPI implements ClassSupplier {
 
     @Getter
     private static Node instance;
@@ -59,6 +60,8 @@ public final class Node extends CloudAPI {
 
     public Node() {
         instance = this;
+
+        CloudAPI.classSupplier(this);
 
         //register all local node properties
         PropertyRegister.register(
@@ -127,5 +130,10 @@ public final class Node extends CloudAPI {
                 }
             }
         });
+    }
+
+    @Override
+    public Class<?> classByName(String name) throws ClassNotFoundException {
+        return Class.forName(name);
     }
 }

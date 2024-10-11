@@ -2,12 +2,15 @@ package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.event.EventPoolRegister;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.RedirectPacket;
+import dev.httpmarco.polocloud.api.packet.resources.event.EventCallPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
@@ -123,7 +126,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             var service = find(target);
 
             if (service instanceof ClusterLocalServiceImpl localService) {
-                localService.transmit().sendPacket(redirectPacket.packet());
+                localService.transmit().sendPacket(redirectPacket);
                 return;
             }
 

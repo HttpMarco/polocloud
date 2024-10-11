@@ -22,12 +22,18 @@ public final class EventProviderImpl implements EventProvider {
 
     public EventProviderImpl() {
         Node.instance().clusterProvider().localNode().transmit().listen(EventCallPacket.class, (transmit, packet) -> {
-            if(Node.instance().serviceProvider().isServiceChannel(transmit)){
-                factory.call(packet.event());
-                return;
-            }
-            for (var pool : EventPoolRegister.pools()) {
-                pool.acceptActor(packet.event());
+            try {
+                var event = packet.buildEvent();
+
+                if (Node.instance().serviceProvider().isServiceChannel(transmit)) {
+                    factory.call(event);
+                    return;
+                }
+                for (var pool : EventPoolRegister.pools()) {
+                    pool.acceptActor(event);
+                }
+            } catch (ClassNotFoundException e) {
+                Node.instance().clusterProvider().broadcast(new EventCallPacket(packet.className(), packet.buffer()));
             }
         });
 

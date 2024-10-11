@@ -7,12 +7,13 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import dev.httpmarco.polocloud.plugin.PluginClassSupplier;
 import dev.httpmarco.polocloud.plugin.ProxyPlatformParameterAdapter;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
 import org.jetbrains.annotations.NotNull;
 
 @Plugin(id = "polocloud", name = "PoloCloud-Plugin", version = "1.0.0", authors = "HttpMarco")
-public final class VelocityPlatformBootstrap implements ProxyPlatformParameterAdapter<Player> {
+public final class VelocityPlatformBootstrap extends PluginClassSupplier implements ProxyPlatformParameterAdapter<Player> {
 
     private final ProxyServer server;
     private final ProxyPluginPlatform<Player> platform;
