@@ -45,13 +45,6 @@ public final class ClusterInstance extends CloudAPI {
 
         this.eventProvider = new EventProviderImpl();
 
-        this.client.listen(RedirectPacket.class, (transmit, redirectPacket) -> {
-            try {
-                this.client.call(redirectPacket.buildPacket(), transmit);
-            } catch (ClassNotFoundException ignored) {
-            }
-        });
-
         this.client.clientAction(CommunicationClientAction.CONNECTED, transmit -> {
             transmit.sendPacket(new ConnectionAuthPacket(System.getenv("cluster-token"), System.getenv("serviceName"), ConnectionAuthPacket.Reason.SERVICE));
 
@@ -59,5 +52,12 @@ public final class ClusterInstance extends CloudAPI {
         });
 
         ClusterInstanceFactory.startPlatform(args);
+
+        this.client.listen(RedirectPacket.class, (transmit, redirectPacket) -> {
+            try {
+                this.client.call(redirectPacket.buildPacket(), transmit);
+            } catch (ClassNotFoundException ignored) {
+            }
+        });
     }
 }

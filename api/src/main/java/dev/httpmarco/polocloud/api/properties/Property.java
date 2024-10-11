@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.api.properties;
 
-import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.Named;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +25,7 @@ public final class Property<T> implements Named {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     public @NotNull Class<T> clazz() {
-        return (Class<T>) CloudAPI.instance().classByName(classType);
+        return (Class<T>) Class.forName(classType);
     }
 
     public static <T> Property<T> of(String id, Class<T> clazz) {

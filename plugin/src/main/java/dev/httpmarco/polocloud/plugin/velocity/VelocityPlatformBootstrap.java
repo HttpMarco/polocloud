@@ -21,9 +21,10 @@ public final class VelocityPlatformBootstrap implements ProxyPlatformParameterAd
     @Inject
     public VelocityPlatformBootstrap(ProxyServer server) {
         this.server = server;
-        this.platform = new ProxyPluginPlatform<>(new VelocityPlatformAction(this.server), new VelocityProxyServerHandler(this.server), this);
 
         CloudAPI.classSupplier(this);
+
+        this.platform = new ProxyPluginPlatform<>(new VelocityPlatformAction(this.server), new VelocityProxyServerHandler(this.server), this);
     }
 
     @Subscribe(order = PostOrder.FIRST)
