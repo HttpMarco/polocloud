@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.plugin.sponge;
 
 import com.google.inject.Inject;
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.PluginPlatform;
 import org.spongepowered.api.Server;
@@ -23,7 +23,7 @@ public final class SpongePlatformBootstrap implements ClassSupplier {
     private void onConstructPlugin2(final StartedEngineEvent<Server> event) {
         platform.presentServiceAsOnline();
 
-        CloudAPI.classSupplier(this);
+        CloudAPI.instance().classSupplier(this);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.ProxyPlatformParameterAdapter;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -16,7 +16,7 @@ public final class BungeeCordPlatformBootstrap extends Plugin implements ProxyPl
         var platform = new ProxyPluginPlatform<>(new BungeeCordPlatformAction(), new BungeeCordPlatformServerHandler(), this);
         var instance = ProxyServer.getInstance();
 
-        CloudAPI.classSupplier(this);
+        CloudAPI.instance().classSupplier(this);
 
         instance.getConfigurationAdapter().getServers().clear();
         instance.getPluginManager().registerListener(this, new BungeeCordPlatformListeners(ProxyServer.getInstance(), platform));

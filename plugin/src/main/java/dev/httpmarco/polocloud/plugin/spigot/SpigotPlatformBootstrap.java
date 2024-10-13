@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.plugin.spigot;
 
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.PluginPlatform;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,7 +13,7 @@ public final class SpigotPlatformBootstrap extends JavaPlugin implements ClassSu
     public void onEnable() {
         platform.presentServiceAsOnline();
 
-        CloudAPI.classSupplier(this);
+        CloudAPI.instance().classSupplier(this);
     }
 
     @Override

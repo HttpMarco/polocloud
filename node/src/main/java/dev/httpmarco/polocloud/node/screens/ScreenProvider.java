@@ -24,7 +24,7 @@ public final class ScreenProvider implements Closeable {
     private final Map<NodeEndpoint, ClusterService> externalSubscribes = new HashMap<>();
 
     public ScreenProvider() {
-        Node.instance().clusterProvider().localNode().transmit().listen(ExternalScreenSubscribePacket.class, (transmit, packet) -> {
+        Node.instance().server().listen(ExternalScreenSubscribePacket.class, (transmit, packet) -> {
             var service = Node.instance().serviceProvider().find(packet.id());
 
             if (service instanceof ClusterLocalServiceImpl localService) {

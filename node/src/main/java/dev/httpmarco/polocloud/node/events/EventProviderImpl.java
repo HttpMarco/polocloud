@@ -21,7 +21,7 @@ public final class EventProviderImpl implements EventProvider {
     private final EventFactory factory = new EventFactoryImpl();
 
     public EventProviderImpl() {
-        Node.instance().clusterProvider().localNode().transmit().listen(EventCallPacket.class, (transmit, packet) -> {
+        Node.instance().server().listen(EventCallPacket.class, (transmit, packet) -> {
             try {
                 var event = packet.buildEvent();
 
@@ -37,15 +37,15 @@ public final class EventProviderImpl implements EventProvider {
             }
         });
 
-        Node.instance().clusterProvider().localNode().transmit().listen(EventSubscribePacket.class, (transmit, packet) -> {
+        Node.instance().server().listen(EventSubscribePacket.class, (transmit, packet) -> {
             var service = Node.instance().serviceProvider().find(transmit);
 
             if (service instanceof ClusterLocalServiceImpl localService) {
                 // register a binding on the packet for transmit the event as packet to the service
                 localService.eventSubscribePool().subscribe(packet.packetClass(), event -> localService.transmit().sendPacket(new EventCallPacket(event)));
             } else {
-                log.warn("Service try to subscribe the event {} but only local service can do this!", packet.getClass());
-                log.warn("Break subscription of the event.");
+                //TODO log.warn("Service try to subscribe the event {} but only local service can do this!", packet.getClass());
+                //TODO log.warn("Break subscription of the event.");
             }
         });
     }

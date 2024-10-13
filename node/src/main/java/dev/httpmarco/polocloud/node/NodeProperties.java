@@ -9,10 +9,10 @@ public final class NodeProperties {
     // define the start port of all proxies on this node. Default: 25565
     public final Property<Integer> PROXY_PORT_START_RANGE = Property.of("PROXY_PORT_START_RANGE", Integer.class);
 
-    // define the start port of all servers (spigot, paper...) on this node. Default: 30000
+    // define the start port of all servers (spigot, paper...) on this node. Default: 20000
     public final Property<Integer> SERVER_PORT_START_RANGE = Property.of("SERVER_PORT_START_RANGE", Integer.class);
 
-    // define the start port of all services (multi-paper master) on this node. Default: 25565
+    // define the start port of all services (multi-paper master) on this node. Default: 40000
     public final Property<Integer> SERVICE_PORT_START_RANGE = Property.of("SERVICE_PORT_START_RANGE", Integer.class);
 
     // if a player connect the cluster with a proxy, we notify this in the terminal

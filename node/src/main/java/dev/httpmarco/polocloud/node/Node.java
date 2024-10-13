@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node;
 
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
+import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
@@ -35,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @Log4j2
 @Getter
 @Accessors(fluent = true)
-public final class Node extends CloudAPI implements ClassSupplier {
+public final class Node extends CloudAPI {
 
     @Getter
     private static Node instance;
@@ -60,8 +61,6 @@ public final class Node extends CloudAPI implements ClassSupplier {
 
     public Node() {
         instance = this;
-
-        CloudAPI.classSupplier(this);
 
         //register all local node properties
         PropertyRegister.register(
@@ -114,6 +113,16 @@ public final class Node extends CloudAPI implements ClassSupplier {
         this.serviceProvider.clusterServiceQueue().start();
     }
 
+    @Override
+    public ClassSupplier classSupplier() {
+        return this.server().classSupplier();
+    }
+
+    @Override
+    public void classSupplier(ClassSupplier classSupplier) {
+        this.server().classSupplier(classSupplier);
+    }
+
     public void updateNodeConfig() {
         Configurations.writeContent(Path.of("config.json"), this.nodeConfig);
     }
@@ -132,8 +141,7 @@ public final class Node extends CloudAPI implements ClassSupplier {
         });
     }
 
-    @Override
-    public Class<?> classByName(String name) throws ClassNotFoundException {
-        return Class.forName(name);
+    public CommunicationServer server() {
+        return this.clusterProvider.localNode().server();
     }
 }

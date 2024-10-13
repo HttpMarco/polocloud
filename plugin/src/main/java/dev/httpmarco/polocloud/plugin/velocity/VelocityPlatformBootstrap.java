@@ -7,7 +7,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.ProxyPlatformParameterAdapter;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -22,7 +22,7 @@ public final class VelocityPlatformBootstrap implements ProxyPlatformParameterAd
     public VelocityPlatformBootstrap(ProxyServer server) {
         this.server = server;
 
-        CloudAPI.classSupplier(this);
+        CloudAPI.instance().classSupplier(this);
 
         this.platform = new ProxyPluginPlatform<>(new VelocityPlatformAction(this.server), new VelocityProxyServerHandler(this.server), this);
     }

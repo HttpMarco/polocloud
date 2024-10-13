@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.plugin.waterdog;
 
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.ProxyPlatformParameterAdapter;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -21,7 +21,7 @@ public final class WaterdogPlatformBootstrap extends Plugin implements ProxyPlat
     public void onEnable() {
         this.platform = new ProxyPluginPlatform<>(new WaterdogPlatformAction(this.getProxy()), new WaterdogServerHandler(this.getProxy()), this);
 
-        CloudAPI.classSupplier(this);
+        CloudAPI.instance().classSupplier(this);
 
         new WaterdogPlatformListeners(this.getProxy(), this.platform);
         this.platform.presentServiceAsOnline();

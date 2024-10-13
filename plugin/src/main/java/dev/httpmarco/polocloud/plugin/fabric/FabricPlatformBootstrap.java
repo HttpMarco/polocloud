@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.plugin.fabric;
 
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.PluginPlatform;
 import net.fabricmc.api.ModInitializer;
@@ -13,7 +13,7 @@ public final class FabricPlatformBootstrap implements ModInitializer, ClassSuppl
     public void onInitialize() {
         platform.presentServiceAsOnline();
 
-        CloudAPI.classSupplier(this);
+        CloudAPI.instance().classSupplier(this);
     }
 
     @Override

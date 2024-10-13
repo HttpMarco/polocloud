@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.plugin.nukkit;
 
 import cn.nukkit.plugin.PluginBase;
-import dev.httpmarco.polocloud.api.ClassSupplier;
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.PluginPlatform;
 
@@ -13,7 +13,7 @@ public final class NukkitPlatformBootstrap extends PluginBase implements ClassSu
     public void onEnable() {
         platform.presentServiceAsOnline();
 
-        CloudAPI.classSupplier(this);
+        CloudAPI.instance().classSupplier(this);
     }
 
     @Override

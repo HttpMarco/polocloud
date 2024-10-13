@@ -39,11 +39,11 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
     public ClusterGroupProviderImpl(@NotNull ClusterProvider clusterProvider) {
         this.clusterProvider = clusterProvider;
 
-        var channelTransmit = clusterProvider.localNode().transmit();
-        channelTransmit.listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
-        channelTransmit.listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
+        var server = clusterProvider.localNode().server();
+        server.listen(GroupCreatePacket.class, (transmit, packet) -> ClusterGroupFactory.createLocalStorageGroup(packet, this));
+        server.listen(GroupDeletePacket.class, (transmit, packet) -> ClusterGroupFactory.deleteLocalStorageGroup(packet.name(), this));
 
-        channelTransmit.responder("group-delete", property -> {
+        server.registerResponder("group-delete", property -> {
             try {
                 return new GroupDeletePacket(GroupDeletionRequest.request(clusterProvider, property.getString("name")).get().get()); //TODO returns maybe null
             } catch (InterruptedException | ExecutionException e) {
@@ -51,13 +51,13 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
             }
         });
 
-        channelTransmit.responder("group-finding", property -> new SingleGroupPacket(find(property.getString("name"))));
-        channelTransmit.responder("group-exists", property -> new GroupExistsResponsePacket(exists(property.getString("name"))));
-        channelTransmit.responder("groups-all", property -> new GroupCollectionPacket(groups()));
-        channelTransmit.responder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterProvider, property));
-        channelTransmit.responder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterProvider, property));
+        server.registerResponder("group-finding", property -> new SingleGroupPacket(find(property.getString("name"))));
+        server.registerResponder("group-exists", property -> new GroupExistsResponsePacket(exists(property.getString("name"))));
+        server.registerResponder("groups-all", property -> new GroupCollectionPacket(groups()));
+        server.registerResponder(GroupCreationRequest.TAG, property -> GroupCreationResponder.handle(this, clusterProvider, property));
+        server.registerResponder(GroupDeletionRequest.TAG, property -> GroupDeletionResponder.handle(this, clusterProvider, property));
 
-        channelTransmit.listen(GroupRequestUpdatePacket.class, (transmit, groupRequestUpdatePacket) -> {
+        server.listen(GroupRequestUpdatePacket.class, (transmit, groupRequestUpdatePacket) -> {
             if (Node.instance().clusterProvider().localHead()) {
                 Node.instance().clusterProvider().broadcastAll(new GroupUpdatePacket(groupRequestUpdatePacket.group()));
                 return;
@@ -65,7 +65,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
             Node.instance().clusterProvider().headNode().transmit().sendPacket(groupRequestUpdatePacket);
         });
 
-        channelTransmit.listen(GroupUpdatePacket.class, (transmit, groupUpdatePacket) -> {
+        server.listen(GroupUpdatePacket.class, (transmit, groupUpdatePacket) -> {
             // change only the right things
             var current = find(groupUpdatePacket.group().name());
 
@@ -117,7 +117,7 @@ public final class ClusterGroupProviderImpl extends ClusterGroupProvider impleme
         if (Node.instance().clusterProvider().localHead()) {
             this.groups.addAll(ClusterGroupFactory.readGroups());
         } else {
-            Node.instance().clusterProvider().headNode().transmit().requestAsync("groups-all", GroupCollectionPacket.class).whenComplete((it, t) -> {
+            Node.instance().clusterProvider().headNode().requestAsync("groups-all", GroupCollectionPacket.class).whenComplete((it, t) -> {
                 this.groups.addAll(it.groups());
                 log.info("Successfully reload all group data.");
             });
