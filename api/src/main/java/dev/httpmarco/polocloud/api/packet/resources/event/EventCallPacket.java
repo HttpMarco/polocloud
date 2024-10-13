@@ -25,7 +25,7 @@ public class EventCallPacket extends Packet {
 
     public Event buildEvent() throws ClassNotFoundException {
         var event = (Event) PacketAllocator.allocate(CloudAPI.instance().classByName(this.className));
-        event.read(this.buffer);
+        event.read(new PacketBuffer(this.buffer.getOrigin().copy()));
         return event;
     }
 
