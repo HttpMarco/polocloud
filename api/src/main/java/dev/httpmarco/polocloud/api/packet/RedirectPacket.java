@@ -31,7 +31,7 @@ public final class RedirectPacket extends Packet {
 
     public Packet buildPacket() throws ClassNotFoundException {
         var packet = (Packet) PacketAllocator.allocate(CloudAPI.instance().classByName(this.packetClassName));
-        packet.read(this.buffer);
+        packet.read(new PacketBuffer(this.buffer.getOrigin().copy()));
         return packet;
     }
 
