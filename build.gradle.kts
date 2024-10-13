@@ -26,8 +26,16 @@ allprojects {
             url = uri("http://10.114.53.2:8081/repository/maven-all/")
             isAllowInsecureProtocol = true
             credentials {
-                username = property("PUBLISH_USERNAME").toString()
-                password = property("PUBLISH_PASSWORD").toString()
+                this.username = if (hasProperty("BYTEMC_REPO_USER")) {
+                    property("BYTEMC_REPO_USER").toString()
+                } else {
+                    System.getenv("BYTEMC_REPO_USER")
+                }
+                this.password = if (hasProperty("BYTEMC_REPO_PASSWORD")) {
+                    property("BYTEMC_REPO_PASSWORD").toString()
+                } else {
+                    System.getenv("BYTEMC_REPO_PASSWORD")
+                }
             }
         }
     }
@@ -63,14 +71,30 @@ allprojects {
             maven {
                 name = "polocloud"
                 url = if (version.toString().endsWith("SNAPSHOT")) {
-                    uri(property("PUBLISH_URL_SNAPSHOTS").toString())
+                    if (hasProperty("BYTEMC_REPO_URL_SNAPSHOTS")) {
+                        uri(property("BYTEMC_REPO_URL_SNAPSHOTS").toString())
+                    } else {
+                        uri(System.getenv("BYTEMC_REPO_URL_SNAPSHOTS"))
+                    }
                 } else {
-                    uri(property("PUBLISH_URL_RELEASES").toString())
+                    if (hasProperty("BYTEMC_REPO_URL_RELEASES")) {
+                        uri(property("BYTEMC_REPO_URL_RELEASES").toString())
+                    } else {
+                        uri(System.getenv("BYTEMC_REPO_URL_RELEASES"))
+                    }
                 }
                 isAllowInsecureProtocol=true
                 credentials {
-                    username = property("PUBLISH_USERNAME").toString()
-                    password = property("PUBLISH_PASSWORD").toString()
+                    this.username = if (hasProperty("BYTEMC_REPO_USER")) {
+                        property("BYTEMC_REPO_USER").toString()
+                    } else {
+                        System.getenv("BYTEMC_REPO_USER")
+                    }
+                    this.password = if (hasProperty("BYTEMC_REPO_PASSWORD")) {
+                        property("BYTEMC_REPO_PASSWORD").toString()
+                    } else {
+                        System.getenv("BYTEMC_REPO_PASSWORD")
+                    }
                 }
             }
         }
