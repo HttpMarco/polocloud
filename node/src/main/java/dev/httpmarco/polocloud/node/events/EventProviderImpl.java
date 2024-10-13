@@ -22,18 +22,13 @@ public final class EventProviderImpl implements EventProvider {
 
     public EventProviderImpl() {
         Node.instance().server().listen(EventCallPacket.class, (transmit, packet) -> {
-            try {
-                var event = packet.buildEvent();
+            if (Node.instance().serviceProvider().isServiceChannel(transmit)) {
+                factory.call(packet);
+                return;
+            }
 
-                if (Node.instance().serviceProvider().isServiceChannel(transmit)) {
-                    factory.call(event);
-                    return;
-                }
-                for (var pool : EventPoolRegister.pools()) {
-                    pool.acceptActor(event);
-                }
-            } catch (ClassNotFoundException e) {
-                Node.instance().clusterProvider().broadcast(new EventCallPacket(packet.className(), packet.buffer()));
+            for (var pool : EventPoolRegister.pools()) {
+                pool.acceptActor(packet);
             }
         });
 
@@ -42,10 +37,10 @@ public final class EventProviderImpl implements EventProvider {
 
             if (service instanceof ClusterLocalServiceImpl localService) {
                 // register a binding on the packet for transmit the event as packet to the service
-                localService.eventSubscribePool().subscribe(packet.packetClass(), event -> localService.transmit().sendPacket(new EventCallPacket(event)));
+                localService.eventSubscribePool().subscribe(packet.packetClass(), callPacket -> localService.transmit().sendPacket(callPacket));
             } else {
-                //TODO log.warn("Service try to subscribe the event {} but only local service can do this!", packet.getClass());
-                //TODO log.warn("Break subscription of the event.");
+                log.warn("Service try to subscribe the event {} but only local service can do this!", packet.getClass());
+                log.warn("Break subscription of the event.");
             }
         });
     }
@@ -53,6 +48,11 @@ public final class EventProviderImpl implements EventProvider {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Event> void listen(@NotNull Class<T> eventClazz, Consumer<T> event) {
-        pool.subscribe(eventClazz.getName(), event1 -> event.accept((T) event1));
+        pool.subscribe(eventClazz.getName(), event1 -> {
+            try {
+                event.accept((T) event1.buildEvent());
+            } catch (ClassNotFoundException ignored) {
+            }
+        });
     }
 }
