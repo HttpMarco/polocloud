@@ -32,12 +32,19 @@ public class EventCallPacket extends Packet {
     @Override
     public void read(PacketBuffer packetBuffer) {
         this.className = packetBuffer.readString();
-        this.buffer = new PacketBuffer(packetBuffer.getOrigin().copy());
+
+        var readable = packetBuffer.readInt();
+        var bytes = new byte[readable];
+        packetBuffer.getOrigin().readBytes(bytes, 0, readable);
+
+        this.buffer = PacketBuffer.allocate(readable);
+        this.buffer.getOrigin().writeBytes(bytes);
     }
 
     @Override
     public void write(PacketBuffer packetBuffer) {
         packetBuffer.writeString(this.className);
-        packetBuffer.writeBytes(this.buffer.getOrigin());
+        packetBuffer.writeInt(this.buffer.getOrigin().readableBytes());
+        packetBuffer.writeBytes(this.buffer.getOrigin().copy());
     }
 }
