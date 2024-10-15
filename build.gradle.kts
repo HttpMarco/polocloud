@@ -9,7 +9,7 @@ allprojects {
     apply(plugin = "maven-publish")
 
     group = "dev.httpmarco.polocloud.node"
-    version = "1.0.5-SNAPSHOT"
+    version = project.version
 
     repositories {
         mavenCentral()
@@ -21,23 +21,6 @@ allprojects {
         maven("https://repo.waterdog.dev/snapshots/")
         maven("https://repo.opencollab.dev/maven-releases/")
         maven("https://repo.opencollab.dev/maven-snapshots/")
-
-        maven {
-            url = uri("http://10.114.53.2:8081/repository/maven-all/")
-            isAllowInsecureProtocol = true
-            credentials {
-                this.username = if (hasProperty("BYTEMC_REPO_USER")) {
-                    property("BYTEMC_REPO_USER").toString()
-                } else {
-                    System.getenv("BYTEMC_REPO_USER")
-                }
-                this.password = if (hasProperty("BYTEMC_REPO_PASSWORD")) {
-                    property("BYTEMC_REPO_PASSWORD").toString()
-                } else {
-                    System.getenv("BYTEMC_REPO_PASSWORD")
-                }
-            }
-        }
     }
 
     tasks.withType<JavaCompile>().configureEach {
@@ -57,46 +40,40 @@ allprojects {
         "implementation"(rootProject.libs.osgan.netty)
     }
 
-    publishing {
+    extensions.configure<PublishingExtension> {
         publications {
-            create<MavenPublication>("mavenJava") {
-                this.groupId = group.toString()
-                this.artifactId = artifactId
-                this.version = version.toString()
+            create("library", MavenPublication::class.java) {
+                from(project.components.getByName("java"))
 
-                from(components["java"])
-            }
-        }
-        repositories {
-            maven {
-                name = "polocloud"
-                url = if (version.toString().endsWith("SNAPSHOT")) {
-                    if (hasProperty("BYTEMC_REPO_URL_SNAPSHOTS")) {
-                        uri(property("BYTEMC_REPO_URL_SNAPSHOTS").toString())
-                    } else {
-                        uri(System.getenv("BYTEMC_REPO_URL_SNAPSHOTS"))
+                pom {
+                    name.set(project.name)
+                    url.set("https://github.com/httpmarco/polocloud")
+                    description.set("A simple minecraft cloud system")
+                    licenses {
+                        license {
+                            name.set("Apache License 2.0")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                        }
                     }
-                } else {
-                    if (hasProperty("BYTEMC_REPO_URL_RELEASES")) {
-                        uri(property("BYTEMC_REPO_URL_RELEASES").toString())
-                    } else {
-                        uri(System.getenv("BYTEMC_REPO_URL_RELEASES"))
-                    }
-                }
-                isAllowInsecureProtocol=true
-                credentials {
-                    this.username = if (hasProperty("BYTEMC_REPO_USER")) {
-                        property("BYTEMC_REPO_USER").toString()
-                    } else {
-                        System.getenv("BYTEMC_REPO_USER")
-                    }
-                    this.password = if (hasProperty("BYTEMC_REPO_PASSWORD")) {
-                        property("BYTEMC_REPO_PASSWORD").toString()
-                    } else {
-                        System.getenv("BYTEMC_REPO_PASSWORD")
+                    scm {
+                        url.set("https://github.com/httpmarco/polocloud")
+                        connection.set("https://github.com/httpmarco/osgon.git")
                     }
                 }
             }
         }
     }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+
+            username.set(System.getenv("ossrhUsername")?.toString() ?: "")
+            password.set(System.getenv("ossrhPassword")?.toString() ?: "")
+        }
+    }
+    useStaging.set(!project.rootProject.version.toString().endsWith("-SNAPSHOT"))
 }
