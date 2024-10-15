@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.services.util;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
 import dev.httpmarco.polocloud.node.Node;
@@ -20,7 +21,10 @@ public final class ServicePortDetector {
         var serverPort = platformType.defaultRuntimePort();
 
         var pool = Node.instance().nodeProperties();
-        if (platformType == PlatformType.PROXY && pool.has(NodeProperties.PROXY_PORT_START_RANGE)) {
+
+        if (group.properties().has(GroupProperties.START_PORT)) {
+            serverPort = group.properties().property(GroupProperties.START_PORT);
+        } else if (platformType == PlatformType.PROXY && pool.has(NodeProperties.PROXY_PORT_START_RANGE)) {
             serverPort = pool.property(NodeProperties.PROXY_PORT_START_RANGE);
         } else if (platformType == PlatformType.SERVER && pool.has(NodeProperties.SERVER_PORT_START_RANGE)) {
             serverPort = pool.property(NodeProperties.SERVER_PORT_START_RANGE);
