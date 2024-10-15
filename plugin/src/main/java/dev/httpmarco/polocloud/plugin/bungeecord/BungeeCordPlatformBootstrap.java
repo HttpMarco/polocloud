@@ -16,6 +16,7 @@ public final class BungeeCordPlatformBootstrap extends Plugin implements ProxyPl
 
         instance.getConfigurationAdapter().getServers().clear();
         instance.getPluginManager().registerListener(this, new BungeeCordPlatformListeners(ProxyServer.getInstance(), platform));
+        instance.getPluginManager().registerCommand(this, new BungeeCordCloudCommand());
         instance.setReconnectHandler(new BungeeCordReconnectHandler());
 
         platform.presentServiceAsOnline();
