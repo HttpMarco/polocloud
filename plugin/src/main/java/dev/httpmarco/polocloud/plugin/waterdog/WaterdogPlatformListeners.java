@@ -65,12 +65,12 @@ public final class WaterdogPlatformListeners {
 
     public void handleInitialize(@NotNull InitialServerConnectedEvent event) {
 
-        var fallback = CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.LOWEST_FALLBACK);
+        var fallback = this.platform.findFallback();
         if (fallback.isEmpty()) {
             event.setCancelled();
             return;
         }
-        event.getPlayer().connect(server.getServerInfo(fallback.get(0).name()));
+        event.getPlayer().connect(server.getServerInfo(fallback.get().name()));
         this.platform.playerChangeServer(event.getPlayer().getUniqueId(), event.getInitialDownstream().getServerInfo().getServerName());
     }
 }

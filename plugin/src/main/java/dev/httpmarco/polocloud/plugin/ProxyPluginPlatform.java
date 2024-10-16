@@ -1,8 +1,10 @@
 package dev.httpmarco.polocloud.plugin;
 
+import com.google.common.collect.Lists;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceStoppingEvent;
+import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.packet.resources.player.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
 import dev.httpmarco.polocloud.api.services.ClusterService;
@@ -12,6 +14,8 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -77,5 +81,38 @@ public final class ProxyPluginPlatform<T> extends PluginPlatform {
 
     public void playerChangeServer(UUID uuid, String server) {
         ClusterInstance.instance().client().sendPacket(new PlayerServiceChangePacket(uuid, server));
+    }
+
+    public List<ClusterService> findFallbacks() {
+        List<ClusterService> fallback;
+
+        if (ClusterInstance.instance().selfService().group().properties().has(GroupProperties.PREFERRED_FALLBACK)) {
+            var self = ClusterInstance.instance().selfService();
+
+            if (self == null) {
+                return Lists.newArrayList();
+            }
+
+            var fallbackGroup = self.group().properties().property(GroupProperties.PREFERRED_FALLBACK);
+
+            fallback = CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.SORTED_FALLBACKS)
+                    .stream()
+                    .filter(service -> service.group().name().equals(fallbackGroup))
+                    .toList();
+        } else {
+            fallback = CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.LOWEST_FALLBACK);
+        }
+
+        return fallback;
+    }
+
+    public Optional<ClusterService> findFallback() {
+        var fallback = findFallbacks();
+
+        if (fallback.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(fallback.get(0));
+        }
     }
 }

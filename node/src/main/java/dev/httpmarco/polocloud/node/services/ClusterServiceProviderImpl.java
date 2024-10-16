@@ -168,6 +168,8 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             case PROXIES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.PROXY);
             case SERVERS -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER);
             case SERVICES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVICE);
+            case SORTED_FALLBACKS ->
+                    services.stream().filter(service -> service.group().fallback()).sorted(Comparator.comparingInt(ClusterService::onlinePlayersCount));
             case LOWEST_FALLBACK ->
                     services.stream().filter(service -> service.group().fallback()).min(Comparator.comparingInt(ClusterService::onlinePlayersCount)).stream();
         }).toList());

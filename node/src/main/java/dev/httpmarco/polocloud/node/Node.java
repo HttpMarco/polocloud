@@ -68,6 +68,7 @@ public final class Node extends CloudAPI {
                 NodeProperties.SERVICE_PORT_START_RANGE,
                 NodeProperties.SERVER_PORT_START_RANGE,
                 GroupProperties.START_PORT,
+                GroupProperties.PREFERRED_FALLBACK,
                 GroupProperties.MAINTENANCE,
                 GroupProperties.PERCENTAGE_TO_START_NEW_SERVER
         );
