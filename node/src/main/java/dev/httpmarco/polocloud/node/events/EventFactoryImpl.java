@@ -8,10 +8,15 @@ public final class EventFactoryImpl implements EventFactory {
 
     @Override
     public void call(Event event) {
-        Node.instance().clusterProvider().broadcast(new EventCallPacket(event));
+        this.call(new EventCallPacket(event));
+    }
+
+    @Override
+    public void call(EventCallPacket packet) {
+        Node.instance().clusterProvider().broadcast(packet);
 
         for (var pool : EventPoolRegister.pools()) {
-            pool.acceptActor(event);
+            pool.acceptActor(packet);
         }
     }
 }

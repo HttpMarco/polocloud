@@ -1,9 +1,11 @@
 package dev.httpmarco.polocloud.instance;
 
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.packet.ConnectionAuthPacket;
+import dev.httpmarco.polocloud.api.packet.RedirectPacket;
 import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
@@ -51,5 +53,22 @@ public final class ClusterInstance extends CloudAPI {
         });
 
         ClusterInstanceFactory.startPlatform(args);
+
+        this.client.listen(RedirectPacket.class, (transmit, redirectPacket) -> {
+            try {
+                this.client.call(redirectPacket.buildPacket(), transmit);
+            } catch (ClassNotFoundException ignored) {
+            }
+        });
+    }
+
+    @Override
+    public ClassSupplier classSupplier() {
+        return this.client.classSupplier();
+    }
+
+    @Override
+    public void classSupplier(ClassSupplier classSupplier) {
+        this.client.classSupplier(classSupplier);
     }
 }

@@ -1,24 +1,27 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
-import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
-import dev.httpmarco.polocloud.instance.ClusterInstance;
+import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ReconnectHandler;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+@RequiredArgsConstructor
 public final class BungeeCordReconnectHandler implements ReconnectHandler {
+
+    private final ProxyPluginPlatform<ProxiedPlayer> platform;
 
     @Override
     public ServerInfo getServer(ProxiedPlayer proxiedPlayer) {
-        var service = ClusterInstance.instance().serviceProvider().find(ClusterServiceFilter.LOWEST_FALLBACK);
+        var service = this.platform.findFallback();
 
         if (service.isEmpty()) {
             proxiedPlayer.disconnect(TextComponent.fromLegacy("No fallback found"));
             return null;
         }
-        return ProxyServer.getInstance().getServerInfo(service.get(0).name());
+        return ProxyServer.getInstance().getServerInfo(service.get().name());
     }
 
     @Override

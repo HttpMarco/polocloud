@@ -16,7 +16,7 @@ public class GroupDeletionRequest {
     public CompletableFuture<Optional<String>> request(ClusterProvider clusterProvider, String name) {
         var groupFuture = new CompletableFuture<Optional<String>>();
 
-        clusterProvider.headNode().transmit().requestAsync(GroupDeletionRequest.TAG, MessageResponsePacket.class, new CommunicationProperty().set("name", name)).whenComplete((it, t) -> groupFuture.complete(it.successfully() ? Optional.empty() : Optional.of(it.reason()))
+        clusterProvider.headNode().requestAsync(GroupDeletionRequest.TAG, MessageResponsePacket.class, new CommunicationProperty().set("name", name)).whenComplete((it, t) -> groupFuture.complete(it.successfully() ? Optional.empty() : Optional.of(it.reason()))
         );
 
         return groupFuture;

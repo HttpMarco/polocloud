@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.node;
 
+import dev.httpmarco.osgan.networking.ClassSupplier;
+import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
@@ -65,6 +67,8 @@ public final class Node extends CloudAPI {
                 NodeProperties.PROXY_PORT_START_RANGE,
                 NodeProperties.SERVICE_PORT_START_RANGE,
                 NodeProperties.SERVER_PORT_START_RANGE,
+                GroupProperties.START_PORT,
+                GroupProperties.PREFERRED_FALLBACK,
                 GroupProperties.MAINTENANCE,
                 GroupProperties.PERCENTAGE_TO_START_NEW_SERVER
         );
@@ -110,6 +114,16 @@ public final class Node extends CloudAPI {
         this.serviceProvider.clusterServiceQueue().start();
     }
 
+    @Override
+    public ClassSupplier classSupplier() {
+        return this.server().classSupplier();
+    }
+
+    @Override
+    public void classSupplier(ClassSupplier classSupplier) {
+        this.server().classSupplier(classSupplier);
+    }
+
     public void updateNodeConfig() {
         Configurations.writeContent(Path.of("config.json"), this.nodeConfig);
     }
@@ -126,5 +140,9 @@ public final class Node extends CloudAPI {
                 }
             }
         });
+    }
+
+    public CommunicationServer server() {
+        return this.clusterProvider.localNode().server();
     }
 }
