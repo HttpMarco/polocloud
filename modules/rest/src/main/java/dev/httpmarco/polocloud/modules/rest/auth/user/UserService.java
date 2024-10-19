@@ -17,7 +17,7 @@ public class UserService {
     private final RestModule restModule;
 
     public String login(String username, String password, String ip, String userAgent) {
-        var user = users().stream().filter(u -> u.username().equals(username)).findFirst().orElse(null);
+        var user = users().stream().filter(u -> u.username().equalsIgnoreCase(username)).findFirst().orElse(null);
         if (user == null) {
             return null;
         }
@@ -30,7 +30,7 @@ public class UserService {
     }
 
     public String create(User user, String ip, String userAgent) {
-        if (users().stream().anyMatch(u -> u.username().equals(user.username()))) {
+        if (users().stream().anyMatch(u -> u.username().equalsIgnoreCase(user.username()))) {
             return null;
         }
 
