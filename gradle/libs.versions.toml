@@ -6,7 +6,7 @@ annotations = "26.0.1"
 nexusPublish = "2.0.0"
 
 # network
-osgan = "1.0.32-SNAPSHOT"
+osgan = "1.0.39-20241013.234840-2"
 netty5 = "5.0.0.Alpha5"
 
 #logging

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.plugin.velocity;
 
+import com.google.common.collect.Lists;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -12,6 +13,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
+import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceFilter;
 import dev.httpmarco.polocloud.instance.ClusterInstance;
 import dev.httpmarco.polocloud.plugin.PlatformValueChecker;
@@ -22,6 +24,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+import java.util.List;
+import java.util.Optional;
+
 @AllArgsConstructor
 public final class VelocityPlatformListeners {
 
@@ -30,12 +36,14 @@ public final class VelocityPlatformListeners {
 
     @Subscribe
     public void onPlayerChooseInitialServer(@NotNull PlayerChooseInitialServerEvent event) {
-        var fallback = CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.LOWEST_FALLBACK);
+        var fallback = this.platform.findFallback();
+
         if (fallback.isEmpty()) {
             event.setInitialServer(null);
             return;
         }
-        server.getServer(fallback.get(0).name()).ifPresent(event::setInitialServer);
+
+        server.getServer(fallback.get().name()).ifPresent(event::setInitialServer);
     }
 
     @Subscribe
@@ -82,8 +90,9 @@ public final class VelocityPlatformListeners {
 
     @Subscribe
     public void handelKick(KickedFromServerEvent event) {
-        var fallback = ClusterInstance.instance().serviceProvider().find(ClusterServiceFilter.LOWEST_FALLBACK);
+        var fallback = this.platform.findFallbacks();
         var message = MiniMessage.miniMessage().deserialize("<red>No server available!");
+
         if (fallback.isEmpty()) {
             event.setResult(KickedFromServerEvent.DisconnectPlayer.create(message));
             return;

@@ -29,7 +29,7 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
 
     public ClusterPlayerProviderImpl() {
         var servicedProvider = Node.instance().serviceProvider();
-        Node.instance().clusterProvider().localNode().transmit().listen(PlayerRegisterPacket.class, (transmit, packet) -> {
+        Node.instance().server().listen(PlayerRegisterPacket.class, (transmit, packet) -> {
             if (!servicedProvider.isServiceChannel(transmit)) {
                 Node.instance().clusterProvider().broadcast(packet);
             }
@@ -42,7 +42,7 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
             playersPool.put(packet.uuid(), new ClusterPlayerImpl(packet.username(), packet.uuid(), proxy));
         });
 
-        Node.instance().clusterProvider().localNode().transmit().listen(PlayerServiceChangePacket.class, (transmit, packet) -> {
+        Node.instance().server().listen(PlayerServiceChangePacket.class, (transmit, packet) -> {
             if (!servicedProvider.isServiceChannel(transmit)) {
                 Node.instance().clusterProvider().broadcast(packet);
             }
@@ -60,7 +60,7 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
             }
         });
 
-        Node.instance().clusterProvider().localNode().transmit().listen(PlayerUnregisterPacket.class, (transmit, packet) -> {
+        Node.instance().server().listen(PlayerUnregisterPacket.class, (transmit, packet) -> {
             if (!servicedProvider.isServiceChannel(transmit)) {
                 Node.instance().clusterProvider().broadcast(packet);
             }
@@ -71,10 +71,10 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
             playersPool.remove(packet.uuid());
         });
 
-        Node.instance().clusterProvider().localNode().transmit().responder("player-all", property -> new PlayerCollectionPacket(players()));
-        Node.instance().clusterProvider().localNode().transmit().responder("player-count", property -> new IntPacket(playersCount()));
-        Node.instance().clusterProvider().localNode().transmit().responder("player-find", property -> new PlayerPacket(property.has("uuid") ? find(property.getUUID("uuid")) : find(property.getString("name"))));
-        Node.instance().clusterProvider().localNode().transmit().responder("player-online", property -> new BooleanPacket(property.has("uuid") ? online(property.getUUID("uuid")) : online(property.getString("name"))));
+        Node.instance().server().registerResponder("player-all", property -> new PlayerCollectionPacket(players()));
+        Node.instance().server().registerResponder("player-count", property -> new IntPacket(playersCount()));
+        Node.instance().server().registerResponder("player-find", property -> new PlayerPacket(property.has("uuid") ? find(property.getUUID("uuid")) : find(property.getString("name"))));
+        Node.instance().server().registerResponder("player-online", property -> new BooleanPacket(property.has("uuid") ? online(property.getUUID("uuid")) : online(property.getString("name"))));
     }
 
     @Override

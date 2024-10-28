@@ -50,7 +50,7 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     @SneakyThrows
     public List<String> logs() {
-        return node().transmit().request("service-log", ServiceLogPacket.class, new CommunicationProperty().set("id", id)).logs();
+        return node().request("service-log", ServiceLogPacket.class, new CommunicationProperty().set("id", id)).logs();
     }
 
     @Override

@@ -8,6 +8,7 @@ public enum ClusterServiceFilter {
     SAME_NODE_SERVICES,
     FALLBACKS,
     LOWEST_FALLBACK,
+    SORTED_FALLBACKS,
 
     ONLINE_SERVICES,
 

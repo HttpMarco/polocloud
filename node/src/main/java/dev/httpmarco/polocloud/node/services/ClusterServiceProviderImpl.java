@@ -2,12 +2,15 @@ package dev.httpmarco.polocloud.node.services;
 
 import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.CloudAPI;
+import dev.httpmarco.polocloud.api.event.EventPoolRegister;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.RedirectPacket;
+import dev.httpmarco.polocloud.api.packet.resources.event.EventCallPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
@@ -42,14 +45,14 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
     public ClusterServiceProviderImpl() {
         var localNode = Node.instance().clusterProvider().localNode();
 
-        localNode.transmit().listen(ClusterSyncRegisterServicePacket.class, (it, packet) -> {
+        localNode.server().listen(ClusterSyncRegisterServicePacket.class, (it, packet) -> {
             services.add(packet.service());
             log.info("The service &8'&f{}&8' &7is starting now&8...", packet.service().name());
         });
 
-        localNode.transmit().responder("service-find", property -> new ClusterServicePacket(property.has("id") ? find(property.getUUID("id")) : find(property.getString("name"))));
+        localNode.server().registerResponder("service-find", property -> new ClusterServicePacket(property.has("id") ? find(property.getUUID("id")) : find(property.getString("name"))));
 
-        localNode.transmit().listen(ServiceShutdownCallPacket.class, (transmit, packet) -> {
+        localNode.server().listen(ServiceShutdownCallPacket.class, (transmit, packet) -> {
             var service = Node.instance().serviceProvider().find(packet.id());
 
             if (service == null) {
@@ -60,7 +63,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             service.shutdown();
         });
 
-        localNode.transmit().listen(ServiceOnlinePacket.class, (transmit, packet) -> {
+        localNode.server().listen(ServiceOnlinePacket.class, (transmit, packet) -> {
             var service = find(packet.id());
             if (service == null) {
                 transmit.channel().close();
@@ -79,7 +82,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             Node.instance().eventProvider().factory().call(new ServiceOnlineEvent(service));
         });
 
-        localNode.transmit().listen(ServiceCommandPacket.class, (transmit, packet) -> {
+        localNode.server().listen(ServiceCommandPacket.class, (transmit, packet) -> {
             var service = find(packet.id());
 
             if (isServiceChannel(transmit)) {
@@ -95,7 +98,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(packet);
         });
 
-        localNode.transmit().responder("service-log", property -> {
+        localNode.server().registerResponder("service-log", property -> {
             var id = property.getUUID("id");
             var service = Node.instance().serviceProvider().find(id);
 
@@ -103,38 +106,38 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
                 return new ServiceLogPacket(localService.logs());
             }
 
-            var logs = Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-log", ServiceLogPacket.class, property).logs();
+            var logs = Node.instance().clusterProvider().find(service.runningNode()).request("service-log", ServiceLogPacket.class, property).logs();
             return new ServiceLogPacket(logs);
         });
 
-        localNode.transmit().responder("service-players-count", property -> {
+        localNode.server().registerResponder("service-players-count", property -> {
             var service = find(property.getUUID("id"));
 
             if (service instanceof ClusterLocalServiceImpl) {
                 return new IntPacket(service.onlinePlayersCount());
             }
 
-            return new IntPacket(Node.instance().clusterProvider().find(service.runningNode()).transmit().request("service-players-count",  IntPacket.class, property).value());
+            return new IntPacket(Node.instance().clusterProvider().find(service.runningNode()).request("service-players-count",  IntPacket.class, property).value());
         });
 
 
-        localNode.transmit().listen(RedirectPacket.class, (transmit, redirectPacket) -> {
+        localNode.server().listen(RedirectPacket.class, (transmit, redirectPacket) -> {
             var target = redirectPacket.target();
             var service = find(target);
 
             if (service instanceof ClusterLocalServiceImpl localService) {
-                localService.transmit().sendPacket(redirectPacket.packet());
+                localService.transmit().sendPacket(redirectPacket);
                 return;
             }
 
             Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(redirectPacket);
         });
 
-        localNode.transmit().responder("service-players", property -> new PlayerCollectionPacket(find(property.getUUID("id")).onlinePlayers()));
-        localNode.transmit().responder("service-all", property -> new ServiceCollectionPacket(services));
-        localNode.transmit().responder("service-filtering", property -> new ServiceCollectionPacket(find(property.getEnum("filter", ClusterServiceFilter.class))));
+        localNode.server().registerResponder("service-players", property -> new PlayerCollectionPacket(find(property.getUUID("id")).onlinePlayers()));
+        localNode.server().registerResponder("service-all", property -> new ServiceCollectionPacket(services));
+        localNode.server().registerResponder("service-filtering", property -> new ServiceCollectionPacket(find(property.getEnum("filter", ClusterServiceFilter.class))));
 
-        localNode.transmit().listen(ClusterSyncUnregisterServicePacket.class, (transmit, packet) -> Node.instance().serviceProvider().services().removeIf(service -> service.id().equals(packet.id())));
+        localNode.server().listen(ClusterSyncUnregisterServicePacket.class, (transmit, packet) -> Node.instance().serviceProvider().services().removeIf(service -> service.id().equals(packet.id())));
         logReadingThread.start();
     }
 
@@ -165,6 +168,8 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             case PROXIES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.PROXY);
             case SERVERS -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVER);
             case SERVICES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVICE);
+            case SORTED_FALLBACKS ->
+                    services.stream().filter(service -> service.group().fallback()).sorted(Comparator.comparingInt(ClusterService::onlinePlayersCount));
             case LOWEST_FALLBACK ->
                     services.stream().filter(service -> service.group().fallback()).min(Comparator.comparingInt(ClusterService::onlinePlayersCount)).stream();
         }).toList());

@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.node.cluster.impl;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.osgan.networking.server.CommunicationServerAction;
 import dev.httpmarco.polocloud.api.packet.ConnectionAuthPacket;
@@ -13,6 +15,8 @@ import dev.httpmarco.polocloud.node.util.Address;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 @Getter
@@ -36,43 +40,38 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
         this.localServiceBindingAddress = hostname.equals(Address.WILDCARD_ADDRESS) ? Address.LOOPBACK_ADDRESS : hostname;
 
         // we must be verified the connection, for block unauthorized connections
-        this.server.beforePacketHandshake((channel, packet) -> {
+        //TODO replace with security
+        this.server.listen(ConnectionAuthPacket.class, (channel, packet) -> {
             // check if the connection is a node
-            if(Node.instance().clusterProvider().isNodeChannel(channel)) {
-                return true;
+            if (Node.instance().clusterProvider().isNodeChannel(channel)) {
+                return;
             }
 
             // check if the connection is a service
-            if(Node.instance().serviceProvider().isServiceChannel(channel)) {
-                return true;
+            if (Node.instance().serviceProvider().isServiceChannel(channel)) {
+                return;
             }
 
-            // the packet can be use an auth token, for verify the connection
-            if(packet instanceof ConnectionAuthPacket authPacket) {
-
-                // confirm the local node token
-                if(!authPacket.token().equals(Node.instance().nodeConfig().clusterToken())) {
-                    log.warn("Unauthorized cluster token from @{} ", channel.channel().remoteAddress());
-                    return false;
-                }
-
-                // verify possible service connection
-                var possibleService = Node.instance().serviceProvider().find(authPacket.id());
-                if(possibleService instanceof ClusterLocalServiceImpl localService) {
-                    localService.transmit(channel);
-                    return true;
-                }
-
-                // verify possible external node connection
-                var possibleNode = Node.instance().clusterProvider().find(authPacket.id());
-                if(possibleNode instanceof ExternalNode externalNode) {
-                    externalNode.transmit(channel);
-                    log.info("The Node &8'&7@&8{}&8' &7connected to the cluster&8!", externalNode.data().name());
-                    return true;
-                }
+            // confirm the local node token
+            if (!packet.token().equals(Node.instance().nodeConfig().clusterToken())) {
+                log.warn("Unauthorized cluster token from @{} ", channel.channel().remoteAddress());
+                return;
             }
-            log.warn("Unauthorized connection from @{}", packet.getClass());
-            return false;
+
+            // verify possible service connection
+            var possibleService = Node.instance().serviceProvider().find(packet.id());
+            if (possibleService instanceof ClusterLocalServiceImpl localService) {
+                localService.transmit(channel);
+                return;
+            }
+
+            // verify possible external node connection
+            var possibleNode = Node.instance().clusterProvider().find(packet.id());
+
+            if (possibleNode instanceof ExternalNode externalNode) {
+                externalNode.transmit(channel);
+                log.info("The Node &8'&7@&8{}&8' &7connected to the cluster&8!", externalNode.data().name());
+            }
         });
 
         this.server.clientAction(CommunicationServerAction.CLIENT_DISCONNECT, it -> {
@@ -130,5 +129,10 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
     public void close() {
         this.server.close();
         log.info("Node server successfully shutdown.");
+    }
+
+    @Override
+    public <P extends Packet> CompletableFuture<P> requestAsync(String id, Class<P> packet, CommunicationProperty property) {
+        return Node.instance().server().requestAsync(id, packet, property);
     }
 }

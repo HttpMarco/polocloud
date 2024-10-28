@@ -10,4 +10,8 @@ public class GroupProperties {
 
     public static final Property<Boolean> MAINTENANCE = Property.of("maintenance", Boolean.class);
 
+    public static final Property<Integer> START_PORT = Property.of("startPort", Integer.class);
+
+    public static final Property<String> PREFERRED_FALLBACK = Property.of("preferredFallback", String.class);
+
 }

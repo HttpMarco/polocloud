@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.api.event;
 
 import dev.httpmarco.polocloud.api.Named;
+import dev.httpmarco.polocloud.api.packet.resources.event.EventCallPacket;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +30,10 @@ public final class EventSubscribePool implements Named {
         return this.actors.containsKey(event.getClass().getName());
     }
 
-    public void acceptActor(@NotNull Event event) {
-        if(!actors.containsKey(event.getClass().getName())) {
+    public void acceptActor(@NotNull EventCallPacket packet) {
+        if(!actors.containsKey(packet.className())) {
             return;
         }
-        this.actors.get(event.getClass().getName()).alert(event);
+        this.actors.get(packet.className()).alert(packet);
     }
 }
