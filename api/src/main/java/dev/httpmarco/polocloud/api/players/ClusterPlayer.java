@@ -52,7 +52,7 @@ public interface ClusterPlayer extends Named, Detail {
         this.sendTitle(title, subtitle, 10, 70, 20);
     }
 
-    default void connect(@NotNull ClusterService service) {
+    default void connect(ClusterService service) {
         this.connect(service.name());
     }
 }
