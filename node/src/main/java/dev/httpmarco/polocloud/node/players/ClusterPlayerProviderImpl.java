@@ -38,8 +38,6 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
                 Node.instance().clusterProvider().broadcast(packet);
             }
 
-            String.valueOf(Boolean.TRUE).equals("true");
-
             var proxy = servicedProvider.find(packet.proxy());
 
             if (Node.instance().nodeProperties().has(NodeProperties.LOG_PLAYERS_CONNECTION) && Boolean.TRUE.equals(Node.instance().nodeProperties().property(NodeProperties.LOG_PLAYERS_CONNECTION))) {
