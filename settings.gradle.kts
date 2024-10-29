@@ -12,3 +12,5 @@ findProject(":modules:rest")?.name = "rest"
 include("addons")
 include("addons:proxy")
 findProject(":addons:proxy")?.name = "proxy"
+include("addons:hub")
+findProject(":addons:hub")?.name = "hub"
