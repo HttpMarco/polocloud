@@ -11,7 +11,7 @@ import dev.httpmarco.polocloud.node.commands.CommandService;
 import dev.httpmarco.polocloud.node.commands.CommandServiceImpl;
 import dev.httpmarco.polocloud.node.events.EventProviderImpl;
 import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
-import dev.httpmarco.polocloud.node.module.ModuleProvider;
+import dev.httpmarco.polocloud.node.modules.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.players.ClusterPlayerProviderImpl;
 import dev.httpmarco.polocloud.api.properties.PropertyRegister;
