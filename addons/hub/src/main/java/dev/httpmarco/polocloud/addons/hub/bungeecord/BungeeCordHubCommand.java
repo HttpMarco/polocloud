@@ -13,7 +13,7 @@ public class BungeeCordHubCommand extends Command {
     private static final String PREFIX = "§b§lPoloCloud-Hub §8» §7";
 
     public BungeeCordHubCommand(String name, String... aliases) {
-        super(name, "", aliases);
+        super(name, "polocloud.addon.hub.command", aliases);
     }
 
     @Override
