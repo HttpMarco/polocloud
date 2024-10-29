@@ -8,7 +8,7 @@ allprojects {
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
 
-    group = "dev.httpmarco.polocloud.node"
+    group = "dev.httpmarco.polocloud"
     version = project.version
 
     repositories {
