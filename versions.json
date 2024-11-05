@@ -10,6 +10,10 @@
       ],
       "versions": [
         {
+          "version": "1.21.3",
+          "url": "https://api.papermc.io/v2/projects/paper/versions/1.21.3/builds/13/downloads/paper-1.21.3-13.jar"
+        },
+        {
           "version": "1.21.1",
           "url": "https://api.papermc.io/v2/projects/paper/versions/1.21.1/builds/57/downloads/paper-1.21.1-57.jar"
         },
@@ -488,6 +492,10 @@
       "patchers": [],
       "versions": [
         {
+          "version": "3.4.0-SNAPSHOT",
+          "url": "https://api.papermc.io/v2/projects/velocity/versions/3.4.0-SNAPSHOT/builds/449/downloads/velocity-3.4.0-SNAPSHOT-449.jar"
+        },
+        {
           "version": "3.3.0-SNAPSHOT",
           "url": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/413/downloads/velocity-3.3.0-SNAPSHOT-413.jar"
         }
@@ -523,7 +531,7 @@
       "versions": [
         {
           "version": "latest",
-          "url": "https://ci.md-5.net/job/BungeeCord/1858/artifact/bootstrap/target/BungeeCord.jar"
+          "url": "https://ci.md-5.net/job/BungeeCord/1881/artifact/bootstrap/target/BungeeCord.jar"
         }
       ],
       "files": [
@@ -613,60 +621,64 @@
       ],
       "versions": [
         {
+          "version": "1.21.3",
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.21.3/0.16.9/1.0.1/server/jar"
+        },
+        {
           "version": "1.21.1",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.21.1/0.16.3/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.21.1/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.20.6",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.6/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.6/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.20.4",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.4/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.4/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.20.2",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.2/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.2/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.20.1",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.1/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20.1/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.20",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.20/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.19.4",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.4/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.4/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.19.3",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.3/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.3/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.19.2",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.2/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.2/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.19.2",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.1/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.1/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.19",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.19/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.18.2",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.18.2/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.18.2/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.18.1",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.18.1/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.18.1/0.16.9/1.0.1/server/jar"
         },
         {
           "version": "1.18",
-          "url": "https://meta.fabricmc.net/v2/versions/loader/1.18/0.16.4/1.0.1/server/jar"
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.18/0.16.9/1.0.1/server/jar"
         }
       ],
       "files": [
@@ -706,6 +718,10 @@
         "-nogui"
       ],
       "versions": [
+        {
+          "version": "1.21.3",
+          "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.21.3-13.0.0-RC1882/spongevanilla-1.21.3-13.0.0-RC1882-universal.jar"
+        },
         {
           "version": "1.21.1",
           "url": "https://repo.spongepowered.org/repository/maven-releases/org/spongepowered/spongevanilla/1.21.1-12.0.0-RC1791/spongevanilla-1.21.1-12.0.0-RC1791-universal.jar"
