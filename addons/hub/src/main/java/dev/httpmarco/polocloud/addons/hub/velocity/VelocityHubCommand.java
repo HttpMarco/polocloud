@@ -43,7 +43,7 @@ public class VelocityHubCommand implements SimpleCommand {
             return;
         }
 
-        var lowestFallbackService = CloudAPI.instance().serviceProvider().findAsync(ClusterServiceFilter.LOWEST_FALLBACK);
+        var lowestFallbackService = CloudAPI.instance().serviceProvider().findAsync(ClusterServiceFilter.EMPTIEST_FALLBACK);
         if (lowestFallbackService.join().isEmpty()) {
             player.sendMessage(MiniMessage.miniMessage().deserialize(PREFIX + messages.noFallbackFound()));
             return;
