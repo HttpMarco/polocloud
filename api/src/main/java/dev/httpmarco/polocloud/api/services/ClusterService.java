@@ -43,10 +43,17 @@ public interface ClusterService extends Named, Detail, ChannelAppender {
 
     CompletableFuture<List<ClusterPlayer>> onlinePlayersAsync();
 
+    CompletableFuture<Integer> currentMemoryAsync();
+
     PropertiesPool properties();
 
     default boolean isEmpty() {
         return this.onlinePlayersCount() == 0;
+    }
+
+    @SneakyThrows
+    default int currentMemory(){
+        return this.currentMemoryAsync().get(5, TimeUnit.SECONDS);
     }
 
     @SneakyThrows

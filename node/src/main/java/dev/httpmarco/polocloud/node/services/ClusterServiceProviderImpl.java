@@ -1,16 +1,12 @@
 package dev.httpmarco.polocloud.node.services;
 
-import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
-import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.event.EventPoolRegister;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.RedirectPacket;
-import dev.httpmarco.polocloud.api.packet.resources.event.EventCallPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
@@ -96,6 +92,16 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
                 return;
             }
             Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(packet);
+        });
+
+        localNode.server().registerResponder("current-service-memory", property -> {
+            var service = find(property.getUUID("id"));
+
+            if (service instanceof ClusterLocalServiceImpl localService) {
+                return new IntPacket(localService.currentMemory());
+            }
+
+            return new IntPacket(Node.instance().clusterProvider().find(service.runningNode()).request("current-service-memory", IntPacket.class, property).value());
         });
 
         localNode.server().registerResponder("service-log", property -> {

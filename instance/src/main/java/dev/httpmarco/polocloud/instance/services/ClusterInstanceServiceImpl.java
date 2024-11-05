@@ -79,6 +79,13 @@ public final class ClusterInstanceServiceImpl implements ClusterService {
     }
 
     @Override
+    public CompletableFuture<Integer> currentMemoryAsync() {
+        var future = new CompletableFuture<Integer>();
+        ClusterInstance.instance().client().requestAsync("current-service-memory", IntPacket.class, new CommunicationProperty().set("id", id)).whenComplete((it, t) -> future.complete(it.value()));
+        return future;
+    }
+
+    @Override
     public String details() {
         return this.toString();
     }

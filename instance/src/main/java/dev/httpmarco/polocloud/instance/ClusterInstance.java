@@ -31,7 +31,7 @@ public final class ClusterInstance extends CloudAPI {
 
     private final EventProviderImpl eventProvider;
     private final ClusterInstanceGroupProvider groupProvider = new ClusterInstanceGroupProvider();
-    private final ClusterServiceProvider serviceProvider = new ClusterInstanceServiceProvider();
+    private final ClusterServiceProvider serviceProvider;
     private final ClusterPlayerProvider playerProvider = new ClusterPlayerProviderImpl();
     private final CommunicationClient client;
 
@@ -60,6 +60,8 @@ public final class ClusterInstance extends CloudAPI {
             } catch (ClassNotFoundException ignored) {
             }
         });
+
+        this.serviceProvider = new ClusterInstanceServiceProvider(this.client);
     }
 
     @Override
