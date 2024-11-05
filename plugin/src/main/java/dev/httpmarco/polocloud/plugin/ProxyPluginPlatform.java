@@ -57,7 +57,7 @@ public final class ProxyPluginPlatform<T> extends PluginPlatform {
             proxyServerHandler.unregisterServer(registered);
         }
 
-        for (var service : CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.ONLINE_SERVICES)) {
+        for (var service : CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.ONLINE_SERVERS)) {
             if (service.group().platform().type() == PlatformType.SERVER) {
                 proxyServerHandler.registerServer(service.name(), overwriteHostname(service), service.port());
             }
@@ -100,7 +100,7 @@ public final class ProxyPluginPlatform<T> extends PluginPlatform {
                     .filter(service -> service.group().name().equals(fallbackGroup))
                     .toList();
         } else {
-            fallback = CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.LOWEST_FALLBACK);
+            fallback = CloudAPI.instance().serviceProvider().find(ClusterServiceFilter.EMPTIEST_FALLBACK);
         }
 
         return fallback;
