@@ -165,9 +165,11 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
     @Override
     public @NotNull CompletableFuture<List<ClusterService>> findAsync(@NotNull ClusterServiceFilter filter) {
         return CompletableFuture.completedFuture((switch (filter) {
-            case ONLINE_SERVICES -> services.stream().filter(service -> service.state() == ClusterServiceState.ONLINE);
+            case ONLINE_SERVERS -> services.stream().filter(service -> service.state() == ClusterServiceState.ONLINE);
             case EMPTY_SERVICES -> services.stream().filter(ClusterService::isEmpty);
             case PLAYERS_PRESENT_SERVERS -> services.stream().filter(service -> !service.isEmpty());
+            case FULLEST_SERVER -> services.stream().max(Comparator.comparing(ClusterService::onlinePlayersCount)).stream();
+            case EMPTIEST_SERVER -> services.stream().min(Comparator.comparing(ClusterService::onlinePlayersCount)).stream();
             case SAME_NODE_SERVICES ->
                     services.stream().filter(it -> Node.instance().clusterProvider().localNode().data().name().equals(it.runningNode()));
             case FALLBACKS -> services.stream().filter(service -> service.group().fallback());
@@ -176,7 +178,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             case SERVICES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVICE);
             case SORTED_FALLBACKS ->
                     services.stream().filter(service -> service.group().fallback()).sorted(Comparator.comparingInt(ClusterService::onlinePlayersCount));
-            case LOWEST_FALLBACK ->
+            case EMPTIEST_FALLBACK ->
                     services.stream().filter(service -> service.group().fallback()).min(Comparator.comparingInt(ClusterService::onlinePlayersCount)).stream();
         }).toList());
     }
