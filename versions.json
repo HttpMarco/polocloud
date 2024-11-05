@@ -492,6 +492,10 @@
       "patchers": [],
       "versions": [
         {
+          "version": "3.4.0-SNAPSHOT",
+          "url": "https://api.papermc.io/v2/projects/velocity/versions/3.4.0-SNAPSHOT/builds/449/downloads/velocity-3.4.0-SNAPSHOT-449.jar"
+        },
+        {
           "version": "3.3.0-SNAPSHOT",
           "url": "https://api.papermc.io/v2/projects/velocity/versions/3.3.0-SNAPSHOT/builds/413/downloads/velocity-3.3.0-SNAPSHOT-413.jar"
         }
