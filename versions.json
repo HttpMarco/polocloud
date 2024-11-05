@@ -621,6 +621,10 @@
       ],
       "versions": [
         {
+          "version": "1.21.3",
+          "url": "https://meta.fabricmc.net/v2/versions/loader/1.21.3/0.16.9/1.0.1/server/jar"
+        },
+        {
           "version": "1.21.1",
           "url": "https://meta.fabricmc.net/v2/versions/loader/1.21.1/0.16.3/1.0.1/server/jar"
         },
