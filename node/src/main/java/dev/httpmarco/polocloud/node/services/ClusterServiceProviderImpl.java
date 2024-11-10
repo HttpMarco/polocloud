@@ -1,16 +1,12 @@
 package dev.httpmarco.polocloud.node.services;
 
-import dev.httpmarco.osgan.networking.CommunicationFuture;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
-import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.event.EventPoolRegister;
 import dev.httpmarco.polocloud.api.event.impl.services.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.RedirectPacket;
-import dev.httpmarco.polocloud.api.packet.resources.event.EventCallPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.PlayerCollectionPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.*;
 import dev.httpmarco.polocloud.api.platforms.PlatformType;
@@ -98,6 +94,16 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(packet);
         });
 
+        localNode.server().registerResponder("current-service-memory", property -> {
+            var service = find(property.getUUID("id"));
+
+            if (service instanceof ClusterLocalServiceImpl localService) {
+                return new IntPacket(localService.currentMemory());
+            }
+
+            return new IntPacket(Node.instance().clusterProvider().find(service.runningNode()).request("current-service-memory", IntPacket.class, property).value());
+        });
+
         localNode.server().registerResponder("service-log", property -> {
             var id = property.getUUID("id");
             var service = Node.instance().serviceProvider().find(id);
@@ -159,9 +165,11 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
     @Override
     public @NotNull CompletableFuture<List<ClusterService>> findAsync(@NotNull ClusterServiceFilter filter) {
         return CompletableFuture.completedFuture((switch (filter) {
-            case ONLINE_SERVICES -> services.stream().filter(service -> service.state() == ClusterServiceState.ONLINE);
+            case ONLINE_SERVERS -> services.stream().filter(service -> service.state() == ClusterServiceState.ONLINE);
             case EMPTY_SERVICES -> services.stream().filter(ClusterService::isEmpty);
             case PLAYERS_PRESENT_SERVERS -> services.stream().filter(service -> !service.isEmpty());
+            case FULLEST_SERVER -> services.stream().max(Comparator.comparing(ClusterService::onlinePlayersCount)).stream();
+            case EMPTIEST_SERVER -> services.stream().min(Comparator.comparing(ClusterService::onlinePlayersCount)).stream();
             case SAME_NODE_SERVICES ->
                     services.stream().filter(it -> Node.instance().clusterProvider().localNode().data().name().equals(it.runningNode()));
             case FALLBACKS -> services.stream().filter(service -> service.group().fallback());
@@ -170,7 +178,7 @@ public final class ClusterServiceProviderImpl extends ClusterServiceProvider imp
             case SERVICES -> services.stream().filter(it -> it.group().platform().type() == PlatformType.SERVICE);
             case SORTED_FALLBACKS ->
                     services.stream().filter(service -> service.group().fallback()).sorted(Comparator.comparingInt(ClusterService::onlinePlayersCount));
-            case LOWEST_FALLBACK ->
+            case EMPTIEST_FALLBACK ->
                     services.stream().filter(service -> service.group().fallback()).min(Comparator.comparingInt(ClusterService::onlinePlayersCount)).stream();
         }).toList());
     }

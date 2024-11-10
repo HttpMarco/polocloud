@@ -48,7 +48,7 @@ public class BungeeCordHubCommand extends Command {
             return;
         }
 
-        var lowestFallbackService = CloudAPI.instance().serviceProvider().findAsync(ClusterServiceFilter.LOWEST_FALLBACK);
+        var lowestFallbackService = CloudAPI.instance().serviceProvider().findAsync(ClusterServiceFilter.EMPTIEST_FALLBACK);
         if (lowestFallbackService.join().isEmpty()) {
             player.sendMessage(new TextComponent(PREFIX + messages.noFallbackFound()));
             return;
