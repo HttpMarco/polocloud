@@ -1,6 +1,6 @@
 [versions]
 # utils
-lombok = "1.18.34"
+lombok = "1.18.36"
 annotations = "26.0.1"
 
 nexusPublish = "2.0.0"
@@ -25,7 +25,7 @@ velocity = "3.3.0-SNAPSHOT"
 bungeecord = "1.20-R0.2"
 waterdogpe = "1.2.4"
 nukkit = "1.0-SNAPSHOT"
-fabric = "0.16.8"
+fabric = "0.16.9"
 sponge = "9.0.0"
 
 # rest
