@@ -22,7 +22,7 @@ public class HeadNodeDetection {
         for (NodeEndpoint endpoint : service.endpoints()) {
             if (endpoint.situation() == NodeSituation.RECHEABLE) {
                 // request head node data
-                var headNode = Objects.requireNonNull(endpoint.transmit()).request("node-head-request", NodeHeadRequestPacket.class).headNode();
+                var headNode = endpoint.request("node-head-request", NodeHeadRequestPacket.class).headNode();
                 var nodeEndpoint = service.find(headNode);
 
                 if (nodeEndpoint.situation() != NodeSituation.RECHEABLE || nodeEndpoint.transmit() == null) {

@@ -25,6 +25,7 @@ public final class PoloCloudLauncher {
 
         PoloCloudLauncher.CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
 
+        var mavenArtifact = new Dependency("org.apache.maven", "maven-artifact", "4.0.0-beta-5");
         var gsonDependency = new Dependency("com.google.code.gson", "gson", "2.11.0");
         var nettyCommonDependency = new Dependency("io.netty", "netty5-common", "5.0.0.Alpha5");
         var nettyTransportDependency = new Dependency("io.netty", "netty5-transport", "5.0.0.Alpha5");
@@ -32,12 +33,12 @@ public final class PoloCloudLauncher {
         var nettyResolverDependency = new Dependency("io.netty", "netty5-resolver", "5.0.0.Alpha5");
         var nettyBufferDependency = new Dependency("io.netty", "netty5-buffer", "5.0.0.Alpha5");
         var nettyTransportEpollDependency = new Dependency("io.netty", "netty5-transport-classes-epoll", "5.0.0.Alpha5");
-        var osganNettyDependency = new Dependency("dev.httpmarco", "osgan-netty", "1.0.31-SNAPSHOT", "1.0.31-20241006.210407-1", Repository.MAVEN_CENTRAL_SNAPSHOT);
+        var osganNettyDependency = new Dependency("dev.httpmarco", "osgan-netty", "1.1.0-SNAPSHOT", "1.1.0-20241028.200418-1", Repository.MAVEN_CENTRAL_SNAPSHOT);
 
         // add boot file to the current classpath
         CLASS_LOADER.addURL(boot.bootFile().toURI().toURL());
 
-        DependencyDownloader.download(gsonDependency, nettyCommonDependency, nettyTransportDependency, nettyCodecDependency, nettyResolverDependency, nettyBufferDependency, nettyTransportEpollDependency, osganNettyDependency);
+        DependencyDownloader.download(mavenArtifact, gsonDependency, nettyCommonDependency, nettyTransportDependency, nettyCodecDependency, nettyResolverDependency, nettyBufferDependency, nettyTransportEpollDependency, osganNettyDependency);
 
         Thread.currentThread().setContextClassLoader(CLASS_LOADER);
         Class.forName(boot.mainClass(), true, CLASS_LOADER).getMethod("main", String[].class).invoke(null, (Object) args);

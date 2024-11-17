@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.players;
 
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
+import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.packet.BooleanPacket;
 import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.resources.player.*;
@@ -8,6 +9,7 @@ import dev.httpmarco.polocloud.api.players.ClusterPlayer;
 import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.NodeProperties;
+import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -29,20 +31,44 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
 
     public ClusterPlayerProviderImpl() {
         var servicedProvider = Node.instance().serviceProvider();
-        Node.instance().clusterProvider().localNode().transmit().listen(PlayerRegisterPacket.class, (transmit, packet) -> {
+        var server = Node.instance().server();
+
+        server.listen(PlayerRegisterPacket.class, (transmit, packet) -> {
             if (!servicedProvider.isServiceChannel(transmit)) {
                 Node.instance().clusterProvider().broadcast(packet);
             }
 
             var proxy = servicedProvider.find(packet.proxy());
 
-            if (Node.instance().nodeProperties().has(NodeProperties.LOG_PLAYERS_CONNECTION) && Node.instance().nodeProperties().property(NodeProperties.LOG_PLAYERS_CONNECTION)) {
+            if (Node.instance().nodeProperties().has(NodeProperties.LOG_PLAYERS_CONNECTION) && Boolean.TRUE.equals(Node.instance().nodeProperties().property(NodeProperties.LOG_PLAYERS_CONNECTION))) {
                 log.info("The player &8'&7{}&8' &7is connected on the proxy {}&8.", packet.username(), proxy.name());
             }
             playersPool.put(packet.uuid(), new ClusterPlayerImpl(packet.username(), packet.uuid(), proxy));
         });
 
-        Node.instance().clusterProvider().localNode().transmit().listen(PlayerServiceChangePacket.class, (transmit, packet) -> {
+        server.listen(PlayerConnectPacket.class, (transmit, packet) -> {
+            var player = Node.instance().playerProvider().find(packet.uuid());
+
+            if(player == null) {
+                log.warn("This node cannot connect the player to the server, uuid: {}", packet.uuid());
+                return;
+            }
+
+            var service = Node.instance().serviceProvider().find(packet.serverId());
+
+            if(service == null) {
+                log.warn("This node cannot connect the player to the server, service not found: {}", packet.serverId());
+                return;
+            }
+
+            if(player.currentProxy() instanceof ClusterLocalServiceImpl localService) {
+                localService.sendPacket(packet);
+            }else {
+                Node.instance().clusterProvider().find(service.runningNode()).transmit().sendPacket(packet);
+            }
+        });
+
+        server.listen(PlayerServiceChangePacket.class, (transmit, packet) -> {
             if (!servicedProvider.isServiceChannel(transmit)) {
                 Node.instance().clusterProvider().broadcast(packet);
             }
@@ -60,7 +86,7 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
             }
         });
 
-        Node.instance().clusterProvider().localNode().transmit().listen(PlayerUnregisterPacket.class, (transmit, packet) -> {
+        server.listen(PlayerUnregisterPacket.class, (transmit, packet) -> {
             if (!servicedProvider.isServiceChannel(transmit)) {
                 Node.instance().clusterProvider().broadcast(packet);
             }
@@ -71,10 +97,10 @@ public final class ClusterPlayerProviderImpl extends ClusterPlayerProvider {
             playersPool.remove(packet.uuid());
         });
 
-        Node.instance().clusterProvider().localNode().transmit().responder("player-all", property -> new PlayerCollectionPacket(players()));
-        Node.instance().clusterProvider().localNode().transmit().responder("player-count", property -> new IntPacket(playersCount()));
-        Node.instance().clusterProvider().localNode().transmit().responder("player-find", property -> new PlayerPacket(property.has("uuid") ? find(property.getUUID("uuid")) : find(property.getString("name"))));
-        Node.instance().clusterProvider().localNode().transmit().responder("player-online", property -> new BooleanPacket(property.has("uuid") ? online(property.getUUID("uuid")) : online(property.getString("name"))));
+        server.registerResponder("player-all", property -> new PlayerCollectionPacket(players()));
+        server.registerResponder("player-count", property -> new IntPacket(playersCount()));
+        server.registerResponder("player-find", property -> new PlayerPacket(property.has("uuid") ? find(property.getUUID("uuid")) : find(property.getString("name"))));
+        server.registerResponder("player-online", property -> new BooleanPacket(property.has("uuid") ? online(property.getUUID("uuid")) : online(property.getString("name"))));
     }
 
     @Override

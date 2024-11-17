@@ -1,9 +1,11 @@
 package dev.httpmarco.polocloud.instance;
 
+import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
-import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
+import dev.httpmarco.polocloud.api.packet.ConnectionAuthPacket;
+import dev.httpmarco.polocloud.api.packet.RedirectPacket;
 import dev.httpmarco.polocloud.api.players.ClusterPlayerProvider;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
@@ -29,7 +31,7 @@ public final class ClusterInstance extends CloudAPI {
 
     private final EventProviderImpl eventProvider;
     private final ClusterInstanceGroupProvider groupProvider = new ClusterInstanceGroupProvider();
-    private final ClusterServiceProvider serviceProvider = new ClusterInstanceServiceProvider();
+    private final ClusterServiceProvider serviceProvider;
     private final ClusterPlayerProvider playerProvider = new ClusterPlayerProviderImpl();
     private final CommunicationClient client;
 
@@ -45,11 +47,30 @@ public final class ClusterInstance extends CloudAPI {
         this.eventProvider = new EventProviderImpl();
 
         this.client.clientAction(CommunicationClientAction.CONNECTED, transmit -> {
-            transmit.sendPacket(new ServiceConnectPacket(selfServiceId));
+            transmit.sendPacket(new ConnectionAuthPacket(System.getenv("cluster-token"), System.getenv("serviceName"), ConnectionAuthPacket.Reason.SERVICE));
 
             serviceProvider().findAsync(selfServiceId).whenComplete((clusterService, throwable) -> this.selfService = clusterService);
         });
 
         ClusterInstanceFactory.startPlatform(args);
+
+        this.client.listen(RedirectPacket.class, (transmit, redirectPacket) -> {
+            try {
+                this.client.call(redirectPacket.buildPacket(), transmit);
+            } catch (ClassNotFoundException ignored) {
+            }
+        });
+
+        this.serviceProvider = new ClusterInstanceServiceProvider(this.client);
+    }
+
+    @Override
+    public ClassSupplier classSupplier() {
+        return this.client.classSupplier();
+    }
+
+    @Override
+    public void classSupplier(ClassSupplier classSupplier) {
+        this.client.classSupplier(classSupplier);
     }
 }

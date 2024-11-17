@@ -60,10 +60,14 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
         // send the platform boot jar
         processBuilder.environment().put("bootstrapFile", group.platform().platformJarName());
         processBuilder.environment().put("nodeEndPointPort", String.valueOf(Node.instance().clusterProvider().localNode().data().port()));
+
         processBuilder.environment().put("serviceId", localService.id().toString());
+        processBuilder.environment().put("serviceName", localService.name());
+
         processBuilder.environment().put("forwarding_secret", PlatformService.FORWARDING_SECRET);
         processBuilder.environment().put("hostname", localService.hostname());
         processBuilder.environment().put("port", String.valueOf(localService.port()));
+        processBuilder.environment().put("cluster-token", Node.instance().nodeConfig().clusterToken());
         processBuilder.environment().put("node-hostname", Node.instance().clusterProvider().localNode().localServiceBindingAddress());
 
         // copy platform plugin for have a better control of service
@@ -106,7 +110,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
         var path = "../../local/dependencies/";
         //todo use dynamic queue
-        var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.0.31-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
+        var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.1.0-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
 
         arguments.add(String.join(System.getProperty("os.name").toLowerCase().contains("win") ? ";" : ":", neededDependencies.stream().map(it -> path + it).toList()));
 

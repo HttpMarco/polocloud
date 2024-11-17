@@ -1,19 +1,22 @@
 package dev.httpmarco.polocloud.node.cluster.impl;
 
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
+import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.osgan.networking.server.CommunicationServerAction;
-import dev.httpmarco.polocloud.api.packet.resources.services.ServiceConnectPacket;
+import dev.httpmarco.polocloud.api.packet.ConnectionAuthPacket;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.LocalNode;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.impl.transmit.LocalChannelTransmit;
-import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
 import dev.httpmarco.polocloud.node.services.ClusterLocalServiceImpl;
 import dev.httpmarco.polocloud.node.util.Address;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.concurrent.CompletableFuture;
 
 @Log4j2
 @Getter
@@ -35,6 +38,41 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
         this.port = data.port();
         this.server = new CommunicationServer(hostname, port);
         this.localServiceBindingAddress = hostname.equals(Address.WILDCARD_ADDRESS) ? Address.LOOPBACK_ADDRESS : hostname;
+
+        // we must be verified the connection, for block unauthorized connections
+        //TODO replace with security
+        this.server.listen(ConnectionAuthPacket.class, (channel, packet) -> {
+            // check if the connection is a node
+            if (Node.instance().clusterProvider().isNodeChannel(channel)) {
+                return;
+            }
+
+            // check if the connection is a service
+            if (Node.instance().serviceProvider().isServiceChannel(channel)) {
+                return;
+            }
+
+            // confirm the local node token
+            if (!packet.token().equals(Node.instance().nodeConfig().clusterToken())) {
+                log.warn("Unauthorized cluster token from @{} ", channel.channel().remoteAddress());
+                return;
+            }
+
+            // verify possible service connection
+            var possibleService = Node.instance().serviceProvider().find(packet.id());
+            if (possibleService instanceof ClusterLocalServiceImpl localService) {
+                localService.transmit(channel);
+                return;
+            }
+
+            // verify possible external node connection
+            var possibleNode = Node.instance().clusterProvider().find(packet.id());
+
+            if (possibleNode instanceof ExternalNode externalNode) {
+                externalNode.transmit(channel);
+                log.info("The Node &8'&7@&8{}&8' &7connected to the cluster&8!", externalNode.data().name());
+            }
+        });
 
         this.server.clientAction(CommunicationServerAction.CLIENT_DISCONNECT, it -> {
             var possibleService = findLocalService(it);
@@ -58,48 +96,10 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
                 log.info("The Node &8'&7@&b{}' &7disconnected from cluster!", possibleNode.data().name());
             }
         });
-
-        this.server.listen(NodeConnectPacket.class, (it, packet) -> {
-            if (!Node.instance().nodeConfig().clusterToken().equals(packet.clusterToken())) {
-                it.channel().close();
-                return;
-            }
-
-            var node = Node.instance().clusterProvider().find(packet.selfId());
-
-            if (node == null) {
-                it.channel().close();
-                return;
-            }
-
-            if (node instanceof ExternalNode externalNode) {
-                externalNode.transmit(it);
-                log.info("The Node &8'&7@&8{}&8' &7connected to the cluster&8!", externalNode.data().name());
-            } else {
-                it.channel().close();
-            }
-        });
-
-        this.server.listen(ServiceConnectPacket.class, (channel, packet) -> {
-
-            if (Node.instance().serviceProvider().services().stream().noneMatch(it -> it.id().equals(packet.id()))) {
-                channel.channel().close();
-                return;
-            }
-
-            var service = Node.instance().serviceProvider().find(packet.id());
-
-            if (service instanceof ClusterLocalServiceImpl localService) {
-                localService.transmit(channel);
-            } else {
-                channel.channel().close();
-            }
-        });
-
         this.transmit = new LocalChannelTransmit(server);
     }
 
-
+    @Deprecated
     private ClusterLocalServiceImpl findLocalService(ChannelTransmit transmit) {
         return Node.instance().serviceProvider()
                 .services()
@@ -129,5 +129,10 @@ public final class LocalNodeImpl extends AbstractNode implements LocalNode {
     public void close() {
         this.server.close();
         log.info("Node server successfully shutdown.");
+    }
+
+    @Override
+    public <P extends Packet> CompletableFuture<P> requestAsync(String id, Class<P> packet, CommunicationProperty property) {
+        return Node.instance().server().requestAsync(id, packet, property);
     }
 }

@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Slf4j
@@ -89,6 +90,11 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl {
         });
 
         this.processTracking.start();
+    }
+
+    @Override
+    public CompletableFuture<Integer> currentMemoryAsync() {
+        return CompletableFuture.completedFuture(0); //TODO
     }
 
     @Override

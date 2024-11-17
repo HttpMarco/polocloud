@@ -2,12 +2,13 @@ package dev.httpmarco.polocloud.node.update;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.httpmarco.polocloud.launcher.update.AutoUpdateInstaller;
 import dev.httpmarco.polocloud.node.util.Downloader;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -15,9 +16,13 @@ import java.net.URL;
 import java.nio.file.Path;
 
 @Log4j2
+@Getter
+@Accessors(fluent = true)
 public final class AutoUpdater {
 
     private static final String REPO_URL = "https://api.github.com/repos/HttpMarco/polocloud/releases";
+    private boolean isInstalled = false;
+    private String downloadName;
 
     public void notifyIfUpdateAvailable() {
         var release = latestRelease();
@@ -25,14 +30,17 @@ public final class AutoUpdater {
             return;
         }
 
-        var releaseVersion = releaseVersion(release);
-        var currentVersion = System.getProperty("Polocloud-Version");
+        var rawReleaseVersion = releaseVersion(release);
+        var rawCurrentVersion = System.getProperty("Polocloud-Version");
 
-        if (!VersionVerifier.isNewerVersion(currentVersion, releaseVersion)) {
+        var releaseVersion = new ComparableVersion(rawReleaseVersion);
+        var currentVersion = new ComparableVersion(rawCurrentVersion);
+
+        if (releaseVersion.compareTo(currentVersion) <= 0) {
             return;
         }
 
-        notifyUpdate(release.get("html_url").getAsString(), releaseVersion);
+        notifyUpdate(release.get("html_url").getAsString(), rawReleaseVersion);
     }
 
     private void notifyUpdate(String releaseUrl, String releaseVersion) {
@@ -43,23 +51,33 @@ public final class AutoUpdater {
         log.warn(" ");
     }
 
+    private void notifyConfirm() {
+        log.warn(" ");
+        log.warn("The new version of PoloCloud has been downloaded successfully.");
+        log.warn("Please confirm the installation by executing the \"node update confirm\" command.");
+        log.warn(" ");
+    }
+
     public void update() {
         var release = latestRelease();
         if (release == null) {
             return;
         }
 
-        var releaseVersion = releaseVersion(release);
-        var currentVersion = System.getProperty("Polocloud-Version");
+        var rawReleaseVersion = releaseVersion(release);
+        var rawCurrentVersion = System.getProperty("Polocloud-Version");
 
-        if (!VersionVerifier.isNewerVersion(currentVersion, releaseVersion)) {
+        var releaseVersion = new ComparableVersion(rawReleaseVersion);
+        var currentVersion = new ComparableVersion(rawCurrentVersion);
+
+        if (releaseVersion.compareTo(currentVersion) <= 0) {
             log.warn("You are already using the latest version of PoloCloud.");
             return;
         }
 
-        var asset = findReleaseAsset(release, releaseVersion);
+        var asset = findReleaseAsset(release, rawReleaseVersion);
         if (asset == null) {
-            log.warn("No suitable asset found for version: {}", releaseVersion);
+            log.warn("No suitable asset found for version: {}", rawReleaseVersion);
             return;
         }
 
@@ -68,7 +86,11 @@ public final class AutoUpdater {
 
         log.info("Downloading new Update...");
         Downloader.download(downloadUrl, Path.of(downloadName).toAbsolutePath());
-        AutoUpdateInstaller.installUpdate(new File(downloadName));
+
+        this.downloadName = downloadName;
+        this.isInstalled = true;
+
+        notifyConfirm();
     }
 
     private JsonObject findReleaseAsset(JsonObject release, String releaseVersion) {

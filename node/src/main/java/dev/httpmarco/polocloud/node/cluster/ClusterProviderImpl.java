@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.cluster;
 
+import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.NodeConfig;
@@ -35,18 +36,18 @@ public final class ClusterProviderImpl implements ClusterProvider {
         this.localNode = new LocalNodeImpl(config.localNode());
         this.endpoints = new HashSet<>();
 
-        localNode.transmit().responder("node-state", property -> new NodeSituationResponsePacket(localNode.situation()));
+        localNode.server().registerResponder("node-state", property -> new NodeSituationResponsePacket(localNode.situation()));
 
-        localNode.transmit().responder("auth-cluster-token", property -> {
+        localNode.server().registerResponder("auth-cluster-token", property -> {
             boolean value = config.clusterToken().equals(property.getString("token"));
             // todo close connection here and check all incoming packets !!! important
             log.warn("External try to authenticate with the cluster token&8. &7The result is &b{}&8.", value);
             return new ClusterAuthTokenPacket(value);
         });
 
-        localNode.transmit().responder("node-head-request", property -> new NodeHeadRequestPacket(headNode.data().name()));
+        localNode.server().registerResponder("node-head-request", property -> new NodeHeadRequestPacket(headNode.data().name()));
 
-        localNode.transmit().listen(ClusterMergeFamilyPacket.class, (transmit, packet) -> {
+        localNode.server().listen(ClusterMergeFamilyPacket.class, (transmit, packet) -> {
             // todo security issue
             config.clusterId(packet.clusterId());
             config.clusterToken(packet.clusterToken());
@@ -62,8 +63,8 @@ public final class ClusterProviderImpl implements ClusterProvider {
             log.info("The cluster has been merged with the family&8. &7The cluster id is now &b{}&8.", packet.clusterId());
             //todo connect with all other new endpoints
         });
-        localNode.transmit().listen(ClusterRequireReloadPacket.class, (transmit, packet) -> broadcastAll(new ClusterReloadCallPacket()));
-        localNode.transmit().listen(ClusterReloadCallPacket.class, (transmit, packet) -> {
+        localNode.server().listen(ClusterRequireReloadPacket.class, (transmit, packet) -> broadcastAll(new ClusterReloadCallPacket()));
+        localNode.server().listen(ClusterReloadCallPacket.class, (transmit, packet) -> {
 
             // reloading first all groups
             Node.instance().groupProvider().reload();
@@ -102,10 +103,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
             var future = new CompletableFuture<>();
 
             externalNode.connect(transmit -> {
-
-
-
-                transmit.requestAsync("node-state", NodeSituationResponsePacket.class).whenComplete((it, t) -> {
+                externalNode.requestAsync("node-state", NodeSituationResponsePacket.class).whenComplete((it, t) -> {
                     externalNode.situation(it.situation());
                     future.complete(true);
                 });
@@ -131,5 +129,9 @@ public final class ClusterProviderImpl implements ClusterProvider {
     @Override
     public void close() {
         this.localNode.close();
+    }
+
+    public boolean isNodeChannel(ChannelTransmit transmit) {
+        return this.endpoints.stream().anyMatch(it -> it.transmit() != null && Objects.equals(it.transmit(), transmit));
     }
 }

@@ -4,6 +4,7 @@ import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.packet.Packet;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.RedirectPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCommandPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceLogPacket;
@@ -20,7 +21,6 @@ import lombok.experimental.Accessors;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 @Accessors(fluent = true)
@@ -50,7 +50,12 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     @SneakyThrows
     public List<String> logs() {
-        return node().transmit().request("service-log", ServiceLogPacket.class, new CommunicationProperty().set("id", id)).logs();
+        return node().request("service-log", ServiceLogPacket.class, new CommunicationProperty().set("id", id)).logs();
+    }
+
+    @Override
+    public CompletableFuture<Integer> currentMemoryAsync() {
+        return node().requestAsync("current-service-memory", IntPacket.class, new CommunicationProperty().set("id", id)).thenApply(IntPacket::value);
     }
 
     @Override

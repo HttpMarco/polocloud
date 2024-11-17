@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.node.module;
+package dev.httpmarco.polocloud.node.modules;
 
 import dev.httpmarco.polocloud.api.Reloadable;
 import dev.httpmarco.polocloud.launcher.PoloCloudLauncher;
@@ -70,7 +70,7 @@ public class ModuleProvider implements Reloadable {
 
         if (!modules.isEmpty()) {
             log.info("Loaded modules&8: {}", String.join("&8, ", modules));
-            this.getLoadedModules().forEach(it -> it.cloudModule().onEnable());
+            this.loadedModules().forEach(it -> it.cloudModule().onEnable());
         }
     }
 
@@ -78,7 +78,7 @@ public class ModuleProvider implements Reloadable {
         this.loadedModules.forEach(this::unloadModule);
     }
 
-    public List<LoadedModule> getLoadedModules() {
+    public List<LoadedModule> loadedModules() {
         return new ArrayList<>(this.loadedModules);
     }
 

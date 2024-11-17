@@ -77,7 +77,7 @@ public final class PlatformSetup extends Setup {
             if (versionType.equalsIgnoreCase("url")) {
                 platformVersion = new PlatformUrlVersion(versionId, context.get("first-version-url"));
             } else if (versionType.equalsIgnoreCase("file")) {
-                platformVersion = new PlatformPathVersion(versionId, context.get("first-version-file"));
+                platformVersion = new PlatformPathVersion(versionId, context.get("id") + "-" + context.get("first-version-id"));
             } else {
                 throw new IllegalArgumentException();
             }

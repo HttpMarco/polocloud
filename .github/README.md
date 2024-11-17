@@ -1,6 +1,7 @@
 <h1 align="center">PoloCloud</h1>
 <h3 align="center">The simplest and easiest Cloud for Minecraft</h3>
 
+
 ## Installation
 
 To install PoloCloud, follow these steps:
@@ -15,9 +16,4 @@ To install PoloCloud, follow these steps:
 5. Connect to your Server using ip-address:DEFAULT-PROXY-PORT
 
 
-
-Properties example:
-```java
-PropertyRegister.register(Property.ofInteger("max_players"));
-```
 

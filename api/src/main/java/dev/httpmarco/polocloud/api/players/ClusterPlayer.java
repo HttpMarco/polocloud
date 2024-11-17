@@ -4,7 +4,6 @@ import dev.httpmarco.polocloud.api.Detail;
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +29,7 @@ public interface ClusterPlayer extends Named, Detail {
 
     void sendActionBar(String message);
 
-    void connect(String serviceId);
+    void connect(String serviceName);
 
     @SneakyThrows
     default ClusterService currentProxy() {
@@ -52,7 +51,7 @@ public interface ClusterPlayer extends Named, Detail {
         this.sendTitle(title, subtitle, 10, 70, 20);
     }
 
-    default void connect(@NotNull ClusterService service) {
+    default void connect(ClusterService service) {
         this.connect(service.name());
     }
 }

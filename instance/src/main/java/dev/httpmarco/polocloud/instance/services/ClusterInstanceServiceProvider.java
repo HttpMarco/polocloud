@@ -1,9 +1,11 @@
 package dev.httpmarco.polocloud.instance.services;
 
 import dev.httpmarco.osgan.networking.CommunicationProperty;
+import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.packet.PacketBuffer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.packet.IntPacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ClusterServicePacket;
 import dev.httpmarco.polocloud.api.packet.resources.services.ServiceCollectionPacket;
 import dev.httpmarco.polocloud.api.properties.PropertiesBuffer;
@@ -17,7 +19,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+
 public final class ClusterInstanceServiceProvider extends ClusterServiceProvider implements ClusterServiceFactory {
+
+    public ClusterInstanceServiceProvider(CommunicationClient client) {
+        var memory = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() / 1024 / 1024);
+        client.registerResponder("current-service-memory", property -> new IntPacket(memory));
+    }
 
     @Contract(pure = true)
     @Override

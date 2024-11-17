@@ -1,16 +1,17 @@
 package dev.httpmarco.polocloud.node;
 
+import dev.httpmarco.osgan.networking.ClassSupplier;
+import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.api.groups.GroupProperties;
 import dev.httpmarco.polocloud.api.properties.PropertiesPool;
-import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.ClusterProviderImpl;
 import dev.httpmarco.polocloud.node.commands.CommandService;
 import dev.httpmarco.polocloud.node.commands.CommandServiceImpl;
 import dev.httpmarco.polocloud.node.events.EventProviderImpl;
 import dev.httpmarco.polocloud.node.groups.ClusterGroupProviderImpl;
-import dev.httpmarco.polocloud.node.module.ModuleProvider;
+import dev.httpmarco.polocloud.node.modules.ModuleProvider;
 import dev.httpmarco.polocloud.node.platforms.PlatformService;
 import dev.httpmarco.polocloud.node.players.ClusterPlayerProviderImpl;
 import dev.httpmarco.polocloud.api.properties.PropertyRegister;
@@ -41,7 +42,7 @@ public final class Node extends CloudAPI {
     private static Node instance;
 
     private final NodeConfig nodeConfig;
-    private final ClusterProvider clusterProvider;
+    private final ClusterProviderImpl clusterProvider;
     private final TemplatesProvider templatesProvider;
     private final EventProvider eventProvider;
     private final PlatformService platformService;
@@ -66,6 +67,8 @@ public final class Node extends CloudAPI {
                 NodeProperties.PROXY_PORT_START_RANGE,
                 NodeProperties.SERVICE_PORT_START_RANGE,
                 NodeProperties.SERVER_PORT_START_RANGE,
+                GroupProperties.START_PORT,
+                GroupProperties.PREFERRED_FALLBACK,
                 GroupProperties.MAINTENANCE,
                 GroupProperties.PERCENTAGE_TO_START_NEW_SERVER
         );
@@ -111,6 +114,16 @@ public final class Node extends CloudAPI {
         this.serviceProvider.clusterServiceQueue().start();
     }
 
+    @Override
+    public ClassSupplier classSupplier() {
+        return this.server().classSupplier();
+    }
+
+    @Override
+    public void classSupplier(ClassSupplier classSupplier) {
+        this.server().classSupplier(classSupplier);
+    }
+
     public void updateNodeConfig() {
         Configurations.writeContent(Path.of("config.json"), this.nodeConfig);
     }
@@ -127,5 +140,9 @@ public final class Node extends CloudAPI {
                 }
             }
         });
+    }
+
+    public CommunicationServer server() {
+        return this.clusterProvider.localNode().server();
     }
 }

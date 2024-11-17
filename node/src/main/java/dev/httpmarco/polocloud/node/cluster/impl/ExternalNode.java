@@ -1,17 +1,26 @@
 package dev.httpmarco.polocloud.node.cluster.impl;
 
+import dev.httpmarco.osgan.networking.CommunicationFuture;
+import dev.httpmarco.osgan.networking.CommunicationProperty;
 import dev.httpmarco.osgan.networking.channel.ChannelTransmit;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
+import dev.httpmarco.osgan.networking.packet.Packet;
+import dev.httpmarco.osgan.networking.packet.RequestPacket;
+import dev.httpmarco.polocloud.api.packet.ConnectionAuthPacket;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.cluster.NodeEndpointData;
 import dev.httpmarco.polocloud.node.cluster.NodeSituation;
-import dev.httpmarco.polocloud.node.packets.node.NodeConnectPacket;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Slf4j
@@ -21,6 +30,8 @@ public class ExternalNode extends AbstractNode {
     @Setter
     private @Nullable ChannelTransmit transmit;
     private @Nullable CommunicationClient client;
+
+    private final Map<UUID, CommunicationFuture<? extends Packet>> externalRequests = new HashMap<>();
 
     public ExternalNode(NodeEndpointData data) {
         super(data);
@@ -39,7 +50,7 @@ public class ExternalNode extends AbstractNode {
             this.transmit = it;
 
             // todo wait for response
-            transmit.sendPacket(new NodeConnectPacket(Node.instance().nodeConfig().clusterToken(), Node.instance().nodeConfig().localNode().name()));
+            transmit.sendPacket(new ConnectionAuthPacket(Node.instance().nodeConfig().clusterToken(), Node.instance().nodeConfig().localNode().name(), ConnectionAuthPacket.Reason.NODE));
 
             goodResponse.accept(it);
         });
@@ -63,5 +74,20 @@ public class ExternalNode extends AbstractNode {
 
         transmit(null);
         situation(NodeSituation.STOPPED);
+    }
+
+    public <P extends Packet> CompletableFuture<P> requestAsync(String id, Class<P> packet) {
+        return requestAsync(id, packet, new CommunicationProperty());
+    }
+
+    public <P extends Packet> CompletableFuture<P> requestAsync(String id, Class<P> packet, CommunicationProperty property) {
+        var future = new CommunicationFuture<P>();
+        var uuid = UUID.randomUUID();
+
+        Node.instance().server().requests().put(uuid, future);
+
+        Objects.requireNonNull(transmit()).sendPacket(new RequestPacket(id, uuid, property));
+
+        return future;
     }
 }

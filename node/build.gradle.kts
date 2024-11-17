@@ -3,6 +3,7 @@ dependencies {
     compileOnly(project(":api"))
     compileOnly(project(":launcher"))
     compileOnly(libs.netty5)
+    compileOnly(libs.maven.artifact)
 }
 
 tasks.jar {
