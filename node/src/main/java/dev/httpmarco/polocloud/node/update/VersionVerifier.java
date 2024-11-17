@@ -13,9 +13,9 @@ public final class VersionVerifier {
         var currentNumbers = currentParts[0].split("\\.");
         var latestNumbers = latestParts[0].split("\\.");
 
-        for (int i = 0; i < Math.min(currentNumbers.length, latestNumbers.length); i++) {
-            int currentNum = Integer.parseInt(currentNumbers[i]);
-            int latestNum = Integer.parseInt(latestNumbers[i]);
+        for (int i = 0; i < Math.max(currentNumbers.length, latestNumbers.length); i++) {
+            int currentNum = i < currentNumbers.length ? Integer.parseInt(currentNumbers[i]) : 0;
+            int latestNum = i < latestNumbers.length ? Integer.parseInt(latestNumbers[i]) : 0;
 
             if (latestNum > currentNum) {
                 return true; // Latest version is newer
@@ -25,30 +25,21 @@ public final class VersionVerifier {
         }
 
         // If major, minor, and patch are the same, check for pre-release suffix (like alpha, beta)
-        return comparePreReleaseTags(currentParts.length > 1 ? currentVersion.split(currentParts[0] + "-")[1] : null,
-                latestParts.length > 1 ? latestVersion.split(latestParts[0] + "-")[1] : null);
+        return comparePreReleaseTags(currentParts.length > 1 ? currentParts[1] : null,
+                latestParts.length > 1 ? latestParts[1] : null);
     }
 
     private boolean comparePreReleaseTags(String currentTag, String latestTag) {
         if (currentTag == null && latestTag != null) {
-            return false;
+            return true; // A version with a tag (e.g., alpha) is considered older than no tag
         } else if (currentTag != null && latestTag == null) {
-            return true;
+            return false; // A version without a tag is newer
+        } else if (currentTag == null) {
+            return false; // Both versions are equal
         }
 
-        var currentTagParts = currentTag.split("-");
-        var latestTagParts = latestTag.split("-");
-
-        int comparison = currentTagParts[0].compareTo(latestTagParts[0]);
-        if (comparison < 0) {
-            return true; // "alpha" is older than "beta"
-        } else if (comparison > 0) {
-            return false; // "beta" is newer than "alpha"
-        }
-
-        int currentNumber = currentTagParts.length > 1 ? Integer.parseInt(currentTagParts[1]) : 0;
-        int latestNumber = latestTagParts.length > 1 ? Integer.parseInt(latestTagParts[1]) : 0;
-
-        return latestNumber > currentNumber;
+        // Compare tags alphabetically (e.g., "alpha" < "beta")
+        int comparison = currentTag.compareTo(latestTag);
+        return comparison < 0;
     }
 }
