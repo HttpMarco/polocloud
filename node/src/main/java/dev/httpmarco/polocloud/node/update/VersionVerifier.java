@@ -3,7 +3,6 @@ package dev.httpmarco.polocloud.node.update;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @UtilityClass
 public final class VersionVerifier {
 
@@ -42,10 +41,8 @@ public final class VersionVerifier {
 
         int comparison = currentTagParts[0].compareTo(latestTagParts[0]);
         if (comparison < 0) {
-            log.info(1);
             return true; // "alpha" is older than "beta"
         } else if (comparison > 0) {
-            log.info(2);
             return false; // "beta" is newer than "alpha"
         }
 
