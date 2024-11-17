@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.node.util.Downloader;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,14 +30,17 @@ public final class AutoUpdater {
             return;
         }
 
-        var releaseVersion = releaseVersion(release);
-        var currentVersion = System.getProperty("Polocloud-Version");
+        var rawReleaseVersion = releaseVersion(release);
+        var rawCurrentVersion = System.getProperty("Polocloud-Version");
 
-        if (!VersionVerifier.isNewerVersion(currentVersion, releaseVersion)) {
+        var releaseVersion = new ComparableVersion(rawReleaseVersion);
+        var currentVersion = new ComparableVersion(rawCurrentVersion);
+
+        if (releaseVersion.compareTo(currentVersion) <= 0) {
             return;
         }
 
-        notifyUpdate(release.get("html_url").getAsString(), releaseVersion);
+        notifyUpdate(release.get("html_url").getAsString(), rawReleaseVersion);
     }
 
     private void notifyUpdate(String releaseUrl, String releaseVersion) {
@@ -60,17 +64,20 @@ public final class AutoUpdater {
             return;
         }
 
-        var releaseVersion = releaseVersion(release);
-        var currentVersion = System.getProperty("Polocloud-Version");
+        var rawReleaseVersion = releaseVersion(release);
+        var rawCurrentVersion = System.getProperty("Polocloud-Version");
 
-        if (!VersionVerifier.isNewerVersion(currentVersion, releaseVersion)) {
+        var releaseVersion = new ComparableVersion(rawReleaseVersion);
+        var currentVersion = new ComparableVersion(rawCurrentVersion);
+
+        if (releaseVersion.compareTo(currentVersion) <= 0) {
             log.warn("You are already using the latest version of PoloCloud.");
             return;
         }
 
-        var asset = findReleaseAsset(release, releaseVersion);
+        var asset = findReleaseAsset(release, rawReleaseVersion);
         if (asset == null) {
-            log.warn("No suitable asset found for version: {}", releaseVersion);
+            log.warn("No suitable asset found for version: {}", rawReleaseVersion);
             return;
         }
 

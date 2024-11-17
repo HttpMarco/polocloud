@@ -25,6 +25,7 @@ public final class PoloCloudLauncher {
 
         PoloCloudLauncher.CLASS_LOADER.addURL(apiFile.toFile().toURI().toURL());
 
+        var mavenArtifact = new Dependency("org.apache.maven", "maven-artifact", "4.0.0-beta-5");
         var gsonDependency = new Dependency("com.google.code.gson", "gson", "2.11.0");
         var nettyCommonDependency = new Dependency("io.netty", "netty5-common", "5.0.0.Alpha5");
         var nettyTransportDependency = new Dependency("io.netty", "netty5-transport", "5.0.0.Alpha5");
@@ -37,7 +38,7 @@ public final class PoloCloudLauncher {
         // add boot file to the current classpath
         CLASS_LOADER.addURL(boot.bootFile().toURI().toURL());
 
-        DependencyDownloader.download(gsonDependency, nettyCommonDependency, nettyTransportDependency, nettyCodecDependency, nettyResolverDependency, nettyBufferDependency, nettyTransportEpollDependency, osganNettyDependency);
+        DependencyDownloader.download(mavenArtifact, gsonDependency, nettyCommonDependency, nettyTransportDependency, nettyCodecDependency, nettyResolverDependency, nettyBufferDependency, nettyTransportEpollDependency, osganNettyDependency);
 
         Thread.currentThread().setContextClassLoader(CLASS_LOADER);
         Class.forName(boot.mainClass(), true, CLASS_LOADER).getMethod("main", String[].class).invoke(null, (Object) args);
