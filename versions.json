@@ -112,8 +112,13 @@
         },
         {
           "file": "config/paper-global.yml",
-          "strategy": "DIRECT_CREATE",
-          "replacements": [],
+          "strategy": "APPEND_OR_REPLACE",
+          "replacements": [
+            {
+              "indicator": "    enabled",
+              "value": "%velocity_use%"
+            }
+          ],
           "appends": [
             "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
           ]
