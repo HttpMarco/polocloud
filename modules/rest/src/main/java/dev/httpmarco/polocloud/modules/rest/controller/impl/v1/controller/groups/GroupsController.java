@@ -54,6 +54,11 @@ public class GroupsController extends Controller {
             context.status(400).json(message("Name cannot be empty"));
             return;
         }
+        if(Node.instance().groupProvider().find(request.name()) != null) {
+            context.status(400).json(errorMessage("group/alreadyExists","Name already exists"));
+            return;
+        }
+
 
         var platform = Node.instance().platformService().find(request.platform());
         if (platform == null) {
@@ -132,6 +137,6 @@ public class GroupsController extends Controller {
 
         context.status(200).json(message("Stopping all services of the group " + request.groupName()));
     }
-    
+
     //TODO put method to update
 }
