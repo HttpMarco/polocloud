@@ -2,24 +2,17 @@ package dev.httpmarco.polocloud.modules.rest.socket.web.impl.v1;
 
 import dev.httpmarco.polocloud.api.event.impl.services.log.ServiceLogEvent;
 import dev.httpmarco.polocloud.modules.rest.RestModule;
-import dev.httpmarco.polocloud.modules.rest.socket.SocketSendable;
 import dev.httpmarco.polocloud.modules.rest.socket.WebSocket;
 import dev.httpmarco.polocloud.node.Node;
 import io.javalin.websocket.*;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Log4j2
-public class ConsoleLogWebWebSocket extends WebSocket implements SocketSendable {
+public class ConsoleLogWebWebSocket extends WebSocket {
 
-    private final List<WsContext> connectedClients;
 
     public ConsoleLogWebWebSocket(RestModule restModule) {
         super("/{service}/log", "polocloud.service.screen", restModule);
-
-        this.connectedClients = new ArrayList<>();
     }
 
     @Override
@@ -46,13 +39,13 @@ public class ConsoleLogWebWebSocket extends WebSocket implements SocketSendable 
             }
         });
 
-        this.connectedClients.add(context);
+        connectedClients().add(context);
         context.enableAutomaticPings();
     }
 
     @Override
     public void onClose(WsCloseContext context) {
-        this.connectedClients.remove(context);
+        connectedClients().remove(context);
     }
 
     @Override
@@ -63,12 +56,5 @@ public class ConsoleLogWebWebSocket extends WebSocket implements SocketSendable 
     @Override
     public void onError(WsErrorContext context) {
 
-    }
-
-    @Override
-    public void send(String content) {
-        for (var client : this.connectedClients) {
-            client.send(content);
-        }
     }
 }
