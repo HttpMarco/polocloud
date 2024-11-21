@@ -20,6 +20,13 @@ public abstract class Controller {
         return response.toString();
     }
 
+    public String errorMessage(String errorCode, String message){
+        var response = new JsonObject();
+        response.addProperty("errorCode", errorCode);
+        response.addProperty("message", message);
+        return response.toString();
+    }
+
     public boolean isNumber(String number) {
         try {
             Integer.parseInt(number);
