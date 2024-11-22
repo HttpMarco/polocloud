@@ -68,6 +68,12 @@ public final class Platform implements Detail {
                     target.getParent().toFile().mkdirs();
                     Files.createFile(target);
                 }
+                case APPEND_OR_REPLACE -> {
+                    if (!Files.exists(target)) {
+                        target.getParent().toFile().mkdirs();
+                        Files.createFile(target);
+                    }
+                }
             }
 
 
@@ -77,8 +83,8 @@ public final class Platform implements Detail {
                     var content = replacement.value()
                             .replaceAll("%hostname%", service.hostname())
                             .replaceAll("%port%", String.valueOf(service.port()))
-                            .replaceAll("%bungeecord_use%", String.valueOf(Node.instance().groupProvider().groups().stream().anyMatch(it -> it.platform().platform().equalsIgnoreCase("bungeecord"))));
-
+                            .replaceAll("%bungeecord_use%", String.valueOf(Node.instance().groupProvider().groups().stream().anyMatch(it -> it.platform().platform().equalsIgnoreCase("bungeecord"))))
+                            .replaceAll("%velocity_use%", String.valueOf(Node.instance().groupProvider().groups().stream().anyMatch(it -> it.platform().platform().equalsIgnoreCase("velocity"))));
                     replacer.rewrite(s -> s.startsWith(replacement.indicator()), fileType.replacer().apply(new Pair<>(replacement.indicator(), content)));
                 }
                 replacer.write();
