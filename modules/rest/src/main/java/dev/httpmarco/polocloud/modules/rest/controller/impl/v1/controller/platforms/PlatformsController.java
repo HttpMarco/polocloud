@@ -20,7 +20,13 @@ public class PlatformsController extends Controller {
         var response = new JsonObject();
         var platforms = new JsonArray();
 
-        Node.instance().platformService().platforms().forEach(platform -> platforms.add(platform.id()));
+        Node.instance().platformService().platforms().forEach(platform -> {
+            var platformObject = new JsonObject();
+            platformObject.addProperty("id", platform.id());
+            platformObject.addProperty("type", platform.type().toString());
+
+            platforms.add(platformObject);
+        });
         response.add("platforms", platforms);
 
         context.status(200).json(response.toString());
