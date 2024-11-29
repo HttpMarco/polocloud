@@ -7,7 +7,6 @@ import dev.httpmarco.polocloud.api.event.Event;
 import dev.httpmarco.polocloud.api.event.util.PacketAllocator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 
 @Getter
@@ -24,7 +23,7 @@ public class EventCallPacket extends Packet {
     }
 
     public Event buildEvent() throws ClassNotFoundException {
-        var event = (Event) PacketAllocator.allocate(CloudAPI.instance().classByName(this.className));
+        var event = (Event) PacketAllocator.allocate(Class.forName(this.className));
         event.read(new PacketBuffer(this.buffer.getOrigin().copy()));
         return event;
     }

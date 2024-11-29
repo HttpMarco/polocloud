@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.plugin.bungeecord;
 
-import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.ProxyPlatformParameterAdapter;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -9,14 +8,12 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public final class BungeeCordPlatformBootstrap extends Plugin implements ProxyPlatformParameterAdapter<ProxiedPlayer>, ClassSupplier {
+public final class BungeeCordPlatformBootstrap extends Plugin implements ProxyPlatformParameterAdapter<ProxiedPlayer> {
 
     @Override
     public void onEnable() {
         var platform = new ProxyPluginPlatform<>(new BungeeCordPlatformAction(), new BungeeCordPlatformServerHandler(), this);
         var instance = ProxyServer.getInstance();
-
-        CloudAPI.instance().classSupplier(this);
 
         instance.getConfigurationAdapter().getServers().clear();
         instance.getPluginManager().registerListener(this, new BungeeCordPlatformListeners(ProxyServer.getInstance(), platform));
@@ -34,10 +31,5 @@ public final class BungeeCordPlatformBootstrap extends Plugin implements ProxyPl
     @Override
     public int onlinePlayers() {
         return ProxyServer.getInstance().getOnlineCount();
-    }
-
-    @Override
-    public Class<?> classByName(String name) throws ClassNotFoundException {
-        return Class.forName(name);
     }
 }

@@ -18,6 +18,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -110,7 +111,7 @@ public final class ClusterServiceFactoryImpl implements ClusterServiceFactory {
 
         var path = "../../local/dependencies/";
         //todo use dynamic queue
-        var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.1.0-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
+        var neededDependencies = List.of("polocloud-instance.jar", "polocloud-api.jar", "osgan-netty-1.1.1-SNAPSHOT.jar", "netty5-buffer-5.0.0.Alpha5.jar", "netty5-codec-5.0.0.Alpha5.jar", "netty5-common-5.0.0.Alpha5.jar", "netty5-resolver-5.0.0.Alpha5.jar", "netty5-transport-5.0.0.Alpha5.jar", "netty5-transport-classes-epoll-5.0.0.Alpha5.jar");
 
         arguments.add(String.join(System.getProperty("os.name").toLowerCase().contains("win") ? ";" : ":", neededDependencies.stream().map(it -> path + it).toList()));
 

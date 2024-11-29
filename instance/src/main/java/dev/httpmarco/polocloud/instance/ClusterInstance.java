@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.instance;
 
-import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.osgan.networking.client.CommunicationClient;
 import dev.httpmarco.osgan.networking.client.CommunicationClientAction;
 import dev.httpmarco.polocloud.api.CloudAPI;
@@ -62,15 +61,5 @@ public final class ClusterInstance extends CloudAPI {
         });
 
         this.serviceProvider = new ClusterInstanceServiceProvider(this.client);
-    }
-
-    @Override
-    public ClassSupplier classSupplier() {
-        return this.client.classSupplier();
-    }
-
-    @Override
-    public void classSupplier(ClassSupplier classSupplier) {
-        this.client.classSupplier(classSupplier);
     }
 }

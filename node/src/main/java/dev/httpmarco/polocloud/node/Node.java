@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.node;
 
-import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.osgan.networking.server.CommunicationServer;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.api.event.EventProvider;
@@ -112,16 +111,6 @@ public final class Node extends CloudAPI {
 
         this.terminal.allowInput();
         this.serviceProvider.clusterServiceQueue().start();
-    }
-
-    @Override
-    public ClassSupplier classSupplier() {
-        return this.server().classSupplier();
-    }
-
-    @Override
-    public void classSupplier(ClassSupplier classSupplier) {
-        this.server().classSupplier(classSupplier);
     }
 
     public void updateNodeConfig() {

@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.plugin.waterdog;
 
-import dev.httpmarco.osgan.networking.ClassSupplier;
 import dev.httpmarco.polocloud.api.CloudAPI;
 import dev.httpmarco.polocloud.plugin.ProxyPlatformParameterAdapter;
 import dev.httpmarco.polocloud.plugin.ProxyPluginPlatform;
@@ -13,15 +12,13 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
-public final class WaterdogPlatformBootstrap extends Plugin implements ProxyPlatformParameterAdapter<ProxiedPlayer>, ClassSupplier {
+public final class WaterdogPlatformBootstrap extends Plugin implements ProxyPlatformParameterAdapter<ProxiedPlayer> {
 
     private ProxyPluginPlatform<ProxiedPlayer> platform;
 
     @Override
     public void onEnable() {
         this.platform = new ProxyPluginPlatform<>(new WaterdogPlatformAction(this.getProxy()), new WaterdogServerHandler(this.getProxy()), this);
-
-        CloudAPI.instance().classSupplier(this);
 
         new WaterdogPlatformListeners(this.getProxy(), this.platform);
         this.platform.presentServiceAsOnline();
@@ -37,8 +34,4 @@ public final class WaterdogPlatformBootstrap extends Plugin implements ProxyPlat
         return ProxyServer.getInstance().getPlayerManager().getPlayerCount();
     }
 
-    @Override
-    public Class<?> classByName(String name) throws ClassNotFoundException {
-        return Class.forName(name);
-    }
 }
