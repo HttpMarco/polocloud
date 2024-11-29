@@ -4,14 +4,14 @@ lombok = "1.18.36"
 annotations = "26.0.1"
 
 nexusPublish = "2.0.0"
-maven-artifact = "4.0.0-beta-5"
+maven-artifact = "4.0.0-rc-1"
 
 # network
 osgan = "1.1.0-20241028.200418-1"
 netty5 = "5.0.0.Alpha5"
 
 #logging
-log4j2 = "2.24.1"
+log4j2 = "2.24.2"
 
 # configuration
 gson = "2.11.0"
