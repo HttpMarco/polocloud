@@ -112,8 +112,13 @@
         },
         {
           "file": "config/paper-global.yml",
-          "strategy": "DIRECT_CREATE",
-          "replacements": [],
+          "strategy": "APPEND_OR_REPLACE",
+          "replacements": [
+            {
+              "indicator": "    enabled",
+              "value": "%velocity_use%"
+            }
+          ],
           "appends": [
             "proxies:\n velocity:\n    enabled: %velocity_use%\n    secret: %forwarding_secret%"
           ]
@@ -661,7 +666,7 @@
           "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.2/0.16.9/1.0.1/server/jar"
         },
         {
-          "version": "1.19.2",
+          "version": "1.19.1",
           "url": "https://meta.fabricmc.net/v2/versions/loader/1.19.1/0.16.9/1.0.1/server/jar"
         },
         {
