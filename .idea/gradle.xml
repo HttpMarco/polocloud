@@ -9,17 +9,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/addons" />
-            <option value="$PROJECT_DIR$/addons/hub" />
-            <option value="$PROJECT_DIR$/addons/proxy" />
-            <option value="$PROJECT_DIR$/api" />
-            <option value="$PROJECT_DIR$/instance" />
-            <option value="$PROJECT_DIR$/launcher" />
-            <option value="$PROJECT_DIR$/modules" />
-            <option value="$PROJECT_DIR$/modules/example" />
-            <option value="$PROJECT_DIR$/modules/rest" />
-            <option value="$PROJECT_DIR$/node" />
-            <option value="$PROJECT_DIR$/plugin" />
+            <option value="$PROJECT_DIR$/polocloud-api" />
+            <option value="$PROJECT_DIR$/polocloud-launcher" />
           </set>
         </option>
       </GradleProjectSettings>
