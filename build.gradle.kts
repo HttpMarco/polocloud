@@ -15,9 +15,7 @@ allprojects {
         options.encoding = "UTF-8"
     }
 
-
     dependencies {
-
+        "compileOnly"(rootProject.libs.bundles.utils)
     }
-
 }

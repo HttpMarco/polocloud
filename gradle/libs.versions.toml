@@ -9,3 +9,4 @@ lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" 
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
 
 [bundles]
+utils = ["lombok", "annotations"]
