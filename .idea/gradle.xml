@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/polocloud-api" />
             <option value="$PROJECT_DIR$/polocloud-launcher" />
+            <option value="$PROJECT_DIR$/polocloud-node" />
           </set>
         </option>
       </GradleProjectSettings>
