@@ -1,5 +1,0 @@
-name: PoloCloud-Plugin
-version: '1.0.0'
-main: dev.httpmarco.polocloud.plugin.spigot.SpigotPlatformBootstrap
-description: Polocloud cluster management plugin
-api-version: '1.20'
