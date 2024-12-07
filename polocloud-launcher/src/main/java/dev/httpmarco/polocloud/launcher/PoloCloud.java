@@ -11,18 +11,16 @@ public final class PoloCloud {
 
     @Getter
     public static PoloCloud launcher;
-
     // allow to check if the cloud is running -> Deny multiple instances
-    // todo: implement this
     private FileLock polocloudLock;
-
-    private final PoloCloudLoader loader;
 
     public PoloCloud() {
         launcher = this;
         // allow us to add more dependencies to the node at runtime
-        this.loader = new PoloCloudLoader();
-        // append the access for the current thread
-        Thread.currentThread().setContextClassLoader(this.loader);
+        // todo: implement this lock
+
+
+        var process = new PoloCloudProcess();
+        process.start();
     }
 }
