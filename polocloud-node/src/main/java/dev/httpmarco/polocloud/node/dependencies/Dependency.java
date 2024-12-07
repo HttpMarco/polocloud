@@ -47,4 +47,10 @@ public interface Dependency extends Available {
      */
     Collection<Dependency> depend();
 
+    /**
+     * The url of the pom file
+     * @return the pom url
+     */
+    String url();
+
 }
