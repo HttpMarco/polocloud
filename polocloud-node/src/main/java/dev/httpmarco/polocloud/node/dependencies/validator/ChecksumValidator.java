@@ -21,7 +21,7 @@ public final class ChecksumValidator implements Validate<Dependency, Path> {
 
     @SneakyThrows
     private @NotNull String dependencyChecksum(Path path) {
-        var digest = MessageDigest.getInstance("SHA-256");
+        var digest = MessageDigest.getInstance("SHA-1");
         var fileBytes = Files.readAllBytes(path);
         var hashBytes = digest.digest(fileBytes);
         var hexString = new StringBuilder();

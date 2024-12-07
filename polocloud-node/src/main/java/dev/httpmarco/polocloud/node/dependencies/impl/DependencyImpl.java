@@ -2,8 +2,10 @@ package dev.httpmarco.polocloud.node.dependencies.impl;
 
 import dev.httpmarco.polocloud.node.dependencies.Dependency;
 import dev.httpmarco.polocloud.node.dependencies.DependencyUtils;
+import dev.httpmarco.polocloud.node.dependencies.xml.DependencyScheme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,7 @@ import java.util.LinkedList;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
+@ToString
 public final class DependencyImpl implements Dependency {
 
     private final String groupId;
@@ -30,6 +33,10 @@ public final class DependencyImpl implements Dependency {
         this.repository = repository;
         this.depend = new LinkedList<>();
         this.checksum = DependencyUtils.readChecksum(this);
+    }
+
+    public DependencyImpl(@NotNull DependencyScheme scheme, String repository) {
+        this(scheme.groupId(), scheme.artifactId(), scheme.version(), repository);
     }
 
     @Override
