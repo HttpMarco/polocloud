@@ -25,6 +25,11 @@ public final class DependencyFactoryImpl implements DependencyFactory {
     @SneakyThrows
     public DependencyFactoryImpl(DependencyProvider provider) {
         this.provider = provider;
+
+        if(Files.exists(dependencyPath)) {
+            return;
+        }
+
         Files.createDirectory(dependencyPath);
     }
 
@@ -85,10 +90,17 @@ public final class DependencyFactoryImpl implements DependencyFactory {
         return dependencies;
     }
 
+    /**
+     * Detects the latest version of a dependency
+     * @param scheme the xml dependency scheme
+     * @return the latest version
+     */
     @Contract(pure = true)
     @SneakyThrows
     private String detectLatestVersion(@NotNull DependencyScheme scheme) {
-        var url = String.format("https://repo1.maven.org/maven2/%s/%s/maven-metadata.xml", scheme.pathGroupId(), scheme.artifactId());
-        return Downloader.downloadXmlDocument(url).getElementsByTagName("release").item(0).getTextContent();
+        return Downloader.downloadXmlDocument(String.format("https://repo1.maven.org/maven2/%s/%s/maven-metadata.xml", scheme.urlGroupId(), scheme.artifactId()))
+                .getElementsByTagName("release")
+                .item(0)
+                .getTextContent();
     }
 }

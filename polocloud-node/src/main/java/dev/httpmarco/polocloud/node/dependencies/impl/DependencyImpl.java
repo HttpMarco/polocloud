@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.dependencies.impl;
 
 import dev.httpmarco.polocloud.node.dependencies.Dependency;
 import dev.httpmarco.polocloud.node.dependencies.DependencyUtils;
+import dev.httpmarco.polocloud.node.dependencies.common.AbstractDependency;
 import dev.httpmarco.polocloud.node.dependencies.xml.DependencyScheme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,19 +18,14 @@ import java.util.LinkedList;
 @Accessors(fluent = true)
 @AllArgsConstructor
 @ToString
-public final class DependencyImpl implements Dependency {
+public final class DependencyImpl extends AbstractDependency implements Dependency {
 
-    private final String groupId;
-    private final String artifactId;
-    private final String version;
     private final String checksum;
     private final String repository;
     private final Collection<Dependency> depend;
 
     public DependencyImpl(String groupId, String artifactId, String version, String repository) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
+        this.groupId(groupId).artifactId(artifactId).version(version);
         this.repository = repository;
         this.depend = new LinkedList<>();
         this.checksum = DependencyUtils.readChecksum(this);
@@ -41,21 +37,17 @@ public final class DependencyImpl implements Dependency {
 
     @Override
     public boolean available() {
-        return groupId != null && artifactId != null && version != null && checksum != null;
+        return super.available() && checksum != null;
     }
 
     @Override
     public @NotNull String url() {
-        return String.format(this.repository, urlGroupId(), artifactId, version, artifactId, version);
-    }
-
-    @Override
-    public String fileName() {
-        return String.format("%s-%s.jar", artifactId, version);
+        return String.format(this.repository, urlGroupId(), artifactId(), version(), artifactId(), version());
     }
 
     @Contract(pure = true)
-    private @NotNull String urlGroupId() {
-        return groupId.replace('.', '/');
+    @Override
+    public @NotNull String fileName() {
+        return String.format("%s-%s.jar", artifactId(), version());
     }
 }
