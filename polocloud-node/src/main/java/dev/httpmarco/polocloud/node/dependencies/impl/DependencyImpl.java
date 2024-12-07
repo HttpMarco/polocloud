@@ -41,12 +41,17 @@ public final class DependencyImpl implements Dependency {
 
     @Override
     public boolean available() {
-        return groupId != null && artifactId != null && version != null;
+        return groupId != null && artifactId != null && version != null && checksum != null;
     }
 
     @Override
     public @NotNull String url() {
         return String.format(this.repository, urlGroupId(), artifactId, version, artifactId, version);
+    }
+
+    @Override
+    public String fileName() {
+        return String.format("%s-%s.jar", artifactId, version);
     }
 
     @Contract(pure = true)

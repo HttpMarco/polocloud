@@ -53,4 +53,10 @@ public interface Dependency extends Available {
      */
     String url();
 
+    /**
+     * The name of the file
+     * @return the file name
+     */
+    String fileName();
+
 }

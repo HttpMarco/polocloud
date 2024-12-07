@@ -1,17 +1,17 @@
 package dev.httpmarco.polocloud.node.dependencies.impl;
 
+import dev.httpmarco.polocloud.launcher.PoloCloud;
 import dev.httpmarco.polocloud.node.dependencies.Dependency;
 import dev.httpmarco.polocloud.node.dependencies.DependencyFactory;
-import dev.httpmarco.polocloud.node.dependencies.DependencyUtils;
-import dev.httpmarco.polocloud.node.dependencies.exceptions.UnkownDependencyVersionException;
+import dev.httpmarco.polocloud.node.dependencies.DependencyProvider;
 import dev.httpmarco.polocloud.node.dependencies.validator.ChecksumValidator;
 import dev.httpmarco.polocloud.node.dependencies.xml.DependencyScheme;
 import dev.httpmarco.polocloud.node.utils.Downloader;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Element;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +19,37 @@ public final class DependencyFactoryImpl implements DependencyFactory {
 
     private static final ChecksumValidator VALIDATOR = new ChecksumValidator();
 
+    private final DependencyProvider provider;
+    private final Path dependencyPath = Path.of("dependencies");
+
+    @SneakyThrows
+    public DependencyFactoryImpl(DependencyProvider provider) {
+        this.provider = provider;
+        Files.createDirectory(dependencyPath);
+    }
+
     @Override
-    public void prepare(Dependency dependency) {
+    public void prepare(@NotNull Dependency dependency) {
+        if(!dependency.available()) {
+            return;
+        }
 
+        if(provider.loadedDependencies().contains(dependency)) {
+            return;
+        }
 
+        for (var subDependency : dependency.depend()) {
+            prepare(subDependency);
+        }
 
+        var dependencyPath = this.dependencyPath.resolve(dependency.fileName());
+
+        if(Files.exists(dependencyPath) && VALIDATOR.valid(dependency, dependencyPath)) {
+            return;
+        }
+
+        Downloader.download(dependency.url() + ".jar", dependencyPath);
+        PoloCloud.launcher().loader().addURL(dependencyPath.toFile());
     }
 
     @Override
@@ -52,9 +78,9 @@ public final class DependencyFactoryImpl implements DependencyFactory {
             }
 
             var subDependency = new DependencyImpl(xmlDependency, dependency.repository());
-
+            // we must load all sub dependencies recursively
+            subDependency.depend().addAll(loadSubDependencies(subDependency));
             dependencies.add(subDependency);
-            dependencies.addAll(loadSubDependencies(subDependency));
         }
         return dependencies;
     }
@@ -62,7 +88,7 @@ public final class DependencyFactoryImpl implements DependencyFactory {
     @Contract(pure = true)
     @SneakyThrows
     private String detectLatestVersion(@NotNull DependencyScheme scheme) {
-        var url = String.format("https://repo1.maven.org/maven2/%s/%s/maven-metadata.xml", scheme.groupId().replace(".", "/"), scheme.artifactId());
+        var url = String.format("https://repo1.maven.org/maven2/%s/%s/maven-metadata.xml", scheme.pathGroupId(), scheme.artifactId());
         return Downloader.downloadXmlDocument(url).getElementsByTagName("release").item(0).getTextContent();
     }
 }

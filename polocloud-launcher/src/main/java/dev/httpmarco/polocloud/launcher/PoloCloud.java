@@ -9,6 +9,9 @@ import java.nio.channels.FileLock;
 @Accessors(fluent = true)
 public final class PoloCloud {
 
+    @Getter
+    public static PoloCloud launcher;
+
     // allow to check if the cloud is running -> Deny multiple instances
     // todo: implement this
     private FileLock polocloudLock;
@@ -16,6 +19,7 @@ public final class PoloCloud {
     private final PoloCloudLoader loader;
 
     public PoloCloud() {
+        launcher = this;
         // allow us to add more dependencies to the node at runtime
         this.loader = new PoloCloudLoader();
         // append the access for the current thread

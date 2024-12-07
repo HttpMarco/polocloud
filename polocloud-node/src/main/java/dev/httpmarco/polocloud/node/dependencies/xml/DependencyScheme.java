@@ -41,4 +41,8 @@ public final class DependencyScheme {
         }
         return null;
     }
+
+    public String pathGroupId() {
+        return groupId.replace('.', '/');
+    }
 }

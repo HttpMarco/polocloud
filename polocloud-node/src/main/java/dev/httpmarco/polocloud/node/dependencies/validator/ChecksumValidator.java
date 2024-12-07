@@ -26,7 +26,7 @@ public final class ChecksumValidator implements Validate<Dependency, Path> {
         var hashBytes = digest.digest(fileBytes);
         var hexString = new StringBuilder();
 
-        for (byte b : hashBytes) {
+        for (var b : hashBytes) {
             hexString.append(String.format("%02x", b));
         }
         return hexString.toString();
