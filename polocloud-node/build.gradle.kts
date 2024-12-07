@@ -1,6 +1,10 @@
 dependencies {
-    implementation(project(":polocloud-api"))
-    implementation(project(":polocloud-launcher"))
+    compileOnly(project(":polocloud-api"))
+    compileOnly(project(":polocloud-launcher"))
+}
+
+tasks.jar {
+    archiveFileName.set("polocloud-node-${version}.jar")
 }
 
 tasks.test {
