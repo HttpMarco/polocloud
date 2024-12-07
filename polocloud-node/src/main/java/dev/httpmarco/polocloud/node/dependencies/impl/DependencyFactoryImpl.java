@@ -61,26 +61,8 @@ public final class DependencyFactoryImpl implements DependencyFactory {
 
     @Contract(pure = true)
     @SneakyThrows
-    private String detectLatestVersion(DependencyScheme scheme) {
-        var metadata = Downloader.downloadXmlDocument(String.format("https://repo1.maven.org/maven2/%s/%s/maven-metadata.xml", scheme.groupId().replace(".", "/"), scheme.artifactId()));
-        var versionsElement = (Element) metadata.getElementsByTagName("versions").item(0);
-        var versionNodes = versionsElement.getElementsByTagName("version");
-
-        String latestStableVersion = null;
-        for (int i = 0; i < versionNodes.getLength(); i++) {
-            var version = versionNodes.item(i).getTextContent();
-
-            if (!DependencyUtils.isStableVersion(version)) {
-                continue;
-            }
-
-            // we only allow stable versions
-            latestStableVersion = version;
-        }
-
-        if (latestStableVersion != null) {
-            return latestStableVersion;
-        }
-        throw new UnkownDependencyVersionException(scheme);
+    private String detectLatestVersion(@NotNull DependencyScheme scheme) {
+        var url = String.format("https://repo1.maven.org/maven2/%s/%s/maven-metadata.xml", scheme.groupId().replace(".", "/"), scheme.artifactId());
+        return Downloader.downloadXmlDocument(url).getElementsByTagName("release").item(0).getTextContent();
     }
 }
