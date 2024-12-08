@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.terminal.impl;
 
+import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import lombok.AccessLevel;
@@ -18,12 +19,14 @@ import org.jline.utils.InfoCmp;
 import java.nio.charset.StandardCharsets;
 
 @Log4j2
+@Getter
 @Accessors(fluent = true)
 public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.terminal.Terminal {
 
     private final Terminal terminal;
     @Getter(AccessLevel.PACKAGE)
     private final LineReaderImpl lineReader;
+    private final CommandService commandService;
 
     @SneakyThrows
     public JLineTerminalImpl() {
@@ -52,6 +55,7 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
         System.setErr(new Log4jStream(log::error).printStream());
 
         this.clear();
+        this.commandService = new CommandService();
         new JLineTerminalReadingThread(this).start();
     }
 
