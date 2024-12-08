@@ -18,6 +18,8 @@ allprojects {
     dependencies {
         "compileOnly"(rootProject.libs.bundles.utils)
 
+        "implementation"(rootProject.libs.log4j2)
+
         "testAnnotationProcessor"(rootProject.libs.lombok)
         "annotationProcessor"(rootProject.libs.lombok)
 
