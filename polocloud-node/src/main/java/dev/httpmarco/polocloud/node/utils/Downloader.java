@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.node.utils;
 
-import dev.httpmarco.polocloud.node.dependencies.Dependency;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -18,8 +18,9 @@ import java.nio.file.Path;
 @UtilityClass
 public final class Downloader {
 
+    @Contract("_ -> new")
     @SneakyThrows
-    public String downloadString(String urlPath) {
+    public @NotNull String downloadString(String urlPath) {
         var url = new URL(urlPath);
 
         try (var stream = url.openStream()) {
