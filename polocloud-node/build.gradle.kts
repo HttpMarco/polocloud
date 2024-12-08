@@ -6,7 +6,7 @@ dependencies {
 tasks.jar {
 
     manifest {
-        attributes["Main-Class"] = "dev.httpmarco.polocloud.node.Node"
+        attributes["Main-Class"] = "dev.httpmarco.polocloud.node.NodeBoot"
     }
 
     archiveFileName.set("polocloud-node-${version}.jar")

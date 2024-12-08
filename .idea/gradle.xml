@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/polocloud-api" />
             <option value="$PROJECT_DIR$/polocloud-launcher" />
             <option value="$PROJECT_DIR$/polocloud-node" />
+            <option value="$PROJECT_DIR$/polocloud-updater" />
           </set>
         </option>
       </GradleProjectSettings>
