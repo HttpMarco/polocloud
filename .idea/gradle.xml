@@ -10,6 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/polocloud-api" />
+            <option value="$PROJECT_DIR$/polocloud-instance" />
+            <option value="$PROJECT_DIR$/polocloud-intigration" />
             <option value="$PROJECT_DIR$/polocloud-launcher" />
             <option value="$PROJECT_DIR$/polocloud-node" />
             <option value="$PROJECT_DIR$/polocloud-updater" />
