@@ -1,9 +1,13 @@
 package dev.httpmarco.polocloud.node.terminal.impl;
 
+import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
+import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import lombok.extern.log4j.Log4j2;
+import org.jline.jansi.Ansi;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
@@ -13,6 +17,7 @@ import org.jline.utils.InfoCmp;
 
 import java.nio.charset.StandardCharsets;
 
+@Log4j2
 @Accessors(fluent = true)
 public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.terminal.Terminal {
 
@@ -43,19 +48,29 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
                 .variable(LineReader.BELL_STYLE, "none")
                 .build();
 
+        System.setOut(new Log4jStream(this::printLine).printStream());
+        System.setErr(new Log4jStream(log::error).printStream());
+
         this.clear();
         new JLineTerminalReadingThread(this).start();
     }
 
     @Override
     public boolean available() {
-        return terminal.echo();
+        return true;
     }
 
     @Override
     @SneakyThrows
     public void close() {
         this.terminal.close();
+    }
+
+    public void printLine(String message) {
+        this.terminal.puts(InfoCmp.Capability.carriage_return);
+        this.terminal.writer().println(TerminalColorReplacer.replaceColorCodes(message) + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
+        this.terminal.flush();
+        this.update();
     }
 
     @Override
