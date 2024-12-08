@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.launcher.bootstrap;
+package dev.httpmarco.polocloud.launcher.boot;
 
 import dev.httpmarco.polocloud.launcher.PoloCloud;
 

@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.node;
 
-public class Node {
+public final class Node {
 
-    public void Node() {
+    public Node() {
 
     }
 }
