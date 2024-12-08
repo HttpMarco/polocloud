@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.node.dependencies.impl;
 
-import dev.httpmarco.polocloud.launcher.PoloCloud;
+import dev.httpmarco.polocloud.node.boot.NodeBoot;
 import dev.httpmarco.polocloud.node.dependencies.Dependency;
 import dev.httpmarco.polocloud.node.dependencies.DependencyFactory;
 import dev.httpmarco.polocloud.node.dependencies.DependencyProvider;
@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarFile;
 
 public final class DependencyFactoryImpl implements DependencyFactory {
 
@@ -33,6 +34,7 @@ public final class DependencyFactoryImpl implements DependencyFactory {
         Files.createDirectory(dependencyPath);
     }
 
+    @SneakyThrows
     @Override
     public void prepare(@NotNull Dependency dependency) {
         if(!dependency.available()) {
@@ -50,11 +52,13 @@ public final class DependencyFactoryImpl implements DependencyFactory {
         var dependencyPath = this.dependencyPath.resolve(dependency.fileName());
 
         if(Files.exists(dependencyPath) && VALIDATOR.valid(dependency, dependencyPath)) {
+            NodeBoot.instrumentation().appendToSystemClassLoaderSearch(new JarFile(dependencyPath.toFile()));
             return;
         }
 
         Downloader.download(dependency.url() + ".jar", dependencyPath);
-        PoloCloud.launcher().loader().addURL(dependencyPath.toFile());
+        NodeBoot.instrumentation().appendToSystemClassLoaderSearch(new JarFile(dependencyPath.toFile()));
+        System.out.println("Loaded dependency " + dependency.fileName());
     }
 
     @Override
