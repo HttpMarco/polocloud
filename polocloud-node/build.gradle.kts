@@ -9,7 +9,7 @@ tasks.jar {
 
     manifest {
         attributes["Main-Class"] = "dev.httpmarco.polocloud.node.boot.NodeBoot"
-        attributes["Premain-Class"] = "dev.httpmarco.polocloud.instance.ClusterPremain"
+        attributes["Premain-Class"] = "dev.httpmarco.polocloud.node.boot.NodeBoot"
     }
 
     archiveFileName.set("polocloud-node-${version}.jar")
