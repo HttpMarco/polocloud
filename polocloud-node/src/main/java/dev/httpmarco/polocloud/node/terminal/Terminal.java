@@ -9,4 +9,6 @@ public interface Terminal extends Available, Closeable {
 
     void update();
 
+    void printLine(String message);
+
 }
