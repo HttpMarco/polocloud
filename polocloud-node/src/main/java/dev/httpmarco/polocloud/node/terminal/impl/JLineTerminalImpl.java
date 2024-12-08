@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.node.terminal.impl;
 import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
+import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -56,6 +57,9 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
 
         this.clear();
         this.commandService = new CommandService();
+
+        // log default cloud information first
+        TerminalHeader.print(this);
         new JLineTerminalReadingThread(this).start();
     }
 

@@ -16,7 +16,6 @@
 
 package dev.httpmarco.polocloud.launcher;
 
-import dev.httpmarco.polocloud.launcher.utils.ManifestReader;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -28,8 +27,6 @@ public final class PoloCloud {
 
     @Getter
     private static PoloCloud launcher;
-    @Getter
-    private static String version;
 
 
     // allow to check if the cloud is running -> Deny multiple instances
@@ -37,7 +34,6 @@ public final class PoloCloud {
 
     public PoloCloud() {
         launcher = this;
-        version = ManifestReader.detectVersion();
 
         // allow us to add more dependencies to the node at runtime
         // todo: implement this lock

@@ -10,18 +10,18 @@ import java.util.jar.JarFile;
 public final class ManifestReader {
 
     @SneakyThrows
-    public String detectVersion() {
-        var path = ManifestReader.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-
-        try (JarFile jarFile = new JarFile(path)) {
-            return jarFile.getManifest().getMainAttributes().getValue("Polocloud-Version");
+    public String detectMainClass(File file) {
+        try (JarFile jarFile = new JarFile(file)) {
+            return jarFile.getManifest().getMainAttributes().getValue("Main-Class");
         }
     }
 
     @SneakyThrows
-    public String detectMainClass(File file) {
-        try (JarFile jarFile = new JarFile(file)) {
-            return jarFile.getManifest().getMainAttributes().getValue("Main-Class");
+    public String detectVersion() {
+        var path = dev.httpmarco.polocloud.launcher.utils.ManifestReader.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+
+        try (JarFile jarFile = new JarFile(path)) {
+            return jarFile.getManifest().getMainAttributes().getValue("Polocloud-Version");
         }
     }
 }
