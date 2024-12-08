@@ -51,14 +51,16 @@ public final class DependencyFactoryImpl implements DependencyFactory {
 
         var dependencyPath = this.dependencyPath.resolve(dependency.fileName());
 
-        if(Files.exists(dependencyPath) && VALIDATOR.valid(dependency, dependencyPath)) {
-            NodeBoot.instrumentation().appendToSystemClassLoaderSearch(new JarFile(dependencyPath.toFile()));
+        if(!Files.exists(dependencyPath)) {
+            Downloader.download(dependency.url() + ".jar", dependencyPath);
+        }
+
+        if(!VALIDATOR.valid(dependency, dependencyPath)) {
+            this.prepare(dependency);
             return;
         }
 
-        Downloader.download(dependency.url() + ".jar", dependencyPath);
         NodeBoot.instrumentation().appendToSystemClassLoaderSearch(new JarFile(dependencyPath.toFile()));
-        System.out.println("Loaded dependency " + dependency.fileName());
     }
 
     @Override
