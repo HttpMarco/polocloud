@@ -17,8 +17,6 @@ public final class DependencyProviderImpl implements DependencyProvider {
 
     public DependencyProviderImpl() {
         this.factory = new DependencyFactoryImpl(this);
-
-        this.registerDependency(new DependencyImpl("org.jline", "jline", "3.27.1", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
     }
 
     @Override
