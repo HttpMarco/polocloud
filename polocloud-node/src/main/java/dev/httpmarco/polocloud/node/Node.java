@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.node;
 
+import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
+import dev.httpmarco.polocloud.node.cluster.impl.ClusterProviderImpl;
 import dev.httpmarco.polocloud.node.terminal.Terminal;
 import dev.httpmarco.polocloud.node.terminal.impl.JLineTerminalImpl;
 import lombok.Getter;
@@ -14,13 +16,13 @@ public final class Node {
     @Getter
     private static Node instance;
 
+    private final ClusterProvider clusterProvider;
     private final Terminal terminal;
 
     public Node() {
         instance = this;
 
         this.terminal = new JLineTerminalImpl();
-
-        log.info("Starting Polocloud Node...");
+        this.clusterProvider = new ClusterProviderImpl();
     }
 }
