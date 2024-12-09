@@ -7,7 +7,6 @@ import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -31,8 +30,6 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
     @Getter(AccessLevel.PACKAGE)
     private final LineReaderImpl lineReader;
     private final CommandService commandService;
-
-    @Setter
     private @Nullable Setup setup;
 
     @SneakyThrows
@@ -85,6 +82,16 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
         this.terminal.writer().println(TerminalColorReplacer.replaceColorCodes(message) + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         this.terminal.flush();
         this.update();
+    }
+
+    @Override
+    public void setup(Setup setup) {
+        this.setup = setup;
+    }
+
+    @Override
+    public void updatePrompt(String prompt) {
+        this.lineReader.setPrompt(TerminalColorReplacer.replaceColorCodes(prompt));
     }
 
     @Override

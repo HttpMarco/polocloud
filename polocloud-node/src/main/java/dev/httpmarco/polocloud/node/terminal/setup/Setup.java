@@ -35,8 +35,8 @@ public abstract class Setup implements Named {
 
     public void displayQuestion(String remark) {
         var terminal = Node.instance().terminal();
-       //todo
-        // terminal.updatePrompt("&8» &7");
+
+        terminal.updatePrompt("&8» &7");
         terminal.clear();
 
         var question = question();

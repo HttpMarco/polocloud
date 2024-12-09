@@ -16,4 +16,6 @@ public interface Terminal extends Available, Closeable {
     CommandService commandService();
 
     void setup(Setup setup);
+
+    void updatePrompt(String prompt);
 }
