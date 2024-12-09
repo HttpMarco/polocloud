@@ -106,8 +106,7 @@ public abstract class Setup implements Named {
     }
 
     public void exit(boolean completed) {
-        //todo
-     //   Node.instance().terminal().setup(null);
+        Node.instance().terminal().setup(null);
         Node.instance().terminal().clear();
 
         if (completed) {
