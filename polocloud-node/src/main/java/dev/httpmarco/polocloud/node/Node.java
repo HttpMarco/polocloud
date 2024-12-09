@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.node.terminal.Terminal;
 import dev.httpmarco.polocloud.node.terminal.impl.JLineTerminalImpl;
+import dev.httpmarco.polocloud.node.terminal.setup.impl.StartSetup;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -22,5 +23,9 @@ public final class Node {
         this.terminal = new JLineTerminalImpl();
 
         log.info("Starting Polocloud Node...");
+
+        //todo
+        //this is only temporary for testing
+        new StartSetup().run();
     }
 }

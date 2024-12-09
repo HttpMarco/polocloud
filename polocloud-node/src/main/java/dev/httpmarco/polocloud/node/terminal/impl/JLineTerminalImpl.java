@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.terminal.impl;
 
 import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
+import dev.httpmarco.polocloud.node.terminal.setup.Setup;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
 import lombok.AccessLevel;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Nullable;
 import org.jline.jansi.Ansi;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -28,6 +30,7 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
     @Getter(AccessLevel.PACKAGE)
     private final LineReaderImpl lineReader;
     private final CommandService commandService;
+    private @Nullable Setup setup;
 
     @SneakyThrows
     public JLineTerminalImpl() {
@@ -79,6 +82,21 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
         this.terminal.writer().println(TerminalColorReplacer.replaceColorCodes(message) + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
         this.terminal.flush();
         this.update();
+    }
+
+    @Override
+    public void setup(Setup setup) {
+        this.setup = setup;
+    }
+
+    @Override
+    public void updatePrompt(String prompt) {
+        this.lineReader.setPrompt(TerminalColorReplacer.replaceColorCodes(prompt));
+    }
+
+    @Override
+    public boolean isInSetup() {
+        return this.setup != null;
     }
 
     @Override
