@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.node.terminal.setup.Setup;
 
 import java.util.Map;
 
-public class StartSetup extends Setup {
+public final class StartSetup extends Setup {
 
     public StartSetup() {
         super("Start-Setup");
