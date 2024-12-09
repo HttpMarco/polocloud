@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 @Log4j2
-public class StartSetup extends Setup {
+public final class StartSetup extends Setup {
 
     private static final List<String> YES_NO_OPTIONS = List.of("yes", "no");
 
