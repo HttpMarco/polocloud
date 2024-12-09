@@ -95,6 +95,11 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
     }
 
     @Override
+    public boolean isInSetup() {
+        return this.setup != null;
+    }
+
+    @Override
     public void clear() {
         this.terminal.puts(InfoCmp.Capability.clear_screen);
         this.terminal.flush();

@@ -18,4 +18,6 @@ public interface Terminal extends Available, Closeable {
     void setup(Setup setup);
 
     void updatePrompt(String prompt);
+
+    boolean isInSetup();
 }
