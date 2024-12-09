@@ -30,6 +30,21 @@ public final class JLineTerminalReadingThread extends Thread implements Closeabl
                 final var line = rawLine.split(" ");
 
                 if (line.length > 0) {
+                    if (terminal.isInSetup()) {
+                        if (rawLine.equalsIgnoreCase("exit")) {
+                            terminal.setup().exit(false);
+                            continue;
+                        }
+
+                        if (rawLine.equalsIgnoreCase("back")) {
+                            terminal.setup().previousQuestion();
+                            continue;
+                        }
+
+                        terminal.setup().answer(rawLine);
+                        continue;
+                    }
+
                     Node.instance().terminal().commandService().call(line[0], Arrays.copyOfRange(line, 1, line.length));
                 }
 
