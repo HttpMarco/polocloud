@@ -64,8 +64,7 @@ public abstract class Setup implements Named {
     }
 
     public void run() {
-        //todo
-        //Node.instance().terminal().setup(this);
+        Node.instance().terminal().setup(this);
 
         displayQuestion();
     }
