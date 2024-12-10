@@ -27,9 +27,10 @@ public final class PoloCloudProcess extends Thread {
         ClasspathUtils.copyClassPathFile(bootPath.getFileName().toString(), bootPath.toString());
 
         // we start this as a new process, because we want to keep the launcher running and can update the cloud
+        var classpath = bootPath + ";" + apiPath;
         // also redirect output inheritIO
-        var processBuilder = new ProcessBuilder("java", "-cp", bootPath + ";" + apiPath + ";" + System.getProperty("java.class.path"), "-javaagent:dependencies/polocloud-node-" + ManifestReader.detectVersion() + ".jar", ManifestReader.detectMainClass(bootPath.toFile())).inheritIO();
-        var process = processBuilder.start();
+        var processBuilder = new ProcessBuilder("java", "-cp", classpath, "-javaagent:" + bootPath, ManifestReader.detectMainClass(bootPath.toFile()));
+        var process = processBuilder.inheritIO().start();
 
         process.waitFor();
     }

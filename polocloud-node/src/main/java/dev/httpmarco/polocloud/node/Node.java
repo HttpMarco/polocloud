@@ -7,7 +7,6 @@ import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
 import dev.httpmarco.polocloud.node.terminal.impl.JLineNodeTerminalImpl;
 import dev.httpmarco.polocloud.node.i18n.I18n;
 import dev.httpmarco.polocloud.node.i18n.impl.I18nPoloCloudNode;
-import dev.httpmarco.polocloud.node.terminal.setup.impl.StartSetup;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;

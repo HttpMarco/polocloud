@@ -33,7 +33,7 @@ public final class NodeBoot {
         dependencyProvider.registerDependency(new DependencyImpl("io.netty", "netty5-resolver", "5.0.0.Alpha5", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
         dependencyProvider.registerDependency(new DependencyImpl("io.netty", "netty5-transport-classes-epoll", "5.0.0.Alpha5", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
         dependencyProvider.registerDependency(new DependencyImpl("io.netty", "netty5-buffer", "5.0.0.Alpha5", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
-        dependencyProvider.registerDependency(new DependencyImpl("dev.httpmarco", "netline", "1.0.2-SNAPSHOT", "https://s01.oss.sonatype.org/service/local/repositories/snapshots/content/%s/%s/%s/%s-%s", "20241209.200330-1"));
+        dependencyProvider.registerDependency(new DependencyImpl("dev.httpmarco", "netline", "1.0.3-SNAPSHOT", "https://s01.oss.sonatype.org/service/local/repositories/snapshots/content/%s/%s/%s/%s-%s", "20241210.212738-1"));
 
         new Node();
     }

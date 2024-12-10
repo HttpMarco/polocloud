@@ -2,10 +2,8 @@ package dev.httpmarco.polocloud.node.terminal.impl;
 
 import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
-import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
 import dev.httpmarco.polocloud.node.terminal.impl.sessions.DefaultTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
-import dev.httpmarco.polocloud.node.terminal.setup.Setup;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
 import lombok.Getter;
