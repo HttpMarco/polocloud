@@ -1,5 +1,6 @@
 dependencies {
     compileOnly(project(":polocloud-api"))
+    compileOnly(project(":polocloud-launcher"))
     compileOnly(libs.netline)
     compileOnly(libs.netty5)
     compileOnly(libs.jline)
