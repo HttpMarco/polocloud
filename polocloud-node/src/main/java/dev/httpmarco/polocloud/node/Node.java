@@ -2,8 +2,9 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.impl.ClusterProviderImpl;
-import dev.httpmarco.polocloud.node.terminal.Terminal;
-import dev.httpmarco.polocloud.node.terminal.impl.JLineTerminalImpl;
+import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
+import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
+import dev.httpmarco.polocloud.node.terminal.impl.JLineNodeTerminalImpl;
 import dev.httpmarco.polocloud.node.i18n.I18n;
 import dev.httpmarco.polocloud.node.i18n.impl.I18nPoloCloudNode;
 import dev.httpmarco.polocloud.node.terminal.setup.impl.StartSetup;
@@ -22,18 +23,15 @@ public final class Node {
     private static final I18n translation = new I18nPoloCloudNode();
 
     private final ClusterProvider clusterProvider;
-    private final Terminal terminal;
+    private final NodeTerminal terminal;
+    private final CommandService commandService;
 
     public Node() {
         instance = this;
 
-        this.terminal = new JLineTerminalImpl();
-        log.info(translation().get("node.starting"));
-      
+        this.terminal = new JLineNodeTerminalImpl();
+        this.commandService = new CommandService();
         this.clusterProvider = new ClusterProviderImpl();
 
-        //todo
-        //this is only temporary for testing
-        new StartSetup().run();
     }
 }

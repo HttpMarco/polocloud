@@ -3,6 +3,7 @@ dependencies {
     compileOnly(libs.netline)
     compileOnly(libs.netty5)
     compileOnly(libs.jline)
+    compileOnly(libs.gson)
 }
 
 tasks.jar {

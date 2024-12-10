@@ -1,16 +1,17 @@
 package dev.httpmarco.polocloud.node.terminal.impl;
 
+import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
+import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
+import dev.httpmarco.polocloud.node.terminal.impl.sessions.DefaultTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
 import dev.httpmarco.polocloud.node.terminal.setup.Setup;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.Nullable;
 import org.jline.jansi.Ansi;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -24,22 +25,16 @@ import java.nio.charset.StandardCharsets;
 @Log4j2
 @Getter
 @Accessors(fluent = true)
-public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.terminal.Terminal {
+public final class JLineNodeTerminalImpl implements NodeTerminal {
 
     private final Terminal terminal;
-    @Getter(AccessLevel.PACKAGE)
     private final LineReaderImpl lineReader;
-    private final CommandService commandService;
-    private @Nullable Setup setup;
+    private NodeTerminalSession session;
 
     @SneakyThrows
-    public JLineTerminalImpl() {
-        this.terminal = TerminalBuilder.builder()
-                .system(true)
-                .encoding(StandardCharsets.UTF_8)
-                .dumb(true)
-                .jansi(true)
-                .build();
+    public JLineNodeTerminalImpl() {
+        this.resetSession();
+        this.terminal = TerminalBuilder.builder().system(true).encoding(StandardCharsets.UTF_8).dumb(true).jansi(true).build();
 
         this.lineReader = (LineReaderImpl) LineReaderBuilder.builder()
                 .terminal(terminal)
@@ -59,7 +54,6 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
         System.setErr(new Log4jStream(log::error).printStream());
 
         this.clear();
-        this.commandService = new CommandService();
 
         // log default cloud information first
         TerminalHeader.print(this);
@@ -85,18 +79,17 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
     }
 
     @Override
-    public void setup(Setup setup) {
-        this.setup = setup;
+    public void newSession(NodeTerminalSession session) {
+        this.session = session;
     }
 
     @Override
+    public void resetSession() {
+        this.session = DefaultTerminalSession.INSTANCE;
+    }
+
     public void updatePrompt(String prompt) {
         this.lineReader.setPrompt(TerminalColorReplacer.replaceColorCodes(prompt));
-    }
-
-    @Override
-    public boolean isInSetup() {
-        return this.setup != null;
     }
 
     @Override
@@ -106,7 +99,6 @@ public final class JLineTerminalImpl implements dev.httpmarco.polocloud.node.ter
         this.update();
     }
 
-    @Override
     public void update() {
         if (!this.lineReader.isReading()) {
             return;

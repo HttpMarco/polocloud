@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.node.terminal.impl;
 
+import dev.httpmarco.polocloud.api.Available;
 import dev.httpmarco.polocloud.api.Closeable;
-import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.NodeShutdown;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import lombok.AllArgsConstructor;
@@ -10,43 +10,28 @@ import org.jline.reader.UserInterruptException;
 import java.util.Arrays;
 
 @AllArgsConstructor
-public final class JLineTerminalReadingThread extends Thread implements Closeable {
+public final class JLineTerminalReadingThread extends Thread implements Closeable, Available {
 
     private final String prompt = TerminalColorReplacer.replaceColorCodes("&9default&8@&7cloud &8» &7");
-    private final JLineTerminalImpl terminal;
+    private final JLineNodeTerminalImpl terminal;
 
     @Override
     public void run() {
         while (!isInterrupted()) {
-
             try {
                 var rawLine = terminal.lineReader().readLine(prompt).trim();
 
-
-                if (rawLine.isEmpty()) {
+                // we don't want to handle empty lines
+                if (rawLine.trim().isEmpty()) {
                     continue;
                 }
 
-                final var line = rawLine.split(" ");
+                var line = rawLine.split(" ");
+                var commandName = line[0];
+                var commandArguments = Arrays.copyOfRange(line, 1, line.length);
 
-                if (line.length > 0) {
-                    if (terminal.isInSetup()) {
-                        if (rawLine.equalsIgnoreCase("exit")) {
-                            terminal.setup().exit(false);
-                            continue;
-                        }
-
-                        if (rawLine.equalsIgnoreCase("back")) {
-                            terminal.setup().previousQuestion();
-                            continue;
-                        }
-
-                        terminal.setup().answer(rawLine);
-                        continue;
-                    }
-
-                    Node.instance().terminal().commandService().call(line[0], Arrays.copyOfRange(line, 1, line.length));
-                }
+                // handle the input with the session
+                terminal.session().handleInput(terminal, rawLine, commandName, commandArguments);
 
             } catch (UserInterruptException exception) {
                 // if a command user use strg + c
@@ -58,5 +43,10 @@ public final class JLineTerminalReadingThread extends Thread implements Closeabl
     @Override
     public void close() {
         this.interrupt();
+    }
+
+    @Override
+    public boolean available() {
+        return this.isAlive();
     }
 }

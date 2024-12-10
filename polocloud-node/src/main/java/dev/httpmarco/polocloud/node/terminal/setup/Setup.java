@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node.terminal.setup;
 
 import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.terminal.impl.sessions.SetupTerminalSession;
 import dev.httpmarco.polocloud.node.utils.Pair;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +65,7 @@ public abstract class Setup implements Named {
     }
 
     public void run() {
-        Node.instance().terminal().setup(this);
+        Node.instance().terminal().newSession(new SetupTerminalSession(this));
 
         displayQuestion();
     }
@@ -105,7 +106,7 @@ public abstract class Setup implements Named {
     }
 
     public void exit(boolean completed) {
-        Node.instance().terminal().setup(null);
+        Node.instance().terminal().resetSession();
         Node.instance().terminal().clear();
 
         if (completed) {

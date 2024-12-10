@@ -23,6 +23,7 @@ public final class NodeBoot {
 
         // download required dependencies
         // todo add more dependencies
+        dependencyProvider.registerDependency(new DependencyImpl("com.google.code.gson", "gson", "2.11.0", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
         dependencyProvider.registerDependency(new DependencyImpl("org.jline", "jline", "3.27.1", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
         dependencyProvider.registerDependency(new DependencyImpl("org.apache.logging.log4j", "log4j-api", "2.24.1", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
         dependencyProvider.registerDependency(new DependencyImpl("org.apache.logging.log4j", "log4j-core", "2.24.1", "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s"));
