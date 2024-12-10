@@ -1,6 +1,6 @@
-package dev.httpmarco.polocloud.node.terminal.commands.type;
-import dev.httpmarco.polocloud.node.terminal.commands.CommandArgument;
-import dev.httpmarco.polocloud.node.terminal.commands.CommandContext;
+package dev.httpmarco.polocloud.node.commands.type;
+import dev.httpmarco.polocloud.node.commands.CommandArgument;
+import dev.httpmarco.polocloud.node.commands.CommandContext;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;

@@ -1,7 +1,7 @@
-package dev.httpmarco.polocloud.node.terminal.commands;
+package dev.httpmarco.polocloud.node.commands;
 
-import dev.httpmarco.polocloud.node.terminal.commands.type.KeywordArgument;
-import dev.httpmarco.polocloud.node.terminal.commands.type.StringArrayArgument;
+import dev.httpmarco.polocloud.node.commands.type.KeywordArgument;
+import dev.httpmarco.polocloud.node.commands.type.StringArrayArgument;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;

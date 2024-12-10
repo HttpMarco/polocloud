@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.node.terminal.commands;
+package dev.httpmarco.polocloud.node.commands;
 
 import dev.httpmarco.polocloud.node.Node;
 import lombok.AllArgsConstructor;

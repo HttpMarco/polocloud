@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.node.terminal.commands;
+package dev.httpmarco.polocloud.node.commands;
 
 public interface CommandExecution {
 

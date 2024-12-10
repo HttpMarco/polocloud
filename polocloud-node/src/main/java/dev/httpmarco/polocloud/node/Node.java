@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.node;
 import dev.httpmarco.polocloud.node.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.node.cluster.impl.ClusterProviderImpl;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
-import dev.httpmarco.polocloud.node.terminal.commands.CommandService;
+import dev.httpmarco.polocloud.node.commands.CommandService;
 import dev.httpmarco.polocloud.node.terminal.impl.JLineNodeTerminalImpl;
 import dev.httpmarco.polocloud.node.i18n.I18n;
 import dev.httpmarco.polocloud.node.i18n.impl.I18nPoloCloudNode;

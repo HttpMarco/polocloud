@@ -1,7 +1,7 @@
-package dev.httpmarco.polocloud.node.terminal.commands.impl;
+package dev.httpmarco.polocloud.node.commands.impl;
 
 import dev.httpmarco.polocloud.node.NodeShutdown;
-import dev.httpmarco.polocloud.node.terminal.commands.Command;
+import dev.httpmarco.polocloud.node.commands.Command;
 
 public final class ShutdownCommand extends Command {
 

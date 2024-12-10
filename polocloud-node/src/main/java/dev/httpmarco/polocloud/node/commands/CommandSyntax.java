@@ -1,6 +1,6 @@
-package dev.httpmarco.polocloud.node.terminal.commands;
+package dev.httpmarco.polocloud.node.commands;
 
-import dev.httpmarco.polocloud.node.terminal.commands.type.KeywordArgument;
+import dev.httpmarco.polocloud.node.commands.type.KeywordArgument;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;

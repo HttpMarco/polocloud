@@ -1,7 +1,6 @@
-package dev.httpmarco.polocloud.node.terminal.commands;
+package dev.httpmarco.polocloud.node.commands;
 
-import dev.httpmarco.polocloud.node.terminal.commands.*;
-import dev.httpmarco.polocloud.node.terminal.commands.impl.ShutdownCommand;
+import dev.httpmarco.polocloud.node.commands.impl.ShutdownCommand;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;

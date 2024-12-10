@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.node.terminal.commands;
+package dev.httpmarco.polocloud.node.commands;
 
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
