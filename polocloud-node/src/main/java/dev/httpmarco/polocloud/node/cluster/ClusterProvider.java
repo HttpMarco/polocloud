@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.cluster;
 
-public interface ClusterProvider {
+import dev.httpmarco.netline.cluster.NetCluster;
 
+public interface ClusterProvider extends NetCluster<ClusterData> {
 
 }
