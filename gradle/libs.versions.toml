@@ -4,7 +4,7 @@ annotations = "26.0.1"
 jline = "3.27.1"
 junitBom = "5.10.0"
 log4j2 = "2.24.1"
-netline = "1.0.2-SNAPSHOT"
+netline = "1.0.3-SNAPSHOT"
 netty5 = "5.0.0.Alpha5"
 gson = "2.11.0"
 
