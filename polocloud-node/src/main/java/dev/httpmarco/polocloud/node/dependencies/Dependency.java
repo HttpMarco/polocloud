@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.dependencies;
 
 import dev.httpmarco.polocloud.api.Available;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -33,6 +34,13 @@ public interface Dependency extends Available {
      * @return the checksum
      */
     String checksum();
+
+    /**
+     * The classifier of the dependency
+     * @return the classifier
+     */
+    @Nullable
+    String classifier();
 
     /**
      * The repository where the dependency is located

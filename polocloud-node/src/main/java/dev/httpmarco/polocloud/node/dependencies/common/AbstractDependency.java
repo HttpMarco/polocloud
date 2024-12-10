@@ -19,6 +19,7 @@ public abstract class AbstractDependency implements Available {
     private String groupId;
     private String artifactId;
     private String version;
+    private String classifier;
 
     @Override
     public boolean available() {

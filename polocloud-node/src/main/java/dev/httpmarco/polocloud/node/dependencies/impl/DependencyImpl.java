@@ -24,16 +24,20 @@ public final class DependencyImpl extends AbstractDependency implements Dependen
     private final String repository;
     private final Collection<Dependency> depend;
 
-    public DependencyImpl(String groupId, String artifactId, String version, String repository) {
-        this.groupId(groupId).artifactId(artifactId).version(version);
+    public DependencyImpl(String groupId, String artifactId, String version, String repository, String classifier) {
+        this.groupId(groupId).artifactId(artifactId).version(version).classifier(classifier);
         this.repository = repository;
         this.depend = new LinkedList<>();
         this.checksum = DependencyUtils.readChecksum(this);
     }
 
     public DependencyImpl(@NotNull DependencyScheme scheme, String repository) {
-        this(scheme.groupId(), scheme.artifactId(), scheme.version(), repository);
+        this(scheme.groupId(), scheme.artifactId(), scheme.version(), repository, null);
     }
+    public DependencyImpl(String groupId, String artifactId, String version, String repository) {
+        this(groupId, artifactId, version, repository, null);
+    }
+
 
     @Override
     public boolean available() {
@@ -42,7 +46,7 @@ public final class DependencyImpl extends AbstractDependency implements Dependen
 
     @Override
     public @NotNull String url() {
-        return String.format(this.repository, urlGroupId(), artifactId(), version(), artifactId(), version());
+        return String.format(this.repository, urlGroupId(), artifactId(), version(), artifactId(), (classifier() != null ? version().split("-")[0] + "-" + classifier() : version()));
     }
 
     @Contract(pure = true)
