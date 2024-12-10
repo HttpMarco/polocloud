@@ -9,13 +9,12 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+@Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
 public class I18nProvider implements I18n {
 
-    @Getter
     private final String resourceBundlePrefix;
-    private final ClassLoader classLoader = getClass().getClassLoader();
 
     @Override
     public String get(String key) {
@@ -50,7 +49,7 @@ public class I18nProvider implements I18n {
     @Override
     public ResourceBundle resourceBundle(Locale locale) {
         try {
-            return ResourceBundle.getBundle(this.resourceBundlePrefix, locale, this.classLoader);
+            return this.localBundle(locale);
         } catch (MissingResourceException e) {
             return defaultResourceBundle();
         }
@@ -58,6 +57,10 @@ public class I18nProvider implements I18n {
 
     @Override
     public ResourceBundle defaultResourceBundle() {
-        return ResourceBundle.getBundle(this.resourceBundlePrefix, Locale.ENGLISH, this.classLoader);
+        return this.localBundle(Locale.ENGLISH);
+    }
+
+    private ResourceBundle localBundle(Locale locale) {
+        return ResourceBundle.getBundle(this.resourceBundlePrefix, locale, getClass().getClassLoader());
     }
 }
