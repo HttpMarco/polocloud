@@ -2,6 +2,8 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.node.terminal.Terminal;
 import dev.httpmarco.polocloud.node.terminal.impl.JLineTerminalImpl;
+import dev.httpmarco.polocloud.node.i18n.I18n;
+import dev.httpmarco.polocloud.node.i18n.impl.I18nPoloCloudNode;
 import dev.httpmarco.polocloud.node.terminal.setup.impl.StartSetup;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -14,6 +16,8 @@ public final class Node {
 
     @Getter
     private static Node instance;
+    @Getter
+    private static final I18n translation = new I18nPoloCloudNode();
 
     private final Terminal terminal;
 
@@ -22,7 +26,7 @@ public final class Node {
 
         this.terminal = new JLineTerminalImpl();
 
-        log.info("Starting Polocloud Node...");
+        log.info(translation().get("node.starting"));
 
         //todo
         //this is only temporary for testing
