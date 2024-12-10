@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.terminal.commands;
 
+import dev.httpmarco.polocloud.node.Node;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -24,7 +25,7 @@ public abstract class CommandArgument<T> {
     }
 
     public String wrongReason() {
-        return "The argument " + key + " is not a valid parameter&8!";
+        return Node.translation().get("terminal.command.argument.wrong");
     }
 
     public abstract T buildResult(String input);

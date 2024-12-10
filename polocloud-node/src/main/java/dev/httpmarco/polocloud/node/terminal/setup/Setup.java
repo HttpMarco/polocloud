@@ -40,14 +40,14 @@ public abstract class Setup implements Named {
         terminal.clear();
 
         var question = question();
-        terminal.printLine("&b" + name + " &8- &7Question &8(&7" + (index + 1) + "&8/&7" + questions.size() + "&8) &7" + question.question());
+        terminal.printLine(Node.translation().get("setup.header.text", name, (index + 1), questions.size(), question.question()));
 
         if (!question.possibleAnswers().apply(answers).isEmpty()) {
-            terminal.printLine("&7Possible answers&8: &f" + String.join("&8, &f", question.possibleAnswers().apply(answers)));
+            terminal.printLine(Node.translation().get("setup.answers.text") + String.join("&8, &f", question.possibleAnswers().apply(answers)));
         }
 
         if (answers.containsKey(question.answerKey())) {
-            terminal.printLine("&7The previous response was&8: &f" + answers.get(question.answerKey()));
+            terminal.printLine(Node.translation().get("setup.answer.before", answers.get(question.answerKey())));
         }
 
         if (remark != null) {
@@ -56,7 +56,7 @@ public abstract class Setup implements Named {
 
         // we write an empty placeholder
         terminal.printLine(" ");
-        terminal.printLine("Enter &8'&7exit&8' &7for leave the setup or enter &8'&7back&8' &7for see the previous question&8!");
+        terminal.printLine(Node.translation().get("setup.exit.text"));
     }
 
     public void displayQuestion() {
@@ -80,7 +80,7 @@ public abstract class Setup implements Named {
     public void answer(String answer) {
 
         if (question().predicate() != null && !question().predicate().apply(new Pair<>(answer, answers))) {
-            displayQuestion("&cThe given answer is not correct.");
+            displayQuestion(Node.translation().get("setup.answer.wrong"));
             return;
         }
 
