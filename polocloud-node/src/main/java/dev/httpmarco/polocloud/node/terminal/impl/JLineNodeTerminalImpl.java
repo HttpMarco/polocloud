@@ -27,12 +27,16 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
 
     private final Terminal terminal;
     private final LineReaderImpl lineReader;
+
+    private String prompt;
     private NodeTerminalSession session;
 
     @SneakyThrows
     public JLineNodeTerminalImpl() {
         this.resetSession();
+
         this.terminal = TerminalBuilder.builder().system(true).encoding(StandardCharsets.UTF_8).dumb(true).jansi(true).build();
+        this.updatePrompt("&9default&8@&7cloud &8» &7");
 
         this.lineReader = (LineReaderImpl) LineReaderBuilder.builder()
                 .terminal(terminal)
@@ -87,7 +91,11 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
     }
 
     public void updatePrompt(String prompt) {
-        this.lineReader.setPrompt(TerminalColorReplacer.replaceColorCodes(prompt));
+        this.prompt = TerminalColorReplacer.replaceColorCodes(prompt);
+
+        if(lineReader != null) {
+            this.lineReader.setPrompt(prompt);
+        }
     }
 
     @Override

@@ -40,4 +40,10 @@ public interface NodeTerminal extends Available, Closeable {
      */
    void updatePrompt(String prompt);
 
+    /**
+     * Get the current prompt
+     * @return the prompt
+     */
+   String prompt();
+
 }
