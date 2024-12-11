@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.impl.sessions.DefaultTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.impl.sessions.SetupTerminalSession;
+import dev.httpmarco.polocloud.node.terminal.impl.setup.StartSetup;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
@@ -89,7 +90,7 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
 
     @Override
     public void resetSession() {
-        this.newSession(new SetupTerminalSession());
+        this.newSession(new SetupTerminalSession(new StartSetup()));
     }
 
     public void updatePrompt(String prompt) {
