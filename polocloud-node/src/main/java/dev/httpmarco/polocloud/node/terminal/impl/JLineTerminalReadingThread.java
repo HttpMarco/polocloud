@@ -3,10 +3,9 @@ package dev.httpmarco.polocloud.node.terminal.impl;
 import dev.httpmarco.polocloud.api.Available;
 import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.node.NodeShutdown;
+import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
 import lombok.AllArgsConstructor;
 import org.jline.reader.UserInterruptException;
-import java.util.Arrays;
-
 @AllArgsConstructor
 public final class JLineTerminalReadingThread extends Thread implements Closeable, Available {
 
@@ -16,20 +15,12 @@ public final class JLineTerminalReadingThread extends Thread implements Closeabl
     public void run() {
         while (!isInterrupted()) {
             try {
-                var rawLine = terminal.lineReader().readLine(terminal.prompt()).trim();
+                NodeTerminalSession session = terminal.session();
+                var result = session.waitFor(terminal.lineReader());
 
-                // we don't want to handle empty lines
-                if (rawLine.trim().isEmpty()) {
-                    continue;
+                if (session.codecAnswer(result)) {
+                    session.handleInput(result);
                 }
-
-                var line = rawLine.split(" ");
-                var commandName = line[0];
-                var commandArguments = Arrays.copyOfRange(line, 1, line.length);
-
-                // handle the input with the session
-                terminal.session().handleInput(terminal, rawLine, commandName, commandArguments);
-
             } catch (UserInterruptException exception) {
                 // if a command user use strg + c
                 NodeShutdown.nodeShutdownTotal(true);

@@ -21,13 +21,13 @@ public interface NodeTerminal extends Available, Closeable {
      * Reads a line from the terminal
      * @return the line
      */
-   NodeTerminalSession session();
+   NodeTerminalSession<?> session();
 
     /**
      * Creates a new session
      * @param session the session
      */
-   void newSession(NodeTerminalSession session);
+   void newSession(NodeTerminalSession<?> session);
 
     /**
      * Resets the session to {@link dev.httpmarco.polocloud.node.terminal.impl.sessions.DefaultTerminalSession}

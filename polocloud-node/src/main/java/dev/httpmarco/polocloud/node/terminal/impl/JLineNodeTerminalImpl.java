@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.node.terminal.impl;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.impl.sessions.DefaultTerminalSession;
+import dev.httpmarco.polocloud.node.terminal.impl.sessions.SetupTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
@@ -29,14 +30,14 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
     private final LineReaderImpl lineReader;
 
     private String prompt;
-    private NodeTerminalSession session;
+    private NodeTerminalSession<?> session;
 
     @SneakyThrows
     public JLineNodeTerminalImpl() {
-        this.resetSession();
 
         this.terminal = TerminalBuilder.builder().system(true).encoding(StandardCharsets.UTF_8).dumb(true).jansi(true).build();
         this.updatePrompt("&9default&8@&7cloud &8» &7");
+        this.resetSession();
 
         this.lineReader = (LineReaderImpl) LineReaderBuilder.builder()
                 .terminal(terminal)
@@ -81,13 +82,14 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
     }
 
     @Override
-    public void newSession(NodeTerminalSession session) {
+    public void newSession(NodeTerminalSession<?> session) {
         this.session = session;
+        this.session.prepare(terminal);
     }
 
     @Override
     public void resetSession() {
-        this.session = DefaultTerminalSession.INSTANCE;
+        this.newSession(new SetupTerminalSession());
     }
 
     public void updatePrompt(String prompt) {
