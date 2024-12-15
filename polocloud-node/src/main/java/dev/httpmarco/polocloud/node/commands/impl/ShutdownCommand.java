@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.commands.impl;
 
+import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.NodeShutdown;
 import dev.httpmarco.polocloud.node.commands.Command;
 
