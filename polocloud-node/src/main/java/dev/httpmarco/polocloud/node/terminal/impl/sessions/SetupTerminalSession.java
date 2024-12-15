@@ -29,7 +29,7 @@ public final class SetupTerminalSession implements NodeTerminalSession<String> {
 
     @Override
     public void handleInput(@NotNull String result) {
-        System.out.println("Handling input: " + result);
+
     }
 
     @Override
