@@ -29,6 +29,8 @@ public final class Node {
         instance = this;
 
         this.terminal = new JLineNodeTerminalImpl();
+        this.terminal.run();
+
         this.commandService = new CommandService();
         this.clusterProvider = new ClusterProviderImpl();
 

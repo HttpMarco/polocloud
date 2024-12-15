@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.node.terminal;
 import dev.httpmarco.polocloud.api.Available;
 import dev.httpmarco.polocloud.api.Closeable;
 
-public interface NodeTerminal extends Available, Closeable {
+public interface NodeTerminal extends Available, Closeable, Runnable {
 
     /**
      * Clears the terminal
@@ -45,5 +45,15 @@ public interface NodeTerminal extends Available, Closeable {
      * @return the prompt
      */
    String prompt();
+
+    /**
+     * Displays the cursor
+     */
+   void displayCursor();
+
+    /**
+     * Hides the cursor
+     */
+   void hideCursor();
 
 }

@@ -2,9 +2,8 @@ package dev.httpmarco.polocloud.node.terminal.impl;
 
 import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
-import dev.httpmarco.polocloud.node.terminal.impl.sessions.DefaultTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.impl.sessions.SetupTerminalSession;
-import dev.httpmarco.polocloud.node.terminal.impl.setup.StartSetup;
+import dev.httpmarco.polocloud.node.terminal.setup.impl.defaults.StartSetup;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
@@ -38,7 +37,6 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
 
         this.terminal = TerminalBuilder.builder().system(true).encoding(StandardCharsets.UTF_8).dumb(true).jansi(true).build();
         this.updatePrompt("&9default&8@&7cloud &8» &7");
-        this.resetSession();
 
         this.lineReader = (LineReaderImpl) LineReaderBuilder.builder()
                 .terminal(terminal)
@@ -61,6 +59,11 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
 
         // log default cloud information first
         TerminalHeader.print(this);
+    }
+
+    @Override
+    public void run() {
+        this.resetSession();
         new JLineTerminalReadingThread(this).start();
     }
 
@@ -99,6 +102,16 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
         if(lineReader != null) {
             this.lineReader.setPrompt(prompt);
         }
+    }
+
+    @Override
+    public void displayCursor() {
+        printLine("\\u001B[?25h"); // show cursor
+    }
+
+    @Override
+    public void hideCursor() {
+        printLine("\u001B[?25l"); // hide cursor
     }
 
     @Override

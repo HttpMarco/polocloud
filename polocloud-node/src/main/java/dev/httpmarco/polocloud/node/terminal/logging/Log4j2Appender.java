@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.node.terminal.logging;
 
 import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.terminal.impl.sessions.SetupTerminalSession;
 import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
@@ -44,7 +45,7 @@ public final class Log4j2Appender extends AbstractAppender {
         var message = event.getMessage().getFormattedMessage();
         var layout = "&7" + TERMINAL_LAYOUT.format(Calendar.getInstance().getTime()) + " &8| " + Log4jColorTranslate.translate(event.getLevel()) + event.getLevel().name() + "&8: &7" + message;
 
-        if (Node.instance().terminal() != null && Node.instance().terminal().available()) {
+        if (Node.instance().terminal() != null && Node.instance().terminal().available() && !(Node.instance().terminal().session() instanceof SetupTerminalSession)) {
             System.out.println(layout);
         }
     }

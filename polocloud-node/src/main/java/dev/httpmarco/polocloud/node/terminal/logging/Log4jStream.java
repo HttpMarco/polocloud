@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.node.terminal.logging;
 
+import dev.httpmarco.polocloud.node.Node;
+import dev.httpmarco.polocloud.node.terminal.setup.Setup;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +23,7 @@ public class Log4jStream extends ByteArrayOutputStream {
         var input = this.toString(StandardCharsets.UTF_8);
         super.reset();
 
-        if (input != null && !input.isEmpty()) {
+        if (input != null && !input.isEmpty() && !(Node.instance().terminal().session() instanceof Setup)) {
             callback.print(input.replace("\n", ""));
         }
     }

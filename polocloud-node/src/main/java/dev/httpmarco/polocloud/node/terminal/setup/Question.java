@@ -4,4 +4,6 @@ public interface Question {
 
     String question();
 
+    void display();
+
 }
