@@ -1,8 +1,11 @@
 package dev.httpmarco.polocloud.node.terminal.impl.sessions;
 
+import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
+import dev.httpmarco.polocloud.node.terminal.setup.Question;
 import dev.httpmarco.polocloud.node.terminal.setup.SelectQuestion;
 import dev.httpmarco.polocloud.node.terminal.setup.Setup;
+import dev.httpmarco.polocloud.node.terminal.setup.impl.SelectQuestionImpl;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jline.keymap.KeyMap;
@@ -29,15 +32,30 @@ public final class SetupTerminalSession implements NodeTerminalSession<String> {
 
     @Override
     public void handleInput(@NotNull String result) {
+        var question = setup.current().question();
 
+        if(question instanceof SelectQuestionImpl selectQuestion) {
+
+            if(result.equals("select-up")) {
+                selectQuestion.nextSelectedOption();
+                return;
+            }
+
+            if(result.equals("select-down")) {
+                selectQuestion.previousSelectedOption();
+            }
+
+            if(result.equals("selection")) {
+                setup.next();
+            }
+            return;
+        }
     }
 
     @Override
     public void prepare(Terminal terminal) {
         this.bindings.bind(new Reference("select-up"), KeyMap.key(terminal, InfoCmp.Capability.key_down));
         this.bindings.bind(new Reference("select-down"), KeyMap.key(terminal, InfoCmp.Capability.key_up));
-
-        // todo
-       // this.bindings.bind(new Reference("confirm-selection"), KeyMap.key(terminal, InfoCmp.Capability.keypad_xmit));
+        this.bindings.bind(new Reference("selection"), KeyMap.key(terminal, InfoCmp.Capability.carriage_return));
     }
 }

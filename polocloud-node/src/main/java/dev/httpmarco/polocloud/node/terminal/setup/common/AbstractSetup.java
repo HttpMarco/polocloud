@@ -17,10 +17,13 @@ import java.util.List;
 @Accessors(fluent = true)
 public abstract class AbstractSetup implements Setup {
 
-    private int index = 0;
+    private final String id;
     private final List<SetupStep> steps = new LinkedList<>();
 
-    public AbstractSetup() {
+    private int index = 0;
+
+    public AbstractSetup(String id) {
+        this.id = id;
         this.bindQuestion();
     }
 
@@ -29,7 +32,7 @@ public abstract class AbstractSetup implements Setup {
     @Override
     public void next() {
         index++;
-        this.display();
+        this.redisplay();
         //todo check last
     }
 
@@ -38,25 +41,12 @@ public abstract class AbstractSetup implements Setup {
         if(index != 0) {
             index--;
         }
-        this.display();
+        this.redisplay();
     }
 
     @Override
     public SetupStep current() {
         return this.steps.get(index);
-    }
-
-    public void display() {
-        var terminal = Node.instance().terminal();
-
-        terminal.clear();
-        terminal.printLine(" ");
-        terminal.printLine("Question: " + this.current().question().question());
-        terminal.printLine(" ");
-        this.current().question().display();
-        terminal.printLine(" ");
-
-        // todo option settings
     }
 
     public void add(Question question) {
@@ -65,11 +55,26 @@ public abstract class AbstractSetup implements Setup {
 
     @Override
     public void start() {
-        this.display();
+        this.redisplay();
     }
 
     @Override
     public void close() {
 
+    }
+
+    @Override
+    public void redisplay() {
+        var terminal = Node.instance().terminal();
+
+        terminal.clear();
+        terminal.printLine(" ");
+        terminal.printLine("Question: " + this.current().question().question());
+        terminal.printLine(" ");
+        this.current().question().display();
+        terminal.printLine(" ");
+        terminal.printLine(" ");
+        terminal.printLine("&eTip! &7Use the arrow keys to navigate through the options&8.");
+        terminal.printLine(" ");
     }
 }

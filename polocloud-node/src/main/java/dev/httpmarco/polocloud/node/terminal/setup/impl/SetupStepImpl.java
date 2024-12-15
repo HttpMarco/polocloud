@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Accessors(fluent = true)
 @RequiredArgsConstructor
-public class SetupStepImpl implements SetupStep {
+public final class SetupStepImpl implements SetupStep {
 
     private final Question question;
     private @Nullable String answer;

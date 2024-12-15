@@ -8,7 +8,7 @@ public interface NodeTerminal extends Available, Closeable, Runnable {
     /**
      * Clears the terminal
      */
-    void clear();
+    NodeTerminal clear();
 
     /**
      * Prints a message to the terminal

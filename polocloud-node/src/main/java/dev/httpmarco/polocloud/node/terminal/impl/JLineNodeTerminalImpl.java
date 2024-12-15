@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.node.terminal.impl;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminal;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
 import dev.httpmarco.polocloud.node.terminal.impl.sessions.SetupTerminalSession;
-import dev.httpmarco.polocloud.node.terminal.setup.impl.defaults.StartSetup;
+import dev.httpmarco.polocloud.node.terminal.setup.impl.defaults.OnboardingSetup;
 import dev.httpmarco.polocloud.node.terminal.logging.Log4jStream;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalColorReplacer;
 import dev.httpmarco.polocloud.node.terminal.utils.TerminalHeader;
@@ -93,7 +93,7 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
 
     @Override
     public void resetSession() {
-        this.newSession(new SetupTerminalSession(new StartSetup()));
+        this.newSession(new SetupTerminalSession(new OnboardingSetup()));
     }
 
     public void updatePrompt(String prompt) {
@@ -115,10 +115,11 @@ public final class JLineNodeTerminalImpl implements NodeTerminal {
     }
 
     @Override
-    public void clear() {
+    public NodeTerminal clear() {
         this.terminal.puts(InfoCmp.Capability.clear_screen);
         this.terminal.flush();
         this.update();
+        return this;
     }
 
     public void update() {
