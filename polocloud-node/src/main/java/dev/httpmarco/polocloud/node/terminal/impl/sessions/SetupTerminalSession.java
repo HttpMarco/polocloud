@@ -1,11 +1,7 @@
 package dev.httpmarco.polocloud.node.terminal.impl.sessions;
 
-import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.terminal.NodeTerminalSession;
-import dev.httpmarco.polocloud.node.terminal.setup.Question;
-import dev.httpmarco.polocloud.node.terminal.setup.SelectQuestion;
 import dev.httpmarco.polocloud.node.terminal.setup.Setup;
-import dev.httpmarco.polocloud.node.terminal.setup.impl.SelectQuestionImpl;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jline.keymap.KeyMap;
@@ -23,33 +19,33 @@ public final class SetupTerminalSession implements NodeTerminalSession<String> {
 
     @Override
     public String waitFor(@NotNull LineReaderImpl lineReader) {
-        if(setup.current().question() instanceof SelectQuestion) {
+       // if(setup.current().question() instanceof SelectQuestion) {
             return ((Reference) lineReader.readBinding(bindings)).name();
-        } else {
-            return lineReader.readLine().trim();
-        }
+        //} else {
+          //  return lineReader.readLine().trim();
+        //}
     }
 
     @Override
     public void handleInput(@NotNull String result) {
-        var question = setup.current().question();
+       // var question = setup.current().question();
 
-        if(question instanceof SelectQuestionImpl selectQuestion) {
+      //  if(question instanceof SelectQuestionImpl selectQuestion) {
 
             if(result.equals("select-up")) {
-                selectQuestion.nextSelectedOption();
+
                 return;
             }
 
             if(result.equals("select-down")) {
-                selectQuestion.previousSelectedOption();
+
             }
 
             if(result.equals("selection")) {
-                setup.next();
+              //  setup.next();
             }
             return;
-        }
+       // }
     }
 
     @Override

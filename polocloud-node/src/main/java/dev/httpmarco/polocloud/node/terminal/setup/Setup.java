@@ -1,39 +1,11 @@
 package dev.httpmarco.polocloud.node.terminal.setup;
 
-import dev.httpmarco.polocloud.api.Closeable;
+public abstract class Setup<T> {
 
-public interface Setup extends Closeable {
+    public SetupQuestionBuilder<T> question(String question) {
+        return new SetupQuestionBuilder<>(question);
+    }
 
-    /**
-     * The display id of this setup
-     * @return the id
-     */
-    String id();
-
-    /**
-     * The current step
-     * @return the step
-     */
-    SetupStep current();
-
-    /**
-     * Alert the next step
-     */
-    void next();
-
-    /**
-     * Alert the previous step
-     */
-    void previous();
-
-    /**
-     * Start the setup
-     */
-    void start();
-
-    /**
-     * Display the current setup
-     */
-    void redisplay();
+    public abstract T newInstance();
 
 }
