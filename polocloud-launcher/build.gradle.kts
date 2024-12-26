@@ -1,15 +1,19 @@
-dependencies {
-
+plugins {
+    id("java")
 }
 
-tasks.jar {
-    from(project(":polocloud-api").tasks.jar)
-    from(project(":polocloud-node").tasks.jar)
+group = "dev.httpmarco.polocloud"
+version = "1.0.0"
 
-    manifest {
-        attributes["Polocloud-Version"] = version
-        attributes["Main-Class"] = "dev.httpmarco.polocloud.launcher.boot.PoloCloudBootstrap"
-    }
+repositories {
+    mavenCentral()
+}
 
-    archiveFileName.set("polocloud-${version}.jar")
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

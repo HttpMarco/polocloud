@@ -7,25 +7,15 @@ allprojects {
 
     repositories {
         mavenCentral()
-
-        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 
     tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_17.toString()
-        targetCompatibility = JavaVersion.VERSION_17.toString()
+        sourceCompatibility = JavaVersion.VERSION_23.toString()
+        targetCompatibility = JavaVersion.VERSION_23.toString()
         options.encoding = "UTF-8"
     }
 
     dependencies {
-        "compileOnly"(rootProject.libs.bundles.utils)
 
-        "implementation"(rootProject.libs.log4j2)
-
-        "testAnnotationProcessor"(rootProject.libs.lombok)
-        "annotationProcessor"(rootProject.libs.lombok)
-
-        "testImplementation"(platform(rootProject.libs.junitBom))
-        "testImplementation"(rootProject.libs.bundles.testing)
     }
 }

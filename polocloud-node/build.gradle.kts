@@ -1,20 +1,17 @@
-dependencies {
-    compileOnly(project(":polocloud-api"))
-    compileOnly(libs.netline)
-    compileOnly(libs.netty5)
-    compileOnly(libs.jline)
-    compileOnly(libs.gson)
+plugins {
+    id("java")
 }
 
-tasks.jar {
+group = "dev.httpmarco.polocloud"
+version = "1.0.0"
 
-    manifest {
-        attributes["Main-Class"] = "dev.httpmarco.polocloud.node.boot.NodeBoot"
-        attributes["Premain-Class"] = "dev.httpmarco.polocloud.node.boot.NodeBoot"
-        attributes["Polocloud-Version"] = version
-    }
+repositories {
+    mavenCentral()
+}
 
-    archiveFileName.set("polocloud-node-${version}.jar")
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks.test {
