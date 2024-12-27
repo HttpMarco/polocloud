@@ -1,18 +1,18 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    `kotlin-dsl`
 }
 
-group = "dev.httpmarco.polocloud"
-version = "1.0.0"
-
 repositories {
-    mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    implementation(libs.build.indra.common)
+    implementation(libs.build.indra.publishing)
 }
 
-tasks.test {
-    useJUnitPlatform()
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }

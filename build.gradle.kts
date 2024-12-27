@@ -1,21 +1,17 @@
-allprojects {
-    apply(plugin = "java-library")
-    apply(plugin = "maven-publish")
+plugins {
+    alias(libs.plugins.indra.sonatype)
+    alias(libs.plugins.nexusPublish)
+}
 
-    group = "dev.httpmarco.polocloud"
-    version = project.version
+group = "dev.httpmarco"
+version = "1.0.0"
 
+indraSonatype {
+    useAlternateSonatypeOSSHost("s01")
+}
+
+subprojects {
     repositories {
         mavenCentral()
-    }
-
-    tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_23.toString()
-        targetCompatibility = JavaVersion.VERSION_23.toString()
-        options.encoding = "UTF-8"
-    }
-
-    dependencies {
-
     }
 }
