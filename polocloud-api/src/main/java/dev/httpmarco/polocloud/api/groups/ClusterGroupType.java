@@ -2,6 +2,11 @@ package dev.httpmarco.polocloud.api.groups;
 
 public enum ClusterGroupType {
 
-    SERVER, PROXY, SERVICE
+    // all minecraft servers
+    SERVER,
+    // all proxy platforms (gate, velocity)
+    PROXY,
+    // represent custom jars
+    SERVICE
 
 }
