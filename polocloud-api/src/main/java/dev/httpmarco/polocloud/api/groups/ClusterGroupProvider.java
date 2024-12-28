@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.api.groups;
 
-import dev.httpmarco.polocloud.api.protocoll.CloudResultFuture;
+import dev.httpmarco.polocloud.api.protocol.CloudResultFuture;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;

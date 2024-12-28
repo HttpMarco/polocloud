@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.api.groups;
 
-import dev.httpmarco.polocloud.api.protocoll.CloudResultInfo;
+import dev.httpmarco.polocloud.api.protocol.CloudResultInfo;
 
 public interface ClusterGroupBuilder {
 
