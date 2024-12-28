@@ -5,10 +5,10 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":polocloud-api"))
-    compileOnly(project(":polocloud-common"))
+    compileOnly(projects.polocloudApi)
+    compileOnly(projects.polocloudCommon)
 
     // local testing
-    runtimeOnly(project(":polocloud-api"))
-    runtimeOnly(project(":polocloud-common"))
+    runtimeOnly(projects.polocloudApi)
+    runtimeOnly(projects.polocloudCommon)
 }
