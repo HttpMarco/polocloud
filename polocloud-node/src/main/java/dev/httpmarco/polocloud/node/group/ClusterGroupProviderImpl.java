@@ -4,9 +4,9 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupBuilder;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.protocol.CloudResultFuture;
+import dev.httpmarco.polocloud.api.protocol.CloudResultInfo;
 import dev.httpmarco.polocloud.node.sync.SyncCategory;
 import dev.httpmarco.polocloud.node.sync.SyncTheme;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -25,12 +25,13 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
     }
 
     @Override
-    public @Nullable ClusterGroup find(String groupId) {
+    public CloudResultFuture<ClusterGroup> findAsync(String groupId) {
         return null;
     }
 
+
     @Override
-    public @Nullable ClusterGroup findAsync(String groupId) {
+    public CloudResultInfo delete(String group) {
         return null;
     }
 

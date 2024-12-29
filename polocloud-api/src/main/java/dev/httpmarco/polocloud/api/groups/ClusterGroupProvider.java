@@ -27,14 +27,16 @@ public interface ClusterGroupProvider {
      * @param groupId the group id
      * @return the group if present, else null
      */
-    @Nullable ClusterGroup find(String groupId);
+    default @Nullable ClusterGroup find(String groupId) {
+        return findAsync(groupId).now();
+    }
 
     /**
      * Get a current group info async
      * @param groupId the group id
      * @return the group if present, else null
      */
-    @Nullable ClusterGroup findAsync(String groupId);
+    CloudResultFuture<ClusterGroup> findAsync(String groupId);
 
     /**
      * Delete an existing group
