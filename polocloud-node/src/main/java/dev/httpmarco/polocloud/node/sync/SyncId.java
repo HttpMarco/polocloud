@@ -5,6 +5,6 @@ package dev.httpmarco.polocloud.node.sync;
  * @param category
  * @param id
  */
-public record SyncId(SyncCat category, String id) {
+public record SyncId(SyncCategory category, String id) {
 
 }

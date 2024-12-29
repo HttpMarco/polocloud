@@ -11,7 +11,9 @@ public interface ClusterGroupProvider {
      * Get all cluster groups
      * @return all groups
      */
-    Collection<ClusterGroup> findAll();
+    default Collection<ClusterGroup> findAll(){
+        return findAllAsync().now();
+    }
 
     /**
      * Get all cluster groups with an async thread
