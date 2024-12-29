@@ -50,3 +50,6 @@ indra-sonatype = { id = "net.kyori.indra.publishing.sonatype", version.ref = "in
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
 shadow = { id = "io.github.goooler.shadow", version.ref = "shadow" }
 lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
+
+[bundles]
+logging = ["slf4j", "netline"]

@@ -7,10 +7,13 @@ plugins {
 dependencies {
     compileOnly(projects.polocloudApi)
     compileOnly(projects.polocloudCommon)
+
     compileOnly(libs.netline)
+    compileOnly(libs.bundles.logging)
 
     // local testing
     runtimeOnly(projects.polocloudApi)
     runtimeOnly(projects.polocloudCommon)
+    runtimeOnly(libs.bundles.logging)
 
 }
