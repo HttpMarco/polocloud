@@ -2,26 +2,19 @@ package dev.httpmarco.polocloud.node.group;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
+@Getter
+@Accessors(fluent = true)
+@AllArgsConstructor
 public class ClusterGroupImpl implements ClusterGroup {
 
-    @Override
-    public ClusterGroupType type() {
-        return null;
-    }
+    private final String name;
+    private final ClusterGroupType type;
 
-    @Override
-    public int minMemory() {
-        return 0;
-    }
+    private int minMemory;
+    private int maxMemory;
 
-    @Override
-    public int maxMemory() {
-        return 0;
-    }
-
-    @Override
-    public String name() {
-        return "";
-    }
 }

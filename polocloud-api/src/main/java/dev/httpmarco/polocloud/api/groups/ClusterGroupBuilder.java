@@ -1,7 +1,5 @@
 package dev.httpmarco.polocloud.api.groups;
 
-import dev.httpmarco.polocloud.api.protocol.CloudResultInfo;
-
 public interface ClusterGroupBuilder {
 
     /**
@@ -17,13 +15,6 @@ public interface ClusterGroupBuilder {
      * @return the current group builder
      */
     ClusterGroupBuilder withMaxMemory(int memory);
-
-    /**
-     * Delete an existing group
-     * @param group id
-     * Return the result of delete processing
-     */
-    CloudResultInfo delete(String group);
 
     /**
      * Finally create the group with the given properties
