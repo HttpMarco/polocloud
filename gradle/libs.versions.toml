@@ -58,4 +58,4 @@ shadow = { id = "io.github.goooler.shadow", version.ref = "shadow" }
 lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
 
 [bundles]
-logging = ["slf4j", "netline"]
+logging = ["slf4j", "log4j"]
