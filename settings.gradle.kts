@@ -21,3 +21,5 @@ include("polocloud-installer")
 include("polocloud-launcher")
 include("polocloud-node")
 include("polocloud-components")
+include("polocloud-components:component-terminal")
+findProject(":polocloud-components:component-terminal")?.name = "component-terminal"

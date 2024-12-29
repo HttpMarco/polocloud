@@ -22,6 +22,9 @@ junit = "5.11.3"
 netty = "5.0.0.Alpha5"
 netline = "1.0.3-SNAPSHOT"
 
+# terminal
+jline = "3.28.0"
+
 [libraries]
 # Logging
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
@@ -44,6 +47,9 @@ test-junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 # Protocol
 netty = { group = "io.netty", name = "netty5-all", version.ref = "netty" }
 netline = { group = "dev.httpmarco", name = "netline", version.ref = "netline" }
+
+# terminal
+jline = { module = "org.jline:jline", version.ref = "jline" }
 
 [plugins]
 indra-sonatype = { id = "net.kyori.indra.publishing.sonatype", version.ref = "indra" }
