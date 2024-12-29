@@ -17,4 +17,8 @@ dependencies {
     runtimeOnly(libs.bundles.logging)
 }
 
-
+tasks.jar {
+    manifest {
+        attributes("Main-Class" to "dev.httpmarco.polocloud.node.NodeBootContext")
+    }
+}
