@@ -8,6 +8,21 @@ import java.util.Collection;
  */
 public interface ComponentProvider {
 
-    Collection<Component> components();
+    Collection<ComponentContainer> containers();
+
+    /**
+     * Find a component by its snapshot
+     * @param snapshot the snapshot of the component
+     * @return the component container
+     */
+    ComponentContainer find(ComponentInfoSnapshot snapshot);
+
+    /**
+     * Find a component by its name
+     * @param name the name of the component
+     * @return the component container
+     */
+    ComponentContainer find(String name);
+
 
 }

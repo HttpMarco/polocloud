@@ -15,5 +15,6 @@ dependencies {
     runtimeOnly(projects.polocloudApi)
     runtimeOnly(projects.polocloudCommon)
     runtimeOnly(libs.bundles.logging)
-
 }
+
+
