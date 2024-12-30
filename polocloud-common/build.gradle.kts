@@ -1,5 +1,8 @@
 plugins {
-    id("polocloud.common")
     id("java-library")
-    alias(libs.plugins.lombok)
+}
+
+dependencies {
+    annotationProcessor(libs.lombok)
+    compileOnly(libs.lombok)
 }

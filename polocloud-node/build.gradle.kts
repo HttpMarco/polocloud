@@ -1,7 +1,5 @@
 plugins {
-    id("polocloud.common")
     id("java")
-    alias(libs.plugins.lombok)
 }
 
 dependencies {
@@ -15,6 +13,9 @@ dependencies {
     runtimeOnly(projects.polocloudApi)
     runtimeOnly(projects.polocloudCommon)
     runtimeOnly(libs.bundles.logging)
+
+    annotationProcessor(libs.lombok)
+    compileOnly(libs.lombok)
 }
 
 tasks.jar {

@@ -8,7 +8,7 @@ log4j = "2.24.2"
 
 # Code quality
 annotations = "26.0.1"
-lombok = "8.11"
+lombok = "1.18.36"
 
 # Build
 indra = "3.1.3"
@@ -32,6 +32,7 @@ log4j = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 
 # Code quality
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 
 # Build
 build-indra-common = { module = "net.kyori:indra-common", version.ref = "indra" }
@@ -54,8 +55,6 @@ jline = { module = "org.jline:jline", version.ref = "jline" }
 [plugins]
 indra-sonatype = { id = "net.kyori.indra.publishing.sonatype", version.ref = "indra" }
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
-shadow = { id = "io.github.goooler.shadow", version.ref = "shadow" }
-lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
 
 [bundles]
 logging = ["slf4j", "log4j"]
