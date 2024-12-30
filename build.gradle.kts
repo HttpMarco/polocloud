@@ -11,6 +11,9 @@ indraSonatype {
 }
 
 subprojects {
+
+    version = rootProject.version
+
     repositories {
         mavenCentral()
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
