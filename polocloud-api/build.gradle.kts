@@ -1,7 +1,5 @@
 plugins {
     id("java-library")
-    id("polocloud.common")
-    alias(libs.plugins.lombok)
 }
 
 dependencies {
