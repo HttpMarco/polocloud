@@ -1,6 +1,6 @@
 plugins {
-    id("polocloud.common")
     id("java-library")
+    id("polocloud.common")
     alias(libs.plugins.lombok)
 }
 
@@ -9,5 +9,5 @@ dependencies {
 }
 
 tasks.jar {
-    archiveFileName.set("polocloud-api.jar")
+    archiveFileName.set("polocloud-api-${version}.jar")
 }

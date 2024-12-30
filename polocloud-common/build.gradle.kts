@@ -3,7 +3,3 @@ plugins {
     id("java-library")
     alias(libs.plugins.lombok)
 }
-
-dependencies {
-
-}
