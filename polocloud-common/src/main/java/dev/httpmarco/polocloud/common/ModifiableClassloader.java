@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.common.classloader;
+package dev.httpmarco.polocloud.common;
 
 import lombok.SneakyThrows;
 
@@ -13,7 +13,7 @@ public final class ModifiableClassloader extends URLClassLoader {
     }
 
     @SneakyThrows
-    public void add(File file) {
-        super.addURL(file.toURI().toURL());
+    public void attach(String file) {
+        super.addURL(new File(file).toURI().toURL());
     }
 }

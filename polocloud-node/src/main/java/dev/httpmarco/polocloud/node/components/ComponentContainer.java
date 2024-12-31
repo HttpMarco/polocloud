@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.node.components;
 
-import dev.httpmarco.polocloud.common.classloader.ModifiableClassloader;
+import dev.httpmarco.polocloud.common.ModifiableClassloader;
 
 public record ComponentContainer(Component component, ComponentInfoSnapshot snapshot, ModifiableClassloader loader) {
 
