@@ -6,7 +6,7 @@ public final class PolocloudBoot {
 
     public static void main(String[] args) {
 
-        var version = ManifestReader.readProperty("version");
+        var version = ManifestReader.readProperty("Polocloud-Version");
 
         // set manifest version to java property
         System.setProperty("version", version);
