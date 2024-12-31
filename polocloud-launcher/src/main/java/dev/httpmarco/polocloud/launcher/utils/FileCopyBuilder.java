@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
-public class FileCopyBuilder {
+public final class FileCopyBuilder {
 
     private String targetFolder;
     private String prefix = "";
@@ -50,7 +50,8 @@ public class FileCopyBuilder {
         for (var file : files) {
             var modifiedFile = modifyFileName(file);
             var target = path.resolve(modifiedFile);
-            Files.copy(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResourceAsStream(file)), target, StandardCopyOption.REPLACE_EXISTING);
+
+            Files.copy(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResourceAsStream(modifiedFile)), target, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 

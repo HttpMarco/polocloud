@@ -16,7 +16,12 @@ tasks.jar {
 
     manifest {
         attributes("Main-Class" to "dev.httpmarco.polocloud.launcher.PolocloudBoot")
+        attributes("Polocloud-version" to version)
     }
     archiveFileName.set("polocloud-launcher-${version}.jar")
+}
+
+fun includeLibs() {
+
 }
 
