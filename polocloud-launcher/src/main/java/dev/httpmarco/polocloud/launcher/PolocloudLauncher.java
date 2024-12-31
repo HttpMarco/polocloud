@@ -18,27 +18,17 @@ public final class PolocloudLauncher {
         new PolocloudProcess().start();
     }
 
-    /**
-     * Polocloud process shutdown handler
-     */
     public PolocloudLauncher registerShutdownHandling() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {}));
         return this;
     }
 
-    /**
-     * We include all cloud jars in
-     *
-     * @return this self process
-     */
-    public PolocloudLauncher cloneClasspathJars(String version) {
+    public void cloneClasspathJars(String version) {
         FileCopyBuilder.builder()
                 .targetFolder(LIB_FOLDER.toString())
                 .prefix("polocloud-")
                 .files("api", "node", "daemon", "common")
                 .suffix("-" + version + ".jar")
                 .copy();
-        return this;
     }
 }
