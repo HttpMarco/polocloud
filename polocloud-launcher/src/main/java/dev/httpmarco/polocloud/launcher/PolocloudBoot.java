@@ -6,13 +6,10 @@ public final class PolocloudBoot {
 
     public static void main(String[] args) {
 
-        var version = ManifestReader.readProperty("Polocloud-Version");
-
+        var version = ManifestReader.readLocalProperty("Polocloud-Version");
         // set manifest version to java property
         System.setProperty("version", version);
 
-
-                //-Dmyproperty=myvalue
         new PolocloudLauncher(version);
     }
 }

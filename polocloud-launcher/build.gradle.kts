@@ -9,6 +9,7 @@ dependencies {
 }
 
 tasks.jar {
+    // todo find a better way for this shit
     from(includeLibs("common"), includeLibs("api"), includeLibs("node"), includeLibs("daemon"))
 
     manifest {
