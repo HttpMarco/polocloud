@@ -1,12 +1,11 @@
 package dev.httpmarco.polocloud.node.dependencies;
 
-import dev.httpmarco.polocloud.api.Version;
+import dev.httpmarco.polocloud.api.Available;
 
-public class Dependency {
+import java.io.File;
 
-    private String groupId;
-    private String artifactId;
-    private Version version;
+public interface Dependency extends Available {
 
+    File file();
 
 }

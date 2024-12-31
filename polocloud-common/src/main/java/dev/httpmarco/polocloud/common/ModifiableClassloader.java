@@ -13,7 +13,11 @@ public final class ModifiableClassloader extends URLClassLoader {
     }
 
     @SneakyThrows
-    public void attach(String file) {
-        super.addURL(new File(file).toURI().toURL());
+    public void attach(File file) {
+        super.addURL(file.toURI().toURL());
+    }
+
+    public static ModifiableClassloader defaultClassLoader() {
+        return new ModifiableClassloader();
     }
 }
