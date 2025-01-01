@@ -1,12 +1,14 @@
 package dev.httpmarco.polocloud.node.dependencies;
 
+import dev.httpmarco.polocloud.node.dependencies.slots.ClassloaderDependencySlot;
+
 import java.util.List;
 
 public interface DependencyProvider {
 
-    DependencySlot originalSlot();
+    ClassloaderDependencySlot originalSlot();
 
-    List<DependencySlot> slots();
+    List<ClassloaderDependencySlot> slots();
 
     void loadDefaults();
 
