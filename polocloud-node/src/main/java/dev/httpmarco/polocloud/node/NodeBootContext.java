@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node;
 
+import dev.httpmarco.polocloud.node.utils.ConsoleActions;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -16,7 +17,9 @@ public final class NodeBootContext {
     }
 
     public static void main(String[] args) {
-        // todo random shit here
+        // for a better and clean layout -> clean console
+        ConsoleActions.cleanLines();
+        // start the node
         new Node();
     }
 }

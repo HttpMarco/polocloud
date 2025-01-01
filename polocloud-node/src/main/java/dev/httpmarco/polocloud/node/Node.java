@@ -32,5 +32,7 @@ public final class Node extends PolocloudAPI {
         this.componentProvider = new ComponentProviderImpl();
         this.groupProvider = new ClusterGroupProviderImpl();
         this.clusterProvider = new ClusterNodeProvider();
+
+        log.info("Polocloud Node started successfully!");
     }
 }
