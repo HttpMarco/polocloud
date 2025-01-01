@@ -8,13 +8,14 @@ dependencies {
     compileOnly(projects.polocloudCommon)
 
     compileOnly(libs.netline)
-    implementation(libs.bundles.logging)
 
     // local testing
     runtimeOnly(projects.polocloudApi)
     runtimeOnly(projects.polocloudCommon)
     runtimeOnly(libs.bundles.logging)
 
+    //todo in libs.versions
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.24.3")
     annotationProcessor(libs.lombok)
     compileOnly(libs.lombok)
 }

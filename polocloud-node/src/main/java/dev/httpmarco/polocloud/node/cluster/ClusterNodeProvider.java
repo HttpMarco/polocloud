@@ -10,5 +10,6 @@ public final class ClusterNodeProvider {
 
     public ClusterNodeProvider() {
         this.cluster = Net.line().cluster();
+        this.cluster.boot().sync();
     }
 }

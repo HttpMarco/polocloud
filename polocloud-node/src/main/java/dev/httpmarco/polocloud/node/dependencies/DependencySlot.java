@@ -17,11 +17,16 @@ public final class DependencySlot {
 
     public void bindDependencies(@NotNull Dependency dependency) {
         this.dependencies.add(dependency);
+    }
 
-        if(!dependency.available()) {
-            log.warn("Cannot bind dependencies for {}", dependency);
-            return;
-        }
-        this.classloader.attach(dependency.file());
+    public void prepare() {
+        this.dependencies.stream().parallel().forEach(it -> {
+            it.prepare();
+            if(!it.available()) {
+                log.warn("Cannot bind dependencies for {}", it);
+                return;
+            }
+            this.classloader.attach(it.file());
+        });
     }
 }

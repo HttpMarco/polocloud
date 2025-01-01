@@ -10,4 +10,10 @@ public record Version(int major, int minor, int patch) {
         var parts = version.split("\\.");
         return new Version(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
     }
+
+    @Contract(pure = true)
+    @Override
+    public @NotNull String toString() {
+        return major + "." + minor + "." + patch;
+    }
 }

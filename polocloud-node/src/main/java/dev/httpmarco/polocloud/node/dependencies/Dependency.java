@@ -8,4 +8,6 @@ public interface Dependency extends Available {
 
     File file();
 
+    void prepare();
+
 }

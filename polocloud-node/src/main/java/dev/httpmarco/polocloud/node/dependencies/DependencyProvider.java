@@ -8,4 +8,6 @@ public interface DependencyProvider {
 
     List<DependencySlot> slots();
 
+    void loadDefaults();
+
 }
