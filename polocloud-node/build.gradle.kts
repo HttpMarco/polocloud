@@ -24,5 +24,6 @@ tasks.shadowJar {
     archiveFileName.set("polocloud-node-${version}.jar")
     manifest {
         attributes("Main-Class" to "dev.httpmarco.polocloud.node.NodeBootContext")
+        attributes("Premain-Class" to "dev.httpmarco.polocloud.node.NodeBootContext")
     }
 }

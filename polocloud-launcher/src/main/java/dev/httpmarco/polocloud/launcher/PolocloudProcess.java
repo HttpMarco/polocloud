@@ -32,7 +32,7 @@ public final class PolocloudProcess extends Thread {
         var mainBootFile = Path.of("dependencies").resolve("polocloud-node-" + version + ".jar");
         var mainClass = ManifestReader.readProperty(mainBootFile, "Main-Class");
 
-        return List.of("java", "-cp", String.join(";", modifyClasspathFiles("node", "common", "api")), mainClass);
+        return List.of("java", "-javaagent:" + mainBootFile,"-cp", String.join(";", modifyClasspathFiles("node", "common", "api")), mainClass);
     }
 
     private String @NotNull [] modifyClasspathFiles(String... libs) {
