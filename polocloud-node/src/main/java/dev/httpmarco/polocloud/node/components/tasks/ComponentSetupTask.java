@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.node.components.tasks;
 
-import dev.httpmarco.polocloud.common.classloader.ModifiableClassloader;
+import dev.httpmarco.polocloud.common.ModifiableClassloader;
 import dev.httpmarco.polocloud.node.components.ComponentContainer;
 import lombok.experimental.UtilityClass;
 

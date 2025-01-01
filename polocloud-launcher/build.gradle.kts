@@ -10,7 +10,7 @@ dependencies {
 
 tasks.jar {
     // todo find a better way for this shit
-    from(includeLibs("common"), includeLibs("api"), includeLibs("node"), includeLibs("daemon"))
+    from(includeLibs("common"), includeLibs("api"), includeLibs("node", "shadowJar"), includeLibs("daemon"))
 
     manifest {
         attributes("Main-Class" to "dev.httpmarco.polocloud.launcher.PolocloudBoot")
@@ -19,7 +19,7 @@ tasks.jar {
     archiveFileName.set("polocloud-launcher-${version}.jar")
 }
 
-fun includeLibs(project: String) : Task {
-    return project(":polocloud-$project").tasks.getByPath(":polocloud-$project:jar")
+fun includeLibs(project: String, task: String = "jar") : Task {
+    return project(":polocloud-$project").tasks.getByPath(":polocloud-$project:" + task)
 }
 

@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 dependencies {
@@ -7,7 +8,7 @@ dependencies {
     compileOnly(projects.polocloudCommon)
 
     compileOnly(libs.netline)
-    compileOnly(libs.bundles.logging)
+    implementation(libs.bundles.logging)
 
     // local testing
     runtimeOnly(projects.polocloudApi)
@@ -18,7 +19,8 @@ dependencies {
     compileOnly(libs.lombok)
 }
 
-tasks.jar {
+tasks.shadowJar {
+    archiveFileName.set("polocloud-node-${version}.jar")
     manifest {
         attributes("Main-Class" to "dev.httpmarco.polocloud.node.NodeBootContext")
     }
