@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.common;
+package dev.httpmarco.polocloud.common.classpath;
 
 import lombok.SneakyThrows;
 
