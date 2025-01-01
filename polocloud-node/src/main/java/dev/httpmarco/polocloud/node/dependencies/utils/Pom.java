@@ -43,13 +43,13 @@ public final class Pom {
             var artifactId = readTag(dependencyElement, "artifactId");
             var version = readTag(dependencyElement, "version");
 
-            if (version == null) {
+            if (version == null || placeholder(version)) {
                 //todo
                 return;
             }
 
             this.dependencies.add(new RepositoryDependency(parentDependency.boundSlot(), groupId, artifactId, Version.parse(version)));
-            log.debug("Add sub dependency from " + parentDependency.artifactId() + " -> " + artifactId + ":" + version);
+            log.debug("Add sub dependency from {} -> {}:{}", parentDependency.artifactId(), artifactId, version);
         }
     }
 
@@ -71,4 +71,7 @@ public final class Pom {
         return nodeList.item(0).getTextContent();
     }
 
+    public boolean placeholder(@NotNull String version) {
+        return version.contains("${") && version.contains("}");
+    }
 }
