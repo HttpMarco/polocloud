@@ -1,14 +1,20 @@
 package dev.httpmarco.polocloud.common.configuration;
 
 import dev.httpmarco.polocloud.common.gson.GsonPool;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Accessors(fluent = true)
 public class Configuration<T> {
 
     private final Path target;
-    public T value;
+
+    @Getter
+    private T value;
 
     public Configuration(String target, T defaultValue) {
         this.target = Path.of(target);
