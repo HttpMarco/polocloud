@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.protocol.CloudResultFuture;
 import dev.httpmarco.polocloud.api.protocol.CloudResultInfo;
 import dev.httpmarco.polocloud.node.group.impl.ClusterGroupBuilderImpl;
+import dev.httpmarco.polocloud.node.group.storage.LocalFileStorageFactory;
 import dev.httpmarco.polocloud.node.sync.SyncCategory;
 import dev.httpmarco.polocloud.node.sync.SyncTheme;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import java.util.Collection;
 @Accessors(fluent = true)
 public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
 
+    private final ClusterGroupStorageFactory storageFactory = new LocalFileStorageFactory();
     private final SyncCategory groupSyncCategory = new SyncCategory("groups");
     private final SyncTheme<ClusterGroup> syncTheme;
 

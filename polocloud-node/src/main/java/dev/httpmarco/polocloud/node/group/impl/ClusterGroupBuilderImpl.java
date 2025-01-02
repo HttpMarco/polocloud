@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupBuilder;
 import dev.httpmarco.polocloud.node.group.ClusterGroupImpl;
 import dev.httpmarco.polocloud.node.group.ClusterGroupProviderImpl;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 public final class ClusterGroupBuilderImpl implements ClusterGroupBuilder {
@@ -29,11 +30,16 @@ public final class ClusterGroupBuilderImpl implements ClusterGroupBuilder {
     }
 
     @Override
-    public ClusterGroup create() {
+    public @NotNull ClusterGroup create() {
         var group = new ClusterGroupImpl(this.group, null, minMemory, maxMemory);
 
+        if(groupProvider.storageFactory().alreadyDefined(group)) {
+            // todo better response
+            throw new IllegalStateException("Group already defined");
+        }
+
         // save group to the local storage
-        // todo
+        groupProvider.storageFactory().store(group);
 
         // push the group to the sync theme
         this.groupProvider.syncTheme().push(this.groupProvider.groupSyncCategory().idOf(group.name()), group);
