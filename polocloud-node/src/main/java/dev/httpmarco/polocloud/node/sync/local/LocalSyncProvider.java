@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LocalSyncProvider implements SyncProvider {
+public final class LocalSyncProvider implements SyncProvider {
 
     private final Map<SyncCategory, Map<SyncId, Object>> cache = new HashMap<>();
 
