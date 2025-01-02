@@ -42,7 +42,7 @@ public final class ClusterGroupBuilderImpl implements ClusterGroupBuilder {
         groupProvider.storageFactory().store(group);
 
         // push the group to the sync theme
-        this.groupProvider.syncTheme().push(this.groupProvider.groupSyncCategory().idOf(group.name()), group);
+        this.groupProvider.syncItem().push(group.name(), group);
 
         return group;
     }
