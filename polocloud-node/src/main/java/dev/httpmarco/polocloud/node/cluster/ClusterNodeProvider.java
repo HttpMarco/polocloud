@@ -1,15 +1,15 @@
 package dev.httpmarco.polocloud.node.cluster;
 
-import dev.httpmarco.netline.Net;
-import dev.httpmarco.netline.cluster.NetCluster;
 import dev.httpmarco.netline.cluster.NetNodeData;
+import dev.httpmarco.netline.cluster.impl.NetClusterImpl;
+import lombok.extern.log4j.Log4j2;
 
-public final class ClusterNodeProvider {
-
-    private final NetCluster<NetNodeData> cluster;
+@Log4j2
+public final class ClusterNodeProvider extends NetClusterImpl<NetNodeData> {
 
     public ClusterNodeProvider() {
-        this.cluster = Net.line().cluster();
-        this.cluster.boot().sync();
+        super.boot().sync();
+
+        log.info("Detect head node: {}", this.headNode().toString());
     }
 }
