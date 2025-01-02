@@ -9,6 +9,8 @@ import dev.httpmarco.polocloud.node.components.impl.ComponentProviderImpl;
 import dev.httpmarco.polocloud.node.dependencies.DependencyProvider;
 import dev.httpmarco.polocloud.node.dependencies.impl.DependencyProviderImpl;
 import dev.httpmarco.polocloud.node.group.ClusterGroupProviderImpl;
+import dev.httpmarco.polocloud.node.i18n.I18n;
+import dev.httpmarco.polocloud.node.i18n.impl.I18nPolocloudNode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +20,11 @@ import lombok.extern.log4j.Log4j2;
 @Accessors(fluent = true)
 public final class Node extends PolocloudAPI {
 
+    @Getter
+    private static Node instance;
+    @Getter
+    private static final I18n translation = new I18nPolocloudNode();
+
     private final DependencyProvider dependencyProvider;
     private final ComponentProvider componentProvider;
     private final ClusterGroupProvider groupProvider;
@@ -26,6 +33,7 @@ public final class Node extends PolocloudAPI {
     private final Configuration<NodeConfiguration> nodeConfiguration;
 
     public Node() {
+        instance = this;
         log.info("Starting Polocloud Node...");
 
         this.dependencyProvider = new DependencyProviderImpl();
