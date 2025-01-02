@@ -2,6 +2,8 @@ package dev.httpmarco.polocloud.node.group;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupType;
+import dev.httpmarco.polocloud.api.groups.instance.ClusterGroupServiceBuilder;
+import dev.httpmarco.polocloud.node.group.builder.ClusterGroupServiceBuilderImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -9,7 +11,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class ClusterGroupImpl implements ClusterGroup {
+public final class ClusterGroupImpl implements ClusterGroup {
 
     private final String name;
     private final ClusterGroupType type;
@@ -20,5 +22,10 @@ public class ClusterGroupImpl implements ClusterGroup {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof ClusterGroup group && group.name().equals(name);
+    }
+
+    @Override
+    public ClusterGroupServiceBuilder newInstanceBuilder() {
+        return new ClusterGroupServiceBuilderImpl(this);
     }
 }
