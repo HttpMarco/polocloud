@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -38,6 +39,10 @@ public class Downloader {
     public Document xml() {
         var documentBuilder = XML_FACTORY.newDocumentBuilder();
         return content(documentBuilder::parse);
+    }
+
+    public String plain() {
+        return content(it -> new String(it.readAllBytes(), StandardCharsets.UTF_8));
     }
 
 
