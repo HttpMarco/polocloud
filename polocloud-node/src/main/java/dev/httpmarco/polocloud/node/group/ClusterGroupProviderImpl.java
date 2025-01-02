@@ -5,13 +5,18 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupBuilder;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.protocol.CloudResultFuture;
 import dev.httpmarco.polocloud.api.protocol.CloudResultInfo;
+import dev.httpmarco.polocloud.node.group.impl.ClusterGroupBuilderImpl;
 import dev.httpmarco.polocloud.node.sync.SyncCategory;
 import dev.httpmarco.polocloud.node.sync.SyncTheme;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+@Getter
+@Accessors(fluent = true)
 public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
 
     private final SyncCategory groupSyncCategory = new SyncCategory("groups");
@@ -39,8 +44,9 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
         return null;
     }
 
+    @Contract("_ -> new")
     @Override
-    public ClusterGroupBuilder create(String group) {
-        return null;
+    public @NotNull ClusterGroupBuilder create(String group) {
+        return new ClusterGroupBuilderImpl(group, this);
     }
 }
