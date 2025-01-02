@@ -7,6 +7,8 @@ import dev.httpmarco.polocloud.api.protocol.CloudResultFuture;
 import dev.httpmarco.polocloud.api.protocol.CloudResultInfo;
 import dev.httpmarco.polocloud.node.sync.SyncCategory;
 import dev.httpmarco.polocloud.node.sync.SyncTheme;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -19,14 +21,16 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
         this.syncTheme = new ClusterGroupSyncTheme();
     }
 
+    @Contract(" -> new")
     @Override
-    public CloudResultFuture<Collection<ClusterGroup>> findAllAsync() {
+    public @NotNull CloudResultFuture<Collection<ClusterGroup>> findAllAsync() {
         return CloudResultFuture.completedFuture(this.syncTheme.grab(groupSyncCategory));
     }
 
+    @Contract("_ -> new")
     @Override
-    public CloudResultFuture<ClusterGroup> findAsync(String groupId) {
-        return null;
+    public @NotNull CloudResultFuture<ClusterGroup> findAsync(String groupId) {
+        return CloudResultFuture.completedFuture(this.syncTheme.grabOne(groupSyncCategory.idOf(groupId)));
     }
 
 
