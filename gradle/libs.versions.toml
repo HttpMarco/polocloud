@@ -17,6 +17,9 @@ nexusPublish = "2.0.0"
 # Test
 junit = "5.11.3"
 
+# configuration
+gson = "2.8.6"
+
 # Protocol
 netty = "5.0.0.Alpha5"
 netline = "1.0.3-SNAPSHOT"
@@ -43,6 +46,9 @@ test-junit-api = { module = "org.junit.jupiter:junit-jupiter-api" }
 test-junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 test-junit-params = { module = "org.junit.jupiter:junit-jupiter-params" }
 test-junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+# configuration
+gson =  { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # Protocol
 netty = { group = "io.netty", name = "netty5-all", version.ref = "netty" }
