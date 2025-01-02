@@ -27,7 +27,7 @@ public final  class DependencyProviderImpl implements DependencyProvider {
             .bindRepositoryDependency("io.netty", "netty5-resolver", "5.0.0.Alpha5")
             .bindRepositoryDependency("io.netty", "netty5-buffer", "5.0.0.Alpha5")
             .bindRepositoryDependency("io.netty", "netty5-transport-classes-epoll", "5.0.0.Alpha5")
-            .bindRepositoryDependency("dev.httpmarco", "netline", "1.0.4-SNAPSHOT", "20250101.234956-1", snapshotMavenCentralRepo);
+            .bindRepositoryDependency("dev.httpmarco", "netline", "1.0.6-SNAPSHOT", "20250102.103857-1", snapshotMavenCentralRepo);
 
         this.originalSlot.prepare();
     }
