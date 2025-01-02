@@ -7,6 +7,7 @@ dependencies {
     compileOnly(projects.polocloudApi)
     compileOnly(projects.polocloudCommon)
 
+    compileOnly(libs.gson)
     compileOnly(libs.netline)
 
     // local testing
