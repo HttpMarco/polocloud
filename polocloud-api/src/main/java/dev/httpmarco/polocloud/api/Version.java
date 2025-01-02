@@ -2,12 +2,13 @@ package dev.httpmarco.polocloud.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
+@Accessors(fluent = true)
 @AllArgsConstructor
 public class Version {
 

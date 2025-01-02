@@ -1,8 +1,12 @@
 package dev.httpmarco.polocloud.node.platforms;
 
 import dev.httpmarco.polocloud.api.Version;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
+@Getter
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public final class PlatformMap {
 
