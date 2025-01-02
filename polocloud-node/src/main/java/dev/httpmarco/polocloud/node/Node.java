@@ -34,7 +34,7 @@ public final class Node extends PolocloudAPI {
 
     public Node() {
         instance = this;
-        log.info("Starting Polocloud Node...");
+        log.info(translation.get("node.starting"));
 
         this.dependencyProvider = new DependencyProviderImpl();
         this.dependencyProvider.loadDefaults();
