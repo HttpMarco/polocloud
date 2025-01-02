@@ -28,6 +28,9 @@ public final class PlatformProviderImpl implements PlatformProvider {
 
     @SneakyThrows
     public PlatformProviderImpl() {
+
+        Files.createDirectories(PLATFORM_MAP_FILE.getParent());
+
         if(!Files.exists(PLATFORM_MAP_FILE)) {
             Files.writeString(PLATFORM_MAP_FILE, PLATOFRM_GSON.toJson(this.originalPlatformMap()));
             log.info("Downloading original platform map...");
