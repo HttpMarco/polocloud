@@ -17,4 +17,8 @@ public class ClusterGroupImpl implements ClusterGroup {
     private int minMemory;
     private int maxMemory;
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof ClusterGroup group && group.name().equals(name);
+    }
 }
