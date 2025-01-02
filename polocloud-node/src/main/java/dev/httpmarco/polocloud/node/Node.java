@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.api.PolocloudAPI;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.common.configuration.Configuration;
 import dev.httpmarco.polocloud.node.cluster.ClusterNodeProvider;
 import dev.httpmarco.polocloud.node.components.ComponentProvider;
 import dev.httpmarco.polocloud.node.components.impl.ComponentProviderImpl;
@@ -22,12 +23,16 @@ public final class Node extends PolocloudAPI {
     private final ClusterGroupProvider groupProvider;
     private final ClusterNodeProvider clusterProvider;
 
+    private final Configuration<NodeConfiguration> nodeConfiguration;
 
     public Node() {
         log.info("Starting Polocloud Node...");
 
         this.dependencyProvider = new DependencyProviderImpl();
         this.dependencyProvider.loadDefaults();
+
+        log.info("Load local configuration...");
+        this.nodeConfiguration = new Configuration<>("config.json", new NodeConfiguration());
 
         this.componentProvider = new ComponentProviderImpl();
         this.groupProvider = new ClusterGroupProviderImpl();
