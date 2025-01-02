@@ -29,6 +29,11 @@ public final class LocalSyncProvider implements SyncProvider {
 
     @Override
     public List<Object> grab(SyncCategory category) {
+
+        if(!this.cache.containsKey(category)) {
+            return List.of();
+        }
+
         return this.cache.get(category).values().stream().toList();
     }
 
