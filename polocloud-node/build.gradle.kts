@@ -15,10 +15,11 @@ dependencies {
     runtimeOnly(projects.polocloudCommon)
     runtimeOnly(libs.bundles.logging)
 
-    //todo in libs.versions
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.24.3")
     annotationProcessor(libs.lombok)
     compileOnly(libs.lombok)
+
+    // the only lib that is not in the polocloud-common lib and must be compiled
+    implementation(libs.log4j.sl4j.impl)
 }
 
 tasks.shadowJar {
