@@ -19,6 +19,9 @@ public class Configuration<T> {
     public Configuration(String target, T defaultValue) {
         this.target = Path.of(target);
         this.value = defaultValue;
+
+        // read default configuration
+        this.read();
     }
 
     @SneakyThrows
