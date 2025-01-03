@@ -1,12 +1,14 @@
 package dev.httpmarco.polocloud.node.group;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
-import dev.httpmarco.polocloud.api.groups.ClusterGroupType;
 import dev.httpmarco.polocloud.api.groups.instance.ClusterGroupServiceBuilder;
 import dev.httpmarco.polocloud.node.group.builder.ClusterGroupServiceBuilderImpl;
+import dev.httpmarco.polocloud.node.group.impl.ClusterGroupSharedPlatformImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
@@ -14,7 +16,7 @@ import lombok.experimental.Accessors;
 public final class ClusterGroupImpl implements ClusterGroup {
 
     private final String name;
-    private final ClusterGroupType type;
+    private final ClusterGroupSharedPlatformImpl platform;
 
     private int minMemory;
     private int maxMemory;
@@ -24,8 +26,9 @@ public final class ClusterGroupImpl implements ClusterGroup {
         return obj instanceof ClusterGroup group && group.name().equals(name);
     }
 
+    @Contract(" -> new")
     @Override
-    public ClusterGroupServiceBuilder newInstanceBuilder() {
+    public @NotNull ClusterGroupServiceBuilder newInstanceBuilder() {
         return new ClusterGroupServiceBuilderImpl(this);
     }
 }

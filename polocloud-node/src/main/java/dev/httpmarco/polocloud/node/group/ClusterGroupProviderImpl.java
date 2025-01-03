@@ -8,22 +8,20 @@ import dev.httpmarco.polocloud.api.protocol.CloudResultInfo;
 import dev.httpmarco.polocloud.node.Node;
 import dev.httpmarco.polocloud.node.group.impl.ClusterGroupBuilderImpl;
 import dev.httpmarco.polocloud.node.group.storage.LocalFileStorageFactory;
-import dev.httpmarco.polocloud.node.sync.SyncProvider;
 import dev.httpmarco.polocloud.node.sync.SyncThemeItem;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+@Log4j2
 @Getter
 @Accessors(fluent = true)
 public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
 
-    private static final Logger log = LogManager.getLogger(ClusterGroupProviderImpl.class);
     private final ClusterGroupStorageFactory storageFactory = new LocalFileStorageFactory();
     private final SyncThemeItem<ClusterGroup> syncItem = new SyncThemeItem<>("groups");
 
@@ -35,7 +33,6 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
             return;
         }
         // sync groups and show different
-
     }
 
     @Contract(" -> new")
