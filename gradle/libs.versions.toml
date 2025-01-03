@@ -57,6 +57,7 @@ netline = { group = "dev.httpmarco", name = "netline", version.ref = "netline" }
 
 # terminal
 jline = { module = "org.jline:jline", version.ref = "jline" }
+jline-jansi = { module = "org.jline:jline-terminal-jansi", version.ref = "jline" }
 
 [plugins]
 indra-sonatype = { id = "net.kyori.indra.publishing.sonatype", version.ref = "indra" }
