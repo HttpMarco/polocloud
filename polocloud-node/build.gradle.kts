@@ -9,11 +9,7 @@ dependencies {
 
     compileOnly(libs.gson)
     compileOnly(libs.netline)
-
-    // local testing
-    runtimeOnly(projects.polocloudApi)
-    runtimeOnly(projects.polocloudCommon)
-    runtimeOnly(libs.bundles.logging)
+    compileOnly(libs.jline.jansi)
 
     annotationProcessor(libs.lombok)
     compileOnly(libs.lombok)
