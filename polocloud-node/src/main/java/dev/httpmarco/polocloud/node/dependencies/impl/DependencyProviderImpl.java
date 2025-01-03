@@ -20,7 +20,7 @@ public final  class DependencyProviderImpl implements DependencyProvider {
         var snapshotMavenCentralRepo = "https://s01.oss.sonatype.org/service/local/repositories/snapshots/content/%s/%s/%s/%s-%s";
 
         this.originalSlot.bindRepositoryDependency("org.slf4j", "slf4j-simple", "2.0.9")
-            .bindRepositoryDependency("com.google.code.gson", "gson", "2.8.6")
+            .bindRepositoryDependency("com.google.code.gson", "gson", "2.11.0")
             .bindRepositoryDependency("io.netty", "netty5-common", "5.0.0.Alpha5")
             .bindRepositoryDependency("io.netty", "netty5-transport", "5.0.0.Alpha5")
             .bindRepositoryDependency("io.netty", "netty5-codec", "5.0.0.Alpha5")
