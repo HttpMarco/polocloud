@@ -22,7 +22,6 @@ public final class SharedPlatformSerializer implements JsonSerializer<SharedPlat
     @Contract(pure = true)
     @Override
     public @NotNull SharedPlatform deserialize(@NotNull JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        System.err.println("HALLO");
         var data = jsonElement.getAsJsonObject();
 
         var platformName = data.get("name").getAsString();
