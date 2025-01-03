@@ -28,8 +28,9 @@ public class ClassloaderDependencySlot implements DependencySlot {
         return this;
     }
 
-    public void bindRepositoryDependency(String groupId, String artifactId, String version, String classifier, String repositoryUrl) {
+    public ClassloaderDependencySlot bindRepositoryDependency(String groupId, String artifactId, String version, String classifier, String repositoryUrl) {
         this.bindDependencies(new RepositoryDependency(this, groupId, artifactId, Version.parse(version), classifier, repositoryUrl));
+        return this;
     }
 
     @Override
