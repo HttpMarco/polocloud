@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.node;
 
 import dev.httpmarco.polocloud.api.PolocloudAPI;
+import dev.httpmarco.polocloud.api.Prepareable;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
-import dev.httpmarco.polocloud.common.configuration.Configuration;
 import dev.httpmarco.polocloud.node.cluster.ClusterNodeProvider;
 import dev.httpmarco.polocloud.node.components.ComponentProvider;
 import dev.httpmarco.polocloud.node.components.impl.ComponentProviderImpl;
@@ -15,6 +15,7 @@ import dev.httpmarco.polocloud.node.platforms.PlatformProvider;
 import dev.httpmarco.polocloud.node.platforms.impl.PlatformProviderImpl;
 import dev.httpmarco.polocloud.node.sync.SyncProvider;
 import dev.httpmarco.polocloud.node.sync.local.LocalSyncProvider;
+import dev.httpmarco.polocloud.node.utils.configuration.Configuration;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -41,15 +42,16 @@ public final class Node extends PolocloudAPI {
 
     public Node() {
         instance = this;
-        log.info(translation.get("node.starting"));
 
-        this.syncProvider = new LocalSyncProvider();
         this.dependencyProvider = new DependencyProviderImpl();
         this.dependencyProvider.loadDefaults();
+
+        log.info(translation.get("node.starting"));
 
         log.info("Load local configuration...");
         this.nodeConfiguration = new Configuration<>("config.json", new NodeConfiguration());
 
+        this.syncProvider = new LocalSyncProvider();
         this.platformProvider = new PlatformProviderImpl();
         this.clusterProvider = new ClusterNodeProvider();
         this.componentProvider = new ComponentProviderImpl();

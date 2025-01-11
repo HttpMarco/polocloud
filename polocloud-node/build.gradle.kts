@@ -16,6 +16,7 @@ dependencies {
 
     // the only lib that is not in the polocloud-common lib and must be compiled
     implementation(libs.log4j.sl4j.impl)
+    implementation(libs.jline.jansi)
 }
 
 tasks.shadowJar {
@@ -24,4 +25,7 @@ tasks.shadowJar {
         attributes("Main-Class" to "dev.httpmarco.polocloud.node.NodeBootContext")
         attributes("Premain-Class" to "dev.httpmarco.polocloud.node.NodeBootContext")
     }
+}
+tasks.withType<ProcessResources> {
+    filteringCharset = "UTF-8"
 }

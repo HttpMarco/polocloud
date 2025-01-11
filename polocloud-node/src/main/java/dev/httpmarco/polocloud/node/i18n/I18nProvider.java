@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.node.i18n;
 
+import dev.httpmarco.polocloud.node.i18n.logging.LoggingColors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -33,12 +34,10 @@ public class I18nProvider implements I18n {
         if(!resourceBundle.containsKey(key)) {
             return key;
         }
-
         if(format.length == 0) {
-            return resourceBundle.getString(key);
+            return LoggingColors.translate(resourceBundle.getString(key));
         }
-
-        return String.format(resourceBundle.getString(key), format);
+        return LoggingColors.translate(String.format(resourceBundle.getString(key), format));
     }
 
     @Override

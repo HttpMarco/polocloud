@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.fusesource.jansi.Ansi;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
@@ -36,7 +37,7 @@ public enum LoggingColors {
         this(code, color, false);
     }
 
-    public String getAnsi() {
+    public String ansi() {
         if (color == null) {
             return Ansi.ansi().reset().toString();
         }
@@ -44,11 +45,10 @@ public enum LoggingColors {
     }
 
 
-    public static String translate(String message) {
+    public static @NotNull String translate(String message) {
         for (LoggingColors color : values()) {
-            message = message.replace(color.code(), color.getAnsi());
+            message = message.replace(color.code(), color.ansi());
         }
-        return message;
+        return message + LoggingColors.RESET.ansi();
     }
-
 }
