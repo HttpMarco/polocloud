@@ -25,7 +25,7 @@ netty = "5.0.0.Alpha5"
 netline = "1.0.6-SNAPSHOT"
 
 # terminal
-jline = "3.28.0"
+jline = "3.29.0"
 
 [libraries]
 # Logging
