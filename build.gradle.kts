@@ -3,16 +3,10 @@ plugins {
     alias(libs.plugins.nexusPublish)
 }
 
-group = "dev.httpmarco"
-version = "1.0.0"
+allprojects {
 
-indraSonatype {
-    useAlternateSonatypeOSSHost("s01")
-}
-
-subprojects {
-
-    version = rootProject.version
+    group = "dev.httpmarco"
+    version = "2.0.0"
 
     repositories {
         mavenCentral()
