@@ -14,7 +14,7 @@ import java.util.List;
 public final class DependencyProviderImpl implements DependencyProvider {
 
     private static final Logger log = LogManager.getLogger(DependencyProviderImpl.class);
-    private static final Path DEPENDENCY_DIRECTORY = PathUtils.defineDirectory("local/dependencies");
+    public static final Path DEPENDENCY_DIRECTORY = PathUtils.defineDirectory("local/dependencies");
 
     private final DependencySlot originalSlot;
     private final List<DependencySlot> slots = new ArrayList<>();
