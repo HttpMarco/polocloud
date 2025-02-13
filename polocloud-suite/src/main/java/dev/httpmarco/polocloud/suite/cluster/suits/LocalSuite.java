@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.cluster.suits;
 
 import dev.httpmarco.polocloud.suite.cluster.ClusterSuite;
+import dev.httpmarco.polocloud.suite.cluster.data.LocalSuiteData;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -13,8 +14,8 @@ public final class LocalSuite implements ClusterSuite {
     private static final Logger log = LogManager.getLogger(LocalSuite.class);
     private final Server server;
 
-    public LocalSuite() {
-        this.server = ServerBuilder.forPort(9091).build();
+    public LocalSuite(LocalSuiteData data) {
+        this.server = ServerBuilder.forPort(data.port()).build();
 
         try {
             this.server.start();
