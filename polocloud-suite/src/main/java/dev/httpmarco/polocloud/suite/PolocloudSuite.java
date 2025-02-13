@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.suite;
 import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.suite.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.suite.cluster.impl.ClusterProviderImpl;
+import dev.httpmarco.polocloud.suite.configuration.SuiteConfig;
 import dev.httpmarco.polocloud.suite.dependencies.DependencyProvider;
 import dev.httpmarco.polocloud.suite.dependencies.impl.DependencyProviderImpl;
 import dev.httpmarco.polocloud.suite.i18n.I18n;
@@ -19,8 +20,11 @@ public final class PolocloudSuite extends Polocloud {
     private final ClusterProvider clusterProvider;
 
     public PolocloudSuite() {
+
+        var config = SuiteConfig.load();
+
         this.dependencyProvider = new DependencyProviderImpl();
-        this.clusterProvider = new ClusterProviderImpl();
+        this.clusterProvider = new ClusterProviderImpl(config.localSuiteData());
     }
 
     public DependencyProvider dependencyProvider() {
