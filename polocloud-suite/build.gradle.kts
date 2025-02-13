@@ -5,6 +5,9 @@ plugins {
 
 dependencies {
     compileOnly(project(":polocloud-api"))
+
+    implementation(libs.bundles.logging)
+    implementation(libs.log4j.sl4j.impl)
 }
 
 tasks.shadowJar {
