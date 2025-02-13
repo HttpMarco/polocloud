@@ -8,17 +8,15 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":polocloud-api"))
-
+    implementation("org.slf4j:slf4j-simple:2.0.16")
     implementation(libs.bundles.logging)
     implementation(libs.log4j.sl4j.impl)
-
     implementation(libs.gson)
     implementation(libs.jline.jansi)
 
+    compileOnly(project(":polocloud-api"))
     compileOnly(libs.bundles.grpc)
     //todo
-    compileOnly("org.slf4j:slf4j-simple:2.0.16")
 
 }
 
