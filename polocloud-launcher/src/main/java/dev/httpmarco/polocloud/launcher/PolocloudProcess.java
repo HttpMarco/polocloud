@@ -43,9 +43,13 @@ public final class PolocloudProcess extends Thread {
         arguments.add("-javaagent:%s".formatted(bootLib.target()));
 
         arguments.add("-cp");
-        arguments.add(String.join(";", processLibs.stream().map(it -> it.target().toString()).toList()));
+        arguments.add(String.join(windowsProcess() ? ";" : ":", processLibs.stream().map(it -> it.target().toString()).toList()));
         arguments.add(bootLib.mainClass());
 
         return arguments;
+    }
+
+    private boolean windowsProcess() {
+        return System.getProperty("os.name").toLowerCase().contains("win");
     }
 }
