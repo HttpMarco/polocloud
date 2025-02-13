@@ -3,19 +3,19 @@ package dev.httpmarco.polocloud.api;
 public class Version {
 
     private final String originalVersion;
-
     private final int major;
     private final int minor;
-    private final int patch;
+    private final Integer patch;
+    private final Integer numberId;
+    private final String state;
 
-    private String state;
-
-    public Version(String originalVersion, int major, int minor, int patch, String state) {
+    public Version(String originalVersion, int major, int minor, Integer patch, Integer numberId, String state) {
         this.originalVersion = originalVersion;
         this.major = major;
         this.minor = minor;
         this.patch = patch;
         this.state = state;
+        this.numberId = numberId;
     }
 
     public static Version parse(String version) {
@@ -25,10 +25,19 @@ public class Version {
 
         var major = parseOrDefault(versionParts, 0);
         var minor = parseOrDefault(versionParts, 1);
-        var patch = parseOrDefault(versionParts, 2);
-        var state = (mainParts.length > 1) ? mainParts[1] : null;
 
-        return new Version(version, major, minor, patch, state);
+        Integer patch = null;
+        if (versionParts.length > 2) {
+            patch = parseOrDefault(versionParts, 2);
+        }
+
+        Integer numberId = null;
+        if (versionParts.length > 3) {
+            numberId = parseOrDefault(versionParts, 3);
+        }
+
+        var state = (mainParts.length > 1) ? mainParts[1] : null;
+        return new Version(version, major, minor, patch, numberId, state);
     }
 
     private static int parseOrDefault(String[] parts, int index) {
@@ -40,7 +49,17 @@ public class Version {
         return originalVersion;
     }
 
-    public String semantic() {
-        return major + "." + minor + "." + patch;
+    public String versionWithState() {
+        var builder = new StringBuilder(major + "." + minor);
+        if (patch != null) {
+            builder.append(".").append(patch);
+        }
+        if (numberId != null) {
+            builder.append(".").append(numberId);
+        }
+        if (state != null) {
+            builder.append("-").append(state);
+        }
+        return builder.toString();
     }
 }
