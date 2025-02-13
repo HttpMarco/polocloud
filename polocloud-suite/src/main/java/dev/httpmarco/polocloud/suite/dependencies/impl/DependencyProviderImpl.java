@@ -2,10 +2,9 @@ package dev.httpmarco.polocloud.suite.dependencies.impl;
 
 import dev.httpmarco.polocloud.suite.dependencies.DependencyProvider;
 import dev.httpmarco.polocloud.suite.dependencies.DependencySlot;
+import dev.httpmarco.polocloud.suite.dependencies.pool.DependencyPool;
 import dev.httpmarco.polocloud.suite.dependencies.slots.OriginalDependencySlot;
 import dev.httpmarco.polocloud.suite.utils.PathUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +12,6 @@ import java.util.List;
 
 public final class DependencyProviderImpl implements DependencyProvider {
 
-    private static final Logger log = LogManager.getLogger(DependencyProviderImpl.class);
     public static final Path DEPENDENCY_DIRECTORY = PathUtils.defineDirectory("local/dependencies");
 
     private final DependencySlot originalSlot;
@@ -21,6 +19,12 @@ public final class DependencyProviderImpl implements DependencyProvider {
 
     public DependencyProviderImpl() {
         this.originalSlot = new OriginalDependencySlot();
+
+        var requiredDependencies = DependencyPool.read();
+
+        for (var dependency : requiredDependencies.dependencies()) {
+            dependency.load(this.originalSlot);
+        }
     }
 
     @Override

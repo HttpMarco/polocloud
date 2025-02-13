@@ -3,19 +3,15 @@ package dev.httpmarco.polocloud.suite.dependencies.external.pom;
 import dev.httpmarco.polocloud.suite.dependencies.exception.DependencyChecksumNotMatchException;
 import dev.httpmarco.polocloud.suite.dependencies.external.ExternalDependency;
 import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
-import dev.httpmarco.polocloud.suite.utils.validator.ChecksumValidator;
 import org.w3c.dom.Element;
-
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public final class Pom {
 
-    private static final String URL_PATTERN = "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s";
+    public static final String URL_PATTERN = "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s";
 
     private final ExternalDependency parentDependency;
     private final String parentDependencyUrl;
@@ -37,16 +33,8 @@ public final class Pom {
             // at the moment the checksum is not correct
             throw new DependencyChecksumNotMatchException(parentDependency);
         }
-
-        var pomChecksum = Downloader.of(this.parentDependencyUrl).plain();
-
         try {
-            var pom = Downloader.of(URL_PATTERN + ".pom").xml();
-
-            if (!ChecksumValidator.validateSHA1Checksum(pom, pomChecksum)) {
-                this.loadContext(++retries);
-            }
-
+            var pom = Downloader.of(this.parentDependencyUrl + ".pom").xml();
             var dependencyNodes = pom.getElementsByTagName("dependency");
 
             for (int i = 0; i < dependencyNodes.getLength(); i++) {
@@ -64,11 +52,18 @@ public final class Pom {
                     return;
                 }
 
+                var scope = readTag(dependencyElement, "scope");
+
+                if(scope != null && scope.equals("test")) {
+                    // we not need this
+                    continue;
+                }
+
                 // we load the complete context of this sub dependency
                 var subDependency = new ExternalDependency(groupId, artifactId, version);
                 dependencies.add(subDependency);
             }
-        } catch (ParserConfigurationException | NoSuchAlgorithmException | TransformerException e) {
+        } catch (ParserConfigurationException e) {
             // another try for the downloading
             this.loadContext(++retries);
         }
