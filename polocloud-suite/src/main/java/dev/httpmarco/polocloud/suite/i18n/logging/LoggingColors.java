@@ -55,7 +55,6 @@ public enum LoggingColors {
         return bright ? Ansi.ansi().fgBright(color).toString() : Ansi.ansi().fg(color).toString();
     }
 
-
     public static String translate(String message) {
         for (LoggingColors color : values()) {
             message = message.replace(color.code(), color.ansi());
