@@ -27,6 +27,8 @@ gradle-app.setting
 !gradle-wrapper.properties
 .gradletasknamecache
 
+polocloud-suite/src/main/resources/dependencies.json
+
 # Logs
 logs
 *.log
