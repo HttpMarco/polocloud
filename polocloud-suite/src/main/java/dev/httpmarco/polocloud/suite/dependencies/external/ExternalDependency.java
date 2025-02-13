@@ -29,8 +29,13 @@ public final class ExternalDependency implements Dependency {
         // load all sub dependencies
         pom.dependencies().forEach(externalDependency -> externalDependency.load(slot));
         var downloadUrl = Pom.URL_PATTERN.formatted(groupIdPath(), artifactId, version, artifactId, version) + ".jar";
-        // download the specific dependency
-        Downloader.of(downloadUrl).file(file().getAbsolutePath());
+
+        if (file().exists()) {
+            // todo check checksum -> delete -> download
+        } else {
+            // download the specific dependency
+            Downloader.of(downloadUrl).file(file().getAbsolutePath());
+        }
         // add to the classloader slot
         slot.append(this);
     }

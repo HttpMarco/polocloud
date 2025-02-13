@@ -54,7 +54,7 @@ public final class Pom {
 
                 var scope = readTag(dependencyElement, "scope");
 
-                if(scope != null && scope.equals("test")) {
+                if(scope == null || scope.equals("test")) {
                     // we not need this
                     continue;
                 }
