@@ -8,6 +8,9 @@ dependencies {
 
     implementation(libs.bundles.logging)
     implementation(libs.log4j.sl4j.impl)
+
+    implementation(libs.gson)
+    implementation(libs.jline.jansi)
 }
 
 tasks.shadowJar {
