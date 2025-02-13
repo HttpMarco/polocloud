@@ -15,6 +15,9 @@ gson = "2.12.1"
 # terminal
 jline = "3.29.0"
 
+# Networking
+grpc = "1.69.0"
+
 [libraries]
 # Logging
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
@@ -31,5 +34,11 @@ gson =  { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 jline = { module = "org.jline:jline", version.ref = "jline" }
 jline-jansi = { module = "org.jline:jline-terminal-jansi", version.ref = "jline" }
 
+# Networking
+grpc-netty =  { group = "io.grpc", name = "grpc-netty-shaded", version.ref = "grpc" }
+grpc-protobuf =  { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
+grpc-stub =  { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
+
 [bundles]
 logging = ["slf4j", "log4j"]
+grpc = ["grpc-netty", "grpc-protobuf", "grpc-stub"]
