@@ -28,7 +28,7 @@ public final class ExternalDependency implements Dependency {
     public void load(DependencySlot slot) {
         // load all sub dependencies
         pom.dependencies().forEach(externalDependency -> externalDependency.load(slot));
-        var downloadUrl = Pom.URL_PATTERN.formatted(groupIdPath(), artifactId, version, artifactId, version) + ".jar";
+        var downloadUrl = Pom.URL_PATTERN.formatted(groupIdPath(), artifactId, version.versionWithState(), artifactId, version.versionWithState()) + ".jar";
 
         if (file().exists()) {
             // todo check checksum -> delete -> download
@@ -45,16 +45,16 @@ public final class ExternalDependency implements Dependency {
         return DependencyProviderImpl.DEPENDENCY_DIRECTORY.resolve(artifactId + "-" + version + ".jar").toFile();
     }
 
-    public String version() {
-        return this.version.semantic();
-    }
-
     public String artifactId() {
         return this.artifactId;
     }
 
     public String groupIdPath() {
         return this.groupId.replace('.', '/');
+    }
+
+    public Version version() {
+        return this.version;
     }
 
     @Override

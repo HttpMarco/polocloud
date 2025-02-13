@@ -21,7 +21,7 @@ public final class Pom {
 
     public Pom(ExternalDependency dependency) {
         this.parentDependency = dependency;
-        this.parentDependencyUrl = URL_PATTERN.formatted(dependency.groupIdPath(), dependency.artifactId(), dependency.version(), dependency.artifactId(), dependency.version());
+        this.parentDependencyUrl = URL_PATTERN.formatted(dependency.groupIdPath(), dependency.artifactId(), dependency.version().versionWithState(), dependency.artifactId(), dependency.version().versionWithState());
 
         // load pom, dependencies and versions
         this.loadContext(0);
