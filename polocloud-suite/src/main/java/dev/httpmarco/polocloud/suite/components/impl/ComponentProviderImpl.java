@@ -3,8 +3,8 @@ package dev.httpmarco.polocloud.suite.components.impl;
 import dev.httpmarco.polocloud.suite.components.ComponentContainer;
 import dev.httpmarco.polocloud.suite.components.ComponentInfoSnapshot;
 import dev.httpmarco.polocloud.suite.components.ComponentProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public final class ComponentProviderImpl implements ComponentProvider {
 
     private static final Path COMPONENTS_PATH = Paths.get("components");
-    private static final Logger log = LoggerFactory.getLogger(ComponentProviderImpl.class);
+    private static final Logger log = LogManager.getLogger(ComponentProviderImpl.class);
     private final List<ComponentContainer> containers = new ArrayList<>();
 
     static {
