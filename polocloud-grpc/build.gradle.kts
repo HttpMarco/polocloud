@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation("io.grpc:grpc-protobuf:1.70.0")
-    implementation("io.grpc:grpc-services:1.69.0")
+    implementation("io.grpc:grpc-services:1.70.0")
     implementation("io.grpc:grpc-stub:1.70.0")
 }
 
