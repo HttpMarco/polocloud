@@ -1,12 +1,14 @@
 package dev.httpmarco.polocloud.suite.components;
 
+import dev.httpmarco.polocloud.api.Closeable;
+
 import java.util.Collection;
 
 /**
  * Accept all subcomponents for the cloud system
  * For example: rest component or console component
  */
-public interface ComponentProvider {
+public interface ComponentProvider extends Closeable {
 
     Collection<ComponentContainer> containers();
 

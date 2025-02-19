@@ -60,9 +60,9 @@ public final class ComponentProviderImpl implements ComponentProvider {
                         var snapshot = new ComponentInfoSnapshot(info.name(), Version.parse(info.version()));
                         var container = new ComponentContainer(instance, snapshot, new ComponentClassLoader(file));
 
+                        // successfully loaded
                         this.containers.add(container);
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                             NoSuchMethodException e) {
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         log.error("Failed to instantiate component", e);
                     }
                 }
@@ -71,6 +71,11 @@ public final class ComponentProviderImpl implements ComponentProvider {
             }
         }
         log.info("Loading {} components", containers.size());
+
+        // initialize all components
+        for (var container : this.containers) {
+            container.component().start();
+        }
     }
 
     @Override
@@ -89,5 +94,11 @@ public final class ComponentProviderImpl implements ComponentProvider {
     }
 
 
+    @Override
+    public void close() {
+        for (var container : this.containers) {
+            container.component().stop();
+        }
+    }
 }
 
