@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.versions.jline)
     compileOnly(project(":polocloud-suite"))
 }
 
