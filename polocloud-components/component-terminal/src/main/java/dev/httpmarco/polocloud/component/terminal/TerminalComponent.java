@@ -6,12 +6,12 @@ import dev.httpmarco.polocloud.suite.components.Component;
 public class TerminalComponent extends Component {
 
     @Override
-    public void enabling() {
-
+    public void start() {
+        System.out.println("Starting terminal component");
     }
 
     @Override
-    public void disabling() {
-
+    public void stop() {
+        System.out.println("Stopping terminal component");
     }
 }

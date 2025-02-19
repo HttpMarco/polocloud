@@ -26,6 +26,9 @@ public final class PolocloudSuite extends Polocloud {
 
         var config = SuiteConfig.load();
 
+        // todo test
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+
         this.dependencyProvider = new DependencyProviderImpl();
         this.clusterProvider = new ClusterProviderImpl(config.localSuiteData());
         this.componentProvider = new ComponentProviderImpl();
@@ -37,5 +40,9 @@ public final class PolocloudSuite extends Polocloud {
 
     public static PolocloudSuite instance() {
         return instance();
+    }
+
+    public void close() {
+        this.componentProvider.close();
     }
 }
