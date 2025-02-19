@@ -7,9 +7,9 @@ import java.lang.annotation.Target;
 
 public abstract class Component {
 
-    public abstract void enabling();
+    public abstract void start();
 
-    public abstract void disabling();
+    public abstract void stop();
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
