@@ -18,6 +18,9 @@ jline = "3.29.0"
 # Networking
 grpc = "1.70.0"
 
+# factories
+docker = "3.4.1"
+
 [libraries]
 # Logging
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
@@ -38,6 +41,9 @@ jline-jansi = { module = "org.jline:jline-terminal-jansi", version.ref = "jline"
 grpc-netty =  { group = "io.grpc", name = "grpc-netty-shaded", version.ref = "grpc" }
 grpc-protobuf =  { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
 grpc-stub =  { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
+
+# factories
+docker =  { group = "com.github.docker-java", name = "docker-java", version.ref = "docker" }
 
 [bundles]
 logging = ["slf4j", "log4j"]
