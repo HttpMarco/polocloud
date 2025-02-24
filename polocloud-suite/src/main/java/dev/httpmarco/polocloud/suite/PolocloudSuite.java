@@ -16,7 +16,8 @@ import org.apache.logging.log4j.Logger;
 public final class PolocloudSuite extends Polocloud {
 
     private static final Logger log = LogManager.getLogger(PolocloudSuite.class);
-    private static final I18n translation = new I18nPolocloudSuite();
+
+    private final I18n translation = new I18nPolocloudSuite();
 
     private final DependencyProvider dependencyProvider;
     private final ClusterProvider clusterProvider;
@@ -45,4 +46,9 @@ public final class PolocloudSuite extends Polocloud {
     public void close() {
         this.componentProvider.close();
     }
+
+    public I18n translation() {
+        return translation;
+    }
+
 }
