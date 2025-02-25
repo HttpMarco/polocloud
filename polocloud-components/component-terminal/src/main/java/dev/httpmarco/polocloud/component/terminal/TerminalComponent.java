@@ -10,11 +10,7 @@ public class TerminalComponent extends Component {
     private static final Logger log = LoggerFactory.getLogger(TerminalComponent.class);
 
     // todo list component
-    // 1. Reading Thread
-    // 2. Add prompt (prefix) at reading thread
-    // 3. old command system like minestom
     // 4. Add auto completer
-    // 5. clean shutdown
 
     private static TerminalComponent instance;
 
@@ -23,8 +19,6 @@ public class TerminalComponent extends Component {
 
     @Override
     public void start() {
-        System.out.println("Starting terminal component");
-
         this.commandService = new CommandService();
         (terminal = new PolocloudTerminalImpl()).start();
 
@@ -33,8 +27,6 @@ public class TerminalComponent extends Component {
 
     @Override
     public void stop() {
-        System.out.println("Stopping terminal component");
-
         try {
             this.terminal.close();
         } catch (Exception ex) {
