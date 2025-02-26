@@ -9,16 +9,18 @@ dependencies {
     implementation("io.grpc:grpc-protobuf:1.70.0")
     implementation("io.grpc:grpc-services:1.70.0")
     implementation("io.grpc:grpc-stub:1.70.0")
+
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
 protobuf {
     protobuf {
         protoc {
-            artifact = "com.google.protobuf:protoc:4.29.3"
+            artifact = "com.google.protobuf:protoc:3.25.5"
         }
         plugins {
             id("grpc") {
-                artifact = "io.grpc:protoc-gen-grpc-java:1.70.0"
+                artifact = "io.grpc:protoc-gen-grpc-java:1.69.0"
             }
         }
         generateProtoTasks {

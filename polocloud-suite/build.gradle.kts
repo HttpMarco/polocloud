@@ -1,10 +1,10 @@
 import com.google.gson.GsonBuilder
 import org.gradle.kotlin.dsl.*
-import java.io.File
 
 plugins {
     id("java")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.0.0-beta9"
+    id("com.google.protobuf") version "0.9.4";
 }
 
 dependencies {
@@ -14,10 +14,9 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.jline.jansi)
 
+    implementation(project(":polocloud-grpc"))
     compileOnly(project(":polocloud-api"))
     compileOnly(libs.bundles.grpc)
-    //todo
-
 }
 
 tasks.shadowJar {
@@ -56,4 +55,10 @@ val generateCompileOnlyDependenciesJson by tasks.registering {
 
 tasks.named("processResources").configure {
     dependsOn(generateCompileOnlyDependenciesJson)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.5"
+    }
 }
