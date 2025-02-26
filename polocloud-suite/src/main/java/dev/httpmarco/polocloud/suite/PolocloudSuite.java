@@ -34,7 +34,7 @@ public final class PolocloudSuite extends Polocloud {
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 
         this.dependencyProvider = new DependencyProviderImpl();
-        this.clusterProvider = new ClusterProviderImpl(config.localSuiteData());
+        this.clusterProvider = new ClusterProviderImpl(config.cluster());
         this.componentProvider = new ComponentProviderImpl();
         this.clusterGroupProvider = new ClusterGroupProviderImpl();
     }
