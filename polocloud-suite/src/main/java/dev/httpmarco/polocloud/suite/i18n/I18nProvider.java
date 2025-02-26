@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.i18n;
 
 import dev.httpmarco.polocloud.suite.i18n.logging.LoggingColors;
+import dev.httpmarco.polocloud.suite.i18n.utils.UTF8Control;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -58,7 +59,7 @@ public class I18nProvider implements I18n {
     }
 
     public ResourceBundle localBundle(Locale locale) {
-        return ResourceBundle.getBundle(this.resourceBundlePrefix, locale, this.getClass().getClassLoader());
+        return ResourceBundle.getBundle(this.resourceBundlePrefix, locale, this.getClass().getClassLoader(), UTF8Control.INSTANCE);
     }
 
     @Override
