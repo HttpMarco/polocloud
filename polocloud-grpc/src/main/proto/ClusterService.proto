@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.grpc;
+
+service ClusterSuiteService {
+  rpc pingSuite(SuitePingRequest) returns (SuitePingResponse);
+}
+
+enum SuiteState {
+  ONLINE = 0;
+}
+
+message SuitePingRequest {
+  string clusterToken = 1;
+}
+
+message SuitePingResponse {
+  SuiteState state = 1;
+}
+
+message AuthIdentificationRequest {
+  string clusterToken = 1;
+  string suiteId = 2;
+  string suiteHostname = 3;
+  int64 suitePort = 4;
+}
