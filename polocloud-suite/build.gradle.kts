@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.*
 plugins {
     id("java")
     id("com.gradleup.shadow") version "9.0.0-beta9"
-    id("com.google.protobuf") version "0.9.4";
+    id("com.google.protobuf") version "0.9.4"
 }
 
 dependencies {
@@ -14,7 +14,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.jline.jansi)
 
-    implementation(project(":polocloud-grpc"))
+    compileOnly(project(":polocloud-grpc"))
     compileOnly(project(":polocloud-api"))
     compileOnly(libs.bundles.grpc)
 }
@@ -42,7 +42,7 @@ val generateCompileOnlyDependenciesJson by tasks.registering {
     group = "build"
     doLast {
         // we only want all compileOnly dependencies -> without polocloud api
-        val dependenciesList = configurations.getByName("compileOnly").allDependencies.filter { it.name !== "polocloud-api" }.map {
+        val dependenciesList = configurations.getByName("compileOnly").allDependencies.filter { it.name !== "polocloud-api" && it.name !== "polocloud-grpc" }.map {
             mapOf("group" to it.group, "name" to it.name, "version" to it.version)
         }
         val json = GsonBuilder().setPrettyPrinting().create().toJson(dependenciesList)

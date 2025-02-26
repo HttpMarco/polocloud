@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.component.terminal.command;
 
-import dev.httpmarco.polocloud.suite.i18n.I18n;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public abstract class CommandArgument<T> {
     }
 
     public String wrongReason() {
-        return translation().get("terminal.command.argument.wrong");
+        return"";
     }
 
     public abstract T buildResult(String input);
@@ -31,9 +30,5 @@ public abstract class CommandArgument<T> {
         return key;
     }
 
-    public I18n translation() {
-        // todo
-        return null;
-    }
 
 }

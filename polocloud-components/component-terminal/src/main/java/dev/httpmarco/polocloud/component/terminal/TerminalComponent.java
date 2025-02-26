@@ -1,12 +1,10 @@
 package dev.httpmarco.polocloud.component.terminal;
 
 import dev.httpmarco.polocloud.component.terminal.command.CommandService;
-import dev.httpmarco.polocloud.suite.components.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component.Info(name = "terminal", version = "1.0.0")
-public class TerminalComponent extends Component {
+public class TerminalComponent  {
     private static final Logger log = LoggerFactory.getLogger(TerminalComponent.class);
 
     // todo list component
@@ -17,7 +15,7 @@ public class TerminalComponent extends Component {
     private CommandService commandService;
     private PolocloudTerminal terminal;
 
-    @Override
+
     public void start() {
         this.commandService = new CommandService();
         (terminal = new PolocloudTerminalImpl()).start();
@@ -25,7 +23,7 @@ public class TerminalComponent extends Component {
         instance = this;
     }
 
-    @Override
+
     public void stop() {
         try {
             this.terminal.close();
