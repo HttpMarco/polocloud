@@ -10,7 +10,6 @@ plugins {
 dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.17")
     implementation(libs.bundles.logging)
-    implementation(libs.log4j.sl4j.impl)
     implementation(libs.gson)
     implementation(libs.jline.jansi)
 
