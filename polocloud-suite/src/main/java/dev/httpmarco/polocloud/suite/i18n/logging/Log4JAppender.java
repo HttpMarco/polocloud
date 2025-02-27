@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.i18n.logging;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
@@ -35,6 +36,21 @@ public final class Log4JAppender extends AbstractAppender {
 
     @Override
     public void append(LogEvent event) {
-        System.out.println(LoggingColors.translate(logFormat.format(new Date()) + " &8| &7" + event.getMessage().getFormattedMessage()));
+        System.out.println(LoggingColors.translate(logFormat.format(new Date()) + " &8| " + detectState(event.getLevel()) + "&8: &7" + event.getMessage().getFormattedMessage()));
+    }
+
+    private String detectState(Level level) {
+        if (level.equals(Level.INFO)) {
+            return LoggingColors.WHITE + "INFO";
+        } else if (level.equals(Level.WARN)) {
+            return LoggingColors.YELLOW + "INFO";
+        } else if (level.equals(Level.ERROR)) {
+            return LoggingColors.RED + "ERROR";
+        } else if (level.equals(Level.FATAL)) {
+            return LoggingColors.RED + "FATAL";
+        } else if (level.equals(Level.DEBUG)) {
+            return LoggingColors.GRAY + "DEBUG";
+        }
+        return LoggingColors.GRAY + "UNKNOWN";
     }
 }

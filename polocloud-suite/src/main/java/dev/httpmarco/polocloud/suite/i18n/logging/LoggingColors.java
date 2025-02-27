@@ -61,4 +61,9 @@ public enum LoggingColors {
         }
         return message + LoggingColors.RESET.ansi();
     }
+
+    @Override
+    public String toString() {
+        return this.ansi();
+    }
 }
