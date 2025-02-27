@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.components.impl;
 
 import dev.httpmarco.polocloud.api.Version;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.components.Component;
 import dev.httpmarco.polocloud.suite.components.ComponentContainer;
 import dev.httpmarco.polocloud.suite.components.ComponentInfoSnapshot;
@@ -12,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +28,7 @@ public final class ComponentProviderImpl implements ComponentProvider {
         try {
             Files.createDirectories(COMPONENTS_PATH);
         } catch (IOException e) {
-            log.error("Failed to create directories", e);
+            log.error(PolocloudSuite.instance().translation().get("suite.directories.create.error"), e);
         }
     }
 
@@ -63,14 +63,14 @@ public final class ComponentProviderImpl implements ComponentProvider {
                         // successfully loaded
                         this.containers.add(container);
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        log.error("Failed to instantiate component", e);
+                        log.error(PolocloudSuite.instance().translation().get("suite.loading.components.instantiate.failed"), e);
                     }
                 }
             } catch (IOException e) {
-                log.error("Failed to scan file", e);
+                log.error(PolocloudSuite.instance().translation().get("suite.loading.components.file.scan.failed"), e);
             }
         }
-        log.info("Loading {} components", containers.size());
+        log.info(PolocloudSuite.instance().translation().get("suite.loading.components", containers.size()));
 
         // initialize all components
         for (var container : this.containers) {
