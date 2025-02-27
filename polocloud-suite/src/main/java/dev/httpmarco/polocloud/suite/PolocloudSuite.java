@@ -58,6 +58,8 @@ public final class PolocloudSuite extends Polocloud {
         if (componentProvider != null) {
             this.componentProvider.close();
         }
+
+        AnsiConsole.systemUninstall();
     }
 
     public I18n translation() {
