@@ -24,7 +24,7 @@ docker = "3.4.1"
 [libraries]
 # Logging
 slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-log4j = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+log4j = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 log4j-sl4j-impl = { module = "org.apache.logging.log4j:log4j-slf4j-impl", version.ref = "log4j" }
 
 # Code quality
@@ -47,5 +47,6 @@ grpc-services =  { group = "io.grpc", name = "grpc-services", version.ref = "grp
 docker =  { group = "com.github.docker-java", name = "docker-java", version.ref = "docker" }
 
 [bundles]
-logging = ["slf4j", "log4j"]
+logging = ["slf4j", "log4j", "log4j-sl4j-impl"]
 grpc = ["grpc-netty", "grpc-protobuf", "grpc-stub", "grpc-services"]
+utils = ["annotations"]
