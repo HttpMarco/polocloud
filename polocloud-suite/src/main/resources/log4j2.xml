@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration packages="dev.httpmarco.polocloud.suite.i18n.logging">
     <Properties>
         <Property name="log4j.skipJansi">false</Property>
     </Properties>
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss} |%5p: %m%n"/>
-        </Console>
+        <Log4JAppender name="Log4JAppender"/>
 
         <RollingFile name="RollingFile" fileName="logs/latest.log"
                      filePattern="logs/archive/%d{yyyy-MM-dd}.zip">
@@ -24,7 +22,7 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Log4JAppender"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
