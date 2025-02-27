@@ -3,7 +3,7 @@ plugins {
 }
 
 tasks.jar {
-    from(includeLibs("api"), includeLibs("instance"),includeLibs("suite", "shadowJar"))
+    from(includeLibs("api"), includeLibs("instance"),includeLibs("suite", "shadowJar"), includeLibs("grpc"))
 
     manifest {
         attributes("Main-Class" to "dev.httpmarco.polocloud.launcher.boot.PolocloudBoot")
