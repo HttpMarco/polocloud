@@ -3,7 +3,7 @@ version = "1.0"
 
 [versions]
 # Logging
-slf4j = "2.0.16"
+slf4j = "2.0.17"
 log4j = "2.24.3"
 
 # Code quality
@@ -41,10 +41,11 @@ jline-jansi = { module = "org.jline:jline-terminal-jansi", version.ref = "jline"
 grpc-netty =  { group = "io.grpc", name = "grpc-netty-shaded", version.ref = "grpc" }
 grpc-protobuf =  { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
 grpc-stub =  { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
+grpc-services =  { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }
 
 # factories
 docker =  { group = "com.github.docker-java", name = "docker-java", version.ref = "docker" }
 
 [bundles]
 logging = ["slf4j", "log4j"]
-grpc = ["grpc-netty", "grpc-protobuf", "grpc-stub"]
+grpc = ["grpc-netty", "grpc-protobuf", "grpc-stub", "grpc-services"]

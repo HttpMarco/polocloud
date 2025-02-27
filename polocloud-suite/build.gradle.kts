@@ -8,11 +8,14 @@ plugins {
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-simple:2.0.16")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
     implementation(libs.bundles.logging)
     implementation(libs.log4j.sl4j.impl)
     implementation(libs.gson)
     implementation(libs.jline.jansi)
+
+    // need grpc -> improve dependency
+    implementation("com.google.guava:failureaccess:1.0.2")
 
     compileOnly(project(":polocloud-grpc"))
     compileOnly(project(":polocloud-api"))

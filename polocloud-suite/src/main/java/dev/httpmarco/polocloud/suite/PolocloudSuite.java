@@ -53,7 +53,11 @@ public final class PolocloudSuite extends Polocloud {
     }
 
     public void close() {
-        this.componentProvider.close();
+
+        // unload only if component provider is present
+        if (componentProvider != null) {
+            this.componentProvider.close();
+        }
     }
 
     public I18n translation() {
