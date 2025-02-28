@@ -22,7 +22,7 @@ final class PolocloudTerminalThread extends Thread {
                 line = terminal.lineReader().readLine(terminal.prompt());
             } catch (UserInterruptException ignored) {
                 // user pressed ctrl+c
-                ComponentSuite.instance().shutdownSuite();
+                ComponentSuite.instance().suiteSystemProvider().shutdown();
                 return;
             }
 
