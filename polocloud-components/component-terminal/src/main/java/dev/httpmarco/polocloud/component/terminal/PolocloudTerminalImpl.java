@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.component.terminal;
 
+import dev.httpmarco.polocloud.component.api.logging.LoggingColors;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
@@ -14,6 +15,8 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
     private Terminal terminal;
     private LineReaderImpl lineReader;
     private PolocloudTerminalThread terminalThread;
+
+    private String terminalPrompt = LoggingColors.translate("&flocal&8@&7node &8» &7");
 
     @Override
     public void start() {
@@ -59,7 +62,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
 
     @Override
     public String prompt() {
-        return "local@node";
+        return this.terminalPrompt;
     }
 
     @Override
