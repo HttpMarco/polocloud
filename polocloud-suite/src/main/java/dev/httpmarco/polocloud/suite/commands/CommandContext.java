@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.component.terminal.command;
+package dev.httpmarco.polocloud.suite.commands;
 
 import java.util.HashMap;
 import java.util.Map;

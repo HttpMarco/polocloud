@@ -1,6 +1,6 @@
-package dev.httpmarco.polocloud.component.terminal.command;
+package dev.httpmarco.polocloud.suite.commands;
 
-
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import java.util.List;
 
 public abstract class CommandArgument<T> {
@@ -9,6 +9,10 @@ public abstract class CommandArgument<T> {
 
     public CommandArgument(String key) {
         this.key = key;
+    }
+
+    public String key() {
+        return this.key;
     }
 
     public List<String> defaultArgs(CommandContext context) {
@@ -21,14 +25,8 @@ public abstract class CommandArgument<T> {
     }
 
     public String wrongReason() {
-        return"";
+        return PolocloudSuite.instance().translation().get("terminal.command.argument.wrong");
     }
 
     public abstract T buildResult(String input);
-
-    public String key() {
-        return key;
-    }
-
-
 }

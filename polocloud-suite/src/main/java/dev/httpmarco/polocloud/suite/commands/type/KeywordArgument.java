@@ -1,7 +1,7 @@
-package dev.httpmarco.polocloud.component.terminal.command.arguments;
+package dev.httpmarco.polocloud.suite.commands.type;
 
-import dev.httpmarco.polocloud.component.terminal.command.CommandArgument;
-import dev.httpmarco.polocloud.component.terminal.command.CommandContext;
+import dev.httpmarco.polocloud.suite.commands.CommandArgument;
+import dev.httpmarco.polocloud.suite.commands.CommandContext;
 
 import java.util.List;
 

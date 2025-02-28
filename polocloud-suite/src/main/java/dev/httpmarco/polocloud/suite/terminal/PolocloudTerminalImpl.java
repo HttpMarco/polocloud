@@ -1,6 +1,6 @@
-package dev.httpmarco.polocloud.component.terminal;
+package dev.httpmarco.polocloud.suite.terminal;
 
-import dev.httpmarco.polocloud.component.api.logging.LoggingColors;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
@@ -57,7 +57,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
 
     @Override
     public void handleInput(String commandName, String[] args) {
-        TerminalComponent.instance().commandService().call(commandName, args);
+        PolocloudSuite.instance().commandService().call(commandName, args);
     }
 
     @Override

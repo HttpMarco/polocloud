@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.component.api.logging;
+package dev.httpmarco.polocloud.suite.terminal;
 
 import org.fusesource.jansi.Ansi;
 

@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.suite.i18n.logging;
 
-import dev.httpmarco.polocloud.component.api.logging.LoggingColors;
+import dev.httpmarco.polocloud.suite.terminal.LoggingColors;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;

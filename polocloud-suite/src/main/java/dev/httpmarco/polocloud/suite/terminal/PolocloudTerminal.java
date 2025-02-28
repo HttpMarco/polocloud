@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.component.terminal;
+package dev.httpmarco.polocloud.suite.terminal;
 
 import org.jline.reader.LineReader;
 

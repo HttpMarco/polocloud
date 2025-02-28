@@ -1,6 +1,6 @@
-package dev.httpmarco.polocloud.component.terminal.command.arguments;
+package dev.httpmarco.polocloud.suite.commands.type;
 
-import dev.httpmarco.polocloud.component.terminal.command.CommandArgument;
+import dev.httpmarco.polocloud.suite.commands.CommandArgument;
 
 public final class StringArrayArgument extends CommandArgument<String> {
 

@@ -1,4 +1,6 @@
-package dev.httpmarco.polocloud.component.terminal.command;
+package dev.httpmarco.polocloud.suite.commands;
+
+import dev.httpmarco.polocloud.suite.commands.impl.ShutdownCommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,13 +11,11 @@ public final class CommandService {
     private final List<Command> commands = new ArrayList<>();
 
     public CommandService() {
+        this.registerCommand(new ShutdownCommand());
     }
 
     public List<Command> commandsByName(String name) {
-        return commands.stream()
-                .filter(it -> it.name().equalsIgnoreCase(name))
-                .filter(it -> Arrays.stream(it.aliases()).anyMatch(s -> s.equalsIgnoreCase(name)))
-                .toList();
+        return commands.stream().filter(it -> it.name().equalsIgnoreCase(name) || Arrays.stream(it.aliases()).anyMatch(s -> s.equalsIgnoreCase(name))).toList();
     }
 
     public void registerCommand(Command command) {

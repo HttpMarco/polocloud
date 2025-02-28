@@ -1,9 +1,9 @@
-package dev.httpmarco.polocloud.component.terminal.command;
+package dev.httpmarco.polocloud.suite.commands;
 
-import dev.httpmarco.polocloud.component.terminal.command.arguments.KeywordArgument;
-import dev.httpmarco.polocloud.component.terminal.command.arguments.StringArrayArgument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
+import dev.httpmarco.polocloud.suite.commands.type.StringArrayArgument;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class CommandParser {
 
-    private static final Logger log = LoggerFactory.getLogger(CommandParser.class);
+    private static final Logger log = LogManager.getLogger(CommandParser.class);
 
     public static void serializer(CommandService commandService, String name, String[] args) {
         // all command with same start name
@@ -25,7 +25,7 @@ public class CommandParser {
         for (var command : commands) {
             if (command.defaultExecution() != null) {
                 command.defaultExecution().execute(new CommandContext());
-            } else {
+            }  else {
                 for (var syntaxCommand : command.commandSyntaxes()) {
                     log.info("{} {}", command.name(), syntaxCommand.usage());
                 }
@@ -35,11 +35,13 @@ public class CommandParser {
 
     private static boolean executeCommand(List<Command> commands, String[] args) {
         for (var command : commands) {
+
             if ((!command.hasSyntaxCommands()) || args.length == 0) {
                 return false;
             }
 
             for (var syntaxCommand : command.commandSyntaxes()) {
+
                 if (args.length != syntaxCommand.arguments().length && Arrays.stream(syntaxCommand.arguments()).noneMatch(it -> it instanceof StringArrayArgument)) {
                     continue;
                 }
@@ -47,7 +49,7 @@ public class CommandParser {
                 var commandContext = new CommandContext();
 
                 var provedSyntax = true;
-                Optional<String> provedSyntaxWarning = Optional.empty();
+                var provedSyntaxWarning = Optional.empty();
 
                 for (int i = 0; i < syntaxCommand.arguments().length; i++) {
                     var argument = syntaxCommand.arguments()[i];
@@ -59,10 +61,10 @@ public class CommandParser {
 
                     var rawInput = args[i];
 
-                    if (argument instanceof StringArrayArgument arrayArgument) {
+                    if(argument instanceof StringArrayArgument arrayArgument) {
                         commandContext.append(arrayArgument, argument.buildResult(String.join(" ", Arrays.copyOfRange(args, i, args.length))));
                         break;
-                    } else if (argument instanceof KeywordArgument keywordArgument) {
+                    }else if (argument instanceof KeywordArgument keywordArgument) {
                         if (!keywordArgument.key().equalsIgnoreCase(rawInput)) {
                             provedSyntax = false;
                             break;
@@ -83,11 +85,11 @@ public class CommandParser {
                     log.warn(provedSyntaxWarning.get());
                     return true;
                 }
+
                 syntaxCommand.execution().execute(commandContext);
                 return true;
             }
         }
         return false;
     }
-
 }

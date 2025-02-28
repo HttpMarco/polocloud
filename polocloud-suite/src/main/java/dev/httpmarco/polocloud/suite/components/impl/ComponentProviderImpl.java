@@ -1,9 +1,8 @@
 package dev.httpmarco.polocloud.suite.components.impl;
 
 import dev.httpmarco.polocloud.api.Version;
-import dev.httpmarco.polocloud.component.api.Component;
-import dev.httpmarco.polocloud.component.api.ComponentSuite;
-import dev.httpmarco.polocloud.component.api.system.SuiteSystemProvider;
+import dev.httpmarco.polocloud.component.Component;
+import dev.httpmarco.polocloud.component.ComponentSuite;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.components.ComponentContainer;
 import dev.httpmarco.polocloud.suite.components.ComponentInfoSnapshot;
@@ -32,11 +31,6 @@ public final class ComponentProviderImpl extends ComponentSuite implements Compo
         } catch (IOException e) {
             log.error(PolocloudSuite.instance().translation().get("suite.directories.create.error"), e);
         }
-    }
-
-    @Override
-    public SuiteSystemProvider suiteSystemProvider() {
-        return PolocloudSuite.instance();
     }
 
     public ComponentProviderImpl() {
