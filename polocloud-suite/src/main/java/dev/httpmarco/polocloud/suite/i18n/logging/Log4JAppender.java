@@ -41,15 +41,15 @@ public final class Log4JAppender extends AbstractAppender {
 
     private String detectState(Level level) {
         if (level.equals(Level.INFO)) {
-            return LoggingColors.WHITE + "INFO";
+            return LoggingColors.AQUA + "INFO";
         } else if (level.equals(Level.WARN)) {
-            return LoggingColors.YELLOW + "INFO";
+            return LoggingColors.YELLOW + "WARN";
         } else if (level.equals(Level.ERROR)) {
             return LoggingColors.RED + "ERROR";
         } else if (level.equals(Level.FATAL)) {
             return LoggingColors.RED + "FATAL";
         } else if (level.equals(Level.DEBUG)) {
-            return LoggingColors.GRAY + "DEBUG";
+            return LoggingColors.WHITE + "DEBUG";
         }
         return LoggingColors.GRAY + "UNKNOWN";
     }
