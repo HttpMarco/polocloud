@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.suite;
 
 import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.component.api.system.SuiteSystemProvider;
 import dev.httpmarco.polocloud.suite.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.suite.cluster.impl.ClusterProviderImpl;
 import dev.httpmarco.polocloud.suite.components.ComponentProvider;
@@ -16,9 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.fusesource.jansi.AnsiConsole;
 
-public final class PolocloudSuite extends Polocloud {
-
-    private static final Logger log = LogManager.getLogger(PolocloudSuite.class);
+public final class PolocloudSuite extends Polocloud implements SuiteSystemProvider {
 
     private final I18n translation = new I18nPolocloudSuite();
 
@@ -31,7 +30,7 @@ public final class PolocloudSuite extends Polocloud {
         var config = SuiteConfig.load();
 
         // todo test
-        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
         this.dependencyProvider = new DependencyProviderImpl();
         this.clusterProvider = new ClusterProviderImpl(config.cluster());
@@ -52,18 +51,24 @@ public final class PolocloudSuite extends Polocloud {
         return clusterGroupProvider;
     }
 
-    public void close() {
 
+    public I18n translation() {
+        return translation;
+    }
+
+    @Override
+    public void reload() {
+        System.out.println("realod");
+    }
+
+    @Override
+    public void shutdown() {
         // unload only if component provider is present
         if (componentProvider != null) {
             this.componentProvider.close();
         }
 
         AnsiConsole.systemUninstall();
+        System.exit(-1);
     }
-
-    public I18n translation() {
-        return translation;
-    }
-
 }

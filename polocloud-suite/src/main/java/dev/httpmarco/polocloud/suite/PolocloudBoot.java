@@ -1,9 +1,8 @@
 package dev.httpmarco.polocloud.suite;
 
-import dev.httpmarco.polocloud.suite.i18n.logging.LoggingColors;
+import dev.httpmarco.polocloud.component.api.logging.LoggingColors;
 import dev.httpmarco.polocloud.suite.utils.ConsoleActions;
 
-import java.io.Console;
 import java.lang.instrument.Instrumentation;
 
 public final class PolocloudBoot {

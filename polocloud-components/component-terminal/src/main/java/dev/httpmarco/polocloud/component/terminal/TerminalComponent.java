@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.component.terminal;
 
 import dev.httpmarco.polocloud.component.api.Component;
 import dev.httpmarco.polocloud.component.terminal.command.CommandService;
+import dev.httpmarco.polocloud.component.terminal.common.ShutdownCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +20,12 @@ public class TerminalComponent  extends Component {
 
     @Override
     public void start() {
+        instance = this;
+
         this.commandService = new CommandService();
         (terminal = new PolocloudTerminalImpl()).start();
 
-        instance = this;
+        commandService.registerCommand(new ShutdownCommand());
     }
 
     @Override

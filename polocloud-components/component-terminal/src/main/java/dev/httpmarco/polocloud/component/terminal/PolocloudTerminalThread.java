@@ -17,7 +17,8 @@ final class PolocloudTerminalThread extends Thread {
     @Override
     public void run() {
         while (!interrupted()) {
-            String line = "";
+            String line;
+
             try {
                 line = terminal.lineReader().readLine(terminal.prompt());
             } catch (UserInterruptException ignored) {

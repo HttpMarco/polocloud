@@ -1,8 +1,10 @@
 package dev.httpmarco.polocloud.suite.components.impl;
 
 import dev.httpmarco.polocloud.api.Version;
+import dev.httpmarco.polocloud.component.api.Component;
+import dev.httpmarco.polocloud.component.api.ComponentSuite;
+import dev.httpmarco.polocloud.component.api.system.SuiteSystemProvider;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
-import dev.httpmarco.polocloud.suite.components.Component;
 import dev.httpmarco.polocloud.suite.components.ComponentContainer;
 import dev.httpmarco.polocloud.suite.components.ComponentInfoSnapshot;
 import dev.httpmarco.polocloud.suite.components.ComponentProvider;
@@ -18,7 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public final class ComponentProviderImpl implements ComponentProvider {
+public final class ComponentProviderImpl extends ComponentSuite implements ComponentProvider {
 
     private static final Path COMPONENTS_PATH = Paths.get("components");
     private static final Logger log = LogManager.getLogger(ComponentProviderImpl.class);
@@ -30,6 +32,11 @@ public final class ComponentProviderImpl implements ComponentProvider {
         } catch (IOException e) {
             log.error(PolocloudSuite.instance().translation().get("suite.directories.create.error"), e);
         }
+    }
+
+    @Override
+    public SuiteSystemProvider suiteSystemProvider() {
+        return PolocloudSuite.instance();
     }
 
     public ComponentProviderImpl() {
@@ -48,23 +55,33 @@ public final class ComponentProviderImpl implements ComponentProvider {
             try (var loader = new ComponentClassLoader(file)) {
                 var classes = FileClassScanner.classes(file);
 
-                var mainClass = classes.stream().filter(it -> {
+                var mainClasses = classes.stream().filter(it -> {
                     var loadedClass = loader.read(it);
                     return loadedClass != null && loadedClass.getSuperclass() != null && loadedClass.getSuperclass().equals(Component.class) && loadedClass.isAnnotationPresent(Component.Info.class);
-                }).map(loader::read).findFirst();
+                }).map(loader::read).toList();
 
-                if (mainClass.isPresent()) {
-                    try {
-                        var info = mainClass.get().getAnnotation(Component.Info.class);
-                        var instance = (Component) mainClass.get().getConstructor().newInstance();
-                        var snapshot = new ComponentInfoSnapshot(info.name(), Version.parse(info.version()));
-                        var container = new ComponentContainer(instance, snapshot, new ComponentClassLoader(file));
+                if (mainClasses.isEmpty()) {
+                    log.error(PolocloudSuite.instance().translation().get("suite.loading.components.mainclass.notfound"));
+                    continue;
+                }
 
-                        // successfully loaded
-                        this.containers.add(container);
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        log.error(PolocloudSuite.instance().translation().get("suite.loading.components.instantiate.failed"), e);
-                    }
+                if (mainClasses.size() > 1) {
+                    log.error(PolocloudSuite.instance().translation().get("suite.loading.components.mainclass.multiple"));
+                    continue;
+                }
+
+                try {
+                    var mainClass = mainClasses.get(0);
+                    var info = mainClass.getAnnotation(Component.Info.class);
+                    var instance = (Component) mainClass.getConstructor().newInstance();
+                    var snapshot = new ComponentInfoSnapshot(info.name(), Version.parse(info.version()));
+                    var container = new ComponentContainer(instance, snapshot, new ComponentClassLoader(file));
+
+                    // successfully loaded
+                    this.containers.add(container);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
+                    log.error(PolocloudSuite.instance().translation().get("suite.loading.components.instantiate.failed"), e);
                 }
             } catch (IOException e) {
                 log.error(PolocloudSuite.instance().translation().get("suite.loading.components.file.scan.failed"), e);

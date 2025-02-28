@@ -17,7 +17,7 @@ public class ComponentClassLoader extends URLClassLoader {
     }
 
     public ComponentClassLoader(File file) throws MalformedURLException {
-        super(new URL[]{file.toURI().toURL()});
+        super(new URL[]{file.toURI().toURL()}, ClassLoader.getSystemClassLoader());
     }
 
     protected void bind(File file) {
