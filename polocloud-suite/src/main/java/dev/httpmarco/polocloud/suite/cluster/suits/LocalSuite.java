@@ -1,20 +1,18 @@
 package dev.httpmarco.polocloud.suite.cluster.suits;
 
-import dev.httpmarco.polocloud.suite.cluster.ClusterSuite;
 import dev.httpmarco.polocloud.suite.cluster.TestServiceImpl;
+import dev.httpmarco.polocloud.suite.cluster.common.AbstractSuite;
 import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import java.io.IOException;
 
-public final class LocalSuite implements ClusterSuite {
+public final class LocalSuite extends AbstractSuite {
 
     private final Server server;
 
-    private final SuiteData data;
-
     public LocalSuite(SuiteData data) {
-        this.data = data;
+        super(data);
         this.server = ServerBuilder.forPort(data.port()).addService(new TestServiceImpl()).build();
 
         try {
@@ -24,10 +22,5 @@ public final class LocalSuite implements ClusterSuite {
             e.printStackTrace(System.err);
             // todo call shutdown methode
         }
-    }
-
-    @Override
-    public SuiteData data() {
-        return data;
     }
 }

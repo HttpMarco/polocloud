@@ -6,4 +6,6 @@ public interface ClusterSuite {
 
     SuiteData data();
 
+    ClusterSuiteState state();
+
 }
