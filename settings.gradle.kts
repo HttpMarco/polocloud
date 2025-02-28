@@ -10,3 +10,5 @@ findProject(":polocloud-components:component-terminal")?.name = "component-termi
 include("polocloud-components:component-factory-docker")
 findProject(":polocloud-components:component-factory-docker")?.name = "component-factory-docker"
 include("polocloud-instance")
+include("polocloud-components:component-api")
+findProject(":polocloud-components:component-api")?.name = "component-api"
