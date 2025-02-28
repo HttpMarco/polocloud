@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.bundles.logging)
     implementation(libs.gson)
     implementation(libs.jline.jansi)
+    implementation(project(":polocloud-components:component-api"))
 
     // need grpc -> improve dependency
     implementation("com.google.guava:failureaccess:1.0.2")
@@ -19,6 +20,9 @@ dependencies {
     compileOnly(project(":polocloud-grpc"))
     compileOnly(project(":polocloud-api"))
     compileOnly(libs.bundles.grpc)
+
+    // todo remove for terminal component
+    compileOnly(libs.jline)
 }
 
 tasks.shadowJar {
