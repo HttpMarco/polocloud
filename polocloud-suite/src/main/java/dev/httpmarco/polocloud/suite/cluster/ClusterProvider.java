@@ -6,4 +6,8 @@ public interface ClusterProvider {
 
     ClusterSuite head();
 
+    void selectHeadSuite();
+
+    void updateData();
+
 }
