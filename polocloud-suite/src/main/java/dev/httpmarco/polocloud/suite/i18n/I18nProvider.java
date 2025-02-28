@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.suite.i18n;
 
-import dev.httpmarco.polocloud.suite.i18n.logging.LoggingColors;
+import dev.httpmarco.polocloud.component.api.logging.LoggingColors;
 import dev.httpmarco.polocloud.suite.i18n.utils.UTF8Control;
 
 import java.util.Collections;
