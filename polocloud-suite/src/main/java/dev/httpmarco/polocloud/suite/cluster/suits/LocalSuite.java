@@ -23,4 +23,9 @@ public final class LocalSuite extends AbstractSuite {
             // todo call shutdown methode
         }
     }
+
+    @Override
+    public void updateInfoSnapshot() {
+
+    }
 }

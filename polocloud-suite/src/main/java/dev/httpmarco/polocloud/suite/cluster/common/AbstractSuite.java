@@ -3,10 +3,12 @@ package dev.httpmarco.polocloud.suite.cluster.common;
 import dev.httpmarco.polocloud.suite.cluster.ClusterSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterSuiteState;
 import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
+import dev.httpmarco.polocloud.suite.cluster.info.ClusterSuiteInfoSnapshot;
 
-public class AbstractSuite implements ClusterSuite {
+public abstract class AbstractSuite implements ClusterSuite {
 
     private final SuiteData data;
+    private ClusterSuiteInfoSnapshot infoSnapshot;
     private ClusterSuiteState state;
 
     public AbstractSuite(SuiteData data) {
@@ -26,5 +28,10 @@ public class AbstractSuite implements ClusterSuite {
 
     public void state(ClusterSuiteState state) {
         this.state = state;
+    }
+
+    @Override
+    public ClusterSuiteInfoSnapshot infoSnapshot() {
+        return this.infoSnapshot;
     }
 }
