@@ -15,8 +15,7 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
     private static final Logger log = LogManager.getLogger(ClusterGroupProviderImpl.class);
 
     public ClusterGroupProviderImpl() {
-        log.info("Load 5 groups from local storage.");
-        log.info("Synchronizing groups from head suite 'suite-3'.");
+
     }
 
     @Override

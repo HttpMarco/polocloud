@@ -8,6 +8,10 @@ public final class ShutdownCommand extends Command {
     public ShutdownCommand() {
         super("shutdown", "Shutdown the current suite", "stop", "exit");
 
-        this.defaultExecution(commandContext -> ComponentSuite.instance().suiteSystemProvider().shutdown());
+        this.defaultExecution(commandContext -> {
+
+            System.out.println("tersting");
+            ComponentSuite.instance().suiteSystemProvider().shutdown();
+        });
     }
 }

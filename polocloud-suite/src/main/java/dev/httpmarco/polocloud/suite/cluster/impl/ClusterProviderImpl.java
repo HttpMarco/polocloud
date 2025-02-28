@@ -24,13 +24,26 @@ public final class ClusterProviderImpl implements ClusterProvider {
             this.externalSuites.add(new ExternalSuite(suiteData));
         }
 
-        System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.header", clusterConfig.localSuite().id()));
-        System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.element", " \uD83D\uDC51 &b","suite-3", "&8(&737.115.92.27&8@&79877&8, &7state&8=&7AVAILABLE&8)"));
-        System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.element", "&8    ", "suite-2", "&8(&737.115.92.01&8@&79877&8, &7state&8=&7NOT_AVAILABLE&8)"));
-        System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.end", "&8    ","suite-4", "&8(&737.115.92.14&8@&79877&8, &7state&8=&7NOT_AVAILABLE&8)"));
+        this.selectHeadSuite();
+
+        if (!this.externalSuites.isEmpty()) {
+            System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.header", clusterConfig.localSuite().id()));
+        } else {
+            System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.element", " \uD83D\uDC51 &b", this.headSuite.data().id(), "&8(&7" + localSuite.data().hostname() + "&8@&7" + this.localSuite.data().port() + "&8, &7state&8=&7" + localSuite.state() + "&8)"));
+        }
+
+        for (int i = 0; i < this.externalSuites.size(); i++) {
+            var suite = this.externalSuites.get(i);
+
+            if (i == externalSuites.size() - 1) {
+                System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.end", "&8    ", "suite-4", "&8(&737.115.92.14&8@&79877&8, &7state&8=&7NOT_AVAILABLE&8)"));
+                continue;
+            }
+            System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.element", "&8    ", "suite-2", "&8(&737.115.92.01&8@&79877&8, &7state&8=&7NOT_AVAILABLE&8)"));
+
+        }
 
         ConsoleActions.emptyLine();
-        //todo verify connection
     }
 
     @Override
@@ -45,7 +58,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
 
     @Override
     public void selectHeadSuite() {
-        if(this.externalSuites.isEmpty()) {
+        if (this.externalSuites.isEmpty()) {
             this.headSuite = localSuite;
             return;
         }
