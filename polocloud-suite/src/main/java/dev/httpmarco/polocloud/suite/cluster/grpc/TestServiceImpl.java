@@ -1,6 +1,5 @@
-package dev.httpmarco.polocloud.suite.cluster;
+package dev.httpmarco.polocloud.suite.cluster.grpc;
 
-import com.google.protobuf.Empty;
 import dev.httpmarco.polocloud.grpc.ClusterService;
 import dev.httpmarco.polocloud.grpc.ClusterSuiteServiceGrpc;
 import io.grpc.stub.StreamObserver;
