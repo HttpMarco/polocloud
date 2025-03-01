@@ -15,10 +15,13 @@ import dev.httpmarco.polocloud.suite.i18n.I18n;
 import dev.httpmarco.polocloud.suite.i18n.impl.I18nPolocloudSuite;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminalImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.fusesource.jansi.AnsiConsole;
 
 public final class PolocloudSuite extends Polocloud {
 
+    private static final Logger log = LogManager.getLogger(PolocloudSuite.class);
     private final I18n translation = new I18nPolocloudSuite();
 
     private boolean running = true;
@@ -56,6 +59,10 @@ public final class PolocloudSuite extends Polocloud {
         return (PolocloudSuite) Polocloud.instance();
     }
 
+    public PolocloudTerminal terminal() {
+        return this.terminal;
+    }
+
     @Override
     public ClusterGroupProvider groupProvider() {
         return clusterGroupProvider;
@@ -81,12 +88,16 @@ public final class PolocloudSuite extends Polocloud {
         this.running = false;
 
         // unload only if component provider is present
-        if (componentProvider != null) {
+        if (this.componentProvider != null) {
             this.componentProvider.close();
         }
 
+        if(this.clusterProvider != null){
+            this.clusterProvider.close();
+        }
+
         AnsiConsole.systemUninstall();
-        System.out.println("Shutting down Polocloud Suite...");
+        log.info("Shutting down Polocloud Suite...");
         System.exit(-1);
     }
 }

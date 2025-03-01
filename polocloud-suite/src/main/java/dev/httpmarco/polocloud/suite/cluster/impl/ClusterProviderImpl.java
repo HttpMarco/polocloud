@@ -70,4 +70,9 @@ public final class ClusterProviderImpl implements ClusterProvider {
     public void updateData() {
         // todo update all binded cluster instance
     }
+
+    @Override
+    public void close() {
+        this.localSuite.close();
+    }
 }
