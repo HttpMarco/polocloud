@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.commands;
 
+import dev.httpmarco.polocloud.suite.cluster.command.SuiteCommand;
 import dev.httpmarco.polocloud.suite.commands.impl.ShutdownCommand;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public final class CommandService {
 
     public CommandService() {
         this.registerCommand(new ShutdownCommand());
+        this.registerCommand(new SuiteCommand());
     }
 
     public List<Command> commandsByName(String name) {
@@ -34,5 +36,9 @@ public final class CommandService {
 
     public void call(String commandId, String[] args) {
         CommandParser.serializer(this, commandId, args);
+    }
+
+    public List<Command> commands() {
+        return commands;
     }
 }

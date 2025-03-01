@@ -33,6 +33,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
 
         this.lineReader = (LineReaderImpl) LineReaderBuilder.builder()
                 .terminal(this.terminal)
+                .completer(new PolocloudTerminalCompleter())
                 .option(LineReader.Option.AUTO_MENU_LIST, true)
                 .variable(LineReader.COMPLETION_STYLE_LIST_SELECTION, "fg:cyan")
                 .variable(LineReader.COMPLETION_STYLE_LIST_BACKGROUND, "fg:default")
