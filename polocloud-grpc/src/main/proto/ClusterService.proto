@@ -3,19 +3,11 @@ syntax = "proto3";
 package dev.httpmarco.polocloud.grpc;
 
 service ClusterSuiteService {
-  rpc pingSuite(SuitePingRequest) returns (SuitePingResponse);
+  rpc auth(AuthIdentificationRequest) returns (AuthClusterResponse);
 }
 
 enum SuiteState {
   ONLINE = 0;
-}
-
-message SuitePingRequest {
-  string clusterToken = 1;
-}
-
-message SuitePingResponse {
-  SuiteState state = 1;
 }
 
 message AuthIdentificationRequest {
@@ -23,4 +15,11 @@ message AuthIdentificationRequest {
   string suiteId = 2;
   string suiteHostname = 3;
   int64 suitePort = 4;
+}
+
+message AuthClusterResponse {
+  bool success = 1;
+  string message = 2;
+
+  SuiteState state = 3;
 }
