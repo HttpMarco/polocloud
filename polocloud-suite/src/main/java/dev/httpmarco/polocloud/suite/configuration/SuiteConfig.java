@@ -35,14 +35,15 @@ public final class SuiteConfig {
         var defaultConfig = new SuiteConfig();
         if (Files.exists(CONFIG_PATH)) {
             try {
-                return GsonInstance.DEFAULT.fromJson(Files.readString(CONFIG_PATH), SuiteConfig.class);
+                defaultConfig = GsonInstance.DEFAULT.fromJson(Files.readString(CONFIG_PATH), SuiteConfig.class);
+                // we write the new data after reading it to update the file
             } catch (IOException e) {
                 log.warn("Failed to load suite config! Using default configuration.");
                 return defaultConfig;
             }
         }
         try {
-            Files.writeString(CONFIG_PATH,GsonInstance.DEFAULT.toJson(defaultConfig));
+            Files.writeString(CONFIG_PATH, GsonInstance.DEFAULT.toJson(defaultConfig));
         } catch (IOException e) {
             log.warn("Failed to write suite config! Using default configuration.");
         }
