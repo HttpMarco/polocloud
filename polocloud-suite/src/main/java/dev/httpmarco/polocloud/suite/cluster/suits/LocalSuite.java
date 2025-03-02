@@ -1,11 +1,10 @@
 package dev.httpmarco.polocloud.suite.cluster.suits;
 
-import dev.httpmarco.polocloud.suite.cluster.grpc.TestServiceImpl;
+import dev.httpmarco.polocloud.suite.cluster.grpc.ClusterGrpcServiceImpl;
 import dev.httpmarco.polocloud.suite.cluster.common.AbstractSuite;
 import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import io.grpc.health.v1.HealthGrpc;
 import io.grpc.protobuf.services.HealthStatusManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +18,7 @@ public final class LocalSuite extends AbstractSuite {
 
     public LocalSuite(SuiteData data) {
         super(data);
-        this.server = ServerBuilder.forPort(data.port()).addService(new TestServiceImpl()).addService(new HealthStatusManager().getHealthService()).build();
+        this.server = ServerBuilder.forPort(data.port()).addService(new ClusterGrpcServiceImpl()).addService(new HealthStatusManager().getHealthService()).build();
 
         try {
             this.server.start();
