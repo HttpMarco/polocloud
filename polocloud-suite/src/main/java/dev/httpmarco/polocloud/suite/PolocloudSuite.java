@@ -76,6 +76,10 @@ public final class PolocloudSuite extends Polocloud {
         return translation;
     }
 
+    public ClusterProvider clusterProvider() {
+        return clusterProvider;
+    }
+
     public void reload() {
         System.out.println("realod");
     }

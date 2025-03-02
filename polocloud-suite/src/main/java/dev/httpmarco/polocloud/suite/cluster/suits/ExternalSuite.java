@@ -43,4 +43,8 @@ public final class ExternalSuite extends AbstractSuite {
     public void close() {
         this.channel.shutdownNow();
     }
+
+    public ClusterSuiteServiceGrpc.ClusterSuiteServiceBlockingStub clusterStub() {
+        return clusterStub;
+    }
 }

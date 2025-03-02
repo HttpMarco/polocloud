@@ -67,6 +67,11 @@ public final class ClusterProviderImpl implements ClusterProvider {
     }
 
     @Override
+    public List<ExternalSuite> suites() {
+        return externalSuites;
+    }
+
+    @Override
     public void updateData() {
         // todo update all binded cluster instance
     }
