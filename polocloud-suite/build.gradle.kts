@@ -21,6 +21,9 @@ dependencies {
     compileOnly(project(":polocloud-api"))
     compileOnly(libs.bundles.grpc)
 
+    compileOnly(libs.bundles.utils)
+    annotationProcessor(libs.bundles.utils)
+
     // todo remove for terminal component
     compileOnly(libs.jline)
 }

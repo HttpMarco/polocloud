@@ -8,6 +8,7 @@ log4j = "2.24.3"
 
 # Code quality
 annotations = "26.0.2"
+lombok = "1.18.36"
 
 # configuration
 gson = "2.12.1"
@@ -29,6 +30,7 @@ log4j-sl4j-impl = { module = "org.apache.logging.log4j:log4j-slf4j-impl", versio
 
 # Code quality
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 
 # configuration
 gson =  { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
@@ -49,4 +51,4 @@ docker =  { group = "com.github.docker-java", name = "docker-java", version.ref 
 [bundles]
 logging = ["slf4j", "log4j", "log4j-sl4j-impl"]
 grpc = ["grpc-netty", "grpc-protobuf", "grpc-stub", "grpc-services"]
-utils = ["annotations"]
+utils = ["annotations", "lombok"]
