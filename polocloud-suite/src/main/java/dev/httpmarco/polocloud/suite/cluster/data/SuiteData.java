@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 public class SuiteData {
 
     private final String id;
-    private final String host;
+    private final String hostname;
     private final int port;
 
 }
