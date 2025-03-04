@@ -15,10 +15,14 @@ import dev.httpmarco.polocloud.suite.i18n.I18n;
 import dev.httpmarco.polocloud.suite.i18n.impl.I18nPolocloudSuite;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminalImpl;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.fusesource.jansi.AnsiConsole;
 
+@Getter
+@Accessors(fluent = true)
 public final class PolocloudSuite extends Polocloud {
 
     private static final Logger log = LogManager.getLogger(PolocloudSuite.class);
@@ -26,26 +30,26 @@ public final class PolocloudSuite extends Polocloud {
 
     private boolean running = true;
 
+    private final SuiteConfig config;
     private final CommandService commandService;
     private final PolocloudTerminal terminal;
 
     private final DependencyProvider dependencyProvider;
     private final ClusterProvider clusterProvider;
     private final ComponentProvider componentProvider;
-    private final ClusterGroupProvider clusterGroupProvider;
+    private final ClusterGroupProvider groupProvider;
 
     public PolocloudSuite() {
-        var config = SuiteConfig.load();
+        config = SuiteConfig.load();
 
         // todo test
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
-        this.dependencyProvider = new DependencyProviderImpl();
-        this.clusterProvider = new ClusterProviderImpl(config.cluster());
-        this.componentProvider = new ComponentProviderImpl();
-        this.clusterGroupProvider = new ClusterGroupProviderImpl();
-
         this.commandService = new CommandService();
+        this.dependencyProvider = new DependencyProviderImpl();
+        this.clusterProvider = new ClusterProviderImpl();
+        this.componentProvider = new ComponentProviderImpl();
+        this.groupProvider = new ClusterGroupProviderImpl();
 
         // start reading current terminal thread
         (terminal = new PolocloudTerminalImpl()).start();
@@ -59,25 +63,12 @@ public final class PolocloudSuite extends Polocloud {
         return (PolocloudSuite) Polocloud.instance();
     }
 
-    public PolocloudTerminal terminal() {
-        return this.terminal;
-    }
-
-    @Override
-    public ClusterGroupProvider groupProvider() {
-        return clusterGroupProvider;
-    }
-
     public CommandService commandService() {
         return commandService;
     }
 
     public I18n translation() {
         return translation;
-    }
-
-    public ClusterProvider clusterProvider() {
-        return clusterProvider;
     }
 
     public void reload() {
