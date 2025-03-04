@@ -17,7 +17,7 @@ message CLusterSuiteAttachRequest {
 
   string bindSuiteId = 4;
   string bindSuiteHostname = 5;
-  int64  bindSuitePort = 6;
+  int32  bindSuitePort = 6;
 }
 
 message AuthClusterResponse {
