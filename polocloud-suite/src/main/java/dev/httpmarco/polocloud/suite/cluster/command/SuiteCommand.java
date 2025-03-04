@@ -9,32 +9,36 @@ import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.IntArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
+import dev.httpmarco.polocloud.suite.configuration.ClusterConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.UUID;
 
 public final class SuiteCommand extends Command {
 
     private static final Logger log = LogManager.getLogger(SuiteCommand.class);
 
-    public SuiteCommand() {
+    public SuiteCommand(ClusterProvider clusterProvider) {
         super("suite", "Manage all suites");
-
-        var clusterProvider = PolocloudSuite.instance().clusterProvider();
 
         var nameArgument = new TextArgument("name");
         var hostnameArgument = new TextArgument("hostname");
         var portArgument = new IntArgument("port");
-        var clusterToken = new TextArgument("token");
+        var privateKey = new TextArgument("privateKey");
 
         syntax(commandContext -> {
             var externalSuiteData = new SuiteData(commandContext.arg(nameArgument), commandContext.arg(hostnameArgument), commandContext.arg(portArgument));
             var externalSuite = new ExternalSuite(externalSuiteData);
 
+            /*
             if (clusterProvider.local().data().id().equalsIgnoreCase(externalSuiteData.id()) || clusterProvider.suites().stream().anyMatch(suite -> suite.data().id().equalsIgnoreCase(externalSuiteData.id()))) {
                 log.warn("The suite {} is already a part of the cluster&8! &7Every suite need a unique id&8!", externalSuiteData.id());
                 log.warn("Change the duplicated id in the external suite config&8.&7json&8!");
                 return;
             }
+
+             */
 
             //todo check network adress
 
@@ -44,12 +48,21 @@ public final class SuiteCommand extends Command {
                 return;
             }
 
-            var token = commandContext.arg(clusterToken);
-            ClusterService.AuthClusterResponse response = externalSuite.clusterStub().auth(ClusterService.AuthIdentificationRequest.newBuilder()
-                    .setClusterToken(token)
-                    .setSuiteHostname(externalSuiteData.hostname())
-                    .setSuitePort(externalSuiteData.port())
+            ClusterConfig clusterConfig = PolocloudSuite.instance().config().cluster();
+            var clusterToken = clusterConfig.clusterToken();
+
+            if (clusterToken == null) {
+                clusterToken = UUID.randomUUID().toString();
+            }
+
+            var privateToken = commandContext.arg(privateKey);
+            ClusterService.AuthClusterResponse response = externalSuite.clusterStub().attachSuite(ClusterService.CLusterSuiteAttachRequest.newBuilder()
+                    .setClusterToken(clusterToken)
+                    .setSuitePrivateKey(privateToken)
                     .setSuiteId(externalSuiteData.id())
+                    .setBindSuiteId(clusterConfig.localSuite().id())
+                    .setBindSuiteHostname(clusterConfig.localSuite().hostname())
+                    .setBindSuitePort(clusterConfig.localSuite().port())
                     .build());
 
             if (!response.getSuccess()) {
@@ -57,8 +70,13 @@ public final class SuiteCommand extends Command {
                 return;
             }
 
-            log.info("Registering suite {} with hostname {} and port {}:", externalSuiteData.id(), externalSuiteData.hostname(), externalSuiteData.port());
-        }, new KeywordArgument("bind"), nameArgument, hostnameArgument, portArgument, clusterToken);
+            clusterProvider.suites().add(externalSuite);
+            // update local configuration and append cluster token
+
+            // todo save new cluster token if change
+
+            log.info("Registering suite {}", externalSuiteData.id());
+        }, new KeywordArgument("bind"), nameArgument, hostnameArgument, portArgument, privateKey);
 
 
         syntax(commandContext -> {

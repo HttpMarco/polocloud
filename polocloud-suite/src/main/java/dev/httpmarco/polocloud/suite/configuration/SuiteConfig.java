@@ -49,4 +49,12 @@ public final class SuiteConfig {
         }
         return defaultConfig;
     }
+
+    public void update() {
+        try {
+            Files.writeString(CONFIG_PATH, GsonInstance.DEFAULT.toJson(this));
+        } catch (IOException e) {
+            log.warn("Failed to write suite config! Using default configuration.");
+        }
+    }
 }
