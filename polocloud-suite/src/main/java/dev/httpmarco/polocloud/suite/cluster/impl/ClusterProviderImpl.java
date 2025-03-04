@@ -3,9 +3,10 @@ package dev.httpmarco.polocloud.suite.cluster.impl;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.suite.cluster.ClusterSuite;
+import dev.httpmarco.polocloud.suite.cluster.command.SuiteCommand;
+import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
 import dev.httpmarco.polocloud.suite.cluster.suits.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.suits.LocalSuite;
-import dev.httpmarco.polocloud.suite.configuration.ClusterConfig;
 import dev.httpmarco.polocloud.suite.utils.ConsoleActions;
 
 import java.util.ArrayList;
@@ -15,9 +16,10 @@ public final class ClusterProviderImpl implements ClusterProvider {
 
     private final List<ExternalSuite> externalSuites = new ArrayList<>();
     private final LocalSuite localSuite;
-    private ClusterSuite headSuite;
+    private ClusterSuite<SuiteData> headSuite;
 
-    public ClusterProviderImpl(ClusterConfig clusterConfig) {
+    public ClusterProviderImpl() {
+        var clusterConfig = PolocloudSuite.instance().config().cluster();
         this.localSuite = new LocalSuite(clusterConfig.localSuite());
 
         for (var suiteData : clusterConfig.externalSuites()) {
@@ -44,6 +46,9 @@ public final class ClusterProviderImpl implements ClusterProvider {
         }
 
         ConsoleActions.emptyLine();
+
+        // register command for manage all suites
+        PolocloudSuite.instance().commandService().registerCommand(new SuiteCommand(this));
     }
 
     @Override
