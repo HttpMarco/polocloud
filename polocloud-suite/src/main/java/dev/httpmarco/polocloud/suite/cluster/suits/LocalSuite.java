@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.suite.cluster.suits;
 
+import dev.httpmarco.polocloud.suite.cluster.data.LocalSuiteData;
 import dev.httpmarco.polocloud.suite.cluster.grpc.ClusterGrpcServiceImpl;
 import dev.httpmarco.polocloud.suite.cluster.common.AbstractSuite;
-import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
@@ -11,12 +11,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public final class LocalSuite extends AbstractSuite {
+public final class LocalSuite extends AbstractSuite<LocalSuiteData> {
 
     private static final Logger log = LogManager.getLogger(LocalSuite.class);
     private final Server server;
 
-    public LocalSuite(SuiteData data) {
+    public LocalSuite(LocalSuiteData data) {
         super(data);
         this.server = ServerBuilder.forPort(data.port()).addService(new ClusterGrpcServiceImpl()).addService(new HealthStatusManager().getHealthService()).build();
 

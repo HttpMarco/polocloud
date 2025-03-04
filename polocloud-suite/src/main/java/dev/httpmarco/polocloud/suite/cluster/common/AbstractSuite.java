@@ -5,19 +5,19 @@ import dev.httpmarco.polocloud.suite.cluster.ClusterSuiteState;
 import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
 import dev.httpmarco.polocloud.suite.cluster.info.ClusterSuiteInfoSnapshot;
 
-public abstract class AbstractSuite implements ClusterSuite {
+public abstract class AbstractSuite<D extends SuiteData> implements ClusterSuite<D> {
 
-    private final SuiteData data;
+    private final D data;
     private ClusterSuiteInfoSnapshot infoSnapshot;
     private ClusterSuiteState state;
 
-    public AbstractSuite(SuiteData data) {
+    public AbstractSuite(D data) {
         this.data = data;
         this.state = ClusterSuiteState.INITIALIZING;
     }
 
     @Override
-    public SuiteData data() {
+    public D data() {
         return data;
     }
 

@@ -4,23 +4,26 @@ import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.suite.cluster.ClusterSuite;
 import dev.httpmarco.polocloud.suite.cluster.command.SuiteCommand;
-import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
 import dev.httpmarco.polocloud.suite.cluster.suits.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.suits.LocalSuite;
 import dev.httpmarco.polocloud.suite.utils.ConsoleActions;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Accessors(fluent = true)
 public final class ClusterProviderImpl implements ClusterProvider {
 
     private final List<ExternalSuite> externalSuites = new ArrayList<>();
-    private final LocalSuite localSuite;
-    private ClusterSuite<SuiteData> headSuite;
+    private final LocalSuite local;
+    private ClusterSuite<?> head;
 
     public ClusterProviderImpl() {
         var clusterConfig = PolocloudSuite.instance().config().cluster();
-        this.localSuite = new LocalSuite(clusterConfig.localSuite());
+        this.local = new LocalSuite(clusterConfig.localSuite());
 
         for (var suiteData : clusterConfig.externalSuites()) {
             this.externalSuites.add(new ExternalSuite(suiteData));
@@ -31,7 +34,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
         if (!this.externalSuites.isEmpty()) {
             System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.header", clusterConfig.localSuite().id()));
         } else {
-            System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.element", " \uD83D\uDC51 &b", this.headSuite.data().id(), "&8(&7" + localSuite.data().hostname() + "&8@&7" + this.localSuite.data().port() + "&8, &7state&8=&7" + localSuite.state() + "&8)"));
+            System.out.println(PolocloudSuite.instance().translation().get("suite.cluster.graph.element", " \uD83D\uDC51 &b", this.head.data().id(), "&8(&7" + local.data().hostname() + "&8@&7" + this.local.data().port() + "&8, &7state&8=&7" + local.state() + "&8)"));
         }
 
         for (int i = 0; i < this.externalSuites.size(); i++) {
@@ -52,19 +55,9 @@ public final class ClusterProviderImpl implements ClusterProvider {
     }
 
     @Override
-    public ClusterSuite local() {
-        return this.localSuite;
-    }
-
-    @Override
-    public ClusterSuite head() {
-        return this.headSuite;
-    }
-
-    @Override
     public void selectHeadSuite() {
         if (this.externalSuites.isEmpty()) {
-            this.headSuite = localSuite;
+            this.head = local;
             return;
         }
 
@@ -83,6 +76,6 @@ public final class ClusterProviderImpl implements ClusterProvider {
 
     @Override
     public void close() {
-        this.localSuite.close();
+        this.local.close();
     }
 }
