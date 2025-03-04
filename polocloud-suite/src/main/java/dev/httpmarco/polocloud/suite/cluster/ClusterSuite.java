@@ -4,9 +4,9 @@ import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
 import dev.httpmarco.polocloud.suite.cluster.info.ClusterSuiteInfoSnapshot;
 
-public interface ClusterSuite extends Closeable {
+public interface ClusterSuite<D extends SuiteData> extends Closeable {
 
-    SuiteData data();
+    D data();
 
     ClusterSuiteState state();
 
