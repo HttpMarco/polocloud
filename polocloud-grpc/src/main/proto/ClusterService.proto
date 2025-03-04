@@ -11,10 +11,9 @@ enum SuiteState {
 }
 
 message AuthIdentificationRequest {
-  string clusterToken = 1;
-  string suiteId = 2;
-  string suiteHostname = 3;
-  int64 suitePort = 4;
+  string suiteId = 1;
+  string suitePrivateKey = 2;
+  string clusterToken = 3;
 }
 
 message AuthClusterResponse {
