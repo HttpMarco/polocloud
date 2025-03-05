@@ -10,10 +10,12 @@ import dev.httpmarco.polocloud.suite.commands.type.IntArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
 import dev.httpmarco.polocloud.suite.configuration.ClusterConfig;
+import dev.httpmarco.polocloud.suite.configuration.SuiteConfig;
 import dev.httpmarco.polocloud.suite.utils.DateFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public final class ClusterCommand extends Command {
@@ -49,7 +51,7 @@ public final class ClusterCommand extends Command {
                 return;
             }
 
-            ClusterConfig clusterConfig = PolocloudSuite.instance().config().cluster();
+            var clusterConfig = PolocloudSuite.instance().config().cluster();
             var clusterToken = clusterConfig.clusterToken();
 
             if (clusterToken == null) {
@@ -71,11 +73,16 @@ public final class ClusterCommand extends Command {
                 return;
             }
 
+            if (!Objects.equals(clusterConfig.clusterToken(), clusterToken)) {
+                clusterConfig.clusterToken(clusterToken);
+            }
+
+            // save new entry
+            clusterConfig.externalSuites().add(externalSuiteData);
+            PolocloudSuite.instance().config().update();
+
             clusterProvider.suites().add(externalSuite);
             // update local configuration and append cluster token
-
-            // todo save new cluster token if change
-
             log.info("Registering suite {}", externalSuiteData.id());
         }, new KeywordArgument("bind"), nameArgument, hostnameArgument, portArgument, privateKey);
 
@@ -92,7 +99,7 @@ public final class ClusterCommand extends Command {
             // empty line
             log.info(" ");
 
-            log.info("Currently registered external suites &8(&f" + clusterProvider.suites().size() + "&8):");
+            log.info("Currently registered external suites &8(&f{}&8):", clusterProvider.suites().size());
             clusterProvider.suites().forEach(externalSuite -> log.info("&8 - &bSuite {} &8(&7{}&8:&7{}&8, &7connection state={}&8)", externalSuite.data().id(), externalSuite.data().hostname(), externalSuite.data().port(), externalSuite.available()));
         }, new KeywordArgument("info"));
 
