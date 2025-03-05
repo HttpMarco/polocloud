@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.suite.cluster.impl;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterProvider;
 import dev.httpmarco.polocloud.suite.cluster.ClusterSuite;
-import dev.httpmarco.polocloud.suite.cluster.command.SuiteCommand;
+import dev.httpmarco.polocloud.suite.cluster.command.ClusterCommand;
 import dev.httpmarco.polocloud.suite.cluster.suits.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.suits.LocalSuite;
 import dev.httpmarco.polocloud.suite.utils.ConsoleActions;
@@ -51,7 +51,7 @@ public final class ClusterProviderImpl implements ClusterProvider {
         ConsoleActions.emptyLine();
 
         // register command for manage all suites
-        PolocloudSuite.instance().commandService().registerCommand(new SuiteCommand(this));
+        PolocloudSuite.instance().commandService().registerCommand(new ClusterCommand(this));
     }
 
     @Override
