@@ -80,7 +80,8 @@ public final class SuiteCommand extends Command {
 
 
         syntax(commandContext -> {
-            //todo list suite
+            log.info("Currently registered suites:");
+            clusterProvider.suites().forEach(externalSuite -> log.info("&8 - &bSuite {} &8(&7{}&8:&7{}&8, &7connection state={}&8)", externalSuite.data().id(), externalSuite.data().hostname(), externalSuite.data().port(), externalSuite.available()));
         }, new KeywordArgument("list"));
 
         syntax(commandContext -> {
