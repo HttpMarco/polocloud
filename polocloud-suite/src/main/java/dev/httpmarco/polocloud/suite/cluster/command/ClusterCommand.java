@@ -10,17 +10,18 @@ import dev.httpmarco.polocloud.suite.commands.type.IntArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
 import dev.httpmarco.polocloud.suite.configuration.ClusterConfig;
+import dev.httpmarco.polocloud.suite.utils.DateFormatter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 
-public final class SuiteCommand extends Command {
+public final class ClusterCommand extends Command {
 
-    private static final Logger log = LogManager.getLogger(SuiteCommand.class);
+    private static final Logger log = LogManager.getLogger(ClusterCommand.class);
 
-    public SuiteCommand(ClusterProvider clusterProvider) {
-        super("suite", "Manage all suites");
+    public ClusterCommand(ClusterProvider clusterProvider) {
+        super("cluster", "Manage the hole cluster");
 
         var nameArgument = new TextArgument("name");
         var hostnameArgument = new TextArgument("hostname");
@@ -80,9 +81,20 @@ public final class SuiteCommand extends Command {
 
 
         syntax(commandContext -> {
-            log.info("Currently registered suites:");
+            log.info("Local suite information:");
+            var localData = clusterProvider.local().data();
+            log.info("&8   &7Id&8: &b{}", localData.id());
+            log.info("&8   &7State&8: &f{}", clusterProvider.local().state().name());
+            log.info("&8   &7Hostname&8: &f{}", localData.hostname());
+            log.info("&8   &7Port&8: &f{}", localData.port());
+            log.info("&8   &7Creation time&8: &f{}", DateFormatter.format(clusterProvider.local().infoSnapshot().creationTime()));
+            log.info("&8   &7Last update time&8: &f{}", DateFormatter.format(clusterProvider.local().infoSnapshot().lastUpdateTime()));
+            // empty line
+            log.info(" ");
+
+            log.info("Currently registered external suites &8(&f" + clusterProvider.suites().size() + "&8):");
             clusterProvider.suites().forEach(externalSuite -> log.info("&8 - &bSuite {} &8(&7{}&8:&7{}&8, &7connection state={}&8)", externalSuite.data().id(), externalSuite.data().hostname(), externalSuite.data().port(), externalSuite.available()));
-        }, new KeywordArgument("list"));
+        }, new KeywordArgument("info"));
 
         syntax(commandContext -> {
             // todo remove suite
