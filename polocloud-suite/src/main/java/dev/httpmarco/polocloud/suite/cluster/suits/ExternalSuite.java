@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.cluster.suits;
 
+import dev.httpmarco.polocloud.grpc.ClusterService;
 import dev.httpmarco.polocloud.grpc.ClusterSuiteServiceGrpc;
 import dev.httpmarco.polocloud.suite.cluster.common.AbstractSuite;
 import dev.httpmarco.polocloud.suite.cluster.data.SuiteData;
@@ -9,6 +10,8 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
+
+import java.util.List;
 
 public final class ExternalSuite extends AbstractSuite {
 
@@ -37,6 +40,14 @@ public final class ExternalSuite extends AbstractSuite {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public List<SuiteData> registeredSuites() {
+        return clusterStub().findAllSuite(ClusterService.EmptyDummy.newBuilder().build())
+                .getSuitesList()
+                .stream()
+                .map(it -> new SuiteData(it.getId(), it.getHostname(), it.getPort()))
+                .toList();
     }
 
     @Override
