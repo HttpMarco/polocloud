@@ -56,7 +56,7 @@ public final class SuiteCommand extends Command {
             }
 
             var privateToken = commandContext.arg(privateKey);
-            ClusterService.AuthClusterResponse response = externalSuite.clusterStub().attachSuite(ClusterService.CLusterSuiteAttachRequest.newBuilder()
+            var response = externalSuite.clusterStub().attachSuite(ClusterService.ClusterSuiteAttachRequest.newBuilder()
                     .setClusterToken(clusterToken)
                     .setSuitePrivateKey(privateToken)
                     .setSuiteId(externalSuiteData.id())

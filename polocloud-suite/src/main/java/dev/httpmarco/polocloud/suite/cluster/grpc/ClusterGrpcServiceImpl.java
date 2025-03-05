@@ -12,8 +12,8 @@ public class ClusterGrpcServiceImpl extends ClusterSuiteServiceGrpc.ClusterSuite
 
 
     @Override
-    public void attachSuite(ClusterService.CLusterSuiteAttachRequest request, StreamObserver<ClusterService.AuthClusterResponse> responseObserver) {
-        var response = ClusterService.AuthClusterResponse.newBuilder().setSuccess(true);
+    public void attachSuite(ClusterService.ClusterSuiteAttachRequest request, StreamObserver<ClusterService.ClusterSuiteAttachResponse> responseObserver) {
+        var response = ClusterService.ClusterSuiteAttachResponse.newBuilder().setSuccess(true);
         var clusterConfig = PolocloudSuite.instance().config().cluster();
 
         // check if the suite is already attached to a cluster
@@ -42,8 +42,10 @@ public class ClusterGrpcServiceImpl extends ClusterSuiteServiceGrpc.ClusterSuite
                 response = response.setSuccess(false).setMessage("The bind suite is not available!");
             }
 
-            // todo write new cluster id to config
             // todo attach this as the first external suite
+            //bindSuite.clusterStub()
+            // -> request all others
+
             clusterConfig.clusterToken(request.getClusterToken());
 
             PolocloudSuite.instance().clusterProvider().suites().add(bindSuite);
