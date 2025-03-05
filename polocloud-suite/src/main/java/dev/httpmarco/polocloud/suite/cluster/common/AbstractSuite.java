@@ -8,11 +8,12 @@ import dev.httpmarco.polocloud.suite.cluster.info.ClusterSuiteInfoSnapshot;
 public abstract class AbstractSuite<D extends SuiteData> implements ClusterSuite<D> {
 
     private final D data;
-    private ClusterSuiteInfoSnapshot infoSnapshot;
+    private final ClusterSuiteInfoSnapshot infoSnapshot;
     private ClusterSuiteState state;
 
     public AbstractSuite(D data) {
         this.data = data;
+        this.infoSnapshot = new ClusterSuiteInfoSnapshot(System.currentTimeMillis(), -1);
         this.state = ClusterSuiteState.INITIALIZING;
     }
 
