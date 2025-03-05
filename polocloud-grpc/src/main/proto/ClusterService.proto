@@ -3,14 +3,11 @@ syntax = "proto3";
 package dev.httpmarco.polocloud.grpc;
 
 service ClusterSuiteService {
-  rpc attachSuite(CLusterSuiteAttachRequest) returns (AuthClusterResponse);
+  rpc attachSuite(ClusterSuiteAttachRequest) returns (ClusterSuiteAttachResponse);
+  rpc findAllSuite(EmptyDummy) returns (ClusterSuitesResponse);
 }
 
-enum SuiteState {
-  ONLINE = 0;
-}
-
-message CLusterSuiteAttachRequest {
+message ClusterSuiteAttachRequest {
   string suiteId = 1;
   string suitePrivateKey = 2;
   string clusterToken = 3;
@@ -20,9 +17,19 @@ message CLusterSuiteAttachRequest {
   int32  bindSuitePort = 6;
 }
 
-message AuthClusterResponse {
+message ClusterSuiteAttachResponse {
   bool success = 1;
   string message = 2;
+}
 
-  SuiteState state = 3;
+message EmptyDummy {}
+
+message ClusterExternalSuite {
+  string id = 1;
+  string hostname = 2;
+  string port = 3;
+}
+
+message ClusterSuitesResponse {
+  repeated ClusterExternalSuite suites = 1;
 }
