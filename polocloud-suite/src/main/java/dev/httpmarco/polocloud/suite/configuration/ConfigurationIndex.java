@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.suite.config;
+package dev.httpmarco.polocloud.suite.configuration;
 
 import dev.httpmarco.polocloud.suite.utils.GsonInstance;
 import org.slf4j.Logger;

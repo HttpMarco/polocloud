@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.suite.config;
+package dev.httpmarco.polocloud.suite.configuration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
