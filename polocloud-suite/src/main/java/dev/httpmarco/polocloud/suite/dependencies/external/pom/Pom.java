@@ -3,12 +3,18 @@ package dev.httpmarco.polocloud.suite.dependencies.external.pom;
 import dev.httpmarco.polocloud.suite.dependencies.exception.DependencyChecksumNotMatchException;
 import dev.httpmarco.polocloud.suite.dependencies.external.ExternalDependency;
 import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Accessors(fluent = true)
 public final class Pom {
 
     public static final String URL_PATTERN = "https://repo1.maven.org/maven2/%s/%s/%s/%s-%s";
@@ -30,15 +36,39 @@ public final class Pom {
     private void loadContext(int retries) {
         // maximum retries are 3
         if (retries > 3) {
-            // at the moment the checksum is not correct
             throw new DependencyChecksumNotMatchException(parentDependency);
         }
         try {
             var pom = Downloader.of(this.parentDependencyUrl + ".pom").xml();
-            var dependencyNodes = pom.getElementsByTagName("dependency");
+            var projectNodes = pom.getElementsByTagName("project");
+
+            if (projectNodes.getLength() == 0) {
+                return;
+            }
+
+            var projectElement = (Element) projectNodes.item(0);
+
+            var children = projectElement.getChildNodes();
+            Element dependenciesElement = null;
+            for (var i = 0; i < children.getLength(); i++) {
+                if (children.item(i) instanceof Element element && element.getTagName().equals("dependencies")) {
+                    dependenciesElement = element;
+                    break;
+                }
+            }
+
+            if (dependenciesElement == null) {
+                return;
+            }
+
+            var dependencyNodes = dependenciesElement.getChildNodes();
 
             for (int i = 0; i < dependencyNodes.getLength(); i++) {
                 if (!(dependencyNodes.item(i) instanceof Element dependencyElement)) {
+                    continue;
+                }
+
+                if (!dependencyElement.getTagName().equals("dependency")) {
                     continue;
                 }
 
@@ -46,28 +76,29 @@ public final class Pom {
                 var artifactId = readTag(dependencyElement, "artifactId");
                 var version = readTag(dependencyElement, "version");
 
-                // we need to search the current dependency version
                 if (version == null || placeholder(version)) {
-                    //todo
-                    return;
-                }
-
-                var scope = readTag(dependencyElement, "scope");
-
-                if(scope == null || scope.equals("test")) {
-                    // we not need this
                     continue;
                 }
 
-                // we load the complete context of this sub dependency
+                var scope = readTag(dependencyElement, "scope");
+                if (scope == null || scope.equals("test") || scope.equals("runtime")) {
+                    continue;
+                }
+
+                // we not need optional dependencies
+                var optional = readTag(dependencyElement, "optional");
+                if (optional != null && optional.equals("true")) {
+                    continue;
+                }
+
                 var subDependency = new ExternalDependency(groupId, artifactId, version);
                 dependencies.add(subDependency);
             }
         } catch (ParserConfigurationException e) {
-            // another try for the downloading
             this.loadContext(++retries);
         }
     }
+
 
     private String readTag(Element element, String tag) {
         var nodeList = element.getElementsByTagName(tag);
