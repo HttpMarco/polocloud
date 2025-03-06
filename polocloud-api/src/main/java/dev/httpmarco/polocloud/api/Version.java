@@ -4,12 +4,12 @@ public class Version {
 
     private final String originalVersion;
     private final int major;
-    private final int minor;
-    private final Integer patch;
-    private final Integer numberId;
+    private final Integer minor;
+    private final String patch;
+    private final String numberId;
     private final String state;
 
-    public Version(String originalVersion, int major, int minor, Integer patch, Integer numberId, String state) {
+    public Version(String originalVersion, int major, Integer minor, String patch, String numberId, String state) {
         this.originalVersion = originalVersion;
         this.major = major;
         this.minor = minor;
@@ -21,27 +21,31 @@ public class Version {
     public static Version parse(String version) {
         // Split the version string into major, minor, patch, and optional state
         var mainParts = version.split("-", 2);
-        var versionParts = mainParts[0].split("\\.");
+        var versionParts = mainParts[0].split("\\.", -1);
 
-        var major = parseOrDefault(versionParts, 0);
-        var minor = parseOrDefault(versionParts, 1);
+        var major = Integer.parseInt(parseOrDefault(versionParts, 0));
 
-        Integer patch = null;
+        Integer minor = null;
+        if (versionParts.length > 1) {
+            minor = Integer.parseInt(parseOrDefault(versionParts, 1));
+        }
+
+        String patch = null;
         if (versionParts.length > 2) {
             patch = parseOrDefault(versionParts, 2);
         }
 
-        Integer numberId = null;
+        String numberId = null;
         if (versionParts.length > 3) {
-            numberId = parseOrDefault(versionParts, 3);
+            numberId = String.valueOf(parseOrDefault(versionParts, 3));
         }
 
         var state = (mainParts.length > 1) ? mainParts[1] : null;
         return new Version(version, major, minor, patch, numberId, state);
     }
 
-    private static int parseOrDefault(String[] parts, int index) {
-        return (index < parts.length) ? Integer.parseInt(parts[index]) : 0;
+    private static String parseOrDefault(String[] parts, int index) {
+        return (index < parts.length) ? parts[index] : "0";
     }
 
     @Override
@@ -50,7 +54,13 @@ public class Version {
     }
 
     public String versionWithState() {
-        var builder = new StringBuilder(major + "." + minor);
+        var builder = new StringBuilder();
+        builder.append(major);
+
+        if(minor != null) {
+            builder.append(".").append(minor);
+        }
+
         if (patch != null) {
             builder.append(".").append(patch);
         }
