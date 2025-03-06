@@ -18,6 +18,7 @@ jline = "3.29.0"
 
 # Networking
 grpc = "1.70.0"
+redis = "6.5.4.RELEASE"
 
 # factories
 docker = "3.4.1"
@@ -29,24 +30,25 @@ log4j = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" 
 log4j-sl4j-impl = { module = "org.apache.logging.log4j:log4j-slf4j-impl", version.ref = "log4j" }
 
 # Code quality
-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
-lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 
 # configuration
-gson =  { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # terminal
 jline = { module = "org.jline:jline", version.ref = "jline" }
 jline-jansi = { module = "org.jline:jline-terminal-jansi", version.ref = "jline" }
 
 # Networking
-grpc-netty =  { group = "io.grpc", name = "grpc-netty-shaded", version.ref = "grpc" }
-grpc-protobuf =  { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
-grpc-stub =  { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
-grpc-services =  { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }
+grpc-netty = { group = "io.grpc", name = "grpc-netty-shaded", version.ref = "grpc" }
+grpc-protobuf = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
+grpc-stub = { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
+grpc-services = { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }
+redis = { group = "io.lettuce", name = "lettuce-core", version.ref = "redis" }
 
 # factories
-docker =  { group = "com.github.docker-java", name = "docker-java", version.ref = "docker" }
+docker = { group = "com.github.docker-java", name = "docker-java", version.ref = "docker" }
 
 [bundles]
 logging = ["slf4j", "log4j", "log4j-sl4j-impl"]
