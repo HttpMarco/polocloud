@@ -24,7 +24,7 @@ dependencies {
     compileOnly(libs.bundles.utils)
     annotationProcessor(libs.bundles.utils)
 
-    // todo remove for terminal component
+    compileOnly(libs.redis)
     compileOnly(libs.jline)
 }
 
@@ -51,9 +51,13 @@ val generateCompileOnlyDependenciesJson by tasks.registering {
     group = "build"
     doLast {
         // we only want all compileOnly dependencies -> without polocloud api
-        val dependenciesList = configurations.getByName("compileOnly").allDependencies.filter { it.name !== "polocloud-api" && it.name !== "polocloud-grpc" }.map {
-            mapOf("group" to it.group, "name" to it.name, "version" to it.version)
-        }
+        val dependenciesList = configurations.getByName("compileOnly").allDependencies
+            .filter { it.name != "polocloud-api" && it.name != "polocloud-grpc" && it.name != "annotations" && it.name != "lombok" }
+            .onEach { println("Dependency: ${it.name}") }
+            .map {
+                mapOf("group" to it.group, "name" to it.name, "version" to it.version)
+            }
+
         val json = GsonBuilder().setPrettyPrinting().create().toJson(dependenciesList)
         val outputDir = file("src/main/resources")
         outputDir.mkdirs()
