@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.grpc.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
-import dev.httpmarco.polocloud.suite.cluster.global.ExternalSuite;
+import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.local.LocalCluster;
 import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.IntArgument;
@@ -21,6 +21,11 @@ public class ClusterCommand extends Command {
         super("cluster", "The main command for cluster management");
 
         var cluster = PolocloudSuite.instance().cluster();
+
+        syntax(commandContext -> {
+
+        }, new KeywordArgument("info"));
+
 
         if (cluster instanceof LocalCluster) {
 
@@ -64,7 +69,7 @@ public class ClusterCommand extends Command {
 
                 // todo add the suite to the cluster
 
-            }, "Join an existing cluster", new TextArgument("enter"), id, hostname, port, privateKey);
+            }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey);
         }
     }
 }
