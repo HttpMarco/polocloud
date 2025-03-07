@@ -2,11 +2,10 @@ package dev.httpmarco.polocloud.suite;
 
 import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
-import dev.httpmarco.polocloud.suite.cluster.ClusterProvider;
-import dev.httpmarco.polocloud.suite.cluster.impl.ClusterProviderImpl;
+import dev.httpmarco.polocloud.suite.cluster.Cluster;
+import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
+import dev.httpmarco.polocloud.suite.cluster.commands.ClusterCommand;
 import dev.httpmarco.polocloud.suite.commands.CommandService;
-import dev.httpmarco.polocloud.suite.components.ComponentProvider;
-import dev.httpmarco.polocloud.suite.components.impl.ComponentProviderImpl;
 import dev.httpmarco.polocloud.suite.configuration.SuiteConfig;
 import dev.httpmarco.polocloud.suite.dependencies.DependencyProvider;
 import dev.httpmarco.polocloud.suite.dependencies.impl.DependencyProviderImpl;
@@ -34,9 +33,8 @@ public final class PolocloudSuite extends Polocloud {
     private final CommandService commandService;
     private final PolocloudTerminal terminal;
 
+    private Cluster cluster;
     private final DependencyProvider dependencyProvider;
-    private final ClusterProvider clusterProvider;
-    private final ComponentProvider componentProvider;
     private final ClusterGroupProvider groupProvider;
 
     public PolocloudSuite() {
@@ -47,12 +45,14 @@ public final class PolocloudSuite extends Polocloud {
 
         this.commandService = new CommandService();
         this.dependencyProvider = new DependencyProviderImpl();
-        this.clusterProvider = new ClusterProviderImpl();
-        this.componentProvider = new ComponentProviderImpl();
+        this.cluster = ClusterInitializer.generate(config.cluster());
         this.groupProvider = new ClusterGroupProviderImpl();
 
         // start reading current terminal thread
         (terminal = new PolocloudTerminalImpl()).start();
+
+        // register cluster command -> we must wait for the cluster to be initialized
+        PolocloudSuite.instance().commandService().registerCommand(new ClusterCommand());
     }
 
     public DependencyProvider dependencyProvider() {
@@ -75,21 +75,16 @@ public final class PolocloudSuite extends Polocloud {
         System.out.println("realod");
     }
 
+    public void updateCluster(Cluster cluster) {
+        this.cluster = cluster;
+    }
+
     public void shutdown() {
-        if(!this.running) {
+        if (!this.running) {
             // cloud already shutdown
             return;
         }
         this.running = false;
-
-        // unload only if component provider is present
-        if (this.componentProvider != null) {
-            this.componentProvider.close();
-        }
-
-        if(this.clusterProvider != null){
-            this.clusterProvider.close();
-        }
 
         AnsiConsole.systemUninstall();
         log.info("Shutting down Polocloud Suite...");
