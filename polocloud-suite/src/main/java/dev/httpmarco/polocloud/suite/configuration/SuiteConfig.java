@@ -1,6 +1,10 @@
 package dev.httpmarco.polocloud.suite.configuration;
 
+import dev.httpmarco.polocloud.suite.cluster.ClusterConfig;
+import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterLocalConfig;
 import dev.httpmarco.polocloud.suite.utils.GsonInstance;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,17 +14,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+@Accessors(fluent = true)
 public final class SuiteConfig {
 
     private static final Path CONFIG_PATH = Paths.get("config.json");
     private static final Logger log = LogManager.getLogger(SuiteConfig.class);
 
     private final Locale language;
-    private final ClusterConfig cluster;
+
+    @Setter
+    private ClusterConfig cluster;
 
     public SuiteConfig() {
         this.language = Locale.ENGLISH;
-        this.cluster = new ClusterConfig();
+        this.cluster = new ClusterLocalConfig("suite-1", 8479);
     }
 
     public Locale language() {
