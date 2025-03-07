@@ -4,32 +4,14 @@ package dev.httpmarco.polocloud.grpc;
 
 service ClusterSuiteService {
   rpc attachSuite(ClusterSuiteAttachRequest) returns (ClusterSuiteAttachResponse);
-  rpc findAllSuite(EmptyDummy) returns (ClusterSuitesResponse);
 }
 
 message ClusterSuiteAttachRequest {
   string suiteId = 1;
   string suitePrivateKey = 2;
-  string clusterToken = 3;
-
-  string bindSuiteId = 4;
-  string bindSuiteHostname = 5;
-  int32  bindSuitePort = 6;
 }
 
 message ClusterSuiteAttachResponse {
   bool success = 1;
   string message = 2;
-}
-
-message EmptyDummy {}
-
-message ClusterExternalSuite {
-  string id = 1;
-  string hostname = 2;
-  int32 port = 3;
-}
-
-message ClusterSuitesResponse {
-  repeated ClusterExternalSuite suites = 1;
 }
