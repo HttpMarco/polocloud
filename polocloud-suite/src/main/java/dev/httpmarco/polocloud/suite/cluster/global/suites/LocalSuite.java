@@ -1,5 +1,7 @@
-package dev.httpmarco.polocloud.suite.cluster.global;
+package dev.httpmarco.polocloud.suite.cluster.global.suites;
 
+import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuite;
+import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
 import dev.httpmarco.polocloud.suite.cluster.grpc.ClusterSuiteGrpcHandler;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;

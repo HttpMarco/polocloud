@@ -1,6 +1,8 @@
-package dev.httpmarco.polocloud.suite.cluster.global;
+package dev.httpmarco.polocloud.suite.cluster.global.suites;
 
 import dev.httpmarco.polocloud.grpc.ClusterSuiteServiceGrpc;
+import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuite;
+import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.health.v1.HealthCheckRequest;

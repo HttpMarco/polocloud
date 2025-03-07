@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.suite.cluster.configuration.serializer;
 
 import com.google.gson.*;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
-import dev.httpmarco.polocloud.suite.cluster.global.ExternalSuite;
+import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
 
 import java.lang.reflect.Type;
 

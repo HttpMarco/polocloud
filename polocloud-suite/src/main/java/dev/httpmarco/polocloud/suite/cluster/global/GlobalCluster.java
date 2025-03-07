@@ -2,8 +2,10 @@ package dev.httpmarco.polocloud.suite.cluster.global;
 
 import dev.httpmarco.polocloud.suite.cluster.Cluster;
 import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterGlobalConfig;
-import dev.httpmarco.polocloud.suite.cluster.syncstorage.ClusterDataSyncStorage;
-import dev.httpmarco.polocloud.suite.cluster.syncstorage.SyncStorage;
+import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
+import dev.httpmarco.polocloud.suite.cluster.global.suites.LocalSuite;
+import dev.httpmarco.polocloud.suite.cluster.global.syncstorage.ClusterDataSyncStorage;
+import dev.httpmarco.polocloud.suite.cluster.global.syncstorage.SyncStorage;
 import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
 import lombok.Getter;
 import lombok.experimental.Accessors;
