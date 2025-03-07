@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.suite.terminal;
 
-import dev.httpmarco.polocloud.component.ComponentSuite;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import org.jline.reader.UserInterruptException;
 
