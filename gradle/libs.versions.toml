@@ -20,7 +20,7 @@ jline = "3.29.0"
 grpc = "1.70.0"
 
 # factories
-docker = "3.4.1"
+docker = "3.4.2"
 
 [libraries]
 # Logging
