@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.suite.cluster.global.serializer;
+package dev.httpmarco.polocloud.suite.cluster.configuration.serializer;
 
 import com.google.gson.*;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;

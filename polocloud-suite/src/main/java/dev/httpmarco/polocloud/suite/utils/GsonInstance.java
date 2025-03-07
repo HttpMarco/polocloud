@@ -3,8 +3,8 @@ package dev.httpmarco.polocloud.suite.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.httpmarco.polocloud.suite.cluster.ClusterConfig;
-import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterConfigSerializer;
-import dev.httpmarco.polocloud.suite.cluster.global.serializer.ExternalSuiteSerializer;
+import dev.httpmarco.polocloud.suite.cluster.configuration.serializer.ClusterConfigSerializer;
+import dev.httpmarco.polocloud.suite.cluster.configuration.serializer.ExternalSuiteSerializer;
 import dev.httpmarco.polocloud.suite.cluster.global.ExternalSuite;
 import dev.httpmarco.polocloud.suite.i18n.serializer.LocalSerializer;
 
