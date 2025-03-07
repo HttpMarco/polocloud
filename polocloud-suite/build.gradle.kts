@@ -12,7 +12,6 @@ dependencies {
     implementation(libs.bundles.logging)
     implementation(libs.gson)
     implementation(libs.jline.jansi)
-    implementation(project(":polocloud-components:component-api"))
 
     // need grpc -> improve dependency
     implementation("com.google.guava:failureaccess:1.0.2")
@@ -26,6 +25,10 @@ dependencies {
 
     compileOnly(libs.redis)
     compileOnly(libs.jline)
+
+    // testing element
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    compileOnly("io.netty:netty-all:4.1.119.Final")
 }
 
 tasks.shadowJar {
