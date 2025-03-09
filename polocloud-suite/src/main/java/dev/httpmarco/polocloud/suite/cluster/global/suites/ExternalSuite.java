@@ -43,4 +43,9 @@ public class ExternalSuite implements ClusterSuite {
             return false;
         }
     }
+
+    @Override
+    public String id() {
+        return data.id();
+    }
 }

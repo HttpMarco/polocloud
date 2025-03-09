@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.grpc.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
+import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
 import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.local.LocalCluster;
 import dev.httpmarco.polocloud.suite.commands.Command;
@@ -23,6 +24,10 @@ public class ClusterCommand extends Command {
         var cluster = PolocloudSuite.instance().cluster();
 
         syntax(commandContext -> {
+
+            if (cluster instanceof GlobalCluster globalCluster) {
+                log.info("  &8- &7Local suite&8: &f{}", globalCluster.localSuite());
+            }
 
         }, new KeywordArgument("info"));
 
