@@ -4,6 +4,6 @@ import dev.httpmarco.polocloud.api.Closeable;
 
 public interface ClusterSuite extends Closeable {
 
-
+    String id();
 
 }

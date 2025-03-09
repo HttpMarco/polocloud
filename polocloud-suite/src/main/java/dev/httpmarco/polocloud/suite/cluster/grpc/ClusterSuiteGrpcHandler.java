@@ -8,7 +8,9 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
 
     @Override
     public void attachSuite(ClusterService.ClusterSuiteAttachRequest request, StreamObserver<ClusterService.ClusterSuiteAttachResponse> responseObserver) {
-        var response = ClusterService.ClusterSuiteAttachResponse.newBuilder().setSuccess(true);
+        var response = ClusterService.ClusterSuiteAttachResponse.newBuilder().setSuccess(false);
+
+
 
         // todo
 
