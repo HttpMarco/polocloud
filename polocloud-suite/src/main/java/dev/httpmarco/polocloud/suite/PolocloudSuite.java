@@ -72,7 +72,7 @@ public final class PolocloudSuite extends Polocloud {
     }
 
     public void reload() {
-        System.out.println("realod");
+        System.out.println("reload");
     }
 
     public void updateCluster(Cluster cluster) {
