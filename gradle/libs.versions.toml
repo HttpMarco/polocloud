@@ -21,7 +21,7 @@ grpc = "1.71.0"
 redis = "6.5.4.RELEASE"
 
 # factories
-docker = "3.4.1"
+docker = "3.4.2"
 
 [libraries]
 # Logging
