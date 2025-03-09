@@ -19,14 +19,14 @@ public class GlobalCluster implements Cluster {
 
     private final SyncStorage<ClusterSuiteData> syncStorage;
 
-    private final LocalSuite localCluster;
+    private final LocalSuite localSuite;
     private final List<ExternalSuite> suites = new ArrayList<>();
-
-    private ClusterSuite headSuite;
 
     public GlobalCluster(ClusterGlobalConfig config, RedisClient redisClient) {
         this.syncStorage = new ClusterDataSyncStorage(config.token(), redisClient);
 
-        this.localCluster = new LocalSuite(new ClusterSuiteData(config.id(), config.hostname(), config.privateKey(), config.port()));
+        // todo update details with privateKey
+
+        this.localSuite = new LocalSuite(new ClusterSuiteData(config.id(), config.hostname(), config.privateKey(), config.port()));
     }
 }
