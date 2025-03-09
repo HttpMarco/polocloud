@@ -32,15 +32,15 @@ public class ClusterInitializer {
     public void createNewCluster(String hostname, int port, String username, String password, int database) {
         var token = UUID.randomUUID().toString().substring(0, 16);
 
-        switchClusterState(ClusterSwitch.CREATE, token, hostname, port, username, password, database);
+        switchClusterState(token, hostname, port, username, password, database);
     }
 
-    private void switchClusterState(ClusterSwitch clusterSwitch, String token, String hostname, int port, String username, String password, int database) {
+    private void switchClusterState(String token, String hostname, int port, String username, String password, int database) {
         var redisConfig = new RedisConfig(hostname, port, username, password, database);
         var redisClient = new RedisClient(redisConfig);
 
         if (!redisClient.available()) {
-            log.warn("The cluster can onlu be created if the redis server is available!");
+            log.warn("The cluster can only be created if the redis server is available!");
             return;
         }
 
@@ -60,10 +60,5 @@ public class ClusterInitializer {
 
         PolocloudSuite.instance().updateCluster(globalCluster);
         log.info("Successfully created global cluster instance!");
-    }
-
-    public enum ClusterSwitch {
-        ENTER,
-        CREATE
     }
 }
