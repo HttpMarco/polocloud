@@ -4,7 +4,8 @@ package dev.httpmarco.polocloud.grpc;
 
 service ClusterSuiteService {
   rpc attachSuite(ClusterSuiteAttachRequest) returns (ClusterSuiteAttachResponse);
-  rpc requestState(ClusterSuiteStateRequest) returns (ClusterSuiteStateResponse);
+  rpc requestState(EmptyCall) returns (ClusterSuiteStateResponse);
+  rpc broadcastAvailable(ServiceId) returns (EmptyCall);
 }
 
 message ClusterSuiteAttachRequest {
@@ -18,8 +19,11 @@ message ClusterSuiteAttachResponse {
   string token = 3;
 }
 
-message ClusterSuiteStateRequest {
+message ServiceId {
+  string id = 1;
+}
 
+message EmptyCall {
 }
 
 message ClusterSuiteStateResponse {
@@ -32,3 +36,5 @@ enum State {
     INVALID = 3;
     AVAILABLE = 4;
 }
+
+
