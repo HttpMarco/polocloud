@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.cluster.global.suites;
 
+import dev.httpmarco.polocloud.grpc.ClusterService;
 import dev.httpmarco.polocloud.grpc.ClusterSuiteServiceGrpc;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuite;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
@@ -47,5 +48,9 @@ public class ExternalSuite implements ClusterSuite {
     @Override
     public String id() {
         return data.id();
+    }
+
+    public ClusterService.State state() {
+        return available() ? this.clusterStub.requestState(ClusterService.ClusterSuiteStateRequest.newBuilder().build()).getState() : ClusterService.State.OFFLINE;
     }
 }

@@ -6,12 +6,11 @@ import dev.httpmarco.polocloud.suite.cluster.grpc.ClusterSuiteGrpcHandler;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
-
 import java.io.IOException;
 
 public final class LocalSuite implements ClusterSuite {
 
-    private ClusterSuiteData data;
+    private final ClusterSuiteData data;
     private final Server server;
 
     public LocalSuite(ClusterSuiteData data) {
@@ -35,4 +34,5 @@ public final class LocalSuite implements ClusterSuite {
     public String id() {
         return data.id();
     }
+
 }

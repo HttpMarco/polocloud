@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.suite.cluster.global;
 
+import dev.httpmarco.polocloud.grpc.ClusterService;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.Cluster;
 import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterGlobalConfig;
 import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
@@ -22,39 +24,49 @@ public class GlobalCluster implements Cluster {
     private static final Logger log = LogManager.getLogger(GlobalCluster.class);
     private final SyncStorage<ClusterSuiteData> syncStorage;
 
+    private ClusterService.State state = ClusterService.State.INITIALIZING;
     private final LocalSuite localSuite;
     private final List<ExternalSuite> suites = new ArrayList<>();
 
     public GlobalCluster(ClusterGlobalConfig config, RedisClient redisClient) {
         this.syncStorage = new ClusterDataSyncStorage(config.token(), redisClient);
         this.localSuite = new LocalSuite(new ClusterSuiteData(config.id(), config.hostname(), config.privateKey(), config.port()));
+    }
 
+    public void initializeExternals() {
         // scan all existing suites
         var entries = this.syncStorage.entries();
+        var config = PolocloudSuite.instance().config().cluster();
 
-        if (entries.stream().noneMatch(clusterSuiteData -> clusterSuiteData.privateKey().equals(config.privateKey()))) {
-            log.warn("The cluster is not correctly configured! The private key is not in the redis storage! -> No part of cluster!");
-            // close the local suite
-            System.exit(-1);
-            return;
-        }
-
-        for (var entry : entries) {
-
-            if (entry.privateKey().equals(config.privateKey())) {
-                // check name and port -> on change update
-                if (!entry.id().equals(config.id()) || entry.port() != config.port()) {
-                    this.syncStorage.update(entry);
-                }
-                // we only use the local suite
-                continue;
+        if (config instanceof ClusterGlobalConfig globalConfig) {
+            if (entries.stream().noneMatch(clusterSuiteData -> clusterSuiteData.privateKey().equals(globalConfig.privateKey()))) {
+                log.warn("The cluster is not correctly configured! The private key is not in the redis storage! -> No part of cluster!");
+                // close the local suite
+                System.exit(-1);
+                return;
             }
 
-            // register suite
-            this.suites.add(new ExternalSuite(entry));
+            for (var entry : entries) {
+                if (entry.privateKey().equals(globalConfig.privateKey())) {
+                    // check name and port -> on change update
+                    if (!entry.id().equals(config.id()) || entry.port() != config.port()) {
+                        this.syncStorage.update(entry);
+                    }
+                    // we only use the local suite
+                    continue;
+                }
 
-            // try connection to the suite and check state
+                // register suite
+                this.suites.add(new ExternalSuite(entry));
 
+                // try connection to the suite and check state
+            }
+        } else {
+            // this case should never happen
+            log.error("The cluster config is not a global cluster config! -> No part of cluster! Use right config schema!");
         }
+
+        // now we can start the show!
+        this.state = ClusterService.State.AVAILABLE;
     }
 }
