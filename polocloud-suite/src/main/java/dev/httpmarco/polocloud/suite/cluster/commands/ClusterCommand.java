@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.suite.cluster.commands;
 import dev.httpmarco.polocloud.grpc.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
+import dev.httpmarco.polocloud.suite.cluster.configuration.redis.RedisConfig;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
 import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
 import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
@@ -11,8 +12,11 @@ import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.IntArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
+import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.UUID;
 
 public class ClusterCommand extends Command {
 
@@ -24,11 +28,9 @@ public class ClusterCommand extends Command {
         var cluster = PolocloudSuite.instance().cluster();
 
         syntax(commandContext -> {
-
             if (cluster instanceof GlobalCluster globalCluster) {
                 log.info("  &8- &7Local suite&8: &f{}", globalCluster.localSuite());
             }
-
         }, new KeywordArgument("info"));
 
 
@@ -41,7 +43,18 @@ public class ClusterCommand extends Command {
             var redisDatabase = new IntArgument("redis-database");
 
             // create new cluster
-            syntax(it -> ClusterInitializer.createNewCluster(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase))
+            syntax(it -> {
+                        var token = UUID.randomUUID().toString().substring(0, 16);
+                        var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
+
+                        if (!redisClient.available()) {
+                            log.warn("The cluster can only be created if the redis server is available!");
+                            return;
+                        }
+
+                        ClusterInitializer.switchToGlobalCluster(redisClient, token);
+                        log.info("Successfully created global cluster instance!");
+                    }
                     , "Publish your first cluster instance"
                     , new KeywordArgument("open")
                     , redisHostname
@@ -72,9 +85,24 @@ public class ClusterCommand extends Command {
                     return;
                 }
 
-                // todo add the suite to the cluster
+                var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
 
-            }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey);
+                if (!redisClient.available()) {
+                    log.warn("The cluster can only be created if the redis server is available!");
+                    return;
+                }
+
+                if (!redisClient.has("polocloud-cluster-" + result.getToken())) {
+                    log.warn("The redis database is not the same as the cluster you are trying to join! Use the same");
+                    return;
+                }
+
+                ClusterInitializer.switchToGlobalCluster(redisClient, result.getToken());
+
+                // todo sync other nodes
+
+
+            }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey, redisHostname, redisPort, redisUsername, redisPassword, redisDatabase);
         }
     }
 }

@@ -14,16 +14,12 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
         var localConfig = PolocloudSuite.instance().config().cluster();
 
         if (localConfig instanceof ClusterGlobalConfig globalConfig) {
-
             if (!globalConfig.privateKey().equals(request.getSuitePrivateKey())) {
                 response.setMessage("Invalid private key!");
             } else {
-
                 if (globalConfig.id().equals(request.getSuiteId())) {
                     response.setSuccess(true);
-                    response.setMessage("Successfully attached suite to cluster!");
-
-                    // todo
+                    response.setMessage(globalConfig.token());
                 } else {
                     response.setMessage("Invalid token!");
                 }
