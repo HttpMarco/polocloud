@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class ClusterDataSyncStorage implements SyncStorage<ClusterSuiteData> {
+public final class ClusterDataSyncStorage implements SyncStorage<ClusterSuiteData> {
 
     private RedisClient client;
     private String key;
