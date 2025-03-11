@@ -51,6 +51,6 @@ public class ExternalSuite implements ClusterSuite {
     }
 
     public ClusterService.State state() {
-        return available() ? this.clusterStub.requestState(ClusterService.ClusterSuiteStateRequest.newBuilder().build()).getState() : ClusterService.State.OFFLINE;
+        return available() ? this.clusterStub.requestState(ClusterService.EmptyCall.newBuilder().build()).getState() : ClusterService.State.OFFLINE;
     }
 }

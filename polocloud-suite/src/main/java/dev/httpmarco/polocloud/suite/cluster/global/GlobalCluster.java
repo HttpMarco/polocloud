@@ -68,6 +68,14 @@ public final class GlobalCluster implements Cluster {
 
         // now we can start the show!
         this.state = ClusterService.State.AVAILABLE;
+
+        // call all suites we are available
+        this.suites.forEach(it -> {
+            if(it.state() != ClusterService.State.AVAILABLE) {
+                return;
+            }
+            it.clusterStub().broadcastAvailable(ClusterService.ServiceId.newBuilder().setId(localSuite.id()).build());
+        });
     }
 
     @Override
