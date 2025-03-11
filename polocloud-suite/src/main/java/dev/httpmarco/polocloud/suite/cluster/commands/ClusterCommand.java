@@ -93,7 +93,7 @@ public class ClusterCommand extends Command {
                 }
 
                 if (!redisClient.has("polocloud-cluster-" + result.getToken())) {
-                    log.warn("The redis database is not the same as the cluster you are trying to join! Use the same");
+                    log.warn("The redis database is not the same as the cluster you are trying to join! Use the same!");
                     return;
                 }
 
@@ -104,6 +104,7 @@ public class ClusterCommand extends Command {
                 // todo sync other nodes
 
 
+                log.info("Successfully joined the cluster!");
             }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey, redisHostname, redisPort, redisUsername, redisPassword, redisDatabase);
         }
     }
