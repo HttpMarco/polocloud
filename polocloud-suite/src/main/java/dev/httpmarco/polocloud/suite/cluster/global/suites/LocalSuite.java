@@ -11,9 +11,11 @@ import java.io.IOException;
 
 public final class LocalSuite implements ClusterSuite {
 
+    private ClusterSuiteData data;
     private final Server server;
 
     public LocalSuite(ClusterSuiteData data) {
+        this.data = data;
         this.server = ServerBuilder.forPort(data.port()).addService(new ClusterSuiteGrpcHandler()).addService(new HealthStatusManager().getHealthService()).build();
 
         try {
@@ -27,5 +29,10 @@ public final class LocalSuite implements ClusterSuite {
     @Override
     public void close() {
         this.server.shutdownNow();
+    }
+
+    @Override
+    public String id() {
+        return data.id();
     }
 }
