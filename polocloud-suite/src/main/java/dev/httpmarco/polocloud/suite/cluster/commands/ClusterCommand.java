@@ -97,7 +97,9 @@ public class ClusterCommand extends Command {
                     return;
                 }
 
-                ClusterInitializer.switchToGlobalCluster(redisClient, result.getToken());
+                var globalCluster = ClusterInitializer.switchToGlobalCluster(redisClient, result.getToken());
+                // scan all existing suites
+                globalCluster.initializeExternals();
 
                 // todo sync other nodes
 
