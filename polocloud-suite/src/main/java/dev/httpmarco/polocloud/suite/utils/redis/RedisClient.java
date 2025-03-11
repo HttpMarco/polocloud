@@ -6,18 +6,24 @@ import dev.httpmarco.polocloud.suite.cluster.configuration.redis.RedisConfig;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+@Getter
+@Accessors(fluent = true)
 public final class RedisClient implements Available {
 
     private static final Logger log = LogManager.getLogger(RedisClient.class);
+    private final RedisConfig redisConfig;
     private StatefulRedisConnection<String, String> connection;
 
     public RedisClient(RedisConfig config) {
+        this.redisConfig = config;
         try {
             var client = io.lettuce.core.RedisClient.create(RedisURI.builder()
                     .withHost(config.hostname())
@@ -27,7 +33,7 @@ public final class RedisClient implements Available {
                     .build());
 
             this.connection = client.connect();
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.warn("Could not connect to redis server! Please check credentials and server!");
         }
     }
@@ -53,6 +59,10 @@ public final class RedisClient implements Available {
     public Set<String> list(String key) {
         RedisCommands<String, String> redis = connection.sync();
         return redis.smembers(key);
+    }
+
+    public boolean has(String key) {
+        return this.connection.sync().exists(key) > 0;
     }
 
     @Override
