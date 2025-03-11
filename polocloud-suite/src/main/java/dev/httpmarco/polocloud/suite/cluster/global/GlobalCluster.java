@@ -19,7 +19,7 @@ import java.util.List;
 
 @Getter
 @Accessors(fluent = true)
-public class GlobalCluster implements Cluster {
+public final class GlobalCluster implements Cluster {
 
     private static final Logger log = LogManager.getLogger(GlobalCluster.class);
     private final SyncStorage<ClusterSuiteData> syncStorage;
