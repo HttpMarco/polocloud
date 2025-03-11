@@ -24,7 +24,7 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
             } else {
                 if (globalConfig.id().equals(request.getSuiteId())) {
                     response.setSuccess(true);
-                    response.setMessage(globalConfig.token());
+                    response.setToken(globalConfig.token());
                 } else {
                     response.setMessage("Invalid token!");
                 }
