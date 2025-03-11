@@ -21,6 +21,13 @@ public class PolocloudShutdownHandler {
         }
         idleShutdown = true;
 
+        var cluster = PolocloudSuite.instance().cluster();
+        if(cluster != null) {
+            log.info("Shutting down Cluster...");
+            cluster.close();
+            log.info("Cluster is successfully shut down.");
+        }
+
         AnsiConsole.systemUninstall();
         log.info("Shutting down Polocloud Suite...");
         System.exit(-1);

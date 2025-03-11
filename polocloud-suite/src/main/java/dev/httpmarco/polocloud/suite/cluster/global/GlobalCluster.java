@@ -69,4 +69,9 @@ public final class GlobalCluster implements Cluster {
         // now we can start the show!
         this.state = ClusterService.State.AVAILABLE;
     }
+
+    @Override
+    public void close() {
+        this.localSuite.close();
+    }
 }

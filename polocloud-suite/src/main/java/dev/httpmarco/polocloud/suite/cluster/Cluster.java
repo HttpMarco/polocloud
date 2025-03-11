@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.suite.cluster;
 
-public interface Cluster {
+import dev.httpmarco.polocloud.api.Closeable;
+
+public interface Cluster extends Closeable {
 
 
 }
