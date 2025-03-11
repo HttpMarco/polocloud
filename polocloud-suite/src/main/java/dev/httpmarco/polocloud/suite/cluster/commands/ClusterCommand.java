@@ -78,7 +78,7 @@ public class ClusterCommand extends Command {
                     return;
                 }
 
-                var result = externalSuite.clusterStub().attachSuite(ClusterService.ClusterSuiteAttachRequest.newBuilder().setSuiteId(data.id()).build());
+                var result = externalSuite.clusterStub().attachSuite(ClusterService.ClusterSuiteAttachRequest.newBuilder().setSuitePrivateKey(it.arg(privateKey)).setSuiteId(data.id()).build());
 
                 if (!result.getSuccess()) {
                     log.warn("Failed to enter the suite cluster: {}", result.getMessage());
