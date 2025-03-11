@@ -11,10 +11,6 @@ public final class PolocloudLauncher {
         // set utf/8 encoding -> windows
         WindowsUtf8Console.setUtf8Encoding();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            // todo
-        });
-
         this.polocloudProcess = new PolocloudProcess();
         this.polocloudProcess.setDaemon(false);
         this.polocloudProcess.start();

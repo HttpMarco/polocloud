@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.fusesource.jansi.AnsiConsole;
 
 @Getter
 @Accessors(fluent = true)
@@ -26,8 +25,6 @@ public final class PolocloudSuite extends Polocloud {
 
     private static final Logger log = LogManager.getLogger(PolocloudSuite.class);
     private final I18n translation = new I18nPolocloudSuite();
-
-    private boolean running = true;
 
     private final SuiteConfig config;
     private final CommandService commandService;
@@ -39,9 +36,6 @@ public final class PolocloudSuite extends Polocloud {
 
     public PolocloudSuite() {
         config = SuiteConfig.load();
-
-        // todo test
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 
         this.commandService = new CommandService();
         this.dependencyProvider = new DependencyProviderImpl();
@@ -79,15 +73,4 @@ public final class PolocloudSuite extends Polocloud {
         this.cluster = cluster;
     }
 
-    public void shutdown() {
-        if (!this.running) {
-            // cloud already shutdown
-            return;
-        }
-        this.running = false;
-
-        AnsiConsole.systemUninstall();
-        log.info("Shutting down Polocloud Suite...");
-        System.exit(-1);
-    }
 }

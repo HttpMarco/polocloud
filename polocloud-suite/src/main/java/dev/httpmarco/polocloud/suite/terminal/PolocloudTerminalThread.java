@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.suite.terminal;
 
-import dev.httpmarco.polocloud.suite.PolocloudSuite;
+import dev.httpmarco.polocloud.suite.PolocloudShutdownHandler;
 import org.jline.reader.UserInterruptException;
 
 import java.util.Arrays;
@@ -23,7 +23,7 @@ final class PolocloudTerminalThread extends Thread {
                 line = terminal.lineReader().readLine(terminal.prompt());
             } catch (UserInterruptException ignored) {
                 // user pressed ctrl+c
-                PolocloudSuite.instance().shutdown();
+                PolocloudShutdownHandler.shutdown();
                 return;
             }
 

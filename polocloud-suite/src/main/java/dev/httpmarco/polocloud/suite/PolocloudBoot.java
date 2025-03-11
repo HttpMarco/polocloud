@@ -12,6 +12,7 @@ public final class PolocloudBoot {
     }
 
     public static void main(String[] args) {
+
         // before we start -> clean layout
         ConsoleActions.clearScreen();
 
@@ -22,6 +23,9 @@ public final class PolocloudBoot {
 
         // spacer between this important information
         ConsoleActions.emptyLine();
+
+        // register for a random shit shutdown
+        PolocloudShutdownHandler.registerShutdownHook();
 
         // run suite
         new PolocloudSuite();
