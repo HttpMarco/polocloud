@@ -38,7 +38,7 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
     }
 
     @Override
-    public void requestState(ClusterService.ClusterSuiteStateRequest request, StreamObserver<ClusterService.ClusterSuiteStateResponse> responseObserver) {
+    public void requestState(ClusterService.EmptyCall request, StreamObserver<ClusterService.ClusterSuiteStateResponse> responseObserver) {
         var response = ClusterService.ClusterSuiteStateResponse.newBuilder();
         if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
             response.setState(globalCluster.state());
@@ -48,6 +48,14 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
             response.setState(ClusterService.State.INVALID);
         }
         responseObserver.onNext(response.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void broadcastAvailable(ClusterService.ServiceId request, StreamObserver<ClusterService.EmptyCall> responseObserver) {
+        // now we only display the new suite
+        log.info("New suite registered in the cluster: &b{}", request.getId());
+        responseObserver.onNext(ClusterService.EmptyCall.newBuilder().build());
         responseObserver.onCompleted();
     }
 }

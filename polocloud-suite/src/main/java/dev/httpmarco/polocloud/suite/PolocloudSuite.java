@@ -16,14 +16,11 @@ import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminalImpl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Getter
 @Accessors(fluent = true)
 public final class PolocloudSuite extends Polocloud {
 
-    private static final Logger log = LogManager.getLogger(PolocloudSuite.class);
     private final I18n translation = new I18nPolocloudSuite();
 
     private final SuiteConfig config;

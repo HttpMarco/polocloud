@@ -9,10 +9,12 @@ import org.fusesource.jansi.AnsiConsole;
 public class PolocloudShutdownHandler {
 
     private static final Logger log = LogManager.getLogger(PolocloudShutdownHandler.class);
+
+    private final String SHUTDOWN_HOOK = "polocloud-shutdown-hook";
     private boolean idleShutdown = false;
 
     public void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(PolocloudShutdownHandler::shutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(PolocloudShutdownHandler::shutdown, SHUTDOWN_HOOK));
     }
 
     public void shutdown() {
@@ -30,6 +32,9 @@ public class PolocloudShutdownHandler {
 
         AnsiConsole.systemUninstall();
         log.info("Shutting down Polocloud Suite...");
-        System.exit(-1);
+
+        if(!Thread.currentThread().getName().equals(SHUTDOWN_HOOK)) {
+            System.exit(-1);
+        }
     }
 }
