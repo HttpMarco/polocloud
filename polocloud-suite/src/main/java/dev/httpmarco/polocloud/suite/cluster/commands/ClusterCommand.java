@@ -29,7 +29,11 @@ public class ClusterCommand extends Command {
 
         syntax(commandContext -> {
             if (cluster instanceof GlobalCluster globalCluster) {
-                log.info("  &8- &7Local suite&8: &f{}", globalCluster.localSuite());
+                log.info("  &8- &7Local suite&8: &f{}", globalCluster.localSuite().id());
+
+                for (ExternalSuite suite : globalCluster.suites()) {
+                    log.info("  &8- &7External suite&8: &f{}", suite.data().id() + " &8(&7state=" + suite.state() + "&8)");
+                }
             }
         }, new KeywordArgument("info"));
 
