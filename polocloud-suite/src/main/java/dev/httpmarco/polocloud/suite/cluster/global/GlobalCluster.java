@@ -62,7 +62,6 @@ public final class GlobalCluster implements Cluster {
 
                 // register suite
                 this.suites.add(new ExternalSuite(entry));
-
                 // try connection to the suite and check state
             }
         } else {
@@ -71,6 +70,9 @@ public final class GlobalCluster implements Cluster {
         }
 
         this.statusTask.start();
+
+        log.info("Cluster available suites&8: {}", String.join("&8, ", this.suites.stream().map(it -> (it.state() == ClusterService.State.AVAILABLE ? "&f" : "&8") + it.id()).toList()));
+
         // now we can start the show!
         this.state = ClusterService.State.AVAILABLE;
     }
