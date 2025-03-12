@@ -6,10 +6,14 @@ import dev.httpmarco.polocloud.suite.cluster.grpc.ClusterSuiteGrpcHandler;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 
 public final class LocalSuite implements ClusterSuite {
 
+    private static final Logger log = LogManager.getLogger(LocalSuite.class);
     private final ClusterSuiteData data;
     private final Server server;
 
@@ -20,8 +24,8 @@ public final class LocalSuite implements ClusterSuite {
         try {
             this.server.start();
         } catch (IOException e) {
-            e.printStackTrace(System.err);
-            // todo call shutdown methode
+            log.error("Failed to start local suite server", e);
+            System.exit(-1);
         }
     }
 
