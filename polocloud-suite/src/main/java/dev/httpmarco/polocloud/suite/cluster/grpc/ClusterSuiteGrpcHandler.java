@@ -50,4 +50,24 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void drainCluster(ClusterService.SuiteDrainRequest request, StreamObserver<ClusterService.EmptyCall> responseObserver) {
+        if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
+            var externalSuite = globalCluster.find(request.getId());
+            if (externalSuite == null) {
+                log.error("The suite {} could not be found in the cluster! But external tries to drain it!", request.getId());
+            } else {
+                externalSuite.close();
+                globalCluster.suites().remove(externalSuite);
+                log.info("The suite {} has been drained from the cluster!", externalSuite.id());
+            }
+        } else {
+            log.warn("Cluster is not configured correctly! The bound suite is local, but we need a global cluster!");
+        }
+
+
+        responseObserver.onNext(ClusterService.EmptyCall.newBuilder().build());
+        responseObserver.onCompleted();
+    }
 }
