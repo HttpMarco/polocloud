@@ -32,8 +32,7 @@ public final class PolocloudSuite extends Polocloud {
     private final ClusterGroupProvider groupProvider;
 
     public PolocloudSuite() {
-        config = SuiteConfig.load();
-
+        this.config = SuiteConfig.load();
         this.commandService = new CommandService();
         this.dependencyProvider = new DependencyProviderImpl();
         this.cluster = ClusterInitializer.generate(config.cluster());
