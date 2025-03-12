@@ -6,11 +6,14 @@ import dev.httpmarco.polocloud.suite.dependencies.DependencySlot;
 import dev.httpmarco.polocloud.suite.dependencies.external.pom.Pom;
 import dev.httpmarco.polocloud.suite.dependencies.impl.DependencyProviderImpl;
 import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
 public final class ExternalDependency implements Dependency {
 
+    private static final Logger log = LogManager.getLogger(ExternalDependency.class);
     private final String groupId;
     private final String artifactId;
     private final Version version;
@@ -30,11 +33,13 @@ public final class ExternalDependency implements Dependency {
         pom.dependencies().forEach(externalDependency -> externalDependency.load(slot));
         var downloadUrl = Pom.URL_PATTERN.formatted(groupIdPath(), artifactId, version.versionWithState(), artifactId, version.versionWithState()) + ".jar";
 
+        log.debug("Loading dependency {}:{}:{}", groupId, artifactId, version.versionWithState());
+
         if (file().exists()) {
             // todo check checksum -> delete -> download
         } else {
             // download the specific dependency
-            Downloader.of(downloadUrl).file(file().getAbsolutePath());
+            Downloader.of(downloadUrl).file(this.file().getAbsolutePath());
         }
         // add to the classloader slot
         slot.append(this);
