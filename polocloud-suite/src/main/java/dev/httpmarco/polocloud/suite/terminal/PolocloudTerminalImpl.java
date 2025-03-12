@@ -6,6 +6,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.InfoCmp;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -62,6 +63,13 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
     }
 
     @Override
+    public void print(String message) {
+        this.terminal.puts(InfoCmp.Capability.carriage_return);
+        this.terminal.writer().println(message);
+        this.update();
+    }
+
+    @Override
     public String prompt() {
         return this.terminalPrompt;
     }
@@ -74,5 +82,12 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
     @Override
     public LineReader lineReader() {
         return lineReader;
+    }
+
+    private void update() {
+        if (this.lineReader.isReading()) {
+            this.lineReader.callWidget(LineReader.REDRAW_LINE);
+            this.lineReader.callWidget(LineReader.REDISPLAY);
+        }
     }
 }

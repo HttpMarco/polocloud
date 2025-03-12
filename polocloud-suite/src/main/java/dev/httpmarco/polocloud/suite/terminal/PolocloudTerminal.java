@@ -13,4 +13,6 @@ public interface PolocloudTerminal extends AutoCloseable {
     void prompt(String prompt);
 
     LineReader lineReader();
+
+    void print(String message);
 }
