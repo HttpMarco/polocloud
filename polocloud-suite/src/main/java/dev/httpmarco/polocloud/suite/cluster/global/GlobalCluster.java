@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.global.suites.LocalSuite;
 import dev.httpmarco.polocloud.suite.cluster.global.syncstorage.ClusterDataSyncStorage;
 import dev.httpmarco.polocloud.suite.cluster.global.syncstorage.SyncStorage;
+import dev.httpmarco.polocloud.suite.cluster.tasks.ClusterStatusTask;
 import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -25,8 +26,11 @@ public final class GlobalCluster implements Cluster {
     private final SyncStorage<ClusterSuiteData> syncStorage;
 
     private ClusterService.State state = ClusterService.State.INITIALIZING;
+
     private final LocalSuite localSuite;
     private final List<ExternalSuite> suites = new ArrayList<>();
+
+    private final ClusterStatusTask statusTask = new ClusterStatusTask(this);
 
     public GlobalCluster(ClusterGlobalConfig config, RedisClient redisClient) {
         this.syncStorage = new ClusterDataSyncStorage(config.token(), redisClient);
@@ -66,16 +70,9 @@ public final class GlobalCluster implements Cluster {
             log.error("The cluster config is not a global cluster config! -> No part of cluster! Use right config schema!");
         }
 
+        this.statusTask.start();
         // now we can start the show!
         this.state = ClusterService.State.AVAILABLE;
-
-        // call all suites we are available
-        this.suites.forEach(it -> {
-            if(it.state() != ClusterService.State.AVAILABLE) {
-                return;
-            }
-            it.clusterStub().broadcastAvailable(ClusterService.ServiceId.newBuilder().setId(localSuite.id()).build());
-        });
     }
 
     @Override

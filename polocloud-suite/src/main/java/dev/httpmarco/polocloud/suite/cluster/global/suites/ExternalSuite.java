@@ -10,6 +10,7 @@ import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Getter
@@ -18,6 +19,9 @@ public class ExternalSuite implements ClusterSuite {
 
     private final ClusterSuiteData data;
     private final ManagedChannel channel;
+
+    @Setter
+    private ClusterService.State state;
 
     // stubs
     private final ClusterSuiteServiceGrpc.ClusterSuiteServiceBlockingStub clusterStub;
@@ -48,9 +52,5 @@ public class ExternalSuite implements ClusterSuite {
     @Override
     public String id() {
         return data.id();
-    }
-
-    public ClusterService.State state() {
-        return available() ? this.clusterStub.requestState(ClusterService.EmptyCall.newBuilder().build()).getState() : ClusterService.State.OFFLINE;
     }
 }
