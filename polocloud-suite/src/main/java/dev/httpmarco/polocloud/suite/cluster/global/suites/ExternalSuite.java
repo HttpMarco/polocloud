@@ -30,7 +30,7 @@ public class ExternalSuite implements ClusterSuite {
     public ExternalSuite(ClusterSuiteData data) {
         this.data = data;
 
-        this.channel = ManagedChannelBuilder.forAddress(data.hostname(), data.port()).usePlaintext().build();
+        this.channel = ManagedChannelBuilder.forAddress(data.hostname(), data.port()).keepAliveWithoutCalls(true).usePlaintext().build();
         this.clusterStub = ClusterSuiteServiceGrpc.newBlockingStub(channel);
         this.healthStub = HealthGrpc.newBlockingStub(channel);
     }
