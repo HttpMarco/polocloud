@@ -1,9 +1,12 @@
 package dev.httpmarco.polocloud.suite.cluster;
 
+import dev.httpmarco.polocloud.grpc.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterGlobalConfig;
+import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterLocalConfig;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
 import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
+import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.local.LocalCluster;
 import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
 import lombok.experimental.UtilityClass;
@@ -54,5 +57,36 @@ public class ClusterInitializer {
 
         PolocloudSuite.instance().updateCluster(globalCluster);
         return globalCluster;
+    }
+
+    public LocalCluster switchToLocalCluster() {
+        if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
+            var config = PolocloudSuite.instance().config();
+            var currentConfig = config.cluster();
+            var localCluster = new LocalCluster();
+            var localClusterConfig = new ClusterLocalConfig(currentConfig.id(), currentConfig.port());
+
+            globalCluster.syncStorage().delete(globalCluster.localSuite().data());
+
+            // call other clusters to update their cluster point data
+            for (ExternalSuite suite : globalCluster.suites()) {
+
+                if(!suite.available()) {
+                    // we call only to online suites
+                    continue;
+                }
+
+                // say goodbye to the other suites
+                suite.clusterStub().drainCluster(ClusterService.SuiteDrainRequest.newBuilder().setId(config.cluster().id()).build());
+            }
+
+            config.cluster(localClusterConfig);
+            config.update();
+
+            PolocloudSuite.instance().updateCluster(localCluster);
+            return localCluster;
+        }
+        log.warn("The cluster is already a local cluster!");
+        return null;
     }
 }
