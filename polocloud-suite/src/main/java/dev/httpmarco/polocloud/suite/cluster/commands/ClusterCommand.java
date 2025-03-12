@@ -89,6 +89,7 @@ public class ClusterCommand extends Command {
                     return;
                 }
 
+                externalSuite.close();
                 var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
 
                 if (!redisClient.available()) {
