@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.terminal;
 
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
+import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
@@ -17,10 +18,11 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
     private LineReaderImpl lineReader;
     private PolocloudTerminalThread terminalThread;
 
-    private String terminalPrompt = LoggingColors.translate("&flocal&8@&7node &8» &7");
+    private String terminalPrompt;
 
     @Override
     public void start() {
+
         try {
             terminal = TerminalBuilder.builder()
                     .system(true)
@@ -43,6 +45,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
                 .variable(LineReader.BELL_STYLE, "none")
                 .build();
 
+        this.refresh();
         (terminalThread = new PolocloudTerminalThread(this)).start();
     }
 
@@ -89,5 +92,18 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
             this.lineReader.callWidget(LineReader.REDRAW_LINE);
             this.lineReader.callWidget(LineReader.REDISPLAY);
         }
+    }
+
+    @Override
+    public void refresh() {
+        var cluster = PolocloudSuite.instance().cluster();
+        var prompt = "&flocal&8@&7node &8» &7";
+
+        if (cluster instanceof GlobalCluster globalCluster) {
+            prompt = "&fglobal&8@&7" + globalCluster.localSuite().id() + " &8» &7";
+        }
+
+        this.terminalPrompt = LoggingColors.translate(prompt);
+        this.prompt(this.terminalPrompt);
     }
 }
