@@ -111,5 +111,18 @@ public class ClusterCommand extends Command {
                 log.info("Successfully joined the cluster!");
             }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey, redisHostname, redisPort, redisUsername, redisPassword, redisDatabase);
         }
+
+        if(cluster instanceof GlobalCluster globalCluster) {
+            syntax(commandContext -> {
+
+                if(!globalCluster.syncStorage().available()) {
+                    log.warn("You can only disconnect from the cluster if the redis server is available!");
+                    return;
+                }
+
+                LocalCluster localCluster = ClusterInitializer.switchToLocalCluster();
+                log.info("Successfully disconnected from the cluster! Now we run in local mode!");
+            }, "Disconnect from the current cluster and change to a local cluster", new KeywordArgument("drain"));
+        }
     }
 }
