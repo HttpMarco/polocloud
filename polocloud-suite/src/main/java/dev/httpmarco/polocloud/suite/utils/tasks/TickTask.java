@@ -22,6 +22,7 @@ public abstract class TickTask implements Task {
         }
     }
 
+    @SuppressWarnings("BusyWait")
     public void start() {
         this.thread = Thread.ofVirtual().start(() -> {
             while (this.thread.isAlive()) {

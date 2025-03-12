@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.suite.utils.redis;
 
 import dev.httpmarco.polocloud.api.Available;
-import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterGlobalConfig;
 import dev.httpmarco.polocloud.suite.cluster.configuration.redis.RedisConfig;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -12,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @Getter

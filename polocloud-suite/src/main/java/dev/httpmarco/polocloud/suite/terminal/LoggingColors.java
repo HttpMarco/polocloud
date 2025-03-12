@@ -1,7 +1,11 @@
 package dev.httpmarco.polocloud.suite.terminal;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.fusesource.jansi.Ansi;
 
+@Getter
+@Accessors(fluent = true)
 public enum LoggingColors {
 
     BLACK("&0", Ansi.Color.BLACK),
@@ -34,18 +38,6 @@ public enum LoggingColors {
 
     LoggingColors(String code, Ansi.Color color) {
         this(code, color, false);
-    }
-
-    public String code() {
-        return code;
-    }
-
-    public Ansi.Color color() {
-        return color;
-    }
-
-    public boolean isBright() {
-        return bright;
     }
 
     public String ansi() {

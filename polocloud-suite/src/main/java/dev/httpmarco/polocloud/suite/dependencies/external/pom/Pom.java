@@ -6,7 +6,6 @@ import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
