@@ -79,4 +79,8 @@ public final class GlobalCluster implements Cluster {
     public void close() {
         this.localSuite.close();
     }
+
+    public ExternalSuite find(String id) {
+        return this.suites.stream().filter(s -> s.id().equals(id)).findFirst().orElse(null);
+    }
 }

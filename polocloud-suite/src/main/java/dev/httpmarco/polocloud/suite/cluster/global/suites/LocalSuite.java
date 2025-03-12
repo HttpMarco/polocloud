@@ -6,11 +6,15 @@ import dev.httpmarco.polocloud.suite.cluster.grpc.ClusterSuiteGrpcHandler;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
+@Getter
+@Accessors(fluent = true)
 public final class LocalSuite implements ClusterSuite {
 
     private static final Logger log = LogManager.getLogger(LocalSuite.class);
