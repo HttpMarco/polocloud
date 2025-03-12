@@ -21,7 +21,7 @@ public final class ClusterDataSyncStorage implements SyncStorage<ClusterSuiteDat
 
     @Override
     public void push(ClusterSuiteData data) {
-        this.client.add(key, GsonInstance.DEFAULT.toJson(data));
+        this.client.set(key, data.privateKey(), GsonInstance.DEFAULT.toJson(data));
     }
 
     @Override
@@ -31,6 +31,16 @@ public final class ClusterDataSyncStorage implements SyncStorage<ClusterSuiteDat
 
     @Override
     public void update(ClusterSuiteData data) {
-        //todo
+        this.push(data);
+    }
+
+    @Override
+    public void delete(ClusterSuiteData data) {
+        this.client.delete(key, data.privateKey());
+    }
+
+    @Override
+    public boolean available() {
+        return this.client.available();
     }
 }

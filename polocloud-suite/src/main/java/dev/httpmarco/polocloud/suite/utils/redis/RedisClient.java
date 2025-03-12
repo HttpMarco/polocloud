@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -46,19 +47,19 @@ public final class RedisClient implements Available {
         return this.connection.sync().get(key);
     }
 
-    public void add(String key, String object) {
+    public void set(String group, String id, String object) {
         RedisCommands<String, String> redis = connection.sync();
-        redis.sadd(key, object);
+        redis.hset(group, id, object);
     }
 
-    public void delete(String key, String object) {
+    public void delete(String key, String id) {
         RedisCommands<String, String> redis = connection.sync();
-        redis.srem(key, object);
+        redis.hdel(key, id);
     }
 
-    public Set<String> list(String key) {
+    public List<String> list(String key) {
         RedisCommands<String, String> redis = connection.sync();
-        return redis.smembers(key);
+        return redis.hvals(key);
     }
 
     public boolean has(String key) {
