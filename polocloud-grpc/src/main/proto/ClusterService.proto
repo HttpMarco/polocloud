@@ -5,6 +5,7 @@ package dev.httpmarco.polocloud.grpc;
 service ClusterSuiteService {
   rpc attachSuite(ClusterSuiteAttachRequest) returns (ClusterSuiteAttachResponse);
   rpc requestState(EmptyCall) returns (ClusterSuiteStateResponse);
+  rpc drainCluster(SuiteDrainRequest) returns (EmptyCall);
 }
 
 message ClusterSuiteAttachRequest {
@@ -16,6 +17,10 @@ message ClusterSuiteAttachResponse {
   bool success = 1;
   string message = 2;
   string token = 3;
+}
+
+message SuiteDrainRequest {
+  string id = 1;
 }
 
 message EmptyCall {
