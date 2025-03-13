@@ -29,11 +29,29 @@ public class ClusterCommand extends Command {
         var cluster = PolocloudSuite.instance().cluster();
 
         syntax(commandContext -> {
-            if (cluster instanceof GlobalCluster globalCluster) {
-                log.info("  &8- &7Local suite&8: &f{}", globalCluster.localSuite().id());
 
-                for (ExternalSuite suite : globalCluster.suites()) {
-                    log.info("  &8- &7External suite&8: &f{}", suite.data().id() + " &8(&7state=" + suite.state() + "&8)");
+            log.info("Using cluster profile: &f{}", cluster instanceof LocalCluster ? "Local" : "Global");
+            log.info(" ");
+
+            if (cluster instanceof GlobalCluster globalCluster) {
+                log.info("Local suite&8:");
+                log.info("  &8- &7Id&8: &f{}", globalCluster.localSuite().id());
+                log.info("  &8- &7Status&8: &f{}", globalCluster.state());
+                log.info("  &8- &7Address&8: &f{}", globalCluster.localSuite().data().address());
+                log.info("  &8- &7Private key: &f{}", "*".repeat(8) + globalCluster.localSuite().data().privateKey().substring(8));
+                log.info(" ");
+                log.info("External suites &8(&7{}&8)&8:", globalCluster.suites().size());
+
+                for (int i = 0; i < globalCluster.suites().size(); i++) {
+                    var suite = globalCluster.suites().get(i);
+                    String prefix = "├";
+
+                    // the last element of suites
+                    if (i == globalCluster.suites().size() - 1) {
+                        prefix = "└";
+                    }
+
+                    log.info("  &8{} &f{}", prefix, suiteStateColorCode(suite) + suite.data().id() + " &8(&7" + suite.data().address() + "&8)");
                 }
             }
         }, new KeywordArgument("info"));
@@ -145,4 +163,13 @@ public class ClusterCommand extends Command {
         return true;
     }
 
+    private String suiteStateColorCode(ExternalSuite suite) {
+        return switch (suite.state()) {
+            case AVAILABLE -> "&b";
+            case OFFLINE -> "&8";
+            case INITIALIZING -> "&e";
+            case INVALID -> "&c";
+            case UNRECOGNIZED -> "&7";
+        };
+    }
 }
