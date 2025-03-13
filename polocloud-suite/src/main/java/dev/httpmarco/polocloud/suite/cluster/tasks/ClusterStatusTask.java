@@ -12,8 +12,8 @@ public class ClusterStatusTask extends TickTask {
     private final GlobalCluster cluster;
 
     public ClusterStatusTask(GlobalCluster cluster) {
-        // every 5 seconds
-        super(5);
+        // every 3 seconds
+        super(3);
 
         this.cluster = cluster;
     }
@@ -37,7 +37,6 @@ public class ClusterStatusTask extends TickTask {
 
             if (state != currentState) {
                 // we must update the new state
-
                 if ((currentState == ClusterService.State.OFFLINE || currentState == ClusterService.State.INITIALIZING) && state == ClusterService.State.AVAILABLE) {
                     log.info("The suite {} is now online and bound to the cluster!", suite.id());
                 }
