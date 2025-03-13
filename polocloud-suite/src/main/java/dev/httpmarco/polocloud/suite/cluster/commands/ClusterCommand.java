@@ -15,6 +15,7 @@ import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
 import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -51,8 +52,7 @@ public class ClusterCommand extends Command {
                         var token = UUID.randomUUID().toString().substring(0, 16);
                         var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
 
-                        if (!redisClient.available()) {
-                            log.warn("The cluster can only be created if the redis server is available!");
+                        if (checkRedisAvailable(redisClient)) {
                             return;
                         }
 
@@ -92,8 +92,8 @@ public class ClusterCommand extends Command {
                 externalSuite.close();
                 var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
 
-                if (!redisClient.available()) {
-                    log.warn("The cluster can only be created if the redis server is available!");
+                // we only can work if the redis client is connected to the same redis server
+                if (checkRedisAvailable(redisClient)) {
                     return;
                 }
 
@@ -106,17 +106,27 @@ public class ClusterCommand extends Command {
                 // scan all existing suites
                 globalCluster.initializeExternals();
 
-                // todo sync other nodes
+                // append this new suite to the cluster suites cache
+                for (var suite : globalCluster.suites()) {
+                    if (suite.available()) {
+                        suite.clusterStub().runtimeHandshake(ClusterService.SuiteRuntimeHandShakeRequest.newBuilder()
+                                .setId(externalSuite.id())
+                                .setHostname(it.arg(hostname))
+                                .setPort(it.arg(port))
+                                .setPrivateKey(it.arg(privateKey))
+                                .build());
+                    }
+                }
 
 
                 log.info("Successfully joined the cluster!");
             }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey, redisHostname, redisPort, redisUsername, redisPassword, redisDatabase);
         }
 
-        if(cluster instanceof GlobalCluster globalCluster) {
+        if (cluster instanceof GlobalCluster globalCluster) {
             syntax(commandContext -> {
 
-                if(!globalCluster.syncStorage().available()) {
+                if (!globalCluster.syncStorage().available()) {
                     log.warn("You can only disconnect from the cluster if the redis server is available!");
                     return;
                 }
@@ -126,4 +136,13 @@ public class ClusterCommand extends Command {
             }, "Disconnect from the current cluster and change to a local cluster", new KeywordArgument("drain"));
         }
     }
+
+    private boolean checkRedisAvailable(@NotNull RedisClient client) {
+        if (!client.available()) {
+            log.warn("The cluster can only be created if the redis server is available!");
+            return false;
+        }
+        return true;
+    }
+
 }
