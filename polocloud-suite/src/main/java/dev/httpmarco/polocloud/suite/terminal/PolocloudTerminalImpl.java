@@ -97,7 +97,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
     @Override
     public void refresh() {
         var cluster = PolocloudSuite.instance().cluster();
-        var prompt = "&flocal&8@&7node &8» &7";
+        var prompt = "&flocal&8@&7suite &8» &7";
 
         if (cluster instanceof GlobalCluster globalCluster) {
             prompt = "&fglobal&8@&7" + globalCluster.localSuite().id() + " &8» &7";
