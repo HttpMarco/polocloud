@@ -2,6 +2,8 @@ package dev.httpmarco.polocloud.suite.terminal;
 
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
+import dev.httpmarco.polocloud.suite.terminal.setup.Setup;
+import dev.httpmarco.polocloud.suite.utils.ConsoleActions;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.LineReaderImpl;
@@ -19,6 +21,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
     private PolocloudTerminalThread terminalThread;
 
     private String terminalPrompt;
+    private Setup displayedSetup;
 
     @Override
     public void start() {
@@ -105,5 +108,25 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
 
         this.terminalPrompt = LoggingColors.translate(prompt);
         this.prompt(this.terminalPrompt);
+    }
+
+    @Override
+    public void clear() {
+        ConsoleActions.clearScreen();
+    }
+
+    @Override
+    public Setup displayedSetup() {
+        return displayedSetup;
+    }
+
+    @Override
+    public boolean hasSetup() {
+        return this.displayedSetup != null;
+    }
+
+    @Override
+    public void changeSetup(Setup setup) {
+        this.displayedSetup = setup;
     }
 }
