@@ -42,7 +42,8 @@ public class ClusterInitializer {
 
     public GlobalCluster switchToGlobalCluster(RedisClient redisClient, String token) {
         var privateKey = UUID.randomUUID().toString().substring(0, 10);
-        var config = PolocloudSuite.instance().config();
+        var polocloudSuite = PolocloudSuite.instance();
+        var config = polocloudSuite.config();
         var currentConfig = config.cluster();
 
         // update the config for global cluster
@@ -55,13 +56,16 @@ public class ClusterInitializer {
         // sync own cluster point data to redis
         globalCluster.syncStorage().push(new ClusterSuiteData(globalClusterConfig.id(), globalClusterConfig.hostname(), privateKey, globalClusterConfig.port()));
 
-        PolocloudSuite.instance().updateCluster(globalCluster);
+        polocloudSuite.updateCluster(globalCluster);
+        // update the command manager
+        polocloudSuite.commandService().refresh();
         return globalCluster;
     }
 
     public LocalCluster switchToLocalCluster() {
-        if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
-            var config = PolocloudSuite.instance().config();
+        var polocloudSuite = PolocloudSuite.instance();
+        if (polocloudSuite.cluster() instanceof GlobalCluster globalCluster) {
+            var config = polocloudSuite.config();
             var currentConfig = config.cluster();
             var localCluster = new LocalCluster();
             var localClusterConfig = new ClusterLocalConfig(currentConfig.id(), currentConfig.port());
@@ -71,7 +75,7 @@ public class ClusterInitializer {
             // call other clusters to update their cluster point data
             for (ExternalSuite suite : globalCluster.suites()) {
 
-                if(!suite.available()) {
+                if (!suite.available()) {
                     // we call only to online suites
                     continue;
                 }
@@ -83,7 +87,9 @@ public class ClusterInitializer {
             config.cluster(localClusterConfig);
             config.update();
 
-            PolocloudSuite.instance().updateCluster(localCluster);
+            polocloudSuite.updateCluster(localCluster);
+            // update the command manager
+            polocloudSuite.commandService().refresh();
             return localCluster;
         }
         log.warn("The cluster is already a local cluster!");
