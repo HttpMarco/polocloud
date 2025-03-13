@@ -18,7 +18,7 @@ jline = "3.29.0"
 
 # Networking
 grpc = "1.71.0"
-redis = "6.5.4.RELEASE"
+redis = "6.5.5.RELEASE"
 
 [libraries]
 # Logging
