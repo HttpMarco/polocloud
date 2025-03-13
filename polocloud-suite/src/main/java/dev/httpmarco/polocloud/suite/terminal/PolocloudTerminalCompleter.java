@@ -18,32 +18,7 @@ public class PolocloudTerminalCompleter implements Completer {
         var commandService = PolocloudSuite.instance().commandService();
 
         if (parsedLine.wordIndex() == 0) {
-
-            /*
-            if (PolocloudSuite.instance().terminal().hasSetup()) {
-
-                for (var input : PolocloudSuite.instance().terminal().setup().possibleAnswers()) {
-                    list.add(new Candidate(input));
-                }
-
-                list.add(new Candidate("exit"));
-
-                if (PolocloudSuite.instance().terminal().setup().index() > 0) {
-                    list.add(new Candidate("back"));
-                }
-                return;
-            }
-
-
-            if (PolocloudSuite.instance().screenProvider().isUsed()) {
-                list.add(new Candidate("exit"));
-                return;
-            }
-
-             */
-
             // we only display the command names -> not aliases
-
             for (var command : commandService.commands()) {
                 // if one command start with the given command first word
                 if (command.name().startsWith(parsedLine.word())) {
@@ -57,14 +32,7 @@ public class PolocloudTerminalCompleter implements Completer {
             return;
         }
 
-        /*
-        if (Node.instance().terminal().hasSetup()) {
-            return;
-        }
-
-         */
-
-        var commandName = parsedLine.words().get(0);
+        var commandName = parsedLine.words().getFirst();
         for (var command : commandService.commandsByName(commandName)) {
 
             for (CommandSyntax commandSyntax : command.commandSyntaxes()) {
