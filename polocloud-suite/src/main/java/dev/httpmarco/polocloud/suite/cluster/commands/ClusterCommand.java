@@ -128,10 +128,10 @@ public class ClusterCommand extends Command {
                 for (var suite : globalCluster.suites()) {
                     if (suite.available()) {
                         suite.clusterStub().runtimeHandshake(ClusterService.SuiteRuntimeHandShakeRequest.newBuilder()
-                                .setId(externalSuite.id())
-                                .setHostname(it.arg(hostname))
-                                .setPort(it.arg(port))
-                                .setPrivateKey(it.arg(privateKey))
+                                .setId(globalCluster.localSuite().id())
+                                .setHostname(globalCluster.localSuite().data().hostname())
+                                .setPort(globalCluster.localSuite().data().port())
+                                .setPrivateKey(globalCluster.localSuite().data().privateKey())
                                 .build());
                     }
                 }
