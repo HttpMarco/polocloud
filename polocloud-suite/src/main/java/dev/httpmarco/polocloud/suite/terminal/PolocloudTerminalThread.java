@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.terminal;
 
 import dev.httpmarco.polocloud.suite.PolocloudShutdownHandler;
+import org.jline.jansi.Ansi;
 import org.jline.reader.UserInterruptException;
 
 import java.util.Arrays;
@@ -28,6 +29,8 @@ final class PolocloudTerminalThread extends Thread {
             }
 
             if (line.isBlank()) {
+                // we reset the terminal prompt as message -> we have a clean console
+                System.out.println(Ansi.ansi().cursorUpLine().eraseLine().toString() + Ansi.ansi().cursorUp(1).toString());
                 continue;
             }
 
