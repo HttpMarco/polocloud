@@ -70,7 +70,7 @@ public class ClusterCommand extends Command {
                         var token = UUID.randomUUID().toString().substring(0, 16);
                         var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
 
-                        if (checkRedisAvailable(redisClient)) {
+                        if (!checkRedisAvailable(redisClient)) {
                             return;
                         }
 
@@ -111,7 +111,7 @@ public class ClusterCommand extends Command {
                 var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
 
                 // we only can work if the redis client is connected to the same redis server
-                if (checkRedisAvailable(redisClient)) {
+                if (!checkRedisAvailable(redisClient)) {
                     return;
                 }
 
@@ -135,7 +135,6 @@ public class ClusterCommand extends Command {
                                 .build());
                     }
                 }
-
 
                 log.info("Successfully joined the cluster!");
             }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey, redisHostname, redisPort, redisUsername, redisPassword, redisDatabase);

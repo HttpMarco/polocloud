@@ -12,7 +12,8 @@ public final class CommandService {
     private final List<Command> commands = new ArrayList<>();
 
     public CommandService() {
-        this.refresh();
+        this.registerCommand(new ShutdownCommand());
+        this.registerCommand(new ClearCommand());
     }
 
     public List<Command> commandsByName(String name) {
@@ -39,11 +40,5 @@ public final class CommandService {
 
     public List<Command> commands() {
         return commands;
-    }
-
-    public void refresh() {
-        this.commands.clear();
-        this.registerCommand(new ShutdownCommand());
-        this.registerCommand(new ClearCommand());
     }
 }

@@ -58,7 +58,7 @@ public class ClusterInitializer {
 
         polocloudSuite.updateCluster(globalCluster);
         // update the command manager
-        polocloudSuite.commandService().refresh();
+        // polocloudSuite.commandService().refresh();
         return globalCluster;
     }
 
@@ -89,7 +89,7 @@ public class ClusterInitializer {
 
             polocloudSuite.updateCluster(localCluster);
             // update the command manager
-            polocloudSuite.commandService().refresh();
+            // polocloudSuite.commandService().refresh();
             return localCluster;
         }
         log.warn("The cluster is already a local cluster!");
