@@ -8,60 +8,40 @@ import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
 import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
 import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.local.LocalCluster;
-import dev.httpmarco.polocloud.suite.commands.RefreshableCommand;
+import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.IntArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
 import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
-import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.Contract;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-@Log4j2
-public final class ClusterCommand extends RefreshableCommand {
+public class ClusterCommand extends Command {
+
+    private static final Logger log = LogManager.getLogger(ClusterCommand.class);
 
     public ClusterCommand() {
-        super("cluster", "The main command for cluster management");
-    }
+        super("cluster", PolocloudSuite.instance().translation().get("cluster.command.commandDescription"));
 
-    private boolean checkRedisAvailable(@NotNull RedisClient client) {
-        if (!client.available()) {
-            log.warn("The cluster can only be created if the redis server is available!");
-            return false;
-        }
-        return true;
-    }
-
-    @Contract(pure = true)
-    private @NotNull String suiteStateColorCode(@NotNull ExternalSuite suite) {
-        return switch (suite.state()) {
-            case AVAILABLE -> "&b";
-            case OFFLINE -> "&8";
-            case INITIALIZING -> "&e";
-            case INVALID -> "&c";
-            case UNRECOGNIZED -> "&7";
-        };
-    }
-
-    @Override
-    public void loadContext() {
         var cluster = PolocloudSuite.instance().cluster();
+        var translation = PolocloudSuite.instance().translation();
 
         syntax(commandContext -> {
 
-            log.info("Using cluster profile: &f{}", cluster instanceof LocalCluster ? "Local" : "Global");
+            log.info(translation.get("cluster.command.info", cluster instanceof LocalCluster ? "Local" : "Global"));
             log.info(" ");
 
             if (cluster instanceof GlobalCluster globalCluster) {
-                log.info("Local suite&8:");
-                log.info("  &8- &7Id&8: &f{}", globalCluster.localSuite().id());
-                log.info("  &8- &7Status&8: &f{}", globalCluster.state());
-                log.info("  &8- &7Address&8: &f{}", globalCluster.localSuite().data().address());
-                log.info("  &8- &7Private key: &f{}", "*".repeat(8) + globalCluster.localSuite().data().privateKey().substring(8));
+                log.info(translation.get("cluster.command.localSuite"));
+                log.info(translation.get("cluster.command.localSuiteId", globalCluster.localSuite().id()));
+                log.info(translation.get("cluster.command.localSuiteStatus", globalCluster.state()));
+                log.info(translation.get("cluster.command.localSuiteAddress", globalCluster.localSuite().data().address()));
+                log.info(translation.get("cluster.command.localSuitePrivateKey", "*".repeat(8) + globalCluster.localSuite().data().privateKey().substring(8)));
                 log.info(" ");
-                log.info("External suites &8(&7{}&8)&8:", globalCluster.suites().size());
+                log.info(translation.get("cluster.command.externalSuites", globalCluster.suites().size()));
 
                 for (int i = 0; i < globalCluster.suites().size(); i++) {
                     var suite = globalCluster.suites().get(i);
@@ -72,7 +52,7 @@ public final class ClusterCommand extends RefreshableCommand {
                         prefix = "└";
                     }
 
-                    log.info("  &8{} &f{}", prefix, suiteStateColorCode(suite) + suite.data().id() + " &8(&7" + suite.data().address() + "&8)");
+                    log.info(translation.get("cluster.command.suiteInfo", prefix, suiteStateColorCode(suite) + suite.data().id(), suite.data().address()));
                 }
             }
         }, new KeywordArgument("info"));
@@ -96,9 +76,9 @@ public final class ClusterCommand extends RefreshableCommand {
                         }
 
                         ClusterInitializer.switchToGlobalCluster(redisClient, token);
-                        log.info("Successfully created global cluster instance!");
+                        log.info(translation.get("cluster.command.successfulCreation"));
                     }
-                    , "Publish your first cluster instance"
+                    , translation.get("cluster.command.openDescription")
                     , new KeywordArgument("open")
                     , redisHostname
                     , redisPort
@@ -117,14 +97,14 @@ public final class ClusterCommand extends RefreshableCommand {
                 var externalSuite = new ExternalSuite(data);
 
                 if (!externalSuite.available()) {
-                    log.warn("The cluster you are trying to join is not available! The part suite must be online!");
+                    log.warn(translation.get("cluster.command.warnNotAvailable"));
                     return;
                 }
 
                 var result = externalSuite.clusterStub().attachSuite(ClusterService.ClusterSuiteAttachRequest.newBuilder().setSuitePrivateKey(it.arg(privateKey)).setSuiteId(data.id()).build());
 
                 if (!result.getSuccess()) {
-                    log.warn("Failed to enter the suite cluster: {}", result.getMessage());
+                    log.warn(translation.get("cluster.command.warnFailedToEnter", result.getMessage()));
                     return;
                 }
 
@@ -137,7 +117,7 @@ public final class ClusterCommand extends RefreshableCommand {
                 }
 
                 if (!redisClient.has("polocloud-cluster-" + result.getToken())) {
-                    log.warn("The redis database is not the same as the cluster you are trying to join! Use the same!");
+                    log.warn(translation.get("cluster.command.redisDatabaseMismatch"));
                     return;
                 }
 
@@ -157,21 +137,39 @@ public final class ClusterCommand extends RefreshableCommand {
                     }
                 }
 
-                log.info("Successfully joined the cluster!");
-            }, "Join an existing cluster", new KeywordArgument("enter"), id, hostname, port, privateKey, redisHostname, redisPort, redisUsername, redisPassword, redisDatabase);
+                log.info(translation.get("cluster.command.successfulJoin"));
+            }, translation.get("cluster.command.enterDescription"), new KeywordArgument("enter"), id, hostname, port, privateKey, redisHostname, redisPort, redisUsername, redisPassword, redisDatabase);
         }
 
         if (cluster instanceof GlobalCluster globalCluster) {
             syntax(commandContext -> {
 
                 if (!globalCluster.syncStorage().available()) {
-                    log.warn("You can only disconnect from the cluster if the redis server is available!");
+                    log.warn(translation.get("cluster.command.warnRedisUnavailable"));
                     return;
                 }
 
                 LocalCluster localCluster = ClusterInitializer.switchToLocalCluster();
-                log.info("Successfully disconnected from the cluster! Now we run in local mode!");
-            }, "Disconnect from the current cluster and change to a local cluster", new KeywordArgument("drain"));
+                log.info(translation.get("cluster.command.successfulDisconnect"));
+            }, translation.get("cluster.command.drainDescription"), new KeywordArgument("drain"));
         }
+    }
+
+    private boolean checkRedisAvailable(@NotNull RedisClient client) {
+        if (!client.available()) {
+            log.warn(PolocloudSuite.instance().translation().get("cluster.command.redisUnavailable"));
+            return false;
+        }
+        return true;
+    }
+
+    private String suiteStateColorCode(ExternalSuite suite) {
+        return switch (suite.state()) {
+            case AVAILABLE -> "&b";
+            case OFFLINE -> "&8";
+            case INITIALIZING -> "&e";
+            case INVALID -> "&c";
+            case UNRECOGNIZED -> "&7";
+        };
     }
 }
