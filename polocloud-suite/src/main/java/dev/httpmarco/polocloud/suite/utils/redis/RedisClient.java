@@ -68,4 +68,13 @@ public final class RedisClient implements Available {
     public boolean available() {
         return this.connection != null && this.connection.isOpen();
     }
+
+    public void close() {
+        if(connection == null) {
+            return;
+        }
+
+        this.connection.close();
+
+    }
 }

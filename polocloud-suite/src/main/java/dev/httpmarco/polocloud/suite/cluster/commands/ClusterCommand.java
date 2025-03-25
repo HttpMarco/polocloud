@@ -14,6 +14,7 @@ import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
 import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -33,7 +34,8 @@ public final class ClusterCommand extends RefreshableCommand {
         return true;
     }
 
-    private String suiteStateColorCode(ExternalSuite suite) {
+    @Contract(pure = true)
+    private @NotNull String suiteStateColorCode(@NotNull ExternalSuite suite) {
         return switch (suite.state()) {
             case AVAILABLE -> "&b";
             case OFFLINE -> "&8";
@@ -91,6 +93,7 @@ public final class ClusterCommand extends RefreshableCommand {
                         var redisClient = new RedisClient(new RedisConfig(it.arg(redisHostname), it.arg(redisPort), it.arg(redisUsername), it.arg(redisPassword), it.arg(redisDatabase)));
 
                         if (!checkRedisAvailable(redisClient)) {
+                            redisClient.close();
                             return;
                         }
 
@@ -132,6 +135,7 @@ public final class ClusterCommand extends RefreshableCommand {
 
                 // we only can work if the redis client is connected to the same redis server
                 if (!checkRedisAvailable(redisClient)) {
+                    redisClient.close();
                     return;
                 }
 
