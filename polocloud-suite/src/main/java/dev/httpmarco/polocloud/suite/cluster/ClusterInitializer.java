@@ -12,6 +12,7 @@ import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class ClusterInitializer {
         }
     }
 
-    public GlobalCluster switchToGlobalCluster(RedisClient redisClient, String token) {
+    public GlobalCluster switchToGlobalCluster(@NotNull RedisClient redisClient, String token) {
         var privateKey = UUID.randomUUID().toString().substring(0, 10);
         var polocloudSuite = PolocloudSuite.instance();
         var config = polocloudSuite.config();
@@ -58,7 +59,7 @@ public class ClusterInitializer {
 
         polocloudSuite.updateCluster(globalCluster);
         // update the command manager
-        // polocloudSuite.commandService().refresh();
+        polocloudSuite.commandService().refreshCommandContext();
         return globalCluster;
     }
 
@@ -89,7 +90,7 @@ public class ClusterInitializer {
 
             polocloudSuite.updateCluster(localCluster);
             // update the command manager
-            // polocloudSuite.commandService().refresh();
+            polocloudSuite.commandService().refreshCommandContext();
             return localCluster;
         }
         log.warn("The cluster is already a local cluster!");

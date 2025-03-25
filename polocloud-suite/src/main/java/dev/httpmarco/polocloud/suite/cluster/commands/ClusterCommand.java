@@ -8,24 +8,45 @@ import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
 import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
 import dev.httpmarco.polocloud.suite.cluster.global.suites.ExternalSuite;
 import dev.httpmarco.polocloud.suite.cluster.local.LocalCluster;
-import dev.httpmarco.polocloud.suite.commands.Command;
+import dev.httpmarco.polocloud.suite.commands.RefreshableCommand;
 import dev.httpmarco.polocloud.suite.commands.type.IntArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.TextArgument;
 import dev.httpmarco.polocloud.suite.utils.redis.RedisClient;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ClusterCommand extends Command {
-
-    private static final Logger log = LogManager.getLogger(ClusterCommand.class);
+@Log4j2
+public final class ClusterCommand extends RefreshableCommand {
 
     public ClusterCommand() {
         super("cluster", "The main command for cluster management");
+    }
 
+    private boolean checkRedisAvailable(@NotNull RedisClient client) {
+        if (!client.available()) {
+            log.warn("The cluster can only be created if the redis server is available!");
+            return false;
+        }
+        return true;
+    }
+
+    @Contract(pure = true)
+    private @NotNull String suiteStateColorCode(@NotNull ExternalSuite suite) {
+        return switch (suite.state()) {
+            case AVAILABLE -> "&b";
+            case OFFLINE -> "&8";
+            case INITIALIZING -> "&e";
+            case INVALID -> "&c";
+            case UNRECOGNIZED -> "&7";
+        };
+    }
+
+    @Override
+    public void loadContext() {
         var cluster = PolocloudSuite.instance().cluster();
 
         syntax(commandContext -> {
@@ -152,23 +173,5 @@ public class ClusterCommand extends Command {
                 log.info("Successfully disconnected from the cluster! Now we run in local mode!");
             }, "Disconnect from the current cluster and change to a local cluster", new KeywordArgument("drain"));
         }
-    }
-
-    private boolean checkRedisAvailable(@NotNull RedisClient client) {
-        if (!client.available()) {
-            log.warn("The cluster can only be created if the redis server is available!");
-            return false;
-        }
-        return true;
-    }
-
-    private String suiteStateColorCode(ExternalSuite suite) {
-        return switch (suite.state()) {
-            case AVAILABLE -> "&b";
-            case OFFLINE -> "&8";
-            case INITIALIZING -> "&e";
-            case INVALID -> "&c";
-            case UNRECOGNIZED -> "&7";
-        };
     }
 }

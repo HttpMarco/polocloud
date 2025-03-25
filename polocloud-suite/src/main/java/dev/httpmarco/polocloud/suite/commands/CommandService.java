@@ -22,6 +22,10 @@ public final class CommandService {
 
     public void registerCommand(Command command) {
         this.commands.add(command);
+
+        if (command instanceof RefreshableCommand refreshableCommand) {
+            refreshableCommand.loadContext();
+        }
     }
 
     public void registerCommands(Command... commands) {
@@ -40,5 +44,14 @@ public final class CommandService {
 
     public List<Command> commands() {
         return commands;
+    }
+
+    public void refreshCommandContext() {
+        this.commands.stream()
+                .filter(it -> it instanceof RefreshableCommand)
+                .forEach(command -> {
+                    command.commandSyntaxes().clear();
+                    ((RefreshableCommand) command).loadContext();
+                });
     }
 }
