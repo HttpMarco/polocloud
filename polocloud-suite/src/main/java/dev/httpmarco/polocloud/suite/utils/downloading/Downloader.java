@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.utils.downloading;
 
+import dev.httpmarco.polocloud.suite.utils.GsonInstance;
 import dev.httpmarco.polocloud.suite.utils.PathUtils;
 import org.w3c.dom.Document;
 
@@ -32,6 +33,10 @@ public final class Downloader {
 
     public Document xml() throws ParserConfigurationException {
         return content(it -> XML_FACTORY.newDocumentBuilder().parse(it));
+    }
+
+    public <T> T gson(Class<T> tClass) {
+        return GsonInstance.DEFAULT.fromJson(plain(), tClass);
     }
 
     public String plain() {

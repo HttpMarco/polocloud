@@ -12,6 +12,7 @@ import dev.httpmarco.polocloud.suite.dependencies.impl.DependencyProviderImpl;
 import dev.httpmarco.polocloud.suite.groups.ClusterGroupProviderImpl;
 import dev.httpmarco.polocloud.suite.i18n.I18n;
 import dev.httpmarco.polocloud.suite.i18n.impl.I18nPolocloudSuite;
+import dev.httpmarco.polocloud.suite.platforms.PlatformProvider;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminalImpl;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public final class PolocloudSuite extends Polocloud {
 
     private Cluster cluster;
     private final DependencyProvider dependencyProvider;
+    private final PlatformProvider platformProvider;
     private final ClusterGroupProvider groupProvider;
 
     public PolocloudSuite() {
@@ -40,6 +42,7 @@ public final class PolocloudSuite extends Polocloud {
         this.commandService = new CommandService();
         this.dependencyProvider = new DependencyProviderImpl();
         this.cluster = ClusterInitializer.generate(config.cluster());
+        this.platformProvider = new PlatformProvider();
         this.groupProvider = new ClusterGroupProviderImpl();
         // start reading current terminal thread
         (terminal = new PolocloudTerminalImpl()).start();

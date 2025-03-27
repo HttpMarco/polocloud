@@ -1,0 +1,45 @@
+{
+  "name": "velocity",
+  "icon": "https://docs.papermc.io/assets/images/velocity-logomark-512-52113b7ac44ad58461e21fe53dd694ed.png",
+  "type": "PROXY",
+  "language": "JAVA",
+  "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",
+  "versions": [
+    {
+      "version": "3.4.0-SNAPSHOT",
+      "buildId": 459
+    },
+    {
+      "version": "3.3.0-SNAPSHOT",
+      "buildId": 436
+    },
+    {
+      "version": "3.2.0-SNAPSHOT",
+      "buildId": 296
+    },
+    {
+      "version": "3.1.2-SNAPSHOT",
+      "buildId": 207
+    },
+    {
+      "version": "3.1.1-SNAPSHOT",
+      "buildId": 97
+    },
+    {
+      "version": "3.1.1",
+      "buildId": 102
+    },
+    {
+      "version": "3.1.0",
+      "buildId": 95
+    },
+    {
+      "version": "1.1.9",
+      "buildId": 447
+    },
+    {
+      "version": "1.0.10",
+      "buildId": 245
+    }
+  ]
+}
