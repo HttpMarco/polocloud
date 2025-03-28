@@ -34,12 +34,14 @@ public final class PolocloudProcess extends Thread {
     private List<String> processArguments() throws LibNotFoundException {
         var arguments = new ArrayList<String>();
 
+        var usedJava = System.getProperty("java.home");
+
         var bootLib = this.processLibs.stream()
                 .filter(it -> it.name().equals(Parameters.BOOT_LIB))
                 .findFirst()
                 .orElseThrow(() -> new LibNotFoundException(Parameters.BOOT_LIB));
 
-        arguments.add("java");
+        arguments.add(usedJava + "/bin/java");
         arguments.add("-javaagent:%s".formatted(bootLib.target()));
 
         arguments.add("-cp");
