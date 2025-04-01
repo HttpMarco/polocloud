@@ -1,11 +1,18 @@
 package dev.httpmarco.polocloud.suite.platforms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
+@Getter
+@Accessors(fluent = true)
+@AllArgsConstructor
 public class Platform {
 
-    private String name;
-    private String icon;
-    private PlatformType type;
-    private PlatformLanguage language;
+    private final String name;
+    private final String icon;
+    private final PlatformType type;
+    private final PlatformLanguage language;
     private String url;
 
 }

@@ -1,12 +1,18 @@
 package dev.httpmarco.polocloud.suite.platforms;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
+import dev.httpmarco.polocloud.suite.platforms.commands.PlatformCommand;
 import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Log4j2
+@Accessors(fluent = true)
 public class PlatformProvider {
 
     private static final String TABLE_OF_PLATFORMS = "https://raw.githubusercontent.com/HttpMarco/polocloud/refs/heads/master/polocloud-metadata/";
@@ -15,7 +21,8 @@ public class PlatformProvider {
     public PlatformProvider() {
         this.refreshPlatformData();
 
-        log.info("Loaded " + platforms.size() + " platforms");
+        PolocloudSuite.instance().commandService().registerCommand(new PlatformCommand(this));
+        log.info("Loaded {} platforms", platforms.size());
     }
 
     public void refreshPlatformData() {
