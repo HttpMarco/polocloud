@@ -8,7 +8,7 @@ log4j = "2.24.3"
 
 # Code quality
 annotations = "26.0.2"
-lombok = "1.18.36"
+lombok = "1.18.38"
 
 # configuration
 gson = "2.12.1"
