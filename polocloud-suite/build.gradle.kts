@@ -4,7 +4,7 @@ import org.gradle.kotlin.dsl.*
 plugins {
     id("java")
     id("com.gradleup.shadow") version "9.0.0-beta11"
-    id("com.google.protobuf") version "0.9.4"
+    id("com.google.protobuf") version "0.9.5"
 }
 
 dependencies {
