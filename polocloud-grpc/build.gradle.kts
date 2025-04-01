@@ -2,7 +2,7 @@ import com.google.protobuf.gradle.id
 
 plugins {
     id("java")
-    id("com.google.protobuf") version "0.9.4"
+    id("com.google.protobuf") version "0.9.5"
 }
 
 dependencies {
