@@ -71,7 +71,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
     @Override
     public void print(String message) {
         this.terminal.puts(InfoCmp.Capability.carriage_return);
-        this.terminal.writer().println(message);
+        this.terminal.writer().println(LoggingColors.translate(message));
         this.update();
     }
 

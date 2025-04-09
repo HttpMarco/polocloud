@@ -1,10 +1,9 @@
 package dev.httpmarco.polocloud.suite.terminal.setup;
 
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
-import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import dev.httpmarco.polocloud.suite.utils.Pair;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.function.Function;
 
 @Getter
 @Accessors(fluent = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class Setup {
 
     private int index = 0;
@@ -29,6 +28,10 @@ public abstract class Setup {
 
     public void question(String answerKey, String question, Function<Pair<String, Map<String, String>>, Boolean> prediction) {
         this.questions.add(new SetupQuestion(answerKey, question, stringStringMap -> List.of(), prediction));
+    }
+
+    public void question(String answerKey, String question) {
+        this.questions.add(new SetupQuestion(answerKey, question, stringStringMap -> List.of(), stringMapPair -> true));
     }
 
     public abstract void complete(Map<String, String> context);

@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.suite.platforms.commands;
 import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.platforms.PlatformProvider;
+import dev.httpmarco.polocloud.suite.platforms.setup.PlatformSetup;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -10,7 +11,6 @@ public final class PlatformCommand extends Command {
 
     public PlatformCommand(PlatformProvider platformProvider) {
         super("platform", "Manage all your used platforms");
-
 
         syntax(it -> {
             if (platformProvider.platforms().isEmpty()) {
@@ -23,5 +23,7 @@ public final class PlatformCommand extends Command {
                 log.info("&8  - &7{} &8(&7type&8=&7{}&8)", platform.name(), platform.type().name());
             }
         }, new KeywordArgument("list"));
+
+        syntax(it -> new PlatformSetup().run(), "Create your own custom platform", new KeywordArgument("custom"));
     }
 }
