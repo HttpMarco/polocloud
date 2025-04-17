@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.suite.platforms.commands;
 
 import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
+import dev.httpmarco.polocloud.suite.commands.type.PlatformArgument;
 import dev.httpmarco.polocloud.suite.platforms.PlatformProvider;
 import dev.httpmarco.polocloud.suite.platforms.setup.PlatformSetup;
 import lombok.extern.log4j.Log4j2;
@@ -25,5 +26,20 @@ public final class PlatformCommand extends Command {
         }, new KeywordArgument("list"));
 
         syntax(it -> new PlatformSetup().run(), "Create your own custom platform", new KeywordArgument("custom"));
+
+        var platformArg = new PlatformArgument("platform");
+        syntax(commandContext -> {
+
+            var platform = commandContext.arg(platformArg);
+
+            if(platform == null) {
+                log.info("No platform found.");
+                return;
+            }
+
+            log.info("Platform &7{}&8:", platform.name());
+            log.info("&8  - &7Type&8: &f{}", platform.type().name());
+            log.info("&8  - &7Language&8: &f{}", platform.language());
+        }, new KeywordArgument("info"), platformArg);
     }
 }

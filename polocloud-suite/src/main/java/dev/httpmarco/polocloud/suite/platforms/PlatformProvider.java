@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,5 +34,9 @@ public class PlatformProvider {
             platforms.add(Downloader.of(TABLE_OF_PLATFORMS + "proxy/" + proxyId + "/metadata.json").gson(Platform.class));
         }
         // todo load local platforms
+    }
+
+    public @Nullable Platform findPlatform(String name) {
+        return platforms.stream().filter(platform -> platform.name().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 }
