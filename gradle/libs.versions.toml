@@ -11,7 +11,7 @@ annotations = "26.0.2"
 lombok = "1.18.38"
 
 # configuration
-gson = "2.12.1"
+gson = "2.13.0"
 
 # terminal
 jline = "3.29.0"
