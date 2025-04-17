@@ -4,12 +4,12 @@ public class Version {
 
     private final String originalVersion;
     private final int major;
-    private final Integer minor;
+    private final String minor;
     private final String patch;
     private final String numberId;
     private final String state;
 
-    public Version(String originalVersion, int major, Integer minor, String patch, String numberId, String state) {
+    public Version(String originalVersion, int major, String minor, String patch, String numberId, String state) {
         this.originalVersion = originalVersion;
         this.major = major;
         this.minor = minor;
@@ -25,9 +25,9 @@ public class Version {
 
         var major = Integer.parseInt(parseOrDefault(versionParts, 0));
 
-        Integer minor = null;
+        String minor = null;
         if (versionParts.length > 1) {
-            minor = Integer.parseInt(parseOrDefault(versionParts, 1));
+            minor = parseOrDefault(versionParts, 1);
         }
 
         String patch = null;
