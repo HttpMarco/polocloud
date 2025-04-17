@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.suite.groups;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
-import dev.httpmarco.polocloud.suite.platforms.Platform;
+import dev.httpmarco.polocloud.api.platform.SharedPlatform;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 public final class ClusterGroupImpl implements ClusterGroup {
 
     private final String name;
-    private final Platform platform;
+    private final SharedPlatform platform;
     private int minMemory;
     private int maxMemory;
 
