@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.suite.cluster.Cluster;
 import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
 import dev.httpmarco.polocloud.suite.cluster.commands.ClusterCommand;
+import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
 import dev.httpmarco.polocloud.suite.commands.CommandService;
 import dev.httpmarco.polocloud.suite.configuration.SuiteConfig;
 import dev.httpmarco.polocloud.suite.dependencies.DependencyProvider;
@@ -78,4 +79,7 @@ public final class PolocloudSuite extends Polocloud {
         terminal.refresh();
     }
 
+    public boolean externalAccess() {
+        return cluster instanceof GlobalCluster;
+    }
 }
