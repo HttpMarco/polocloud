@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.groups.storage;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.suite.cluster.storage.ClusterStorage;
 import dev.httpmarco.polocloud.suite.groups.ClusterGroupImpl;
 import dev.httpmarco.polocloud.suite.utils.GsonInstance;
 import lombok.Getter;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @Getter
 @Log4j2
 @Accessors(fluent = true)
-public final class LocalClusterGroupStorage implements ClusterGroupStorage {
+public final class LocalClusterGroupStorage implements ClusterStorage<String, ClusterGroup> {
 
     private static final Path GROUPS_PATH = Paths.get("local/groups");
     // all cached groups
@@ -59,6 +60,11 @@ public final class LocalClusterGroupStorage implements ClusterGroupStorage {
     }
 
     @Override
+    public List<ClusterGroup> items() {
+        return List.of();
+    }
+
+    @Override
     public void publish(@NotNull ClusterGroup group) {
         try {
             Files.writeString(GROUPS_PATH.toAbsolutePath().resolve(group.name() + ".json"), convertToJson(group));
@@ -81,5 +87,10 @@ public final class LocalClusterGroupStorage implements ClusterGroupStorage {
         } catch (IOException e) {
             log.error("Could not delete group: {}", identifier, e);
         }
+    }
+
+    @Override
+    public String extreactIdentifier(ClusterGroup item) {
+        return "";
     }
 }
