@@ -15,5 +15,8 @@ public final class ClusterGroupImpl implements ClusterGroup {
     private final SharedPlatform platform;
     private int minMemory;
     private int maxMemory;
+    private int minOnlineService;
+    private int maxOnlineService;
+    private double percentageToStartNewService;
 
 }
