@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.suite;
 
 import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.suite.cluster.Cluster;
 import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
 import dev.httpmarco.polocloud.suite.cluster.commands.ClusterCommand;
@@ -14,6 +15,7 @@ import dev.httpmarco.polocloud.suite.groups.ClusterGroupProviderImpl;
 import dev.httpmarco.polocloud.suite.i18n.I18n;
 import dev.httpmarco.polocloud.suite.i18n.impl.I18nPolocloudSuite;
 import dev.httpmarco.polocloud.suite.platforms.PlatformProvider;
+import dev.httpmarco.polocloud.suite.services.ClusterServiceProviderImpl;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminalImpl;
 import lombok.Getter;
@@ -25,8 +27,6 @@ import org.apache.logging.log4j.Logger;
 @Accessors(fluent = true)
 public final class PolocloudSuite extends Polocloud {
 
-    private static final Logger log = LogManager.getLogger(PolocloudSuite.class);
-
     private final SuiteConfig config;
     private final I18n translation;
     private final CommandService commandService;
@@ -36,6 +36,7 @@ public final class PolocloudSuite extends Polocloud {
     private final DependencyProvider dependencyProvider;
     private final PlatformProvider platformProvider;
     private final ClusterGroupProvider groupProvider;
+    private final ClusterServiceProvider serviceProvider;
 
     public PolocloudSuite() {
         this.config = SuiteConfig.load();
@@ -45,7 +46,9 @@ public final class PolocloudSuite extends Polocloud {
         this.cluster = ClusterInitializer.generate(config.cluster());
         this.platformProvider = new PlatformProvider();
         this.groupProvider = new ClusterGroupProviderImpl();
-        // start reading current terminal thread
+        this.serviceProvider = new ClusterServiceProviderImpl();
+
+        // start reading the current terminal thread
         (terminal = new PolocloudTerminalImpl()).start();
 
         // register cluster command -> we must wait for the cluster to be initialized
