@@ -7,8 +7,10 @@ import dev.httpmarco.polocloud.suite.utils.GsonInstance;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,8 +61,9 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
         this.groups = Arrays.stream(Objects.requireNonNull(GROUPS_PATH.toFile().listFiles())).map(this::convertFromJson).filter(Objects::nonNull).toList();
     }
 
+    @Contract(pure = true)
     @Override
-    public List<ClusterGroup> items() {
+    public @NotNull @Unmodifiable List<ClusterGroup> items() {
         return List.of();
     }
 
