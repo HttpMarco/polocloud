@@ -21,9 +21,9 @@ final class PolocloudTerminalThread extends Thread {
             String line;
 
             try {
-                line = terminal.lineReader().readLine(terminal.prompt());
+                line = terminal.lineReader().readLine(terminal.prompt()).trim();
             } catch (UserInterruptException ignored) {
-                // user pressed ctrl+c
+                // the user pressed ctrl+c
                 PolocloudShutdownHandler.shutdown();
                 return;
             }
