@@ -66,6 +66,12 @@ public abstract class Setup {
     }
 
     public void run() {
+
+        if(this.questions.isEmpty()) {
+            this.exit(true);
+            return;
+        }
+
         PolocloudSuite.instance().terminal().changeSetup(this);
 
         displayQuestion();

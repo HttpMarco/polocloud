@@ -21,7 +21,7 @@ public interface ClusterGroupProvider {
     Future<Collection<ClusterGroup>> findAllAsync();
 
     /**
-     * Get a current group info
+     * Get current group info
      * @param groupId the group id
      * @return the group if present, else null
      */

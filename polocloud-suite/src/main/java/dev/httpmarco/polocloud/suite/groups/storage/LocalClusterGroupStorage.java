@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +50,6 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
 
     @Override
     public void initialize() {
-
         if (!Files.exists(GROUPS_PATH)) {
             try {
                 Files.createDirectories(GROUPS_PATH);
@@ -58,7 +58,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
             }
         }
 
-        this.groups = Arrays.stream(Objects.requireNonNull(GROUPS_PATH.toFile().listFiles())).map(this::convertFromJson).filter(Objects::nonNull).toList();
+        this.groups = new ArrayList<>(Arrays.stream(Objects.requireNonNull(GROUPS_PATH.toFile().listFiles())).map(this::convertFromJson).filter(Objects::nonNull).toList());
     }
 
     @Contract(pure = true)
@@ -74,6 +74,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
         } catch (IOException e) {
             log.error("Could not save group to file: {}", group.name(), e);
         }
+        this.groups.add(group);
     }
 
     @Override

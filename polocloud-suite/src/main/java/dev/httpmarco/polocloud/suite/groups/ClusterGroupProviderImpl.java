@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.api.utils.Future;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.storage.ClusterStorage;
 import dev.httpmarco.polocloud.suite.groups.commands.GroupCommand;
+import dev.httpmarco.polocloud.suite.groups.storage.LocalClusterGroupStorage;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +21,9 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
     private final ClusterStorage<String, ClusterGroup> storage;
 
     public ClusterGroupProviderImpl() {
+        //todo
       //  this.storage = PolocloudSuite.instance().externalAccess() ? new GlobalClusterGroupStorage() : new LocalClusterGroupStorage();
-        this.storage = null;
+        this.storage = new LocalClusterGroupStorage();
         this.storage.initialize();
 
         // register global group command
@@ -51,5 +53,9 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
     public ClusterGroupBuilder create(String group) {
         //todo
         return null;
+    }
+
+    public void registerGroup(ClusterGroup group) {
+        this.storage.publish(group);
     }
 }
