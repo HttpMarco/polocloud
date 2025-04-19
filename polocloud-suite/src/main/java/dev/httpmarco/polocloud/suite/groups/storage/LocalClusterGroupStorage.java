@@ -64,7 +64,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
     @Contract(pure = true)
     @Override
     public @NotNull @Unmodifiable List<ClusterGroup> items() {
-        return List.of();
+        return this.groups;
     }
 
     @Override
