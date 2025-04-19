@@ -4,7 +4,15 @@ import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 
-public class PolocloudInstance extends Polocloud {
+public final class PolocloudInstance extends Polocloud {
+
+    public PolocloudInstance() {
+
+        // todo test
+        while (true) {
+
+        }
+    }
 
     @Override
     public ClusterServiceProvider serviceProvider() {

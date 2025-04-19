@@ -13,8 +13,8 @@ public final class LocalServiceFactory implements ServiceFactory {
 
         var processBuilder = new ProcessBuilder();
 
-        // todo use different platforms
-        processBuilder.command("", "", "", "");
+        // todo use  different platforms
+        processBuilder.command("java", "-jar", "", "");
 
         try {
             processBuilder.start();
