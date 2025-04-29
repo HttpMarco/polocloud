@@ -7,4 +7,9 @@ public class LocalCluster implements Cluster {
     @Override
     public void close() {
     }
+
+    @Override
+    public String name() {
+        return "local";
+    }
 }

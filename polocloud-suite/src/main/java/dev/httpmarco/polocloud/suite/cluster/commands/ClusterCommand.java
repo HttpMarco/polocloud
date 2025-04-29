@@ -52,7 +52,7 @@ public final class ClusterCommand extends RefreshableCommand {
 
         syntax(commandContext -> {
 
-            log.info(translation.get("cluster.command.info", cluster instanceof LocalCluster ? "Local" : "Global"));
+            log.info(translation.get("cluster.command.info", cluster.name()));
             log.info(" ");
 
             if (cluster instanceof GlobalCluster globalCluster) {

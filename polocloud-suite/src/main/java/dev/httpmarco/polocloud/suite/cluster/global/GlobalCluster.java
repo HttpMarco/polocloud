@@ -85,4 +85,9 @@ public final class GlobalCluster implements Cluster {
     public ExternalSuite find(String id) {
         return this.suites.stream().filter(s -> s.id().equals(id)).findFirst().orElse(null);
     }
+
+    @Override
+    public String name() {
+        return "global";
+    }
 }

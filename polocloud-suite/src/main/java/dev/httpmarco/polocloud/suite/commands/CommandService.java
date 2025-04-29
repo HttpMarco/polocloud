@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.commands;
 
 import dev.httpmarco.polocloud.suite.commands.impl.ClearCommand;
+import dev.httpmarco.polocloud.suite.commands.impl.InfoCommand;
 import dev.httpmarco.polocloud.suite.commands.impl.ShutdownCommand;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public final class CommandService {
     public CommandService() {
         this.registerCommand(new ShutdownCommand());
         this.registerCommand(new ClearCommand());
+        this.registerCommand(new InfoCommand());
     }
 
     public List<Command> commandsByName(String name) {
