@@ -3,7 +3,7 @@ import org.gradle.kotlin.dsl.*
 
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "9.0.0-beta12"
+    id("com.gradleup.shadow") version "9.0.0-beta13"
     id("com.google.protobuf") version "0.9.5"
 }
 
@@ -75,6 +75,6 @@ tasks.named("processResources").configure {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.25.6"
+        artifact = "com.google.protobuf:protoc:3.25.7"
     }
 }
