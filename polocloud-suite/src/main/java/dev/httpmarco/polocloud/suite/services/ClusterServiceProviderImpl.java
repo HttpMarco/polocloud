@@ -16,6 +16,7 @@ public class ClusterServiceProviderImpl implements ClusterServiceProvider {
     public ClusterServiceProviderImpl() {
         //todo add external access
         this.storage = new LocalServiceStorage();
+        this.storage.initialize();
 
         PolocloudSuite.instance().commandService().registerCommand(new ServiceCommand(this));
     }
