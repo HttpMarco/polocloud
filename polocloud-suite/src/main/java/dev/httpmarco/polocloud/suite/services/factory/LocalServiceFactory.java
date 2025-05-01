@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.suite.services.factory;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
+import dev.httpmarco.polocloud.suite.utils.PathUtils;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
@@ -79,6 +80,9 @@ public final class LocalServiceFactory implements ServiceFactory {
                     service.process().toHandle().destroyForcibly();
                 }
             }
+
+            // clear service directory
+            PathUtils.deleteDirectory(service.path().toFile());
 
             log.info("Service &8'&f{}&8' &7stopped successfully&8.", service.name());
         } else {
