@@ -10,6 +10,8 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -24,8 +26,9 @@ public final class Log4JAppender extends AbstractAppender {
         super(name, filter, layout, ignoreExceptions, properties);
     }
 
+    @Contract(value = " -> new", pure = true)
     @PluginBuilderFactory
-    public static Builder newBuilder() {
+    public static @NotNull Builder newBuilder() {
         return new Builder();
     }
 
@@ -37,8 +40,8 @@ public final class Log4JAppender extends AbstractAppender {
     }
 
     @Override
-    public void append(LogEvent event) {
-        var message = LoggingColors.translate(logFormat.format(new Date()) + " &8| " + detectState(event.getLevel()) + "&8: &7" + event.getMessage().getFormattedMessage());
+    public void append(@NotNull LogEvent event) {
+        var message = LoggingColors.translate(logFormat.format(new Date()) + " &8| " + detectState(event.getLevel()) + "&8 » &7" + event.getMessage().getFormattedMessage());
         var terminal = PolocloudSuite.instance().terminal();
 
         if (terminal != null) {
@@ -51,7 +54,7 @@ public final class Log4JAppender extends AbstractAppender {
 
     private String detectState(Level level) {
         if (level.equals(Level.INFO)) {
-            return LoggingColors.AQUA + "INFO";
+            return LoggingColors.GRAY + "INFO";
         } else if (level.equals(Level.WARN)) {
             return LoggingColors.YELLOW + "WARN";
         } else if (level.equals(Level.ERROR)) {
