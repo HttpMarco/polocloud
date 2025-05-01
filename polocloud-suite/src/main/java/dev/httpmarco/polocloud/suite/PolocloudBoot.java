@@ -20,7 +20,7 @@ public final class PolocloudBoot {
 
         // print header
         ConsoleActions.emptyLine();
-        System.out.println(LoggingColors.translate("&b  &8| &fPoloCloud &7- &7Simple minecraft cloud &8(⚙\uFE0F &7v2&8.&70&8.&70&8/&7beta1&8)"));
+        System.out.println(LoggingColors.translate("&b  &8| &fPoloCloud &7- &7Simple minecraft cloud &8(&7v2&8.&70&8.&70&8/&7beta1&8)"));
         System.out.println(LoggingColors.translate("&b  &8| &7Discord support&8: &fhttps://discord.gg/WGzUcuJax7"));
 
 
