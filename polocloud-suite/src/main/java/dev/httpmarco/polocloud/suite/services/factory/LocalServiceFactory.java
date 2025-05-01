@@ -1,20 +1,41 @@
 package dev.httpmarco.polocloud.suite.services.factory;
 
 import dev.httpmarco.polocloud.api.services.ClusterService;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Log4j2
 public final class LocalServiceFactory implements ServiceFactory {
 
+    private static final Path FACTORY_DIR = Path.of("temp");
+
+    @SneakyThrows
+    public LocalServiceFactory() {
+        if(!FACTORY_DIR.toFile().exists()) {
+            Files.createDirectories(FACTORY_DIR);
+        } else {
+            // todo drop dir
+        }
+    }
+
+    @SneakyThrows
     @Override
-    public void bootInstance(ClusterService service) {
+    public void bootInstance(@NotNull ClusterService service) {
+        var path = FACTORY_DIR.resolve(service.name() + "-" + service.uniqueId());
+        Files.createDirectories(path);
 
         var processBuilder = new ProcessBuilder();
 
-        // todo use  different platforms
-        processBuilder.command("java", "-jar", "", "");
+        // if users start with a custom java location
+        var javaLocation = System.getProperty("java.home");
+
+        processBuilder.inheritIO();
+        processBuilder.command(javaLocation, "-jar", "", "");
 
         try {
             processBuilder.start();
