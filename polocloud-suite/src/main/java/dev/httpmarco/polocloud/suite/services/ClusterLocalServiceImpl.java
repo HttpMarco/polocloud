@@ -30,18 +30,20 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
     }
 
     @Override
-    public void executeCommand(String command) {
+    public boolean executeCommand(String command) {
         if(process == null) {
             log.warn("Cannot execute this command, because the process is not running!");
-            return;
+            return false;
         }
 
         try {
             var output = this.process.getOutputStream();
             output.write((command + "\n").getBytes(StandardCharsets.UTF_8));
             output.flush();
+            return true;
         } catch (IOException e) {
-            log.error("cannot execute command: {}", command, e);
+            log.debug("Cannot execute command: {}", command, e);
+            return false;
         }
     }
 }

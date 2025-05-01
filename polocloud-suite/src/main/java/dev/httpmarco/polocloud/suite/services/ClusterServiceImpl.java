@@ -24,8 +24,9 @@ public class ClusterServiceImpl implements ClusterService {
     }
 
     @Override
-    public void executeCommand(String command) {
+    public boolean executeCommand(String command) {
         //todo
+        return false;
     }
 
     @Override

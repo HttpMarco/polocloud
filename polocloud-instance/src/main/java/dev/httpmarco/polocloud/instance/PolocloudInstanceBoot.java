@@ -8,7 +8,7 @@ public final class PolocloudInstanceBoot {
         new PolocloudInstance();
     }
 
-    public static void instrumentation(Instrumentation instrumentation) {
+    public static void premain(String agentArgs, Instrumentation instrumentation) {
 
     }
 }

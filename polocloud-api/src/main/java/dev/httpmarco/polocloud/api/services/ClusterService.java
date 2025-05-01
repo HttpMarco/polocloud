@@ -22,7 +22,7 @@ public interface ClusterService extends Named {
 
     ClusterGroup group();
 
-    void executeCommand(String command);
+    boolean executeCommand(String command);
 
     void shutdown();
 

@@ -16,10 +16,10 @@ public final class Parameters {
     public static final String VERSION = "polocloud-version";
     // path for all cloud separates components
     public static final Path LIB_DIRECTORY = Paths.get("local/libs");
-    // important for the launcher process to detect the next initialize class
+    // important for the launcher process to detect the next initialized class
     public static final String BOOT_LIB = "suite";
     // required libs for the first boot process
-    public static final String[] REQUIRED_LIBS = {"api", BOOT_LIB, "grpc"};
+    public static final String[] REQUIRED_LIBS = {"api", BOOT_LIB, "grpc", "instance"};
 
     static {
         try {
