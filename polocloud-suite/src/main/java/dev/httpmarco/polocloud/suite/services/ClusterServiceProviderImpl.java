@@ -42,7 +42,7 @@ public class ClusterServiceProviderImpl implements ClusterServiceProvider {
     }
 
     public void bootNewInstance(ClusterGroup group) {
-        var service = new ClusterServiceImpl(1, UUID.randomUUID(), group);
+        var service = new ClusterLocalServiceImpl(1, UUID.randomUUID(), group);
 
         log.info("Service &8'&f{}&8' &7is starting now&8...", service.name());
         this.storage.publish(service);

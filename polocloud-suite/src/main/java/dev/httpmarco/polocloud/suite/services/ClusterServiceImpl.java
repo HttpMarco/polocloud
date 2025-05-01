@@ -22,4 +22,9 @@ public class ClusterServiceImpl implements ClusterService {
     public @NotNull String name() {
         return group.name() + "-" + id;
     }
+
+    @Override
+    public void executeCommand(String command) {
+        //todo
+    }
 }

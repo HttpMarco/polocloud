@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.services.factory;
 
 import dev.httpmarco.polocloud.api.services.ClusterService;
+import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +26,11 @@ public final class LocalServiceFactory implements ServiceFactory {
 
     @SneakyThrows
     @Override
-    public void bootInstance(@NotNull ClusterService service) {
+    public void bootInstance(@NotNull ClusterLocalServiceImpl service) {
         var path = FACTORY_DIR.resolve(service.name() + "-" + service.uniqueId());
         Files.createDirectories(path);
+
+        service.path(path);
 
         var processBuilder = new ProcessBuilder();
 
@@ -38,10 +41,9 @@ public final class LocalServiceFactory implements ServiceFactory {
         processBuilder.command(javaLocation, "-jar", "", "");
 
         try {
-            processBuilder.start();
+            service.process(processBuilder.start());
         } catch (IOException e) {
             log.error("Failed to start service {}: {}", e.fillInStackTrace(), service.name());
-
             // todo try reboot with properties retry 3 times
             // destroy this service
         }
