@@ -16,6 +16,7 @@ public final class Platform {
     private final PlatformType type;
     private final PlatformLanguage language;
     private final String url;
+    private final String shutdownCommand;
 
     private final List<PlatformVersion> versions;
 

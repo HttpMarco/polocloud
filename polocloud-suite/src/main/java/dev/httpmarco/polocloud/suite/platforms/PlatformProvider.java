@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.platforms;
 
+import dev.httpmarco.polocloud.api.platform.SharedPlatform;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.platforms.commands.PlatformCommand;
 import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
@@ -38,5 +39,10 @@ public class PlatformProvider {
 
     public @Nullable Platform findPlatform(String name) {
         return platforms.stream().filter(platform -> platform.name().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
+    @Nullable
+    public Platform findSharedInstance(SharedPlatform platform) {
+       return this.platforms.stream().filter(it -> it.name().equalsIgnoreCase(platform.name())).findFirst().orElse(null);
     }
 }
