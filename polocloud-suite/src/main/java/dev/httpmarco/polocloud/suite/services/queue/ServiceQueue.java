@@ -13,9 +13,7 @@ public final class ServiceQueue extends Thread {
 
     @Override
     public void run() {
-
         while (!interrupted()) {
-
             Polocloud.instance().groupProvider().findAll().forEach(it -> {
 
                 if(it.minOnlineService() == 0) {
