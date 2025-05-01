@@ -27,4 +27,9 @@ public class ClusterServiceImpl implements ClusterService {
     public void executeCommand(String command) {
         //todo
     }
+
+    @Override
+    public void shutdown() {
+        // todo
+    }
 }

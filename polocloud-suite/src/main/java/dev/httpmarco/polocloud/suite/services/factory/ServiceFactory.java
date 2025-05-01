@@ -1,9 +1,11 @@
 package dev.httpmarco.polocloud.suite.services.factory;
 
-import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
+import dev.httpmarco.polocloud.api.services.ClusterService;
 
 public interface ServiceFactory {
 
-    void bootInstance(ClusterLocalServiceImpl service);
+    void bootInstance(ClusterService service);
+
+    void shutdownInstance(ClusterService service);
 
 }

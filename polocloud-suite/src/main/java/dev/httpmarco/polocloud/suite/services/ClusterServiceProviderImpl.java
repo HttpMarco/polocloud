@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.services;
 
+import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
@@ -10,17 +11,22 @@ import dev.httpmarco.polocloud.suite.services.factory.LocalServiceFactory;
 import dev.httpmarco.polocloud.suite.services.factory.ServiceFactory;
 import dev.httpmarco.polocloud.suite.services.queue.ServiceQueue;
 import dev.httpmarco.polocloud.suite.services.storage.LocalServiceStorage;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.UUID;
 
 @Log4j2
-public class ClusterServiceProviderImpl implements ClusterServiceProvider {
+@Accessors(fluent = true)
+public final class ClusterServiceProviderImpl implements ClusterServiceProvider, Closeable {
 
     private final ClusterStorage<String, ClusterService> storage;
-    private final ServiceFactory factory;
     private final ServiceQueue queue;
+
+    @Getter
+    private final ServiceFactory factory;
 
     public ClusterServiceProviderImpl() {
         //todo add external access
@@ -48,5 +54,18 @@ public class ClusterServiceProviderImpl implements ClusterServiceProvider {
         this.storage.publish(service);
 
         this.factory.bootInstance(service);
+    }
+
+    @Override
+    public void close() {
+        this.queue.interrupt();
+        log.info("Successfully stop the service queue&8.");
+
+        for (ClusterService item : this.storage.items()) {
+            // only stop this suite instance
+            if(item instanceof ClusterLocalServiceImpl localService) {
+                localService.shutdown();
+            }
+        }
     }
 }

@@ -1,24 +1,21 @@
 package dev.httpmarco.polocloud.suite.services;
 
-import dev.httpmarco.polocloud.api.Closeable;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Log4j2
 @Getter
 @Setter
 @Accessors(fluent = true)
-public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements Closeable {
+public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements ClusterLocalService {
 
     private Process process;
     private Path path;
@@ -28,28 +25,8 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
     }
 
     @Override
-    public void close() {
-        if (this.process == null) {
-            return;
-        }
-
-        // todo call exit
-
-        this.executeCommand(PolocloudSuite.instance().platformProvider().findSharedInstance(group().platform()).shutdownCommand());
-
-        try {
-            if (this.process.waitFor(PolocloudSuite.instance().config().local().processTerminationIdleSeconds(), TimeUnit.SECONDS)) {
-                this.process.exitValue();
-                this.process = null;
-            }
-        }catch (InterruptedException exception) {
-            log.debug("Failed to wait for process termination");
-        }
-
-        // the process is running...
-        if(process != null) {
-            this.process.toHandle().destroyForcibly();
-        }
+    public void shutdown() {
+        PolocloudSuite.instance().serviceProvider().factory().shutdownInstance(this);
     }
 
     @Override

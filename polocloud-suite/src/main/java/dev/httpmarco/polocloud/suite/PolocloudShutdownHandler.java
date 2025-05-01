@@ -26,6 +26,9 @@ public class PolocloudShutdownHandler {
         var cluster = PolocloudSuite.instance().cluster();
         var translation = PolocloudSuite.instance().translation();
 
+        // stop all services and interrupt queue
+        PolocloudSuite.instance().serviceProvider().close();
+
         if(cluster != null) {
             log.info(translation.get("shutdown.cluster"));
             cluster.close();

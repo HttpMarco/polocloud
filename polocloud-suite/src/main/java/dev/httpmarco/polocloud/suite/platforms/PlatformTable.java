@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class PlatformTable {
+public final class PlatformTable {
 
     private final String[] availableProxies;
 

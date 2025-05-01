@@ -31,9 +31,7 @@ public final class ServiceQueue extends Thread {
 
             try {
                 sleep(1000);
-            } catch (InterruptedException e) {
-                log.error("Failed to sleep on queue thread.", e);
-            }
+            } catch (InterruptedException ignore) {}
         }
     }
 }
