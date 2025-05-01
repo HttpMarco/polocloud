@@ -37,9 +37,27 @@ public final class PlatformCommand extends Command {
                 return;
             }
 
-            log.info("Platform &7{}&8:", platform.name());
-            log.info("&8  - &7Type&8: &f{}", platform.type().name());
-            log.info("&8  - &7Language&8: &f{}", platform.language());
+            log.info("&7{}&8:", platform.name());
+            log.info("&8  ├─ &7Type&8: &f{}", platform.type().name());
+            log.info("&8  ├─ &7Language&8: &f{}", platform.language());
+            log.info("&8  └─ &7Versions&8: (&f{}&8)", platform.versions().size());
+
+            for (int i = 0; i < platform.versions().size(); i++) {
+                var version = platform.versions().get(i);
+                var prefix = "├─";
+
+                if(i == platform.versions().size()-1) {
+                    prefix = "└─";
+                }
+                log.info("&8    {} &7{}", prefix, version.version());
+            }
         }, new KeywordArgument("info"), platformArg);
+
+        syntax(commandContext -> {
+
+            // todo
+
+        }, new KeywordArgument("delete"), platformArg);
+
     }
 }
