@@ -4,7 +4,6 @@ import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.PlatformArgument;
 import dev.httpmarco.polocloud.suite.platforms.PlatformProvider;
-import dev.httpmarco.polocloud.suite.platforms.setup.PlatformSetup;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -25,8 +24,6 @@ public final class PlatformCommand extends Command {
             }
         }, new KeywordArgument("list"));
 
-        syntax(it -> new PlatformSetup().run(), "Create your own custom platform", new KeywordArgument("custom"));
-
         var platformArg = new PlatformArgument("platform");
         syntax(commandContext -> {
 
@@ -37,9 +34,20 @@ public final class PlatformCommand extends Command {
                 return;
             }
 
-            log.info("Platform &7{}&8:", platform.name());
-            log.info("&8  - &7Type&8: &f{}", platform.type().name());
-            log.info("&8  - &7Language&8: &f{}", platform.language());
+            log.info("&7{}&8:", platform.name());
+            log.info("&8  ├─ &7Type&8: &f{}", platform.type().name());
+            log.info("&8  ├─ &7Language&8: &f{}", platform.language());
+            log.info("&8  └─ &7Versions&8: (&f{}&8)", platform.versions().size());
+
+            for (int i = 0; i < platform.versions().size(); i++) {
+                var version = platform.versions().get(i);
+                var prefix = "├─";
+
+                if(i == platform.versions().size()-1) {
+                    prefix = "└─";
+                }
+                log.info("&8    {} &7{}", prefix, version.version());
+            }
         }, new KeywordArgument("info"), platformArg);
     }
 }

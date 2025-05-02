@@ -70,6 +70,12 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
 
     @Override
     public void print(String message) {
+        if (terminal == null) {
+            // we wait here for the right terminal
+            System.out.println(LoggingColors.translate(message));
+            return;
+        }
+
         this.terminal.puts(InfoCmp.Capability.carriage_return);
         this.terminal.writer().println(LoggingColors.translate(message));
         this.update();

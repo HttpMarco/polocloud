@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.platforms;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -7,8 +8,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public final class PlatformTable {
+public final class PlatformVersion {
 
-    private final String[] availableProxies;
+    private final String version;
+    private final String buildId;
 
 }

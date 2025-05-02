@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.suite.services.local;
 
-import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 
 public final class LocalClusterServiceQueue extends Thread {
@@ -21,7 +20,6 @@ public final class LocalClusterServiceQueue extends Thread {
 
                 // todo check percentage of service
                 // todo start the new service
-
             }
         }
     }

@@ -6,4 +6,6 @@ public interface ServiceFactory {
 
     void bootInstance(ClusterService service);
 
+    void shutdownInstance(ClusterService service);
+
 }

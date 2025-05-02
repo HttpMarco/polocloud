@@ -4,15 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class Platform {
+public final class Platform {
 
     private final String name;
     private final String icon;
     private final PlatformType type;
     private final PlatformLanguage language;
-    private String url;
+    private final String url;
+    private final String shutdownCommand;
+
+    private final List<PlatformVersion> versions;
+
+
 
 }

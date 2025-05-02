@@ -36,7 +36,7 @@ public final class PolocloudSuite extends Polocloud {
     private final DependencyProvider dependencyProvider;
     private final PlatformProvider platformProvider;
     private final ClusterGroupProviderImpl groupProvider;
-    private final ClusterServiceProvider serviceProvider;
+    private final ClusterServiceProviderImpl serviceProvider;
 
     public PolocloudSuite() {
         this.config = SuiteConfig.load();

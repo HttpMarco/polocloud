@@ -42,6 +42,13 @@ public final class PolocloudProcess extends Thread {
                 .orElseThrow(() -> new LibNotFoundException(Parameters.BOOT_LIB));
 
         arguments.add(usedJava + "/bin/java");
+
+        // Enables native access for unnamed modules to avoid warnings caused by Jansi (used for terminal output).
+        // Without this flag, Java may block access to native methods like System::load in future versions.
+        arguments.add("--enable-native-access=ALL-UNNAMED");
+        // java 24 drop a big warning here -> temp fix
+        arguments.add("--sun-misc-unsafe-memory-access=allow");
+
         arguments.add("-javaagent:%s".formatted(bootLib.target()));
 
         arguments.add("-cp");
