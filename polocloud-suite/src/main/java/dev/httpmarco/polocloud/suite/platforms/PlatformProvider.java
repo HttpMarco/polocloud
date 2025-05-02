@@ -3,6 +3,8 @@ package dev.httpmarco.polocloud.suite.platforms;
 import dev.httpmarco.polocloud.api.platform.SharedPlatform;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.platforms.commands.PlatformCommand;
+import dev.httpmarco.polocloud.suite.platforms.factory.LocalPlatformFactory;
+import dev.httpmarco.polocloud.suite.platforms.factory.PlatformFactory;
 import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -19,9 +21,13 @@ public class PlatformProvider {
 
     private static final String TABLE_OF_PLATFORMS = "https://raw.githubusercontent.com/HttpMarco/polocloud/refs/heads/master/polocloud-metadata/";
     private final List<Platform> platforms = new ArrayList<>();
+    private final PlatformFactory factory;
 
     public PlatformProvider() {
         this.refreshPlatformData();
+
+        // todo make generable
+        this.factory = new LocalPlatformFactory();
 
         PolocloudSuite.instance().commandService().registerCommand(new PlatformCommand(this));
         log.info("Loaded {} platforms", platforms.size());
@@ -39,6 +45,15 @@ public class PlatformProvider {
 
     public @Nullable Platform findPlatform(String name) {
         return platforms.stream().filter(platform -> platform.name().equalsIgnoreCase(name)).findFirst().orElse(null);
+    }
+
+    public @Nullable PlatformVersion findPlatformVersion(SharedPlatform platform) {
+        Platform localPlatform = this.findPlatform(platform.name());
+
+        if(localPlatform == null) {
+            return null;
+        }
+        return localPlatform.versions().stream().filter(it -> it.version().equals(platform.version().toString())).findFirst().orElse(null);
     }
 
     @Nullable
