@@ -19,7 +19,7 @@ public final class GroupSetup extends Setup {
         question("minMemory", "What is the minimum memory available for this group's service? (mb)");
         question("maxMemory", "What is the maximum memory available for this group's service? (mb)");
         question("minOnlineService", "How many services must be minimal online?");
-        question("minOnlineService", "What is the maximum online services amount?");
+        question("maxOnlineService", "What is the maximum online services amount?");
     }
 
     @Override

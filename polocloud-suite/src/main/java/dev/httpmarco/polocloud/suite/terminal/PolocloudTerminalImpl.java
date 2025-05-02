@@ -65,6 +65,12 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
 
     @Override
     public void handleInput(String commandName, String[] args) {
+
+        if(displayedSetup != null) {
+            displayedSetup.answer(commandName);
+            return;
+        }
+
         PolocloudSuite.instance().commandService().call(commandName, args);
     }
 
