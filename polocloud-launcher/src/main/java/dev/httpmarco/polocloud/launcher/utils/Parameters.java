@@ -19,7 +19,7 @@ public final class Parameters {
     // important for the launcher process to detect the next initialized class
     public static final String BOOT_LIB = "suite";
     // required libs for the first boot process
-    public static final String[] REQUIRED_LIBS = {"api", BOOT_LIB, "grpc", "instance"};
+    public static final String[] REQUIRED_LIBS = {"api", BOOT_LIB, "grpc", "instance", "common"};
 
     static {
         try {

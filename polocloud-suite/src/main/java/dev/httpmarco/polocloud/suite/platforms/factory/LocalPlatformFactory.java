@@ -59,7 +59,6 @@ public final class LocalPlatformFactory implements PlatformFactory {
                     .resolve(platformVersion.version())
                     .resolve(platformFileName);
 
-            // copy file
             try {
                 Files.copy(platformPath, localService.path().resolve(platformFileName));
             } catch (IOException e) {

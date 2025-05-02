@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -43,12 +44,16 @@ public class PlatformProvider {
         // todo load local platforms
     }
 
-    public @Nullable Platform findPlatform(String name) {
-        return platforms.stream().filter(platform -> platform.name().equalsIgnoreCase(name)).findFirst().orElse(null);
+    public @Nullable Platform findPlatform(SharedPlatform platform) {
+        return this.findPlatform(platform.name());
     }
 
-    public @Nullable PlatformVersion findPlatformVersion(SharedPlatform platform) {
-        Platform localPlatform = this.findPlatform(platform.name());
+    public @Nullable Platform findPlatform(String platform) {
+        return platforms.stream().filter(it -> it.name().equalsIgnoreCase(platform)).findFirst().orElse(null);
+    }
+
+    public @Nullable PlatformVersion findPlatformVersion(@NotNull SharedPlatform platform) {
+        Platform localPlatform = this.findPlatform(platform);
 
         if(localPlatform == null) {
             return null;

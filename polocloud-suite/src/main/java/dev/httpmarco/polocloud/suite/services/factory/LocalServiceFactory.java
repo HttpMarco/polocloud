@@ -1,7 +1,8 @@
 package dev.httpmarco.polocloud.suite.services.factory;
 
-import dev.httpmarco.polocloud.api.Polocloud;
+import dev.httpmarco.polocloud.api.PolocloudEnvironment;
 import dev.httpmarco.polocloud.api.services.ClusterService;
+import dev.httpmarco.polocloud.common.OS;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
 import dev.httpmarco.polocloud.suite.utils.PathUtils;
@@ -12,13 +13,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Log4j2
 public final class LocalServiceFactory implements ServiceFactory {
 
     private static final String INSTANCE_PATH = "../../local/libs/polocloud-instance-2.0.0.jar";
+    private static final String API_PATH = "../../local/libs/polocloud-api-2.0.0.jar";
+
     private static final String INSTANCE_MAIN_CLASS;
 
     private static final Path FACTORY_DIR = Path.of("temp");
@@ -42,46 +45,44 @@ public final class LocalServiceFactory implements ServiceFactory {
     public void bootInstance(ClusterService clusterService) {
         if (clusterService instanceof ClusterLocalServiceImpl service) {
             var path = FACTORY_DIR.resolve(service.name() + "-" + service.uniqueId());
-            Files.createDirectories(path);
 
+            Files.createDirectories(path);
             service.path(path);
 
-            var processBuilder = new ProcessBuilder();
+            var processBuilder = new ProcessBuilder().directory(service.path().toFile());
 
             // if users start with a custom java location
             var javaLocation = System.getProperty("java.home");
 
-            processBuilder.inheritIO();
-            processBuilder.directory(service.path().toFile());
-
-
             var arguments = new ArrayList<String>();
-            // todo generate dynamic common method
-            var dependencies = List.of("../../local/libs/polocloud-api-2.0.0.jar");
+            var dependencies = new ArrayList<String>();
+            dependencies.add(API_PATH);
 
             arguments.add(javaLocation + "/bin/java");
             arguments.add("-javaagent:%s".formatted(INSTANCE_PATH));
             arguments.add("-cp");
-            arguments.add(String.join(windowsProcess() ? ";" : ":", dependencies));
+            arguments.add(String.join(OS.detect().processSeparator(), dependencies));
             arguments.add(INSTANCE_MAIN_CLASS);
 
-            processBuilder.command(arguments);
+            var platformProvider = PolocloudSuite.instance().platformProvider();
+            var platform = platformProvider.findPlatform(service.group().platform());
+            var version = platformProvider.findPlatformVersion(service.group().platform());
 
-            var platform = PolocloudSuite.instance().platformProvider().findPlatform(service.group().platform().name());
-            var platformVersion = PolocloudSuite.instance().platformProvider().findPlatformVersion(service.group().platform());
-            var platformFile = platform.name() + "-" + platformVersion.version() + "-" + platformVersion.buildId() + ".jar";
+            if (platform == null) {
+                log.error("Failed to find platform version for service {}: {}", service.name(), service.group().platform());
+                return;
+            }
 
-
-            processBuilder.environment().put("POLOCLOUD_SUITE_HOSTNAME", "localhost");
-            processBuilder.environment().put("POLOCLOUD_SUITE_PORT", String.valueOf(PolocloudSuite.instance().config().cluster().port()));
-            processBuilder.environment().put("POLOCLOUD_SUITE_PLATFORM_PATH", platformFile);
-
+            Map<String, String> environment = processBuilder.environment();
+            environment.put(PolocloudEnvironment.POLOCLOUD_SUITE_HOSTNAME.name(), "localhost");
+            environment.put(PolocloudEnvironment.POLOCLOUD_SUITE_PORT.name(), String.valueOf(PolocloudSuite.instance().config().cluster().port()));
+            environment.put(PolocloudEnvironment.POLOCLOUD_SUITE_PLATFORM_PATH.name(), platform.name() + "-" + version.version() + "-" + version.buildId() + ".jar");
 
             // download platform file
-            PolocloudSuite.instance().platformProvider().factory().bindPlatform(service);
+            platformProvider.factory().bindPlatform(service);
 
             try {
-                service.process(processBuilder.start());
+                service.process(processBuilder.command(arguments).start());
             } catch (IOException e) {
                 log.error("Failed to start service {}: {}", e.fillInStackTrace(), service.name());
                 // todo try reboot with properties retry 3 times
@@ -94,11 +95,8 @@ public final class LocalServiceFactory implements ServiceFactory {
     @Override
     public void shutdownInstance(ClusterService clusterService) {
         if (clusterService instanceof ClusterLocalServiceImpl service) {
-
             log.info("Service &8'&f{}&8' &7stop process...", service.name());
-
             if (service.process() != null) {
-                // todo call exit
                 var platform = PolocloudSuite.instance().platformProvider().findSharedInstance(service.group().platform());
                 // shutdown the process with the right command -> else use the default stop command
                 if (service.executeCommand(platform == null ? "stop" : platform.shutdownCommand())) {
@@ -111,25 +109,17 @@ public final class LocalServiceFactory implements ServiceFactory {
                         log.debug("Failed to wait for process termination");
                     }
                 }
-
                 // the process is running...
                 if (service.process() != null) {
                     service.process().toHandle().destroyForcibly();
                     service.process(null);
                 }
             }
-
             // clear service directory
             PathUtils.deleteDirectory(service.path().toFile());
-
             log.info("Service &8'&f{}&8' &7stopped successfully&8.", service.name());
         } else {
             // todo other suite
         }
-    }
-
-    //todo duplicated
-    private boolean windowsProcess() {
-        return System.getProperty("os.name").toLowerCase().contains("win");
     }
 }

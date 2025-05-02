@@ -2,10 +2,11 @@ package dev.httpmarco.polocloud.suite.services.commands;
 
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.suite.commands.Command;
+import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class ServiceCommand extends Command {
+public final class ServiceCommand extends Command {
 
     public ServiceCommand(ClusterServiceProvider serviceProvider) {
         super("service", "Manage all your services", "services");
@@ -21,6 +22,6 @@ public class ServiceCommand extends Command {
             for (var service : serviceProvider.findAll()) {
                 log.info("&8- &f{}", service.name());
             }
-        });
+        }, new KeywordArgument("list"));
     }
 }
