@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.services.factory;
 
+import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
@@ -53,6 +54,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             processBuilder.inheritIO();
             processBuilder.directory(service.path().toFile());
 
+
             var arguments = new ArrayList<String>();
             // todo generate dynamic common method
             var dependencies = List.of("../../local/libs/polocloud-api-2.0.0.jar");
@@ -64,6 +66,19 @@ public final class LocalServiceFactory implements ServiceFactory {
             arguments.add(INSTANCE_MAIN_CLASS);
 
             processBuilder.command(arguments);
+
+            var platform = PolocloudSuite.instance().platformProvider().findPlatform(service.group().platform().name());
+            var platformVersion = PolocloudSuite.instance().platformProvider().findPlatformVersion(service.group().platform());
+            var platformFile = platform.name() + "-" + platformVersion.version() + "-" + platformVersion.buildId() + ".jar";
+
+
+            processBuilder.environment().put("POLOCLOUD_SUITE_HOSTNAME", "localhost");
+            processBuilder.environment().put("POLOCLOUD_SUITE_PORT", String.valueOf(PolocloudSuite.instance().config().cluster().port()));
+            processBuilder.environment().put("POLOCLOUD_SUITE_PLATFORM_PATH", platformFile);
+
+
+            // download platform file
+            PolocloudSuite.instance().platformProvider().factory().bindPlatform(service);
 
             try {
                 service.process(processBuilder.start());
@@ -83,7 +98,6 @@ public final class LocalServiceFactory implements ServiceFactory {
             log.info("Service &8'&f{}&8' &7stop process...", service.name());
 
             if (service.process() != null) {
-
                 // todo call exit
                 var platform = PolocloudSuite.instance().platformProvider().findSharedInstance(service.group().platform());
                 // shutdown the process with the right command -> else use the default stop command
@@ -101,6 +115,7 @@ public final class LocalServiceFactory implements ServiceFactory {
                 // the process is running...
                 if (service.process() != null) {
                     service.process().toHandle().destroyForcibly();
+                    service.process(null);
                 }
             }
 

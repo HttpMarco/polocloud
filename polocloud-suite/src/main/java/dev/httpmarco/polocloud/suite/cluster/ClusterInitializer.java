@@ -39,7 +39,7 @@ public class ClusterInitializer {
             return cluster;
         } else {
             log.info(translation.get("cluster.initializer.localClusterProfile"));
-            return new LocalCluster();
+            return new LocalCluster(new ClusterSuiteData("local", "127.0.0.1", null, config.port()));
         }
     }
 
@@ -70,8 +70,8 @@ public class ClusterInitializer {
         if (polocloudSuite.cluster() instanceof GlobalCluster globalCluster) {
             var config = polocloudSuite.config();
             var currentConfig = config.cluster();
-            var localCluster = new LocalCluster();
             var localClusterConfig = new ClusterLocalConfig(currentConfig.id(), currentConfig.port());
+            var localCluster = new LocalCluster(new ClusterSuiteData(localClusterConfig.id(), "127.0.0.1", null, localClusterConfig.port()));
 
             globalCluster.syncStorage().delete(globalCluster.localSuite().data());
 

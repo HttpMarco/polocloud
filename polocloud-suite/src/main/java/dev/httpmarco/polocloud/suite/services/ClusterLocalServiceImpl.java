@@ -31,7 +31,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
 
     @Override
     public boolean executeCommand(String command) {
-        if(process == null) {
+        if (process == null) {
             log.warn("Cannot execute this command, because the process is not running!");
             return false;
         }
