@@ -6,4 +6,6 @@ public interface ClusterServiceProvider {
 
     List<ClusterService> findAll();
 
+    ClusterService find(String name);
+
 }

@@ -47,6 +47,11 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
         return this.storage.items();
     }
 
+    @Override
+    public ClusterService find(String name) {
+        return this.storage.singleton(name);
+    }
+
     public void bootNewInstance(ClusterGroup group) {
         var service = new ClusterLocalServiceImpl(1, UUID.randomUUID(), group);
 
