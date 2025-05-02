@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":polocloud-api"))
+    compileOnly(libs.bundles.grpc)
 }
 
 
