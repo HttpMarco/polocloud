@@ -16,6 +16,7 @@ dependencies {
     // need grpc -> improve dependency
     implementation("com.google.guava:failureaccess:1.0.3")
 
+    compileOnly(project(":polocloud-common"))
     compileOnly(project(":polocloud-grpc"))
     compileOnly(project(":polocloud-api"))
     compileOnly(libs.bundles.grpc)
@@ -55,7 +56,7 @@ val generateCompileOnlyDependenciesJson by tasks.registering {
     doLast {
         // we only want all compileOnly dependencies -> without polocloud api
         val dependenciesList = configurations.getByName("compileOnly").allDependencies
-            .filter { it.name != "polocloud-api" && it.name != "polocloud-grpc" && it.name != "annotations" && it.name != "lombok" }
+            .filter { it.name != "polocloud-api" && it.name != "polocloud-grpc" && it.name != "polocloud-common" && it.name != "annotations" && it.name != "lombok" }
             .onEach { println("Dependency: ${it.name}") }
             .map {
                 mapOf("group" to it.group, "name" to it.name, "version" to it.version)

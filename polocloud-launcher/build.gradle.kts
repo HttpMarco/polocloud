@@ -8,7 +8,8 @@ tasks.jar {
         includeLibs("instance"),
         includeLibs("suite", "shadowJar"),
         includeLibs("grpc"),
-        includeLibs("instance")
+        includeLibs("instance"),
+        includeLibs("common")
     )
 
     manifest {
