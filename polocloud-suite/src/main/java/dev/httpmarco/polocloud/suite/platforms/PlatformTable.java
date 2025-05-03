@@ -10,5 +10,6 @@ import lombok.experimental.Accessors;
 public final class PlatformTable {
 
     private final String[] availableProxies;
+    private final String[] availableServers;
 
 }

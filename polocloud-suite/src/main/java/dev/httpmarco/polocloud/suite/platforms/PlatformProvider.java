@@ -38,8 +38,13 @@ public class PlatformProvider {
         this.platforms.clear();
         var table = Downloader.of(TABLE_OF_PLATFORMS + "metadata-table.json").gson(PlatformTable.class);
 
+        // todo improve duplicated code
         for (var proxyId : table.availableProxies()) {
             platforms.add(Downloader.of(TABLE_OF_PLATFORMS + "proxy/" + proxyId + "/metadata.json").gson(Platform.class));
+        }
+
+        for (var serverId : table.availableServers()) {
+            platforms.add(Downloader.of(TABLE_OF_PLATFORMS + "server/" + serverId + "/metadata.json").gson(Platform.class));
         }
         // todo load local platforms
     }
