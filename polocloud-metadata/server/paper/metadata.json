@@ -8,6 +8,7 @@
   "filePrepareProcess": [
     {
       "type": "TXT",
+      "name": "eula",
       "flag": "REPLACE_ALL",
       "content": "eula=true"
     }
