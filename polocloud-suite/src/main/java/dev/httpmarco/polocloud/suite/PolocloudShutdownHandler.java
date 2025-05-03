@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite;
 
+import dev.httpmarco.polocloud.suite.services.ClusterServiceProviderImpl;
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,18 +19,21 @@ public class PolocloudShutdownHandler {
     }
 
     public void shutdown() {
-        if(idleShutdown) {
+        if (idleShutdown) {
             return;
         }
         idleShutdown = true;
 
         var cluster = PolocloudSuite.instance().cluster();
         var translation = PolocloudSuite.instance().translation();
+        var serviceProvider = PolocloudSuite.instance().serviceProvider();
 
         // stop all services and interrupt queue
-        PolocloudSuite.instance().serviceProvider().close();
+        if (serviceProvider != null) {
+            serviceProvider.close();
+        }
 
-        if(cluster != null) {
+        if (cluster != null) {
             log.info(translation.get("shutdown.cluster"));
             cluster.close();
             log.info(translation.get("shutdown.clusterSuccessfully"));
@@ -38,7 +42,7 @@ public class PolocloudShutdownHandler {
         AnsiConsole.systemUninstall();
         log.info(translation.get("shutdown.suite"));
 
-        if(!Thread.currentThread().getName().equals(SHUTDOWN_HOOK)) {
+        if (!Thread.currentThread().getName().equals(SHUTDOWN_HOOK)) {
             System.exit(-1);
         }
     }
