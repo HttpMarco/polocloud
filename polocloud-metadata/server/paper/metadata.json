@@ -5,6 +5,13 @@
   "language": "JAVA",
   "url": "https://api.papermc.io/v2/projects/paper/versions/%version%/builds/%buildId%/downloads/paper-%version%-%buildId%.jar",
   "shutdownCommand": "stop",
+  "filePrepareProcess": [
+    {
+      "type": "TXT",
+      "flag": "REPLACE_ALL",
+      "content": "eula=true"
+    }
+  ],
   "versions": [
     {
       "version": "1.21.5",
