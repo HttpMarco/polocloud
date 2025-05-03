@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.platforms;
 
+import dev.httpmarco.polocloud.suite.platforms.files.FilePrepareProcess;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -17,9 +18,7 @@ public final class Platform {
     private final PlatformLanguage language;
     private final String url;
     private final String shutdownCommand;
-
+    private final List<FilePrepareProcess> filePrepareProcess;
     private final List<PlatformVersion> versions;
-
-
 
 }

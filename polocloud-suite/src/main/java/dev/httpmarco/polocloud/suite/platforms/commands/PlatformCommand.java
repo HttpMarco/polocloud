@@ -37,6 +37,21 @@ public final class PlatformCommand extends Command {
             log.info("&7{}&8:", platform.name());
             log.info("&8  ├─ &7Type&8: &f{}", platform.type().name());
             log.info("&8  ├─ &7Language&8: &f{}", platform.language());
+            log.info("&8  ├─ &7File preparation&8:(&f{}&8)", platform.filePrepareProcess().size());
+
+            for (int i = 0; i < platform.filePrepareProcess().size(); i++) {
+                var fileProcess = platform.filePrepareProcess().get(i);
+                var prefix = "├─";
+
+                if(i == platform.filePrepareProcess().size()-1) {
+                    prefix = "└─";
+                }
+                //todo fix duplication
+                log.info("&8    {} &7{}", prefix, fileProcess.name());
+            }
+
+
+
             log.info("&8  └─ &7Versions&8: (&f{}&8)", platform.versions().size());
 
             for (int i = 0; i < platform.versions().size(); i++) {
