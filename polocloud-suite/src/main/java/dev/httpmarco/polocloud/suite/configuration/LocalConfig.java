@@ -9,8 +9,9 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public final class LocalConfig {
 
-    public static LocalConfig DEFAULT = new LocalConfig(10);
+    public static LocalConfig DEFAULT = new LocalConfig(10, 2);
 
     private final int processTerminationIdleSeconds;
+    private final int maxQueueProcesses;
 
 }

@@ -31,6 +31,8 @@ public final class InfoCommand extends Command {
             log.info("&8- &7Startup Time&8: &f{}", formatDuration(System.currentTimeMillis() - Long.parseLong(System.getProperty("polocloud.boot.time"))));
             log.info("&8- &7Java Version&8: &f{}", System.getProperty("java.version"));
             log.info("&8- &7Cluster type&8: &f{}", PolocloudSuite.instance().cluster().name());
+            log.info("&8- &7Max queue processes&8: &f{}", PolocloudSuite.instance().config().local().maxQueueProcesses());
+            log.info("&8- &7Process termination idle&8: &f{}", PolocloudSuite.instance().config().local().processTerminationIdleSeconds() + "s");
         });
     }
 
