@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.suite.services.commands.ServiceCommand;
 import dev.httpmarco.polocloud.suite.services.factory.LocalServiceFactory;
 import dev.httpmarco.polocloud.suite.services.factory.ServiceFactory;
 import dev.httpmarco.polocloud.suite.services.queue.ServiceQueue;
+import dev.httpmarco.polocloud.suite.services.queue.ServiceTrackingQueue;
 import dev.httpmarco.polocloud.suite.services.storage.LocalServiceStorage;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -23,6 +24,8 @@ import java.util.UUID;
 public final class ClusterServiceProviderImpl implements ClusterServiceProvider, Closeable {
 
     private final ClusterStorage<String, ClusterService> storage;
+
+    private final ServiceTrackingQueue trackingQueue;
     private final ServiceQueue queue;
 
     @Getter
@@ -37,6 +40,9 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
         this.factory = new LocalServiceFactory();
 
         PolocloudSuite.instance().commandService().registerCommand(new ServiceCommand(this));
+
+        this.trackingQueue = new ServiceTrackingQueue(this);
+        this.trackingQueue.start();
 
         this.queue = new ServiceQueue();
         this.queue.start();
@@ -64,6 +70,7 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
     @Override
     public void close() {
         this.queue.interrupt();
+        this.trackingQueue.interrupt();
         log.info("Successfully stop the service queue&8.");
 
         for (ClusterService item : this.storage.items()) {
