@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.suite.services;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
+import dev.httpmarco.polocloud.suite.utils.PortDetector;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,11 +20,15 @@ import java.util.UUID;
 @Accessors(fluent = true)
 public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements ClusterLocalService {
 
+    private final int port;
     private Process process;
     private Path path;
 
     public ClusterLocalServiceImpl(int id, UUID uniqueId, ClusterGroup group) {
         super(id, uniqueId, group, ClusterServiceState.PREPARE);
+
+        // generate port
+        this.port = PortDetector.nextPort(this);
     }
 
     @Override

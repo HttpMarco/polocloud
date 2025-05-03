@@ -4,6 +4,8 @@ import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.platforms.Platform;
 import dev.httpmarco.polocloud.suite.platforms.PlatformVersion;
+import dev.httpmarco.polocloud.suite.platforms.files.FilePrepareProcess;
+import dev.httpmarco.polocloud.suite.services.ClusterLocalService;
 import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
 import dev.httpmarco.polocloud.suite.utils.PathUtils;
 import dev.httpmarco.polocloud.suite.utils.downloading.Downloader;
@@ -34,11 +36,12 @@ public final class LocalPlatformFactory implements PlatformFactory {
         platformPath.getParent().toFile().mkdirs();
 
         Downloader.of(platform.url()
-                .replace("%version%", version.version())
-                .replace("%buildId%", version.buildId()))
+                        .replace("%version%", version.version())
+                        .replace("%buildId%", version.buildId()))
                 .file(platformPath.toString());
     }
 
+    @SneakyThrows
     @Override
     public void bindPlatform(ClusterService service) {
 
@@ -64,8 +67,34 @@ public final class LocalPlatformFactory implements PlatformFactory {
             } catch (IOException e) {
                 log.error("Failed to copy platform boot file to {}", platformPath, e);
             }
+
+
+            // edit the prepared process files
+            for (FilePrepareProcess prepareProcess : platform.filePrepareProcess()) {
+                var file = localService.path().resolve(prepareProcess.file().getName());
+
+                switch (prepareProcess.flag()) {
+                    case REPLACE_ALL -> {
+                        Files.write(file, replacePlaceHolder(prepareProcess.content(), localService).getBytes());
+                    }
+                    case CREATE_OR_UPDATE -> {
+
+                        if (Files.exists(file)) {
+                            // update here
+                        } else {
+                            Files.writeString(file, replacePlaceHolder(prepareProcess.content(), localService));
+                        }
+
+                    }
+                }
+            }
+
         } else {
             log.warn("Cannot prepare platform binding for {}.", service.name());
         }
+    }
+
+    private String replacePlaceHolder(String content, ClusterLocalService service) {
+        return content.replace("[%PORT%]", String.valueOf(service.port()));
     }
 }
