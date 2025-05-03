@@ -1,11 +1,13 @@
 package dev.httpmarco.polocloud.suite.services;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -21,7 +23,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
     private Path path;
 
     public ClusterLocalServiceImpl(int id, UUID uniqueId, ClusterGroup group) {
-        super(id, uniqueId, group);
+        super(id, uniqueId, group, ClusterServiceState.PREPARE);
     }
 
     @Override
@@ -45,5 +47,10 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
             log.debug("Cannot execute command: {}", command, e);
             return false;
         }
+    }
+
+
+    public void changeState(ClusterServiceState state) {
+        super.state(state);
     }
 }

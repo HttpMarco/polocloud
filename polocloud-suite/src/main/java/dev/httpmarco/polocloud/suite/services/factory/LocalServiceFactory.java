@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.suite.services.factory;
 
 import dev.httpmarco.polocloud.api.PolocloudEnvironment;
 import dev.httpmarco.polocloud.api.services.ClusterService;
+import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.common.OS;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
@@ -44,6 +45,8 @@ public final class LocalServiceFactory implements ServiceFactory {
     @Override
     public void bootInstance(ClusterService clusterService) {
         if (clusterService instanceof ClusterLocalServiceImpl service) {
+            service.changeState(ClusterServiceState.STARTING);
+
             var path = FACTORY_DIR.resolve(service.name() + "-" + service.uniqueId());
 
             Files.createDirectories(path);

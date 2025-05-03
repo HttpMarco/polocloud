@@ -22,6 +22,8 @@ public interface ClusterService extends Named {
 
     ClusterGroup group();
 
+    ClusterServiceState state();
+
     boolean executeCommand(String command);
 
     void shutdown();

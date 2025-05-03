@@ -46,6 +46,7 @@ public final class ServiceCommand extends Command {
             log.info(service.name());
             log.info("&8  ├─ &7Id: &f{}", service.uniqueId());
             log.info("&8  ├─ &7Group: &f{}", service.group().name());
+            log.info("&8  ├─ &7State: &f{}", service.state().name());
         }, serviceArgument);
 
     }
