@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.commands.type;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.commands.CommandArgument;
 import dev.httpmarco.polocloud.suite.commands.CommandContext;
 
@@ -23,7 +24,7 @@ public final class IntArgument extends CommandArgument<Integer> {
 
     @Override
     public String wrongReason() {
-        return "The argument " + key() + " is not a number!";
+        return PolocloudSuite.instance().translation().get("suite.command.argument.int.invalid", key());
     }
 
     @Override
