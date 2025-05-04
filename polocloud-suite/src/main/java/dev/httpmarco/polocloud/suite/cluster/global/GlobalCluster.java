@@ -44,7 +44,7 @@ public final class GlobalCluster implements Cluster {
 
         if (config instanceof ClusterGlobalConfig globalConfig) {
             if (entries.stream().noneMatch(clusterSuiteData -> clusterSuiteData.privateKey().equals(globalConfig.privateKey()))) {
-                log.warn("The cluster is not correctly configured! The private key is not in the redis storage! -> No part of cluster!");
+                log.warn(PolocloudSuite.instance().translation().get("cluster.globalCluster.notConfigured"));
                 // close the local suite
                 System.exit(-1);
                 return;
@@ -66,12 +66,12 @@ public final class GlobalCluster implements Cluster {
             }
         } else {
             // this case should never happen
-            log.error("The cluster config is not a global cluster config! -> No part of cluster! Use right config schema!");
+            log.error(PolocloudSuite.instance().translation().get("cluster.globalCluster.errorConfig"));
         }
 
         this.statusTask.start();
 
-        log.info("Cluster available suites&8: {}", String.join("&8, ", this.suites.stream().map(it -> (it.state() == ClusterService.State.AVAILABLE ? "&f" : "&8") + it.id()).toList()));
+        log.info(PolocloudSuite.instance().translation().get("cluster.globalCluster.availableSuites"), String.join("&8, ", this.suites.stream().map(it -> (it.state() == ClusterService.State.AVAILABLE ? "&f" : "&8") + it.id()).toList()));
 
         // now we can start the show!
         this.state = ClusterService.State.AVAILABLE;
