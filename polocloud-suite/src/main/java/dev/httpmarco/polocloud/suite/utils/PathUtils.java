@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.utils;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +20,7 @@ public final class PathUtils {
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
-            log.info("Failed to create directories for dependencies.");
+            log.info(PolocloudSuite.instance().translation().get("suite.utils.path.createDirectories.failed", pathUrl));
         }
         return path;
     }
