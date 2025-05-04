@@ -17,13 +17,13 @@ public final class PlatformCommand extends Command {
 
         syntax(it -> {
             if (platformProvider.platforms().isEmpty()) {
-                log.info(translation.get("suite.platform.command.noneFound"));
+                log.info(translation.get("suite.command.platform.noneFound"));
                 return;
             }
 
-            log.info(translation.get("suite.platform.command.list", platformProvider.platforms().size()));
+            log.info(translation.get("suite.command.platform.list", platformProvider.platforms().size()));
             for (var platform : platformProvider.platforms()) {
-                log.info(translation.get("suite.platform.command.entry", platform.name(), platform.type().name()));
+                log.info(translation.get("suite.command.platform.entry", platform.name(), platform.type().name()));
             }
         }, new KeywordArgument("list"));
 
@@ -33,14 +33,14 @@ public final class PlatformCommand extends Command {
             var platform = commandContext.arg(platformArg);
 
             if(platform == null) {
-                log.info(translation.get("suite.platform.command.notFound"));
+                log.info(translation.get("suite.command.platform.notFound"));
                 return;
             }
 
             log.info("&7{}&8:", platform.name());
-            log.info(translation.get("suite.platform.command.detail.type", platform.type().name()));
-            log.info(translation.get("suite.platform.command.detail.language", platform.language()));
-            log.info(translation.get("suite.platform.command.detail.filePrep", platform.filePrepareProcess().size()));
+            log.info(translation.get("suite.command.platform.detail.type", platform.type().name()));
+            log.info(translation.get("suite.command.platform.detail.language", platform.language()));
+            log.info(translation.get("suite.command.platform.detail.filePrep", platform.filePrepareProcess().size()));
 
             for (int i = 0; i < platform.filePrepareProcess().size(); i++) {
                 var fileProcess = platform.filePrepareProcess().get(i);
@@ -55,7 +55,7 @@ public final class PlatformCommand extends Command {
 
 
 
-            log.info(translation.get("suite.platform.command.detail.versions", platform.versions().size()));
+            log.info(translation.get("suite.command.platform.detail.versions", platform.versions().size()));
 
             for (int i = 0; i < platform.versions().size(); i++) {
                 var version = platform.versions().get(i);
