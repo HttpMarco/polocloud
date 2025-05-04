@@ -34,7 +34,7 @@ public final class PolocloudTerminalImpl implements PolocloudTerminal {
                     .jansi(true)
                     .build();
         } catch (IOException ex) {
-            throw new RuntimeException("Cannot build Terminal!", ex);
+            throw new RuntimeException(PolocloudSuite.instance().translation().get("suite.terminal.init.failed"), ex);
         }
 
         this.lineReader = (LineReaderImpl) LineReaderBuilder.builder()
