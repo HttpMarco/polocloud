@@ -61,7 +61,7 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
     public void bootNewInstance(ClusterGroup group) {
         var service = new ClusterLocalServiceImpl(1, UUID.randomUUID(), group);
 
-        log.info("Service &8'&f{}&8' &7is starting now&8...", service.name());
+        log.info(PolocloudSuite.instance().translation().get("suite.cluster.service.starting", service.name()));
         this.storage.publish(service);
 
         this.factory.bootInstance(service);
@@ -71,7 +71,7 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
     public void close() {
         this.queue.interrupt();
         this.trackingQueue.interrupt();
-        log.info("Successfully stop the service queue&8.");
+        log.info(PolocloudSuite.instance().translation().get("suite.cluster.service.queueStopped"));
 
         for (ClusterService item : this.storage.items()) {
             // only stop this suite instance
