@@ -18,21 +18,22 @@ public final class InfoCommand extends Command {
     public InfoCommand() {
         super("info", "Show all information about your running cluster.");
 
+        var translation = PolocloudSuite.instance().translation();
 
         defaultExecution(it -> {
             // todo
-            log.info("Polocloud Suite - Version: {}", 1);
+            log.info(PolocloudSuite.instance().translation().get("suite.command.info.header", 1));
 
             double usedMemory = usedMemory();
             double maxMemory = maxMemory();
-            log.info("&8- &7Current Memory Usage&8: &f{}mb &8(&7{}%&8)", FORMAT.format(usedMemory), Math.round((100 / maxMemory) * usedMemory));
-            log.info("&8- &7Max Memory Usage&8: &f{}mb",  FORMAT.format(maxMemory));
-            log.info("&8- &7CPU Usage&8: &f{}%", cpuUsage());
-            log.info("&8- &7Startup Time&8: &f{}", formatDuration(System.currentTimeMillis() - Long.parseLong(System.getProperty("polocloud.boot.time"))));
-            log.info("&8- &7Java Version&8: &f{}", System.getProperty("java.version"));
-            log.info("&8- &7Cluster type&8: &f{}", PolocloudSuite.instance().cluster().name());
-            log.info("&8- &7Max queue processes&8: &f{}", PolocloudSuite.instance().config().local().maxQueueProcesses());
-            log.info("&8- &7Process termination idle&8: &f{}", PolocloudSuite.instance().config().local().processTerminationIdleSeconds() + "s");
+            log.info(translation.get("suite.command.info.memory.current", FORMAT.format(usedMemory), Math.round((100 / maxMemory) * usedMemory)));
+            log.info(translation.get("suite.command.info.memory.max",  FORMAT.format(maxMemory)));
+            log.info(translation.get("suite.command.info.cpu", cpuUsage()));
+            log.info(translation.get("suite.command.info.uptime", formatDuration(System.currentTimeMillis() - Long.parseLong(System.getProperty("polocloud.boot.time")))));
+            log.info(translation.get("suite.command.info.java", System.getProperty("java.version")));
+            log.info(translation.get("suite.command.info.clusterType", PolocloudSuite.instance().cluster().name()));
+            log.info(translation.get("suite.command.info.maxQueue", PolocloudSuite.instance().config().local().maxQueueProcesses()));
+            log.info(translation.get("suite.command.info.idleShutdown", PolocloudSuite.instance().config().local().processTerminationIdleSeconds()));
         });
     }
 

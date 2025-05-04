@@ -51,7 +51,7 @@ public final class LocalPlatformFactory implements PlatformFactory {
             var platformVersion = PolocloudSuite.instance().platformProvider().findPlatformVersion(localService.group().platform());
 
             if (platform == null || platformVersion == null) {
-                log.error("cannot bind platform to {} with name {}", service.name(), platform.name());
+                log.error(PolocloudSuite.instance().translation().get("suite.platform.bind.failed", service.name(), platform.name()));
                 return;
             }
 
@@ -65,7 +65,7 @@ public final class LocalPlatformFactory implements PlatformFactory {
             try {
                 Files.copy(platformPath, localService.path().resolve(platformFileName));
             } catch (IOException e) {
-                log.error("Failed to copy platform boot file to {}", platformPath, e);
+                log.error(PolocloudSuite.instance().translation().get("suite.platform.copy.failed", platformPath), e);
             }
 
 
@@ -90,7 +90,7 @@ public final class LocalPlatformFactory implements PlatformFactory {
             }
 
         } else {
-            log.warn("Cannot prepare platform binding for {}.", service.name());
+            log.warn(PolocloudSuite.instance().translation().get("suite.platform.binding.unsupported", service.name()));
         }
     }
 

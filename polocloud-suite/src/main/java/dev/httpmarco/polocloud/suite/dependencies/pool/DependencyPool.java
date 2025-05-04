@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import dev.httpmarco.polocloud.api.Version;
+import dev.httpmarco.polocloud.suite.PolocloudContext;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.dependencies.external.ExternalDependency;
 import dev.httpmarco.polocloud.suite.dependencies.pool.serializer.DependencySerializer;
 import dev.httpmarco.polocloud.suite.utils.serializer.VersionSerializer;
@@ -28,7 +30,7 @@ public final class DependencyPool {
         try (var inputStream = DependencyPool.class.getClassLoader().getResourceAsStream("dependencies.json")) {
 
             if(inputStream == null) {
-                throw new RuntimeException("Unable to read dependencies.json");
+                throw new RuntimeException(PolocloudSuite.instance().translation().get("loading.dependencies.fileNotFound"));
             }
 
             try (var reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
@@ -42,7 +44,7 @@ public final class DependencyPool {
                 return new DependencyPool(pool);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Cannot read dependency content!", e);
+            throw new RuntimeException(PolocloudSuite.instance().translation().get("loading.dependencies.fileReadFailed"), e);
         }
     }
 

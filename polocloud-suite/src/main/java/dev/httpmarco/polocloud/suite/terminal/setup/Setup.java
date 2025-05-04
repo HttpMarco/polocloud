@@ -37,19 +37,20 @@ public abstract class Setup {
     public abstract void complete(Map<String, String> context);
 
     public void displayQuestion(String remark) {
+        var translation = PolocloudSuite.instance().translation();
         var terminal = PolocloudSuite.instance().terminal();
         terminal.prompt("&8» &7");
         terminal.clear();
 
         var question = question();
-        terminal.print("&b" + name + " &8- &7Question &8(&7" + (index + 1) + "&8/&7" + questions.size() + "&8) &7" + question.question());
+        terminal.print(translation.get("suite.terminal.setup.question", name, index + 1, questions.size(), question.question()));
 
         if (!question.possibleAnswers().apply(answers).isEmpty()) {
-            terminal.print("&7Possible answers&8: &f" + String.join("&8, &f", question.possibleAnswers().apply(answers)));
+            terminal.print(translation.get("suite.terminal.setup.possibleAnswers", String.join("&8, &f", question.possibleAnswers().apply(answers))));
         }
 
         if (answers.containsKey(question.answerKey())) {
-            terminal.print("&7The previous response was&8: &f" + answers.get(question.answerKey()));
+            terminal.print(translation.get("suite.terminal.setup.previousResponse", answers.get(question.answerKey())));
         }
 
         if (remark != null) {
@@ -58,7 +59,7 @@ public abstract class Setup {
 
         // we write an empty placeholder
         terminal.print(" ");
-        terminal.print("Enter &8'&7exit&8' &7for leave the setup or enter &8'&7back&8' &7for see the previous question&8!");
+        terminal.print(translation.get("suite.terminal.setup.navigation"));
     }
 
     public void displayQuestion() {
@@ -88,7 +89,7 @@ public abstract class Setup {
     public void answer(String answer) {
 
         if (question().predicate() != null && !question().predicate().apply(new Pair<>(answer, answers))) {
-            displayQuestion("&cThe given answer is not correct.");
+            displayQuestion(PolocloudSuite.instance().translation().get("suite.terminal.setup.answer.invalid"));
             return;
         }
 

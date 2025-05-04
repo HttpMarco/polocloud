@@ -39,7 +39,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
     @Override
     public boolean executeCommand(String command) {
         if (process == null) {
-            log.warn("Cannot execute this command, because the process is not running!");
+            log.warn(PolocloudSuite.instance().translation().get("suite.cluster.localService.commandNotExecuted"));
             return false;
         }
 
@@ -49,7 +49,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
             output.flush();
             return true;
         } catch (IOException e) {
-            log.debug("Cannot execute command: {}", command, e);
+            log.debug(PolocloudSuite.instance().translation().get("suite.cluster.localService.commandExecutionFailed", command), e);
             return false;
         }
     }

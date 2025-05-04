@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.groups.commands;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroupProvider;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.GroupArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
@@ -13,14 +14,16 @@ public final class GroupCommand extends Command {
     public GroupCommand(ClusterGroupProvider groupProvider) {
         super("group", "Manage all your cluster groups", "groups");
 
+        var translation = PolocloudSuite.instance().translation();
+
         syntax(commandContext -> {
 
             if (groupProvider.findAll().isEmpty()) {
-                log.info("The cluster has no groups yet.");
+                log.info(translation.get("suite.command.group.list.noGroups"));
                 return;
             }
 
-            log.info("The cluster has the following groups:");
+            log.info(translation.get("suite.command.group.list.header"));
             groupProvider.findAll().forEach(clusterGroup -> log.info(" - {}", clusterGroup.name()));
 
         }, new KeywordArgument("list"));
@@ -30,20 +33,20 @@ public final class GroupCommand extends Command {
             var group = commandContext.arg(groupArgument);
 
             if(group == null) {
-                log.info("The group does not exist.");
+                log.info(translation.get("suite.command.group.info.notFound"));
                 return;
             }
 
-            log.info("All details about the group &f{}&8:", group.name());
-            log.info("&8- &7Platform&8:");
-            log.info("  &8- &7Type&8: &f{}", group.platform().type());
-            log.info("  &8- &7Version&8: &f{}", group.platform().version());
-            log.info("&8- &7min Memory&8: &f{}", group.minMemory());
-            log.info("&8- &7max Memory&8: &f{}", group.maxMemory());
-            log.info("&8- &7Minimal online services: &f{}", group.minOnlineService());
-            log.info("&8- &7Maximum online services: &f{}", group.maxOnlineService());
-            log.info("&8- &7Percentage to start a new service: &f{}%", group.percentageToStartNewService());
-            log.info("&8- &7Current running group services: &f{}", group.runningServicesAmount());
+            log.info(translation.get("suite.command.group.info.detailsHeader", group.name()));
+            log.info(translation.get("suite.command.group.info.platformHeader"));
+            log.info(translation.get("suite.command.group.info.platformType", group.platform().type()));
+            log.info(translation.get("suite.command.group.info.platformVersion", group.platform().version()));
+            log.info(translation.get("suite.command.group.info.minMemory", group.minMemory()));
+            log.info(translation.get("suite.command.group.info.maxMemory", group.maxMemory()));
+            log.info(translation.get("suite.command.group.info.minOnline", group.minOnlineService()));
+            log.info(translation.get("suite.command.group.info.maxOnline", group.maxOnlineService()));
+            log.info(translation.get("suite.command.group.info.percentageToStartNewService", group.percentageToStartNewService()));
+            log.info(translation.get("suite.command.group.info.runningServices", group.runningServicesAmount()));
         }, new KeywordArgument("info"), groupArgument);
 
 

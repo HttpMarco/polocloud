@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.groups.storage;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.storage.ClusterStorage;
 import dev.httpmarco.polocloud.suite.groups.ClusterGroupImpl;
 import dev.httpmarco.polocloud.suite.utils.GsonInstance;
@@ -39,7 +40,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
         try {
             return GsonInstance.DEFAULT.fromJson(Files.readString(file.toPath()), ClusterGroupImpl.class);
         } catch (IOException e) {
-            log.error("Could not load group from file: {}", file.getName(), e);
+            log.error(PolocloudSuite.instance().translation().get("suite.group.error.load", file.getName()), e);
         }
         return null;
     }
@@ -54,7 +55,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
             try {
                 Files.createDirectories(GROUPS_PATH);
             } catch (IOException e) {
-                log.error("Could not create directory: {}", GROUPS_PATH, e);
+                log.error(PolocloudSuite.instance().translation().get("suite.group.error.createDir", GROUPS_PATH), e);
             }
         }
 
@@ -72,7 +73,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
         try {
             Files.writeString(GROUPS_PATH.toAbsolutePath().resolve(group.name() + ".json"), convertToJson(group));
         } catch (IOException e) {
-            log.error("Could not save group to file: {}", group.name(), e);
+            log.error(PolocloudSuite.instance().translation().get("suite.group.error.save", group.name()), e);
         }
         this.groups.add(group);
     }
@@ -89,7 +90,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
         try {
             Files.delete(GROUPS_PATH.toAbsolutePath().resolve(identifier + ".json"));
         } catch (IOException e) {
-            log.error("Could not delete group: {}", identifier, e);
+            log.error(PolocloudSuite.instance().translation().get("suite.group.error.delete", identifier), e);
         }
     }
 

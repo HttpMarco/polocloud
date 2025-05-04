@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.utils.tasks;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,7 +39,7 @@ public abstract class TickTask implements Task {
                     // we wait one second for the next interval
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    log.error("An error occurred while waiting for the next tick", e);
+                    log.error(PolocloudSuite.instance().translation().get("suite.timing.nextTick.error"), e);
                 }
             }
         });

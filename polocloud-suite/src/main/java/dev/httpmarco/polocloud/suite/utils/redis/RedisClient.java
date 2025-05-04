@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.utils.redis;
 
 import dev.httpmarco.polocloud.api.Available;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.configuration.redis.RedisConfig;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -33,7 +34,7 @@ public final class RedisClient implements Available {
 
             this.connection = client.connect();
         } catch (Exception e) {
-            log.warn("Could not connect to redis server! Please check credentials and server!");
+            log.warn(PolocloudSuite.instance().translation().get("suite.utils.redis.connection.failed"));
         }
     }
 

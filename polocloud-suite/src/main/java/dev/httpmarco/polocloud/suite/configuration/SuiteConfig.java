@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.configuration;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterConfig;
 import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterLocalConfig;
 import dev.httpmarco.polocloud.suite.utils.GsonInstance;
@@ -42,14 +43,14 @@ public final class SuiteConfig {
                 defaultConfig = GsonInstance.DEFAULT.fromJson(Files.readString(CONFIG_PATH), SuiteConfig.class);
                 // we write the new data after reading it to update the file
             } catch (IOException e) {
-                log.warn("Failed to load suite config! Using default configuration.");
+                log.warn(PolocloudSuite.instance().translation().get("suite.config.load.failed"));
                 return defaultConfig;
             }
         }
         try {
             Files.writeString(CONFIG_PATH, GsonInstance.DEFAULT.toJson(defaultConfig));
         } catch (IOException e) {
-            log.warn("Failed to write suite config! Using default configuration.");
+            log.warn(PolocloudSuite.instance().translation().get("suite.config.write.failed"));
         }
         return defaultConfig;
     }
@@ -58,7 +59,7 @@ public final class SuiteConfig {
         try {
             Files.writeString(CONFIG_PATH, GsonInstance.DEFAULT.toJson(this));
         } catch (IOException e) {
-            log.warn("Failed to write suite config! Using default configuration.");
+            log.warn(PolocloudSuite.instance().translation().get("suite.config.update.failed"));
         }
     }
 }

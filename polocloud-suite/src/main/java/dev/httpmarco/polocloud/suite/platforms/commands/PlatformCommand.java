@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.platforms.commands;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
 import dev.httpmarco.polocloud.suite.commands.type.PlatformArgument;
@@ -12,15 +13,17 @@ public final class PlatformCommand extends Command {
     public PlatformCommand(PlatformProvider platformProvider) {
         super("platform", "Manage all your used platforms");
 
+        var translation = PolocloudSuite.instance().translation();
+
         syntax(it -> {
             if (platformProvider.platforms().isEmpty()) {
-                log.info("No platforms found.");
+                log.info(translation.get("suite.command.platform.noneFound"));
                 return;
             }
 
-            log.info("&7Available platforms &8(&7{}&8):", platformProvider.platforms().size());
+            log.info(translation.get("suite.command.platform.list", platformProvider.platforms().size()));
             for (var platform : platformProvider.platforms()) {
-                log.info("&8  - &7{} &8(&7type&8=&7{}&8)", platform.name(), platform.type().name());
+                log.info(translation.get("suite.command.platform.entry", platform.name(), platform.type().name()));
             }
         }, new KeywordArgument("list"));
 
@@ -30,14 +33,14 @@ public final class PlatformCommand extends Command {
             var platform = commandContext.arg(platformArg);
 
             if(platform == null) {
-                log.info("No platform found.");
+                log.info(translation.get("suite.command.platform.notFound"));
                 return;
             }
 
             log.info("&7{}&8:", platform.name());
-            log.info("&8  ├─ &7Type&8: &f{}", platform.type().name());
-            log.info("&8  ├─ &7Language&8: &f{}", platform.language());
-            log.info("&8  ├─ &7File preparation&8:(&f{}&8)", platform.filePrepareProcess().size());
+            log.info(translation.get("suite.command.platform.detail.type", platform.type().name()));
+            log.info(translation.get("suite.command.platform.detail.language", platform.language()));
+            log.info(translation.get("suite.command.platform.detail.filePrep", platform.filePrepareProcess().size()));
 
             for (int i = 0; i < platform.filePrepareProcess().size(); i++) {
                 var fileProcess = platform.filePrepareProcess().get(i);
@@ -52,7 +55,7 @@ public final class PlatformCommand extends Command {
 
 
 
-            log.info("&8  └─ &7Versions&8: (&f{}&8)", platform.versions().size());
+            log.info(translation.get("suite.command.platform.detail.versions", platform.versions().size()));
 
             for (int i = 0; i < platform.versions().size(); i++) {
                 var version = platform.versions().get(i);
