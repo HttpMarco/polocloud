@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.cluster.grpc;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -27,7 +28,7 @@ public class ClusterGrpcServer implements Closeable {
         try {
             this.server.start();
         } catch (IOException e) {
-            log.error("Failed to start local suite server", e);
+            log.error(PolocloudSuite.instance().translation().get("cluster.grpc.handler.failedToStartLocalSuiteServer"), e);
             System.exit(-1);
         }
     }
