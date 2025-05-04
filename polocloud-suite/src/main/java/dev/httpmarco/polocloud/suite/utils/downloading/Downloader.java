@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.utils.downloading;
 
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.utils.GsonInstance;
 import dev.httpmarco.polocloud.suite.utils.PathUtils;
 import org.w3c.dom.Document;
@@ -47,7 +48,7 @@ public final class Downloader {
         try (var in = new URL(url).openStream()) {
             return acceptor.accept(in);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to download from " + url, e);
+            throw new RuntimeException(PolocloudSuite.instance().translation().get("suite.utils.downloader.download.failed", url), e);
         }
     }
 
