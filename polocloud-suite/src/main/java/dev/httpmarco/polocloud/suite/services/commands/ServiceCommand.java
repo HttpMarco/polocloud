@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.services.commands;
 
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.ClusterServiceArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
@@ -19,14 +20,16 @@ public final class ServiceCommand extends Command {
         // service <name> log
         // service <name> execute <command>
 
+        var translation = PolocloudSuite.instance().translation();
+
         syntax(commandContext -> {
 
             if(serviceProvider.findAll().isEmpty()) {
-                log.info("Current there are no services running&8!");
+                log.info(translation.get("suite.command.service.noneRunning"));
                 return;
             }
 
-            log.info("Current running services:");
+            log.info(translation.get("suite.command.service.list"));
             for (var service : serviceProvider.findAll()) {
                 log.info("&8- &f{}", service.name());
             }
@@ -39,14 +42,14 @@ public final class ServiceCommand extends Command {
             var service = commandContext.arg(serviceArgument);
 
             if(service == null) {
-                log.info("Service not found&8!");
+                log.info(translation.get("suite.command.service.notFound"));
                 return;
             }
 
             log.info(service.name());
-            log.info("&8  ├─ &7Id: &f{}", service.uniqueId());
-            log.info("&8  ├─ &7Group: &f{}", service.group().name());
-            log.info("&8  ├─ &7State: &f{}", service.state().name());
+            log.info(translation.get("suite.command.service.info.id", service.uniqueId()));
+            log.info(translation.get("suite.command.service.info.group", service.group().name()));
+            log.info(translation.get("suite.command.service.info.state", service.state().name()));
         }, serviceArgument);
 
     }
