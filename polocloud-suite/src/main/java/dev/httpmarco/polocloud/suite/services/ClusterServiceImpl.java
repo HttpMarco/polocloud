@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -38,5 +39,11 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     public void shutdown() {
         // todo
+    }
+
+    @Override
+    public List<String> logs(int lines) {
+        // todo
+        return List.of();
     }
 }

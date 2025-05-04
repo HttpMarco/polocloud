@@ -9,10 +9,13 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
 @Getter
@@ -20,9 +23,12 @@ import java.util.UUID;
 @Accessors(fluent = true)
 public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements ClusterLocalService {
 
+    private final List<String> logs = new CopyOnWriteArrayList<>();
     private final int port;
-    private Process process;
     private Path path;
+
+    private Process process;
+    private @Nullable Thread processTracking;
 
     public ClusterLocalServiceImpl(int id, UUID uniqueId, ClusterGroup group) {
         super(id, uniqueId, group, ClusterServiceState.PREPARE);
@@ -54,6 +60,24 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
         }
     }
 
+    public void startTracking() {
+        // start process tracking
+        this.processTracking = new Thread(() -> {
+            // if player send a stop command from game command system
+            try {
+                this.process.waitFor();
+            } catch (InterruptedException ignore) {
+            }
+
+            if (state() != ClusterServiceState.STOPPING) {
+                state(ClusterServiceState.STOPPING);
+                if (process != null) {
+                    this.process.exitValue();
+                }
+                PolocloudSuite.instance().serviceProvider().factory().shutdownInstance(this);
+            }
+        });
+    }
 
     public void changeState(ClusterServiceState state) {
         super.state(state);

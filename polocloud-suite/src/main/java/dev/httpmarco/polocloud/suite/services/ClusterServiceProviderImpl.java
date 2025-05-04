@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.suite.cluster.storage.ClusterStorage;
 import dev.httpmarco.polocloud.suite.services.commands.ServiceCommand;
 import dev.httpmarco.polocloud.suite.services.factory.LocalServiceFactory;
 import dev.httpmarco.polocloud.suite.services.factory.ServiceFactory;
+import dev.httpmarco.polocloud.suite.services.queue.ServiceLogQueue;
 import dev.httpmarco.polocloud.suite.services.queue.ServiceQueue;
 import dev.httpmarco.polocloud.suite.services.queue.ServiceTrackingQueue;
 import dev.httpmarco.polocloud.suite.services.storage.LocalServiceStorage;
@@ -26,6 +27,7 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
     private final ClusterStorage<String, ClusterService> storage;
 
     private final ServiceTrackingQueue trackingQueue;
+    private final ServiceLogQueue logQueue;
     private final ServiceQueue queue;
 
     @Getter
@@ -43,6 +45,9 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
 
         this.trackingQueue = new ServiceTrackingQueue(this);
         this.trackingQueue.start();
+
+        this.logQueue = new ServiceLogQueue(this);
+        this.logQueue.start();
 
         this.queue = new ServiceQueue();
         this.queue.start();
@@ -71,6 +76,8 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
     public void close() {
         this.queue.interrupt();
         this.trackingQueue.interrupt();
+        this.logQueue.interrupt();
+
         log.info(PolocloudSuite.instance().translation().get("suite.cluster.service.queueStopped"));
 
         for (ClusterService item : this.storage.items()) {

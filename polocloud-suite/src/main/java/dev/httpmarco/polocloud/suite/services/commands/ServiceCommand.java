@@ -5,7 +5,10 @@ import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.commands.Command;
 import dev.httpmarco.polocloud.suite.commands.type.ClusterServiceArgument;
 import dev.httpmarco.polocloud.suite.commands.type.KeywordArgument;
+import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.AbstractMap;
 
 @Log4j2
 public final class ServiceCommand extends Command {
@@ -51,6 +54,18 @@ public final class ServiceCommand extends Command {
             log.info(translation.get("suite.command.service.info.group", service.group().name()));
             log.info(translation.get("suite.command.service.info.state", service.state().name()));
         }, serviceArgument);
+
+
+        syntax(commandContext -> {
+            var service = commandContext.arg(serviceArgument);
+            var terminal = PolocloudSuite.instance().terminal();
+
+            terminal.clear();
+
+            for (var line : service.logs()) {
+                terminal.print(line);
+            }
+        }, serviceArgument, new KeywordArgument("logs"));
 
     }
 }
