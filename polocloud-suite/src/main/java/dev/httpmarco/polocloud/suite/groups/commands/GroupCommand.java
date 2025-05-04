@@ -39,8 +39,8 @@ public final class GroupCommand extends Command {
 
             log.info(translation.get("suite.command.group.info.detailsHeader", group.name()));
             log.info(translation.get("suite.command.group.info.platformHeader"));
-            log.info(translation.get("command.group.info.platformType", group.platform().type()));
-            log.info(translation.get("command.group.info.platformVersion", group.platform().version()));
+            log.info(translation.get("suite.command.group.info.platformType", group.platform().type()));
+            log.info(translation.get("suite.command.group.info.platformVersion", group.platform().version()));
             log.info(translation.get("suite.command.group.info.minMemory", group.minMemory()));
             log.info(translation.get("suite.command.group.info.maxMemory", group.maxMemory()));
             log.info(translation.get("suite.command.group.info.minOnline", group.minOnlineService()));
