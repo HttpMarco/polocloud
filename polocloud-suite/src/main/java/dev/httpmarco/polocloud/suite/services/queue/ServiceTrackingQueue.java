@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.suite.services.queue;
 
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.services.ClusterLocalServiceImpl;
 import dev.httpmarco.polocloud.suite.services.ClusterServiceProviderImpl;
 import lombok.SneakyThrows;
@@ -29,7 +30,7 @@ public final class ServiceTrackingQueue extends Thread {
                     if(service.state() == ClusterServiceState.STARTING) {
                         if(pingService(localService.port())) {
                             localService.changeState(ClusterServiceState.ONLINE);
-                            log.info("Service &8'&f{}&8' &7is now online&8!", localService.name());
+                            log.info(PolocloudSuite.instance().translation().get("suite.cluster.service.nowOnline", localService.name()));
                         }
                     }
                 }
