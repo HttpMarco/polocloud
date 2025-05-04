@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.dependencies.slots;
 
 import dev.httpmarco.polocloud.suite.PolocloudContext;
+import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.dependencies.Dependency;
 import dev.httpmarco.polocloud.suite.dependencies.DependencySlot;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +18,7 @@ public final class OriginalDependencySlot implements DependencySlot {
         try {
             PolocloudContext.attachPath(dependency.file().toPath());
         } catch (IOException e) {
-            log.error("Failed to attach path: {}", dependency.file().toPath());
+            log.error(PolocloudSuite.instance().translation().get("loading.dependencies.attachFailed", dependency.file().toPath()));
             throw new RuntimeException(e);
         }
     }
