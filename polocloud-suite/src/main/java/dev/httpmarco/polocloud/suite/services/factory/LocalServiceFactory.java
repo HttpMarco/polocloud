@@ -72,7 +72,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             var version = platformProvider.findPlatformVersion(service.group().platform());
 
             if (platform == null) {
-                log.error("Failed to find platform version for service {}: {}", service.name(), service.group().platform());
+                log.error(PolocloudSuite.instance().translation().get("suite.service.platformVersion.failed", service.name(), service.group().platform()));
                 return;
             }
 
@@ -87,7 +87,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             try {
                 service.process(processBuilder.command(arguments).start());
             } catch (IOException e) {
-                log.error("Failed to start service {}: {}", e.fillInStackTrace(), service.name());
+                log.error(PolocloudSuite.instance().translation().get("suite.service.start.failed", e.fillInStackTrace(), service.name()));
                 // todo try reboot with properties retry 3 times
                 // destroy this service
             }
@@ -98,7 +98,7 @@ public final class LocalServiceFactory implements ServiceFactory {
     @Override
     public void shutdownInstance(ClusterService clusterService) {
         if (clusterService instanceof ClusterLocalServiceImpl service) {
-            log.info("Service &8'&f{}&8' &7stop process...", service.name());
+            log.info(PolocloudSuite.instance().translation().get("suite.service.stop.process", service.name()));
             if (service.process() != null) {
                 var platform = PolocloudSuite.instance().platformProvider().findSharedInstance(service.group().platform());
                 // shutdown the process with the right command -> else use the default stop command
@@ -109,7 +109,7 @@ public final class LocalServiceFactory implements ServiceFactory {
                             service.process(null);
                         }
                     } catch (InterruptedException exception) {
-                        log.debug("Failed to wait for process termination");
+                        log.debug(PolocloudSuite.instance().translation().get("suite.service.stop.waitFailed"));
                     }
                 }
                 // the process is running...
@@ -120,7 +120,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             }
             // clear service directory
             PathUtils.deleteDirectory(service.path().toFile());
-            log.info("Service &8'&f{}&8' &7stopped successfully&8.", service.name());
+            log.info(PolocloudSuite.instance().translation().get("suite.service.stop.success", service.name()));
         } else {
             // todo other suite
         }
