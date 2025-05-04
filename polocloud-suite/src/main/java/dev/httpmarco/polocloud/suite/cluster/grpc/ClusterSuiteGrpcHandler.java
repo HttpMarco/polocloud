@@ -23,18 +23,18 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
         //todo
         if (localConfig instanceof ClusterGlobalConfig globalConfig) {
             if (!globalConfig.privateKey().equals(request.getSuitePrivateKey())) {
-                response.setMessage("Invalid private key!");
+                response.setMessage(PolocloudSuite.instance().translation().get("cluster.grpc.handler.attachSuite.invalidPrivateKey"));
             } else {
                 if (globalConfig.id().equals(request.getSuiteId())) {
                     response.setSuccess(true);
                     response.setToken(globalConfig.token());
                 } else {
-                    response.setMessage("Invalid token!");
+                    response.setMessage(PolocloudSuite.instance().translation().get("cluster.grpc.handler.invalidToken"));
                 }
             }
 
         } else {
-            response.setMessage("Cluster is not configured correctly! The binded suite is local");
+            response.setMessage(PolocloudSuite.instance().translation().get("cluster.grpc.handler.clusterNotConfigured"));
         }
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();
@@ -49,7 +49,7 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
             response.setState(globalCluster.state());
         } else {
             // this should never happen, but if we are here, the cluster is not configured correctly
-            log.warn("Cluster is not configured correctly! The bound suite is local, but we need a global cluster!");
+            log.warn(PolocloudSuite.instance().translation().get("cluster.grpc.handler.clusterNotFound"));
             response.setState(ClusterService.State.INVALID);
         }
         responseObserver.onNext(response.build());
@@ -62,14 +62,14 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
         if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
             var externalSuite = globalCluster.find(request.getId());
             if (externalSuite == null) {
-                log.error("The suite {} could not be found in the cluster! But external tries to drain it!", request.getId());
+                log.error(PolocloudSuite.instance().translation().get("cluster.grpc.handler.suiteNotFound", request.getId()));
             } else {
                 externalSuite.close();
                 globalCluster.suites().remove(externalSuite);
-                log.info("The suite {} has been drained from the cluster!", externalSuite.id());
+                log.info(PolocloudSuite.instance().translation().get("cluster.grpc.handler.suiteDrained", externalSuite.id()));
             }
         } else {
-            log.warn("Cluster is not configured correctly! The bound suite is local, but we need a global cluster!");
+            log.warn(PolocloudSuite.instance().translation().get("cluster.grpc.handler.clusterNotFound"));
         }
 
 
@@ -83,14 +83,14 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
 
         if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
             if (globalCluster.find(request.getId()) != null) {
-                log.error("The suite {} is already registered in the cluster! Maybe a hidden data?", request.getId());
+                log.error(PolocloudSuite.instance().translation().get("cluster.grpc.handler.suiteAlreadyRegistered", request.getId()));
             } else {
                 // welcome new suite
                 globalCluster.suites().add(newSuite);
                 newSuite.state(newSuite.available() ? newSuite.clusterStub().requestState(ClusterService.EmptyCall.newBuilder().build()).getState() : ClusterService.State.OFFLINE);
 
                 if (newSuite.state() == ClusterService.State.AVAILABLE) {
-                    log.info("The suite {} is now online and bound to the cluster!", newSuite.id());
+                    log.info(PolocloudSuite.instance().translation().get("cluster.grpc.handler.suiteOnline", newSuite.id()));
                 }
                 // the suite status task will handle the rest
             }
