@@ -15,11 +15,13 @@ public final class GroupSetup extends Setup {
     public GroupSetup() {
         super("Create your Group");
 
-        question("name", "What is the name about the group?");
-        question("minMemory", "What is the minimum memory available for this group's service? (mb)");
-        question("maxMemory", "What is the maximum memory available for this group's service? (mb)");
-        question("minOnlineService", "How many services must be minimal online?");
-        question("maxOnlineService", "What is the maximum online services amount?");
+        var translation = PolocloudSuite.instance().translation();
+
+        question("name", translation.get("suite.setup.group.name"));
+        question("minMemory", translation.get("suite.setup.group.minMemory"));
+        question("maxMemory", translation.get("suite.setup.group.maxMemory"));
+        question("minOnlineService", translation.get("suite.setup.group.minOnline"));
+        question("maxOnlineService", translation.get("suite.setup.group.maxOnline"));
     }
 
     @Override
