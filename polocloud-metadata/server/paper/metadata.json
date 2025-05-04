@@ -19,6 +19,9 @@
       "content": "server-port=[%PORT%]"
     }
   ],
+  "startArguments": [
+    "--nogui"
+  ],
   "versions": [
     {
       "version": "1.21.5",
