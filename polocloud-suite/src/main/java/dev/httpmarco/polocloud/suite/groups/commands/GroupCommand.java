@@ -45,7 +45,7 @@ public final class GroupCommand extends Command {
             log.info(translation.get("suite.command.group.info.maxMemory", group.maxMemory()));
             log.info(translation.get("suite.command.group.info.minOnline", group.minOnlineService()));
             log.info(translation.get("suite.command.group.info.maxOnline", group.maxOnlineService()));
-            log.info(translation.get("suite.command.group.info.percentageToStartNewService", group.percentageToStartNewService()));
+            log.info(translation.get("suite.command.group.info.percentageToStartNewService", group.percentageToStartNewService()) + "%");
             log.info(translation.get("suite.command.group.info.runningServices", group.runningServicesAmount()));
         }, new KeywordArgument("info"), groupArgument);
 

@@ -29,6 +29,10 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
         // register global group command
         PolocloudSuite.instance().commandService().registerCommand(new GroupCommand(this));
 
+        if (this.storage.items().isEmpty()) {
+            return;
+        }
+
         log.info(PolocloudSuite.instance().translation().get("suite.group.load", this.storage.items().size(), String.join(", ", this.storage.items().stream().map(Named::name).toList())));
     }
 
