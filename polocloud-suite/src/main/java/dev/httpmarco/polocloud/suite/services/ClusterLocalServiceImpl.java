@@ -10,8 +10,9 @@ import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
@@ -44,15 +45,16 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
 
     @Override
     public boolean executeCommand(String command) {
-        if (process == null) {
+        if (process == null || command == null || command.isEmpty()) {
             log.warn(PolocloudSuite.instance().translation().get("suite.cluster.localService.commandNotExecuted"));
             return false;
         }
 
         try {
-            var output = this.process.getOutputStream();
-            output.write((command + "\n").getBytes(StandardCharsets.UTF_8));
-            output.flush();
+            var writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
+            writer.write(command);
+            writer.newLine();
+            writer.flush();
             return true;
         } catch (IOException e) {
             log.debug(PolocloudSuite.instance().translation().get("suite.cluster.localService.commandExecutionFailed", command), e);
