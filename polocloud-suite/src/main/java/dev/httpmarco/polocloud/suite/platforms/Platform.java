@@ -20,5 +20,6 @@ public final class Platform {
     private final String shutdownCommand;
     private final List<FilePrepareProcess> filePrepareProcess;
     private final List<PlatformVersion> versions;
+    private final List<String> startArguments;
 
 }
