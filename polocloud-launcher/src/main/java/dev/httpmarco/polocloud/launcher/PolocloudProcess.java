@@ -24,6 +24,7 @@ public final class PolocloudProcess extends Thread {
             var process = new ProcessBuilder().inheritIO().command(processArguments()).start();
             // wait for the end of the polocloud suite
             process.waitFor();
+            process.exitValue();
         } catch (InterruptedException e) {
             this.interrupt();
         } catch (IOException | LibNotFoundException exception) {

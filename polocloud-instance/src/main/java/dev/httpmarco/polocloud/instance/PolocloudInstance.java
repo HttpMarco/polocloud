@@ -7,25 +7,21 @@ import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.instance.loader.PolocloudInstanceLoader;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.jar.JarFile;
 
 public final class PolocloudInstance extends Polocloud {
 
-    public PolocloudInstance() {
-
-
+    public PolocloudInstance(String[] args) {
         try {
             Path platformPath = Path.of(PolocloudEnvironment.read(PolocloudEnvironment.POLOCLOUD_SUITE_PLATFORM_PATH));
             var loader = new PolocloudInstanceLoader(platformPath);
-            var arguments = new ArrayList<>();
 
             try (var jarFile = new JarFile(platformPath.toString())) {
                 final var mainClass = Class.forName( jarFile.getManifest().getMainAttributes().getValue("Main-Class"), false, loader);
 
                 final var thread = new Thread(() -> {
                     try {
-                        mainClass.getMethod("main", String[].class).invoke(null, (Object) arguments.toArray(new String[0]));
+                        mainClass.getMethod("main", String[].class).invoke(null, (Object) args);
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }
@@ -35,14 +31,8 @@ public final class PolocloudInstance extends Polocloud {
             } catch (Exception exception) {
                 exception.printStackTrace(System.err);
             }
-
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        }
-
-        while (true) {
-
         }
     }
 
