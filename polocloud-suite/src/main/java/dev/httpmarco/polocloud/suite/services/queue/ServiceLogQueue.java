@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-public class ServiceLogQueue extends Thread {
+public final class ServiceLogQueue extends Thread {
 
     private static final long LOG_UPDATE_CYCLE = 100;
 
