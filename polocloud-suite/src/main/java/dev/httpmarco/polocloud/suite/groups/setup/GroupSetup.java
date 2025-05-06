@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.suite.groups.setup;
 
 import dev.httpmarco.polocloud.api.Version;
-import dev.httpmarco.polocloud.api.platform.PlatformType;
 import dev.httpmarco.polocloud.api.platform.SharedPlatform;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.groups.ClusterGroupImpl;
@@ -9,7 +8,6 @@ import dev.httpmarco.polocloud.suite.platforms.Platform;
 import dev.httpmarco.polocloud.suite.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.suite.terminal.setup.Setup;
 
-import java.util.List;
 import java.util.Map;
 
 public final class GroupSetup extends Setup {

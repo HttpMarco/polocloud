@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.suite.platforms.factory;
 
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
+import dev.httpmarco.polocloud.suite.dependencies.pool.DependencyPool;
 import dev.httpmarco.polocloud.suite.platforms.Platform;
 import dev.httpmarco.polocloud.suite.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.suite.platforms.files.FilePrepareProcess;
@@ -15,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Log4j2
 public final class LocalPlatformFactory implements PlatformFactory {
@@ -80,11 +82,23 @@ public final class LocalPlatformFactory implements PlatformFactory {
                     case CREATE_OR_UPDATE -> {
 
                         if (Files.exists(file)) {
-                            // update here
+                            //todo update here
                         } else {
                             Files.writeString(file, replacePlaceHolder(prepareProcess.content(), localService));
                         }
 
+                    }
+                    case FILE_CLONE_OR_UPDATE -> {
+                        if (Files.exists(file)) {
+                            // todo update here
+                        } else {
+                            // todo improve here
+                            Files.copy(Objects.requireNonNull(LocalPlatformFactory.class.getClassLoader().getResourceAsStream("platforms/" + platform.type().name().toLowerCase() + "/" + platform.name() + "/" + prepareProcess.file().getName())), file);
+
+                            // update port properties etc.
+                            var content = Files.readString(localService.path().resolve(prepareProcess.file().getName()));
+                            Files.write(file, replacePlaceHolder(content, localService).getBytes());
+                        }
                     }
                 }
             }
@@ -95,6 +109,6 @@ public final class LocalPlatformFactory implements PlatformFactory {
     }
 
     private String replacePlaceHolder(String content, ClusterLocalService service) {
-        return content.replace("[%PORT%]", String.valueOf(service.port()));
+        return content.replace("[%PORT%]", String.valueOf(service.port())).replace("[%PROXY_SECRET%]", "18293j21893j");
     }
 }

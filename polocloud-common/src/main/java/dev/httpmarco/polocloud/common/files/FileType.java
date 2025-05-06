@@ -9,7 +9,8 @@ public enum FileType {
 
     TXT,
     TOML,
-    PROPERTIES;
+    PROPERTIES,
+    SECRET;
 
 
     private final String suffix;

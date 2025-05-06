@@ -11,7 +11,7 @@ import lombok.extern.log4j.Log4j2;
 public final class PlatformCommand extends Command {
 
     public PlatformCommand(PlatformProvider platformProvider) {
-        super("platform", "Manage all your used platforms");
+        super("platforms", "Manage all your used platforms");
 
         var translation = PolocloudSuite.instance().translation();
 
@@ -27,7 +27,7 @@ public final class PlatformCommand extends Command {
             }
         }, new KeywordArgument("list"));
 
-        var platformArg = new PlatformArgument("platform");
+        var platformArg = new PlatformArgument("platforms");
         syntax(commandContext -> {
 
             var platform = commandContext.arg(platformArg);
