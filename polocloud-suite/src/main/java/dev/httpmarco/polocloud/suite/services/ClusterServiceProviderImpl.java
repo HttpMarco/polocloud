@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.services;
 
 import dev.httpmarco.polocloud.api.Closeable;
+import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @Accessors(fluent = true)
 public final class ClusterServiceProviderImpl implements ClusterServiceProvider, Closeable {
 
+    @Getter
     private final ClusterStorage<String, ClusterService> storage;
 
     private final ServiceTrackingQueue trackingQueue;
@@ -75,8 +77,6 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
     @Override
     public void close() {
         this.queue.interrupt();
-        this.trackingQueue.interrupt();
-        this.logQueue.interrupt();
 
         log.info(PolocloudSuite.instance().translation().get("suite.cluster.service.queueStopped"));
 
@@ -86,5 +86,7 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
                 localService.shutdown();
             }
         }
+        this.trackingQueue.interrupt();
+        this.logQueue.interrupt();
     }
 }
