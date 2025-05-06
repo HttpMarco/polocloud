@@ -10,7 +10,7 @@
       "type": "TOML",
       "name": "velocity",
       "flag": "FILE_CLONE_OR_UPDATE",
-      "content": "bind = \"[%port%]\""
+      "content": "bind = \"[%PORT%]\""
     }
   ],
   "startArguments": [],
