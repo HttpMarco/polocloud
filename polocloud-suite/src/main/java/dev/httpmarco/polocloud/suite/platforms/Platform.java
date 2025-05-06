@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.platforms;
 
+import dev.httpmarco.polocloud.api.platform.PlatformType;
 import dev.httpmarco.polocloud.suite.platforms.files.FilePrepareProcess;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

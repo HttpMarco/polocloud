@@ -31,7 +31,7 @@ public class PlatformProvider {
         this.factory = new LocalPlatformFactory();
 
         PolocloudSuite.instance().commandService().registerCommand(new PlatformCommand(this));
-        log.info("Loaded {} platforms", platforms.size());
+        log.debug("Loaded {} platforms", platforms.size());
     }
 
     public void refreshPlatformData() {

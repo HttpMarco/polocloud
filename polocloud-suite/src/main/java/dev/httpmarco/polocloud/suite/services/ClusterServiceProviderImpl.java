@@ -82,7 +82,7 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
 
         for (ClusterService item : this.storage.items()) {
             // only stop this suite instance
-            if(item instanceof ClusterLocalServiceImpl localService) {
+            if (item instanceof ClusterLocalServiceImpl localService) {
                 localService.shutdown();
             }
         }

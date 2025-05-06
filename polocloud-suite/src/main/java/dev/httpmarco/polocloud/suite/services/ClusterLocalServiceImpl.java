@@ -40,6 +40,10 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
 
     @Override
     public void shutdown() {
+        if(this.processTracking != null) {
+            this.processTracking.interrupt();
+        }
+
         PolocloudSuite.instance().serviceProvider().factory().shutdownInstance(this);
     }
 
