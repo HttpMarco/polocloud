@@ -5,7 +5,14 @@
   "language": "JAVA",
   "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",
   "shutdownCommand": "end",
-  "filePrepareProcess": [],
+  "filePrepareProcess": [
+    {
+      "type": "TOML",
+      "name": "velocity",
+      "flag": "CREATE_OR_UPDATE",
+      "content": "player-info-forwarding-mode = \"MODERN\""
+    }
+  ],
   "startArguments": [],
   "versions": [
     {

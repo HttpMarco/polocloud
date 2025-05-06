@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 public enum FileType {
 
     TXT,
+    TOML,
     PROPERTIES;
 
 
