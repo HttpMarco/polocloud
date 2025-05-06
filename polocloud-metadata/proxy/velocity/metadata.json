@@ -9,8 +9,8 @@
     {
       "type": "TOML",
       "name": "velocity",
-      "flag": "CREATE_OR_UPDATE",
-      "content": "player-info-forwarding-mode = \"MODERN\""
+      "flag": "FILE_CLONE_OR_UPDATE",
+      "content": "bind = \"[%port%]\""
     }
   ],
   "startArguments": [],
