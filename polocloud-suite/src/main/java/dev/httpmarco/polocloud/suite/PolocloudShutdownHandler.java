@@ -1,14 +1,12 @@
 package dev.httpmarco.polocloud.suite;
 
 import lombok.experimental.UtilityClass;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.fusesource.jansi.AnsiConsole;
 
+@Log4j2
 @UtilityClass
 public class PolocloudShutdownHandler {
-
-    private static final Logger log = LogManager.getLogger(PolocloudShutdownHandler.class);
 
     private final String SHUTDOWN_HOOK = "polocloud-shutdown-hook";
     private boolean idleShutdown = false;

@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.suite.cluster.storage.ClusterStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class LocalServiceStorage implements ClusterStorage<String, ClusterService> {
 
@@ -12,7 +13,7 @@ public final class LocalServiceStorage implements ClusterStorage<String, Cluster
 
     @Override
     public void initialize() {
-        this.services = new ArrayList<>();
+        this.services = new CopyOnWriteArrayList<>();
     }
 
     @Override

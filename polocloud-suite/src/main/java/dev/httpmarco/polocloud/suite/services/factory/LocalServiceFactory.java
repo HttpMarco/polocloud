@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.services.factory;
 
+import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.PolocloudEnvironment;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
@@ -76,6 +77,8 @@ public final class LocalServiceFactory implements ServiceFactory {
                 return;
             }
 
+            arguments.addAll(platform.startArguments());
+
             Map<String, String> environment = processBuilder.environment();
             environment.put(PolocloudEnvironment.POLOCLOUD_SUITE_HOSTNAME.name(), "localhost");
             environment.put(PolocloudEnvironment.POLOCLOUD_SUITE_PORT.name(), String.valueOf(PolocloudSuite.instance().config().cluster().port()));
@@ -86,12 +89,12 @@ public final class LocalServiceFactory implements ServiceFactory {
 
             try {
                 service.process(processBuilder.command(arguments).start());
+                service.startTracking();
             } catch (IOException e) {
                 log.error(PolocloudSuite.instance().translation().get("suite.service.start.failed", e.fillInStackTrace(), service.name()));
                 // todo try reboot with properties retry 3 times
                 // destroy this service
             }
-
         }
     }
 
@@ -118,9 +121,16 @@ public final class LocalServiceFactory implements ServiceFactory {
                     service.process(null);
                 }
             }
-            // clear service directory
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ignore) {
+            }
             PathUtils.deleteDirectory(service.path().toFile());
+            // clear service directory
             log.info(PolocloudSuite.instance().translation().get("suite.service.stop.success", service.name()));
+
+            PolocloudSuite.instance().serviceProvider().storage().destroy(clusterService.name());
         } else {
             // todo other suite
         }

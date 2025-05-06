@@ -28,6 +28,9 @@ public final class PolocloudInstance extends Polocloud {
                 }, "PoloCloud-Service-Thread");
                 thread.setContextClassLoader(loader);
                 thread.start();
+
+                // todo testing element
+                Runtime.getRuntime().addShutdownHook(new Thread(thread::interrupt));
             } catch (Exception exception) {
                 exception.printStackTrace(System.err);
             }
