@@ -11,6 +11,12 @@
       "name": "velocity",
       "flag": "FILE_CLONE_OR_UPDATE",
       "content": "bind = \"[%PORT%]\""
+    },
+    {
+      "type": "SECRET",
+      "name": "forwarding",
+      "flag": "OVERWRITE",
+      "content": "[%PROXY_SECRET%]"
     }
   ],
   "startArguments": [],
