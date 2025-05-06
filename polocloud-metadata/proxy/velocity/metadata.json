@@ -15,7 +15,7 @@
     {
       "type": "SECRET",
       "name": "forwarding",
-      "flag": "OVERWRITE",
+      "flag": "REPLACE_ALL",
       "content": "[%PROXY_SECRET%]"
     }
   ],
