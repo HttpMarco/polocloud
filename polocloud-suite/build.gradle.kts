@@ -29,7 +29,7 @@ dependencies {
 
     // testing element
     // https://mvnrepository.com/artifact/io.netty/netty-all
-    compileOnly("io.netty:netty-all:4.2.0.Final")
+    compileOnly("io.netty:netty-all:4.2.1.Final")
 }
 
 tasks.shadowJar {
