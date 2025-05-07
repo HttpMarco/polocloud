@@ -9,10 +9,10 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public enum OS {
 
-    WINDOWS(""),
-    LINUX(""),
-    MACOS(""),
-    UNKNOWN("");
+    WINDOWS(";"),
+    LINUX(":"),
+    MACOS(":"),
+    UNKNOWN(":");
 
     private final String processSeparator;
 

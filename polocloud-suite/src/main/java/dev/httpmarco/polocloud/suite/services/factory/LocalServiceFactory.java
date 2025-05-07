@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +28,7 @@ public final class LocalServiceFactory implements ServiceFactory {
     private static final String INSTANCE_MAIN_CLASS;
 
     private static final Path FACTORY_DIR = Path.of("temp");
+
 
     static {
         // todo read dynamic
@@ -61,6 +63,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             var arguments = new ArrayList<String>();
             var dependencies = new ArrayList<String>();
             dependencies.add(API_PATH);
+            dependencies.addAll(PolocloudSuite.instance().dependencyProvider().original().bindDependencies().stream().map(it -> "../../local/dependencies/" + it.file().getName()).toList());
 
             arguments.add(javaLocation + "/bin/java");
             arguments.add("-javaagent:%s".formatted(INSTANCE_PATH));
@@ -88,7 +91,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             platformProvider.factory().bindPlatform(service);
 
             try {
-                service.process(processBuilder.command(arguments).start());
+                service.process(processBuilder.command(arguments).inheritIO().start());
                 service.startTracking();
             } catch (IOException e) {
                 log.error(PolocloudSuite.instance().translation().get("suite.service.start.failed", e.fillInStackTrace(), service.name()));
