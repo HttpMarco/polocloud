@@ -21,15 +21,13 @@ dependencies {
     compileOnly(project(":polocloud-api"))
     compileOnly(libs.bundles.grpc)
 
+    compileOnly("io.netty:netty-all:4.2.1.Final")
+
     compileOnly(libs.bundles.utils)
     annotationProcessor(libs.bundles.utils)
 
     compileOnly(libs.redis)
     compileOnly(libs.jline)
-
-    // testing element
-    // https://mvnrepository.com/artifact/io.netty/netty-all
-    compileOnly("io.netty:netty-all:4.2.1.Final")
 }
 
 tasks.shadowJar {

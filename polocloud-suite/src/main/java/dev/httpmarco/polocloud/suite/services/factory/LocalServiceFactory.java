@@ -63,7 +63,9 @@ public final class LocalServiceFactory implements ServiceFactory {
             var arguments = new ArrayList<String>();
             var dependencies = new ArrayList<String>();
             dependencies.add(API_PATH);
-            dependencies.addAll(PolocloudSuite.instance().dependencyProvider().original().bindDependencies().stream().map(it -> "../../local/dependencies/" + it.file().getName()).toList());
+            dependencies.addAll(PolocloudSuite.instance().dependencyProvider().original().bindDependencies().stream()
+                    .map(it -> "../../local/dependencies/" + it.file().getName())
+                    .toList());
 
             arguments.add(javaLocation + "/bin/java");
             arguments.add("-javaagent:%s".formatted(INSTANCE_PATH));

@@ -31,7 +31,7 @@ public final class PolocloudInstance extends Polocloud {
             var loader = new PolocloudInstanceLoader(platformPath);
 
             try (var jarFile = new JarFile(platformPath.toString())) {
-                final var mainClass = Class.forName( jarFile.getManifest().getMainAttributes().getValue("Main-Class"), false, loader);
+                final var mainClass = Class.forName(jarFile.getManifest().getMainAttributes().getValue("Main-Class"), false, loader);
 
                 final var thread = new Thread(() -> {
                     try {
