@@ -93,7 +93,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             platformProvider.factory().bindPlatform(service);
 
             try {
-                service.process(processBuilder.command(arguments).inheritIO().start());
+                service.process(processBuilder.command(arguments).start());
                 service.startTracking();
             } catch (IOException e) {
                 log.error(PolocloudSuite.instance().translation().get("suite.service.start.failed", e.fillInStackTrace(), service.name()));
