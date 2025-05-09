@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dev.httpmarco.polocloud.grpc;
+package dev.httpmarco.polocloud.explanation.cluster;
 
 service ClusterSuiteService {
   rpc attachSuite(ClusterSuiteAttachRequest) returns (ClusterSuiteAttachResponse);

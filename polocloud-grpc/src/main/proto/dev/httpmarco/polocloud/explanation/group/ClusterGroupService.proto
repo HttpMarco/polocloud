@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.explanation.group;
+
+import "dev/httpmarco/polocloud/explanation/group/ClusterGroupExplanation.proto";
+
+message GroupFindRequest {
+   string name = 1;
+}
+
+service ClusterGroupService {
+  rpc findGroup(GroupFindRequest) returns (ClusterGroupExplanation);
+}

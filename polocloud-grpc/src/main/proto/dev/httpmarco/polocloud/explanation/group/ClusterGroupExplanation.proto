@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.explanation.group;
+
+message ClusterGroupExplanation {
+    string name = 1;
+}
