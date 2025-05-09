@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":polocloud-api"))
+    compileOnly(project(":polocloud-grpc"))
     compileOnly(libs.bundles.grpc)
     compileOnly(libs.bundles.utils)
     annotationProcessor(libs.bundles.utils)

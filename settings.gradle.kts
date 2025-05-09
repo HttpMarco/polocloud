@@ -7,3 +7,4 @@ include("polocloud-instance")
 include("polocloud-metadata")
 
 include("polocloud-common")
+include("polocloud-bridges")

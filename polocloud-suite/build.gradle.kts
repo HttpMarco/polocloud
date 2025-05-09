@@ -15,6 +15,8 @@ dependencies {
 
     // need grpc -> improve dependency
     implementation("com.google.guava:failureaccess:1.0.3")
+    // for the dependency list -> instance need this (next time maybe better idea)
+    compileOnly("com.google.guava:failureaccess:1.0.3")
 
     compileOnly(project(":polocloud-common"))
     compileOnly(project(":polocloud-grpc"))
