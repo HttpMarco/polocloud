@@ -1,0 +1,36 @@
+package dev.httpmarco.polocloud.instance;
+
+import dev.httpmarco.polocloud.api.Polocloud;
+import dev.httpmarco.polocloud.instance.loader.PolocloudInstanceLoader;
+
+import java.lang.reflect.InvocationTargetException;
+
+public final class PolocloudPlatformInvoker extends Thread {
+
+    private final Class<?> mainClass;
+    private final String[] args;
+
+    public PolocloudPlatformInvoker(PolocloudInstanceLoader loader, Class<?> mainClass, String[] args) {
+        this.mainClass = mainClass;
+        this.args = args;
+
+        // close process on exit
+        Runtime.getRuntime().addShutdownHook(new Thread(this::interrupt));
+
+        this.setName("PoloCloud-Service-Thread");
+        this.setContextClassLoader(loader);
+        this.start();
+    }
+
+    @Override
+    public void run() {
+        try {
+
+            System.err.println(Polocloud.instance().groupProvider().find("proxy").name());
+
+            mainClass.getMethod("main", String[].class).invoke(null, (Object) args);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

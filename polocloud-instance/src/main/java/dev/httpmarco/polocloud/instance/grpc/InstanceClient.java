@@ -3,10 +3,14 @@ package dev.httpmarco.polocloud.instance.grpc;
 import dev.httpmarco.polocloud.api.PolocloudEnvironment;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
+@Getter
+@Accessors(fluent = true)
 public final class InstanceClient {
 
-    private ManagedChannel channel;
+    private final ManagedChannel channel;
 
     public InstanceClient() {
         this.channel = ManagedChannelBuilder.forAddress(

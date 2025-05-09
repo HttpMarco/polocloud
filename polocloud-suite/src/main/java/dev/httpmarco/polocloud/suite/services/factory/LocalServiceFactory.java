@@ -24,7 +24,7 @@ public final class LocalServiceFactory implements ServiceFactory {
 
     private static final String INSTANCE_PATH = "../../local/libs/polocloud-instance-2.0.0.jar";
     private static final String API_PATH = "../../local/libs/polocloud-api-2.0.0.jar";
-
+    private static final String GRPC_PATH = "../../local/libs/polocloud-grpc-2.0.0.jar";
     private static final String INSTANCE_MAIN_CLASS;
 
     private static final Path FACTORY_DIR = Path.of("temp");
@@ -63,11 +63,17 @@ public final class LocalServiceFactory implements ServiceFactory {
             var arguments = new ArrayList<String>();
             var dependencies = new ArrayList<String>();
             dependencies.add(API_PATH);
+            dependencies.add(GRPC_PATH);
             dependencies.addAll(PolocloudSuite.instance().dependencyProvider().original().bindDependencies().stream()
                     .map(it -> "../../local/dependencies/" + it.file().getName())
                     .toList());
 
             arguments.add(javaLocation + "/bin/java");
+
+            arguments.add("--enable-native-access=ALL-UNNAMED");
+            // java 24 drop a big warning here -> temp fix
+            arguments.add("--sun-misc-unsafe-memory-access=allow");
+
             arguments.add("-javaagent:%s".formatted(INSTANCE_PATH));
             arguments.add("-cp");
             arguments.add(String.join(OS.detect().processSeparator(), dependencies));

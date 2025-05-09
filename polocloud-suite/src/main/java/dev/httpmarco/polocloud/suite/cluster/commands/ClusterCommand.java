@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.suite.cluster.commands;
 
-import dev.httpmarco.polocloud.grpc.ClusterService;
+import dev.httpmarco.polocloud.explanation.cluster.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
 import dev.httpmarco.polocloud.suite.cluster.configuration.redis.RedisConfig;

@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.suite.cluster.grpc;
 
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
+import dev.httpmarco.polocloud.suite.groups.grpc.ClusterGroupGrpcService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
@@ -23,7 +24,12 @@ public class ClusterGrpcServer implements Closeable {
 
     public ClusterGrpcServer(@NotNull ClusterSuiteData data) {
         this.data = data;
-        this.server = ServerBuilder.forPort(data.port()).addService(new ClusterSuiteGrpcHandler()).addService(new HealthStatusManager().getHealthService()).build();
+        this.server = ServerBuilder.forPort(data.port())
+                .addService(new ClusterSuiteGrpcHandler())
+                .addService(new HealthStatusManager().getHealthService())
+                // service for all group requests
+                .addService(new ClusterGroupGrpcService())
+                .build();
 
         try {
             this.server.start();

@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.suite.cluster.grpc;
 
-import dev.httpmarco.polocloud.grpc.ClusterService;
-import dev.httpmarco.polocloud.grpc.ClusterSuiteServiceGrpc;
+import dev.httpmarco.polocloud.explanation.cluster.ClusterService;
+import dev.httpmarco.polocloud.explanation.cluster.ClusterSuiteServiceGrpc;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.configuration.ClusterGlobalConfig;
 import dev.httpmarco.polocloud.suite.cluster.global.ClusterSuiteData;
