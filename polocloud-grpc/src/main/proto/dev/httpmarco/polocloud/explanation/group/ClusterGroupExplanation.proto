@@ -4,4 +4,9 @@ package dev.httpmarco.polocloud.explanation.group;
 
 message ClusterGroupExplanation {
     string name = 1;
+    int64 minMemory = 2;
+    int64 maxMemory = 3;
+    int64 minOnlineServices = 4;
+    uint32 maxOnlineServices = 5;
+    double percentageToStartNewService = 6;
 }

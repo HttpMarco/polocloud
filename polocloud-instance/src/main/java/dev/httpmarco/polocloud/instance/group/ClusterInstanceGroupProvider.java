@@ -26,7 +26,13 @@ public class ClusterInstanceGroupProvider implements ClusterGroupProvider {
     @Override
     public Future<ClusterGroup> findAsync(String groupId) {
         var response = stub.findGroup(ClusterGroupServiceOuterClass.GroupFindRequest.newBuilder().setName(groupId).build());
-        return Future.completedFuture(new ClusterInstanceGroup(response.getName()));
+        return Future.completedFuture(new ClusterInstanceGroup(
+                response.getName(),
+                (int) response.getMinMemory(),
+                (int) response.getMaxMemory(),
+                (int) response.getMinOnlineServices(),
+                (int) response.getMaxOnlineServices(),
+                response.getPercentageToStartNewService()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.instance;
 
 import dev.httpmarco.polocloud.api.Polocloud;
+import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.instance.loader.PolocloudInstanceLoader;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,9 +26,6 @@ public final class PolocloudPlatformInvoker extends Thread {
     @Override
     public void run() {
         try {
-
-            System.err.println(Polocloud.instance().groupProvider().find("proxy").name());
-
             mainClass.getMethod("main", String[].class).invoke(null, (Object) args);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);

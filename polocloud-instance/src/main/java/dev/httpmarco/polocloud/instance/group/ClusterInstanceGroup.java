@@ -14,36 +14,16 @@ import java.util.List;
 @Accessors(fluent = true)
 public final class ClusterInstanceGroup implements ClusterGroup {
 
-    private String name;
+    private final String name;
+    private final int minMemory;
+    private final int maxMemory;
+    private final int minOnlineService;
+    private final int maxOnlineService;
+    private final double percentageToStartNewService;
 
     @Override
     public SharedPlatform platform() {
         return null;
-    }
-
-    @Override
-    public int minMemory() {
-        return 0;
-    }
-
-    @Override
-    public int maxMemory() {
-        return 0;
-    }
-
-    @Override
-    public int minOnlineService() {
-        return 0;
-    }
-
-    @Override
-    public int maxOnlineService() {
-        return 0;
-    }
-
-    @Override
-    public double percentageToStartNewService() {
-        return 0;
     }
 
     @Override

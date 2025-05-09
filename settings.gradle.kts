@@ -8,3 +8,4 @@ include("polocloud-metadata")
 
 include("polocloud-common")
 include("polocloud-bridges")
+include("polocloud-bridges:java-paper-bridge")
