@@ -15,7 +15,7 @@ public class PortDetector {
     public int nextPort(ClusterLocalServiceImpl service) {
         var port = service.group().platform().type() == PlatformType.PROXY ? 25565 : 30000;
         while (isPortUsed(port)) {
-            port++;
+            port = port + 2;
         }
         return port;
     }

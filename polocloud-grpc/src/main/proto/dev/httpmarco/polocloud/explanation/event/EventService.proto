@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.explanation.event;
+
+message EventRegisterRequest {
+  string name = 1;
+  string eventClass = 2;
+}
+
+message EventRegisterResponse {
+  bool success = 1;
+  string reason = 2;
+}
+
+service EventService {
+  rpc subscribe(EventRegisterRequest) returns (EventRegisterResponse);
+}

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.cluster.grpc;
 
+import dev.httpmarco.polocloud.explanation.Utils;
 import dev.httpmarco.polocloud.explanation.cluster.ClusterService;
 import dev.httpmarco.polocloud.explanation.cluster.ClusterSuiteServiceGrpc;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
@@ -41,7 +42,7 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
     }
 
     @Override
-    public void requestState(ClusterService.EmptyCall request, StreamObserver<ClusterService.ClusterSuiteStateResponse> responseObserver) {
+    public void requestState(Utils.EmptyCall request, StreamObserver<ClusterService.ClusterSuiteStateResponse> responseObserver) {
         var response = ClusterService.ClusterSuiteStateResponse.newBuilder();
 
         //todo
@@ -57,7 +58,7 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
     }
 
     @Override
-    public void drainCluster(ClusterService.SuiteDrainRequest request, StreamObserver<ClusterService.EmptyCall> responseObserver) {
+    public void drainCluster(ClusterService.SuiteDrainRequest request, StreamObserver<Utils.EmptyCall> responseObserver) {
         //todo
         if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
             var externalSuite = globalCluster.find(request.getId());
@@ -73,12 +74,12 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
         }
 
 
-        responseObserver.onNext(ClusterService.EmptyCall.newBuilder().build());
+        responseObserver.onNext(Utils.EmptyCall.newBuilder().build());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void runtimeHandshake(ClusterService.SuiteRuntimeHandShakeRequest request, StreamObserver<ClusterService.EmptyCall> responseObserver) {
+    public void runtimeHandshake(ClusterService.SuiteRuntimeHandShakeRequest request, StreamObserver<Utils.EmptyCall> responseObserver) {
         var newSuite = new ExternalSuite(new ClusterSuiteData(request.getId(), request.getHostname(), request.getPrivateKey(), request.getPort()));
 
         if (PolocloudSuite.instance().cluster() instanceof GlobalCluster globalCluster) {
@@ -87,7 +88,7 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
             } else {
                 // welcome new suite
                 globalCluster.suites().add(newSuite);
-                newSuite.state(newSuite.available() ? newSuite.clusterStub().requestState(ClusterService.EmptyCall.newBuilder().build()).getState() : ClusterService.State.OFFLINE);
+                newSuite.state(newSuite.available() ? newSuite.clusterStub().requestState(Utils.EmptyCall.newBuilder().build()).getState() : ClusterService.State.OFFLINE);
 
                 if (newSuite.state() == ClusterService.State.AVAILABLE) {
                     log.info(PolocloudSuite.instance().translation().get("cluster.grpc.handler.suiteOnline", newSuite.id()));
@@ -97,7 +98,7 @@ public final class ClusterSuiteGrpcHandler extends ClusterSuiteServiceGrpc.Clust
 
         }
 
-        responseObserver.onNext(ClusterService.EmptyCall.newBuilder().build());
+        responseObserver.onNext(Utils.EmptyCall.newBuilder().build());
         responseObserver.onCompleted();
     }
 }

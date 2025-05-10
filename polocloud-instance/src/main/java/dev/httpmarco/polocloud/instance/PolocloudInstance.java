@@ -2,9 +2,10 @@ package dev.httpmarco.polocloud.instance;
 
 import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.PolocloudEnvironment;
+import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
 import dev.httpmarco.polocloud.instance.group.ClusterInstanceGroupProvider;
-import dev.httpmarco.polocloud.instance.grpc.InstanceClient;
+import dev.httpmarco.polocloud.instance.grpc.GrpcInstance;
 import dev.httpmarco.polocloud.instance.loader.PolocloudInstanceLoader;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -19,14 +20,14 @@ public final class PolocloudInstance extends Polocloud {
 
     @Getter
     private static PolocloudInstance instance;
-    private final InstanceClient client;
+    private final GrpcInstance client;
 
     private final ClusterInstanceGroupProvider groupProvider;
 
     public PolocloudInstance(String[] args) {
         instance = this;
 
-        this.client = new InstanceClient();
+        this.client = new GrpcInstance();
         this.groupProvider = new ClusterInstanceGroupProvider(this.client.channel());
 
         try {
@@ -46,6 +47,11 @@ public final class PolocloudInstance extends Polocloud {
 
     @Override
     public ClusterServiceProvider serviceProvider() {
+        return null;
+    }
+
+    @Override
+    public EventProvider eventProvider() {
         return null;
     }
 }

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.cluster.tasks;
 
+import dev.httpmarco.polocloud.explanation.Utils;
 import dev.httpmarco.polocloud.explanation.cluster.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.global.GlobalCluster;
@@ -34,7 +35,7 @@ public class ClusterStatusTask extends TickTask {
         for (var suite : this.cluster.suites()) {
 
             var currentState = suite.state();
-            var state = suite.available() ? suite.clusterStub().requestState(ClusterService.EmptyCall.newBuilder().build()).getState() : ClusterService.State.OFFLINE;
+            var state = suite.available() ? suite.clusterStub().requestState(Utils.EmptyCall.newBuilder().build()).getState() : ClusterService.State.OFFLINE;
 
             if (state != currentState) {
                 var translation = PolocloudSuite.instance().translation();

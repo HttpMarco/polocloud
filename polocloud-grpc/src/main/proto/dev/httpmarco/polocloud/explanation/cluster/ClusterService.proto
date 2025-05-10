@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package dev.httpmarco.polocloud.explanation.cluster;
 
+import "dev/httpmarco/polocloud/explanation/utils.proto";
+
 service ClusterSuiteService {
   rpc attachSuite(ClusterSuiteAttachRequest) returns (ClusterSuiteAttachResponse);
   rpc requestState(EmptyCall) returns (ClusterSuiteStateResponse);
@@ -29,9 +31,6 @@ message SuiteRuntimeHandShakeRequest {
   string privateKey = 2;
   string hostname = 3;
   int32 port = 4;
-}
-
-message EmptyCall {
 }
 
 message ClusterSuiteStateResponse {

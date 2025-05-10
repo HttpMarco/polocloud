@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite;
 
 import dev.httpmarco.polocloud.api.Polocloud;
+import dev.httpmarco.polocloud.api.event.EventProvider;
 import dev.httpmarco.polocloud.suite.cluster.Cluster;
 import dev.httpmarco.polocloud.suite.cluster.ClusterInitializer;
 import dev.httpmarco.polocloud.suite.cluster.commands.ClusterCommand;
@@ -9,6 +10,7 @@ import dev.httpmarco.polocloud.suite.commands.CommandService;
 import dev.httpmarco.polocloud.suite.configuration.SuiteConfig;
 import dev.httpmarco.polocloud.suite.dependencies.DependencyProvider;
 import dev.httpmarco.polocloud.suite.dependencies.impl.DependencyProviderImpl;
+import dev.httpmarco.polocloud.suite.events.EventProviderImpl;
 import dev.httpmarco.polocloud.suite.groups.ClusterGroupProviderImpl;
 import dev.httpmarco.polocloud.suite.i18n.I18n;
 import dev.httpmarco.polocloud.suite.i18n.impl.I18nPolocloudSuite;
@@ -31,6 +33,7 @@ public final class PolocloudSuite extends Polocloud {
 
     private Cluster cluster;
     private final DependencyProvider dependencyProvider;
+    private final EventProvider eventProvider;
     private final PlatformProvider platformProvider;
     private final TemplateService templateService;
     private final ClusterGroupProviderImpl groupProvider;
@@ -38,7 +41,8 @@ public final class PolocloudSuite extends Polocloud {
 
     public PolocloudSuite() {
         this.config = SuiteConfig.load();
-        this.translation =new I18nPolocloudSuite();
+        this.translation = new I18nPolocloudSuite();
+        this.eventProvider = new EventProviderImpl();
         this.commandService = new CommandService();
         this.dependencyProvider = new DependencyProviderImpl();
         this.cluster = ClusterInitializer.generate(config.cluster());
