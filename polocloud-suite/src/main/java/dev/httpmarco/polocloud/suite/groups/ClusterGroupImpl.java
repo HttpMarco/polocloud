@@ -22,6 +22,7 @@ public final class ClusterGroupImpl implements ClusterGroup {
     private int minOnlineService;
     private int maxOnlineService;
     private double percentageToStartNewService;
+    private List<String> templates;
 
     @Override
     public int runningServicesAmount() {

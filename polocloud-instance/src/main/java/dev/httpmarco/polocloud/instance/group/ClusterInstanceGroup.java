@@ -20,6 +20,7 @@ public final class ClusterInstanceGroup implements ClusterGroup {
     private final int minOnlineService;
     private final int maxOnlineService;
     private final double percentageToStartNewService;
+    private final List<String> templates;
 
     @Override
     public SharedPlatform platform() {

@@ -1,7 +1,13 @@
 package dev.httpmarco.polocloud.suite.services;
 
-public interface ClusterLocalService {
+import dev.httpmarco.polocloud.api.services.ClusterService;
+
+import java.nio.file.Path;
+
+public interface ClusterLocalService extends ClusterService {
 
     int port();
+
+    Path path();
 
 }

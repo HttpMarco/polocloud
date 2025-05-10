@@ -8,6 +8,8 @@ import dev.httpmarco.polocloud.suite.platforms.Platform;
 import dev.httpmarco.polocloud.suite.platforms.PlatformVersion;
 import dev.httpmarco.polocloud.suite.terminal.setup.Setup;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public final class GroupSetup extends Setup {
@@ -50,16 +52,26 @@ public final class GroupSetup extends Setup {
 
         var platform = PolocloudSuite.instance().platformProvider().findPlatform(context.get("platform"));
         var platformVersion = platform.versions().stream().filter(it -> it.version().equals(context.get("platformVersion"))).findFirst().orElseThrow();
+        var name = context.get("name");
+
+        // register new own templates
+        PolocloudSuite.instance().templateService().register(name);
+
+        List<String> templates = new ArrayList<>(List.of(name, "EVERY"));
+        // add all default templates
+        templates.add("EVERY_" + platform.type().name());
 
         ClusterGroupImpl clusterGroup = new ClusterGroupImpl(
-                context.get("name"),
+                name,
                 new SharedPlatform(context.get("platform"), Version.parse(platformVersion.version()), platform.type()),
                 Integer.parseInt(context.get("minMemory")),
                 Integer.parseInt(context.get("maxMemory")),
                 Integer.parseInt(context.get("minOnlineService")),
                 Integer.parseInt(context.get("maxOnlineService")),
-                80.0
+                80.0,
+                templates
         );
+
         PolocloudSuite.instance().groupProvider().registerGroup(clusterGroup);
     }
 }

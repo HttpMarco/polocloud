@@ -55,6 +55,9 @@ public final class LocalServiceFactory implements ServiceFactory {
             Files.createDirectories(path);
             service.path(path);
 
+            // copy all binded templates
+            PolocloudSuite.instance().templateService().bindTemplates(service);
+
             var processBuilder = new ProcessBuilder().directory(service.path().toFile());
 
             // if users start with a custom java location

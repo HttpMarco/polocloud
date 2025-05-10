@@ -14,6 +14,7 @@ import dev.httpmarco.polocloud.suite.i18n.I18n;
 import dev.httpmarco.polocloud.suite.i18n.impl.I18nPolocloudSuite;
 import dev.httpmarco.polocloud.suite.platforms.PlatformProvider;
 import dev.httpmarco.polocloud.suite.services.ClusterServiceProviderImpl;
+import dev.httpmarco.polocloud.suite.templates.TemplateService;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminal;
 import dev.httpmarco.polocloud.suite.terminal.PolocloudTerminalImpl;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public final class PolocloudSuite extends Polocloud {
     private Cluster cluster;
     private final DependencyProvider dependencyProvider;
     private final PlatformProvider platformProvider;
+    private final TemplateService templateService;
     private final ClusterGroupProviderImpl groupProvider;
     private final ClusterServiceProviderImpl serviceProvider;
 
@@ -41,6 +43,7 @@ public final class PolocloudSuite extends Polocloud {
         this.dependencyProvider = new DependencyProviderImpl();
         this.cluster = ClusterInitializer.generate(config.cluster());
         this.platformProvider = new PlatformProvider();
+        this.templateService = new TemplateService();
         this.groupProvider = new ClusterGroupProviderImpl();
         this.serviceProvider = new ClusterServiceProviderImpl();
 

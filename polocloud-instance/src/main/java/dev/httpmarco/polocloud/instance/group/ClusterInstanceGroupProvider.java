@@ -28,11 +28,12 @@ public class ClusterInstanceGroupProvider implements ClusterGroupProvider {
         var response = stub.findGroup(ClusterGroupServiceOuterClass.GroupFindRequest.newBuilder().setName(groupId).build());
         return Future.completedFuture(new ClusterInstanceGroup(
                 response.getName(),
-                (int) response.getMinMemory(),
-                (int) response.getMaxMemory(),
-                (int) response.getMinOnlineServices(),
-                (int) response.getMaxOnlineServices(),
-                response.getPercentageToStartNewService()));
+                response.getMinMemory(),
+                response.getMaxMemory(),
+                response.getMinOnlineServices(),
+                response.getMaxOnlineServices(),
+                response.getPercentageToStartNewService(),
+                response.getTemplatesList().stream().toList()));
     }
 
     @Override

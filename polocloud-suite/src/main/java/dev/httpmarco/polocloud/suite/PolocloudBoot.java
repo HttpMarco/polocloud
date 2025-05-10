@@ -12,7 +12,6 @@ public final class PolocloudBoot {
     }
 
     public static void main(String[] args) {
-
         System.setProperty("polocloud.boot.time", String.valueOf(System.currentTimeMillis()));
 
         // before we start -> clean layout

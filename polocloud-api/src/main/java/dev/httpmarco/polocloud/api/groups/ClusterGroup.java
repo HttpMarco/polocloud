@@ -64,5 +64,11 @@ public interface ClusterGroup extends Named {
      */
     List<ClusterService> runningServices();
 
+    /**
+     * Retrieves the list of templates associated with this cluster group.
+     * @return a list of templates related to this cluster group
+     */
+    List<String> templates();
+
 
 }
