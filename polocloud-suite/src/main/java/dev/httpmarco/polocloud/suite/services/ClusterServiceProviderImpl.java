@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.api.Named;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceProvider;
+import dev.httpmarco.polocloud.api.services.events.ClusterServiceOnlineEvent;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.storage.ClusterStorage;
 import dev.httpmarco.polocloud.suite.services.commands.ServiceCommand;
@@ -44,6 +45,11 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
         this.factory = new LocalServiceFactory();
 
         PolocloudSuite.instance().commandService().registerCommand(new ServiceCommand(this));
+
+        // register default events
+        PolocloudSuite.instance().eventProvider().subscribe(ClusterServiceOnlineEvent.class, it -> {
+
+        });
 
         this.trackingQueue = new ServiceTrackingQueue(this);
         this.trackingQueue.start();
