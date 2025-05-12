@@ -8,6 +8,8 @@ dependencies {
     compileOnly(libs.bundles.grpc)
     compileOnly(libs.bundles.utils)
     annotationProcessor(libs.bundles.utils)
+
+    compileOnly(libs.gson)
 }
 
 
