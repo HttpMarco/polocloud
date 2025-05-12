@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.commands.impl;
 
 import com.sun.management.OperatingSystemMXBean;
+import dev.httpmarco.polocloud.api.services.events.ClusterServiceOnlineEvent;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.commands.Command;
 import lombok.extern.log4j.Log4j2;

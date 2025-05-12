@@ -49,4 +49,8 @@ public interface ClusterService extends Named {
      */
     List<String> logs(int lines);
 
+    @Override
+    default String name() {
+        return group() + "-" + id();
+    }
 }

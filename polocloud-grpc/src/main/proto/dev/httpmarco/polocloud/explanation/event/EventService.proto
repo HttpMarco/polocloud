@@ -3,7 +3,7 @@ syntax = "proto3";
 package dev.httpmarco.polocloud.explanation.event;
 
 message EventRegisterRequest {
-  string name = 1;
+  string serviceId = 1;
   string eventClass = 2;
 }
 
@@ -12,6 +12,16 @@ message EventRegisterResponse {
   string reason = 2;
 }
 
+message Event {
+  string eventClass = 1;
+  string content = 2;
+}
+
+message EventResponse {
+
+}
+
 service EventService {
   rpc subscribe(EventRegisterRequest) returns (EventRegisterResponse);
+  rpc call(Event) returns (EventResponse);
 }

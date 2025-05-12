@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.explanation.group;
+
+message ServiceSayOnlineRequest{
+  string serviceId = 1;
+}
+
+message ServiceSayOnlineResponse{
+
+}
+
+service ClusterServerService {
+  rpc ServiceSayOnline(ServiceSayOnlineRequest) returns (ServiceSayOnlineResponse);
+}

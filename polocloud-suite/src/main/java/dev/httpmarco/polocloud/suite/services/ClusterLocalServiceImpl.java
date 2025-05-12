@@ -2,8 +2,10 @@ package dev.httpmarco.polocloud.suite.services;
 
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
+import dev.httpmarco.polocloud.explanation.event.EventServiceGrpc;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.utils.PortDetector;
+import io.grpc.Channel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,6 +32,11 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
 
     private Process process;
     private @Nullable Thread processTracking;
+
+    private Channel channel;
+
+    // grpc channel stubs
+    private EventServiceGrpc.EventServiceBlockingStub eventServiceBlockingStub;
 
     public ClusterLocalServiceImpl(int id, UUID uniqueId, ClusterGroup group) {
         super(id, uniqueId, group, ClusterServiceState.PREPARE);
@@ -87,5 +94,11 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
 
     public void changeState(ClusterServiceState state) {
         super.state(state);
+    }
+
+    public void channel(Channel channel) {
+        this.channel = channel;
+
+        this.eventServiceBlockingStub = EventServiceGrpc.newBlockingStub(channel);
     }
 }

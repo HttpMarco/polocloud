@@ -1,7 +1,5 @@
 package dev.httpmarco.polocloud.instance;
 
-import dev.httpmarco.polocloud.api.Polocloud;
-import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.instance.loader.PolocloudInstanceLoader;
 
 import java.lang.reflect.InvocationTargetException;
