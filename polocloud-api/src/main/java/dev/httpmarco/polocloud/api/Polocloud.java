@@ -8,8 +8,6 @@ public abstract class Polocloud {
 
     private static Polocloud instance;
 
-    private ClusterGroupProvider groupProvider;
-
     public Polocloud() {
         instance = this;
     }
