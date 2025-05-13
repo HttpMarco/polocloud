@@ -14,6 +14,11 @@ public final class ClusterGroupGrpcService extends ClusterGroupServiceGrpc.Clust
         var group = PolocloudSuite.instance().groupProvider().find(request.getName());
 
         response.setName(group.name());
+        response.setPlatform(ClusterGroupExplanationOuterClass.SharedPlatform.newBuilder()
+                .setName(group.platform().name())
+                .setVersion(group.platform().version().toString())
+                .setType(group.platform().type().name())
+                .build());
         response.setMinMemory(group.minMemory());
         response.setMaxMemory(group.maxMemory());
         response.setMinOnlineServices(group.minOnlineService());

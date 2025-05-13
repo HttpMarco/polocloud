@@ -4,10 +4,18 @@ package dev.httpmarco.polocloud.explanation.group;
 
 message ClusterGroupExplanation {
     string name = 1;
-    int32 minMemory = 2;
-    int32 maxMemory = 3;
-    int32 minOnlineServices = 4;
-    int32 maxOnlineServices = 5;
-    double percentageToStartNewService = 6;
-    repeated string templates = 7;
+    SharedPlatform platform = 2;
+    int32 minMemory = 3;
+    int32 maxMemory = 4;
+    int32 minOnlineServices = 5;
+    int32 maxOnlineServices = 6;
+    double percentageToStartNewService = 7;
+    repeated string templates = 8;
 }
+
+message SharedPlatform {
+    string name = 1;
+    string version = 2;
+    string type = 3;
+}
+

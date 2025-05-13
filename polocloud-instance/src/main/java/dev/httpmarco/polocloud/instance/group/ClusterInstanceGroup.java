@@ -15,6 +15,7 @@ import java.util.List;
 public final class ClusterInstanceGroup implements ClusterGroup {
 
     private final String name;
+    private final SharedPlatform platform;
     private final int minMemory;
     private final int maxMemory;
     private final int minOnlineService;
@@ -23,17 +24,14 @@ public final class ClusterInstanceGroup implements ClusterGroup {
     private final List<String> templates;
 
     @Override
-    public SharedPlatform platform() {
-        return null;
-    }
-
-    @Override
     public int runningServicesAmount() {
+        // todo
         return 0;
     }
 
     @Override
     public List<ClusterService> runningServices() {
+        // todo
         return List.of();
     }
 }
