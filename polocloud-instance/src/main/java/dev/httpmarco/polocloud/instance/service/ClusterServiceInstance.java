@@ -19,6 +19,8 @@ public final class ClusterServiceInstance implements ClusterService {
     private UUID uniqueId;
     private ClusterServiceState state;
     private ClusterGroup group;
+    private String hostname;
+    private int port;
 
     @Override
     public boolean executeCommand(String command) {

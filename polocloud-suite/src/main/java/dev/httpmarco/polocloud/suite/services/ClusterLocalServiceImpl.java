@@ -27,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements ClusterLocalService {
 
     private final List<String> logs = new CopyOnWriteArrayList<>();
-    private final int port;
     private Path path;
 
     private Process process;
@@ -38,11 +37,8 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
     // grpc channel stubs
     private EventServiceGrpc.EventServiceBlockingStub eventServiceBlockingStub;
 
-    public ClusterLocalServiceImpl(int id, UUID uniqueId, ClusterGroup group) {
-        super(id, uniqueId, group, ClusterServiceState.PREPARE);
-
-        // generate port
-        this.port = PortDetector.nextPort(this);
+    public ClusterLocalServiceImpl(int id, int port, UUID uniqueId, ClusterGroup group) {
+        super(id, uniqueId, group, "127.0.0.1", port,  ClusterServiceState.PREPARE);
     }
 
     @Override

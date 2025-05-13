@@ -22,6 +22,9 @@ public class ClusterServiceImpl implements ClusterService {
     private final UUID uniqueId;
     private final ClusterGroup group;
 
+    private final String hostname;
+    private final int port;
+
     @Setter(AccessLevel.PROTECTED)
     private ClusterServiceState state;
 

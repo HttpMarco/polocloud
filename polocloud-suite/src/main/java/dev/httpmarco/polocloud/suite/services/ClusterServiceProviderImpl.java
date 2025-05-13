@@ -15,6 +15,7 @@ import dev.httpmarco.polocloud.suite.services.queue.ServiceLogQueue;
 import dev.httpmarco.polocloud.suite.services.queue.ServiceQueue;
 import dev.httpmarco.polocloud.suite.services.queue.ServiceTrackingQueue;
 import dev.httpmarco.polocloud.suite.services.storage.LocalServiceStorage;
+import dev.httpmarco.polocloud.suite.utils.PortDetector;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
@@ -76,11 +77,12 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
     }
 
     public void bootNewInstance(ClusterGroup group) {
-        var service = new ClusterLocalServiceImpl(1, UUID.randomUUID(), group);
+        var nextPossibleGroupServicePort = PortDetector.nextPort(group);
+        var service = new ClusterLocalServiceImpl(1, nextPossibleGroupServicePort, UUID.randomUUID(), group);
 
         log.info(PolocloudSuite.instance().translation().get("suite.cluster.service.starting", service.name()));
-        this.storage.publish(service);
 
+        this.storage.publish(service);
         this.factory.bootInstance(service);
     }
 

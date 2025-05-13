@@ -102,5 +102,5 @@ public interface ClusterService extends Named {
      *
      * @return the port of the service as a {@code String}
      */
-    String port();
+    int port();
 }

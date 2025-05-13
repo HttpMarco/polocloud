@@ -17,7 +17,7 @@ public final class ClusterServiceSerializer implements JsonSerializer<ClusterSer
                 properties.get("id").getAsInt(),
                 UUID.fromString(properties.get("uniqueId").getAsString()),
                 ClusterServiceState.ONLINE,
-                null);
+                null, "127.0.0.1",0);
     }
 
     @Override

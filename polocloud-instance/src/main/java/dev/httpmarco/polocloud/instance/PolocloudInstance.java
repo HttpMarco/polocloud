@@ -36,7 +36,7 @@ public final class PolocloudInstance extends Polocloud {
         this.serviceProvider = new ClusterServiceInstanceProvider(this.client.channel());
 
         try {
-            Path platformPath = Path.of(PolocloudEnvironment.read(PolocloudEnvironment.POLOCLOUD_SUITE_PLATFORM_PATH));
+            var platformPath = Path.of(PolocloudEnvironment.read(PolocloudEnvironment.POLOCLOUD_SUITE_PLATFORM_PATH));
             var loader = new PolocloudInstanceLoader(platformPath);
 
             try (var jarFile = new JarFile(platformPath.toString())) {

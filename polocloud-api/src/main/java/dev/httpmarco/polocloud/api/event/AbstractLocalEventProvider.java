@@ -2,7 +2,6 @@ package dev.httpmarco.polocloud.api.event;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Getter
-@Log4j2
 @Accessors(fluent = true)
 public abstract class AbstractLocalEventProvider implements EventProvider {
 
@@ -40,8 +38,6 @@ public abstract class AbstractLocalEventProvider implements EventProvider {
         current.add((Consumer<Event>) consumer);
         // Update the registry with the new consumer.
         this.registry.put(eventClazz, current);
-
-        log.debug("Subscribe new event: {}", eventClazz);
     }
 
     @Override
