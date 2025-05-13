@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -45,7 +46,7 @@ public final class Downloader {
     }
 
     private <T> T content(DownloadAcceptor<T> acceptor) {
-        try (var in = new URL(url).openStream()) {
+        try (var in = new URI(url).toURL().openStream()) {
             return acceptor.accept(in);
         } catch (Exception e) {
             throw new RuntimeException(PolocloudSuite.instance().translation().get("suite.utils.downloader.download.failed", url), e);
