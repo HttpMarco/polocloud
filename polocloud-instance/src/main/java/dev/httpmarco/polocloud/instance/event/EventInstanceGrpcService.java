@@ -16,7 +16,7 @@ public final class EventInstanceGrpcService extends EventServiceGrpc.EventServic
 
         Event event = (Event) GsonInstance.DEFAULT.fromJson(request.getContent(), Class.forName(request.getEventClass()));
 
-        PolocloudInstance.instance().eventProvider().callLocal(event);
+        PolocloudInstance.instance().eventProvider().call(event);
 
         responseObserver.onNext(EventServiceOuterClass.EventResponse.newBuilder().build());
         responseObserver.onCompleted();

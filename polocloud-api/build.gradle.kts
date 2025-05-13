@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.lombok)
-    annotationProcessor(libs.lombok)
+    compileOnly(libs.bundles.logging)
+    compileOnly(libs.bundles.utils)
+    annotationProcessor(libs.bundles.utils)
 }
