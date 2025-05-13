@@ -5,6 +5,7 @@
   "language": "JAVA",
   "url": "https://api.papermc.io/v2/projects/paper/versions/%version%/builds/%buildId%/downloads/paper-%version%-%buildId%.jar",
   "shutdownCommand": "stop",
+  "separateClassLoader": "false",
   "bridgePath": "plugins",
   "filePrepareProcess": [
     {
