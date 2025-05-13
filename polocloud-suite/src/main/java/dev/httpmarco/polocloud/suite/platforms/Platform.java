@@ -19,6 +19,8 @@ public final class Platform {
     private final PlatformLanguage language;
     private final String url;
     private final String shutdownCommand;
+    private final String bridgePath;
+    private final Boolean separateClassLoader;
     private final List<FilePrepareProcess> filePrepareProcess;
     private final List<PlatformVersion> versions;
     private final List<String> startArguments;

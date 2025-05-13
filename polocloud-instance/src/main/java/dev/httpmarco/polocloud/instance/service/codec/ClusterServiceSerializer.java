@@ -16,12 +16,16 @@ public final class ClusterServiceSerializer implements JsonSerializer<ClusterSer
         return new ClusterServiceInstance(
                 properties.get("id").getAsInt(),
                 UUID.fromString(properties.get("uniqueId").getAsString()),
-                ClusterServiceState.ONLINE,
-                null, "127.0.0.1",0);
+                ClusterServiceState.valueOf(properties.get("state").getAsString()),
+                context.deserialize(properties.get("group"), ClusterServiceInstance.class),
+                properties.get("hostname").getAsString(),
+                properties.get("port").getAsInt()
+        );
     }
 
     @Override
     public JsonElement serialize(ClusterService src, Type typeOfSrc, JsonSerializationContext context) {
+        //todo
         return null;
     }
 }

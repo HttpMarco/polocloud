@@ -99,6 +99,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             environment.put(PolocloudEnvironment.POLOCLOUD_SUITE_PLATFORM_PATH.name(), platform.name() + "-" + version.version() + "-" + version.buildId() + ".jar");
             environment.put(PolocloudEnvironment.POLOCLOUD_SERVICE_ID.name(), service.uniqueId().toString());
             environment.put(PolocloudEnvironment.POLOCLOUD_SERVICE_PORT.name(), String.valueOf(service.port()));
+            environment.put(PolocloudEnvironment.POLOCLOUD_SERVICE_SEPARAT_CLASSLOADER.name(), platform.separateClassLoader().toString());
             // download platform file
             platformProvider.factory().bindPlatform(service);
 

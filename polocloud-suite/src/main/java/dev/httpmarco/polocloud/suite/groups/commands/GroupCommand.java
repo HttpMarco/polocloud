@@ -53,5 +53,19 @@ public final class GroupCommand extends Command {
 
 
         syntax(commandContext -> new GroupSetup().run(), "Create a new group", new KeywordArgument("create"));
+
+
+        syntax(commandContext -> {
+            var group = commandContext.arg(groupArgument);
+
+            if(group == null) {
+                log.info(translation.get("suite.command.group.info.notFound"));
+                return;
+            }
+
+            PolocloudSuite.instance().groupProvider().delete(group.name());
+            log.info("Successfully deleted group {}", group.name());
+        }, groupArgument, new KeywordArgument("delete"));
+
     }
 }

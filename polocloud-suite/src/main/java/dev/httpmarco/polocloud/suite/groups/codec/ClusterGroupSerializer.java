@@ -1,46 +1,39 @@
-package dev.httpmarco.polocloud.instance.group.codec;
+package dev.httpmarco.polocloud.suite.groups.codec;
 
 import com.google.gson.*;
 import dev.httpmarco.polocloud.api.Version;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.platform.PlatformType;
 import dev.httpmarco.polocloud.api.platform.SharedPlatform;
-import dev.httpmarco.polocloud.instance.group.ClusterInstanceGroup;
+import dev.httpmarco.polocloud.suite.groups.ClusterGroupImpl;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
+import java.util.List;
 
 public final class ClusterGroupSerializer implements JsonSerializer<ClusterGroup>, JsonDeserializer<ClusterGroup> {
-
 
     @Override
     public ClusterGroup deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         var properties = json.getAsJsonObject();
 
         var name = properties.get("name").getAsString();
+
+        var platformProperties = properties.get("platform").getAsJsonObject();
+
+        var platform = new SharedPlatform(
+                platformProperties.get("name").getAsString(),
+                Version.parse(platformProperties.get("version").getAsString()),
+                PlatformType.valueOf(platformProperties.get("type").getAsString())
+        );
         var minMemory = properties.get("minMemory").getAsInt();
         var maxMemory = properties.get("maxMemory").getAsInt();
-        var minOnlineServices = properties.get("minOnlineServices").getAsInt();
-        var maxOnlineServices = properties.get("maxOnlineServices").getAsInt();
+        var minOnlineService = properties.get("minOnlineService").getAsInt();
+        var maxOnlineService = properties.get("maxOnlineService").getAsInt();
         var percentageToStartNewService = properties.get("percentageToStartNewService").getAsDouble();
 
-        String[] templates = context.deserialize(properties.get("templates"), String[].class);
+        List<String> templates = context.deserialize(properties.get("templates"), List.class);
 
-        JsonObject platform = properties.get("platform").getAsJsonObject();
-        var platformName = platform.get("name").getAsString();
-        var platformVersion = Version.parse(platform.get("version").getAsString());
-        var platformType = PlatformType.valueOf(platform.get("type").getAsString());
-
-        var sharedPlatform = new SharedPlatform(platformName, platformVersion, platformType);
-
-        return new ClusterInstanceGroup(name,
-                sharedPlatform,
-                minMemory,
-                maxMemory,
-                minOnlineServices,
-                maxOnlineServices,
-                percentageToStartNewService,
-                Arrays.stream(templates).toList());
+        return new ClusterGroupImpl(name, platform, minMemory,maxMemory,minOnlineService,maxOnlineService,percentageToStartNewService, templates);
     }
 
     @Override
@@ -48,15 +41,22 @@ public final class ClusterGroupSerializer implements JsonSerializer<ClusterGroup
         var properties = new JsonObject();
 
         properties.addProperty("name", src.name());
+
+        var platform = new JsonObject();
+        platform.addProperty("name", src.platform().name());
+        platform.addProperty("version", src.platform().version().toString());
+        platform.addProperty("type", src.platform().type().name());
+
+        properties.add("platform", platform);
+
+
         properties.addProperty("minMemory", src.minMemory());
         properties.addProperty("maxMemory", src.maxMemory());
-        properties.addProperty("minOnlineServices", src.minOnlineService());
-        properties.addProperty("maxOnlineServices", src.maxOnlineService());
+        properties.addProperty("minOnlineService", src.minOnlineService());
+        properties.addProperty("maxOnlineService", src.maxOnlineService());
         properties.addProperty("percentageToStartNewService", src.percentageToStartNewService());
 
         properties.add("templates", context.serialize(src.templates()));
-        properties.add("platform", context.serialize(src.platform()));
-
         return properties;
     }
 }

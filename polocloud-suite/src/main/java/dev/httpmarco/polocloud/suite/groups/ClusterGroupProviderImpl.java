@@ -50,6 +50,11 @@ public final class ClusterGroupProviderImpl implements ClusterGroupProvider {
 
     @Override
     public void delete(String group) {
+        // stop all services
+        for (var service : find(group).runningServices()) {
+            service.shutdown();
+        }
+
         this.storage.destroy(group);
     }
 

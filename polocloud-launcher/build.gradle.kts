@@ -9,7 +9,8 @@ tasks.jar {
         includeLibs("suite", "shadowJar"),
         includeLibs("grpc"),
         includeLibs("instance"),
-        includeLibs("common")
+        includeLibs("common"),
+        includeLibs("bridges:java-bridge")
     )
 
     manifest {

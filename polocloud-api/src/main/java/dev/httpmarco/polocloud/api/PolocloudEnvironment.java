@@ -7,6 +7,8 @@ public enum PolocloudEnvironment {
     // path for the running platform jar
     POLOCLOUD_SUITE_PLATFORM_PATH,
 
+
+    POLOCLOUD_SERVICE_SEPARAT_CLASSLOADER,
     POLOCLOUD_SERVICE_PORT,
     POLOCLOUD_SERVICE_ID;
 

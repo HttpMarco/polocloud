@@ -16,9 +16,13 @@ public final class ClusterServiceSerializer implements JsonSerializer<ClusterSer
     public JsonElement serialize(ClusterService src, Type typeOfSrc, JsonSerializationContext context) {
         var properties = new JsonObject();
 
-        properties.add("id", new JsonPrimitive(src.id()));
-        properties.add("uniqueId", new JsonPrimitive(src.uniqueId().toString()));
+        properties.addProperty("id", src.id());
+        properties.addProperty("uniqueId", src.uniqueId().toString());
+        properties.addProperty("state", src.state().name());
+        properties.addProperty("hostname", src.hostname());
+        properties.addProperty("port", src.port());
 
+        properties.add("group", context.serialize(src.group()));
         return properties;
     }
 }

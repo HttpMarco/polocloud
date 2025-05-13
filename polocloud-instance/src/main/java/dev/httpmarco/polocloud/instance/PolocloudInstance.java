@@ -37,7 +37,7 @@ public final class PolocloudInstance extends Polocloud {
 
         try {
             var platformPath = Path.of(PolocloudEnvironment.read(PolocloudEnvironment.POLOCLOUD_SUITE_PLATFORM_PATH));
-            var loader = new PolocloudInstanceLoader(platformPath);
+            var loader = PolocloudInstanceLoader.generate(platformPath, Boolean.parseBoolean(System.getenv().get(PolocloudEnvironment.POLOCLOUD_SERVICE_SEPARAT_CLASSLOADER.name())));
 
             try (var jarFile = new JarFile(platformPath.toString())) {
                 var mainClass = Class.forName(jarFile.getManifest().getMainAttributes().getValue("Main-Class"), false, loader);

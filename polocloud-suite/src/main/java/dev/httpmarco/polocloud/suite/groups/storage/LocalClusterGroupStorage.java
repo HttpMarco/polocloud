@@ -3,7 +3,6 @@ package dev.httpmarco.polocloud.suite.groups.storage;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.cluster.storage.ClusterStorage;
-import dev.httpmarco.polocloud.suite.groups.ClusterGroupImpl;
 import dev.httpmarco.polocloud.suite.utils.GsonInstance;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -38,7 +37,7 @@ public final class LocalClusterGroupStorage implements ClusterStorage<String, Cl
 
     private @Nullable ClusterGroup convertFromJson(@NotNull File file) {
         try {
-            return GsonInstance.DEFAULT.fromJson(Files.readString(file.toPath()), ClusterGroupImpl.class);
+            return GsonInstance.DEFAULT.fromJson(Files.readString(file.toPath()), ClusterGroup.class);
         } catch (IOException e) {
             log.error(PolocloudSuite.instance().translation().get("suite.group.error.load", file.getName()), e);
         }

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.suite.platforms.factory;
 
+import dev.httpmarco.polocloud.api.platform.PlatformType;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
 import dev.httpmarco.polocloud.suite.dependencies.pool.DependencyPool;
@@ -101,6 +102,18 @@ public final class LocalPlatformFactory implements PlatformFactory {
                         }
                     }
                 }
+            }
+
+            // copy the bridge if needed
+            if (platform.type() == PlatformType.PROXY) {
+                var bridgePath = Path.of("local/libs/polocloud-" + platform.language().name().toLowerCase() + "-bridge-2.0.0.jar");
+                var bridgeTarget = localService.path().resolve(platform.bridgePath());
+
+                if (Files.notExists(bridgeTarget)) {
+                    Files.createDirectories(bridgeTarget);
+                }
+
+                Files.copy(bridgePath, bridgeTarget.resolve(bridgePath.getFileName()));
             }
 
         } else {
