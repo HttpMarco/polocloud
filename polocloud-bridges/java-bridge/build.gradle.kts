@@ -7,6 +7,9 @@ dependencies {
     annotationProcessor(libs.velocity)
 
     compileOnly(project(":polocloud-api"))
+
+    compileOnly(libs.bundles.utils)
+    annotationProcessor(libs.bundles.utils)
 }
 
 tasks.jar {
