@@ -35,7 +35,6 @@ public final class GrpcInstance {
 
         try {
             this.server.start();
-            System.out.println("service online on port " + port);
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
