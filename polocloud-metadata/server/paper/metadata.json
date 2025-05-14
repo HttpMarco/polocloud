@@ -19,7 +19,7 @@
       "name": "server",
       "flag": "CREATE_OR_UPDATE",
       "content": "server-port=[%PORT%] \nonline-mode=[%ONLINE_MODE%]"
-    },
+    }
   ],
   "startArguments": [
     "--nogui"
