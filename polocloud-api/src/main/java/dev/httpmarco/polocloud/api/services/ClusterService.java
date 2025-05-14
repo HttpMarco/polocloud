@@ -87,7 +87,7 @@ public interface ClusterService extends Named {
      */
     @Override
     default String name() {
-        return group() + "-" + id();
+        return group().name() + "-" + id();
     }
 
     /**
