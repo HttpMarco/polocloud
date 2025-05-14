@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package dev.httpmarco.polocloud.explanation.group;
 
+import "dev/httpmarco/polocloud/explanation/utils.proto";
+
 message ServiceSayOnlineRequest{
   string serviceId = 1;
 }
@@ -10,6 +12,15 @@ message ServiceSayOnlineResponse{
 
 }
 
+message FindAllServiceRequest {
+
+}
+
+message FindAllServiceResponse {
+  repeated ClusterService services = 1;
+}
+
 service ClusterServerService {
   rpc ServiceSayOnline(ServiceSayOnlineRequest) returns (ServiceSayOnlineResponse);
+  rpc findAllGroup(FindAllServiceRequest) returns (FindAllServiceResponse);
 }

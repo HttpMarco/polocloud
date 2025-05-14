@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package dev.httpmarco.polocloud.explanation.group;
 
-import "dev/httpmarco/polocloud/explanation/group/ClusterGroupExplanation.proto";
+import "dev/httpmarco/polocloud/explanation/utils.proto";
 
 message GroupFindRequest {
    string name = 1;

@@ -5,3 +5,38 @@ package dev.httpmarco.polocloud.explanation;
 
 message EmptyCall {
 }
+
+message ClusterGroupExplanation {
+  string name = 1;
+  SharedPlatform platform = 2;
+  int32 minMemory = 3;
+  int32 maxMemory = 4;
+  int32 minOnlineServices = 5;
+  int32 maxOnlineServices = 6;
+  double percentageToStartNewService = 7;
+  repeated string templates = 8;
+}
+
+message SharedPlatform {
+  string name = 1;
+  string version = 2;
+  string type = 3;
+}
+
+message ClusterService {
+  string serviceId = 1;
+  int32 serviceindex = 2;
+  ClusterServiceState state = 3;
+  ClusterGroupExplanation groupExplanation = 4;
+  string hostname = 5;
+  int32 port = 6;
+}
+
+enum ClusterServiceState {
+    PREPARE = 0;
+    STARTING = 1;
+    ONLINE = 2;
+    STOPPING = 3;
+    DELETED = 4;
+}
+
