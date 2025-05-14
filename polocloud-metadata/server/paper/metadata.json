@@ -12,13 +12,18 @@
       "type": "TXT",
       "name": "eula",
       "flag": "REPLACE_ALL",
-      "content": "eula=true"
+      "content": {
+        "eula": "true"
+      }
     },
     {
       "type": "PROPERTIES",
       "name": "server",
       "flag": "CREATE_OR_UPDATE",
-      "content": "server-port=[%PORT%]"
+      "content": {
+        "server-port": "[%PORT%]",
+        "online-mode": "[%ONLINE_MODE%]"
+      }
     }
   ],
   "startArguments": [

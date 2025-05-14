@@ -12,13 +12,17 @@
       "type": "TOML",
       "name": "velocity",
       "flag": "FILE_CLONE_OR_UPDATE",
-      "content": "bind = \"[%PORT%]\""
+      "content": {
+        "bind": "\"[%PORT%]\""
+      }
     },
     {
       "type": "SECRET",
       "name": "forwarding",
       "flag": "REPLACE_ALL",
-      "content": "[%PROXY_SECRET%]"
+      "content": {
+        "[%PROXY_SECRET%]": ""
+      }
     }
   ],
   "startArguments": [],
