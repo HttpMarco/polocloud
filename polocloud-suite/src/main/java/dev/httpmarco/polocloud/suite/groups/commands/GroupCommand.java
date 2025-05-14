@@ -67,5 +67,20 @@ public final class GroupCommand extends Command {
             log.info("Successfully deleted group {}", group.name());
         }, groupArgument, new KeywordArgument("delete"));
 
+        syntax(commandContext -> {
+            var group = commandContext.arg(groupArgument);
+
+            if (group == null) {
+                log.info(translation.get("suite.command.group.info.notFound"));
+                return;
+            }
+
+            log.info(translation.get("suite.command.group.info.shutdown", group.name()));
+            for (var service : group.runningServices()) {
+                service.shutdown();
+            }
+
+        }, groupArgument, new KeywordArgument("shutdown"));
+
     }
 }
