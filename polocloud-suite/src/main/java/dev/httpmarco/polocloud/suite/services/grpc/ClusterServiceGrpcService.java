@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.suite.services.grpc;
 
+import dev.httpmarco.polocloud.api.services.ClusterService;
+import dev.httpmarco.polocloud.explanation.Utils;
 import dev.httpmarco.polocloud.explanation.group.ClusterServerServiceGrpc;
 import dev.httpmarco.polocloud.explanation.group.ClusterServerServiceOuterClass;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
@@ -35,5 +37,42 @@ public final class ClusterServiceGrpcService extends ClusterServerServiceGrpc.Cl
         log.error("Service {} is not a local service", request.getServiceId());
         responseObserver.onError(new RuntimeException("Service is not a local service"));
         responseObserver.onCompleted();
+    }
+
+
+    @Override
+    public void findAllGroup(ClusterServerServiceOuterClass.FindAllServiceRequest request, StreamObserver<ClusterServerServiceOuterClass.FindAllServiceResponse> responseObserver) {
+        var builder = ClusterServerServiceOuterClass.FindAllServiceResponse.newBuilder();
+
+        for (var service : PolocloudSuite.instance().serviceProvider().findAll()) {
+
+            var group = service.group();
+            var groupResponse = Utils.ClusterGroupExplanation.newBuilder();
+
+            System.out.println(group.name());
+            groupResponse.setName(group.name());
+            groupResponse.setPlatform(Utils.SharedPlatform.newBuilder()
+                    .setName(group.platform().name())
+                    .setVersion(group.platform().version().toString())
+                    .setType(group.platform().type().name())
+                    .build());
+            groupResponse.setMinMemory(group.minMemory());
+            groupResponse.setMaxMemory(group.maxMemory());
+            groupResponse.setMinOnlineServices(group.minOnlineService());
+            groupResponse.setMaxOnlineServices(group.maxOnlineService());
+            groupResponse.setPercentageToStartNewService(group.percentageToStartNewService());
+
+            builder.addServices(Utils.ClusterService.newBuilder()
+                    .setServiceId(service.uniqueId().toString())
+                    .setServiceindex(service.id())
+                    .setPort(service.port())
+                    .setHostname(service.hostname())
+                    .setGroupExplanation(groupResponse.build())
+                    .build());
+        }
+
+        responseObserver.onNext(builder.build());
+        responseObserver.onCompleted();
+
     }
 }
