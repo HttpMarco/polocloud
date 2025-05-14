@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.suite.services.factory;
 
-import dev.httpmarco.polocloud.api.Polocloud;
 import dev.httpmarco.polocloud.api.PolocloudEnvironment;
 import dev.httpmarco.polocloud.api.services.ClusterService;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
@@ -15,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -76,6 +74,9 @@ public final class LocalServiceFactory implements ServiceFactory {
             arguments.add("--enable-native-access=ALL-UNNAMED");
             // java 24 drop a big warning here -> temp fix
             arguments.add("--sun-misc-unsafe-memory-access=allow");
+
+            arguments.add("-Xms" + service.group().minMemory() + "M");
+            arguments.add("-Xmx" + service.group().maxMemory() + "M");
 
             arguments.add("-javaagent:%s".formatted(INSTANCE_PATH));
             arguments.add("-cp");
