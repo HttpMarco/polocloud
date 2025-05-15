@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Map;
 
 @Getter
 @Accessors(fluent = true)
@@ -17,7 +18,7 @@ public final class FilePrepareProcess {
     private FileType type;
     private String name;
     private FilePrepareFlag flag;
-    private String content;
+    private Map<String, String> content;
 
     @Contract(" -> new")
     public @NotNull File file() {

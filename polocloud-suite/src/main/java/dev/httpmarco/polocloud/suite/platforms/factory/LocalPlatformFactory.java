@@ -78,14 +78,30 @@ public final class LocalPlatformFactory implements PlatformFactory {
 
                 switch (prepareProcess.flag()) {
                     case REPLACE_ALL -> {
-                        Files.write(file, replacePlaceHolder(prepareProcess.content(), localService).getBytes());
+
+                        var content = new StringBuilder();
+                        for (var keys : prepareProcess.content().keySet()) {
+                            var value = prepareProcess.content().get(keys);
+                            if (value.isEmpty()) {
+                                content.append(replacePlaceHolder(keys, localService)).append("\n");
+                            } else {
+                                content.append(keys).append("=").append(replacePlaceHolder(value, localService)).append("\n");
+                            }
+                        }
+
+                        Files.write(file, content.toString().getBytes());
                     }
                     case CREATE_OR_UPDATE -> {
-
                         if (Files.exists(file)) {
                             //todo update here
                         } else {
-                            Files.writeString(file, replacePlaceHolder(prepareProcess.content(), localService));
+                            var content = new StringBuilder();
+                            for (var keys : prepareProcess.content().keySet()) {
+                                var value = prepareProcess.content().get(keys);
+
+                                content.append(keys).append("=").append(replacePlaceHolder(value, localService)).append("\n");
+                            }
+                            Files.writeString(file, replacePlaceHolder(content.toString(), localService));
                         }
 
                     }
@@ -122,6 +138,8 @@ public final class LocalPlatformFactory implements PlatformFactory {
     }
 
     private String replacePlaceHolder(String content, ClusterLocalService service) {
-        return content.replace("[%PORT%]", String.valueOf(service.port())).replace("[%PROXY_SECRET%]", "18293j21893j");
+        return content.replace("[%PORT%]", String.valueOf(service.port()))
+                .replace("[%ONLINE_MODE%]", String.valueOf(PolocloudSuite.instance().groupProvider().findAll().stream().noneMatch(it -> it.platform().type() == PlatformType.PROXY)))
+                .replace("[%PROXY_SECRET%]", "18293j21893j");
     }
 }

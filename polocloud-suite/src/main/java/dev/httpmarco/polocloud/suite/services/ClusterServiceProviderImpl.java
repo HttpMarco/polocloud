@@ -78,6 +78,7 @@ public final class ClusterServiceProviderImpl implements ClusterServiceProvider,
 
     public void bootNewInstance(ClusterGroup group) {
         var nextPossibleGroupServicePort = PortDetector.nextPort(group);
+        //todo find id
         var service = new ClusterLocalServiceImpl(1, nextPossibleGroupServicePort, UUID.randomUUID(), group);
 
         log.info(PolocloudSuite.instance().translation().get("suite.cluster.service.starting", service.name()));
