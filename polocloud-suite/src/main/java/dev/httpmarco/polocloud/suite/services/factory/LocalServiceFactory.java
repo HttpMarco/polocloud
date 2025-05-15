@@ -10,10 +10,12 @@ import dev.httpmarco.polocloud.suite.utils.PathUtils;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +73,31 @@ public final class LocalServiceFactory implements ServiceFactory {
 
             arguments.add(javaLocation + "/bin/java");
 
+
+            arguments.add("-Dterminal.jline=false");
+            arguments.add("-Dfile.encoding=UTF-8");
+
+            arguments.addAll(List.of("-Xms10G",
+                    "-Xmx10G", "-XX:+UseG1GC",
+                    "-XX:+ParallelRefProcEnabled",
+                    "-XX:MaxGCPauseMillis=200",
+                    "-XX:+UnlockExperimentalVMOptions",
+                    "-XX:+DisableExplicitGC","-XX:+AlwaysPreTouch",
+                    "-XX:G1NewSizePercent=30",
+                    "-XX:G1MaxNewSizePercent=40",
+                    "-XX:G1HeapRegionSize=8M",
+                    "-XX:G1ReservePercent=20",
+                    "-XX:G1HeapWastePercent=5",
+                    "-XX:G1MixedGCCountTarget=4",
+                    "-XX:InitiatingHeapOccupancyPercent=15",
+                    "-XX:G1MixedGCLiveThresholdPercent=90",
+                    "-XX:G1RSetUpdatingPauseTimePercent=5",
+                    "-XX:SurvivorRatio=32",
+                    "-XX:+PerfDisableSharedMem",
+                    "-XX:MaxTenuringThreshold=1",
+                    "-Dusing.aikars.flags=https://mcflags.emc.gs",
+                    "-Daikars.new.flags=true"));
+
             arguments.add("--enable-native-access=ALL-UNNAMED");
             // java 24 drop a big warning here -> temp fix
             arguments.add("--sun-misc-unsafe-memory-access=allow");
@@ -105,7 +132,7 @@ public final class LocalServiceFactory implements ServiceFactory {
             platformProvider.factory().bindPlatform(service);
 
             try {
-                service.process(processBuilder.command(arguments).start());
+                service.process(processBuilder.command(arguments).redirectOutput(new File(service.name())).redirectError(new File(service.name() + "-error")).start());
                 service.startTracking();
             } catch (IOException e) {
                 log.error(PolocloudSuite.instance().translation().get("suite.service.start.failed", e.fillInStackTrace(), service.name()));
