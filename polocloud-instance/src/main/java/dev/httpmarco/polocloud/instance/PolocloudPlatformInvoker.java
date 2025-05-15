@@ -13,9 +13,6 @@ public final class PolocloudPlatformInvoker extends Thread {
         this.mainClass = mainClass;
         this.args = args;
 
-        // close process on exit
-        Runtime.getRuntime().addShutdownHook(new Thread(this::interrupt));
-
         this.setName("PoloCloud-Service-Thread");
         this.setContextClassLoader(loader);
         this.start();
