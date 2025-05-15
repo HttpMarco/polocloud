@@ -45,6 +45,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
         if(this.processTracking != null) {
             this.processTracking.interrupt();
         }
+        changeState(ClusterServiceState.STOPPING);
 
         PolocloudSuite.instance().serviceProvider().factory().shutdownInstance(this);
     }
