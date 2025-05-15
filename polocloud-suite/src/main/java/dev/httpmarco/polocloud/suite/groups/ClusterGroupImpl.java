@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.suite.groups;
 
 import dev.httpmarco.polocloud.api.Polocloud;
+import dev.httpmarco.polocloud.api.groups.AbstractClusterGroup;
 import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.platform.SharedPlatform;
 import dev.httpmarco.polocloud.api.services.ClusterService;
@@ -12,17 +13,11 @@ import java.util.List;
 
 @Getter
 @Accessors(fluent = true)
-@AllArgsConstructor
-public final class ClusterGroupImpl implements ClusterGroup {
+public final class ClusterGroupImpl extends AbstractClusterGroup {
 
-    private final String name;
-    private final SharedPlatform platform;
-    private int minMemory;
-    private int maxMemory;
-    private int minOnlineService;
-    private int maxOnlineService;
-    private double percentageToStartNewService;
-    private List<String> templates;
+    public ClusterGroupImpl(String name, SharedPlatform platform, int minMemory, int maxMemory, int minOnlineService, int maxOnlineService, double percentageToStartNewService, List<String> templates) {
+        super(name, platform, minMemory, maxMemory, minOnlineService, maxOnlineService, percentageToStartNewService, templates);
+    }
 
     @Override
     public int runningServicesAmount() {
