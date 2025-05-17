@@ -4,7 +4,6 @@ import dev.httpmarco.polocloud.api.groups.ClusterGroup;
 import dev.httpmarco.polocloud.api.services.ClusterServiceState;
 import dev.httpmarco.polocloud.explanation.event.EventServiceGrpc;
 import dev.httpmarco.polocloud.suite.PolocloudSuite;
-import dev.httpmarco.polocloud.suite.utils.PortDetector;
 import io.grpc.Channel;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,6 +45,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
         if(this.processTracking != null) {
             this.processTracking.interrupt();
         }
+        changeState(ClusterServiceState.STOPPING);
 
         PolocloudSuite.instance().serviceProvider().factory().shutdownInstance(this);
     }
@@ -86,6 +86,7 @@ public final class ClusterLocalServiceImpl extends ClusterServiceImpl implements
                 PolocloudSuite.instance().serviceProvider().factory().shutdownInstance(this);
             }
         });
+        this.processTracking.start();
     }
 
     public void changeState(ClusterServiceState state) {
