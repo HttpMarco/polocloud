@@ -1,0 +1,11 @@
+{
+  "tasks": [
+    {
+      "id": "eula",
+      "file": "eula.txt",
+      "description": "End User License Agreement",
+      "action": "WRITE_CONTENT",
+      "content": "eula=true"
+    }
+  ]
+}
