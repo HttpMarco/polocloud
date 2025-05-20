@@ -1,12 +1,9 @@
-rootProject.name = "polocloud"
-include("polocloud-suite")
-include("polocloud-api")
-include("polocloud-grpc")
-include("polocloud-launcher")
-include("polocloud-instance")
-include("polocloud-metadata")
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 
-include("polocloud-common")
-include("polocloud-bridges")
-include("polocloud-bridges:java-bridge")
-include("polocloud-addons")
+rootProject.name = "polocloud"
+include("proto")
+include("metadata")
+include("launcher")
+include("agent")

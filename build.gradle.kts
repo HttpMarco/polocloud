@@ -1,6 +1,5 @@
 allprojects {
-
-    group = "dev.httpmarco"
+    group = "dev.httpmarco.polocloud"
     version = "2.0.0"
 
     repositories {
