@@ -2,55 +2,9 @@
 version = "1.0"
 
 [versions]
-# Logging
-slf4j = "2.0.17"
-log4j = "2.24.3"
-
-# Code quality
-annotations = "26.0.2"
-lombok = "1.18.38"
-
-# configuration
-gson = "2.13.1"
-
-# terminal
-jline = "3.30.1"
-
-# Networking
-grpc = "1.72.0"
-redis = "6.6.0.RELEASE"
-
-# Platforms
-velocity = "3.4.0-SNAPSHOT"
+kubernetes = "7.3.0"
 
 [libraries]
-# Logging
-slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-log4j = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
-log4j-sl4j-impl = { module = "org.apache.logging.log4j:log4j-slf4j-impl", version.ref = "log4j" }
-
-# Code quality
-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
-lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
-
-# configuration
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-
-# terminal
-jline = { module = "org.jline:jline", version.ref = "jline" }
-jline-jansi = { module = "org.jline:jline-terminal-jansi", version.ref = "jline" }
-
-# Networking
-grpc-netty = { group = "io.grpc", name = "grpc-netty", version.ref = "grpc" }
-grpc-protobuf = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
-grpc-stub = { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
-grpc-services = { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }
-redis = { group = "io.lettuce", name = "lettuce-core", version.ref = "redis" }
-
-# Platforms
-velocity =  { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+kubernetes = { group = "io.fabric8", name = "kubernetes-client", version.ref = "kubernetes" }
 
 [bundles]
-logging = ["slf4j", "log4j", "log4j-sl4j-impl"]
-grpc = ["grpc-netty", "grpc-protobuf", "grpc-stub", "grpc-services"]
-utils = ["annotations", "lombok"]

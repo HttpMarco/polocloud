@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") version "2.1.21"
 }
 
 group = "dev.httpmarco.polocloud.cli"
@@ -11,11 +11,14 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+
+    implementation(project(":cli:terminal"))
 }
 
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(23)
 }
