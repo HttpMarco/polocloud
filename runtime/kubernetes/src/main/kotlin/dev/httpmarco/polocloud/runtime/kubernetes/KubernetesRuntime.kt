@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.runtime.kubernetes
 
-class KubernetesRuntime {
+object KubernetesRuntime {
 
     private val kubernetesClient = KubernetesRuntime()
 

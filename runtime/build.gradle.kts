@@ -2,20 +2,17 @@ plugins {
     kotlin("jvm") version "2.1.20"
 }
 
-group = "dev.httpmarco.polocloud"
-version = "2.0.0"
+subprojects {
 
-repositories {
-    mavenCentral()
-}
+    apply(plugin = "kotlin")
 
-dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(23)
+    dependencies {
+        testImplementation(kotlin("test"))
+    }
+    tasks.test {
+        useJUnitPlatform()
+    }
+    kotlin {
+        jvmToolchain(23)
+    }
 }
