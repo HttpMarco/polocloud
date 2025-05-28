@@ -76,6 +76,6 @@ tasks.named("processResources").configure {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.25.7"
+        artifact = "com.google.protobuf:protoc:3.25.8"
     }
 }
