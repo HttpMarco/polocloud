@@ -4,10 +4,4 @@ plugins {
 
 rootProject.name = "polocloud"
 include("agent")
-include("runtime")
-include("runtime:local")
-include("runtime:kubernetes")
-include("runtime:docker")
-
-include("agent:api")
-include("agent:impl")
+include("proto")

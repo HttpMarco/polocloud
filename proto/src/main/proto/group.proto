@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.proto;
+
+message GroupSnapshot {
+  string name = 1;
+  int32 minMemory = 2;
+  int32 maxMemory = 3;
+  int32 minimumOnline = 4;
+  int32 maximumOnline = 5;
+}
