@@ -18,7 +18,7 @@ jline = "3.30.4"
 
 # Networking
 grpc = "1.72.0"
-redis = "6.7.0.RELEASE"
+redis = "6.7.1.RELEASE"
 
 # Platforms
 velocity = "3.4.0-SNAPSHOT"
