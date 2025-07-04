@@ -28,4 +28,8 @@ open class Group(val data: GroupData) {
     fun applicationPlatformFile() : Path {
         return Path("local/platforms/${data.platform.group}/${data.platform.version}/${data.platform.group}-${data.platform.version}.jar");
     }
+
+    fun shutdownAll() {
+        Agent.instance.runtime.serviceStorage().findServicesByGroup(this).forEach { it.shutdown() }
+    }
 }

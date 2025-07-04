@@ -25,6 +25,10 @@ class LocalRuntimeExpender : RuntimeExpender<LocalService> {
     }
 
     override fun readLogs(service: LocalService, lines: Int): List<String> {
-        TODO("Not yet implemented")
+        if(lines == -1) {
+            return service.cachedLogs
+        }
+
+        return service.cachedLogs.takeLast(lines)
     }
 }

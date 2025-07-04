@@ -60,12 +60,17 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
         }, groupArgument, KeywordArgument("edit"), GroupEditFlagArgument(), TextArgument("value"))
 
         syntax(execution = { context ->
-            TODO()
+            var group = context.arg(groupArgument)
+            logger.info("All services of groups will be shutdown&8...")
+            group.shutdownAll()
+            logger.info("All services of group ${group.data.name} are now shutdown&8.")
         }, groupArgument, KeywordArgument("shutdownAll"))
 
         syntax(execution = { context ->
-            groupStorage.destroy(context.arg(groupArgument))
-            logger.info("Group ${context.arg(groupArgument).data.name} deleted.")
+            val group = context.arg(groupArgument)
+
+            group.shutdownAll()
+            logger.info("Group ${group.data.name} deleted.")
         }, groupArgument, KeywordArgument("delete"))
 
         val nameArgument = TextArgument("name")
@@ -76,21 +81,33 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
         val minMemory = IntArgument("minMemory")
         val maxMemory = IntArgument("maxMemory")
 
-        syntax(execution = { context ->
-            Agent.instance.runtime.groupStorage().publish(
-                Group(
-                    GroupData(
-                        context.arg(nameArgument),
-                        PlatformIndex(context.arg(platformArgument).name, context.arg(platformVersionArgument).version),
-                        context.arg(minMemory),
-                        context.arg(maxMemory),
-                        context.arg(minOnlineServices),
-                        context.arg(maxOnlineServices)
+        syntax(
+            execution = { context ->
+                Agent.instance.runtime.groupStorage().publish(
+                    Group(
+                        GroupData(
+                            context.arg(nameArgument),
+                            PlatformIndex(
+                                context.arg(platformArgument).name,
+                                context.arg(platformVersionArgument).version
+                            ),
+                            context.arg(minMemory),
+                            context.arg(maxMemory),
+                            context.arg(minOnlineServices),
+                            context.arg(maxOnlineServices)
+                        )
                     )
                 )
-            )
-            logger.info("Group &f${context.arg(nameArgument)} successfully created&8.")
-        }, KeywordArgument("create"), nameArgument, platformArgument, platformVersionArgument, minMemory, maxMemory, minOnlineServices, maxOnlineServices)
-
+                logger.info("Group &f${context.arg(nameArgument)} successfully created&8.")
+            },
+            KeywordArgument("create"),
+            nameArgument,
+            platformArgument,
+            platformVersionArgument,
+            minMemory,
+            maxMemory,
+            minOnlineServices,
+            maxOnlineServices
+        )
     }
 }

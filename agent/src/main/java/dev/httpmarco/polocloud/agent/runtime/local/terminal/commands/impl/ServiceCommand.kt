@@ -44,7 +44,9 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage) :
         syntax(execution = {
             var service = it.arg(serviceArgument)
 
-            TODO()
+            service.logs().forEach { log ->
+                println(log)
+            }
         }, serviceArgument, KeywordArgument("logs"))
 
         var commandArg = StringArrayArgument("command")

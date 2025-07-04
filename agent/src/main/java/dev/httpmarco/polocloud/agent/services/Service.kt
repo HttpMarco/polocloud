@@ -27,6 +27,10 @@ abstract class Service(val group: Group) {
         Agent.instance.runtime.expender().executeCommand(this, command)
     }
 
+    fun logs(limit: Int = 100): List<String> {
+        return Agent.instance.runtime.expender().readLogs(this,limit)
+    }
+
     enum class State {
         PREPARING,
         STARTING,

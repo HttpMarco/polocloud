@@ -4,7 +4,6 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandSyntax
 
 class GroupArgument(key: String = "group") : CommandArgument<Group>(key) {
 
