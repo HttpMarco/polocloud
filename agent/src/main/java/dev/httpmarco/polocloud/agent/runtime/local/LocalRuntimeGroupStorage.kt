@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
-import dev.httpmarco.polocloud.agent.utils.PRETTY_JSON
+import dev.httpmarco.polocloud.common.json.PRETTY_JSON
 import kotlinx.serialization.json.Json
 import java.nio.file.Files
 import java.nio.file.Path

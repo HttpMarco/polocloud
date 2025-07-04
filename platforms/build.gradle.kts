@@ -6,6 +6,9 @@ plugins {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(libs.bundles.confirationPool)
+
+    compileOnly(libs.gson)
+    compileOnly(project(":common"))
 }
 
 tasks.test {

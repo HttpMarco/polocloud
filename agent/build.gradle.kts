@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.jline)
 
     compileOnly(project(":platforms"))
+    compileOnly(project(":common"))
 }
 
 tasks.shadowJar {
