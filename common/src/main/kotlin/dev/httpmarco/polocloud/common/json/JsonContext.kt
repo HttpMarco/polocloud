@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.platforms
+package dev.httpmarco.polocloud.common.json
 
 import kotlinx.serialization.json.Json
 

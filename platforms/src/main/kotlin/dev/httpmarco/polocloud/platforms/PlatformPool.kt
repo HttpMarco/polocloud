@@ -7,12 +7,10 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
 
-private const val PLATFORM_TABLE_URL =
-    "https://raw.githubusercontent.com/HttpMarco/polocloud/refs/heads/master/metadata/metadata.json"
-
+private const val PLATFORM_TABLE_URL = "https://raw.githubusercontent.com/HttpMarco/polocloud/refs/heads/master/metadata/metadata.json"
 
 @Serializable
-class PlatformPool(val platforms: List<Platform>, val path: Path) {
+class PlatformPool(val platforms: List<Platform>, val tasks: List<PlatformTask>, val path: Path) {
 
     companion object {
         private fun loadPlatform(url: String, name: String, type: String): Platform {
@@ -23,10 +21,14 @@ class PlatformPool(val platforms: List<Platform>, val path: Path) {
             if (path.exists()) {
                 return PlatformPool(PRETTY_JSON.decodeFromString<List<Platform>>(Files.readString(path)), path)
             } else {
-                val platformTable: PlatformTable =
-                    Json.decodeFromString<PlatformTable>(URI(PLATFORM_TABLE_URL).toURL().readText())
+                val platformTable: PlatformTable = Json.decodeFromString<PlatformTable>(URI(PLATFORM_TABLE_URL).toURL().readText())
                 val platforms = mutableListOf<Platform>()
                 val platformUrl = PLATFORM_TABLE_URL.substringBeforeLast("/")
+
+                // first load all tasks, because all platforms need this
+                platformTable.availableTask.forEach {
+
+                }
 
                 platformTable.availableProxies.forEach { platforms.add(loadPlatform(platformUrl, it, "proxies")) }
                 platformTable.availableServers.forEach { platforms.add(loadPlatform(platformUrl, it, "servers")) }

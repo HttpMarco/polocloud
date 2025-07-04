@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation(libs.gson)
     implementation(libs.bundles.confirationPool)
 }
 
