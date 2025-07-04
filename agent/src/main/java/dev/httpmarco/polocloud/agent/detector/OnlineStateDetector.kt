@@ -31,7 +31,10 @@ class OnlineStateDetector : Detector {
                 Socket().use { socket ->
                     socket.connect(InetSocketAddress(host, port), 500)
 
-                    service.state = Service.State.ONLINE
+                    if(service.state == Service.State.STARTING) {
+                        service.state = Service.State.ONLINE
+                        logger.info("The service &3${service.name()} &7is now online&8.")
+                    }
 
                     val out = socket.getOutputStream()
                     val input = socket.getInputStream()
