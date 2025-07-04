@@ -23,7 +23,7 @@ tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(23)
+    jvmToolchain(21)
 }
 
 fun includeLibs(project: String, task: String = "jar"): Task {

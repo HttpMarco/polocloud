@@ -14,6 +14,12 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = JavaVersion.VERSION_21.toString()
+    targetCompatibility = JavaVersion.VERSION_21.toString()
+    options.encoding = "UTF-8"
+}
+
 protobuf {
     protobuf {
         protoc {
