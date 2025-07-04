@@ -5,5 +5,8 @@
   "availableServers": [
     "paper",
     "fabric"
+  ],
+  "availableTask": [
+    "eula"
   ]
 }

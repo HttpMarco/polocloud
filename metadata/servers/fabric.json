@@ -6,6 +6,9 @@
   "arguments": [
     "-nogui"
   ],
+  "tasks": [
+    "EULA_TASK"
+  ],
   "versions": [
     {
       "version": "1.21.7",
