@@ -5,9 +5,8 @@ import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.utils.PortDetector
 import java.util.UUID
 
-abstract class Service(val group: Group) {
+abstract class Service(val group: Group, val id: Int) {
 
-    val uniqueId = UUID.randomUUID()
     val port = PortDetector.nextPort(group)
     val hostname = "127.0.0.1"
 
@@ -16,7 +15,7 @@ abstract class Service(val group: Group) {
     var maxPlayerCount =  -1
 
     fun name(): String {
-        return "${group.data.name}-1"
+        return "${group.data.name}-${id}"
     }
 
     fun shutdown() {

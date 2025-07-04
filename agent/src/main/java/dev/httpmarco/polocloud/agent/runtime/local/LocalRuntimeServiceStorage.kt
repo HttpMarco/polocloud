@@ -14,10 +14,6 @@ class LocalRuntimeServiceStorage : RuntimeServiceStorage {
         this.services.add(service)
     }
 
-    override fun findService(uniqueId: UUID): Service? {
-        return this.services.stream().filter { it.uniqueId == uniqueId }.findFirst().orElse(null)
-    }
-
     override fun findService(name: String): Service? {
         return this.services.stream()
             .filter { it.name() == name }

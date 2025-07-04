@@ -10,10 +10,6 @@ class KubernetesRuntimeServiceStorage : RuntimeServiceStorage {
         TODO("Not yet implemented")
     }
 
-    override fun findService(uniqueId: UUID): Service? {
-        TODO("Not yet implemented")
-    }
-
     override fun findService(name: String): Service? {
         TODO("Not yet implemented")
     }

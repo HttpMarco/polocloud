@@ -18,7 +18,7 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage) :
                 return@syntax
             }
             logger.info("Found ${serviceStorage.items().size} services&8:")
-            serviceStorage.items().forEach { logger.info(" &8- &3${it.name()} &8(&7uuid&8=&7${it.uniqueId}&8)") }
+            serviceStorage.items().forEach { logger.info(" &8- &3${it.name()} &8(&7&8)") }
         }, KeywordArgument("list"))
 
         var serviceArgument = ServiceArgument()
@@ -27,7 +27,6 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage) :
             var service = it.arg(serviceArgument)
 
             logger.info("Service &3${service.name()}&8:")
-            logger.info(" &8- &7Id&8: &f${service.uniqueId}")
             logger.info(" &8- &7State&8: &f${service.state}")
             logger.info(" &8- &7Group&8: &f${service.group.data.name}")
             logger.info(" &8- &7Port&8: &f${service.port}")

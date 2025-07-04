@@ -5,7 +5,7 @@ import dev.httpmarco.polocloud.agent.services.Service
 import java.util.LinkedList
 import kotlin.io.path.Path
 
-class LocalService(group: Group) : Service(group) {
+class LocalService(group: Group, id: Int) : Service(group, id) {
 
     val cachedLogs = LinkedList<String>();
     var process: Process? = null
