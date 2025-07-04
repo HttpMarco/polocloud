@@ -32,6 +32,7 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage) :
             logger.info(" &8- &7Group&8: &f${service.group.data.name}")
             logger.info(" &8- &7Port&8: &f${service.port}")
             logger.info(" &8- &7Hostname&8: &f${service.hostname}")
+            logger.info(" &8- &7Players&8: &f${service.playerCount}&8/&f${service.maxPlayerCount}" )
         }, serviceArgument)
 
         syntax(execution = {

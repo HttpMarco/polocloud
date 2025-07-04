@@ -12,6 +12,8 @@ abstract class Service(val group: Group) {
     val hostname = "127.0.0.1"
 
     var state = State.PREPARING
+    var playerCount = -1
+    var maxPlayerCount =  -1
 
     fun name(): String {
         return "${group.data.name}-1"
