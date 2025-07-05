@@ -16,6 +16,8 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+platforms/src/main/resources/**
+
 ### Kotlin ###
 .kotlin
 
