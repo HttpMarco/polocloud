@@ -1,12 +1,10 @@
 {
-  "availableProxies": [
+  "platforms": [
+    "paper",
+    "fabric",
     "velocity"
   ],
-  "availableServers": [
-    "paper",
-    "fabric"
-  ],
-  "availableTask": [
+  "tasks": [
     "eula"
   ]
 }
