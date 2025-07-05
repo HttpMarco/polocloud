@@ -11,6 +11,18 @@ dependencies {
     compileOnly(project(":common"))
 }
 
+
+val copyMetadata by tasks.registering(Copy::class) {
+    from("../metadata")
+    into("$projectDir/src/main/resources/metadata")
+}
+
+tasks.named("processResources") {
+    dependsOn(copyMetadata)
+}
+
+
+
 tasks.test {
     useJUnitPlatform()
 }
