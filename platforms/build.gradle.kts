@@ -22,13 +22,9 @@ val copyPlatforms by tasks.registering(Copy::class) {
     from("../metadata/platforms").into("$projectDir/src/main/resources/metadata/platforms")
 }
 
-
-
 tasks.named("processResources") {
     dependsOn(copyTasks, copyPlatforms)
 }
-
-
 
 tasks.test {
     useJUnitPlatform()

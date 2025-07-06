@@ -2,17 +2,14 @@ plugins {
     kotlin("jvm")
 }
 
-group = "dev.httpmarco.polocloud"
-version = "3.0.0.BETA"
-
 repositories {
-    mavenCentral()
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
+    compileOnly(libs.velocity)
+    annotationProcessor(libs.velocity)
 }
