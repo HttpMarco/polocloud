@@ -15,7 +15,8 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
+.idea/**
+.idea
 platforms/src/main/resources/**
 
 ### Kotlin ###
