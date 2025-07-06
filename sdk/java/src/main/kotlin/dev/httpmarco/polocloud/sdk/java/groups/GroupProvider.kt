@@ -7,7 +7,7 @@ import io.grpc.ManagedChannel
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 
-class GroupProvider(private val channel: ManagedChannel?) {
+class GroupProvider(channel: ManagedChannel?) {
 
     private val directExecutor: Executor = MoreExecutors.directExecutor()
     private val groupStub = GroupProviderHandlerGrpc.newBlockingStub(channel)

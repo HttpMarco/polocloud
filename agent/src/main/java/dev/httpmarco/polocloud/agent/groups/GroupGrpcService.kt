@@ -7,12 +7,28 @@ import io.grpc.stub.StreamObserver
 
 class GroupGrpcService : GroupProviderHandlerGrpc.GroupProviderHandlerImplBase() {
 
-    override fun find(request: GroupProvider.FindRequest, responseObserver: StreamObserver<GroupProvider.FindResponse>) {
+    override fun find(
+        request: GroupProvider.FindRequest,
+        responseObserver: StreamObserver<GroupProvider.FindResponse>
+    ) {
 
-        var group = Agent.instance.runtime.groupStorage().item(request.name)
+        val builder = GroupProvider.FindResponse.newBuilder()
+        val groupStorage = Agent.instance.runtime.groupStorage()
 
+        if (request.name.isNotEmpty()) {
+            val group = groupStorage.item(request.name)
 
+            if (group != null) {
+                builder.addGroups(GroupProvider.GroupSnapshot.newBuilder().setName(group.data.name).build())
+            }
+        } else {
+            groupStorage.items().forEach {
+                builder.addGroups(GroupProvider.GroupSnapshot.newBuilder().setName(it.data.name).build())
+            }
+        }
 
-        TODO()
+        responseObserver.onNext(builder.build())
+        responseObserver.onCompleted()
+
     }
 }
