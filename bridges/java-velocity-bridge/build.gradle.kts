@@ -13,3 +13,7 @@ dependencies {
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
 }
+
+tasks.jar {
+    archiveFileName.set("polocloud-velocity-bridge-$version.jar")
+}
