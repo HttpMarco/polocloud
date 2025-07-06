@@ -1,0 +1,43 @@
+{
+  "name": "paper",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://api.papermc.io/v2/projects/paper/versions/%version%/builds/%buildId%/downloads/paper-%version%-%buildId%.jar",
+  "arguments": [
+    "-nogui"
+  ],
+  "tasks": [
+    "EULA_TASK",
+    "SERVER_PROPERTIES_PORT"
+  ],
+  "versions": [
+    {
+      "version": "1.21.7",
+      "buildId": "16"
+    },
+    {
+      "version": "1.21.6",
+      "buildId": "48"
+    },
+    {
+      "version": "1.21.5",
+      "buildId": "114"
+    },
+    {
+      "version": "1.21.4",
+      "buildId": "232"
+    },
+    {
+      "version": "1.21.3",
+      "buildId": "83"
+    },
+    {
+      "version": "1.21.1",
+      "buildId": "133"
+    },
+    {
+      "version": "1.21",
+      "buildId": "130"
+    }
+  ]
+}

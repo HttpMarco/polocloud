@@ -1,0 +1,15 @@
+{
+  "name": "SERVER_PROPERTIES_PORT",
+  "steps": [
+    {
+      "name": "Update server port",
+      "description": "Change Server Port for all spigot forks",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "server-port",
+        "value": "%port%"
+      }
+    }
+  ]
+}

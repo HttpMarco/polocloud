@@ -1,0 +1,11 @@
+{
+  "platforms": [
+    "paper",
+    "fabric",
+    "velocity"
+  ],
+  "tasks": [
+    "eula",
+    "serverPropertiesPort"
+  ]
+}

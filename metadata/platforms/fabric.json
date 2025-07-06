@@ -1,0 +1,19 @@
+{
+  "name": "fabric",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://meta.fabricmc.net/v2/versions/loader/%version%/%buildId%/1.0.3/server/jar",
+  "arguments": [
+    "-nogui"
+  ],
+  "tasks": [
+    "EULA_TASK",
+    "SERVER_PROPERTIES_PORT"
+  ],
+  "versions": [
+    {
+      "version": "1.21.7",
+      "buildId": "0.16.14"
+    }
+  ]
+}

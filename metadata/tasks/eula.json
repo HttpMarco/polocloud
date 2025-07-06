@@ -1,0 +1,14 @@
+{
+  "name": "EULA_TASK",
+  "steps": [
+    {
+      "name": "Write eula file",
+      "description": "Apply the EULA by writing to the file.",
+      "filename": "eula.txt",
+      "action": {
+        "type": "PlatformFileWriteAction",
+        "content": "eula=true"
+      }
+    }
+  ]
+}
