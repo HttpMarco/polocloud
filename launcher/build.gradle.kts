@@ -8,7 +8,13 @@ dependencies {
 }
 
 tasks.shadowJar {
-    from(includeLibs("common"), includeLibs("agent", "shadowJar"), includeLibs("platforms"))
+    from(
+        includeLibs("common"),
+        includeLibs("agent", "shadowJar"),
+        includeLibs("platforms"),
+        includeLibs(":bridges:java-velocity-bridge"),
+        includeLibs(":bridges:java-bungeecord-bridge")
+    )
 
     manifest {
         attributes("Main-Class" to "dev.httpmarco.polocloud.launcher.PolocloudLauncher")
