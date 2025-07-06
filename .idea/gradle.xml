@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/proto" />
             <option value="$PROJECT_DIR$/sdk" />
             <option value="$PROJECT_DIR$/sdk/java" />
+            <option value="$PROJECT_DIR$/updater" />
           </set>
         </option>
       </GradleProjectSettings>
