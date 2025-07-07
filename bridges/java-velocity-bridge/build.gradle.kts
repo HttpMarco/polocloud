@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("com.gradleup.shadow") version "9.0.0-beta17"
 }
 
 repositories {
@@ -12,6 +13,7 @@ repositories {
 dependencies {
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
+    implementation(project(":sdk:java"))
 }
 
 tasks.jar {
