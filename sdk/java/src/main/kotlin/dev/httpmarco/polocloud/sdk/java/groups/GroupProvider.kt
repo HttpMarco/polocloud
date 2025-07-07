@@ -39,6 +39,7 @@ class GroupProvider(channel: ManagedChannel?) {
         }
     }
 
+
     private fun <T, R> completableFromGuava(guavaFuture: com.google.common.util.concurrent.ListenableFuture<T>, mapper: (T) -> R): CompletableFuture<R> {
         val completable = CompletableFuture<R>()
         guavaFuture.addListener({
