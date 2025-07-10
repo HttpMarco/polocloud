@@ -5,7 +5,7 @@ version = "1.0"
 
 # libraries
 json = "1.9.0"
-gson = "2.10.1"
+gson = "2.13.1"
 
 # configuration
 config = "3.8.2"
