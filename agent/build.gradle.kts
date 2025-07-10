@@ -20,6 +20,10 @@ dependencies {
     compileOnly(project(":common"))
 }
 
+sourceSets["main"].java.srcDirs(
+    "../proto/build/generated/sources/proto/main/grpc",
+    "../proto/build/generated/sources/proto/main/java"
+)
 tasks.jar {
     archiveFileName.set("polocloud-agent-$version.jar")
     manifest {
@@ -37,6 +41,7 @@ tasks {
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
 }
