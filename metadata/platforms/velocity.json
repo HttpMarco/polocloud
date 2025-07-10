@@ -6,5 +6,10 @@
   "bridgePath": "plugins",
   "arguments": [],
   "tasks": [],
-  "versions": []
+  "versions": [
+    {
+      "version": "3.4.0-SNAPSHOT",
+      "buildId": "521"
+    }
+  ]
 }

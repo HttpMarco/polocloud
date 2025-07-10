@@ -56,10 +56,13 @@ class Platform(
         // copy the platform file to the service path
         Files.copy(path, servicePath.resolve(path.name), StandardCopyOption.REPLACE_EXISTING)
 
-        if(environment["need-bridge"]?.toBoolean() == true) {
+        if (environment["need-bridge"]?.toBoolean() == true) {
             // copy the bridge if present
             val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-3.0.0.BETA.jar")
-            Files.copy(sourceBridge, Path(bridgePath + sourceBridge.name), StandardCopyOption.REPLACE_EXISTING)
+            val targetbridge = Path(bridgePath + "/" + sourceBridge.name)
+
+            targetbridge.parent.createDirectories()
+            Files.copy(sourceBridge, targetbridge, StandardCopyOption.REPLACE_EXISTING)
         }
     }
 
