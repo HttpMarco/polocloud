@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    id("java")
     id("com.gradleup.shadow") version "9.0.0-beta17"
 }
 
@@ -14,6 +14,12 @@ dependencies {
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
     compileOnly(project(":sdk:java"))
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = JavaVersion.VERSION_21.toString()
+    targetCompatibility = JavaVersion.VERSION_21.toString()
+    options.encoding = "UTF-8"
 }
 
 tasks.jar {
