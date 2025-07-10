@@ -5,6 +5,8 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import dev.httpmarco.polocloud.sdk.java.Polocloud;
+import dev.httpmarco.polocloud.sdk.java.groups.Group;
 import org.slf4j.Logger;
 
 @Plugin(id = "polocloud-bridge", name = "Polocloud-Bridge", version = "3.0.0.BETA", url = "https://github.com/HttpMarco/polocloud", description = "Polocloud-Bridge")
@@ -26,7 +28,10 @@ public final class VelocityBridge {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-
+        System.out.println("Amount of registered servers: " + Polocloud.Companion.instance().groupProvider().find().size());
+        for (Group group : Polocloud.Companion.instance().groupProvider().find()) {
+            System.out.println("Registering group: " + group.name());
+        }
     }
 
 }

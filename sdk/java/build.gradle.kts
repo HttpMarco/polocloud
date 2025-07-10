@@ -17,6 +17,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.jar {
+    archiveFileName.set("polocloud-java-sdk-$version.jar")
+}
+
 kotlin {
     jvmToolchain(21)
 }

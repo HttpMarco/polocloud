@@ -13,7 +13,7 @@ repositories {
 dependencies {
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
-    compileOnly(project(":sdk:java"))
+    implementation(project(":sdk:java"))
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -22,6 +22,6 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 
-tasks.jar {
+tasks.shadowJar {
     archiveFileName.set("polocloud-java-bridge-$version.jar")
 }
