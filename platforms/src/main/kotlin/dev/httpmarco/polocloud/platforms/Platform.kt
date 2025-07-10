@@ -23,6 +23,7 @@ class Platform(
     val type: PlatformType,
     val arguments: List<String>,
     val versions: List<PlatformVersion>,
+    val bridgePath: String = "",
     private val tasks: List<String>
 ) {
 
@@ -52,7 +53,14 @@ class Platform(
 
         tasks().forEach { it.runTask(servicePath, environment) }
 
+        // copy the platform file to the service path
         Files.copy(path, servicePath.resolve(path.name), StandardCopyOption.REPLACE_EXISTING)
+
+        if(environment["need-bridge"]?.toBoolean() == true) {
+            // copy the bridge if present
+            val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-3.0.0.BETA.jar")
+            Files.copy(sourceBridge, Path(bridgePath + sourceBridge.name), StandardCopyOption.REPLACE_EXISTING)
+        }
     }
 
     fun version(version: String): PlatformVersion? {

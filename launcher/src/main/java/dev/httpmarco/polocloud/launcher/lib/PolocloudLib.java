@@ -17,13 +17,17 @@ public class PolocloudLib {
         this.path = Paths.get(String.format("polocloud-%s-%s.jar", name, PolocloudParameters.polocloudVersion()));
     }
 
+    public static List<PolocloudLib> of(String... names) {
+        return of(null, names);
+    }
+
     /**
      * Creates a list of PolocloudLib instances from the provided names.
      */
-    public static List<PolocloudLib> of(String... names) {
+    public static List<PolocloudLib> of(String suffix, String... names) {
         List<PolocloudLib> libs = new ArrayList<>();
         for (String name : names) {
-            libs.add(new PolocloudLib(name));
+            libs.add(new PolocloudLib(name + (suffix != null ? "-" + suffix : "")));
         }
         return libs;
     }

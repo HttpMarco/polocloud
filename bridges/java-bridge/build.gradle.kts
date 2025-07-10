@@ -13,9 +13,9 @@ repositories {
 dependencies {
     compileOnly(libs.velocity)
     annotationProcessor(libs.velocity)
-    implementation(project(":sdk:java"))
+    compileOnly(project(":sdk:java"))
 }
 
 tasks.jar {
-    archiveFileName.set("polocloud-velocity-bridge-$version.jar")
+    archiveFileName.set("polocloud-java-bridge-$version.jar")
 }
