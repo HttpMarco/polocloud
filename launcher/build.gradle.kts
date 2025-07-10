@@ -1,5 +1,6 @@
 import groovy.json.JsonOutput
 import java.io.File
+import java.security.MessageDigest
 
 plugins {
     id("java")
@@ -42,9 +43,11 @@ fun includeLibs(project: String, task: String = "jar"): Task {
  * Exports all runtime dependencies from the :agent project into a JSON file,
  * including guessed Maven Central URLs.
  */
+
 tasks.register("exportAgentDependenciesWithUrls") {
     group = "custom"
-    description = "Exports only runtime dependencies of the :agent project as JSON with guessed Maven Central URLs."
+    description =
+        "Exports only runtime dependencies of the :agent project as JSON with guessed Maven Central URLs and SHA-256 checksums."
 
     // Ensure the agent project is evaluated
     evaluationDependsOn(":agent")
@@ -55,7 +58,6 @@ tasks.register("exportAgentDependenciesWithUrls") {
 
         val mavenCentralBase = "https://repo1.maven.org/maven2"
 
-        // Use runtimeClasspath to get resolved, executable dependencies
         val runtimeClasspath = agentProject.configurations.getByName("runtimeClasspath")
 
         if (runtimeClasspath.isCanBeResolved) {
@@ -63,12 +65,22 @@ tasks.register("exportAgentDependenciesWithUrls") {
                 val group = artifact.moduleVersion.id.group
                 val name = artifact.name
                 val version = artifact.moduleVersion.id.version
-                val fileName = artifact.file.name
+                val file = artifact.file
+                val fileName = file.name
                 val groupPath = group.replace(".", "/")
                 val guessedUrl = "$mavenCentralBase/$groupPath/$name/$version/$fileName"
 
-                // Skip internal dependencies
                 if (group == "dev.httpmarco.polocloud") return@forEach
+
+                val sha256 = file.inputStream().use { input ->
+                    val digest = MessageDigest.getInstance("SHA-256")
+                    val buffer = ByteArray(8192)
+                    var bytesRead: Int
+                    while (input.read(buffer).also { bytesRead = it } != -1) {
+                        digest.update(buffer, 0, bytesRead)
+                    }
+                    digest.digest().joinToString("") { "%02x".format(it) }
+                }
 
                 dependenciesList.add(
                     mapOf(
@@ -76,17 +88,17 @@ tasks.register("exportAgentDependenciesWithUrls") {
                         "name" to name,
                         "version" to version,
                         "file" to fileName,
-                        "guessedUrl" to guessedUrl
+                        "guessedUrl" to guessedUrl,
+                        "sha256" to sha256
                     )
                 )
             }
         }
 
-        // Pretty print the result and write to resources folder
         val json = JsonOutput.prettyPrint(JsonOutput.toJson(dependenciesList))
         val outputFile = File("${projectDir}/src/main/resources", "dependencies.json")
         outputFile.writeText(json)
 
-        println("✅ Exported agent dependencies to ${outputFile.absolutePath}")
+        println("✅ Exported agent dependencies with SHA-256 to ${outputFile.absolutePath}")
     }
 }
