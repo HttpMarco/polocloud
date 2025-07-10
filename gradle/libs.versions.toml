@@ -4,7 +4,8 @@ version = "1.0"
 [versions]
 
 # libraries
-gson = "1.9.0"
+json = "1.9.0"
+gson = "2.10.1"
 
 # configuration
 config = "3.8.2"
@@ -31,7 +32,8 @@ lombok = "1.18.38"
 [libraries]
 
 # libraries
-gson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "gson" }
+json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "json" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # configuration
 electronwill-toml = { group = "com.electronwill.night-config", name = "toml", version.ref = "config" }

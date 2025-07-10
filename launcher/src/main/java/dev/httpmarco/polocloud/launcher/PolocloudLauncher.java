@@ -1,11 +1,13 @@
 package dev.httpmarco.polocloud.launcher;
 
+import dev.httpmarco.polocloud.launcher.dependencies.DependencyProvider;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class PolocloudLauncher {
+public final class PolocloudLauncher {
 
     public static void main(String[] args) throws URISyntaxException, IOException {
         var ownPath = Paths.get(PolocloudProcess.class.getProtectionDomain().getCodeSource().getLocation().toURI());

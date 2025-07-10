@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.launcher;
 
+import dev.httpmarco.polocloud.launcher.dependencies.DependencyProvider;
 import dev.httpmarco.polocloud.launcher.lib.PolocloudLib;
 import dev.httpmarco.polocloud.launcher.lib.PolocloudLibNotFoundException;
 
@@ -12,7 +13,6 @@ public class PolocloudProcess extends Thread {
     private final List<PolocloudLib> processLibs;
 
     public PolocloudProcess() {
-        super("PolocloudProcess");
         setDaemon(false);
 
         this.processLibs = PolocloudLib.of(PolocloudParameters.REQUIRED_LIBS);
@@ -21,9 +21,12 @@ public class PolocloudProcess extends Thread {
 
     @Override
     public void run() {
-        ProcessBuilder processBuilder = new ProcessBuilder()
+        var dependencyProvider = new DependencyProvider();
+        dependencyProvider.download();
+
+        var processBuilder = new ProcessBuilder()
                 .inheritIO()
-                .command(arguments());
+                .command(arguments(dependencyProvider));
 
         // copy all environment variables from the current process
         String version = System.getProperty(PolocloudParameters.VERSION_ENV_ID);
@@ -40,31 +43,32 @@ public class PolocloudProcess extends Thread {
         }
     }
 
-    private List<String> arguments() {
-        List<String> arguments = new ArrayList<>();
-        String usedJava = System.getenv("java.home");
+    private List<String> arguments(DependencyProvider dependencyProvider) {
+        var arguments = new ArrayList<String>();
+        var usedJava = System.getenv("java.home");
 
-        PolocloudLib bootLib = processLibs.stream()
+        var bootLib = processLibs.stream()
                 .filter(lib -> PolocloudParameters.BOOT_LIB.equals(lib.name()))
                 .findFirst()
                 .orElseThrow(() -> new PolocloudLibNotFoundException(PolocloudParameters.BOOT_LIB));
 
-        if (usedJava != null) {
-            arguments.add(usedJava + "/bin/java");
-        } else {
-            arguments.add("java");
-        }
-
+        arguments.add(usedJava != null ? usedJava + "/bin/java" : "java");
         arguments.add(String.format("-javaagent:%s", bootLib.target()));
 
         arguments.add("-cp");
-        String classpathSeparator = windowsProcess() ? ";" : ":";
-        String classpath = processLibs.stream()
-                .map(lib -> lib.target().toString())
+        var classpathSeparator = windowsProcess() ? ";" : ":";
+        var libClasspath = processLibs
+                .stream().map(it -> it.target().toString())
                 .collect(Collectors.joining(classpathSeparator));
-        arguments.add(classpath);
 
+        var dependencyClasspath = dependencyProvider.dependencies()
+                .stream()
+                .map(it -> PolocloudParameters.DEPENDENCY_DIRECTORY.resolve(it.file()).toString())
+                .collect(Collectors.joining(classpathSeparator));
+
+        arguments.add(libClasspath + classpathSeparator + dependencyClasspath);
         arguments.add(bootLib.mainClass());
+
         return arguments;
     }
 

@@ -13,14 +13,14 @@ dependencies {
 
     implementation(libs.bundles.terminal)
     implementation(libs.bundles.runtime)
-    implementation(libs.gson)
+    implementation(libs.json)
     implementation(libs.jline)
 
     compileOnly(project(":platforms"))
     compileOnly(project(":common"))
 }
 
-tasks.shadowJar {
+tasks.jar {
     archiveFileName.set("polocloud-agent-$version.jar")
     manifest {
         attributes("Main-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt");

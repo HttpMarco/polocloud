@@ -5,12 +5,12 @@ plugins {
 
 dependencies {
     testImplementation(kotlin("test"))
-    testImplementation(libs.gson)
+    testImplementation(libs.json)
     testImplementation(project(":common"))
 
     implementation(libs.bundles.confirationPool)
 
-    compileOnly(libs.gson)
+    compileOnly(libs.json)
     compileOnly(project(":common"))
 }
 

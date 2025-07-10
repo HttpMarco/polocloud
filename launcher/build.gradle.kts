@@ -8,15 +8,22 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.lombok)
+    implementation(libs.gson)
+    compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = JavaVersion.VERSION_21.toString()
+    targetCompatibility = JavaVersion.VERSION_21.toString()
+    options.encoding = "UTF-8"
 }
 
 // Configure the shadowJar task (used to create a fat jar with dependencies)
 tasks.shadowJar {
     from(
         includeLibs("common"),
-        includeLibs("agent", "shadowJar"),
+        includeLibs("agent"),
         includeLibs("platforms"),
         includeLibs(":bridges:java-velocity-bridge"),
         includeLibs(":bridges:java-bungeecord-bridge")
