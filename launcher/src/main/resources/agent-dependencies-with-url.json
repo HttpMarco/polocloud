@@ -1,0 +1,884 @@
+[
+    {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-core-jvm",
+        "version": "1.9.0",
+        "file": "kotlinx-serialization-core-jvm-1.9.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.9.0/kotlinx-serialization-core-jvm-1.9.0.jar"
+    },
+    {
+        "group": "org.jetbrains.kotlinx",
+        "name": "kotlinx-serialization-json-jvm",
+        "version": "1.9.0",
+        "file": "kotlinx-serialization-json-jvm-1.9.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-json-jvm/1.9.0/kotlinx-serialization-json-jvm-1.9.0.jar"
+    },
+    {
+        "group": "org.jetbrains.kotlin",
+        "name": "kotlin-stdlib",
+        "version": "2.2.0",
+        "file": "kotlin-stdlib-2.2.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.2.0/kotlin-stdlib-2.2.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-services",
+        "version": "1.73.0",
+        "file": "grpc-services-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-services/1.73.0/grpc-services-1.73.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-protobuf",
+        "version": "1.73.0",
+        "file": "grpc-protobuf-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf/1.73.0/grpc-protobuf-1.73.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-stub",
+        "version": "1.73.0",
+        "file": "grpc-stub-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-stub/1.73.0/grpc-stub-1.73.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-netty",
+        "version": "1.73.0",
+        "file": "grpc-netty-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-netty/1.73.0/grpc-netty-1.73.0.jar"
+    },
+    {
+        "group": "org.apache.logging.log4j",
+        "name": "log4j-slf4j2-impl",
+        "version": "2.25.0",
+        "file": "log4j-slf4j2-impl-2.25.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-slf4j2-impl/2.25.0/log4j-slf4j2-impl-2.25.0.jar"
+    },
+    {
+        "group": "com.github.docker-java",
+        "name": "docker-java",
+        "version": "3.5.3",
+        "file": "docker-java-3.5.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/github/docker-java/docker-java/3.5.3/docker-java-3.5.3.jar"
+    },
+    {
+        "group": "com.github.docker-java",
+        "name": "docker-java-transport-jersey",
+        "version": "3.5.3",
+        "file": "docker-java-transport-jersey-3.5.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/github/docker-java/docker-java-transport-jersey/3.5.3/docker-java-transport-jersey-3.5.3.jar"
+    },
+    {
+        "group": "com.github.docker-java",
+        "name": "docker-java-transport-netty",
+        "version": "3.5.3",
+        "file": "docker-java-transport-netty-3.5.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/github/docker-java/docker-java-transport-netty/3.5.3/docker-java-transport-netty-3.5.3.jar"
+    },
+    {
+        "group": "com.github.docker-java",
+        "name": "docker-java-core",
+        "version": "3.5.3",
+        "file": "docker-java-core-3.5.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/github/docker-java/docker-java-core/3.5.3/docker-java-core-3.5.3.jar"
+    },
+    {
+        "group": "org.slf4j",
+        "name": "jcl-over-slf4j",
+        "version": "1.7.30",
+        "file": "jcl-over-slf4j-1.7.30.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/1.7.30/jcl-over-slf4j-1.7.30.jar"
+    },
+    {
+        "group": "com.github.docker-java",
+        "name": "docker-java-transport-httpclient5",
+        "version": "3.5.3",
+        "file": "docker-java-transport-httpclient5-3.5.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/github/docker-java/docker-java-transport-httpclient5/3.5.3/docker-java-transport-httpclient5-3.5.3.jar"
+    },
+    {
+        "group": "org.apache.httpcomponents.client5",
+        "name": "httpclient5",
+        "version": "5.5",
+        "file": "httpclient5-5.5.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/httpcomponents/client5/httpclient5/5.5/httpclient5-5.5.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-client",
+        "version": "7.3.1",
+        "file": "kubernetes-client-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-client/7.3.1/kubernetes-client-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-httpclient-vertx",
+        "version": "7.3.1",
+        "file": "kubernetes-httpclient-vertx-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-httpclient-vertx/7.3.1/kubernetes-httpclient-vertx-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-client-api",
+        "version": "7.3.1",
+        "file": "kubernetes-client-api-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-client-api/7.3.1/kubernetes-client-api-7.3.1.jar"
+    },
+    {
+        "group": "com.github.docker-java",
+        "name": "docker-java-api",
+        "version": "3.5.3",
+        "file": "docker-java-api-3.5.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/github/docker-java/docker-java-api/3.5.3/docker-java-api-3.5.3.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-gatewayapi",
+        "version": "7.3.1",
+        "file": "kubernetes-model-gatewayapi-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-gatewayapi/7.3.1/kubernetes-model-gatewayapi-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-resource",
+        "version": "7.3.1",
+        "file": "kubernetes-model-resource-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-resource/7.3.1/kubernetes-model-resource-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-rbac",
+        "version": "7.3.1",
+        "file": "kubernetes-model-rbac-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-rbac/7.3.1/kubernetes-model-rbac-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-admissionregistration",
+        "version": "7.3.1",
+        "file": "kubernetes-model-admissionregistration-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-admissionregistration/7.3.1/kubernetes-model-admissionregistration-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-apps",
+        "version": "7.3.1",
+        "file": "kubernetes-model-apps-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-apps/7.3.1/kubernetes-model-apps-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-autoscaling",
+        "version": "7.3.1",
+        "file": "kubernetes-model-autoscaling-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-autoscaling/7.3.1/kubernetes-model-autoscaling-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-apiextensions",
+        "version": "7.3.1",
+        "file": "kubernetes-model-apiextensions-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-apiextensions/7.3.1/kubernetes-model-apiextensions-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-batch",
+        "version": "7.3.1",
+        "file": "kubernetes-model-batch-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-batch/7.3.1/kubernetes-model-batch-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-certificates",
+        "version": "7.3.1",
+        "file": "kubernetes-model-certificates-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-certificates/7.3.1/kubernetes-model-certificates-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-coordination",
+        "version": "7.3.1",
+        "file": "kubernetes-model-coordination-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-coordination/7.3.1/kubernetes-model-coordination-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-discovery",
+        "version": "7.3.1",
+        "file": "kubernetes-model-discovery-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-discovery/7.3.1/kubernetes-model-discovery-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-events",
+        "version": "7.3.1",
+        "file": "kubernetes-model-events-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-events/7.3.1/kubernetes-model-events-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-extensions",
+        "version": "7.3.1",
+        "file": "kubernetes-model-extensions-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-extensions/7.3.1/kubernetes-model-extensions-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-flowcontrol",
+        "version": "7.3.1",
+        "file": "kubernetes-model-flowcontrol-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-flowcontrol/7.3.1/kubernetes-model-flowcontrol-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-networking",
+        "version": "7.3.1",
+        "file": "kubernetes-model-networking-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-networking/7.3.1/kubernetes-model-networking-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-metrics",
+        "version": "7.3.1",
+        "file": "kubernetes-model-metrics-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-metrics/7.3.1/kubernetes-model-metrics-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-policy",
+        "version": "7.3.1",
+        "file": "kubernetes-model-policy-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-policy/7.3.1/kubernetes-model-policy-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-scheduling",
+        "version": "7.3.1",
+        "file": "kubernetes-model-scheduling-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-scheduling/7.3.1/kubernetes-model-scheduling-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-storageclass",
+        "version": "7.3.1",
+        "file": "kubernetes-model-storageclass-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-storageclass/7.3.1/kubernetes-model-storageclass-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-node",
+        "version": "7.3.1",
+        "file": "kubernetes-model-node-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-node/7.3.1/kubernetes-model-node-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-core",
+        "version": "7.3.1",
+        "file": "kubernetes-model-core-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-core/7.3.1/kubernetes-model-core-7.3.1.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "kubernetes-model-common",
+        "version": "7.3.1",
+        "file": "kubernetes-model-common-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/kubernetes-model-common/7.3.1/kubernetes-model-common-7.3.1.jar"
+    },
+    {
+        "group": "org.slf4j",
+        "name": "slf4j-api",
+        "version": "2.0.17",
+        "file": "slf4j-api-2.0.17.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar"
+    },
+    {
+        "group": "org.apache.logging.log4j",
+        "name": "log4j-core",
+        "version": "2.25.0",
+        "file": "log4j-core-2.25.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.25.0/log4j-core-2.25.0.jar"
+    },
+    {
+        "group": "org.apache.logging.log4j",
+        "name": "log4j-api",
+        "version": "2.25.0",
+        "file": "log4j-api-2.25.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.25.0/log4j-api-2.25.0.jar"
+    },
+    {
+        "group": "org.jline",
+        "name": "jline",
+        "version": "3.30.4",
+        "file": "jline-3.30.4.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/jline/jline/3.30.4/jline-3.30.4.jar"
+    },
+    {
+        "group": "org.jetbrains",
+        "name": "annotations",
+        "version": "13.0",
+        "file": "annotations-13.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-protobuf-lite",
+        "version": "1.73.0",
+        "file": "grpc-protobuf-lite-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-protobuf-lite/1.73.0/grpc-protobuf-lite-1.73.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-util",
+        "version": "1.73.0",
+        "file": "grpc-util-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-util/1.73.0/grpc-util-1.73.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-core",
+        "version": "1.73.0",
+        "file": "grpc-core-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-core/1.73.0/grpc-core-1.73.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-context",
+        "version": "1.73.0",
+        "file": "grpc-context-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-context/1.73.0/grpc-context-1.73.0.jar"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-api",
+        "version": "1.73.0",
+        "file": "grpc-api-1.73.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/grpc/grpc-api/1.73.0/grpc-api-1.73.0.jar"
+    },
+    {
+        "group": "com.google.protobuf",
+        "name": "protobuf-java-util",
+        "version": "3.25.5",
+        "file": "protobuf-java-util-3.25.5.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.jar"
+    },
+    {
+        "group": "com.google.code.findbugs",
+        "name": "jsr305",
+        "version": "3.0.2",
+        "file": "jsr305-3.0.2.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
+    },
+    {
+        "group": "com.google.api.grpc",
+        "name": "proto-google-common-protos",
+        "version": "2.51.0",
+        "file": "proto-google-common-protos-2.51.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/api/grpc/proto-google-common-protos/2.51.0/proto-google-common-protos-2.51.0.jar"
+    },
+    {
+        "group": "com.google.protobuf",
+        "name": "protobuf-java",
+        "version": "3.25.5",
+        "file": "protobuf-java-3.25.5.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.25.5/protobuf-java-3.25.5.jar"
+    },
+    {
+        "group": "com.google.guava",
+        "name": "guava",
+        "version": "33.4.8-jre",
+        "file": "guava-33.4.8-jre.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar"
+    },
+    {
+        "group": "org.codehaus.mojo",
+        "name": "animal-sniffer-annotations",
+        "version": "1.24",
+        "file": "animal-sniffer-annotations-1.24.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/codehaus/mojo/animal-sniffer-annotations/1.24/animal-sniffer-annotations-1.24.jar"
+    },
+    {
+        "group": "com.google.code.gson",
+        "name": "gson",
+        "version": "2.11.0",
+        "file": "gson-2.11.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.11.0/gson-2.11.0.jar"
+    },
+    {
+        "group": "com.google.errorprone",
+        "name": "error_prone_annotations",
+        "version": "2.36.0",
+        "file": "error_prone_annotations-2.36.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.36.0/error_prone_annotations-2.36.0.jar"
+    },
+    {
+        "group": "io.vertx",
+        "name": "vertx-web-client",
+        "version": "4.5.14",
+        "file": "vertx-web-client-4.5.14.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/vertx/vertx-web-client/4.5.14/vertx-web-client-4.5.14.jar"
+    },
+    {
+        "group": "io.vertx",
+        "name": "vertx-web-common",
+        "version": "4.5.14",
+        "file": "vertx-web-common-4.5.14.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/vertx/vertx-web-common/4.5.14/vertx-web-common-4.5.14.jar"
+    },
+    {
+        "group": "io.vertx",
+        "name": "vertx-auth-common",
+        "version": "4.5.14",
+        "file": "vertx-auth-common-4.5.14.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/vertx/vertx-auth-common/4.5.14/vertx-auth-common-4.5.14.jar"
+    },
+    {
+        "group": "io.vertx",
+        "name": "vertx-core",
+        "version": "4.5.14",
+        "file": "vertx-core-4.5.14.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/vertx/vertx-core/4.5.14/vertx-core-4.5.14.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-codec-http2",
+        "version": "4.1.118.Final",
+        "file": "netty-codec-http2-4.1.118.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-codec-http2/4.1.118.Final/netty-codec-http2-4.1.118.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-handler-proxy",
+        "version": "4.2.2.Final",
+        "file": "netty-handler-proxy-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-handler-proxy/4.2.2.Final/netty-handler-proxy-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.perfmark",
+        "name": "perfmark-api",
+        "version": "0.27.0",
+        "file": "perfmark-api-0.27.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/perfmark/perfmark-api/0.27.0/perfmark-api-0.27.0.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-codec-http",
+        "version": "4.2.2.Final",
+        "file": "netty-codec-http-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-codec-http/4.2.2.Final/netty-codec-http-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-resolver-dns",
+        "version": "4.1.118.Final",
+        "file": "netty-resolver-dns-4.1.118.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-resolver-dns/4.1.118.Final/netty-resolver-dns-4.1.118.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-handler",
+        "version": "4.2.2.Final",
+        "file": "netty-handler-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-handler/4.2.2.Final/netty-handler-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-transport-native-epoll",
+        "version": "4.2.2.Final",
+        "file": "netty-transport-native-epoll-4.2.2.Final-linux-x86_64.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-transport-native-epoll/4.2.2.Final/netty-transport-native-epoll-4.2.2.Final-linux-x86_64.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-transport-native-kqueue",
+        "version": "4.2.2.Final",
+        "file": "netty-transport-native-kqueue-4.2.2.Final-osx-x86_64.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-transport-native-kqueue/4.2.2.Final/netty-transport-native-kqueue-4.2.2.Final-osx-x86_64.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-transport-classes-epoll",
+        "version": "4.2.2.Final",
+        "file": "netty-transport-classes-epoll-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-transport-classes-epoll/4.2.2.Final/netty-transport-classes-epoll-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-transport-classes-kqueue",
+        "version": "4.2.2.Final",
+        "file": "netty-transport-classes-kqueue-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-transport-classes-kqueue/4.2.2.Final/netty-transport-classes-kqueue-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-transport-native-unix-common",
+        "version": "4.2.2.Final",
+        "file": "netty-transport-native-unix-common-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-transport-native-unix-common/4.2.2.Final/netty-transport-native-unix-common-4.2.2.Final.jar"
+    },
+    {
+        "group": "javax.annotation",
+        "name": "javax.annotation-api",
+        "version": "1.3.2",
+        "file": "javax.annotation-api-1.3.2.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar"
+    },
+    {
+        "group": "com.github.docker-java",
+        "name": "docker-java-transport",
+        "version": "3.5.3",
+        "file": "docker-java-transport-3.5.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/github/docker-java/docker-java-transport/3.5.3/docker-java-transport-3.5.3.jar"
+    },
+    {
+        "group": "net.java.dev.jna",
+        "name": "jna",
+        "version": "5.17.0",
+        "file": "jna-5.17.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.17.0/jna-5.17.0.jar"
+    },
+    {
+        "group": "io.fabric8",
+        "name": "zjsonpatch",
+        "version": "7.3.1",
+        "file": "zjsonpatch-7.3.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/fabric8/zjsonpatch/7.3.1/zjsonpatch-7.3.1.jar"
+    },
+    {
+        "group": "com.google.guava",
+        "name": "failureaccess",
+        "version": "1.0.3",
+        "file": "failureaccess-1.0.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar"
+    },
+    {
+        "group": "com.google.guava",
+        "name": "listenablefuture",
+        "version": "9999.0-empty-to-avoid-conflict-with-guava",
+        "file": "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
+    },
+    {
+        "group": "com.google.j2objc",
+        "name": "j2objc-annotations",
+        "version": "3.0.0",
+        "file": "j2objc-annotations-3.0.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/3.0.0/j2objc-annotations-3.0.0.jar"
+    },
+    {
+        "group": "com.google.android",
+        "name": "annotations",
+        "version": "4.1.1.4",
+        "file": "annotations-4.1.1.4.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/google/android/annotations/4.1.1.4/annotations-4.1.1.4.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-codec-compression",
+        "version": "4.2.2.Final",
+        "file": "netty-codec-compression-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-codec-compression/4.2.2.Final/netty-codec-compression-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-codec-socks",
+        "version": "4.2.2.Final",
+        "file": "netty-codec-socks-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-codec-socks/4.2.2.Final/netty-codec-socks-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-codec-base",
+        "version": "4.2.2.Final",
+        "file": "netty-codec-base-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-codec-base/4.2.2.Final/netty-codec-base-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-codec-dns",
+        "version": "4.1.118.Final",
+        "file": "netty-codec-dns-4.1.118.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-codec-dns/4.1.118.Final/netty-codec-dns-4.1.118.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-codec",
+        "version": "4.1.118.Final",
+        "file": "netty-codec-4.1.118.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-codec/4.1.118.Final/netty-codec-4.1.118.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-transport",
+        "version": "4.2.2.Final",
+        "file": "netty-transport-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-transport/4.2.2.Final/netty-transport-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-buffer",
+        "version": "4.2.2.Final",
+        "file": "netty-buffer-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-buffer/4.2.2.Final/netty-buffer-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-resolver",
+        "version": "4.2.2.Final",
+        "file": "netty-resolver-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-resolver/4.2.2.Final/netty-resolver-4.2.2.Final.jar"
+    },
+    {
+        "group": "io.netty",
+        "name": "netty-common",
+        "version": "4.2.2.Final",
+        "file": "netty-common-4.2.2.Final.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/io/netty/netty-common/4.2.2.Final/netty-common-4.2.2.Final.jar"
+    },
+    {
+        "group": "org.apache.commons",
+        "name": "commons-compress",
+        "version": "1.27.1",
+        "file": "commons-compress-1.27.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/commons/commons-compress/1.27.1/commons-compress-1.27.1.jar"
+    },
+    {
+        "group": "commons-io",
+        "name": "commons-io",
+        "version": "2.19.0",
+        "file": "commons-io-2.19.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/commons-io/commons-io/2.19.0/commons-io-2.19.0.jar"
+    },
+    {
+        "group": "org.apache.commons",
+        "name": "commons-lang3",
+        "version": "3.17.0",
+        "file": "commons-lang3-3.17.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.17.0/commons-lang3-3.17.0.jar"
+    },
+    {
+        "group": "com.fasterxml.jackson.datatype",
+        "name": "jackson-datatype-jsr310",
+        "version": "2.19.0",
+        "file": "jackson-datatype-jsr310-2.19.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.19.0/jackson-datatype-jsr310-2.19.0.jar"
+    },
+    {
+        "group": "com.fasterxml.jackson.core",
+        "name": "jackson-core",
+        "version": "2.19.0",
+        "file": "jackson-core-2.19.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.19.0/jackson-core-2.19.0.jar"
+    },
+    {
+        "group": "com.fasterxml.jackson.core",
+        "name": "jackson-annotations",
+        "version": "2.19.0",
+        "file": "jackson-annotations-2.19.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.19.0/jackson-annotations-2.19.0.jar"
+    },
+    {
+        "group": "com.fasterxml.jackson.dataformat",
+        "name": "jackson-dataformat-yaml",
+        "version": "2.19.0",
+        "file": "jackson-dataformat-yaml-2.19.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.19.0/jackson-dataformat-yaml-2.19.0.jar"
+    },
+    {
+        "group": "com.fasterxml.jackson.core",
+        "name": "jackson-databind",
+        "version": "2.19.0",
+        "file": "jackson-databind-2.19.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.19.0/jackson-databind-2.19.0.jar"
+    },
+    {
+        "group": "org.bouncycastle",
+        "name": "bcpkix-jdk18on",
+        "version": "1.81",
+        "file": "bcpkix-jdk18on-1.81.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-jdk18on/1.81/bcpkix-jdk18on-1.81.jar"
+    },
+    {
+        "group": "org.glassfish.jersey.connectors",
+        "name": "jersey-apache-connector",
+        "version": "2.30.1",
+        "file": "jersey-apache-connector-2.30.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/jersey/connectors/jersey-apache-connector/2.30.1/jersey-apache-connector-2.30.1.jar"
+    },
+    {
+        "group": "org.apache.httpcomponents",
+        "name": "httpclient",
+        "version": "4.5.12",
+        "file": "httpclient-4.5.12.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.12/httpclient-4.5.12.jar"
+    },
+    {
+        "group": "org.apache.httpcomponents",
+        "name": "httpcore",
+        "version": "4.4.13",
+        "file": "httpcore-4.4.13.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/httpcomponents/httpcore/4.4.13/httpcore-4.4.13.jar"
+    },
+    {
+        "group": "org.glassfish.jersey.core",
+        "name": "jersey-client",
+        "version": "2.30.1",
+        "file": "jersey-client-2.30.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/jersey/core/jersey-client/2.30.1/jersey-client-2.30.1.jar"
+    },
+    {
+        "group": "org.glassfish.jersey.inject",
+        "name": "jersey-hk2",
+        "version": "2.30.1",
+        "file": "jersey-hk2-2.30.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/jersey/inject/jersey-hk2/2.30.1/jersey-hk2-2.30.1.jar"
+    },
+    {
+        "group": "com.kohlschutter.junixsocket",
+        "name": "junixsocket-common",
+        "version": "2.10.1",
+        "file": "junixsocket-common-2.10.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/kohlschutter/junixsocket/junixsocket-common/2.10.1/junixsocket-common-2.10.1.jar"
+    },
+    {
+        "group": "com.kohlschutter.junixsocket",
+        "name": "junixsocket-native-common",
+        "version": "2.10.1",
+        "file": "junixsocket-native-common-2.10.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/com/kohlschutter/junixsocket/junixsocket-native-common/2.10.1/junixsocket-native-common-2.10.1.jar"
+    },
+    {
+        "group": "org.apache.httpcomponents.core5",
+        "name": "httpcore5-h2",
+        "version": "5.3.4",
+        "file": "httpcore5-h2-5.3.4.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/httpcomponents/core5/httpcore5-h2/5.3.4/httpcore5-h2-5.3.4.jar"
+    },
+    {
+        "group": "org.apache.httpcomponents.core5",
+        "name": "httpcore5",
+        "version": "5.3.4",
+        "file": "httpcore5-5.3.4.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/apache/httpcomponents/core5/httpcore5/5.3.4/httpcore5-5.3.4.jar"
+    },
+    {
+        "group": "org.snakeyaml",
+        "name": "snakeyaml-engine",
+        "version": "2.9",
+        "file": "snakeyaml-engine-2.9.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/snakeyaml/snakeyaml-engine/2.9/snakeyaml-engine-2.9.jar"
+    },
+    {
+        "group": "org.jspecify",
+        "name": "jspecify",
+        "version": "1.0.0",
+        "file": "jspecify-1.0.0.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar"
+    },
+    {
+        "group": "commons-codec",
+        "name": "commons-codec",
+        "version": "1.17.1",
+        "file": "commons-codec-1.17.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/commons-codec/commons-codec/1.17.1/commons-codec-1.17.1.jar"
+    },
+    {
+        "group": "org.bouncycastle",
+        "name": "bcutil-jdk18on",
+        "version": "1.81",
+        "file": "bcutil-jdk18on-1.81.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/bouncycastle/bcutil-jdk18on/1.81/bcutil-jdk18on-1.81.jar"
+    },
+    {
+        "group": "org.glassfish.jersey.core",
+        "name": "jersey-common",
+        "version": "2.30.1",
+        "file": "jersey-common-2.30.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/jersey/core/jersey-common/2.30.1/jersey-common-2.30.1.jar"
+    },
+    {
+        "group": "jakarta.ws.rs",
+        "name": "jakarta.ws.rs-api",
+        "version": "2.1.6",
+        "file": "jakarta.ws.rs-api-2.1.6.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/jakarta/ws/rs/jakarta.ws.rs-api/2.1.6/jakarta.ws.rs-api-2.1.6.jar"
+    },
+    {
+        "group": "commons-logging",
+        "name": "commons-logging",
+        "version": "1.2",
+        "file": "commons-logging-1.2.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"
+    },
+    {
+        "group": "org.glassfish.hk2",
+        "name": "hk2-locator",
+        "version": "2.6.1",
+        "file": "hk2-locator-2.6.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/hk2/hk2-locator/2.6.1/hk2-locator-2.6.1.jar"
+    },
+    {
+        "group": "org.glassfish.hk2",
+        "name": "hk2-api",
+        "version": "2.6.1",
+        "file": "hk2-api-2.6.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/hk2/hk2-api/2.6.1/hk2-api-2.6.1.jar"
+    },
+    {
+        "group": "org.glassfish.hk2",
+        "name": "hk2-utils",
+        "version": "2.6.1",
+        "file": "hk2-utils-2.6.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/hk2/hk2-utils/2.6.1/hk2-utils-2.6.1.jar"
+    },
+    {
+        "group": "org.glassfish.hk2.external",
+        "name": "jakarta.inject",
+        "version": "2.6.1",
+        "file": "jakarta.inject-2.6.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/hk2/external/jakarta.inject/2.6.1/jakarta.inject-2.6.1.jar"
+    },
+    {
+        "group": "org.javassist",
+        "name": "javassist",
+        "version": "3.25.0-GA",
+        "file": "javassist-3.25.0-GA.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/javassist/javassist/3.25.0-GA/javassist-3.25.0-GA.jar"
+    },
+    {
+        "group": "org.yaml",
+        "name": "snakeyaml",
+        "version": "2.4",
+        "file": "snakeyaml-2.4.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/yaml/snakeyaml/2.4/snakeyaml-2.4.jar"
+    },
+    {
+        "group": "org.bouncycastle",
+        "name": "bcprov-jdk18on",
+        "version": "1.81",
+        "file": "bcprov-jdk18on-1.81.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk18on/1.81/bcprov-jdk18on-1.81.jar"
+    },
+    {
+        "group": "jakarta.annotation",
+        "name": "jakarta.annotation-api",
+        "version": "1.3.5",
+        "file": "jakarta.annotation-api-1.3.5.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/jakarta/annotation/jakarta.annotation-api/1.3.5/jakarta.annotation-api-1.3.5.jar"
+    },
+    {
+        "group": "org.glassfish.hk2",
+        "name": "osgi-resource-locator",
+        "version": "1.0.3",
+        "file": "osgi-resource-locator-1.0.3.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/hk2/osgi-resource-locator/1.0.3/osgi-resource-locator-1.0.3.jar"
+    },
+    {
+        "group": "org.glassfish.hk2.external",
+        "name": "aopalliance-repackaged",
+        "version": "2.6.1",
+        "file": "aopalliance-repackaged-2.6.1.jar",
+        "guessedUrl": "https://repo1.maven.org/maven2/org/glassfish/hk2/external/aopalliance-repackaged/2.6.1/aopalliance-repackaged-2.6.1.jar"
+    }
+]

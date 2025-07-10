@@ -1,4 +1,6 @@
-package dev.httpmarco.polocloud.launcher;
+package dev.httpmarco.polocloud.launcher.lib;
+
+import dev.httpmarco.polocloud.launcher.PolocloudParameters;
 
 import java.io.IOException;
 import java.io.InputStream;
