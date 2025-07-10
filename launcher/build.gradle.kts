@@ -68,7 +68,7 @@ tasks.register("exportAgentDependenciesWithUrls") {
                 val file = artifact.file
                 val fileName = file.name
                 val groupPath = group.replace(".", "/")
-                val guessedUrl = "$mavenCentralBase/$groupPath/$name/$version/$fileName"
+                val url = "$mavenCentralBase/$groupPath/$name/$version/$fileName"
 
                 if (group == "dev.httpmarco.polocloud") return@forEach
 
@@ -79,7 +79,7 @@ tasks.register("exportAgentDependenciesWithUrls") {
                     while (input.read(buffer).also { bytesRead = it } != -1) {
                         digest.update(buffer, 0, bytesRead)
                     }
-                    digest.digest().joinToString("") { "%02x".format(it) }
+                    digest.digest().joinToString("") { "%02x".format( it) }
                 }
 
                 dependenciesList.add(
@@ -88,7 +88,7 @@ tasks.register("exportAgentDependenciesWithUrls") {
                         "name" to name,
                         "version" to version,
                         "file" to fileName,
-                        "guessedUrl" to guessedUrl,
+                        "url" to url,
                         "sha256" to sha256
                     )
                 )
