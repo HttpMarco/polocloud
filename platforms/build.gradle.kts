@@ -8,7 +8,7 @@ dependencies {
     testImplementation(libs.json)
     testImplementation(project(":common"))
 
-    implementation(libs.bundles.confirationPool)
+    compileOnly(libs.bundles.confirationPool)
 
     compileOnly(libs.json)
     compileOnly(project(":common"))

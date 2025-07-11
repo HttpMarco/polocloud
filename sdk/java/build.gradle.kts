@@ -6,7 +6,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(libs.bundles.proto)
     implementation(libs.grpc.netty)
-    implementation(project(":proto"))
+    compileOnly(project(":proto"))
 }
 
 tasks.named("compileJava") {

@@ -1,7 +1,5 @@
 import com.google.protobuf.gradle.id
 
-val protobufProtoc by configurations.creating
-
 plugins {
     id("java")
     id("com.google.protobuf") version "0.9.5"
@@ -9,8 +7,6 @@ plugins {
 
 dependencies {
     implementation(libs.bundles.proto)
-
-    protobufProtoc("com.google.protobuf:protoc:3.25.8")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
@@ -39,3 +35,9 @@ protobuf {
         }
     }
 }
+
+tasks.jar {
+    archiveFileName.set("polocloud-proto-$version.jar")
+}
+
+sourceSets["main"].proto.srcDir("src/main/proto")

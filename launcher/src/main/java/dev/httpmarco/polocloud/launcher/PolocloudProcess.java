@@ -37,7 +37,7 @@ public class PolocloudProcess extends Thread {
         try {
             Process process = processBuilder.start();
             process.waitFor();
-            process.exitValue(); // Optional: can be used for logging or error handling
+            process.exitValue();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace(System.err);
         }

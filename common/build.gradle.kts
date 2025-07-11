@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation(libs.json)
+    compileOnly(libs.json)
 }
 
 tasks.test {
