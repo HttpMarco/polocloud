@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.sdk.java.services
 
-class Service(val name: String) {
-
+class Service(val name: String, val hostname: String, val port: Int) {
 
 
 }

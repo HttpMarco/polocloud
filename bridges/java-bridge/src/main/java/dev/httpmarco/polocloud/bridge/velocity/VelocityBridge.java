@@ -2,12 +2,18 @@ package dev.httpmarco.polocloud.bridge.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceOnlineEvent;
 import org.slf4j.Logger;
+
+import java.net.InetSocketAddress;
+import java.util.Objects;
 
 @Plugin(id = "polocloud-bridge", name = "Polocloud-Bridge", version = "3.0.0.BETA", authors = {"Polocloud"}, url = "https://github.com/HttpMarco/polocloud", description = "Polocloud-Bridge")
 public final class VelocityBridge {
@@ -29,7 +35,15 @@ public final class VelocityBridge {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Polocloud.Companion.instance().eventProvider().subscribe(ServiceOnlineEvent.class, it -> {
-            System.out.println(it.getService().getName());
+            var service = it.getService();
+
+            server.registerServer(new ServerInfo(service.getName(), new InetSocketAddress(service.getHostname(), service.getPort())));
         });
     }
+
+    @Subscribe
+    public void onConnect(PlayerChooseInitialServerEvent event) {
+        event.setInitialServer(Objects.requireNonNull(server.getAllServers().stream().findFirst().orElse(null)));
+    }
 }
+
