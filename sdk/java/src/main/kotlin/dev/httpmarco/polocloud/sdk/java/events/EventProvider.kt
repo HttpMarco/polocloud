@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.sdk.java.events
 
 import com.google.gson.GsonBuilder
-import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.v1.proto.EventProviderGrpc
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
 import io.grpc.ManagedChannel
@@ -19,6 +18,7 @@ class EventProvider(channel: ManagedChannel?) {
 
         eventStub.subscribe(request, object : StreamObserver<EventProviderOuterClass.EventContext> {
             override fun onNext(conetext: EventProviderOuterClass.EventContext) {
+                System.out.println("Event: ${conetext.eventData}")
                 listener.accept(GsonBuilder().create().fromJson(conetext.eventData, event))
             }
 

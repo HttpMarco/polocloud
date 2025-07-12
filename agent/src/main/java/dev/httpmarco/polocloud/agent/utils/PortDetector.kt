@@ -10,7 +10,7 @@ class PortDetector {
 
     companion object {
         fun nextPort(group: Group): Int {
-            var port = if (group.platform().type === PlatformType.PROXY) 25566 else 25566
+            var port = if (group.platform().type == PlatformType.PROXY) 25565 else 30000
             while (isPortUsed(port)) {
                 port = port + 2
             }

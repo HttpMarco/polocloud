@@ -63,7 +63,9 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
 
         val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
         processBuilder.environment().putAll(environment)
+
         service.process = processBuilder.start()
+        service.startTracking()
     }
 
     @OptIn(ExperimentalPathApi::class)

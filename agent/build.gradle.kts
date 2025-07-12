@@ -9,7 +9,6 @@ dependencies {
     compileOnly(libs.bundles.proto)
     compileOnly(libs.grpc.netty)
     compileOnly(project(":proto"))
-    compileOnly(project(":shared"))
 
     compileOnly(libs.bundles.terminal)
     compileOnly(libs.bundles.runtime)

@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.agent.events
 
 import com.google.gson.GsonBuilder
-import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
 import io.grpc.stub.StreamObserver
 

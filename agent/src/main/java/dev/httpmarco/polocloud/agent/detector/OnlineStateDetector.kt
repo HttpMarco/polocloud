@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.agent.detector
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.events.Event
+import dev.httpmarco.polocloud.agent.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.services.Service
 import kotlinx.serialization.json.Json
@@ -33,6 +35,11 @@ class OnlineStateDetector : Detector {
 
                     if(service.state == Service.State.STARTING) {
                         service.state = Service.State.ONLINE
+
+                        // call the services all the events
+                        //todo call here errors
+                       // Agent.instance.eventService.call(ServiceOnlineEvent(service))
+
                         logger.info("The service &3${service.name()} &7is now online&8.")
                     }
 

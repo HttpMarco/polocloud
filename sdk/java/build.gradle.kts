@@ -8,7 +8,6 @@ dependencies {
     implementation(libs.grpc.netty)
     compileOnly(libs.gson)
     implementation(project(":proto"))
-    implementation(project(":shared"))
 }
 
 sourceSets["main"].java.srcDirs("../proto/build/generated/sources/proto","../shared/src/main/kotlin")
