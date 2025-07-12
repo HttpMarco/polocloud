@@ -9,10 +9,12 @@ dependencies {
     compileOnly(libs.bundles.proto)
     compileOnly(libs.grpc.netty)
     compileOnly(project(":proto"))
+    compileOnly(project(":shared"))
 
     compileOnly(libs.bundles.terminal)
     compileOnly(libs.bundles.runtime)
     compileOnly(libs.json)
+    compileOnly(libs.gson)
     compileOnly(libs.jline)
 
     compileOnly(project(":platforms"))

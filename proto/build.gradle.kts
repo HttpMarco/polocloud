@@ -40,4 +40,8 @@ tasks.jar {
     archiveFileName.set("polocloud-proto-$version.jar")
 }
 
+tasks.named<Copy>("processResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 sourceSets["main"].proto.srcDir("src/main/proto")

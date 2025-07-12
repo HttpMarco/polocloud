@@ -25,6 +25,7 @@ class InfoCommand : Command("info", "Used to display information about the agent
             logger.info("  &8- &7Cpu usage&8: &f${cpuUsage()}%")
             logger.info("  &8- &7Used memory&8: &f${usedMemory()}MB")
             logger.info("  &8- &7Max memory&8: &f${maxMemory()}MB")
+            logger.info("  &8- &7Subscribed events&8: &f${Agent.instance.eventService.registeredAmount()}")
         }
     }
 

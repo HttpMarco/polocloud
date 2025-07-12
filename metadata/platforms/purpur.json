@@ -1,0 +1,118 @@
+{
+  "name": "Purpur",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://api.purpurmc.org/v2/purpur/%version%/%buildId%/download",
+  "arguments": [],
+  "tasks": [],
+  "versions": [
+    {
+      "version": "1.21.7",
+      "buildId": "2473"
+    },
+    {
+      "version": "1.21.6",
+      "buildId": "2465"
+    },
+    {
+      "version": "1.21.5",
+      "buildId": "2450"
+    },
+    {
+      "version": "1.21.4",
+      "buildId": "2416"
+    },
+    {
+      "version": "1.21.3",
+      "buildId": "2358"
+    },
+    {
+      "version": "1.21.1",
+      "buildId": "2329"
+    },
+    {
+      "version": "1.21",
+      "buildId": "2284"
+    },
+    {
+      "version": "1.20.6",
+      "buildId": "2233"
+    },
+    {
+      "version": "1.20.4",
+      "buildId": "2176"
+    },
+    {
+      "version": "1.20.2",
+      "buildId": "2095"
+    },
+    {
+      "version": "1.20.1",
+      "buildId": "2062"
+    },
+    {
+      "version": "1.20",
+      "buildId": "1990"
+    },
+    {
+      "version": "1.19.4",
+      "buildId": "1985"
+    },
+    {
+      "version": "1.19.3",
+      "buildId": "1933"
+    },
+    {
+      "version": "1.19.2",
+      "buildId": "1858"
+    },
+    {
+      "version": "1.19.1",
+      "buildId": "1751"
+    },
+    {
+      "version": "1.19",
+      "buildId": "1735"
+    },
+    {
+      "version": "1.18.2",
+      "buildId": "1632"
+    },
+    {
+      "version": "1.18.1",
+      "buildId": "1566"
+    },
+    {
+      "version": "1.18",
+      "buildId": "1433"
+    },
+    {
+      "version": "1.17.1",
+      "buildId": "1428"
+    },
+    {
+      "version": "1.17",
+      "buildId": "1255"
+    },
+    {
+      "version": "1.16.5",
+      "buildId": "1171"
+    },
+    {
+      "version": "1.16.4",
+      "buildId": "956"
+    },
+    {
+      "version": "1.16.3",
+      "buildId": "808"
+    },
+    {
+      "version": "1.16.2",
+      "buildId": "750"
+    },
+    {
+      "version": "1.16.1",
+      "buildId": "710"
+    }
+  ]
+}

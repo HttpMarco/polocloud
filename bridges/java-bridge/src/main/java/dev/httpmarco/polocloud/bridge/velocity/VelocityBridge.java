@@ -9,7 +9,7 @@ import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.sdk.java.groups.Group;
 import org.slf4j.Logger;
 
-@Plugin(id = "polocloud-bridge", name = "Polocloud-Bridge", version = "3.0.0.BETA", url = "https://github.com/HttpMarco/polocloud", description = "Polocloud-Bridge")
+@Plugin(id = "polocloud-bridge", name = "Polocloud-Bridge", version = "3.0.0.BETA", authors = {"Polocloud"}, url = "https://github.com/HttpMarco/polocloud", description = "Polocloud-Bridge")
 public final class VelocityBridge {
 
     private final ProxyServer server;
@@ -33,5 +33,4 @@ public final class VelocityBridge {
             System.out.println("Registering group: " + group.name());
         }
     }
-
 }

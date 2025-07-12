@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.v1.proto;
+
+service EventProvider {
+
+  rpc Subscribe (EventSubscribeRequest) returns (stream EventContext);
+
+}
+
+message EventSubscribeRequest {
+  string eventName = 1;
+}
+
+message EventContext {
+  string eventName = 1;
+  string eventData = 2;
+}

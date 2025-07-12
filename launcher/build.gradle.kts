@@ -26,6 +26,7 @@ tasks.shadowJar {
         includeLibs("agent"),
         includeLibs("platforms"),
         includeLibs("proto"),
+        includeLibs("shared"),
         includeLibs(":bridges:java-bridge", "shadowJar"),
     )
 
