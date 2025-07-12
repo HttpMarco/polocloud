@@ -10,6 +10,16 @@
         "key": "server-port",
         "value": "%port%"
       }
+    },
+    {
+      "name": "Update online mode",
+      "description": "Change the online mode setting for all spigot forks",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "online-mode",
+        "value": "false"
+      }
     }
   ]
 }

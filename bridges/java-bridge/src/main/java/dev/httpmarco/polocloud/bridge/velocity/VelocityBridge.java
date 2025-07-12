@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceOnlineEvent;
+import dev.httpmarco.polocloud.sdk.java.services.ServiceType;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -36,6 +37,10 @@ public final class VelocityBridge {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Polocloud.Companion.instance().eventProvider().subscribe(ServiceOnlineEvent.class, it -> {
             var service = it.getService();
+
+            if(service.getType() != ServiceType.SERVER) {
+                return;
+            }
 
             server.registerServer(new ServerInfo(service.getName(), new InetSocketAddress(service.getHostname(), service.getPort())));
         });
