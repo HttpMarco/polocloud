@@ -22,6 +22,7 @@ message GroupSnapshot {
   int64 maximumMemory = 4;
   int64 minimumOnline = 5;
   int64 maximumOnline = 6;
+  repeated string templates = 7;
 }
 
 enum GroupType {

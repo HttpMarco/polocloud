@@ -4,6 +4,8 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.RuntimeExpender
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
+import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
+import dev.httpmarco.polocloud.agent.services.Service
 import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -35,5 +37,8 @@ class KubernetesRuntime : Runtime {
     override fun factory() = factory;
 
     override fun expender() = expender
+    override fun templates(): RuntimeTemplates<Service> {
+        TODO("Not yet implemented")
+    }
 
 }

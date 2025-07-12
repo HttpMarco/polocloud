@@ -1,12 +1,10 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
-import dev.httpmarco.polocloud.agent.detector.DetectorFactoryThread
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.Jline3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.GroupCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.PlatformCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.ServiceCommand
-
 class LocalRuntime : Runtime {
 
     private val runtimeGroupStorage = LocalRuntimeGroupStorage()
@@ -14,6 +12,7 @@ class LocalRuntime : Runtime {
     private val runtimeFactory = LocalRuntimeFactory()
     private val runtimeQueue = LocalRuntimeQueue()
     private val runtimeExpender = LocalRuntimeExpender()
+    private val templates = LocalRuntimeTemplates()
 
     lateinit var terminal: Jline3Terminal
 
@@ -36,6 +35,8 @@ class LocalRuntime : Runtime {
     override fun factory() = runtimeFactory
 
     override fun expender() = runtimeExpender
+
+    override fun templates() = templates
 
     override fun shutdown() {
         this.runtimeQueue.interrupt()

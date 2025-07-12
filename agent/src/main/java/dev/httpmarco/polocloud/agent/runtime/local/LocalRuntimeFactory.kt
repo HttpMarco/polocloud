@@ -4,9 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
-import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformType
-import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
 
@@ -40,6 +38,9 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         val environment = HashMap<String, String>()
         environment.put("port", service.port.toString())
         environment.put("need-bridge", (service.group.platform().type == PlatformType.PROXY).toString())
+
+        // copy all templates to the service path
+        Agent.instance.runtime.templates().bindTemplate(service)
 
         // download and copy the platform files to the service path
         platform.prepare(service.path, service.group.data.platform.version, environment)

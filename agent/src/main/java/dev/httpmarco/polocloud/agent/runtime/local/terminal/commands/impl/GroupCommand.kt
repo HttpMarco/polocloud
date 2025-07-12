@@ -92,22 +92,25 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                     return@syntax
                 }
 
+                val platform = context.arg(platformArgument)
+                val groupName = context.arg(nameArgument)
                 Agent.instance.runtime.groupStorage().publish(
                     Group(
                         GroupData(
-                            context.arg(nameArgument),
+                            groupName,
                             PlatformIndex(
-                                context.arg(platformArgument).name,
+                                platform.name,
                                 context.arg(platformVersionArgument).version
                             ),
                             minMemory,
                             maxMemory,
                             context.arg(minOnlineServices),
-                            context.arg(maxOnlineServices)
+                            context.arg(maxOnlineServices),
+                            listOf("EVERY", "EVERY_" + platform.type, groupName)
                         )
                     )
                 )
-                logger.info("Group &f${context.arg(nameArgument)} successfully created&8.")
+                logger.info("Group &f$groupName successfully created&8.")
             },
             KeywordArgument("create"),
             nameArgument,

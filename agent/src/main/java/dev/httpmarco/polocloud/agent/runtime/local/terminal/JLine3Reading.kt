@@ -20,7 +20,7 @@ class JLine3Reading(private val lineReader: LineReader, private val commandServi
                     continue
                 }
 
-                val splat: Array<String> = line.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                val splat: Array<String> = line.trim().split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 val commandName = splat[0]
                 val args = splat.copyOfRange(1, splat.size)
 

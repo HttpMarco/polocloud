@@ -3,6 +3,8 @@ package dev.httpmarco.polocloud.agent.runtime
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
 import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
+import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntimeTemplates
+import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import dev.httpmarco.polocloud.agent.services.Service
 
 interface Runtime {
@@ -63,6 +65,12 @@ interface Runtime {
      * This method should be overridden by the specific runtime implementations
      */
     fun expender(): RuntimeExpender<Service>
+
+    /**
+     * Returns the templates for the runtime.
+     * This method should be overridden by the specific runtime implementations
+     */
+    fun templates(): RuntimeTemplates<Service>
 
     /**
      * Shuts down the runtime.
