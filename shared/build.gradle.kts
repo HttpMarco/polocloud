@@ -5,3 +5,7 @@ plugins {
 kotlin {
     jvmToolchain(21)
 }
+
+tasks.jar {
+    archiveFileName.set("polocloud-shared-$version.jar")
+}
