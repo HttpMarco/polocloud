@@ -1,5 +1,5 @@
 {
-  "name": "Purpur",
+  "name": "purpur",
   "type": "SERVER",
   "language": "JAVA",
   "url": "https://api.purpurmc.org/v2/purpur/%version%/%buildId%/download",
