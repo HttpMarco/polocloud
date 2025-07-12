@@ -22,8 +22,9 @@ class EventProvider(channel: ManagedChannel?) {
                 listener.accept(GsonBuilder().create().fromJson(conetext.eventData, event))
             }
 
-            override fun onError(p0: Throwable?) {
-                // Log the error or handle it as needed
+            override fun onError(p0: Throwable) {
+                System.err.println("Error while subscribing to event: ${p0.message}")
+                p0.printStackTrace()
             }
 
             override fun onCompleted() {

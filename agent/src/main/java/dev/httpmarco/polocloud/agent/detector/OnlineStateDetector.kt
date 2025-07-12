@@ -1,21 +1,19 @@
 package dev.httpmarco.polocloud.agent.detector
 
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.events.Event
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.services.Service
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.int
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.bouncycastle.asn1.dvcs.ServiceType
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.ConnectException
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.nio.charset.StandardCharsets
@@ -33,12 +31,12 @@ class OnlineStateDetector : Detector {
                 Socket().use { socket ->
                     socket.connect(InetSocketAddress(host, port), 500)
 
-                    if(service.state == Service.State.STARTING) {
+                    if (service.state == Service.State.STARTING) {
                         service.state = Service.State.ONLINE
 
                         // call the services all the events
                         //todo call here errors
-                       // Agent.instance.eventService.call(ServiceOnlineEvent(service))
+                        Agent.instance.eventService.call(ServiceOnlineEvent(service))
 
                         logger.info("The service &3${service.name()} &7is now online&8.")
                     }
@@ -71,11 +69,11 @@ class OnlineStateDetector : Detector {
                     val json = Json.parseToJsonElement(String(jsonData, StandardCharsets.UTF_8)).jsonObject
 
                     val players = json["players"]?.jsonObject
-                    service.playerCount  = players?.get("online")?.jsonPrimitive?.intOrNull ?: -1
+                    service.playerCount = players?.get("online")?.jsonPrimitive?.intOrNull ?: -1
                     service.maxPlayerCount = players?.get("max")?.jsonPrimitive?.intOrNull ?: -1
                 }
-            } catch (_: Throwable) {
-                // intentionally ignored, but consider logging minimal info in debug mode
+            } catch (_: ConnectException) {
+                // ignore connection errors, the service is not online yet
             }
         }
     }
