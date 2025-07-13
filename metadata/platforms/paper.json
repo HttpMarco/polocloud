@@ -8,7 +8,8 @@
   ],
   "tasks": [
     "EULA_TASK",
-    "SERVER_PROPERTIES_PORT"
+    "SERVER_PROPERTIES_PORT",
+    "PAPER_PROXY_SUPPORT_TASK"
   ],
   "versions": [
     {
