@@ -6,7 +6,8 @@
   "bridgePath": "plugins",
   "arguments": [],
   "tasks": [
-    "VELOCITY_PROXY_TOKEN_TASK"
+    "VELOCITY_PROXY_TOKEN_TASK",
+    "VELOCITY_SETUP_TASK"
   ],
   "versions": [
     {
