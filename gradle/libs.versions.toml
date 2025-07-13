@@ -9,6 +9,7 @@ gson = "2.13.1"
 
 # configuration
 configurate = "4.2.0"
+tomlj = "1.1.1"
 
 # networking
 grpc = "1.73.0"
@@ -36,9 +37,9 @@ json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", v
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # configuration
-configurate-core = { group = "org.spongepowered", name = "configurate-core", version = "4.2.0" }
+configurate-core = { group = "org.spongepowered", name = "configurate-core", version = "configurate" }
 configurate-yaml = { group = "org.spongepowered", name = "configurate-yaml", version.ref = "configurate" }
-configurate-json = { group = "org.spongepowered", name = "configurate-gson", version.ref = "configurate" }
+configurate-alt-toml = { group = "org.tomlj", name = "tomlj", version.ref = "tomlj" }
 
 # networking
 grpc-netty = { group = "io.grpc", name = "grpc-netty", version.ref = "grpc" }
@@ -66,7 +67,7 @@ velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref =
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 
 [bundles]
-confirationPool = ["configurate-yaml", "configurate-json", "configurate-core"]
+confirationPool = ["configurate-yaml", "configurate-core", "configurate-alt-toml"]
 proto = ["grpc-protobuf", "grpc-stub", "grpc-services"]
 terminal = ["slf4j", "log4j-api", "log4j-core", "log4j-slf4j2-impl"]
 runtime = ["docker", "docker-http", "k8s"]

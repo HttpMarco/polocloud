@@ -36,6 +36,7 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         service.path.createDirectories()
 
         val environment = HashMap<String, String>()
+        environment.put("hostname", service.hostname)
         environment.put("port", service.port.toString())
         environment.put("need-bridge", (service.group.platform().type == PlatformType.PROXY).toString())
         environment.put("velocityProxyToken", Agent.instance.securityProvider.proxySecureToken)

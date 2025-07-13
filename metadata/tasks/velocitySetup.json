@@ -17,7 +17,7 @@
       "filename": "velocity.toml",
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
-        "key": "player-info-forwarding-mode",
+        "key": "bind",
         "value": "\"%hostname%:%port%\""
       }
     }
