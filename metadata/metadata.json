@@ -9,6 +9,7 @@
     "eula",
     "serverPropertiesPort",
     "velocityProxyToken",
-    "paperProxySupport"
+    "paperProxySupport",
+    "velocitySetup"
   ]
 }

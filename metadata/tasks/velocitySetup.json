@@ -1,0 +1,25 @@
+{
+  "name": "VELOCITY_SETUP_TASK",
+  "steps": [
+    {
+      "name": "Setup velocity",
+      "description": "Set player forwarding in Velocity.",
+      "filename": "velocity.toml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "player-info-forwarding-mode",
+        "value": "modern"
+      }
+    },
+    {
+      "name": "Setup velocity",
+      "description": "Set port and hostname in Velocity.",
+      "filename": "velocity.toml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "player-info-forwarding-mode",
+        "value": "\"%hostname%:%port%\""
+      }
+    }
+  ]
+}
