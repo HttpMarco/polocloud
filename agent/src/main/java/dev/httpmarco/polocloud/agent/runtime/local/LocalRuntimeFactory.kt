@@ -38,6 +38,7 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         val environment = HashMap<String, String>()
         environment.put("hostname", service.hostname)
         environment.put("port", service.port.toString())
+        environment.put("service-name", service.name())
         environment.put("need-bridge", (service.group.platform().type == PlatformType.PROXY).toString())
         environment.put("velocityProxyToken", Agent.instance.securityProvider.proxySecureToken)
 
@@ -79,6 +80,8 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         }
 
         logger.info("The service &3${service.name()}&7 is now stopping&8...")
+
+        Agent.instance.eventService.dropServiceSubscriptions(service)
 
         if (service.process != null) {
             if (service.executeCommand(service.group.platform().shutdownCommand)) {

@@ -10,6 +10,7 @@ service EventProvider {
 
 message EventSubscribeRequest {
   string eventName = 1;
+  string serviceName = 2;
 }
 
 message EventContext {

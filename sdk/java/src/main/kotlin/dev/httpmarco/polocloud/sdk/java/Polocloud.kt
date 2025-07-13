@@ -29,4 +29,8 @@ class Polocloud {
     fun available(): Boolean {
         return !grpcClient.channel?.isShutdown!! && !grpcClient.channel?.isTerminated!!
     }
+
+    fun selfServiceName(): String {
+        return System.getenv("service-name")
+    }
 }

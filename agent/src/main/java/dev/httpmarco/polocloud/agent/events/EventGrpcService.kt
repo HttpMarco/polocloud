@@ -7,7 +7,10 @@ import io.grpc.stub.StreamObserver
 
 class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
 
-    override fun subscribe(request: EventProviderOuterClass.EventSubscribeRequest, responseObserver: StreamObserver<EventProviderOuterClass.EventContext>) {
-        Agent.instance.eventService.attach(request.eventName, responseObserver)
+    override fun subscribe(
+        request: EventProviderOuterClass.EventSubscribeRequest,
+        responseObserver: StreamObserver<EventProviderOuterClass.EventContext>
+    ) {
+        Agent.instance.eventService.attach(request.eventName, request.serviceName, responseObserver)
     }
 }
