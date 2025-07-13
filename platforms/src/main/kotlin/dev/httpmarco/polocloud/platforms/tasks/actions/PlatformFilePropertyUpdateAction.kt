@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.platforms.tasks.actions
 
+import com.electronwill.nightconfig.core.file.FileConfig
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskStep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -32,6 +33,10 @@ class PlatformFilePropertyUpdateAction(private val key: String, private val valu
                     "Update configuration property: $key"
                 )
             }
+        } else if(step.filename.endsWith(".yml")) {
+            val config = FileConfig.of(file)
+            config.set<String>(key, value)
+            config.save()
         }
     }
 }

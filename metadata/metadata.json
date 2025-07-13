@@ -8,6 +8,7 @@
   "tasks": [
     "eula",
     "serverPropertiesPort",
-    "velocityProxyToken"
+    "velocityProxyToken",
+    "paperProxySupport"
   ]
 }
