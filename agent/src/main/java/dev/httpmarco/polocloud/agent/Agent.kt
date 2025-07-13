@@ -49,6 +49,7 @@ class Agent {
     }
 
     fun close() {
+        this.runtime.shutdown()
         this.grpcServerEndpoint.close()
         this.onlineStateDetector.close()
     }
