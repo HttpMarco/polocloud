@@ -20,10 +20,9 @@ class Agent {
 
     val runtime: Runtime
     val eventService = EventService()
+    val securityProvider = SecurityProvider()
 
     private val grpcServerEndpoint = GrpcServerEndpoint()
-    private val securityProvider = SecurityProvider()
-
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())
 
     companion object {

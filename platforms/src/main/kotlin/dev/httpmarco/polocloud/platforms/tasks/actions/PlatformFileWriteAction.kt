@@ -17,6 +17,6 @@ class PlatformFileWriteAction(val content: String) : PlatformAction() {
         step: PlatformTaskStep,
         environment: Map<String, String>
     ) {
-        Files.writeString(file, content)
+        Files.writeString(file, modifyValueWithEnvironment(content, environment))
     }
 }

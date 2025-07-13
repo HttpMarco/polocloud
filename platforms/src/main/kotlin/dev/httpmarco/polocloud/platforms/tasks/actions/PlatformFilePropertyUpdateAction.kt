@@ -34,12 +34,4 @@ class PlatformFilePropertyUpdateAction(private val key: String, private val valu
             }
         }
     }
-
-    private fun modifyValueWithEnvironment(value: String, environment: Map<String, String>): String {
-        var modifiedValue = value
-        for ((envKey, envValue) in environment) {
-            modifiedValue = modifiedValue.replace("%$envKey%", envValue)
-        }
-        return modifiedValue
-    }
 }

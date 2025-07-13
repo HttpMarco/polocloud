@@ -38,6 +38,7 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         val environment = HashMap<String, String>()
         environment.put("port", service.port.toString())
         environment.put("need-bridge", (service.group.platform().type == PlatformType.PROXY).toString())
+        environment.put("velocityProxyToken", Agent.instance.securityProvider.proxySecureToken)
 
         // copy all templates to the service path
         Agent.instance.runtime.templates().bindTemplate(service)
