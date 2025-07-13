@@ -72,6 +72,5 @@ class Platform(
 
     fun tasks(): List<PlatformTask> {
         return tasks.map { PlatformTaskPool.find(it)!! }.toList()
-
     }
 }

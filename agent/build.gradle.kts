@@ -6,16 +6,18 @@ plugins {
 dependencies {
     testImplementation(kotlin("test"))
 
-    compileOnly(libs.bundles.proto)
-    compileOnly(libs.grpc.netty)
+    implementation(libs.bundles.proto)
+    implementation(libs.grpc.netty)
     compileOnly(project(":proto"))
 
-    compileOnly(libs.bundles.terminal)
-    compileOnly(libs.bundles.runtime)
-    compileOnly(libs.json)
-    compileOnly(libs.gson)
-    compileOnly(libs.jline)
+    implementation(libs.bundles.terminal)
+    implementation(libs.bundles.runtime)
+    implementation(libs.json)
+    implementation(libs.gson)
+    implementation(libs.jline)
 
+
+    implementation(libs.bundles.confirationPool)
     compileOnly(project(":platforms"))
     compileOnly(project(":common"))
 }

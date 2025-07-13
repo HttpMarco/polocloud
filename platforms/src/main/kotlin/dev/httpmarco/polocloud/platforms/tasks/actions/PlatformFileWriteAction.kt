@@ -17,6 +17,8 @@ class PlatformFileWriteAction(val content: String) : PlatformAction() {
         step: PlatformTaskStep,
         environment: Map<String, String>
     ) {
+        file.parent.createDirectories()
+
         Files.writeString(file, modifyValueWithEnvironment(content, environment))
     }
 }

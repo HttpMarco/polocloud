@@ -352,12 +352,68 @@
         "sha256": "0393e32167240eb56597a2016446928755729f1a181046cab5d42a81d0e3d909"
     },
     {
+        "group": "org.spongepowered",
+        "name": "configurate-gson",
+        "version": "4.2.0",
+        "file": "configurate-gson-4.2.0.jar",
+        "url": "https://repo1.maven.org/maven2/org/spongepowered/configurate-gson/4.2.0/configurate-gson-4.2.0.jar",
+        "sha256": "7aa71c61043f96911ce793a5fec25138134841d163a7637a349f59df480b50c5"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-util",
+        "version": "1.73.0",
+        "file": "grpc-util-1.73.0.jar",
+        "url": "https://repo1.maven.org/maven2/io/grpc/grpc-util/1.73.0/grpc-util-1.73.0.jar",
+        "sha256": "b7df6cbcc30b7a3219f06483a9a9d320a431beda8a1ace5b16d879f84112373f"
+    },
+    {
+        "group": "io.grpc",
+        "name": "grpc-core",
+        "version": "1.73.0",
+        "file": "grpc-core-1.73.0.jar",
+        "url": "https://repo1.maven.org/maven2/io/grpc/grpc-core/1.73.0/grpc-core-1.73.0.jar",
+        "sha256": "cffb55f1e7268e160647e88da142c09c6175ff72970c64f7cb411d78eb661663"
+    },
+    {
+        "group": "com.google.protobuf",
+        "name": "protobuf-java-util",
+        "version": "3.25.5",
+        "file": "protobuf-java-util-3.25.5.jar",
+        "url": "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.jar",
+        "sha256": "dacc58b2c3d2fa8d4bddc1acb881e78d6cf7c137dd78bc1d67f6aca732436a8d"
+    },
+    {
+        "group": "com.google.code.gson",
+        "name": "gson",
+        "version": "2.13.1",
+        "file": "gson-2.13.1.jar",
+        "url": "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.13.1/gson-2.13.1.jar",
+        "sha256": "94855942d4992f112946d3de1c334e709237b8126d8130bf07807c018a4a2120"
+    },
+    {
         "group": "org.jline",
         "name": "jline",
         "version": "3.30.4",
         "file": "jline-3.30.4.jar",
         "url": "https://repo1.maven.org/maven2/org/jline/jline/3.30.4/jline-3.30.4.jar",
         "sha256": "a177738b52cf41ff4865c4a441c4fc7fdf2262648159e0de6ced2f842acf52e9"
+    },
+    {
+        "group": "org.spongepowered",
+        "name": "configurate-yaml",
+        "version": "4.2.0",
+        "file": "configurate-yaml-4.2.0.jar",
+        "url": "https://repo1.maven.org/maven2/org/spongepowered/configurate-yaml/4.2.0/configurate-yaml-4.2.0.jar",
+        "sha256": "6294f085316188bffb71bb05ef36bf8755a288ed925c791952e1e8d7bfc8ba4c"
+    },
+    {
+        "group": "org.spongepowered",
+        "name": "configurate-core",
+        "version": "4.2.0",
+        "file": "configurate-core-4.2.0.jar",
+        "url": "https://repo1.maven.org/maven2/org/spongepowered/configurate-core/4.2.0/configurate-core-4.2.0.jar",
+        "sha256": "06c1e9f7789a189af0c0156ebe9f469da7cc674233f43e8133c83131edd9f7e0"
     },
     {
         "group": "org.jetbrains",
@@ -377,22 +433,6 @@
     },
     {
         "group": "io.grpc",
-        "name": "grpc-util",
-        "version": "1.73.0",
-        "file": "grpc-util-1.73.0.jar",
-        "url": "https://repo1.maven.org/maven2/io/grpc/grpc-util/1.73.0/grpc-util-1.73.0.jar",
-        "sha256": "b7df6cbcc30b7a3219f06483a9a9d320a431beda8a1ace5b16d879f84112373f"
-    },
-    {
-        "group": "io.grpc",
-        "name": "grpc-core",
-        "version": "1.73.0",
-        "file": "grpc-core-1.73.0.jar",
-        "url": "https://repo1.maven.org/maven2/io/grpc/grpc-core/1.73.0/grpc-core-1.73.0.jar",
-        "sha256": "cffb55f1e7268e160647e88da142c09c6175ff72970c64f7cb411d78eb661663"
-    },
-    {
-        "group": "io.grpc",
         "name": "grpc-context",
         "version": "1.73.0",
         "file": "grpc-context-1.73.0.jar",
@@ -406,14 +446,6 @@
         "file": "grpc-api-1.73.0.jar",
         "url": "https://repo1.maven.org/maven2/io/grpc/grpc-api/1.73.0/grpc-api-1.73.0.jar",
         "sha256": "bae13d4e4716a0955d316b5fcb75582504325e5b11ac946b13b64b4fce19bc6e"
-    },
-    {
-        "group": "com.google.protobuf",
-        "name": "protobuf-java-util",
-        "version": "3.25.5",
-        "file": "protobuf-java-util-3.25.5.jar",
-        "url": "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java-util/3.25.5/protobuf-java-util-3.25.5.jar",
-        "sha256": "dacc58b2c3d2fa8d4bddc1acb881e78d6cf7c137dd78bc1d67f6aca732436a8d"
     },
     {
         "group": "com.google.code.findbugs",
@@ -456,20 +488,12 @@
         "sha256": "c720e6e5bcbe6b2f48ded75a47bccdb763eede79d14330102e0d352e3d89ed92"
     },
     {
-        "group": "com.google.code.gson",
-        "name": "gson",
-        "version": "2.11.0",
-        "file": "gson-2.11.0.jar",
-        "url": "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.11.0/gson-2.11.0.jar",
-        "sha256": "57928d6e5a6edeb2abd3770a8f95ba44dce45f3b23b7a9dc2b309c581552a78b"
-    },
-    {
         "group": "com.google.errorprone",
         "name": "error_prone_annotations",
-        "version": "2.36.0",
-        "file": "error_prone_annotations-2.36.0.jar",
-        "url": "https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.36.0/error_prone_annotations-2.36.0.jar",
-        "sha256": "77440e270b0bc9a249903c5a076c36a722c4886ca4f42675f2903a1c53ed61a5"
+        "version": "2.38.0",
+        "file": "error_prone_annotations-2.38.0.jar",
+        "url": "https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.38.0/error_prone_annotations-2.38.0.jar",
+        "sha256": "6661d5335090a5fc61dd869d2095bc6c1e2156e3aa47a6e4ababdf64c99a7889"
     },
     {
         "group": "io.vertx",
@@ -592,14 +616,6 @@
         "sha256": "aa8821a7ea2ca47f62740bd1f37d67deb97824cc77e76dde6ae2c439a923fc9d"
     },
     {
-        "group": "javax.annotation",
-        "name": "javax.annotation-api",
-        "version": "1.3.2",
-        "file": "javax.annotation-api-1.3.2.jar",
-        "url": "https://repo1.maven.org/maven2/javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar",
-        "sha256": "e04ba5195bcd555dc95650f7cc614d151e4bcd52d29a10b8aa2197f3ab89ab9b"
-    },
-    {
         "group": "com.github.docker-java",
         "name": "docker-java-transport",
         "version": "3.5.3",
@@ -622,6 +638,22 @@
         "file": "zjsonpatch-7.3.1.jar",
         "url": "https://repo1.maven.org/maven2/io/fabric8/zjsonpatch/7.3.1/zjsonpatch-7.3.1.jar",
         "sha256": "7af1e120b0291f03b716de12893d681172bf9b2c62732ead9e8ca1d1368fb3bc"
+    },
+    {
+        "group": "io.leangen.geantyref",
+        "name": "geantyref",
+        "version": "1.3.16",
+        "file": "geantyref-1.3.16.jar",
+        "url": "https://repo1.maven.org/maven2/io/leangen/geantyref/geantyref/1.3.16/geantyref-1.3.16.jar",
+        "sha256": "7f1d591092d5142b6aaa7cf59f94c4c74d57dbeef03b2f8262949f8f36bac6e3"
+    },
+    {
+        "group": "net.kyori",
+        "name": "option",
+        "version": "1.1.0",
+        "file": "option-1.1.0.jar",
+        "url": "https://repo1.maven.org/maven2/net/kyori/option/1.1.0/option-1.1.0.jar",
+        "sha256": "97b69b4b17dfe02217c9131ad342564cbc9aebd04c75eb689639b5f78fd4b11c"
     },
     {
         "group": "com.google.guava",

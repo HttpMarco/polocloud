@@ -8,7 +8,7 @@ json = "1.9.0"
 gson = "2.13.1"
 
 # configuration
-config = "3.8.2"
+configurate = "4.2.0"
 
 # networking
 grpc = "1.73.0"
@@ -36,9 +36,9 @@ json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", v
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 # configuration
-electronwill-toml = { group = "com.electronwill.night-config", name = "toml", version.ref = "config" }
-electronwill-yaml = { group = "com.electronwill.night-config", name = "yaml", version.ref = "config" }
-electronwill-json = { group = "com.electronwill.night-config", name = "json", version.ref = "config" }
+configurate-core = { group = "org.spongepowered", name = "configurate-core", version = "4.2.0" }
+configurate-yaml = { group = "org.spongepowered", name = "configurate-yaml", version.ref = "configurate" }
+configurate-json = { group = "org.spongepowered", name = "configurate-gson", version.ref = "configurate" }
 
 # networking
 grpc-netty = { group = "io.grpc", name = "grpc-netty", version.ref = "grpc" }
@@ -66,7 +66,7 @@ velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref =
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 
 [bundles]
-confirationPool = ["electronwill-toml", "electronwill-yaml", "electronwill-json"]
+confirationPool = ["configurate-yaml", "configurate-json", "configurate-core"]
 proto = ["grpc-protobuf", "grpc-stub", "grpc-services"]
 terminal = ["slf4j", "log4j-api", "log4j-core", "log4j-slf4j2-impl"]
 runtime = ["docker", "docker-http", "k8s"]
