@@ -81,10 +81,11 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         logger.info("The service &3${service.name()}&7 is now stopping&8...")
 
         if (service.process != null) {
-            service.executeCommand(service.group.platform().shutdownCommand)
+            if (service.executeCommand(service.group.platform().shutdownCommand)) {
 
-            if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
-                service.process!!.exitValue()
+                if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
+                    service.process!!.exitValue()
+                }
             }
 
             service.process!!.toHandle().destroyForcibly()

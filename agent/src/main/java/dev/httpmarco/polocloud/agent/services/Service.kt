@@ -12,7 +12,7 @@ abstract class Service(val group: Group, val id: Int) {
 
     var state = State.PREPARING
     var playerCount = -1
-    var maxPlayerCount =  -1
+    var maxPlayerCount = -1
 
     fun name(): String {
         return "${group.data.name}-${id}"
@@ -22,12 +22,12 @@ abstract class Service(val group: Group, val id: Int) {
         Agent.instance.runtime.factory().shutdownApplication(this)
     }
 
-    fun executeCommand(command: String) {
-        Agent.instance.runtime.expender().executeCommand(this, command)
+    fun executeCommand(command: String): Boolean {
+        return Agent.instance.runtime.expender().executeCommand(this, command)
     }
 
     fun logs(limit: Int = 100): List<String> {
-        return Agent.instance.runtime.expender().readLogs(this,limit)
+        return Agent.instance.runtime.expender().readLogs(this, limit)
     }
 
     enum class State {

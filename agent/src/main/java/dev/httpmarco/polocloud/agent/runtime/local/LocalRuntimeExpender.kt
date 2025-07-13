@@ -8,24 +8,34 @@ import java.io.OutputStreamWriter
 
 class LocalRuntimeExpender : RuntimeExpender<LocalService> {
 
-    override fun executeCommand(service: LocalService, command: String) {
-        if (service.process == null || command.isEmpty()) {
-            logger.warn("Cannot execute command on service ${service.name()}: Process is null or command is empty")
-            return
+    override fun executeCommand(service: LocalService, command: String): Boolean {
+        val process = service.process
+
+        if (process == null || command.isBlank()) {
+            logger.warn("Cannot execute command on service ${service.name()}: Process is null or command is blank")
+            return false
+        }
+
+        if (!process.isAlive) {
+            return false
         }
 
         try {
-            val writer = BufferedWriter(OutputStreamWriter(service.process!!.outputStream))
-            writer.write(command)
-            writer.newLine()
-            writer.flush()
+            BufferedWriter(OutputStreamWriter(process.outputStream)).use { writer ->
+                writer.write(command)
+                writer.newLine()
+                writer.flush()
+            }
+            return true
         } catch (e: IOException) {
+            logger.warn("Failed to write command to service ${service.name()}: ${e.message}")
             logger.throwable(e)
+            return false
         }
     }
 
     override fun readLogs(service: LocalService, lines: Int): List<String> {
-        if(lines == -1) {
+        if (lines == -1) {
             return service.cachedLogs
         }
 

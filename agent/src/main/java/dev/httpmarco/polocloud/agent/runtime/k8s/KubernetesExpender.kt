@@ -7,7 +7,7 @@ class KubernetesExpender : RuntimeExpender<KubernetesService> {
     override fun executeCommand(
         service: KubernetesService,
         command: String
-    ) {
+    ) : Boolean {
         TODO("Not yet implemented")
     }
 

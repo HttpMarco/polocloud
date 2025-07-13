@@ -6,7 +6,7 @@ class DockerExpender : RuntimeExpender<DockerService> {
     override fun executeCommand(
         service: DockerService,
         command: String
-    ) {
+    ) : Boolean {
         TODO("Not yet implemented")
     }
 
