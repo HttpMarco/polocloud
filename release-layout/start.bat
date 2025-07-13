@@ -1,1 +1,1 @@
-java -jar polocloud-3.0.0.BETA.jar
+java -jar polocloud-launcher.jar
