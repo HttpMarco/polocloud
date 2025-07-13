@@ -1,0 +1,14 @@
+{
+  "name": "VELOCITY_PROXY_TOKEN_TASK",
+  "steps": [
+    {
+      "name": "Setup Velocity Proxy Token",
+      "description": "Set up the Velocity proxy token by writing to the file.",
+      "filename": "forwarding.secret",
+      "action": {
+        "type": "PlatformFileWriteAction",
+        "content": "%velocityProxyToken%"
+      }
+    }
+  ]
+}

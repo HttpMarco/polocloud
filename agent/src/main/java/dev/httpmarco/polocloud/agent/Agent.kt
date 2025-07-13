@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.agent.grpc.GrpcServerEndpoint
 import dev.httpmarco.polocloud.agent.i18n.I18nPolocloudAgent
 import dev.httpmarco.polocloud.agent.logging.Logger
 import dev.httpmarco.polocloud.agent.runtime.Runtime
+import dev.httpmarco.polocloud.agent.security.SecurityProvider
 import dev.httpmarco.polocloud.platforms.PlatformPool
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 
@@ -21,6 +22,8 @@ class Agent {
     val eventService = EventService()
 
     private val grpcServerEndpoint = GrpcServerEndpoint()
+    private val securityProvider = SecurityProvider()
+
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())
 
     companion object {
