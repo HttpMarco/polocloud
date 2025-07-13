@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
@@ -78,6 +79,8 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
             logger.info("Cannot shutdown service ${service.name()} because it is already stopping or stopped&8. &7Wait for action&8...")
             return
         }
+
+        Agent.instance.eventService.call(ServiceShutdownEvent(service))
 
         logger.info("The service &3${service.name()}&7 is now stopping&8...")
 

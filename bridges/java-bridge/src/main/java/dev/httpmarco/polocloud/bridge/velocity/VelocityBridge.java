@@ -3,13 +3,13 @@ package dev.httpmarco.polocloud.bridge.velocity;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
-import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceOnlineEvent;
+import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceShutdownEvent;
 import dev.httpmarco.polocloud.sdk.java.services.ServiceType;
 import org.slf4j.Logger;
 
@@ -43,6 +43,15 @@ public final class VelocityBridge {
             }
 
             server.registerServer(new ServerInfo(service.getName(), new InetSocketAddress(service.getHostname(), service.getPort())));
+        });
+
+        Polocloud.Companion.instance().eventProvider().subscribe(ServiceShutdownEvent.class, it -> {
+            var service = it.getService();
+
+            if(service.getType() != ServiceType.SERVER) {
+                return;
+            }
+            server.getServer(service.getName()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo()));
         });
     }
 

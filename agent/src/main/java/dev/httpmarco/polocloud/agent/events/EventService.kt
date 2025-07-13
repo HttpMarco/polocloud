@@ -7,10 +7,12 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
 import io.grpc.stub.StreamObserver
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 class EventService {
 
-    private val events = HashMap<String, List<EventSubscription>>()
+    private val events = ConcurrentHashMap<String, List<EventSubscription>>()
 
     fun attach(event: String, serviceName: String, observer: StreamObserver<EventProviderOuterClass.EventContext>) {
 
@@ -22,7 +24,7 @@ class EventService {
             return
         }
 
-        events.computeIfAbsent(event) { mutableListOf() }.let {
+        events.computeIfAbsent(event) { CopyOnWriteArrayList() }.let {
             it as MutableList
             it.add(EventSubscription(service, observer))
         }
