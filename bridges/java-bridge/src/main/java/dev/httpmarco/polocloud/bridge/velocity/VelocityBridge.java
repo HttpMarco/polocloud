@@ -57,7 +57,7 @@ public final class VelocityBridge {
 
     @Subscribe
     public void onConnect(PlayerChooseInitialServerEvent event) {
-        event.setInitialServer(Objects.requireNonNull(server.getAllServers().stream().findFirst().orElse(null)));
+        server.getAllServers().stream().findFirst().stream().findFirst().ifPresent(event::setInitialServer);
     }
 }
 
