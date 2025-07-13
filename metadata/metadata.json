@@ -1,9 +1,7 @@
 {
   "platforms": [
     "paper",
-    "fabric",
-    "velocity",
-    "purpur"
+    "velocity"
   ],
   "tasks": [
     "eula",
