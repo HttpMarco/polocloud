@@ -17,6 +17,7 @@ class KubernetesRuntime : Runtime {
     private val serviceStorage = KubernetesRuntimeServiceStorage()
     private val factory = KubernetesFactory()
     private val expender = KubernetesExpender()
+    private val templates = KubernetesRuntimeTemplates()
 
     override fun runnable(): Boolean {
         return try {
@@ -37,8 +38,7 @@ class KubernetesRuntime : Runtime {
     override fun factory() = factory;
 
     override fun expender() = expender
-    override fun templates(): RuntimeTemplates<Service> {
-        TODO("Not yet implemented")
-    }
+
+    override fun templates() = templates
 
 }

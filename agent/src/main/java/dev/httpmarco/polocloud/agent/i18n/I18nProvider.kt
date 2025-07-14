@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.i18n
 
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import java.util.*
 
 open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
@@ -18,11 +19,9 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
             return key
         }
         if (format.isEmpty()) {
-            //todo
-            //return LoggingColors.translate(resourceBundle.getString(key))
+            return LoggingColor.translate(resourceBundle.getString(key))
         }
-        //return LoggingColors.translate(String.format(resourceBundle.getString(key), *format))
-        return resourceBundle.getString(key)
+        return LoggingColor.translate(String.format(resourceBundle.getString(key), *format))
     }
 
     override fun get(key: String, locale: Locale, vararg format: Any): String {

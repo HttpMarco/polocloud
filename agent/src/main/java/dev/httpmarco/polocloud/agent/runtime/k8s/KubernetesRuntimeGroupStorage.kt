@@ -25,7 +25,6 @@ class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : 
     }
 
     override fun destroy(group: Group) {
-        // todo testing
         kubeClient.resources(KubernetesGroup::class.java).withName(group.data.name).delete()
     }
 

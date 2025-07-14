@@ -14,7 +14,6 @@ import dev.httpmarco.polocloud.sdk.java.services.ServiceType;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
-import java.util.Objects;
 
 @Plugin(id = "polocloud-bridge", name = "Polocloud-Bridge", version = "3.0.0.BETA", authors = {"Polocloud"}, url = "https://github.com/HttpMarco/polocloud", description = "Polocloud-Bridge")
 public final class VelocityBridge {

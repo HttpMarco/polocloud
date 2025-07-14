@@ -35,7 +35,6 @@ class OnlineStateDetector : Detector {
                         service.state = Service.State.ONLINE
 
                         // call the services all the events
-                        //todo call here errors
                         Agent.instance.eventService.call(ServiceOnlineEvent(service))
 
                         logger.info("The service &3${service.name()} &7is now online&8.")
