@@ -4,7 +4,7 @@ import org.jline.jansi.AnsiConsole
 import kotlin.system.exitProcess
 
 private val SHUTDOWN_HOOK = "polocloud-shutdown-hook"
-private var idleShutdown = false
+private var inShutdown = false
 
 fun registerHook() {
     Runtime.getRuntime().addShutdownHook(Thread({
@@ -14,11 +14,11 @@ fun registerHook() {
 
 fun exitPolocloud() {
 
-    if (idleShutdown) {
+    if (inShutdown) {
         return
     }
 
-    idleShutdown = true
+    inShutdown = true
 
     Agent.instance.runtime.serviceStorage().items().forEach {
         it.shutdown()
@@ -33,4 +33,8 @@ fun exitPolocloud() {
     if (Thread.currentThread().name != SHUTDOWN_HOOK) {
         exitProcess(-1)
     }
+}
+
+fun shutdownProcess() : Boolean {
+    return inShutdown
 }
