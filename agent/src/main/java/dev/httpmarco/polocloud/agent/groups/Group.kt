@@ -10,7 +10,7 @@ import kotlin.io.path.Path
 open class Group(val data: GroupData) {
 
     fun update() {
-        // update the grou
+        // update the group
         Agent.instance.runtime.groupStorage().update(group = this)
     }
 

@@ -7,10 +7,13 @@ dependencies {
     implementation(libs.bundles.proto)
     implementation(libs.grpc.netty)
     compileOnly(libs.gson)
+
+    api(project(":proto"))
     implementation(project(":proto"))
+    compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 }
 
-sourceSets["main"].java.srcDirs("../proto/build/generated/sources/proto","../shared/src/main/kotlin")
+sourceSets["main"].java.srcDirs("../../proto/build/generated/sources/proto")
 
 tasks.named("compileJava") {
     dependsOn(":proto:classes")

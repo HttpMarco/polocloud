@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
+import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.proto.GroupProvider
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -16,7 +17,7 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
     private val TEMPLATE_PATH = Path("local/templates")
 
     init {
-        GroupProvider.GroupType.entries.forEach {
+        GroupType.entries.forEach {
             TEMPLATE_PATH.resolve("EVERY_$it").createDirectories()
         }
         // default template directory for all groups

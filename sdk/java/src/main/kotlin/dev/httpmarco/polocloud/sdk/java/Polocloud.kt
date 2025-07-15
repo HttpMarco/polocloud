@@ -8,7 +8,7 @@ import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider
 class Polocloud {
 
     private val grpcClient = SdkGrpcClient()
-    private val serviceProvider = ServiceProvider()
+    private val serviceProvider = ServiceProvider(grpcClient.channel)
     private val groupProvider = GroupProvider(grpcClient.channel)
     private val eventProvider = EventProvider(grpcClient.channel)
 

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.v1.proto;
+
+option java_package = "dev.httpmarco.polocloud.v1";
+option java_multiple_files = true;
+
+enum GroupType {
+  SERVICE = 0;
+  SERVER = 1;
+  PROXY = 2;
+}
