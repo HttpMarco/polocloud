@@ -10,7 +10,8 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceShutdownEvent;
-import dev.httpmarco.polocloud.sdk.java.services.ServiceType;
+import dev.httpmarco.polocloud.sdk.java.services.Service;
+import dev.httpmarco.polocloud.v1.GroupType;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -37,26 +38,37 @@ public final class VelocityBridge {
         Polocloud.Companion.instance().eventProvider().subscribe(ServiceOnlineEvent.class, it -> {
             var service = it.getService();
 
-            if(service.getType() != ServiceType.SERVER) {
+            if (service.getType() != GroupType.SERVER) {
                 return;
             }
 
-            server.registerServer(new ServerInfo(service.getName(), new InetSocketAddress(service.getHostname(), service.getPort())));
+            registerServer(service);
         });
 
         Polocloud.Companion.instance().eventProvider().subscribe(ServiceShutdownEvent.class, it -> {
             var service = it.getService();
 
-            if(service.getType() != ServiceType.SERVER) {
+            if (service.getType() != GroupType.SERVER) {
                 return;
             }
-            server.getServer(service.getName()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo()));
+            server.getServer(service.name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo()));
         });
+
+        for (Service service : Polocloud.Companion.instance().serviceProvider().find()) {
+            if (service.getType() != GroupType.SERVER) {
+                continue;
+            }
+            registerServer(service);
+        }
     }
 
     @Subscribe
     public void onConnect(PlayerChooseInitialServerEvent event) {
         server.getAllServers().stream().findFirst().stream().findFirst().ifPresent(event::setInitialServer);
+    }
+
+    private void registerServer(Service service) {
+        server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(service.getHostname(), service.getPort())));
     }
 }
 
