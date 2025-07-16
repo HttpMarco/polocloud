@@ -3,8 +3,6 @@
   "type": "SERVER",
   "language": "JAVA",
   "url": "https://api.purpurmc.org/v2/purpur/%version%/%buildId%/download",
-  "arguments": [],
-  "tasks": [],
   "versions": [
     {
       "version": "1.21.7",
