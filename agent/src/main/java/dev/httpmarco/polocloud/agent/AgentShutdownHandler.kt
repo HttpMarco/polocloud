@@ -31,7 +31,7 @@ fun exitPolocloud() {
     logger.info("Polocloud Agent is shutting down&8...")
 
     if (Thread.currentThread().name != SHUTDOWN_HOOK) {
-        exitProcess(-1)
+        exitProcess(0)
     }
 }
 

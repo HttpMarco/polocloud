@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.groups.Group
+import dev.httpmarco.polocloud.agent.runtime.local.tracking.LocalServiceLogTrack
 import dev.httpmarco.polocloud.agent.services.Service
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -10,17 +11,20 @@ import kotlin.io.path.Path
 
 class LocalService(group: Group, id: Int) : Service(group, id) {
 
-    val cachedLogs = LinkedList<String>();
+    private val logTracker = LocalServiceLogTrack(this)
+
     var process: Process? = null
     val path = Path("temp/${name()}")
 
     fun startTracking() {
-        Thread.startVirtualThread {
-            process?.inputStream?.let { inputStream ->
-                BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8)).use { reader ->
-                    reader.lines().forEach { line -> cachedLogs.add(line) }
-                }
-            }
-        }
+        this.logTracker.start()
+    }
+
+    fun stopTracking() {
+        this.logTracker.close()
+    }
+
+    fun logs() : List<String> {
+        return logTracker.cachedLogs
     }
 }

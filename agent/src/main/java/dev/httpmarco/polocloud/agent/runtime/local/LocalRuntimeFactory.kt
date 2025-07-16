@@ -87,16 +87,25 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         Agent.instance.eventService.dropServiceSubscriptions(service)
 
         if (service.process != null) {
-            if (service.executeCommand(service.group.platform().shutdownCommand)) {
-
-                if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
-                    service.process!!.exitValue()
+            try {
+                if (service.executeCommand(service.group.platform().shutdownCommand)) {
+                    if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
+                        service.process!!.exitValue()
+                        service.state == Service.State.STOPPED
+                    }
                 }
+            }catch (_: Exception) {
+                // ignore exceptions, we just want to stop the process
             }
 
-            service.process!!.toHandle().destroyForcibly()
-            service.process = null
+            if (service.state != Service.State.STOPPED) {
+                service.process!!.toHandle().destroyForcibly()
+                service.process = null
+                service.state == Service.State.STOPPED
+            }
         }
+
+        service.stopTracking()
 
         Thread.sleep(200) // wait for a process to be destroyed
         service.path.deleteRecursively()
