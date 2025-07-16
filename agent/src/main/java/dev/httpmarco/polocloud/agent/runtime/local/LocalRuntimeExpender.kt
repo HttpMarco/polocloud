@@ -36,9 +36,9 @@ class LocalRuntimeExpender : RuntimeExpender<LocalService> {
 
     override fun readLogs(service: LocalService, lines: Int): List<String> {
         if (lines == -1) {
-            return service.cachedLogs
+            return service.logs()
         }
 
-        return service.cachedLogs.takeLast(lines)
+        return service.logs().takeLast(lines)
     }
 }
