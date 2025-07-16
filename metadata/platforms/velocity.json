@@ -4,7 +4,6 @@
   "language": "JAVA",
   "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",
   "bridgePath": "plugins",
-  "arguments": [],
   "tasks": [
     "VELOCITY_PROXY_TOKEN_TASK",
     "VELOCITY_SETUP_TASK"
