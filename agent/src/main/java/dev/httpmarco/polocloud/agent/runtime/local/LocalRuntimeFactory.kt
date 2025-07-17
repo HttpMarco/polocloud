@@ -9,7 +9,7 @@ import dev.httpmarco.polocloud.platforms.PlatformType
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
 
-class LocalRuntimeFactory : RuntimeFactory<LocalService> {
+class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<LocalService> {
 
     private val factoryPath = Path("temp")
 
@@ -76,15 +76,16 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
     @OptIn(ExperimentalPathApi::class)
     override fun shutdownApplication(service: LocalService) {
         if (service.state == Service.State.STOPPING || service.state == Service.State.STOPPING) {
-            logger.info("Cannot shutdown service ${service.name()} because it is already stopping or stopped&8. &7Wait for action&8...")
             return
         }
-
-        Agent.instance.eventService.call(ServiceShutdownEvent(service))
+        service.state = Service.State.STOPPING
 
         logger.info("The service &3${service.name()}&7 is now stopping&8...")
 
-        Agent.instance.eventService.dropServiceSubscriptions(service)
+        val eventService = Agent.instance.eventService
+
+        eventService.dropServiceSubscriptions(service)
+        eventService.call(ServiceShutdownEvent(service))
 
         if (service.process != null) {
             try {
@@ -94,7 +95,7 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
                         service.state == Service.State.STOPPED
                     }
                 }
-            }catch (_: Exception) {
+            } catch (_: Exception) {
                 // ignore exceptions, we just want to stop the process
             }
 
@@ -105,9 +106,14 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
             }
         }
 
+        localRuntime.terminal.screenService.stopCurrentRecording()
         service.stopTracking()
 
-        Thread.sleep(200) // wait for a process to be destroyed
+        // windows need some time to destroy the process
+        if (!Thread.currentThread().isVirtual) {
+            Thread.sleep(200) // wait for a process to be destroyed
+        }
+
         service.path.deleteRecursively()
 
         service.state = Service.State.STOPPED
