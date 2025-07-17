@@ -39,7 +39,13 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
             logger.info(" &8- &7Min Online Services&8: &f${group.data.minOnlineService}")
             logger.info(" &8- &7Max Online Services&8: &f${group.data.maxOnlineService}")
             logger.info(" &8- &7Online services&8: &f${group.serviceCount()}")
-            logger.info(" &8- &7Platform&8: &f${group.data.platform.group} (${group.data.platform.version})")
+            logger.info(" &8- &7Platform&8: &f${group.data.platform.group} &8(&7${group.data.platform.version}&8)")
+            logger.info(" &8- &7Properties&8:")
+
+            group.data.properties.forEach { (key, value) ->
+                logger.info("   &8- &7$key&8: &f$value")
+            }
+
         }, groupArgument)
 
 
@@ -108,7 +114,8 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                             maxMemory,
                             context.arg(minOnlineServices),
                             context.arg(maxOnlineServices),
-                            listOf("EVERY", "EVERY_" + platform.type, groupName)
+                            listOf("EVERY", "EVERY_" + platform.type, groupName),
+                            emptyMap()
                         )
                     )
                 )
