@@ -3,12 +3,13 @@ package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.Jline3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.ServiceArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.StringArrayArgument
 
-class ServiceCommand(private val serviceStorage: RuntimeServiceStorage) :
+class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal: Jline3Terminal) :
     Command("service", "Used to manage services") {
 
     init {
@@ -31,7 +32,7 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage) :
             logger.info(" &8- &7Group&8: &f${service.group.data.name}")
             logger.info(" &8- &7Port&8: &f${service.port}")
             logger.info(" &8- &7Hostname&8: &f${service.hostname}")
-            logger.info(" &8- &7Players&8: &f${service.playerCount}&8/&f${service.maxPlayerCount}" )
+            logger.info(" &8- &7Players&8: &f${service.playerCount}&8/&f${service.maxPlayerCount}")
         }, serviceArgument)
 
         syntax(execution = {
@@ -55,5 +56,10 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage) :
             Agent.instance.runtime.expender().executeCommand(service, it.arg(commandArg))
             logger.info("Executed command on service &3${service.name()}&8: &f${it.arg(commandArg)}")
         }, serviceArgument, KeywordArgument("execute"), commandArg)
+
+        syntax(execution = {
+            val service = it.arg(serviceArgument)
+            terminal.screenService.screenRecordingOf(service)
+        }, serviceArgument, KeywordArgument("screen"))
     }
 }
