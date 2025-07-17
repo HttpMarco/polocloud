@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal
 
+import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.exitPolocloud
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandService
@@ -9,11 +10,12 @@ import org.jline.reader.UserInterruptException
 
 class JLine3Reading(private val lineReader: LineReader, private val commandService: CommandService) : Thread() {
 
+    val prompt = LoggingColor.translate("&bpolocloud&8@&7" + Agent.instance.version() + " &8» &7")
+
     override fun run() {
         while (!isInterrupted) {
             try {
-                val line =
-                    lineReader.readLine(LoggingColor.translate("&bpolocloud&8@&7" + System.getenv("polocloud-version") + " &8» &7"))
+                val line = lineReader.readLine(prompt)
                 if (line.isBlank()) {
                     // we reset the terminal prompt as message -> we have a clean console
                     println(Ansi.ansi().cursorUpLine().eraseLine().toString() + Ansi.ansi().cursorUp(1).toString())
