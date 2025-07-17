@@ -18,6 +18,7 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
             builder.addServices(
                 ServiceSnapshot.newBuilder()
                     .setGroupName(it.group.data.name)
+                    .setId(it.id)
                     .setServerType(GroupType.valueOf(it.group.platform().type.name))
                     .setHostname(it.hostname)
                     .setPort(it.port)
@@ -26,7 +27,6 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
                     .build()
             )
         }
-
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()
     }

@@ -21,11 +21,10 @@ class LocalRuntimeExpender : RuntimeExpender<LocalService> {
         }
 
         try {
-            BufferedWriter(OutputStreamWriter(process.outputStream)).use { writer ->
-                writer.write(command)
-                writer.newLine()
-                writer.flush()
-            }
+            val writer = BufferedWriter(OutputStreamWriter(process.outputStream))
+            writer.write(command)
+            writer.newLine()
+            writer.flush()
             return true
         } catch (e: IOException) {
             logger.warn("Failed to write command to service ${service.name()}: ${e.message}")
