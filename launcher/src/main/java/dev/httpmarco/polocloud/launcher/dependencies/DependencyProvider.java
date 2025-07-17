@@ -27,9 +27,7 @@ public final class DependencyProvider {
     }
 
     public void download() {
-        for (var dependency : this.dependencies) {
-            dependency.download();
-        }
+        this.dependencies.stream().parallel().forEach(Dependency::download);
     }
 
     @SneakyThrows
