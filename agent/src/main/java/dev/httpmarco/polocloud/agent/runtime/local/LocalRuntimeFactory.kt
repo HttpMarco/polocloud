@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.platforms.PlatformType
+import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
 
@@ -48,6 +49,13 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         // download and copy the platform files to the service path
         platform.prepare(service.path, service.group.data.platform.version, environment)
+
+
+        val serverIconPath = service.path.resolve("server-icon.png")
+        // copy server-icon if not exists
+        if(Files.notExists(serverIconPath)) {
+            Files.copy(this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!, serverIconPath)
+        }
 
         // basically current only the java command is supported yet
         val commands = ArrayList<String>()
