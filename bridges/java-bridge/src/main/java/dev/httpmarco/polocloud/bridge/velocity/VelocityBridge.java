@@ -6,6 +6,7 @@ import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.api.proxy.server.ServerInfo;
 import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceOnlineEvent;
@@ -15,12 +16,17 @@ import dev.httpmarco.polocloud.v1.GroupType;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Plugin(id = "polocloud-bridge", name = "Polocloud-Bridge", version = "3.0.0.BETA", authors = {"Polocloud"}, url = "https://github.com/HttpMarco/polocloud", description = "Polocloud-Bridge")
 public final class VelocityBridge {
 
     private final ProxyServer server;
     private final Logger logger;
+
+    private final List<RegisteredServer> registeredFallbacks = new ArrayList<>();
 
     @Inject
     public VelocityBridge(ProxyServer server, Logger logger) {
@@ -41,7 +47,6 @@ public final class VelocityBridge {
             if (service.getType() != GroupType.SERVER) {
                 return;
             }
-
             registerServer(service);
         });
 
@@ -51,7 +56,11 @@ public final class VelocityBridge {
             if (service.getType() != GroupType.SERVER) {
                 return;
             }
-            server.getServer(service.name()).ifPresent(registeredServer -> server.unregisterServer(registeredServer.getServerInfo()));
+
+            server.getServer(service.name()).ifPresent(registeredServer -> {
+                registeredFallbacks.remove(registeredServer);
+                server.unregisterServer(registeredServer.getServerInfo());
+            });
         });
 
         for (Service service : Polocloud.Companion.instance().serviceProvider().find()) {
@@ -64,11 +73,16 @@ public final class VelocityBridge {
 
     @Subscribe
     public void onConnect(PlayerChooseInitialServerEvent event) {
-        server.getAllServers().stream().findFirst().stream().findFirst().ifPresent(event::setInitialServer);
+        var fallback = registeredFallbacks.stream().min(Comparator.comparing(registeredServer -> registeredServer.getPlayersConnected().size())).stream().findFirst();
+        event.setInitialServer(fallback.orElse(null));
     }
 
     private void registerServer(Service service) {
-        server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(service.getHostname(), service.getPort())));
+        var registeredServer = server.registerServer(new ServerInfo(service.name(), new InetSocketAddress(service.getHostname(), service.getPort())));
+
+        if(service.getProperties().containsKey("fallback") && service.getProperties().get("fallback").equalsIgnoreCase("true")) {
+            registeredFallbacks.add(registeredServer);
+        }
     }
 }
 

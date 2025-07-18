@@ -24,6 +24,7 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
                     .setPort(it.port)
                     .setMaxPlayers(it.maxPlayerCount.toLong())
                     .setPlayerCount(it.playerCount.toLong())
+                    .putAllProperties(it.properties)
                     .build()
             )
         }

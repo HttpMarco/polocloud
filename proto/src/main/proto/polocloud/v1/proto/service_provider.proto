@@ -30,6 +30,7 @@ message ServiceSnapshot {
   uint64 max_players = 8;
   uint64 player_count = 9;
   ServerState server_state = 10;
+  map<string, string> properties = 11;
 }
 
 enum ServerState {
