@@ -8,6 +8,8 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.ServiceArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.StringArrayArgument
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal: Jline3Terminal) :
     Command("service", "Used to manage services") {
@@ -33,6 +35,11 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
             logger.info(" &8- &7Port&8: &f${service.port}")
             logger.info(" &8- &7Hostname&8: &f${service.hostname}")
             logger.info(" &8- &7Players&8: &f${service.playerCount}&8/&f${service.maxPlayerCount}")
+            logger.info(" &8- &7Properties&8:")
+
+            service.properties.forEach { (key, value) ->
+                logger.info("   &8- &7$key&8: &f$value")
+            }
         }, serviceArgument)
 
         syntax(execution = {
