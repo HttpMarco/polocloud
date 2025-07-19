@@ -21,6 +21,10 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
         logger.warn(get(key, *format))
     }
 
+    fun error(key: String, vararg format: Any?) {
+        logger.error(get(key, *format))
+    }
+
     override fun get(key: String, vararg format: Any?): String {
         val resourceBundle: ResourceBundle = this.resourceBundle(locale)
 
