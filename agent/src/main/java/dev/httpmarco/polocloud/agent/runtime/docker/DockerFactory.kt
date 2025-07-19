@@ -7,7 +7,7 @@ class DockerFactory : RuntimeFactory<DockerService> {
         TODO("Not yet implemented")
     }
 
-    override fun shutdownApplication(service: DockerService) {
+    override fun shutdownApplication(service: DockerService, shutdownCleanUp: Boolean) {
         TODO("Not yet implemented")
     }
 }

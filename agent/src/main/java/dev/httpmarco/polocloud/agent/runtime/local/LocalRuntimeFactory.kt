@@ -82,7 +82,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
     }
 
     @OptIn(ExperimentalPathApi::class)
-    override fun shutdownApplication(service: LocalService) {
+    override fun shutdownApplication(service: LocalService, shutdownCleanUp : Boolean) {
         if (service.state == Service.State.STOPPING || service.state == Service.State.STOPPING) {
             return
         }
@@ -97,7 +97,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         if (service.process != null) {
             try {
-                if (service.executeCommand(service.group.platform().shutdownCommand)) {
+                if (shutdownCleanUp && service.executeCommand(service.group.platform().shutdownCommand)) {
                     if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
                         service.process!!.exitValue()
                         service.state == Service.State.STOPPED
@@ -118,7 +118,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.stopTracking()
 
         // windows need some time to destroy the process
-        if (!Thread.currentThread().isVirtual) {
+        if (!Thread.currentThread().isVirtual && shutdownCleanUp) {
             Thread.sleep(200) // wait for a process to be destroyed
         }
 

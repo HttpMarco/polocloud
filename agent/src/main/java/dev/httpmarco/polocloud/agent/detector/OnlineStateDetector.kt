@@ -58,8 +58,13 @@ class OnlineStateDetector : Detector {
                     out.write(0x01)
                     out.write(0x00)
 
-                    readVarInt(input) // packet length
-                    readVarInt(input) // packet ID
+                    try {
+                        readVarInt(input) // packet length
+                        readVarInt(input) // packet ID
+                    }catch (_: Throwable) {
+                        // if the packet length or ID cannot be read, the service is not online
+                        return@forEach
+                    }
 
                     val jsonLength = readVarInt(input)
                     val jsonData = ByteArray(jsonLength)

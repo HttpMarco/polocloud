@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
+import dev.httpmarco.polocloud.agent.shutdownProcess
 import java.time.LocalTime
 
 class Logger {
@@ -44,7 +45,7 @@ class Logger {
         // if the agent is running in a local runtime, we use the terminal to display the message
         val agent = Agent.instance
 
-        if(agent != null && agent.runtime != null && agent.runtime is LocalRuntime) {
+        if(agent != null && agent.runtime != null && agent.runtime is LocalRuntime && !shutdownProcess()) {
             val localRuntime = Agent.instance.runtime
 
             localRuntime.terminal.display(message)
