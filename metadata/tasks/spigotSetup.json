@@ -1,5 +1,5 @@
 {
-  "name": "SERVER_PROPERTIES_PORT",
+  "name": "SPIGOT_SERVER_PROPERTIES",
   "steps": [
     {
       "name": "Update server port",
@@ -19,6 +19,16 @@
         "type": "PlatformFilePropertyUpdateAction",
         "key": "online-mode",
         "value": "false"
+      }
+    },
+    {
+      "name": "Motd",
+      "description": "Change the motd if no file present",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "motd",
+        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
       }
     }
   ]

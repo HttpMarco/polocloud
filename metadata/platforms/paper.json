@@ -30,7 +30,7 @@
   ],
   "tasks": [
     "EULA_TASK",
-    "SERVER_PROPERTIES_PORT",
+    "SPIGOT_SERVER_PROPERTIES",
     "PAPER_PROXY_SUPPORT_TASK"
   ],
   "versions": [

@@ -5,7 +5,7 @@
   ],
   "tasks": [
     "eula",
-    "serverPropertiesPort",
+    "spigotSetup",
     "velocityProxyToken",
     "paperProxySupport",
     "velocitySetup"
