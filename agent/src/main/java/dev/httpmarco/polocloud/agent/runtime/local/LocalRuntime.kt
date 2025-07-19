@@ -9,7 +9,7 @@ class LocalRuntime : Runtime {
 
     private val runtimeGroupStorage = LocalRuntimeGroupStorage()
     private val runtimeServiceStorage = LocalRuntimeServiceStorage()
-    private val runtimeFactory = LocalRuntimeFactory()
+    private val runtimeFactory = LocalRuntimeFactory(this)
     private val runtimeQueue = LocalRuntimeQueue()
     private val runtimeExpender = LocalRuntimeExpender()
     private val templates = LocalRuntimeTemplates()
@@ -20,7 +20,7 @@ class LocalRuntime : Runtime {
         terminal = Jline3Terminal()
 
         terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage))
-        terminal.commandService.registerCommand(ServiceCommand(runtimeServiceStorage))
+        terminal.commandService.registerCommand(ServiceCommand(runtimeServiceStorage, terminal))
         terminal.commandService.registerCommand(PlatformCommand())
     }
 
@@ -39,8 +39,9 @@ class LocalRuntime : Runtime {
     override fun templates() = templates
 
     override fun shutdown() {
-        this.runtimeQueue.interrupt()
         this.terminal.shutdown()
+
+        this.runtimeQueue.interrupt()
     }
 
     override fun postInitialize() {

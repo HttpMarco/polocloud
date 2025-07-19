@@ -1,29 +1,35 @@
 package dev.httpmarco.polocloud.agent.groups
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.v1.proto.GroupControllerGrpc
 import dev.httpmarco.polocloud.v1.proto.GroupProvider
-import dev.httpmarco.polocloud.v1.proto.GroupProviderHandlerGrpc
 import io.grpc.stub.StreamObserver
 
-class GroupGrpcService : GroupProviderHandlerGrpc.GroupProviderHandlerImplBase() {
+class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
 
     override fun find(
-        request: GroupProvider.FindRequest,
-        responseObserver: StreamObserver<GroupProvider.FindResponse>
+        request: GroupProvider.FindGroupRequest,
+        responseObserver: StreamObserver<GroupProvider.FindGroupResponse>
     ) {
 
-        val builder = GroupProvider.FindResponse.newBuilder()
+        val builder = GroupProvider.FindGroupResponse.newBuilder()
         val groupStorage = Agent.instance.runtime.groupStorage()
 
         if (request.name.isNotEmpty()) {
             val group = groupStorage.item(request.name)
 
             if (group != null) {
-                builder.addGroups(GroupProvider.GroupSnapshot.newBuilder().setName(group.data.name).build())
+                builder.addGroups(
+                    GroupProvider.GroupSnapshot.newBuilder().setName(group.data.name)
+                        .putAllProperties(group.data.properties).build()
+                )
             }
         } else {
             groupStorage.items().forEach {
-                builder.addGroups(GroupProvider.GroupSnapshot.newBuilder().setName(it.data.name).build())
+                builder.addGroups(
+                    GroupProvider.GroupSnapshot.newBuilder().setName(it.data.name).putAllProperties(it.data.properties)
+                        .build()
+                )
             }
         }
 

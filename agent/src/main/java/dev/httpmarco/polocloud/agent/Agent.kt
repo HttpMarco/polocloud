@@ -14,6 +14,7 @@ import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 // global terminal instance for the agent
 // this is used to print messages to the console
 val logger = Logger()
+val developmentMode = System.getProperty("polocloud.version", "false").toBoolean()
 val i18n = I18nPolocloudAgent();
 
 class Agent {
@@ -31,7 +32,11 @@ class Agent {
 
     init {
         // display the default log information
-        logger.info("Starting PoloCloud Agent...")
+        logger.info("Starting PoloCloud ${version()} Agent...")
+
+        if(version().endsWith("-SNAPSHOT")) {
+            logger.warn("You are using a snapshot version of polocloud. This version is not recommended for production use!")
+        }
 
         this.runtime = Runtime.create()
         this.grpcServerEndpoint.connect()
@@ -52,5 +57,9 @@ class Agent {
         this.runtime.shutdown()
         this.grpcServerEndpoint.close()
         this.onlineStateDetector.close()
+    }
+
+    fun version(): String {
+        return System.getenv("polocloud-version");
     }
 }

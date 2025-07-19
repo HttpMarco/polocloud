@@ -14,12 +14,19 @@ abstract class Service(val group: Group, val id: Int) {
     var playerCount = -1
     var maxPlayerCount = -1
 
+    var properties = hashMapOf<String, String>()
+
+
+    init {
+        properties.putAll(group.data.properties)
+    }
+
     fun name(): String {
         return "${group.data.name}-${id}"
     }
 
-    fun shutdown() {
-        Agent.instance.runtime.factory().shutdownApplication(this)
+    fun shutdown(shutdownCleanUp : Boolean = true) {
+        Agent.instance.runtime.factory().shutdownApplication(this, shutdownCleanUp)
     }
 
     fun executeCommand(command: String): Boolean {

@@ -1,10 +1,14 @@
 package dev.httpmarco.polocloud.agent
 
+import dev.httpmarco.polocloud.agent.logging.Logger
 import org.jline.jansi.AnsiConsole
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
+import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
 private val SHUTDOWN_HOOK = "polocloud-shutdown-hook"
-private var idleShutdown = false
+private var inShutdown = false
 
 fun registerHook() {
     Runtime.getRuntime().addShutdownHook(Thread({
@@ -12,25 +16,40 @@ fun registerHook() {
     }, SHUTDOWN_HOOK))
 }
 
-fun exitPolocloud() {
+fun exitPolocloud(cleanShutdown: Boolean = true) {
 
-    if (idleShutdown) {
+    if (inShutdown) {
         return
     }
 
-    idleShutdown = true
+    inShutdown = true
 
-    Agent.instance.runtime.serviceStorage().items().forEach {
-        it.shutdown()
+    logger.info("Polocloud Agent is shutting down&8...")
+
+
+    try {
+        Agent.instance.runtime.serviceStorage().items().forEach {
+            it.shutdown(cleanShutdown)
+        }
+
+        Agent.instance.close()
+
+        logger.info("Cleanup temp files&8...")
+        Path("temp").toFile().deleteRecursively()
+        logger.info("Successfully cleaned up temp files&8.")
+
+        AnsiConsole.systemUninstall()
+    } catch (e: Exception) {
+        logger.throwable(e)
     }
-
-    Agent.instance.close()
-    
-    AnsiConsole.systemUninstall()
 
     logger.info("Polocloud Agent is shutting down&8...")
 
     if (Thread.currentThread().name != SHUTDOWN_HOOK) {
-        exitProcess(-1)
+        exitProcess(0)
     }
+}
+
+fun shutdownProcess(): Boolean {
+    return inShutdown
 }

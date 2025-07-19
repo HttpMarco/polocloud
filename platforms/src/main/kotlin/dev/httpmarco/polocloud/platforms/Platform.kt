@@ -21,10 +21,13 @@ class Platform(
     // default is "stop"
     val shutdownCommand: String = "stop",
     val type: PlatformType,
-    val arguments: List<String>,
+    // all global arguments for the platform after the jar name for exmple: 'nogui'
+    val arguments: List<String> = emptyList(),
+    // all global flags for the platform after the jar name for example: '-Djava.net.preferIPv4Stack=true'
+    val flags: List<String> = emptyList(),
     val versions: List<PlatformVersion>,
-    val bridgePath: String = "",
-    private val tasks: List<String>
+    private val bridgePath: String = "",
+    private val tasks: List<String> = emptyList()
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: Map<String, String>) {
@@ -58,7 +61,7 @@ class Platform(
 
         if (environment["need-bridge"]?.toBoolean() == true) {
             // copy the bridge if present
-            val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-3.0.0.BETA.jar")
+            val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-${System.getenv("polocloud-version")}.jar")
             val targetBridge = servicePath.resolve(bridgePath + "/" + sourceBridge.name)
 
             targetBridge.parent.createDirectories()

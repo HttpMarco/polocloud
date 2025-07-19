@@ -5,7 +5,6 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import dev.httpmarco.polocloud.agent.services.Service
-import dev.httpmarco.polocloud.platforms.PlatformPool
 import java.lang.reflect.Type
 
 class ServiceDefinitionSerializer : JsonSerializer<Service> {
@@ -16,10 +15,12 @@ class ServiceDefinitionSerializer : JsonSerializer<Service> {
         context: JsonSerializationContext
     ): JsonElement? {
         val values = JsonObject()
-        values.addProperty("name", src.name())
+        values.addProperty("groupName", src.group.data.name)
         values.addProperty("hostname", src.hostname)
+        values.addProperty("id", src.id)
         values.addProperty("port", src.port)
         values.addProperty("type", src.group.platform().type.name)
+        values.add("properties", context.serialize(src.properties))
         return values
     }
 }

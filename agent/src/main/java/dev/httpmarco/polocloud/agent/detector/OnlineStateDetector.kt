@@ -35,7 +35,6 @@ class OnlineStateDetector : Detector {
                         service.state = Service.State.ONLINE
 
                         // call the services all the events
-                        //todo call here errors
                         Agent.instance.eventService.call(ServiceOnlineEvent(service))
 
                         logger.info("The service &3${service.name()} &7is now online&8.")
@@ -59,8 +58,13 @@ class OnlineStateDetector : Detector {
                     out.write(0x01)
                     out.write(0x00)
 
-                    readVarInt(input) // packet length
-                    readVarInt(input) // packet ID
+                    try {
+                        readVarInt(input) // packet length
+                        readVarInt(input) // packet ID
+                    }catch (_: Throwable) {
+                        // if the packet length or ID cannot be read, the service is not online
+                        return@forEach
+                    }
 
                     val jsonLength = readVarInt(input)
                     val jsonData = ByteArray(jsonLength)

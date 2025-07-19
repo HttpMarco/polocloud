@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.launcher;
 
-import dev.httpmarco.polocloud.launcher.dependencies.DependencyProvider;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,7 +19,8 @@ public final class PolocloudLauncher {
 
         Files.createDirectories(PolocloudParameters.LIB_DIRECTORY);
 
+        var process = new PolocloudProcess();
         // start the main context of the polocloud agent
-        new PolocloudProcess().start();
+        process.start();
     }
 }

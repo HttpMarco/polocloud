@@ -2,15 +2,18 @@ syntax = "proto3";
 
 package dev.httpmarco.polocloud.v1.proto;
 
-service GroupProviderHandler {
-  rpc find(FindRequest) returns (FindResponse);
+import "polocloud/v1/proto/object_utils.proto";
+import "google/protobuf/struct.proto";
+
+service GroupController {
+  rpc find(FindGroupRequest) returns (FindGroupResponse);
 }
 
-message FindRequest {
+message FindGroupRequest {
   string name = 1;
 }
 
-message FindResponse {
+message FindGroupResponse {
   repeated GroupSnapshot groups = 1;
 }
 
@@ -23,10 +26,5 @@ message GroupSnapshot {
   int64 minimumOnline = 5;
   int64 maximumOnline = 6;
   repeated string templates = 7;
-}
-
-enum GroupType {
-  SERVICE = 0;
-  SERVER = 1;
-  PROXY = 2;
+  map<string, string> properties = 8;
 }

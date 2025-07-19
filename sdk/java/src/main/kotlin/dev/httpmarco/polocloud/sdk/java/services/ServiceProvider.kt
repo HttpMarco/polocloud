@@ -1,9 +1,31 @@
 package dev.httpmarco.polocloud.sdk.java.services
 
-class ServiceProvider {
+import com.google.common.util.concurrent.MoreExecutors
+import dev.httpmarco.polocloud.v1.ServiceControllerGrpc
+import dev.httpmarco.polocloud.v1.ServiceFindRequest
+import java.util.concurrent.Executor
 
-    fun find() {
+class ServiceProvider(channel: io.grpc.ManagedChannel?) {
 
+    private val directExecutor: Executor = MoreExecutors.directExecutor()
+    private val serviceStub = ServiceControllerGrpc.newBlockingStub(channel)
+    private val asyncServiceStub = ServiceControllerGrpc.newFutureStub(channel)
+
+    fun find(): List<Service> {
+        return serviceStub.find(ServiceFindRequest.newBuilder().build()).servicesList.map {
+            Service(
+                it.groupName,
+                it.id,
+                it.hostname,
+                it.port,
+                it.state,
+                it.serverType,
+                it.propertiesMap
+            )
+        }.toList()
     }
 
+    fun findAsync(): List<Service> {
+        return listOf();
+    }
 }

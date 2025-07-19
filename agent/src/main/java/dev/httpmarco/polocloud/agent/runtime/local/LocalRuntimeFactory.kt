@@ -6,10 +6,11 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.platforms.PlatformType
+import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
 
-class LocalRuntimeFactory : RuntimeFactory<LocalService> {
+class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<LocalService> {
 
     private val factoryPath = Path("temp")
 
@@ -42,12 +43,20 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
         environment.put("service-name", service.name())
         environment.put("need-bridge", (service.group.platform().type == PlatformType.PROXY).toString())
         environment.put("velocityProxyToken", Agent.instance.securityProvider.proxySecureToken)
+        environment.put("version", Agent.instance.version())
 
         // copy all templates to the service path
         Agent.instance.runtime.templates().bindTemplate(service)
 
         // download and copy the platform files to the service path
         platform.prepare(service.path, service.group.data.platform.version, environment)
+
+
+        val serverIconPath = service.path.resolve("server-icon.png")
+        // copy server-icon if not exists
+        if(Files.notExists(serverIconPath)) {
+            Files.copy(this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!, serverIconPath)
+        }
 
         // basically current only the java command is supported yet
         val commands = ArrayList<String>()
@@ -74,31 +83,46 @@ class LocalRuntimeFactory : RuntimeFactory<LocalService> {
     }
 
     @OptIn(ExperimentalPathApi::class)
-    override fun shutdownApplication(service: LocalService) {
+    override fun shutdownApplication(service: LocalService, shutdownCleanUp : Boolean) {
         if (service.state == Service.State.STOPPING || service.state == Service.State.STOPPING) {
-            logger.info("Cannot shutdown service ${service.name()} because it is already stopping or stopped&8. &7Wait for action&8...")
             return
         }
-
-        Agent.instance.eventService.call(ServiceShutdownEvent(service))
+        service.state = Service.State.STOPPING
 
         logger.info("The service &3${service.name()}&7 is now stopping&8...")
 
-        Agent.instance.eventService.dropServiceSubscriptions(service)
+        val eventService = Agent.instance.eventService
+
+        eventService.dropServiceSubscriptions(service)
+        eventService.call(ServiceShutdownEvent(service))
 
         if (service.process != null) {
-            if (service.executeCommand(service.group.platform().shutdownCommand)) {
-
-                if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
-                    service.process!!.exitValue()
+            try {
+                if (shutdownCleanUp && service.executeCommand(service.group.platform().shutdownCommand)) {
+                    if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
+                        service.process!!.exitValue()
+                        service.state == Service.State.STOPPED
+                    }
                 }
+            } catch (_: Exception) {
+                // ignore exceptions, we just want to stop the process
             }
 
-            service.process!!.toHandle().destroyForcibly()
-            service.process = null
+            if (service.state != Service.State.STOPPED) {
+                service.process!!.toHandle().destroyForcibly()
+                service.process = null
+                service.state == Service.State.STOPPED
+            }
         }
 
-        Thread.sleep(200) // wait for a process to be destroyed
+        localRuntime.terminal.screenService.stopCurrentRecording()
+        service.stopTracking()
+
+        // windows need some time to destroy the process
+        if (!Thread.currentThread().isVirtual && shutdownCleanUp) {
+            Thread.sleep(200) // wait for a process to be destroyed
+        }
+
         service.path.deleteRecursively()
 
         service.state = Service.State.STOPPED
