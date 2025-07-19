@@ -29,11 +29,11 @@ message ServiceSnapshot {
   uint32 port = 7;
   uint64 max_players = 8;
   uint64 player_count = 9;
-  ServerState server_state = 10;
+  ServiceState state = 10;
   map<string, string> properties = 11;
 }
 
-enum ServerState {
+enum ServiceState {
   PREPARING = 0;
   STARTING = 1;
   ONLINE = 2;

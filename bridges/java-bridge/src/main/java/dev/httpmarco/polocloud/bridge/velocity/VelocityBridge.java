@@ -13,6 +13,7 @@ import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceOnlineEvent;
 import dev.httpmarco.polocloud.sdk.java.events.definitions.ServiceShutdownEvent;
 import dev.httpmarco.polocloud.sdk.java.services.Service;
 import dev.httpmarco.polocloud.v1.GroupType;
+import dev.httpmarco.polocloud.v1.ServiceState;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -64,7 +65,7 @@ public final class VelocityBridge {
         });
 
         for (Service service : Polocloud.Companion.instance().serviceProvider().find()) {
-            if (service.getType() != GroupType.SERVER) {
+            if (service.getType() != GroupType.SERVER || service.getState() != ServiceState.ONLINE) {
                 continue;
             }
             registerServer(service);

@@ -18,6 +18,7 @@ class ServiceProvider(channel: io.grpc.ManagedChannel?) {
                 it.id,
                 it.hostname,
                 it.port,
+                it.state,
                 it.serverType,
                 it.propertiesMap
             )

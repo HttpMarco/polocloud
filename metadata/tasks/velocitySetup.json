@@ -20,6 +20,16 @@
         "key": "bind",
         "value": "%hostname%:%port%"
       }
+    },
+    {
+      "name": "Velocity motd",
+      "description": "Set the MOTD in Velocity.",
+      "filename": "velocity.toml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "motd",
+        "value": "&b&lPolocloud &8- &7Simple and lightweight &8- &f%version%\n&8» &7GitHub&8: &f&ngithub.polocloud.de"
+      }
     }
   ]
 }
