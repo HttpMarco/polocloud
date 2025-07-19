@@ -12,7 +12,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 
 class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal: Jline3Terminal) :
-    Command("service", "Used to manage services") {
+    Command("service", "Used to manage services", "ser") {
 
     init {
         syntax(execution = { context ->
