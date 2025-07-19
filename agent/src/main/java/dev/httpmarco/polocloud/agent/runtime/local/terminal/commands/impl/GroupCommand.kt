@@ -55,10 +55,38 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
             var value = context.arg(TextArgument("value"))
 
             when (editType) {
-                GroupEditFlagArgument.TYPES.MIN_ONLINE_SERVICES -> group.data.minOnlineService = value.toInt()
-                GroupEditFlagArgument.TYPES.MAX_ONLINE_SERVICES -> group.data.maxOnlineService = value.toInt()
-                GroupEditFlagArgument.TYPES.MIN_MEMORY -> group.data.minMemory = value.toInt()
-                GroupEditFlagArgument.TYPES.MAX_MEMORY -> group.data.maxMemory = value.toInt()
+                GroupEditFlagArgument.TYPES.MIN_ONLINE_SERVICES -> {
+                    val intValue = value.toInt()
+                    if (intValue > group.data.maxOnlineService) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
+                        return@syntax
+                    }
+                    group.data.minOnlineService = intValue
+                }
+                GroupEditFlagArgument.TYPES.MAX_ONLINE_SERVICES -> {
+                    val intValue = value.toInt()
+                    if (intValue < group.data.minOnlineService) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
+                        return@syntax
+                    }
+                    group.data.maxOnlineService = intValue
+                }
+                GroupEditFlagArgument.TYPES.MIN_MEMORY -> {
+                    val intValue = value.toInt()
+                    if (intValue > group.data.maxMemory) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
+                        return@syntax
+                    }
+                    group.data.minMemory = intValue
+                }
+                GroupEditFlagArgument.TYPES.MAX_MEMORY -> {
+                    val intValue = value.toInt()
+                    if (intValue < group.data.minMemory) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
+                        return@syntax
+                    }
+                    group.data.maxMemory = intValue
+                }
             }
 
             group.update()
