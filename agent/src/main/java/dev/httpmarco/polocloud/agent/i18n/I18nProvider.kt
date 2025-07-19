@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.i18n
 
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import java.util.*
 
@@ -12,16 +13,22 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
         return get(key, mutableListOf<Any?>())
     }
 
-    override fun get(key: String, vararg format: Any): String {
+    fun info(key: String, vararg format: Any?) {
+        logger.info(get(key, *format))
+    }
+
+    override fun get(key: String, vararg format: Any?): String {
         val resourceBundle: ResourceBundle = this.resourceBundle(locale)
 
         if (!resourceBundle.containsKey(key)) {
             return key
         }
+        val value = resourceBundle.getString(key)
         if (format.isEmpty()) {
-            return LoggingColor.translate(resourceBundle.getString(key))
+            return LoggingColor.translate(value)
         }
-        return LoggingColor.translate(String.format(resourceBundle.getString(key), *format))
+
+        return LoggingColor.translate(String.format(value, *format))
     }
 
     override fun get(key: String, locale: Locale, vararg format: Any): String {
@@ -33,10 +40,10 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
     }
 
     override fun resourceBundle(locale: Locale): ResourceBundle {
-        try {
-            return this.localBundle(locale)
-        } catch (exception: MissingResourceException) {
-            return defaultResourceBundle()
+        return try {
+            this.localBundle(locale)
+        } catch (_: MissingResourceException) {
+            defaultResourceBundle()
         }
     }
 

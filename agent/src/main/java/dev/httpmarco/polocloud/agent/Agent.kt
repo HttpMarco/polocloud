@@ -32,7 +32,7 @@ class Agent {
 
     init {
         // display the default log information
-        logger.info("Starting PoloCloud ${version()} Agent...")
+        i18n.info("agent.starting", version())
 
         if(version().endsWith("-SNAPSHOT")) {
             logger.warn("You are using a snapshot version of polocloud. This version is not recommended for production use!")
