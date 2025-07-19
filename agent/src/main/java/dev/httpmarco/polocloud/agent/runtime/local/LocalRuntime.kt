@@ -39,8 +39,9 @@ class LocalRuntime : Runtime {
     override fun templates() = templates
 
     override fun shutdown() {
-        this.runtimeQueue.interrupt()
         this.terminal.shutdown()
+
+        this.runtimeQueue.interrupt()
     }
 
     override fun postInitialize() {

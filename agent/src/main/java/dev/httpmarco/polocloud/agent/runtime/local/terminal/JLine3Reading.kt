@@ -42,7 +42,7 @@ class JLine3Reading(
 
             } catch (_: UserInterruptException) {
                 // pressing Ctrl+C or similar to interrupt reading
-                exitPolocloud()
+                exitPolocloud(cleanShutdown = false)
                 break
             } catch (e: Throwable) {
                 logger.throwable(e)

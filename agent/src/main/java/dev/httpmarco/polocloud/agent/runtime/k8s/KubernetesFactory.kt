@@ -7,7 +7,7 @@ class KubernetesFactory : RuntimeFactory<KubernetesService> {
         TODO("Not yet implemented")
     }
 
-    override fun shutdownApplication(service: KubernetesService) {
+    override fun shutdownApplication(service: KubernetesService, shutdownCleanUp: Boolean) {
         TODO("Not yet implemented")
     }
 }

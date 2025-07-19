@@ -20,19 +20,22 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
                 }
                 sleep(1000)
             }
-        }catch (e : Throwable) {
+        } catch (_: InterruptedException) {
+            // The Thread was interrupted, we can exit gracefully
+        } catch (e: Throwable) {
             logger.throwable(e)
         }
     }
 
-    private fun requiredServersThatStart(group : Group): Int {
+    private fun requiredServersThatStart(group: Group): Int {
         return (group.data.minOnlineService - group.serviceCount()).coerceAtLeast(0);
     }
 
     private fun findIndex(group: Group): Int {
         var id = 1
         while (Agent.instance.runtime.serviceStorage().items().stream()
-                .anyMatch { it.group == group && it.id == id }) {
+                .anyMatch { it.group == group && it.id == id }
+        ) {
             id++
         }
         return id

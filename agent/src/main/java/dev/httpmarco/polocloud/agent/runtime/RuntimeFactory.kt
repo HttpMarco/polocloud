@@ -6,6 +6,6 @@ interface RuntimeFactory<out T : Service> {
 
     fun bootApplication(service: @UnsafeVariance T)
 
-    fun shutdownApplication(service: @UnsafeVariance T)
+    fun shutdownApplication(service: @UnsafeVariance T, shutdownCleanUp : Boolean = true)
 
 }
