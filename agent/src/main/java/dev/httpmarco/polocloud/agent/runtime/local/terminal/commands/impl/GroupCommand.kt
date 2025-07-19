@@ -95,13 +95,21 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                 val minMemory = context.arg(minMemory)
                 val maxMemory = context.arg(maxMemory)
 
-                if(maxMemory < minMemory) {
+                if (maxMemory < minMemory) {
                     logger.warn("Max memory cannot be less than min memory&8. &7Using min memory as max memory&8.")
                     return@syntax
                 }
 
                 val platform = context.arg(platformArgument)
                 val groupName = context.arg(nameArgument)
+
+                if (Agent.instance.runtime.groupStorage().items()
+                        .any { it.data.name.equals(groupName, ignoreCase = true) }
+                ) {
+                    logger.warn("Group with name $groupName already exists.")
+                    return@syntax
+                }
+
                 Agent.instance.runtime.groupStorage().publish(
                     Group(
                         GroupData(
