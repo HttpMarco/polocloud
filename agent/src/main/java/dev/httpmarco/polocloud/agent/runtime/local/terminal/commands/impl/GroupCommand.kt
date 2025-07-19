@@ -128,6 +128,14 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                     return@syntax
                 }
 
+                val minOnlineServices = context.arg(minOnlineServices)
+                val maxOnlineServices = context.arg(maxOnlineServices)
+
+                if (maxOnlineServices < minOnlineServices) {
+                    logger.warn("Max online services cannot be less than min online service&8. &7Using min online services as max online service&8.")
+                    return@syntax
+                }
+
                 val platform = context.arg(platformArgument)
                 val groupName = context.arg(nameArgument)
                 Agent.instance.runtime.groupStorage().publish(
@@ -140,8 +148,8 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                             ),
                             minMemory,
                             maxMemory,
-                            context.arg(minOnlineServices),
-                            context.arg(maxOnlineServices),
+                            minOnlineServices,
+                            maxOnlineServices,
                             listOf("EVERY", "EVERY_" + platform.type, groupName),
                             emptyMap()
                         )
