@@ -55,10 +55,38 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
             var value = context.arg(TextArgument("value"))
 
             when (editType) {
-                GroupEditFlagArgument.TYPES.MIN_ONLINE_SERVICES -> group.data.minOnlineService = value.toInt()
-                GroupEditFlagArgument.TYPES.MAX_ONLINE_SERVICES -> group.data.maxOnlineService = value.toInt()
-                GroupEditFlagArgument.TYPES.MIN_MEMORY -> group.data.minMemory = value.toInt()
-                GroupEditFlagArgument.TYPES.MAX_MEMORY -> group.data.maxMemory = value.toInt()
+                GroupEditFlagArgument.TYPES.MIN_ONLINE_SERVICES -> {
+                    val intValue = value.toInt()
+                    if (intValue > group.data.maxOnlineService) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
+                        return@syntax
+                    }
+                    group.data.minOnlineService = intValue
+                }
+                GroupEditFlagArgument.TYPES.MAX_ONLINE_SERVICES -> {
+                    val intValue = value.toInt()
+                    if (intValue < group.data.minOnlineService) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
+                        return@syntax
+                    }
+                    group.data.maxOnlineService = intValue
+                }
+                GroupEditFlagArgument.TYPES.MIN_MEMORY -> {
+                    val intValue = value.toInt()
+                    if (intValue > group.data.maxMemory) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
+                        return@syntax
+                    }
+                    group.data.minMemory = intValue
+                }
+                GroupEditFlagArgument.TYPES.MAX_MEMORY -> {
+                    val intValue = value.toInt()
+                    if (intValue < group.data.minMemory) {
+                        logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
+                        return@syntax
+                    }
+                    group.data.maxMemory = intValue
+                }
             }
 
             group.update()
@@ -100,6 +128,14 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                     return@syntax
                 }
 
+                val minOnlineServices = context.arg(minOnlineServices)
+                val maxOnlineServices = context.arg(maxOnlineServices)
+
+                if (maxOnlineServices < minOnlineServices) {
+                    logger.warn("Max online services cannot be less than min online service&8. &7Using min online services as max online service&8.")
+                    return@syntax
+                }
+
                 val platform = context.arg(platformArgument)
                 val groupName = context.arg(nameArgument)
                 Agent.instance.runtime.groupStorage().publish(
@@ -112,8 +148,8 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                             ),
                             minMemory,
                             maxMemory,
-                            context.arg(minOnlineServices),
-                            context.arg(maxOnlineServices),
+                            minOnlineServices,
+                            maxOnlineServices,
                             listOf("EVERY", "EVERY_" + platform.type, groupName),
                             emptyMap()
                         )
