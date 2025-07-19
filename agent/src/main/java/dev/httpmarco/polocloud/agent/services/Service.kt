@@ -25,8 +25,8 @@ abstract class Service(val group: Group, val id: Int) {
         return "${group.data.name}-${id}"
     }
 
-    fun shutdown() {
-        Agent.instance.runtime.factory().shutdownApplication(this)
+    fun shutdown(shutdownCleanUp : Boolean = true) {
+        Agent.instance.runtime.factory().shutdownApplication(this, shutdownCleanUp)
     }
 
     fun executeCommand(command: String): Boolean {
