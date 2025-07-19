@@ -21,7 +21,7 @@ class Jline3Completer(private val commandService: CommandService) : Completer {
                 }
 
                 Arrays.stream(command.aliases)
-                    .filter { !line.word().isEmpty() && it.startsWith(line.word()) }
+                    .filter { line.word().isNotEmpty() && it.startsWith(line.word()) }
                     .forEach { alias -> candidates.add(Candidate(alias)) }
             }
             return
