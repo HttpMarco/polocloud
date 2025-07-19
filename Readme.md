@@ -19,5 +19,11 @@
 
 <br/>
 
-### 1. Getting Started
+
+### 🌐 Translations
+
+This project is being translated into multiple languages with the help of [Crowdin](https://crowdin.com/project/polocloud).  
+You can contribute by helping us localize it!
+
+[![Crowdin](https://badges.crowdin.net/polocloud/localized.svg)](https://crowdin.com/project/polocloud)
 
