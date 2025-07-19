@@ -43,6 +43,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment.put("service-name", service.name())
         environment.put("need-bridge", (service.group.platform().type == PlatformType.PROXY).toString())
         environment.put("velocityProxyToken", Agent.instance.securityProvider.proxySecureToken)
+        environment.put("version", Agent.instance.version())
 
         // copy all templates to the service path
         Agent.instance.runtime.templates().bindTemplate(service)

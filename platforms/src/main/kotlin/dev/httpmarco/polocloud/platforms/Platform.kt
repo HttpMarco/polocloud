@@ -61,7 +61,7 @@ class Platform(
 
         if (environment["need-bridge"]?.toBoolean() == true) {
             // copy the bridge if present
-            val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-3.0.0.BETA.jar")
+            val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-${System.getenv("polocloud-version")}.jar")
             val targetBridge = servicePath.resolve(bridgePath + "/" + sourceBridge.name)
 
             targetBridge.parent.createDirectories()
