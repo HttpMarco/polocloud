@@ -3,19 +3,14 @@ package dev.httpmarco.polocloud.agent.services
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.utils.PortDetector
-import java.util.UUID
 
-abstract class Service(val group: Group, val id: Int) {
+abstract class Service(val group: Group, val id: Int, val hostname: String = "127.0.0.1") {
 
     val port = PortDetector.nextPort(group)
-    val hostname = "127.0.0.1"
-
     var state = State.PREPARING
     var playerCount = -1
     var maxPlayerCount = -1
-
     var properties = hashMapOf<String, String>()
-
 
     init {
         properties.putAll(group.data.properties)

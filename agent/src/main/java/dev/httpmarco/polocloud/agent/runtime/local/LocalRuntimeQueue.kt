@@ -3,7 +3,9 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.agent.shutdownProcess
+import dev.httpmarco.polocloud.platforms.PlatformType
 
 class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
 
@@ -13,7 +15,13 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
             while (!isInterrupted && !shutdownProcess()) {
                 Agent.instance.runtime.groupStorage().items().forEach {
                     for (n in 0 until requiredServersThatStart(it)) {
-                        val service = LocalService(it, findIndex(it))
+
+                        val service = if(it.platform().type == PlatformType.PROXY) {
+                            LocalService(it, findIndex(it), "0.0.0.0")
+                        } else {
+                            LocalService(it, findIndex(it))
+                        }
+
                         Agent.instance.runtime.serviceStorage().deployService(service)
                         Agent.instance.runtime.factory().bootApplication(service)
                     }

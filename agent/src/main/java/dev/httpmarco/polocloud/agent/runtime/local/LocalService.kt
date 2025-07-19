@@ -6,7 +6,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.tracking.LocalServiceLogTrack
 import dev.httpmarco.polocloud.agent.services.Service
 import kotlin.io.path.Path
 
-class LocalService(group: Group, id: Int) : Service(group, id) {
+class LocalService(group: Group, id: Int, hostname: String = "127.0.0.1") : Service(group, id, hostname) {
 
     private val logTracker = LocalServiceLogTrack(this)
     private val onlineTrack = LocalOnlineTrack(this)
