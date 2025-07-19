@@ -9,7 +9,7 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
     private val utf8ResourceBundleControl = UTF8ResourceBundleControl()
     private val locale = Locale.ENGLISH // default/backup locale is English
 
-    override fun get(key: String): String? {
+    override fun get(key: String): String {
         return get(key, mutableListOf<Any?>())
     }
 
