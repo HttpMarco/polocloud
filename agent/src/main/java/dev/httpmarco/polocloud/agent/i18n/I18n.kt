@@ -17,7 +17,7 @@ interface I18n {
      * @param format format the translation with argument {0} -> format
      * @return the translation for the key
      */
-    fun get(key: String, vararg format: Any): String?
+    fun get(key: String, vararg format: Any?): String?
 
     /**
      * @param key the key of translation
