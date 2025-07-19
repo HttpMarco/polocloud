@@ -35,7 +35,7 @@ class Agent {
         i18n.info("agent.starting", version())
 
         if(version().endsWith("-SNAPSHOT")) {
-            i18n.info("agent.version.warn")
+            i18n.warn("agent.version.warn")
         }
 
         this.runtime = Runtime.create()
