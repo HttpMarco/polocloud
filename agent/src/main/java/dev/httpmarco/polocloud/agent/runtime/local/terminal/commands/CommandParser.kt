@@ -65,7 +65,7 @@ object CommandParser {
                             break;
                         }
                     } else if (!argument.predication(rawInput)) {
-                        provedSyntaxWarning = argument.wrongReason()
+                        provedSyntaxWarning = argument.wrongReason(rawInput)
                         continue
                     }
                         //   println("Adding argument: ${argument.key} with value: $rawInput")

@@ -11,7 +11,7 @@ abstract class CommandArgument<T>(open val key: String) {
         return !(rawInput.startsWith("<") && rawInput.endsWith(">"))
     }
 
-    open fun wrongReason(): String {
+    open fun wrongReason(rawInput: String): String {
      //   return PolocloudSuite.instance().translation().get("terminal.command.argument.wrong")
         return "Wrong argument format"
     }
