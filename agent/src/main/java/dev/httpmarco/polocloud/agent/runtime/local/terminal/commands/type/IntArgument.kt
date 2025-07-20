@@ -11,9 +11,9 @@ class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = n
     override fun wrongReason(rawInput: String): String {
         //TODO needs to be replaced with translation keys
         return when (getError(rawInput)) {
-            IntArgumentError.INVALID_INT -> "Input is not a valid integer."
-            IntArgumentError.LOWER_THAN_MIN -> "Input must be at least $minValue"
-            IntArgumentError.HIGHER_THAN_MAX -> "Input must not exceed $maxValue"
+            IntArgumentError.INVALID_INT -> "Input $key is not a valid integer."
+            IntArgumentError.LOWER_THAN_MIN -> "Input $key must be at least $minValue"
+            IntArgumentError.HIGHER_THAN_MAX -> "Input $key must not exceed $maxValue"
             else -> ""
         }
     }
