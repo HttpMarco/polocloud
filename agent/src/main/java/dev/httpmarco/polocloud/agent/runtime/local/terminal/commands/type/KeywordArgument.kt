@@ -2,14 +2,13 @@ package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type
 
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandSyntax
 
 class KeywordArgument(key: String) : CommandArgument<String>(key) {
     override fun defaultArgs(context: CommandContext): MutableList<String> {
         return listOf(key) as MutableList<String>
     }
 
-    override fun wrongReason(): String {
+    override fun wrongReason(rawInput: String): String {
         return ""
     }
 
