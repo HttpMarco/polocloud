@@ -5,6 +5,8 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import java.lang.management.ManagementFactory
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Duration
 import kotlin.math.roundToInt
 
@@ -54,7 +56,10 @@ class InfoCommand : Command("info", "Used to display information about the agent
     }
 
     private fun calculateMemory(bytes: Long): Double {
-        return bytes / 1024.0 / 1024.0
+        val mb = bytes / 1024.0 / 1024.0
+        return BigDecimal(mb)
+            .setScale(2, RoundingMode.HALF_UP)
+            .toDouble()
     }
 
      fun formatDuration(millis: Long): String {
