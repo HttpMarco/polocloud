@@ -112,10 +112,10 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
         val nameArgument = TextArgument("name")
         val platformArgument = PlatformArgument()
         val platformVersionArgument = PlatformVersionArgument(platformArgument)
-        val minOnlineServices = IntArgument("minOnlineServices")
-        val maxOnlineServices = IntArgument("maxOnlineServices")
-        val minMemory = IntArgument("minMemory")
-        val maxMemory = IntArgument("maxMemory")
+        val minOnlineServices = IntArgument("minOnlineServices", minValue = 1)
+        val maxOnlineServices = IntArgument("maxOnlineServices", minValue = 1)
+        val minMemory = IntArgument("minMemory", minValue = 1)
+        val maxMemory = IntArgument("maxMemory", minValue = 1)
 
         syntax(
             execution = { context ->
