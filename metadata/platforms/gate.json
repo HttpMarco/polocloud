@@ -1,0 +1,15 @@
+{
+  "name": "gate",
+  "type": "PROXY",
+  "language": "GO",
+  "url": "https://github.com/minekube/gate/releases/download/v%version%/gate_%version%_windows_386.exe",
+  "copyServerIcon": false,
+  "tasks": [
+    "GATE_SETUP"
+  ],
+  "versions": [
+    {
+      "version": "0.51.0"
+    }
+  ]
+}

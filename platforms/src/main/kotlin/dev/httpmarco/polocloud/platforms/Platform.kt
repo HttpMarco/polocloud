@@ -20,14 +20,20 @@ class Platform(
     val language: PlatformLanguage,
     // default is "stop"
     val shutdownCommand: String = "stop",
+    // the type of platform, proxy, server, or service
     val type: PlatformType,
     // all global arguments for the platform after the jar name, for example, 'nogui'
     val arguments: List<String> = emptyList(),
     // all global flags for the platform after the jar name, for example: '-Djava.net.preferIPv4Stack=true'
     val flags: List<String> = emptyList(),
+    // all versions of the platform that are supported
     val versions: List<PlatformVersion>,
+    // if the path is empty, the platform will not copy the bridge
     private val bridgePath: String = "",
-    private val tasks: List<String> = emptyList()
+    // the tasks that should be run after the platform is prepared
+    private val tasks: List<String> = emptyList(),
+    // if true, the polocloud server icon will be copied to the service path
+    private val copyServerIcon: Boolean = true
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: Map<String, String>) {
