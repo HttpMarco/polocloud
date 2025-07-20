@@ -21,9 +21,9 @@ class Platform(
     // default is "stop"
     val shutdownCommand: String = "stop",
     val type: PlatformType,
-    // all global arguments for the platform after the jar name for exmple: 'nogui'
+    // all global arguments for the platform after the jar name, for example, 'nogui'
     val arguments: List<String> = emptyList(),
-    // all global flags for the platform after the jar name for example: '-Djava.net.preferIPv4Stack=true'
+    // all global flags for the platform after the jar name, for example: '-Djava.net.preferIPv4Stack=true'
     val flags: List<String> = emptyList(),
     val versions: List<PlatformVersion>,
     private val bridgePath: String = "",
@@ -34,7 +34,7 @@ class Platform(
         // This method should handle the preparation of the platform, such as downloading the necessary files
         // or setting up the environment for the specified version.
         // Implementation details would depend on the specific requirements of the platform.
-        val path = Path("local/metadata/cache/$name/$version/$name-$version.jar")
+        val path = Path("local/metadata/cache/$name/$version/$name-$version" + language.suffix())
         val version = this.version(version)
 
         if (version == null) {
@@ -46,7 +46,7 @@ class Platform(
         if (path.notExists()) {
             URI(
                 url.replace("%version%", version.version)
-                    .replace("%buildId%", version.buildId)
+                    .replace("%buildId%", version.buildId?:"null")
             ).toURL().openStream().use { input ->
                 path.toFile().outputStream().use { output ->
                     input.copyTo(output)

@@ -1,7 +1,11 @@
 package dev.httpmarco.polocloud.platforms
 
-enum class PlatformLanguage {
+enum class PlatformLanguage(private var fileSuffix: String) {
 
-    JAVA
+    JAVA("jar"),
+    GO("exe");
 
+    fun suffix(): String {
+        return ".$fileSuffix"
+    }
 }
