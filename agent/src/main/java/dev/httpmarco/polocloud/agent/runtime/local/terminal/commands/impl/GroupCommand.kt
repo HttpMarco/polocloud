@@ -65,7 +65,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
 
             when (editType) {
                 GroupEditFlagArgument.TYPES.MIN_ONLINE_SERVICES -> {
-                    val value = convertValueToInt(IntArgument("value", minValue = 1)) ?: return@syntax
+                    val value = convertValueToInt(IntArgument("value", minValue = 0)) ?: return@syntax
                     if (value > group.data.maxOnlineService) {
                         i18n.info("agent.terminal.command.group.edit.warn.above-max", editType)
                         return@syntax
@@ -73,7 +73,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                     group.data.minOnlineService = value
                 }
                 GroupEditFlagArgument.TYPES.MAX_ONLINE_SERVICES -> {
-                    val value = convertValueToInt(IntArgument("value", minValue = 1)) ?: return@syntax
+                    val value = convertValueToInt(IntArgument("value", minValue = 0)) ?: return@syntax
                     if (value < group.data.minOnlineService) {
                         i18n.info("agent.terminal.command.group.edit.warn.below-min", editType)
                         return@syntax
@@ -121,8 +121,8 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
         val nameArgument = TextArgument("name")
         val platformArgument = PlatformArgument()
         val platformVersionArgument = PlatformVersionArgument(platformArgument)
-        val minOnlineServices = IntArgument("minOnlineServices", minValue = 1)
-        val maxOnlineServices = IntArgument("maxOnlineServices", minValue = 1)
+        val minOnlineServices = IntArgument("minOnlineServices", minValue = 0)
+        val maxOnlineServices = IntArgument("maxOnlineServices", minValue = 0)
         val minMemory = IntArgument("minMemory", minValue = 1)
         val maxMemory = IntArgument("maxMemory", minValue = 1)
 
