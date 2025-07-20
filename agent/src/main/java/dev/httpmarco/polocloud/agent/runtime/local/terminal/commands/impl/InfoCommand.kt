@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 
 import com.sun.management.OperatingSystemMXBean
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import java.lang.management.ManagementFactory
 import java.time.Duration
@@ -18,14 +18,14 @@ class InfoCommand : Command("info", "Used to display information about the agent
         cpuUsage()
 
         defaultExecution {
-            logger.info("Current &3agent &7information&8:")
-            logger.info("  &8- &7Uptime&8: &f${formatDuration(System.currentTimeMillis() - System.getProperty("polocloud.lifecycle.boot-time").toLong())}")
-            logger.info("  &8- &7Cluster type&8: &f${Agent.instance.runtime.javaClass.simpleName}")
-            logger.info("  &8- &7Java version&8: &f${System.getProperty("java.version")}")
-            logger.info("  &8- &7Cpu usage&8: &f${cpuUsage()}%")
-            logger.info("  &8- &7Used memory&8: &f${usedMemory()}MB")
-            logger.info("  &8- &7Max memory&8: &f${maxMemory()}MB")
-            logger.info("  &8- &7Subscribed events&8: &f${Agent.instance.eventService.registeredAmount()}")
+            i18n.info("agent.terminal.command.info")
+            i18n.info("agent.terminal.command.info.line.1", formatDuration(System.currentTimeMillis() - System.getProperty("polocloud.lifecycle.boot-time").toLong()))
+            i18n.info("agent.terminal.command.info.line.2", Agent.instance.runtime.javaClass.simpleName)
+            i18n.info("agent.terminal.command.info.line.3", System.getProperty("java.version"))
+            i18n.info("agent.terminal.command.info.line.4", cpuUsage(), "%")
+            i18n.info("agent.terminal.command.info.line.5", usedMemory())
+            i18n.info("agent.terminal.command.info.line.6", maxMemory())
+            i18n.info("agent.terminal.command.info.line.7", Agent.instance.eventService.registeredAmount())
         }
     }
 
@@ -57,7 +57,7 @@ class InfoCommand : Command("info", "Used to display information about the agent
         return bytes / 1024.0 / 1024.0
     }
 
-    fun formatDuration(millis: Long): String {
+     fun formatDuration(millis: Long): String {
         var duration = Duration.ofMillis(millis)
 
         val days = duration.toDays()
@@ -69,7 +69,7 @@ class InfoCommand : Command("info", "Used to display information about the agent
         val minutes = duration.toMinutes()
         duration = duration.minusMinutes(minutes)
 
-        val seconds = duration.getSeconds()
+        val seconds = duration.seconds
         val sb = StringBuilder()
 
         if (days > 0) sb.append(days).append("d ")

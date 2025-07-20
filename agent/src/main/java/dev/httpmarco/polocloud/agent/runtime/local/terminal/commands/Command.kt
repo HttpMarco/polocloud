@@ -22,6 +22,6 @@ abstract class Command(val name: String, val description: String, vararg val ali
     }
 
     fun hasSyntaxCommands(): Boolean {
-        return !this.commandSyntaxes.isEmpty()
+        return this.commandSyntaxes.isNotEmpty()
     }
 }

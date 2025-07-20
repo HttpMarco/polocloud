@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.groups.Group
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
 import dev.httpmarco.polocloud.common.json.PRETTY_JSON
@@ -65,9 +66,9 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
     }
 
     override fun reload() {
-        logger.info("Drop all cached groups and reload from storage&8...")
+        i18n.info("agent.local-runtime.group-storage.reload")
         this.initialize()
-        logger.info("Collect &3${this.cachedGroups.size}&7 groups from storage&8.")
+        i18n.info("agent.local-runtime.group-storage.collect", this.cachedGroups.size)
     }
 
     private fun groupPath(group: Group): Path {

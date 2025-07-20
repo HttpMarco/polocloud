@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.agent.events
 import com.google.gson.GsonBuilder
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.serializer.ServiceDefinitionSerializer
-import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
 import io.grpc.stub.StreamObserver
@@ -19,7 +19,7 @@ class EventService {
         val service = Agent.instance.runtime.serviceStorage().findService(serviceName)
 
         if (service == null) {
-            logger.warn("Service $service not found for event subscription $event. Ignoring subscription.")
+            i18n.warn("agent.events.service.not-found", serviceName, event)
             observer.onCompleted()
             return
         }

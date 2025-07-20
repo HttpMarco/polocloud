@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.agent.grpc
 
 import dev.httpmarco.polocloud.agent.events.EventGrpcService
 import dev.httpmarco.polocloud.agent.groups.GroupGrpcService
-import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.services.ServiceGrpcService
 import io.grpc.Server
 import io.grpc.ServerBuilder
@@ -18,7 +18,7 @@ class GrpcServerEndpoint {
             .addService(ServiceGrpcService())
             .build()
         this.server.start()
-        logger.info("Successfully started gRPC server on port 8932")
+        i18n.info("agent.starting.grpc.successful")
     }
 
     fun close() {

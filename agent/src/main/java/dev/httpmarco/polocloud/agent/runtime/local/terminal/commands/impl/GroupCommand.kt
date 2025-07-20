@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.groups.GroupData
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
@@ -18,29 +19,28 @@ import dev.httpmarco.polocloud.platforms.PlatformIndex
 class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("group", "Manage all group actions") {
 
     init {
-        syntax(execution = { context ->
+        syntax(execution = {
             if (groupStorage.items().isEmpty()) {
-                logger.info("No groups found.")
+                i18n.info("agent.terminal.command.group.not-found")
                 return@syntax
             }
-            logger.info("Found ${groupStorage.items().size} groups&8:")
-            groupStorage.items()
-                .forEach { logger.info(" &8- &3${it.data.name} &8(&7minOnlineServices&8=&7${it.data.minOnlineService} services&8=&7${it.serviceCount()}&8)") }
+            i18n.info("agent.terminal.command.group.found", groupStorage.items().size)
+            groupStorage.items().forEach { i18n.info("agent.terminal.command.group.list", it.data.name, it.data.minOnlineService, it.serviceCount()) }
         }, KeywordArgument("list"))
 
         val groupArgument = GroupArgument()
 
         syntax(execution = { context ->
-            var group = context.arg(groupArgument)
+            val group = context.arg(groupArgument)
 
-            logger.info("Group &3${group.data.name}&8:")
-            logger.info(" &8- &7Min Memory&8: &f${group.data.minMemory}MB")
-            logger.info(" &8- &7Max Memory&8: &f${group.data.maxMemory}MB")
-            logger.info(" &8- &7Min Online Services&8: &f${group.data.minOnlineService}")
-            logger.info(" &8- &7Max Online Services&8: &f${group.data.maxOnlineService}")
-            logger.info(" &8- &7Online services&8: &f${group.serviceCount()}")
-            logger.info(" &8- &7Platform&8: &f${group.data.platform.group} &8(&7${group.data.platform.version}&8)")
-            logger.info(" &8- &7Properties&8:")
+            i18n.info("agent.terminal.command.group.info.header", group.data.name)
+            i18n.info("agent.terminal.command.group.info.line.1", group.data.minMemory)
+            i18n.info("agent.terminal.command.group.info.line.2", group.data.maxMemory)
+            i18n.info("agent.terminal.command.group.info.line.3", group.data.minOnlineService)
+            i18n.info("agent.terminal.command.group.info.line.4", group.data.maxOnlineService)
+            i18n.info("agent.terminal.command.group.info.line.5", group.serviceCount())
+            i18n.info("agent.terminal.command.group.info.line.6", group.data.platform.group, group.data.platform.version)
+            i18n.info("agent.terminal.command.group.info.line.7")
 
             group.data.properties.forEach { (key, value) ->
                 logger.info("   &8- &7$key&8: &f$value")
@@ -50,15 +50,15 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
 
 
         syntax(execution = { context ->
-            var editType = context.arg(GroupEditFlagArgument())
-            var group = context.arg(groupArgument)
-            var value = context.arg(TextArgument("value"))
+            val editType = context.arg(GroupEditFlagArgument())
+            val group = context.arg(groupArgument)
+            val value = context.arg(TextArgument("value"))
 
             when (editType) {
                 GroupEditFlagArgument.TYPES.MIN_ONLINE_SERVICES -> {
                     val intValue = value.toInt()
                     if (intValue > group.data.maxOnlineService) {
-                        logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
+                        i18n.warn("agent.terminal.command.group.create.warn.above-max", editType.name)
                         return@syntax
                     }
                     group.data.minOnlineService = intValue
@@ -66,7 +66,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                 GroupEditFlagArgument.TYPES.MAX_ONLINE_SERVICES -> {
                     val intValue = value.toInt()
                     if (intValue < group.data.minOnlineService) {
-                        logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
+                        i18n.warn("agent.terminal.command.group.edit.warn.below-min", editType.name)
                         return@syntax
                     }
                     group.data.maxOnlineService = intValue
@@ -74,7 +74,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                 GroupEditFlagArgument.TYPES.MIN_MEMORY -> {
                     val intValue = value.toInt()
                     if (intValue > group.data.maxMemory) {
-                        logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
+                        i18n.warn("agent.terminal.command.group.edit.warn.above-max", editType.name)
                         return@syntax
                     }
                     group.data.minMemory = intValue
@@ -82,7 +82,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                 GroupEditFlagArgument.TYPES.MAX_MEMORY -> {
                     val intValue = value.toInt()
                     if (intValue < group.data.minMemory) {
-                        logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
+                        i18n.warn("agent.terminal.command.group.edit.warn.below-min", editType.name)
                         return@syntax
                     }
                     group.data.maxMemory = intValue
@@ -90,14 +90,14 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
             }
 
             group.update()
-            logger.info("The group &f${group.data.name} &7has been edited&8: &7Update &3${editType.name} &7to &f$value&8.")
+            i18n.info("agent.terminal.command.group.edit.successful", group.data.name, editType.name, value)
         }, groupArgument, KeywordArgument("edit"), GroupEditFlagArgument(), TextArgument("value"))
 
         syntax(execution = { context ->
-            var group = context.arg(groupArgument)
-            logger.info("All services of groups will be shutdown&8...")
+            val group = context.arg(groupArgument)
+            i18n.info("agent.terminal.command.group.shutdown-all")
             group.shutdownAll()
-            logger.info("All services of group ${group.data.name} are now shutdown&8.")
+            i18n.info("agent.terminal.command.group.shutdown-all.successful", group.data.name)
         }, groupArgument, KeywordArgument("shutdownAll"))
 
         syntax(execution = { context ->
@@ -106,7 +106,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
             Agent.instance.runtime.groupStorage().destroy(group)
             group.shutdownAll()
 
-            logger.info("Group ${group.data.name} deleted.")
+            i18n.info("agent.terminal.command.group.deleted", group.data.name)
         }, groupArgument, KeywordArgument("delete"))
 
         val nameArgument = TextArgument("name")
@@ -124,7 +124,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                 val maxMemory = context.arg(maxMemory)
 
                 if (maxMemory < minMemory) {
-                    logger.warn("Max memory cannot be less than min memory&8. &7Using min memory as max memory&8.")
+                    i18n.warn("agent.terminal.command.group.create.invalid-memory-range")
                     return@syntax
                 }
 
@@ -132,17 +132,15 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                 val maxOnlineServices = context.arg(maxOnlineServices)
 
                 if (maxOnlineServices < minOnlineServices) {
-                    logger.warn("Max online services cannot be less than min online service&8. &7Using min online services as max online service&8.")
+                    i18n.warn("agent.terminal.command.group.create.invalid-services-range")
                     return@syntax
                 }
 
                 val platform = context.arg(platformArgument)
                 val groupName = context.arg(nameArgument)
 
-                if (Agent.instance.runtime.groupStorage().items()
-                        .any { it.data.name.equals(groupName, ignoreCase = true) }
-                ) {
-                    logger.warn("Group with name $groupName already exists.")
+                if (Agent.instance.runtime.groupStorage().items().any { it.data.name.equals(groupName, ignoreCase = true) }) {
+                    i18n.warn("agent.terminal.command.group.create.already-exists", groupName)
                     return@syntax
                 }
 
@@ -163,7 +161,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                         )
                     )
                 )
-                logger.info("Group &f$groupName successfully created&8.")
+                i18n.info("agent.terminal.command.group.create.successful")
             },
             KeywordArgument("create"),
             nameArgument,

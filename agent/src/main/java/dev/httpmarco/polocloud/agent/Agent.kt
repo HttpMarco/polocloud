@@ -15,7 +15,7 @@ import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 // this is used to print messages to the console
 val logger = Logger()
 val developmentMode = System.getProperty("polocloud.version", "false").toBoolean()
-val i18n = I18nPolocloudAgent();
+val i18n = I18nPolocloudAgent()
 
 class Agent {
 
@@ -35,19 +35,19 @@ class Agent {
         i18n.info("agent.starting", version())
 
         if(version().endsWith("-SNAPSHOT")) {
-            logger.warn("You are using a snapshot version of polocloud. This version is not recommended for production use!")
+            i18n.warn("agent.version.warn")
         }
 
         this.runtime = Runtime.create()
         this.grpcServerEndpoint.connect()
 
-        logger.info("Using runtime: ${runtime::class.simpleName}")
+        i18n.info("agent.starting.runtime", runtime::class.simpleName)
 
         val groups = runtime.groupStorage().items()
-        logger.info("Load groups&8 (&7${groups.size}&8): &7" + groups.joinToString(separator = "&8, &7") { it.data.name })
-        logger.info("Load ${PlatformPool.size()} platforms with ${PlatformTaskPool.size()} tasks&8.")
+        i18n.info("agent.starting.groups.count", groups.size, groups.joinToString(separator = "&8, &7") { it.data.name })
+        i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformTaskPool.size())
 
-        logger.info("The agent is now &3successfully &7started and ready to use&8!")
+        i18n.info("agent.starting.successful")
 
         this.onlineStateDetector.detect()
         this.runtime.postInitialize()
@@ -60,6 +60,6 @@ class Agent {
     }
 
     fun version(): String {
-        return System.getenv("polocloud-version");
+        return System.getenv("polocloud-version")
     }
 }

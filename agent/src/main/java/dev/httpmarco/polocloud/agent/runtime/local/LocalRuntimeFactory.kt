@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
@@ -26,11 +27,11 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
     override fun bootApplication(service: LocalService) {
 
         if (service.state != Service.State.PREPARING) {
-            logger.error("Cannot boot application for service ${service.name()} because it is not in PREPARING state, but in ${service.state} state&8. &7Wait for action&8...")
+            i18n.error("agent.local-runtime.factory.boot.error", service.name(), service.state)
             return
         }
 
-        logger.info("The service &3${service.name()}&7 is now starting&8...")
+        i18n.info("agent.local-runtime.factory.boot.up", service.name())
 
         val platform = service.group.platform()
 
@@ -89,7 +90,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         }
         service.state = Service.State.STOPPING
 
-        logger.info("The service &3${service.name()}&7 is now stopping&8...")
+        i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
         val eventService = Agent.instance.eventService
 
@@ -127,6 +128,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         service.state = Service.State.STOPPED
         Agent.instance.runtime.serviceStorage().dropService(service)
-        logger.info("The service &3${service.name()}&7 has been stopped and deleted&8.")
+        i18n.info("agent.local-runtime.factory.shutdown.successful", service.name())
     }
 }

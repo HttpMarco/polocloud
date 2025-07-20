@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.Jline3Terminal
@@ -15,27 +16,27 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
     Command("service", "Used to manage services", "ser") {
 
     init {
-        syntax(execution = { context ->
+        syntax(execution = {
             if (serviceStorage.items().isEmpty()) {
-                logger.info("No service found.")
+                i18n.info("agent.terminal.command.service.not-found")
                 return@syntax
             }
-            logger.info("Found ${serviceStorage.items().size} services&8:")
+            i18n.info("agent.terminal.command.service.found", serviceStorage.items().size)
             serviceStorage.items().forEach { logger.info(" &8- &3${it.name()} &8(&7&8)") }
         }, KeywordArgument("list"))
 
-        var serviceArgument = ServiceArgument()
+        val serviceArgument = ServiceArgument()
 
         syntax(execution = {
-            var service = it.arg(serviceArgument)
+            val service = it.arg(serviceArgument)
 
-            logger.info("Service &3${service.name()}&8:")
-            logger.info(" &8- &7State&8: &f${service.state}")
-            logger.info(" &8- &7Group&8: &f${service.group.data.name}")
-            logger.info(" &8- &7Port&8: &f${service.port}")
-            logger.info(" &8- &7Hostname&8: &f${service.hostname}")
-            logger.info(" &8- &7Players&8: &f${service.playerCount}&8/&f${service.maxPlayerCount}")
-            logger.info(" &8- &7Properties&8:")
+            i18n.info("agent.terminal.command.service.info.header", service.name())
+            i18n.info("agent.terminal.command.service.info.line.1", service.state)
+            i18n.info("agent.terminal.command.service.info.line.2", service.group.data.name)
+            i18n.info("agent.terminal.command.service.info.line.3", service.port)
+            i18n.info("agent.terminal.command.service.info.line.4", service.hostname)
+            i18n.info("agent.terminal.command.service.info.line.5", service.playerCount, service.maxPlayerCount)
+            i18n.info("agent.terminal.command.service.info.line.6")
 
             service.properties.forEach { (key, value) ->
                 logger.info("   &8- &7$key&8: &f$value")
@@ -43,25 +44,25 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
         }, serviceArgument)
 
         syntax(execution = {
-            var service = it.arg(serviceArgument)
+            val service = it.arg(serviceArgument)
 
             service.shutdown()
         }, serviceArgument, KeywordArgument("shutdown"))
 
         syntax(execution = {
-            var service = it.arg(serviceArgument)
+            val service = it.arg(serviceArgument)
 
             service.logs().forEach { log ->
                 println(log)
             }
         }, serviceArgument, KeywordArgument("logs"))
 
-        var commandArg = StringArrayArgument("command")
+        val commandArg = StringArrayArgument("command")
         syntax(execution = {
-            var service = it.arg(serviceArgument)
+            val service = it.arg(serviceArgument)
 
             Agent.instance.runtime.expender().executeCommand(service, it.arg(commandArg))
-            logger.info("Executed command on service &3${service.name()}&8: &f${it.arg(commandArg)}")
+            i18n.info("agent.terminal.command.service.execute", service.name(), it.arg(commandArg))
         }, serviceArgument, KeywordArgument("execute"), commandArg)
 
         syntax(execution = {
