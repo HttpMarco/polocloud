@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 
-import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
@@ -10,7 +9,7 @@ import dev.httpmarco.polocloud.platforms.PlatformPool
 class PlatformCommand() : Command("platform", "Manage the platforms") {
 
     init {
-        syntax(execution = { context ->
+        syntax(execution = {
             if (PlatformPool.platforms().isEmpty()) {
                 logger.info("No platform found.")
                 return@syntax
@@ -20,10 +19,10 @@ class PlatformCommand() : Command("platform", "Manage the platforms") {
         }, KeywordArgument("list"))
 
 
-        var platformArg = PlatformArgument()
+        val platformArg = PlatformArgument()
         syntax(execution = {
 
-            var platform = it.arg(platformArg)
+            val platform = it.arg(platformArg)
 
             logger.info("Service &3${platform.name}&8:")
             logger.info(" &8- &7Language&8: &f${platform.language}")
@@ -44,7 +43,7 @@ class PlatformCommand() : Command("platform", "Manage the platforms") {
             }
         }, platformArg)
 
-        syntax(execution = { context ->
+        syntax(execution = {
             TODO()
         }, KeywordArgument("tasks"))
 
