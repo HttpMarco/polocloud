@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal
 
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandService
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandSyntax
 import org.jline.reader.Candidate
@@ -59,7 +59,7 @@ class Jline3Completer(private val commandService: CommandService) : Completer {
         }
 
         val argument = commandSyntax.arguments[argumentIndex]
-        val context = CommandContext()
+        val context = InputContext()
 
         for (i in 0..<argumentIndex) {
             // read all previous temp parameters

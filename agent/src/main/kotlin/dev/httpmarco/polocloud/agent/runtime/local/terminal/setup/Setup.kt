@@ -4,7 +4,7 @@ import java.util.LinkedList
 
 abstract class Setup<T>(private val name: String) {
 
-    private val steps = LinkedList<SetupStep>()
+    private val steps = LinkedList<SetupStep<*>>()
 
     abstract fun bindQuestion()
 

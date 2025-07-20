@@ -1,10 +1,10 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type
 
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 
 class KeywordArgument(key: String) : TerminalArgument<String>(key) {
-    override fun defaultArgs(context: CommandContext): MutableList<String> {
+    override fun defaultArgs(context: InputContext): MutableList<String> {
         return listOf(key) as MutableList<String>
     }
 
@@ -12,7 +12,7 @@ class KeywordArgument(key: String) : TerminalArgument<String>(key) {
         return ""
     }
 
-    override fun buildResult(input: String, context: CommandContext): String {
+    override fun buildResult(input: String, context: InputContext): String {
         return ""
     }
 

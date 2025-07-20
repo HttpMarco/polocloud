@@ -2,17 +2,17 @@ package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 import dev.httpmarco.polocloud.agent.services.Service
 
 class ServiceArgument(key: String = "service") : TerminalArgument<Service>(key) {
 
-    override fun buildResult(input: String, context: CommandContext): Service {
+    override fun buildResult(input: String, context: InputContext): Service {
         // null check is done in the predication method
         return Agent.instance.runtime.serviceStorage().findService(input)!!
     }
 
-    override fun defaultArgs(context: CommandContext): MutableList<String> {
+    override fun defaultArgs(context: InputContext): MutableList<String> {
         return Agent.instance.runtime.serviceStorage().items().stream().map { it.name() }.toList()
     }
 

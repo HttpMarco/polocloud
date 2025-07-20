@@ -1,11 +1,11 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments
 
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 
 abstract class TerminalArgument<T>(open val key: String) {
 
-    open fun defaultArgs(context: CommandContext): MutableList<String> {
+    open fun defaultArgs(context: InputContext): MutableList<String> {
         return mutableListOf()
     }
 
@@ -18,5 +18,5 @@ abstract class TerminalArgument<T>(open val key: String) {
         return i18n.get("agent.terminal.command.reason.wrong")
     }
 
-    abstract fun buildResult(input: String, context: CommandContext): T
+    abstract fun buildResult(input: String, context: InputContext): T
 }

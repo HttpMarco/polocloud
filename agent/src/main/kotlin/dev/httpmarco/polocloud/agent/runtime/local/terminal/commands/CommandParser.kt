@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands
 
 import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.StringArrayArgument
 import kotlin.Array
@@ -20,7 +21,7 @@ object CommandParser {
         // we must calculate the usage, because no command was found
         for (command in commands) {
             if (command.defaultExecution != null) {
-                command.defaultExecution!!.execute(CommandContext())
+                command.defaultExecution!!.execute(InputContext())
             } else {
                 for (syntaxCommand in command.commandSyntaxes()) {
                     logger.info("${command.name} ${syntaxCommand.usage()}")
@@ -40,7 +41,7 @@ object CommandParser {
                     continue
                 }
 
-                val commandContext = CommandContext()
+                val inputContext = InputContext()
 
                 var provedSyntax = true
                 var provedSyntaxWarning : String? = null
@@ -56,7 +57,7 @@ object CommandParser {
                     val rawInput = args[i]
 
                     if (argument is StringArrayArgument) {
-                        commandContext.append(argument, argument.buildResult(args.sliceArray(i until args.size).joinToString(" "), commandContext))
+                        inputContext.append(argument, argument.buildResult(args.sliceArray(i until args.size).joinToString(" "), inputContext))
                         break
                     } else if (argument is KeywordArgument ) {
                         if (argument.key != rawInput) {
@@ -68,7 +69,7 @@ object CommandParser {
                         continue
                     }
                         //   println("Adding argument: ${argument.key} with value: $rawInput")
-                    commandContext.append(argument, argument.buildResult(rawInput, commandContext))
+                    inputContext.append(argument, argument.buildResult(rawInput, inputContext))
                 }
 
                 if (!provedSyntax) {
@@ -80,7 +81,7 @@ object CommandParser {
                     return true
                 }
 
-                syntaxCommand.execution.execute(commandContext)
+                syntaxCommand.execution.execute(inputContext)
                 return true
             }
         }

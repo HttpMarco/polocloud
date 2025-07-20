@@ -1,9 +1,6 @@
-package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands
+package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments
 
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
-
-
-class CommandContext {
+class InputContext {
     private val contexts = HashMap<String, Any?>()
 
     @Suppress("UNCHECKED_CAST")
