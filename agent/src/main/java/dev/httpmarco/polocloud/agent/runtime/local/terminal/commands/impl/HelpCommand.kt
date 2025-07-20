@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandService
@@ -8,7 +9,7 @@ class HelpCommand(private val commandService: CommandService) : Command("help", 
 
     init {
         defaultExecution {
-            logger.info("List of available commands&8:")
+            i18n.info("agent.terminal.command.help.info")
             commandService.commands.forEach {
                 logger.info(" &8- &f${it.name}&8: &7${it.description}")
             }

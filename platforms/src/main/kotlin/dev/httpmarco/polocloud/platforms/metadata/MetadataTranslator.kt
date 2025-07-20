@@ -51,7 +51,6 @@ object MetadataTranslator {
                 else -> continue
             }
         }
-
         return true
     }
 

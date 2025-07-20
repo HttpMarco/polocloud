@@ -27,7 +27,7 @@ open class Group(val data: GroupData) {
     }
 
     fun applicationPlatformFile(): Path {
-        return Path("local/metadata/cache/${data.platform.group}/${data.platform.version}/${data.platform.group}-${data.platform.version}.jar");
+        return Path("local/metadata/cache/${data.platform.group}/${data.platform.version}/${data.platform.group}-${data.platform.version}${platform().language.suffix()}")
     }
 
     fun shutdownAll() {

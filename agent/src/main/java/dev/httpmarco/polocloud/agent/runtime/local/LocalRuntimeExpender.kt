@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeExpender
 import java.io.BufferedWriter
@@ -12,7 +13,7 @@ class LocalRuntimeExpender : RuntimeExpender<LocalService> {
         val process = service.process
 
         if (process == null || command.isBlank()) {
-            logger.warn("Cannot execute command on service ${service.name()}: Process is null or command is blank")
+            i18n.warn("agent.local-runtime.expender.execute.failed", service.name())
             return false
         }
 
@@ -27,7 +28,7 @@ class LocalRuntimeExpender : RuntimeExpender<LocalService> {
             writer.flush()
             return true
         } catch (e: IOException) {
-            logger.warn("Failed to write command to service ${service.name()}: ${e.message}")
+            i18n.warn("agent.local-runtime.expender.execute.error")
             logger.throwable(e)
             return false
         }

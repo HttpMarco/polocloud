@@ -1,9 +1,6 @@
 package dev.httpmarco.polocloud.agent
 
-import dev.httpmarco.polocloud.agent.logging.Logger
 import org.jline.jansi.AnsiConsole
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executors
 import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
@@ -24,7 +21,7 @@ fun exitPolocloud(cleanShutdown: Boolean = true) {
 
     inShutdown = true
 
-    logger.info("Polocloud Agent is shutting down&8...")
+    i18n.info("agent.shutdown.starting")
 
 
     try {
@@ -34,16 +31,16 @@ fun exitPolocloud(cleanShutdown: Boolean = true) {
 
         Agent.instance.close()
 
-        logger.info("Cleanup temp files&8...")
+        i18n.info("agent.shutdown.temp-files.cleanup")
         Path("temp").toFile().deleteRecursively()
-        logger.info("Successfully cleaned up temp files&8.")
+        i18n.info("agent.shutdown.temp-files.cleanup.successful")
 
         AnsiConsole.systemUninstall()
     } catch (e: Exception) {
         logger.throwable(e)
     }
 
-    logger.info("Polocloud Agent is shutting down&8...")
+    i18n.info("agent.shutdown.successful")
 
     if (Thread.currentThread().name != SHUTDOWN_HOOK) {
         exitProcess(0)

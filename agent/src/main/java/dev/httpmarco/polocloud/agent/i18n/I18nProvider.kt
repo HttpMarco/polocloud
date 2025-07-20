@@ -9,12 +9,24 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
     private val utf8ResourceBundleControl = UTF8ResourceBundleControl()
     private val locale = Locale.ENGLISH // default/backup locale is English
 
-    override fun get(key: String): String? {
+    override fun get(key: String): String {
         return get(key, mutableListOf<Any?>())
     }
 
     fun info(key: String, vararg format: Any?) {
         logger.info(get(key, *format))
+    }
+
+    fun warn(key: String, vararg format: Any?) {
+        logger.warn(get(key, *format))
+    }
+
+    fun error(key: String, vararg format: Any?) {
+        logger.error(get(key, *format))
+    }
+
+    fun debug(key: String, vararg format: Any?) {
+        logger.debug(get(key, *format))
     }
 
     override fun get(key: String, vararg format: Any?): String {

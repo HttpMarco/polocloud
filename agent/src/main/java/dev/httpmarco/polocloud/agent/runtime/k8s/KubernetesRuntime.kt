@@ -1,11 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.k8s
 
-import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
-import dev.httpmarco.polocloud.agent.runtime.RuntimeExpender
-import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
-import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
-import dev.httpmarco.polocloud.agent.services.Service
 import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -26,7 +22,7 @@ class KubernetesRuntime : Runtime {
             }
             future.get(1, TimeUnit.SECONDS)
         } catch (e: Exception) {
-            logger.debug("Failed to connect to Kubernetes API: ${e.javaClass.simpleName} - ${e.message}")
+            i18n.debug("agent.runtime.k8s.connection.failed", e.javaClass.simpleName, e.message)
             false
         }
     }
@@ -35,7 +31,7 @@ class KubernetesRuntime : Runtime {
 
     override fun groupStorage() = groupStorage
 
-    override fun factory() = factory;
+    override fun factory() = factory
 
     override fun expender() = expender
 
