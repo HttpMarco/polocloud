@@ -52,45 +52,50 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
         syntax(execution = { context ->
             var editType = context.arg(GroupEditFlagArgument())
             var group = context.arg(groupArgument)
-            var value = context.arg(TextArgument("value"))
+
+            val objectValue: Any
 
             when (editType) {
                 GroupEditFlagArgument.TYPES.MIN_ONLINE_SERVICES -> {
-                    val intValue = value.toInt()
-                    if (intValue > group.data.maxOnlineService) {
+                    var value = context.arg(IntArgument("value", minValue = 1))
+                    if (value > group.data.maxOnlineService) {
                         logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
                         return@syntax
                     }
-                    group.data.minOnlineService = intValue
+                    group.data.minOnlineService = value
+                    objectValue = value
                 }
                 GroupEditFlagArgument.TYPES.MAX_ONLINE_SERVICES -> {
-                    val intValue = value.toInt()
-                    if (intValue < group.data.minOnlineService) {
+                    var value = context.arg(IntArgument("value", minValue = 1))
+                    if (value < group.data.minOnlineService) {
                         logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
                         return@syntax
                     }
-                    group.data.maxOnlineService = intValue
+                    group.data.maxOnlineService = value
+                    objectValue = value
                 }
                 GroupEditFlagArgument.TYPES.MIN_MEMORY -> {
-                    val intValue = value.toInt()
-                    if (intValue > group.data.maxMemory) {
+                    var value = context.arg(IntArgument("value", minValue = 1))
+                    if (value > group.data.maxMemory) {
                         logger.warn("Group can't be updated because ${editType.name} can't be greater than max value.")
                         return@syntax
                     }
-                    group.data.minMemory = intValue
+                    group.data.minMemory = value
+                    objectValue = value
                 }
                 GroupEditFlagArgument.TYPES.MAX_MEMORY -> {
-                    val intValue = value.toInt()
-                    if (intValue < group.data.minMemory) {
+                    var value = context.arg(IntArgument("value", minValue = 1))
+                    if (value < group.data.minMemory) {
                         logger.warn("Group can't be updated because ${editType.name} can't be lower than min value.")
                         return@syntax
                     }
-                    group.data.maxMemory = intValue
+                    group.data.maxMemory = value
+                    objectValue = value
                 }
             }
 
             group.update()
-            logger.info("The group &f${group.data.name} &7has been edited&8: &7Update &3${editType.name} &7to &f$value&8.")
+            logger.info("The group &f${group.data.name} &7has been edited&8: &7Update &3${editType.name} &7to &f$objectValue&8.")
         }, groupArgument, KeywordArgument("edit"), GroupEditFlagArgument(), TextArgument("value"))
 
         syntax(execution = { context ->
