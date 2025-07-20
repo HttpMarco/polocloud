@@ -1,14 +1,17 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands
 
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
+
+
 class CommandContext {
     private val contexts = HashMap<String, Any?>()
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> arg(argument: CommandArgument<T>): T {
+    fun <T> arg(argument: TerminalArgument<T>): T {
         return contexts[argument.key] as T
     }
 
-    fun append(argument: CommandArgument<*>, value: Any?) {
+    fun append(argument: TerminalArgument<*>, value: Any?) {
         this.contexts.put(argument.key, value)
     }
 }

@@ -7,13 +7,13 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.GroupArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.GroupEditFlagArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.IntArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.PlatformArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.PlatformVersionArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.TextArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.GroupArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.GroupEditFlagArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.IntArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformVersionArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextArgument
 import dev.httpmarco.polocloud.platforms.PlatformIndex
 
 class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("group", "Manage all group actions") {

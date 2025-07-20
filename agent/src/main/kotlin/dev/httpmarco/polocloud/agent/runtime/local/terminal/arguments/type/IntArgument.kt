@@ -1,10 +1,10 @@
-package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type
+package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type
 
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
 
-class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = null) : CommandArgument<Int>(key) {
+class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = null) : TerminalArgument<Int>(key) {
     override fun predication(rawInput: String): Boolean {
         return getError(rawInput) == null
     }

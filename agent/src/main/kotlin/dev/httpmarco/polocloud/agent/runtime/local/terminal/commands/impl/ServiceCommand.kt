@@ -6,9 +6,9 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.Jline3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.ServiceArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.StringArrayArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.ServiceArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.StringArrayArgument
 import kotlin.collections.component1
 import kotlin.collections.component2
 

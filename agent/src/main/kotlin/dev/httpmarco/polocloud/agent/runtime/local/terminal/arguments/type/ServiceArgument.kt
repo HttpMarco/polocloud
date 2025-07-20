@@ -1,11 +1,11 @@
-package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type
+package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type
 
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
 import dev.httpmarco.polocloud.agent.services.Service
 
-class ServiceArgument(key: String = "service") : CommandArgument<Service>(key) {
+class ServiceArgument(key: String = "service") : TerminalArgument<Service>(key) {
 
     override fun buildResult(input: String, context: CommandContext): Service {
         // null check is done in the predication method

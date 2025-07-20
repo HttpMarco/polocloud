@@ -1,11 +1,11 @@
-package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type
+package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
 
-class GroupArgument(key: String = "group") : CommandArgument<Group>(key) {
+class GroupArgument(key: String = "group") : TerminalArgument<Group>(key) {
 
     override fun buildResult(input: String, context: CommandContext): Group {
         return Agent.instance.runtime.groupStorage().item(input)!!

@@ -1,9 +1,8 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands
 
 import dev.httpmarco.polocloud.agent.logger
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.StringArrayArgument
-import java.util.*
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.StringArrayArgument
 import kotlin.Array
 import kotlin.Boolean
 

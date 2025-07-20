@@ -1,12 +1,11 @@
-package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type
+package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type
 
-import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformPool
 
-class PlatformArgument(key: String = "platform") : CommandArgument<Platform>(key) {
+class PlatformArgument(key: String = "platform") : TerminalArgument<Platform>(key) {
 
     override fun buildResult(input: String, context: CommandContext): Platform {
         return PlatformPool.find(input)!!

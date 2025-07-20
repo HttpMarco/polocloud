@@ -3,8 +3,8 @@ package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.PlatformArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformArgument
 import dev.httpmarco.polocloud.platforms.PlatformPool
 
 class PlatformCommand() : Command("platform", "Manage the platforms") {

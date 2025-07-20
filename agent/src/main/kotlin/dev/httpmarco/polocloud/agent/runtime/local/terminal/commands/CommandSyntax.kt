@@ -1,12 +1,12 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands
 
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type.KeywordArgument
-import java.util.Arrays
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
 
 class CommandSyntax(
     val execution: CommandExecution,
     val description: String?,
-    val arguments: MutableList<CommandArgument<*>>
+    val arguments: MutableList<TerminalArgument<*>>
 ) {
     fun usage(): String {
         return java.lang.String.join(

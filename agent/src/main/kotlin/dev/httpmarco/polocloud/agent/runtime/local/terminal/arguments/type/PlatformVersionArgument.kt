@@ -1,10 +1,10 @@
-package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.type
+package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type
 
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandContext
 import dev.httpmarco.polocloud.platforms.PlatformVersion
 
-class PlatformVersionArgument(val platformArgument: PlatformArgument) : CommandArgument<PlatformVersion>("version"){
+class PlatformVersionArgument(val platformArgument: PlatformArgument) : TerminalArgument<PlatformVersion>("version"){
 
     override fun buildResult(
         input: String,

@@ -3,9 +3,9 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformType
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
@@ -42,7 +42,10 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment.put("hostname", service.hostname)
         environment.put("port", service.port.toString())
         environment.put("service-name", service.name())
-        environment.put("need-bridge", (service.group.platform().type == PlatformType.PROXY).toString())
+        environment.put(
+            "need-bridge",
+            (service.group.platform().type == PlatformType.PROXY && service.group.platform().language != PlatformLanguage.GO).toString()
+        )
         environment.put("velocityProxyToken", Agent.instance.securityProvider.proxySecureToken)
         environment.put("version", Agent.instance.version())
 
@@ -55,12 +58,15 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         val serverIconPath = service.path.resolve("server-icon.png")
         // copy server-icon if not exists
-        if(Files.notExists(serverIconPath)) {
+        if (Files.notExists(serverIconPath)) {
             Files.copy(this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!, serverIconPath)
         }
 
         // basically current only the java command is supported yet
         val commands = ArrayList<String>()
+
+        commands.add(service.group.applicationPlatformFile().toString())
+        /*
         val javaPath = System.getProperty("java.home")
 
         commands.add("${javaPath}/bin/java")
@@ -76,6 +82,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         )
         commands.addAll(platform.arguments)
 
+         */
+
         val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
         processBuilder.environment().putAll(environment)
 
@@ -84,7 +92,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
     }
 
     @OptIn(ExperimentalPathApi::class)
-    override fun shutdownApplication(service: LocalService, shutdownCleanUp : Boolean) {
+    override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean) {
         if (service.state == Service.State.STOPPING || service.state == Service.State.STOPPING) {
             return
         }
