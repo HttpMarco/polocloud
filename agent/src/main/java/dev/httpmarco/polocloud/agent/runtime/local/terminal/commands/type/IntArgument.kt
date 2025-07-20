@@ -5,16 +5,16 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandCont
 
 class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = null) : CommandArgument<Int>(key) {
     override fun predication(rawInput: String): Boolean {
-        return getError(rawInput) == IntArgumentError.NONE
+        return getError(rawInput) == null
     }
 
     override fun wrongReason(rawInput: String): String {
         //TODO needs to be replaced with translation keys
         return when (getError(rawInput)) {
-            IntArgumentError.INVALID_INT -> "Test1"
-            IntArgumentError.LOWER_THAN_MIN -> "Test2"
-            IntArgumentError.HIGHER_THAN_MAX -> "Test3"
-            IntArgumentError.NONE -> "Test4"
+            IntArgumentError.INVALID_INT -> "Input is not a valid integer."
+            IntArgumentError.LOWER_THAN_MIN -> "Input must be at least $minValue"
+            IntArgumentError.HIGHER_THAN_MAX -> "Input must not exceed $maxValue"
+            else -> ""
         }
     }
 
@@ -26,7 +26,7 @@ class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = n
         return input.toInt()
     }
 
-    private fun getError(rawInput: String): IntArgumentError {
+    private fun getError(rawInput: String): IntArgumentError? {
         try {
             val intValue = rawInput.toInt()
 
@@ -38,7 +38,7 @@ class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = n
                 return IntArgumentError.LOWER_THAN_MIN
             }
 
-            return IntArgumentError.NONE
+            return null
         } catch (_: NumberFormatException) {
             return IntArgumentError.INVALID_INT
         }
@@ -49,5 +49,4 @@ enum class IntArgumentError {
     INVALID_INT,
     LOWER_THAN_MIN,
     HIGHER_THAN_MAX,
-    NONE
 }
