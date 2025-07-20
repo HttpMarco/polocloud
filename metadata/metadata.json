@@ -6,6 +6,7 @@
   "tasks": [
     "eula",
     "spigotSetup",
+    "gateSetup",
     "velocityProxyToken",
     "paperProxySupport",
     "velocitySetup"
