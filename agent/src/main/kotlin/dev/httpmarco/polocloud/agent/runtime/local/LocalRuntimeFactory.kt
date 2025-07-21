@@ -39,15 +39,12 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.path.createDirectories()
 
         val environment = HashMap<String, String>()
-        environment.put("hostname", service.hostname)
-        environment.put("port", service.port.toString())
-        environment.put("service-name", service.name())
-        environment.put(
-            "need-bridge",
-            (service.group.platform().type == PlatformType.PROXY && service.group.platform().language != PlatformLanguage.GO).toString()
-        )
-        environment.put("velocityProxyToken", Agent.instance.securityProvider.proxySecureToken)
-        environment.put("version", Agent.instance.version())
+        environment["hostname"] = service.hostname
+        environment["port"] = service.port.toString()
+        environment["service-name"] = service.name()
+        environment["need-bridge"] = (service.group.platform().type == PlatformType.PROXY && service.group.platform().language != PlatformLanguage.GO).toString()
+        environment["velocityProxyToken"] = Agent.instance.securityProvider.proxySecureToken
+        environment["version"] = Agent.instance.version()
 
         // copy all templates to the service path
         Agent.instance.runtime.templates().bindTemplate(service)
