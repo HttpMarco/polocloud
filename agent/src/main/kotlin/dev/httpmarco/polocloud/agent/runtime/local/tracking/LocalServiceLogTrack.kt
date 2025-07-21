@@ -10,7 +10,7 @@ import java.util.LinkedList
 
 class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
 
-    val cachedLogs = LinkedList<String>();
+    val cachedLogs = LinkedList<String>()
 
     override fun start() {
         this.thread = Thread.startVirtualThread {

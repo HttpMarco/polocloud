@@ -57,8 +57,8 @@ object CommandParser {
                         break
                     } else if (argument is KeywordArgument ) {
                         if (argument.key != rawInput) {
-                            provedSyntax = false;
-                            break;
+                            provedSyntax = false
+                            break
                         }
                     } else if (!argument.predication(rawInput)) {
                         provedSyntaxWarning = argument.wrongReason(rawInput)
