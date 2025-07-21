@@ -19,13 +19,9 @@ object CommandParser {
         }
 
         // we must calculate the usage, because no command was found
-        for (command in commands) {
-            if (command.defaultExecution != null) {
-                command.defaultExecution!!.execute(InputContext())
-            } else {
-                for (syntaxCommand in command.commandSyntaxes()) {
-                    logger.info("${command.name} ${syntaxCommand.usage()}")
-                }
+        commands.forEach { command ->
+            command.defaultExecution?.execute(InputContext()) ?: command.commandSyntaxes().forEach {
+                logger.info("${command.name} ${it.usage()}")
             }
         }
     }
