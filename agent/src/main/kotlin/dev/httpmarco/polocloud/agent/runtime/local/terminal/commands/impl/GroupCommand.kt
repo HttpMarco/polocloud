@@ -50,10 +50,10 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
 
 
         syntax(execution = { context ->
-            var editType = context.arg(GroupEditFlagArgument())
-            var group = context.arg(groupArgument)
+            val editType = context.arg(GroupEditFlagArgument())
+            val group = context.arg(groupArgument)
 
-            var stringValue = context.arg(TextArgument("value"))
+            val stringValue = context.arg(TextArgument("value"))
 
             fun convertValueToInt(argument: IntArgument): Int? {
                 if (!argument.predication(stringValue)) {

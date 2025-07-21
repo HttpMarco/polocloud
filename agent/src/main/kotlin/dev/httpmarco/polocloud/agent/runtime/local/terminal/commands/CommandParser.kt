@@ -19,13 +19,9 @@ object CommandParser {
         }
 
         // we must calculate the usage, because no command was found
-        for (command in commands) {
-            if (command.defaultExecution != null) {
-                command.defaultExecution!!.execute(InputContext())
-            } else {
-                for (syntaxCommand in command.commandSyntaxes()) {
-                    logger.info("${command.name} ${syntaxCommand.usage()}")
-                }
+        commands.forEach { command ->
+            command.defaultExecution?.execute(InputContext()) ?: command.commandSyntaxes().forEach {
+                logger.info("${command.name} ${it.usage()}")
             }
         }
     }
@@ -61,8 +57,8 @@ object CommandParser {
                         break
                     } else if (argument is KeywordArgument ) {
                         if (argument.key != rawInput) {
-                            provedSyntax = false;
-                            break;
+                            provedSyntax = false
+                            break
                         }
                     } else if (!argument.predication(rawInput)) {
                         provedSyntaxWarning = argument.wrongReason(rawInput)

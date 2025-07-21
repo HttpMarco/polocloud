@@ -10,25 +10,22 @@ import java.util.LinkedList
 
 class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
 
-    val cachedLogs = LinkedList<String>();
+    val cachedLogs = LinkedList<String>()
 
     override fun start() {
         this.thread = Thread.startVirtualThread {
-            service.process?.inputStream?.let { inputStream ->
-                BufferedReader(InputStreamReader(inputStream, StandardCharsets.UTF_8)).use { reader ->
-                    reader.lines().forEach { line ->
-                        cachedLogs.add(line)
+            val input = service.process?.inputStream ?: return@startVirtualThread
+            BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { reader ->
+                reader.lines().forEach { line ->
+                    cachedLogs += line
 
-                        // print the line to the console directly if the screen used this service
-                        if (Agent.instance.runtime is LocalRuntime) {
-                            val runtime = Agent.instance.runtime
-                            val screenService = runtime.terminal.screenService
+                    val runtime = Agent.instance.runtime
+                    if (runtime !is LocalRuntime) return@forEach
 
-                            if (screenService.isServiceRecoding(service)) {
-                               runtime.terminal.screenService.terminal.display(line)
-                            }
-                        }
-                    }
+                    val screenService = runtime.terminal.screenService
+                    if (!screenService.isServiceRecoding(service)) return@forEach
+
+                    screenService.terminal.display(line)
                 }
             }
         }
