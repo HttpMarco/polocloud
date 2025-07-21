@@ -170,7 +170,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
                         )
                     )
                 )
-                i18n.info("agent.terminal.command.group.create.successful")
+                i18n.info("agent.terminal.command.group.create.successful", groupName)
             },
             KeywordArgument("create"),
             nameArgument,

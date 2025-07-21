@@ -13,10 +13,11 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
     val cachedLogs = LinkedList<String>()
 
     override fun start() {
-        this.thread = Thread.startVirtualThread {
-            val input = service.process?.inputStream ?: return@startVirtualThread
-            BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { reader ->
-                reader.lines().forEach { line ->
+        val process = service.process ?: return
+
+        fun handleStream(reader: BufferedReader) {
+            reader.useLines { lines ->
+                lines.forEach { line ->
                     cachedLogs += line
 
                     val runtime = Agent.instance.runtime
@@ -29,5 +30,15 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
                 }
             }
         }
+
+        this.threads.add(Thread.startVirtualThread {
+            val inputReader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
+            handleStream(inputReader)
+        })
+
+        this.threads.add(Thread.startVirtualThread {
+            val errorReader = BufferedReader(InputStreamReader(process.errorStream, StandardCharsets.UTF_8))
+            handleStream(errorReader)
+        })
     }
 }
