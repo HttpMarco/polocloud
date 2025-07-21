@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import java.io.BufferedReader
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.util.LinkedList
@@ -15,7 +16,9 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
     override fun start() {
         val process = service.process ?: return
 
-        fun handleStream(reader: BufferedReader) {
+        fun handleStream(input: InputStream) {
+            val reader = BufferedReader(InputStreamReader(input, StandardCharsets.UTF_8))
+
             reader.useLines { lines ->
                 lines.forEach { line ->
                     cachedLogs += line
@@ -31,14 +34,12 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
             }
         }
 
-        this.threads.add(Thread.startVirtualThread {
-            val inputReader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
-            handleStream(inputReader)
-        })
+        this.threads += Thread.startVirtualThread {
+            handleStream(process.inputStream)
+        }
 
-        this.threads.add(Thread.startVirtualThread {
-            val errorReader = BufferedReader(InputStreamReader(process.errorStream, StandardCharsets.UTF_8))
-            handleStream(errorReader)
-        })
+        this.threads += Thread.startVirtualThread {
+            handleStream(process.errorStream)
+        }
     }
 }
