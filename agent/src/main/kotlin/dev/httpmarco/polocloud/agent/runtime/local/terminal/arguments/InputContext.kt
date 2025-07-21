@@ -9,6 +9,6 @@ class InputContext {
     }
 
     fun append(argument: TerminalArgument<*>, value: Any?) {
-        this.contexts.put(argument.key, value)
+        this.contexts[argument.key] = value
     }
 }
