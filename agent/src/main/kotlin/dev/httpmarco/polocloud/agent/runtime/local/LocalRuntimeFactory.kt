@@ -4,9 +4,9 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
-import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformType
+import dev.httpmarco.polocloud.v1.ServiceState
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
@@ -26,7 +26,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
     override fun bootApplication(service: LocalService) {
 
-        if (service.state != Service.State.PREPARING) {
+        if (service.state != ServiceState.PREPARING) {
             i18n.error("agent.local-runtime.factory.boot.error", service.name(), service.state)
             return
         }
@@ -35,7 +35,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         val platform = service.group.platform()
 
-        service.state = Service.State.STARTING
+        service.state = ServiceState.STARTING
         service.path.createDirectories()
 
         val environment = HashMap<String, String>()
@@ -90,10 +90,10 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
     @OptIn(ExperimentalPathApi::class)
     override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean) {
-        if (service.state == Service.State.STOPPING || service.state == Service.State.STOPPING) {
+        if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPING) {
             return
         }
-        service.state = Service.State.STOPPING
+        service.state = ServiceState.STOPPING
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
@@ -107,17 +107,17 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
                 if (shutdownCleanUp && service.executeCommand(service.group.platform().shutdownCommand)) {
                     if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
                         service.process!!.exitValue()
-                        service.state == Service.State.STOPPED
+                        service.state == ServiceState.STOPPED
                     }
                 }
             } catch (_: Exception) {
                 // ignore exceptions, we just want to stop the process
             }
 
-            if (service.state != Service.State.STOPPED) {
+            if (service.state != ServiceState.STOPPED) {
                 service.process!!.toHandle().destroyForcibly()
                 service.process = null
-                service.state == Service.State.STOPPED
+                service.state == ServiceState.STOPPED
             }
         }
 
@@ -131,7 +131,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         service.path.deleteRecursively()
 
-        service.state = Service.State.STOPPED
+        service.state = ServiceState.STOPPED
         Agent.instance.runtime.serviceStorage().dropService(service)
         i18n.info("agent.local-runtime.factory.shutdown.successful", service.name())
     }
