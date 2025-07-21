@@ -3,7 +3,6 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.logger
-import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.agent.shutdownProcess
 import dev.httpmarco.polocloud.platforms.PlatformType
 
@@ -42,7 +41,7 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
     }
 
     private fun requiredServersThatStart(group: Group): Int {
-        return (group.data.minOnlineService - group.serviceCount()).coerceAtLeast(0);
+        return (group.data.minOnlineService - group.serviceCount()).coerceAtLeast(0)
     }
 
     private fun findIndex(group: Group): Int {
