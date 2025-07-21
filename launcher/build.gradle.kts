@@ -26,7 +26,9 @@ tasks.shadowJar {
         includeLibs("agent"),
         includeLibs("platforms"),
         includeLibs("proto"),
-        includeLibs(":bridges:java-bridge", "shadowJar"),
+
+        includeLibs(":bridges:bridge-velocity", "shadowJar"),
+        includeLibs(":bridges:bridge-bungeecord", "shadowJar")
     )
 
     manifest {

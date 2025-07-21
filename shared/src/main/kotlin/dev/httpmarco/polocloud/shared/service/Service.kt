@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.sdk.java.services
+package dev.httpmarco.polocloud.shared.service
 
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.ServiceState
@@ -8,5 +8,4 @@ class Service(val groupName: String, val id: Int, val hostname: String, val port
     fun name(): String {
         return "${groupName}-$id"
     }
-
 }

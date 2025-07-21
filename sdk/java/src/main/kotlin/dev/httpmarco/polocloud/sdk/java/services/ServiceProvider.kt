@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.sdk.java.services
 
 import com.google.common.util.concurrent.MoreExecutors
+import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.ServiceControllerGrpc
 import dev.httpmarco.polocloud.v1.ServiceFindRequest
 import java.util.concurrent.Executor
