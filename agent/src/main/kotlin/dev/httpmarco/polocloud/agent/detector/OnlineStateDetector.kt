@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.agent.detector
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.v1.ServiceState
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
@@ -31,8 +31,8 @@ class OnlineStateDetector : Detector {
                 Socket().use { socket ->
                     socket.connect(InetSocketAddress(host, port), 500)
 
-                    if (service.state == Service.State.STARTING) {
-                        service.state = Service.State.ONLINE
+                    if (service.state == ServiceState.STARTING) {
+                        service.state = ServiceState.ONLINE
 
                         // call the services all the events
                         Agent.instance.eventService.call(ServiceOnlineEvent(service))
