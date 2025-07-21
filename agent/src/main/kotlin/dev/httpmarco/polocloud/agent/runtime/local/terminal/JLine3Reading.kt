@@ -25,20 +25,22 @@ class JLine3Reading(
                     continue
                 }
 
-                val splat: Array<String> = line.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                val commandName = splat[0]
-                val args = splat.copyOfRange(1, splat.size)
                 val screenService = terminal.screenService
 
-                if (!screenService.isRecoding()) {
-                    commandService.call(commandName, args)
-                } else {
+                if (screenService.isRecoding()) {
                     if (line == "exit") {
                         screenService.stopCurrentRecording()
                         continue
                     }
                     screenService.redirectCommand(line)
+                    continue
                 }
+
+                val tokens = line.split(" ").filter { it.isNotBlank() }
+                val commandName = tokens.firstOrNull() ?: continue
+                val args = tokens.drop(1).toTypedArray()
+
+                commandService.call(commandName, args)
 
             } catch (_: UserInterruptException) {
                 // pressing Ctrl+C or similar to interrupt reading
