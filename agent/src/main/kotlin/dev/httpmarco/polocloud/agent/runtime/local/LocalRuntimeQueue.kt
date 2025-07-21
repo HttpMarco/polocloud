@@ -12,20 +12,26 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
 
     override fun run() {
         try {
+            val runtime = Agent.instance.runtime
+
             while (!isInterrupted && !shutdownProcess()) {
-                Agent.instance.runtime.groupStorage().items().forEach {
-                    for (n in 0 until requiredServersThatStart(it)) {
+                runtime.groupStorage().items()
+                    .filter { requiredServersThatStart(it) > 0 }
+                    .forEach { group ->
+                        val required = requiredServersThatStart(group)
+                        val index = findIndex(group)
 
-                        val service = if(it.platform().type == PlatformType.PROXY) {
-                            LocalService(it, findIndex(it), "0.0.0.0")
-                        } else {
-                            LocalService(it, findIndex(it))
+                        repeat(required) {
+                            val service = when (group.platform().type) {
+                                PlatformType.PROXY -> LocalService(group, index, "0.0.0.0")
+                                else -> LocalService(group, index)
+                            }
+
+                            runtime.serviceStorage().deployService(service)
+                            runtime.factory().bootApplication(service)
                         }
-
-                        Agent.instance.runtime.serviceStorage().deployService(service)
-                        Agent.instance.runtime.factory().bootApplication(service)
                     }
-                }
+
                 sleep(1000)
             }
         } catch (_: InterruptedException) {
