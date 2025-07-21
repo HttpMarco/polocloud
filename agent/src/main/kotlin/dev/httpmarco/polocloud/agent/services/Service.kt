@@ -3,11 +3,12 @@ package dev.httpmarco.polocloud.agent.services
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.utils.PortDetector
+import dev.httpmarco.polocloud.v1.ServiceState
 
 abstract class Service(val group: Group, val id: Int, val hostname: String = "127.0.0.1") {
 
     val port = PortDetector.nextPort(group)
-    var state = State.PREPARING
+    var state = ServiceState.PREPARING
     var playerCount = -1
     var maxPlayerCount = -1
     var properties = hashMapOf<String, String>()
@@ -30,13 +31,5 @@ abstract class Service(val group: Group, val id: Int, val hostname: String = "12
 
     fun logs(limit: Int = 100): List<String> {
         return Agent.instance.runtime.expender().readLogs(this, limit)
-    }
-
-    enum class State {
-        PREPARING,
-        STARTING,
-        ONLINE,
-        STOPPING,
-        STOPPED,
     }
 }
