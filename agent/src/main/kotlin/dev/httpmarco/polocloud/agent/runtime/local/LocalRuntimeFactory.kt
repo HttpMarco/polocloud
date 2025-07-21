@@ -81,7 +81,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
          */
 
-        val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
+        val processBuilder = ProcessBuilder(commands).directory(service.path.toFile()).redirectErrorStream(true)
         processBuilder.environment().putAll(environment)
 
         service.process = processBuilder.start()
