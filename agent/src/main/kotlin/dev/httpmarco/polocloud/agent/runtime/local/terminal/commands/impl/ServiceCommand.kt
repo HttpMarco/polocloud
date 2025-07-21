@@ -22,7 +22,7 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
                 return@syntax
             }
             i18n.info("agent.terminal.command.service.found", serviceStorage.items().size)
-            serviceStorage.items().forEach { logger.info(" &8- &3${it.name()} &8(&7&8)") }
+            serviceStorage.items().forEach { i18n.info("agent.terminal.command.service.list", it.name(), it.state.name, it.hostname, it.port, it.properties.size) }
         }, KeywordArgument("list"))
 
         val serviceArgument = ServiceArgument()
