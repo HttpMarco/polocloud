@@ -67,7 +67,7 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
         return ResourceBundle.getBundle(
             this.resourceBundlePrefix,
             locale,
-            this.javaClass.getClassLoader(),
+            this.javaClass.classLoader,
             utf8ResourceBundleControl
         )
     }
