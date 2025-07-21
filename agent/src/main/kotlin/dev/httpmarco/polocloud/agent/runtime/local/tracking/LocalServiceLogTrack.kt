@@ -31,14 +31,14 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
             }
         }
 
-        Thread.startVirtualThread {
-            val reader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
-            handleStream(reader)
-        }
+        this.threads.add(Thread.startVirtualThread {
+            val inputReader = BufferedReader(InputStreamReader(process.inputStream, StandardCharsets.UTF_8))
+            handleStream(inputReader)
+        })
 
-        Thread.startVirtualThread {
-            val reader = BufferedReader(InputStreamReader(process.errorStream, StandardCharsets.UTF_8))
-            handleStream(reader)
-        }
+        this.threads.add(Thread.startVirtualThread {
+            val errorReader = BufferedReader(InputStreamReader(process.errorStream, StandardCharsets.UTF_8))
+            handleStream(errorReader)
+        })
     }
 }

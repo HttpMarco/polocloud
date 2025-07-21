@@ -2,11 +2,11 @@ package dev.httpmarco.polocloud.agent.runtime.local.tracking
 
 abstract class LocalTrack {
 
-    protected var thread: Thread? = null
+    protected val threads = mutableListOf<Thread>()
 
     abstract fun start()
 
     fun close() {
-        this.thread?.interrupt()
+        threads.forEach { it.interrupt() }
     }
 }
