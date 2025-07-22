@@ -9,7 +9,7 @@ import org.jline.reader.LineReader
 import org.jline.reader.ParsedLine
 import java.util.*
 
-class Jline3Completer(private val commandService: CommandService) : Completer {
+class JLine3Completer(private val commandService: CommandService) : Completer {
 
     override fun complete(reader: LineReader, line: ParsedLine, candidates: MutableList<Candidate>) {
         if (line.wordIndex() == 0) {

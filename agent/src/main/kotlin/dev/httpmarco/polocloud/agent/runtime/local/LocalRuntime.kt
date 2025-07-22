@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.runtime.Runtime
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.Jline3Terminal
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.GroupCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.PlatformCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.ServiceCommand
@@ -14,10 +14,10 @@ class LocalRuntime : Runtime {
     private val runtimeExpender = LocalRuntimeExpender()
     private val templates = LocalRuntimeTemplates()
 
-    lateinit var terminal: Jline3Terminal
+    lateinit var terminal: JLine3Terminal
 
     override fun boot() {
-        terminal = Jline3Terminal()
+        terminal = JLine3Terminal()
 
         terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage))
         terminal.commandService.registerCommand(ServiceCommand(runtimeServiceStorage, terminal))

@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.Jline3Terminal
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.ServiceArgument
@@ -12,7 +12,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.Strin
 import kotlin.collections.component1
 import kotlin.collections.component2
 
-class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal: Jline3Terminal) :
+class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal: JLine3Terminal) :
     Command("service", "Used to manage services", "ser") {
 
     init {

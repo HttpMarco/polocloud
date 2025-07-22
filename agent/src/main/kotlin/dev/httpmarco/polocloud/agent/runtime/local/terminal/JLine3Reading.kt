@@ -8,7 +8,7 @@ import org.jline.reader.LineReader
 import org.jline.reader.UserInterruptException
 
 class JLine3Reading(
-    private var terminal: Jline3Terminal,
+    private var terminal: JLine3Terminal,
     private val lineReader: LineReader,
     private val commandService: CommandService
 ) : Thread() {

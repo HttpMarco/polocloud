@@ -11,7 +11,7 @@ import org.jline.terminal.TerminalBuilder
 import org.jline.utils.InfoCmp
 import java.nio.charset.StandardCharsets
 
-class Jline3Terminal {
+class JLine3Terminal {
 
     val commandService = CommandService()
     val screenService = ServiceScreenController(this)
@@ -26,7 +26,7 @@ class Jline3Terminal {
         .build()
     private val lineReader: LineReaderImpl = LineReaderBuilder.builder()
         .terminal(this.terminal)
-        .completer(Jline3Completer(commandService))
+        .completer(JLine3Completer(commandService))
         .option(LineReader.Option.AUTO_MENU_LIST, true)
         .variable(LineReader.COMPLETION_STYLE_LIST_SELECTION, "fg:cyan")
         .variable(LineReader.COMPLETION_STYLE_LIST_BACKGROUND, "fg:default")

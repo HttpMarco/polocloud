@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.screen
 
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.Jline3Terminal
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.services.Service
 
@@ -8,7 +8,7 @@ import dev.httpmarco.polocloud.agent.services.Service
  * This class is responsible for managing the screen recording of a service.
  * It allows starting and stopping the recording of a service's screen.
  */
-class ServiceScreenController(val terminal: Jline3Terminal) {
+class ServiceScreenController(val terminal: JLine3Terminal) {
 
     private var displayedService: Service? = null
 
