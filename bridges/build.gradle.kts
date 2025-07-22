@@ -12,5 +12,9 @@ subprojects {
     tasks.withType<ShadowJar> {
         archiveFileName.set("polocloud-${project.name}-$version.jar")
     }
+
+    kotlin {
+        jvmToolchain(21)
+    }
 }
 

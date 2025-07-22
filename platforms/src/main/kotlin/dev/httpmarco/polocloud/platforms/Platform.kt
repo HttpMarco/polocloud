@@ -28,8 +28,9 @@ class Platform(
     val flags: List<String> = emptyList(),
     // all versions of the platform that are supported
     val versions: List<PlatformVersion>,
+    private val bridge: String? = null,
     // if the path is empty, the platform will not copy the bridge
-    private val bridgePath: String = "",
+    private val bridgePath: String? = null,
     // the tasks that should be run after the platform is prepared
     private val tasks: List<String> = emptyList(),
     // if true, the polocloud server icon will be copied to the service path
@@ -65,7 +66,7 @@ class Platform(
         // copy the platform file to the service path
         Files.copy(path, servicePath.resolve(path.name), StandardCopyOption.REPLACE_EXISTING)
 
-        if (environment["need-bridge"]?.toBoolean() == true) {
+        if (bridge != null) {
             // copy the bridge if present
             val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-${System.getenv("polocloud-version")}.jar")
             val targetBridge = servicePath.resolve(bridgePath + "/" + sourceBridge.name)

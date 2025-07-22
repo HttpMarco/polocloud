@@ -42,7 +42,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment["hostname"] = service.hostname
         environment["port"] = service.port.toString()
         environment["service-name"] = service.name()
-        environment["need-bridge"] = (service.group.platform().type == PlatformType.PROXY && service.group.platform().language != PlatformLanguage.GO).toString()
         environment["velocityProxyToken"] = Agent.instance.securityProvider.proxySecureToken
         environment["version"] = Agent.instance.version()
 
@@ -62,8 +61,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         // basically current only the java command is supported yet
         val commands = ArrayList<String>()
 
-        commands.add(service.group.applicationPlatformFile().toString())
-        /*
         val javaPath = System.getProperty("java.home")
 
         commands.add("${javaPath}/bin/java")
@@ -79,8 +76,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         )
         commands.addAll(platform.arguments)
 
-         */
-
         val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
         processBuilder.environment().putAll(environment)
 
@@ -90,7 +85,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
     @OptIn(ExperimentalPathApi::class)
     override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean) {
-        if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPING) {
+        if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPED) {
             return
         }
         service.state = ServiceState.STOPPING
