@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.groups
 
 import dev.httpmarco.polocloud.platforms.PlatformIndex
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class GroupData(
@@ -12,5 +13,5 @@ data class GroupData(
     var minOnlineService: Int,
     var maxOnlineService: Int,
     var templates: List<String>,
-    var properties: Map<String, String>
+    var properties: Map<String, JsonElement>
 )

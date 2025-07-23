@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.services
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.utils.PortDetector
+import dev.httpmarco.polocloud.agent.utils.asStringMap
 import dev.httpmarco.polocloud.v1.ServiceState
 
 abstract class Service(val group: Group, val id: Int, val hostname: String = "127.0.0.1") {
@@ -14,7 +15,7 @@ abstract class Service(val group: Group, val id: Int, val hostname: String = "12
     var properties = hashMapOf<String, String>()
 
     init {
-        properties.putAll(group.data.properties)
+        properties.putAll(group.data.properties.asStringMap())
     }
 
     fun name(): String {

@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.groups
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.utils.asStringMap
 import dev.httpmarco.polocloud.v1.proto.GroupControllerGrpc
 import dev.httpmarco.polocloud.v1.proto.GroupProvider
 import io.grpc.stub.StreamObserver
@@ -15,22 +16,19 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
         val builder = GroupProvider.FindGroupResponse.newBuilder()
         val groupStorage = Agent.instance.runtime.groupStorage()
 
-        if (request.name.isNotEmpty()) {
-            val group = groupStorage.item(request.name)
-
-            if (group != null) {
-                builder.addGroups(
-                    GroupProvider.GroupSnapshot.newBuilder().setName(group.data.name)
-                        .putAllProperties(group.data.properties).build()
-                )
-            }
+        val groupsToReturn = if (request.name.isNotEmpty()) {
+            groupStorage.item(request.name)?.let { listOf(it) } ?: emptyList()
         } else {
-            groupStorage.items().forEach {
-                builder.addGroups(
-                    GroupProvider.GroupSnapshot.newBuilder().setName(it.data.name).putAllProperties(it.data.properties)
-                        .build()
-                )
-            }
+            groupStorage.items()
+        }
+
+        for (group in groupsToReturn) {
+            builder.addGroups(
+                GroupProvider.GroupSnapshot.newBuilder()
+                    .setName(group.data.name)
+                    .putAllProperties(group.data.properties.asStringMap())
+                    .build()
+            )
         }
 
         responseObserver.onNext(builder.build())
