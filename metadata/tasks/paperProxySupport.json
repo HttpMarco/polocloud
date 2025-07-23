@@ -8,7 +8,7 @@
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
         "key": "proxies.velocity.enabled",
-        "value": "true"
+        "value": "%velocity_use%"
       }
     },
     {

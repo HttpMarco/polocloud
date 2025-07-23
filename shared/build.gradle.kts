@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":proto"))
-    implementation(project(":proto"))
+    api(projects.proto)
+    implementation(projects.proto)
 }
 
 kotlin {

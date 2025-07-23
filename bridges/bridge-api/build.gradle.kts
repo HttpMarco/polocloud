@@ -1,3 +1,3 @@
 dependencies {
-    implementation(projects.shared)
+    compileOnly(projects.shared)
 }

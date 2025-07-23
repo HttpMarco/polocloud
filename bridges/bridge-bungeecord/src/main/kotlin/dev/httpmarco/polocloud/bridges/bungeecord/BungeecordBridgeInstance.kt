@@ -5,6 +5,8 @@ import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.config.ServerInfo
 import net.md_5.bungee.api.event.PreLoginEvent
+import net.md_5.bungee.api.event.ServerConnectEvent
+import net.md_5.bungee.api.event.ServerKickEvent
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 import java.net.InetSocketAddress
@@ -39,8 +41,27 @@ class BungeecordBridgeInstance : BridgeInstance<ServerInfo>(), Listener {
 
     @EventHandler
     fun onPostLogin(event: PreLoginEvent) {
-        if(registeredFallbacks.isEmpty()) {
+        if (registeredFallbacks.isEmpty()) {
             event.reason = TextComponent("No fallback servers are registered.")
         }
+    }
+
+    @EventHandler
+    fun connect(event: ServerConnectEvent) {
+        if (event.reason == ServerConnectEvent.Reason.JOIN_PROXY || event.reason == ServerConnectEvent.Reason.LOBBY_FALLBACK) {
+            val target = registeredFallbacks.minByOrNull { it.players.size }
+
+            if (target == null) {
+                event.player.disconnect(TextComponent("No fallback servers available."))
+                return
+            }
+
+            event.target = target
+        }
+    }
+
+    @EventHandler
+    fun kick(event: ServerKickEvent) {
+        TODO()
     }
 }

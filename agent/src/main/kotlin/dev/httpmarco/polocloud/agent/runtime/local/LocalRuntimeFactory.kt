@@ -43,6 +43,9 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment["port"] = service.port.toString()
         environment["service-name"] = service.name()
         environment["velocityProxyToken"] = Agent.instance.securityProvider.proxySecureToken
+
+        // find a better way here
+        environment["velocity_use"] = Agent.instance.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name.equals("velocity") }.toString()
         environment["version"] = Agent.instance.version()
 
         // copy all templates to the service path

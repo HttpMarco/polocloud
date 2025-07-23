@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.bridge.api
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.shared.polocloudShared
+import dev.httpmarco.polocloud.v1.GroupType
 
 abstract class BridgeInstance<T> {
 
@@ -24,9 +25,11 @@ abstract class BridgeInstance<T> {
 
         polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class) {
             val service = it.service
-            val fallback = service.properties["fallback"]?.equals("true", ignoreCase = true) == true
 
-            registerService(generateInfo(service.name(), service.hostname, service.port), fallback)
+            if (service.type == GroupType.SERVER) {
+                val fallback = service.properties["fallback"]?.equals("true", ignoreCase = true) == true
+                registerService(generateInfo(service.name(), service.hostname, service.port), fallback)
+            }
         }
 
         polocloudShared.eventProvider().subscribe(ServiceShutdownEvent::class) {
