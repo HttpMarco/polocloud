@@ -1,7 +1,8 @@
 package dev.httpmarco.polocloud.addons.signs
 
-class Connector(val location: ConnectorLocation, val group: ConnectorGroup) {
+import dev.httpmarco.polocloud.addons.signs.types.ConnectorType
 
+class Connector(val type: ConnectorType, val group: ConnectorGroup, val location: ConnectorLocation) {
 
 
 }

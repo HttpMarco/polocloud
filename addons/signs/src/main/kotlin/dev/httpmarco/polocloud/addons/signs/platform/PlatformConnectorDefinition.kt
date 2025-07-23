@@ -1,4 +1,11 @@
 package dev.httpmarco.polocloud.addons.signs.platform
 
-interface PlatformConnectorDefinition {
+import dev.httpmarco.polocloud.addons.signs.Connectors
+
+abstract class PlatformConnectorDefinition {
+
+    init {
+        // initialize the platform connector
+        Connectors()
+    }
 }
