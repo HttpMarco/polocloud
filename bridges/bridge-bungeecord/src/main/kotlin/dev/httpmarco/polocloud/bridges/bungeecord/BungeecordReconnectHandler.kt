@@ -7,20 +7,12 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 class BungeecordReconnectHandler(private val bridge: BungeecordBridgeInstance) : ReconnectHandler {
 
     override fun getServer(player: ProxiedPlayer?): ServerInfo? {
-        return bridge.registeredFallbacks.minByOrNull { it.players.size }
+        return bridge.findFallback()
     }
 
-    override fun setServer(player: ProxiedPlayer?) {
-        TODO("Not yet implemented")
-    }
+    override fun setServer(player: ProxiedPlayer?) {}
 
-    override fun save() {
-        TODO("Not yet implemented")
-    }
+    override fun save() {}
 
-    override fun close() {
-        TODO("Not yet implemented")
-    }
-
-
+    override fun close() {}
 }

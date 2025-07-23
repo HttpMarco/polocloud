@@ -18,9 +18,9 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
                     .filter { requiredServersThatStart(it) > 0 }
                     .forEach { group ->
                         val required = requiredServersThatStart(group)
-                        val index = findIndex(group)
 
                         repeat(required) {
+                            val index = findIndex(group)
                             val service = when (group.platform().type) {
                                 PlatformType.PROXY -> LocalService(group, index, "0.0.0.0")
                                 else -> LocalService(group, index)

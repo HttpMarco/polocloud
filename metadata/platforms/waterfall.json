@@ -1,18 +1,18 @@
 {
-  "name": "velocity",
+  "name": "waterfall",
   "type": "PROXY",
   "language": "JAVA",
-  "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",
-  "bridge": "velocity-bridge",
+  "url": "https://fill-data.papermc.io/v1/objects/954b48b95a4300e1493aaa0c9532fc4a89d38136d74ccfb6df8c2b60eea48ee6/waterfall-1.21-598.jar",
+  "bridge": "bungeecord-bridge",
   "bridgePath": "plugins",
+  "shutdownCommand": "end",
   "tasks": [
-    "VELOCITY_PROXY_TOKEN_TASK",
-    "VELOCITY_SETUP_TASK"
+    "BUNGEECORD_SETUP_TASK"
   ],
   "versions": [
     {
-      "version": "3.4.0-SNAPSHOT",
-      "buildId": "522"
+      "version": "latest",
+      "buildId": "-1"
     }
   ]
 }

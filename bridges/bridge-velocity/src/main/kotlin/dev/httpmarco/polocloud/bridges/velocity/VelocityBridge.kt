@@ -46,7 +46,11 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, logger: L
 
     @Subscribe
     fun onKick(event: KickedFromServerEvent) {
-        TODO()
+        if (event.player.isActive) {
+            event.result =
+                KickedFromServerEvent.RedirectPlayer.create(registeredFallbacks.filter { it.serverInfo.name != event.server.serverInfo.name }
+                    .minByOrNull { it.playersConnected.size })
+        }
     }
 
     override fun generateInfo(name: String, hostname: String, port: Int): ServerInfo {

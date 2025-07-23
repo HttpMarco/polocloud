@@ -62,6 +62,11 @@ class BungeecordBridgeInstance : BridgeInstance<ServerInfo>(), Listener {
 
     @EventHandler
     fun kick(event: ServerKickEvent) {
-        TODO()
+        event.isCancelled = true
+        event.cancelServer =  registeredFallbacks.filter { it.name != event.kickedFrom.name }.minByOrNull { it.players.size }
+    }
+
+    fun findFallback(): ServerInfo? {
+        return registeredFallbacks.minByOrNull { it.players.size }
     }
 }
