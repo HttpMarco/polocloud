@@ -9,9 +9,20 @@ import org.jline.reader.LineReader
 import org.jline.reader.ParsedLine
 import java.util.*
 
-class JLine3Completer(private val commandService: CommandService) : Completer {
+class JLine3Completer(private val terminal: JLine3Terminal) : Completer {
 
     override fun complete(reader: LineReader, line: ParsedLine, candidates: MutableList<Candidate>) {
+        val commandService = terminal.commandService
+
+        if(terminal.setupController.active()) {
+            val setup = terminal.setupController.currentSetup()!!
+            val step = setup.step()
+
+            candidates.addAll(step.argument.defaultArgs(setup.context).map { Candidate(it) })
+            return
+        }
+
+
         if (line.wordIndex() == 0) {
             // we only display the command names -> not aliases
             for (command in commandService.commands) {

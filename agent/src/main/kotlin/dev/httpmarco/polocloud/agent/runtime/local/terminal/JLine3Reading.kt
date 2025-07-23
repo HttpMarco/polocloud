@@ -36,12 +36,17 @@ class JLine3Reading(
                     continue
                 }
 
+                val setupController = terminal.setupController
+                if(setupController.active()) {
+                    setupController.currentSetup()!!.acceptAnswer(line)
+                    continue
+                }
+
                 val tokens = line.split(" ").filter { it.isNotBlank() }
                 val commandName = tokens.firstOrNull() ?: continue
                 val args = tokens.drop(1).toTypedArray()
 
                 commandService.call(commandName, args)
-
             } catch (_: UserInterruptException) {
                 // pressing Ctrl+C or similar to interrupt reading
                 exitPolocloud(cleanShutdown = false)

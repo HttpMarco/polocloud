@@ -14,4 +14,8 @@ class PlatformArgument(key: String = "platform") : TerminalArgument<Platform>(ke
     override fun defaultArgs(context: InputContext): MutableList<String> {
         return PlatformPool.platforms().stream().map { it.name }.toList()
     }
+
+    override fun predication(rawInput: String): Boolean {
+        return PlatformPool.find(rawInput) != null
+    }
 }

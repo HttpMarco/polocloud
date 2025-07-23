@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandService
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.ClearCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.screen.ServiceScreenController
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupController
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.impl.LineReaderImpl
@@ -14,6 +15,7 @@ import java.nio.charset.StandardCharsets
 class JLine3Terminal {
 
     val commandService = CommandService()
+    val setupController = SetupController(this)
     val screenService = ServiceScreenController(this)
 
     var prompt: String? = null
@@ -26,7 +28,7 @@ class JLine3Terminal {
         .build()
     private val lineReader: LineReaderImpl = LineReaderBuilder.builder()
         .terminal(this.terminal)
-        .completer(JLine3Completer(commandService))
+        .completer(JLine3Completer(this))
         .option(LineReader.Option.AUTO_MENU_LIST, true)
         .variable(LineReader.COMPLETION_STYLE_LIST_SELECTION, "fg:cyan")
         .variable(LineReader.COMPLETION_STYLE_LIST_BACKGROUND, "fg:default")

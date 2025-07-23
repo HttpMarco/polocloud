@@ -19,7 +19,7 @@ class LocalRuntime : Runtime {
     override fun boot() {
         terminal = JLine3Terminal()
 
-        terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage))
+        terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage, terminal))
         terminal.commandService.registerCommand(ServiceCommand(runtimeServiceStorage, terminal))
         terminal.commandService.registerCommand(PlatformCommand())
     }

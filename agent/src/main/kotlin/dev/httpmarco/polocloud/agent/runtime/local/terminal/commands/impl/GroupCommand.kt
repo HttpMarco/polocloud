@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.agent.groups.GroupData
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.GroupArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.GroupEditFlagArgument
@@ -14,9 +15,10 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.Keywo
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformVersionArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.GroupSetup
 import dev.httpmarco.polocloud.platforms.PlatformIndex
 
-class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("group", "Manage all group actions") {
+class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val terminal: JLine3Terminal) : Command("group", "Manage all group actions") {
 
     init {
         syntax(execution = {
@@ -117,6 +119,10 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage) : Command("gro
 
             i18n.info("agent.terminal.command.group.deleted", group.data.name)
         }, groupArgument, KeywordArgument("delete"))
+
+        syntax(execution = { context ->
+            terminal.setupController.start(GroupSetup())
+        }, KeywordArgument("setup"), KeywordArgument("2"))
 
         val nameArgument = TextArgument("name")
         val platformArgument = PlatformArgument()
