@@ -1,0 +1,21 @@
+{
+  "name": "leaf",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://api.leafmc.one/v2/projects/leaf/versions/%version%/builds/%buildId%/downloads/leaf-%version%-%buildId%.jar",
+  "arguments": [
+    "-nogui"
+  ],
+  "flags": [],
+  "tasks": [
+    "EULA_TASK",
+    "SPIGOT_SERVER_PROPERTIES",
+    "PAPER_PROXY_SUPPORT_TASK"
+  ],
+  "versions": [
+    {
+      "version": "1.21.8",
+      "buildId": "28"
+    }
+  ]
+}
