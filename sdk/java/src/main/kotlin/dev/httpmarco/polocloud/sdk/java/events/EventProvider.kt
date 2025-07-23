@@ -3,25 +3,32 @@ package dev.httpmarco.polocloud.sdk.java.events
 import com.google.gson.GsonBuilder
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.events.Event
+import dev.httpmarco.polocloud.shared.events.EventProvider
 import dev.httpmarco.polocloud.v1.proto.EventProviderGrpc
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
 import io.grpc.ManagedChannel
 import io.grpc.stub.StreamObserver
 import java.util.function.Consumer
+import kotlin.reflect.KClass
 
-class EventProvider(channel: ManagedChannel?) {
+class EventProvider(channel: ManagedChannel?) : EventProvider {
 
     private val eventStub = EventProviderGrpc.newStub(channel)
 
-    fun <T :  Event> subscribe(event: Class<T>, listener: Consumer<T>) {
+    override fun call(event: Event) {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Event> subscribe(eventType: KClass<T>, result: (T) -> Any) {
         val request = EventProviderOuterClass.EventSubscribeRequest.newBuilder()
             .setServiceName(Polocloud.instance().selfServiceName())
-            .setEventName(event.simpleName)
+            .setEventName(eventType.simpleName)
             .build()
 
         eventStub.subscribe(request, object : StreamObserver<EventProviderOuterClass.EventContext> {
             override fun onNext(conetext: EventProviderOuterClass.EventContext) {
-                listener.accept(GsonBuilder().create().fromJson(conetext.eventData, event))
+                System.err.println("Received event: ${conetext.eventName} with data: ${conetext.eventData}")
+                result(GsonBuilder().create().fromJson(conetext.eventData, eventType.java))
             }
 
             override fun onError(p0: Throwable) {

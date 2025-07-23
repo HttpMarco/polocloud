@@ -20,7 +20,7 @@ class BungeecordBridge : BridgeInstance<ServerInfo>() {
         )
     }
 
-    override fun registerService(identifier: ServerInfo) {
+    override fun registerService(identifier: ServerInfo, fallback: Boolean) {
         ProxyServer.getInstance().servers[identifier.name] = identifier
     }
 

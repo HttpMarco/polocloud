@@ -2,7 +2,7 @@
   "name": "velocity",
   "type": "PROXY",
   "language": "JAVA",
-  "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",\,
+  "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",
   "bridge": "velocity-bridge",
   "bridgePath": "plugins",
   "tasks": [

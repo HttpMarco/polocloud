@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.bridges.velocity
 
+import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
@@ -9,7 +10,6 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerInfo
 import dev.httpmarco.polocloud.bridge.api.BridgeInstance
-import dev.httpmarco.polocloud.shared.events.Event
 import org.slf4j.Logger
 import java.net.InetSocketAddress
 import kotlin.jvm.optionals.getOrNull
@@ -22,14 +22,14 @@ import kotlin.jvm.optionals.getOrNull
     url = "https://github.com/HttpMarco/polocloud",
     description = "Polocloud-Bridge"
 )
-class VelocityBridge constructor(val proxyServer: ProxyServer, logger: Logger) : BridgeInstance<ServerInfo>() {
+class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, logger: Logger) : BridgeInstance<ServerInfo>() {
 
     private val registeredFallbacks = ArrayList<RegisteredServer>()
 
     init {
         // remove all registered servers on startup
-        for (server in proxyServer.allServers) {
-            proxyServer.unregisterServer(server.serverInfo)
+        proxyServer.allServers.forEach {
+            proxyServer.unregisterServer(it.serverInfo)
         }
         logger.debug("Unregistered all servers on startup by Polocloud-Bridge")
     }
@@ -53,8 +53,12 @@ class VelocityBridge constructor(val proxyServer: ProxyServer, logger: Logger) :
         return ServerInfo(name, InetSocketAddress(hostname, port))
     }
 
-    override fun registerService(identifier: ServerInfo) {
-        proxyServer.registerServer(identifier)
+    override fun registerService(identifier: ServerInfo, fallback: Boolean) {
+        val server = proxyServer.registerServer(identifier)
+
+        if (fallback) {
+            registeredFallbacks.add(server)
+        }
     }
 
     override fun unregisterService(identifier: ServerInfo) {

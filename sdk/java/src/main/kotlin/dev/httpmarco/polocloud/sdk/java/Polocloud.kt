@@ -4,8 +4,9 @@ import dev.httpmarco.polocloud.sdk.java.events.EventProvider
 import dev.httpmarco.polocloud.sdk.java.groups.GroupProvider
 import dev.httpmarco.polocloud.sdk.java.grpc.SdkGrpcClient
 import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider
+import dev.httpmarco.polocloud.shared.PolocloudShared
 
-class Polocloud {
+class Polocloud : PolocloudShared() {
 
     private val grpcClient = SdkGrpcClient()
     private val serviceProvider = ServiceProvider(grpcClient.channel)
@@ -20,8 +21,6 @@ class Polocloud {
         }
     }
 
-    fun eventProvider() = eventProvider
-
     fun serviceProvider() = serviceProvider
 
     fun groupProvider() = groupProvider
@@ -33,4 +32,7 @@ class Polocloud {
     fun selfServiceName(): String {
         return System.getenv("service-name")
     }
+
+    override fun eventProvider() = eventProvider
+
 }

@@ -11,8 +11,8 @@ dependencies {
     api(project(":proto"))
     implementation(project(":proto"))
 
-    api(project(":shared"))
-    implementation(project(":shared"))
+    api(projects.shared)
+    implementation(projects.shared)
 
     compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 }

@@ -8,24 +8,29 @@ abstract class BridgeInstance<T> {
 
     abstract fun generateInfo(name: String, hostname: String, port: Int): T
 
-    abstract fun registerService(identifier: T)
+    abstract fun registerService(identifier: T, fallback: Boolean = false)
 
     abstract fun unregisterService(identifier: T)
 
     abstract fun findInfo(name: String): T?
 
+    init {
+        // it is bad, but if sdk ist present, we can use it
+        Class.forName("dev.httpmarco.polocloud.sdk.java.Polocloud")
+    }
+
     fun initialize() {
         polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class) {
             val service = it.service
+            val fallback = service.properties["fallback"]?.equals("true", ignoreCase = true) == true
 
-            registerService(generateInfo(service.name(), service.hostname, service.port))
+            registerService(generateInfo(service.name(), service.hostname, service.port), fallback)
         }
 
         polocloudShared.eventProvider().subscribe(ServiceShutdownEvent::class) {
-            val info = findInfo(it.service.name())
-            if (info != null) {
+            findInfo(it.service.name())?.let { info ->
                 unregisterService(info)
-            }
+            }!!
         }
     }
 }

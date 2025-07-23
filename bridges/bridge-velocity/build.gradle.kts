@@ -1,5 +1,9 @@
 import org.gradle.kotlin.dsl.projects
 
+plugins {
+    kotlin("kapt")
+}
+
 repositories {
     maven {
         name = "papermc"
@@ -9,7 +13,7 @@ repositories {
 
 dependencies {
     compileOnly(libs.velocity)
-    annotationProcessor(libs.velocity)
+    kapt(libs.velocity)
 
     implementation(projects.sdk.java)
     implementation(projects.bridges.bridgeApi)

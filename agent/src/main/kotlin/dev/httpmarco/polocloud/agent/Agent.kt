@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.agent
 
-import dev.httpmarco.polocloud.agent.bridges.BridgeProvider
 import dev.httpmarco.polocloud.agent.detector.DetectorFactoryThread
 import dev.httpmarco.polocloud.agent.detector.OnlineStateDetector
 import dev.httpmarco.polocloud.agent.events.EventService
@@ -23,7 +22,6 @@ class Agent {
     val runtime: Runtime
     val eventService = EventService()
     val securityProvider = SecurityProvider()
-    val bridgeProvider = BridgeProvider()
 
     private val grpcServerEndpoint = GrpcServerEndpoint()
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())

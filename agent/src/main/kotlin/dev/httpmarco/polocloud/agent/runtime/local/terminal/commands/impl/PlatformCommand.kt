@@ -26,6 +26,12 @@ class PlatformCommand() : Command("platform", "Manage the platforms") {
             val platform = it.arg(platformArg)
 
             i18n.info("agent.terminal.command.platform.info.header", platform.name)
+
+            var bridge = platform.bridge
+            if(bridge!= null) {
+                i18n.info("agent.terminal.command.platform.info.bridge", bridge.name, bridge.type.name)
+            }
+
             i18n.info("agent.terminal.command.platform.info.line.1", platform.language)
             i18n.info("agent.terminal.command.platform.info.line.2", platform.url)
             i18n.info("agent.terminal.command.platform.info.line.3", platform.type)

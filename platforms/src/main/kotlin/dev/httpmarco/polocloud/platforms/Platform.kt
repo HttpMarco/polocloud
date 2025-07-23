@@ -1,5 +1,8 @@
 package dev.httpmarco.polocloud.platforms
 
+import dev.httpmarco.polocloud.platforms.bridge.Bridge
+import dev.httpmarco.polocloud.platforms.bridge.BridgeSerializer
+import dev.httpmarco.polocloud.platforms.bridge.BridgeType
 import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidException
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
@@ -28,7 +31,9 @@ class Platform(
     val flags: List<String> = emptyList(),
     // all versions of the platform that are supported
     val versions: List<PlatformVersion>,
-    private val bridge: String? = null,
+    // if bridge present, the bridge that should be used for this platform
+    @Serializable(with = BridgeSerializer::class)
+    val bridge: Bridge? = null,
     // if the path is empty, the platform will not copy the bridge
     private val bridgePath: String? = null,
     // the tasks that should be run after the platform is prepared
@@ -53,7 +58,7 @@ class Platform(
         if (path.notExists()) {
             URI(
                 url.replace("%version%", version.version)
-                    .replace("%buildId%", version.buildId?:"null")
+                    .replace("%buildId%", version.buildId ?: "null")
             ).toURL().openStream().use { input ->
                 path.toFile().outputStream().use { output ->
                     input.copyTo(output)
@@ -66,13 +71,20 @@ class Platform(
         // copy the platform file to the service path
         Files.copy(path, servicePath.resolve(path.name), StandardCopyOption.REPLACE_EXISTING)
 
-        if (bridge != null) {
-            // copy the bridge if present
-            val sourceBridge = Path("local/libs/polocloud-${language.name.lowercase()}-bridge-${System.getenv("polocloud-version")}.jar")
-            val targetBridge = servicePath.resolve(bridgePath + "/" + sourceBridge.name)
+        if (bridge == null) {
+            return
+        }
 
+        // on_promise situation -> copy files to the service path
+        if (bridge.type == BridgeType.ON_PREMISE) {
+            val targetBridge = servicePath.resolve(bridgePath + "/" + bridge.path.name)
             targetBridge.parent.createDirectories()
-            Files.copy(sourceBridge, targetBridge, StandardCopyOption.REPLACE_EXISTING)
+            Files.copy(bridge.path, targetBridge, StandardCopyOption.REPLACE_EXISTING)
+            return
+        }
+
+        if (bridge.type == BridgeType.OFF_PREMISE) {
+            TODO()
         }
     }
 
