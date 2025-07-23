@@ -47,16 +47,20 @@ class PlatformFilePropertyUpdateAction(private val key: String, private val valu
             val root = if (file.exists()) loader.load() else loader.createNode()
             val path = key.split(".")
 
+            val nodePath = path.map {
+                it.toIntOrNull() ?: it
+            }.toTypedArray()
+
+            val targetNode = root.node(*nodePath)
+
             if (translatedValue == "true" || translatedValue == "false") {
-                // Convert boolean strings to actual booleans
-                root.node(*path.toTypedArray()).set(translatedValue.toBoolean())
+                targetNode.set(translatedValue.toBoolean())
             } else if (translatedValue.toIntOrNull() != null) {
-                // Convert numeric strings to actual integers
-                root.node(*path.toTypedArray()).set(translatedValue.toInt())
+                targetNode.set(translatedValue.toInt())
             } else {
-                // Otherwise, treat it as a string
-                root.node(*path.toTypedArray()).set(translatedValue)
+                targetNode.set(translatedValue)
             }
+
             loader.save(root)
         } else if (step.filename.endsWith(".toml")) {
             val pathList = key.split(".")

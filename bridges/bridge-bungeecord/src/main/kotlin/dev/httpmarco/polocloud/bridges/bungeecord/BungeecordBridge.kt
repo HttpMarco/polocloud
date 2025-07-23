@@ -1,34 +1,22 @@
 package dev.httpmarco.polocloud.bridges.bungeecord
 
-import dev.httpmarco.polocloud.bridge.api.BridgeInstance
 import net.md_5.bungee.api.ProxyServer
-import net.md_5.bungee.api.config.ServerInfo
+import net.md_5.bungee.api.plugin.Plugin
 import java.net.InetSocketAddress
 
-class BungeecordBridge : BridgeInstance<ServerInfo>() {
+class BungeecordBridge : Plugin() {
 
-    override fun generateInfo(
-        name: String,
-        hostname: String,
-        port: Int
-    ): ServerInfo {
-        return ProxyServer.getInstance().constructServerInfo(
-            name,
-            InetSocketAddress(hostname, port),
-            null,
-            false
-        )
-    }
+    override fun onEnable() {
+        ProxyServer.getInstance().servers.clear()
 
-    override fun registerService(identifier: ServerInfo, fallback: Boolean) {
-        ProxyServer.getInstance().servers[identifier.name] = identifier
-    }
+        // register a simple fallback dummy for reconnect handler
+        ProxyServer.getInstance().servers["fallback"] =
+            ProxyServer.getInstance().constructServerInfo("fallback", InetSocketAddress("127.0.0.1", 0), null, false)
 
-    override fun unregisterService(identifier: ServerInfo) {
-        ProxyServer.getInstance().servers.remove(identifier.name)
-    }
+        val bridgeInstance = BungeecordBridgeInstance()
+        ProxyServer.getInstance().reconnectHandler = BungeecordReconnectHandler(bridgeInstance)
+        ProxyServer.getInstance().pluginManager.registerListener(this, bridgeInstance)
 
-    override fun findInfo(name: String): ServerInfo? {
-        return ProxyServer.getInstance().getServerInfo(name)
+
     }
 }

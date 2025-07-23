@@ -27,7 +27,6 @@ class EventProvider(channel: ManagedChannel?) : EventProvider {
 
         eventStub.subscribe(request, object : StreamObserver<EventProviderOuterClass.EventContext> {
             override fun onNext(conetext: EventProviderOuterClass.EventContext) {
-                System.err.println("Received event: ${conetext.eventName} with data: ${conetext.eventData}")
                 result(GsonBuilder().create().fromJson(conetext.eventData, eventType.java))
             }
 

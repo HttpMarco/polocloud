@@ -1,7 +1,9 @@
 {
   "platforms": [
     "paper",
-    "velocity"
+    "velocity",
+    "waterfall",
+    "bungeecord"
   ],
   "tasks": [
     "eula",

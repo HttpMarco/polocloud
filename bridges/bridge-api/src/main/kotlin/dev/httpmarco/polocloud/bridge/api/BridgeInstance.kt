@@ -20,6 +20,8 @@ abstract class BridgeInstance<T> {
     }
 
     fun initialize() {
+        // TODO register all services that are already online
+
         polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class) {
             val service = it.service
             val fallback = service.properties["fallback"]?.equals("true", ignoreCase = true) == true

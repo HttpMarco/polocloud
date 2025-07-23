@@ -1,0 +1,4 @@
+name: Pololcoud-BungeeCord-Bridge
+main:  dev.httpmarco.polocloud.bridges.bungeecord.BungeecordBridge
+version: 3.0.0-SNAPSHOT
+author: Polocloud
