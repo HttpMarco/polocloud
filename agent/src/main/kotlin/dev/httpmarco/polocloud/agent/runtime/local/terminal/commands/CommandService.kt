@@ -8,6 +8,7 @@ import java.util.*
 
 class CommandService {
     val commands = ArrayList<Command>()
+    val parser = CommandParser(this)
 
     init {
         this.registerCommand(ShutdownCommand())
@@ -37,6 +38,6 @@ class CommandService {
     }
 
     fun call(commandId: String, args: Array<String>) {
-        CommandParser.serializer(this, commandId, args)
+        parser.parse(commandId, args)
     }
 }

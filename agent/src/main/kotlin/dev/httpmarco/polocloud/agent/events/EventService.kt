@@ -37,6 +37,7 @@ class EventService {
 
         events[event.javaClass.simpleName]?.forEach {
             val eventName = event.javaClass.simpleName
+
             it.sub.onNext(
                 EventProviderOuterClass.EventContext.newBuilder().setEventName(eventName)
                     .setEventData(
