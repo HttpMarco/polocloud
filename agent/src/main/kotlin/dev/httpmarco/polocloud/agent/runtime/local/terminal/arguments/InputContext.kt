@@ -11,4 +11,8 @@ class InputContext {
     fun append(argument: TerminalArgument<*>, value: Any?) {
         this.contexts[argument.key] = value
     }
+
+    fun remove(argument: TerminalArgument<*>) {
+        this.contexts.remove(argument.key)
+    }
 }

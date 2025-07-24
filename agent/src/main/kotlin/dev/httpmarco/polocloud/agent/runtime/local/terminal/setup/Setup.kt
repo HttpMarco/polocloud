@@ -10,6 +10,7 @@ abstract class Setup<T>(private val name: String) {
 
     private lateinit var terminal: JLine3Terminal
     private val steps: ArrayDeque<SetupStep<*>> = ArrayDeque()
+    private val completedSteps: ArrayDeque<SetupStep<*>> = ArrayDeque()
     val context = InputContext()
 
     abstract fun bindQuestion()
@@ -45,11 +46,13 @@ abstract class Setup<T>(private val name: String) {
             return
         }
 
-        this.steps.removeFirst()
+        val finished = this.steps.removeFirst()
+        this.completedSteps.addLast(finished)
+
         this.display()
     }
 
-    private fun display(wrongAnswer: Boolean = false) {
+    private fun display(wrongAnswer: Boolean = false, noPreviousStep: Boolean = false) {
         val current = step()
         val translatedQuestion = i18n.get(current.questionKey)
 
@@ -68,6 +71,11 @@ abstract class Setup<T>(private val name: String) {
         }
 
         this.terminal.display(i18n.get("agent.local-runtime.setup.info"))
+
+        if (noPreviousStep) {
+            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.no-previous-step")))
+        }
+
         this.terminal.display("")
     }
 
@@ -76,6 +84,21 @@ abstract class Setup<T>(private val name: String) {
             this.terminal.setupController.exit()
             this.terminal.clearScreen()
             this.terminal.resetPrompt()
+            return
+        }
+
+        if (answer.equals("back", ignoreCase = true)) {
+            if (this.completedSteps.isEmpty()) {
+                display(noPreviousStep = true)
+                return
+            }
+
+            val lastSteps = completedSteps.removeLast()
+            steps.addFirst(lastSteps)
+
+            this.context.remove(lastSteps.argument)
+
+            this.display()
             return
         }
 
