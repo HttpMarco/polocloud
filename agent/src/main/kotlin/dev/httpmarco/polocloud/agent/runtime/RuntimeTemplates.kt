@@ -6,4 +6,6 @@ interface RuntimeTemplates<out S : Service> {
 
     fun bindTemplate(service: @UnsafeVariance S)
 
+    fun saveTemplate(template : String, service: @UnsafeVariance S)
+
 }

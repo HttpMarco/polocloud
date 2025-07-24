@@ -1,8 +1,10 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.proto.GroupProvider
+import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,10 +32,13 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
             if (!Files.exists(sourcePath)) {
                 sourcePath.createDirectories()
                 // no template found, create empty directory
-                return@forEach
             }
             copyDirectory(sourcePath, service.path)
         }
+    }
+
+    override fun saveTemplate(template: String, service: LocalService) {
+       copyDirectory(service.path, TEMPLATE_PATH.resolve(template))
     }
 
     fun copyDirectory(sourcePath: Path, targetPath: Path) {
@@ -47,7 +52,16 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
             }
 
             override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                Files.copy(file, targetPath.resolve(sourcePath.relativize(file)), StandardCopyOption.REPLACE_EXISTING)
+                try {
+                    System.out.println("Copying $file")
+                    Files.copy(
+                        file,
+                        targetPath.resolve(sourcePath.relativize(file)),
+                        StandardCopyOption.REPLACE_EXISTING
+                    )
+                } catch (e: IOException) {
+                    logger.warn("Cannot copy file ${file.fileName}: ${e.message}")
+                }
                 return FileVisitResult.CONTINUE
             }
         })

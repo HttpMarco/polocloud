@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.ServiceArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.StringArrayArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextArgument
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -22,7 +23,16 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
                 return@syntax
             }
             i18n.info("agent.terminal.command.service.found", serviceStorage.items().size)
-            serviceStorage.items().forEach { i18n.info("agent.terminal.command.service.list", it.name(), it.state.name, it.hostname, it.port, it.properties.size) }
+            serviceStorage.items().forEach {
+                i18n.info(
+                    "agent.terminal.command.service.list",
+                    it.name(),
+                    it.state.name,
+                    it.hostname,
+                    it.port,
+                    it.properties.size
+                )
+            }
         }, KeywordArgument("list"))
 
         val serviceArgument = ServiceArgument()
@@ -56,6 +66,16 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
                 println(log)
             }
         }, serviceArgument, KeywordArgument("logs"))
+
+        var templateName = TextArgument("template")
+        syntax(execution = {
+            val service = it.arg(serviceArgument)
+            val template = it.arg(templateName)
+
+            i18n.info("agent.terminal.command.service.export.start", service.name(), template)
+            Agent.instance.runtime.templates().saveTemplate(template, service)
+            i18n.info("agent.terminal.command.service.export.end", template)
+        }, serviceArgument, KeywordArgument("copy"), templateName)
 
         val commandArg = StringArrayArgument("command")
         syntax(execution = {

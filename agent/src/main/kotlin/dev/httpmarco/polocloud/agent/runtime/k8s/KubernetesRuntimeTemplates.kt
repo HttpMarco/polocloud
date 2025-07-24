@@ -7,4 +7,11 @@ class KubernetesRuntimeTemplates : RuntimeTemplates<KubernetesService> {
     override fun bindTemplate(service: KubernetesService) {
         TODO("Not yet implemented")
     }
+
+    override fun saveTemplate(
+        template: String,
+        service: KubernetesService
+    ) {
+        TODO("Not yet implemented")
+    }
 }
