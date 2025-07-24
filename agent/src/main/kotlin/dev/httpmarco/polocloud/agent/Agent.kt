@@ -53,7 +53,7 @@ class Agent {
             "agent.starting.groups.count",
             groups.size,
             groups.joinToString(separator = "&8, &7") { it.data.name })
-        i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformTaskPool.size())
+        i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformPool.versionSize())
 
         i18n.info("agent.starting.successful")
 

@@ -32,6 +32,10 @@ object PlatformPool {
         platformPool.add(platform)
     }
 
+    fun versionSize(): Int {
+        return platformPool.sumOf { it.versions.size }
+    }
+
     fun size() = platformPool.size
 
     fun platforms() = platformPool
