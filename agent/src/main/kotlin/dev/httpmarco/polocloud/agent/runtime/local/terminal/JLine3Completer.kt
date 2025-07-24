@@ -43,7 +43,7 @@ class JLine3Completer(private val terminal: JLine3Terminal) : Completer {
 
         val commandName = line.words().first()
         for (command in commandService.commandsByName(commandName!!)) {
-            for (commandSyntax in command.commandSyntaxes()) {
+            for (commandSyntax in command.commandSyntaxes) {
                 if (isMatchingSyntax(line, commandSyntax)) {
                     addSuggestions(line, commandSyntax, candidates)
                 }

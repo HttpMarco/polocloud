@@ -122,7 +122,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val te
 
         syntax(execution = { context ->
             terminal.setupController.start(GroupSetup())
-        }, KeywordArgument("setup"), KeywordArgument("2"))
+        }, KeywordArgument("setup"))
 
         val nameArgument = TextArgument("name")
         val platformArgument = PlatformArgument()

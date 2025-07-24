@@ -11,10 +11,6 @@ abstract class Command(val name: String, val description: String, vararg val ali
         this.commandSyntaxes.add(CommandSyntax(execution, null, arguments.toList() as MutableList<TerminalArgument<*>>))
     }
 
-    fun commandSyntaxes(): MutableList<CommandSyntax> {
-        return this.commandSyntaxes
-    }
-
     fun syntax(execution: CommandExecution, description: String, vararg arguments: TerminalArgument<*>) {
         this.commandSyntaxes.add(CommandSyntax(execution, description, arguments.toList() as MutableList<TerminalArgument<*>>))
     }
