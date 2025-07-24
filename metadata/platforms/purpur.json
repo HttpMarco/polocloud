@@ -3,7 +3,41 @@
   "type": "SERVER",
   "language": "JAVA",
   "url": "https://api.purpurmc.org/v2/purpur/%version%/%buildId%/download",
+  "arguments": [
+    "-nogui"
+  ],
+  "tasks": [
+    "EULA_TASK",
+    "SPIGOT_SERVER_PROPERTIES",
+    "PAPER_PROXY_SUPPORT_TASK"
+  ],
+  "flags": [
+    "-XX:+UseG1GC",
+    "-XX:+ParallelRefProcEnabled",
+    "-XX:MaxGCPauseMillis=200",
+    "-XX:+UnlockExperimentalVMOptions",
+    "-XX:+DisableExplicitGC",
+    "-XX:+AlwaysPreTouch",
+    "-XX:G1NewSizePercent=30",
+    "-XX:G1MaxNewSizePercent=40",
+    "-XX:G1HeapRegionSize=8M",
+    "-XX:G1ReservePercent=20",
+    "-XX:G1HeapWastePercent=5",
+    "-XX:G1MixedGCCountTarget=4",
+    "-XX:InitiatingHeapOccupancyPercent=15",
+    "-XX:G1MixedGCLiveThresholdPercent=90",
+    "-XX:G1RSetUpdatingPauseTimePercent=5",
+    "-XX:SurvivorRatio=32",
+    "-XX:MaxTenuringThreshold=1",
+    "-XX:+PerfDisableSharedMem",
+    "-Dusing.aikars.flags=https://mcflags.emc.gs",
+    "-Daikars.new.flags=true"
+  ],
   "versions": [
+    {
+      "version": "1.21.8",
+      "buildId": "2482"
+    },
     {
       "version": "1.21.7",
       "buildId": "2473"
@@ -71,46 +105,6 @@
     {
       "version": "1.19",
       "buildId": "1735"
-    },
-    {
-      "version": "1.18.2",
-      "buildId": "1632"
-    },
-    {
-      "version": "1.18.1",
-      "buildId": "1566"
-    },
-    {
-      "version": "1.18",
-      "buildId": "1433"
-    },
-    {
-      "version": "1.17.1",
-      "buildId": "1428"
-    },
-    {
-      "version": "1.17",
-      "buildId": "1255"
-    },
-    {
-      "version": "1.16.5",
-      "buildId": "1171"
-    },
-    {
-      "version": "1.16.4",
-      "buildId": "956"
-    },
-    {
-      "version": "1.16.3",
-      "buildId": "808"
-    },
-    {
-      "version": "1.16.2",
-      "buildId": "750"
-    },
-    {
-      "version": "1.16.1",
-      "buildId": "710"
     }
   ]
 }
