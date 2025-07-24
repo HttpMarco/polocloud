@@ -18,6 +18,9 @@ class JLine3Completer(private val terminal: JLine3Terminal) : Completer {
             val setup = terminal.setupController.currentSetup()!!
             val step = setup.step()
 
+            if(line.wordIndex() != 0) {
+                return
+            }
             candidates.addAll(step.argument.defaultArgs(setup.context).map { Candidate(it) })
             return
         }

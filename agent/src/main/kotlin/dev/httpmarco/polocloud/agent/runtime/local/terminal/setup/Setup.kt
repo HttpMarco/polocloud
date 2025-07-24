@@ -23,6 +23,7 @@ abstract class Setup<T>(private val name: String) {
     fun start(terminal: JLine3Terminal) {
         this.bindQuestion()
         this.terminal = terminal
+        this.terminal.updatePrompt("&7$name&8 » &7")
         this.display()
     }
 
@@ -32,6 +33,7 @@ abstract class Setup<T>(private val name: String) {
             this.terminal.setupController.completeCurrentSetup()
 
             terminal.clearScreen()
+            terminal.resetPrompt()
             logger.info("Setup &8'&a$name&8' &7successfully completed&8.")
             return
         }
