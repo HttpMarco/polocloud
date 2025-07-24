@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.setup
 
 import dev.httpmarco.polocloud.agent.i18n
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
@@ -29,7 +30,8 @@ abstract class Setup<T>(private val name: String) {
     fun stop() {
         this.terminal.clearScreen()
         this.terminal.resetPrompt()
-        i18n.info("agent.local-runtime.setup.stopped", this.name)
+        logger.flushSetupLogs()
+        i18n.info("agent.local-runtime.setup.exited", this.name)
     }
 
     fun next() {

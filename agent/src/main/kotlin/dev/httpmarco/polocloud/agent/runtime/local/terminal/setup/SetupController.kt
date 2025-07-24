@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.setup
 
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 
 class SetupController(private val terminal: JLine3Terminal) {
@@ -10,6 +11,8 @@ class SetupController(private val terminal: JLine3Terminal) {
         if (displayedSetup != null) {
             return
         }
+
+        logger.enableSetupLogBuffering()
 
         this.displayedSetup = setup
         displayedSetup?.start(terminal)
@@ -24,6 +27,7 @@ class SetupController(private val terminal: JLine3Terminal) {
     }
 
     fun completeCurrentSetup() {
+        logger.flushSetupLogs()
         displayedSetup = null
     }
 
@@ -32,7 +36,7 @@ class SetupController(private val terminal: JLine3Terminal) {
             return
         }
 
-        this.displayedSetup = null
         displayedSetup?.stop()
+        this.displayedSetup = null
     }
 }

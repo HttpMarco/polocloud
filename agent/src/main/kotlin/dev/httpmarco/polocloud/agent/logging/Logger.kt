@@ -9,6 +9,8 @@ import java.time.LocalTime
 
 class Logger {
 
+    private val logBuffer = mutableListOf<String>()
+    private var bufferingLogs = false
     private var debugMode = false
 
     fun info(message: String) {
@@ -38,17 +40,35 @@ class Logger {
         log("DEBUG", "&f", message)
     }
 
+    fun enableSetupLogBuffering() {
+        this.bufferingLogs = true
+        this.logBuffer.clear()
+    }
+
+    fun flushSetupLogs() {
+        this.bufferingLogs = false
+        this.logBuffer.forEach { outputLog(it) }
+        this.logBuffer.clear()
+    }
+
     private fun log(level: String, style: String, message: String) {
         val timestamp = LocalTime.now().withNano(0).format(java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"))
-        val message = LoggingColor.translate("${("$timestamp")} &8| $style$level&8: &7$message")
+        val formatted = LoggingColor.translate("$timestamp &8| $style$level&8: &7$message")
 
-        // if the agent is running in a local runtime, we use the terminal to display the message
+        if (bufferingLogs) {
+            this.logBuffer.add(formatted)
+            return
+        }
+
+        outputLog(formatted)
+    }
+
+    private fun outputLog(message: String) {
         val agent = Agent.instance
 
-        if(agent != null && agent.runtime != null && agent.runtime is LocalRuntime && !shutdownProcess()) {
-            val localRuntime = Agent.instance.runtime
-
-            localRuntime.terminal.display(message)
+        if (agent != null && agent.runtime != null && agent.runtime is LocalRuntime && !shutdownProcess()) {
+            val terminal = agent.runtime.terminal
+            terminal.display(message)
             return
         }
 
