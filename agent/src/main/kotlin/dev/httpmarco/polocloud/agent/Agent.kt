@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent
 
+import dev.httpmarco.polocloud.agent.configuration.AgentConfig
 import dev.httpmarco.polocloud.agent.detector.DetectorFactoryThread
 import dev.httpmarco.polocloud.agent.detector.OnlineStateDetector
 import dev.httpmarco.polocloud.agent.events.EventService
@@ -20,6 +21,7 @@ val i18n = I18nPolocloudAgent()
 class Agent {
 
     val runtime: Runtime
+    val config: AgentConfig
     val eventService = EventService()
     val securityProvider = SecurityProvider()
 
@@ -34,17 +36,23 @@ class Agent {
         // display the default log information
         i18n.info("agent.starting", version())
 
-        if(version().endsWith("-SNAPSHOT")) {
+        if (version().endsWith("-SNAPSHOT")) {
             i18n.warn("agent.version.warn")
         }
 
         this.runtime = Runtime.create()
         this.grpcServerEndpoint.connect()
 
+        // read all information about the runtime config
+        this.config = this.runtime.configHolder().read("config", AgentConfig())
+
         i18n.info("agent.starting.runtime", runtime::class.simpleName)
 
         val groups = runtime.groupStorage().items()
-        i18n.info("agent.starting.groups.count", groups.size, groups.joinToString(separator = "&8, &7") { it.data.name })
+        i18n.info(
+            "agent.starting.groups.count",
+            groups.size,
+            groups.joinToString(separator = "&8, &7") { it.data.name })
         i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformTaskPool.size())
 
         i18n.info("agent.starting.successful")

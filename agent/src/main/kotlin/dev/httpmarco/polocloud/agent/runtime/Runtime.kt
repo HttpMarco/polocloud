@@ -73,6 +73,11 @@ interface Runtime {
     fun templates(): RuntimeTemplates<Service>
 
     /**
+     * Returns the holder for the runtime configuration.
+     */
+    fun configHolder(): RuntimeConfigHolder
+
+    /**
      * Shuts down the runtime.
      * This method can be overridden by specific runtime implementations
      * to perform any necessary shutdown operations.

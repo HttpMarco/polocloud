@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.agent.configuration
 
-import kotlinx.serialization.Serializable
+import java.util.Locale
 
-@Serializable
-data class AgentConfig(val processTerminationIdleSeconds : Int = 0, val maxQueueProcesses : Int = 0) {
+class AgentConfig(val local : Locale = Locale.ENGLISH) : Config {
+
 
 }

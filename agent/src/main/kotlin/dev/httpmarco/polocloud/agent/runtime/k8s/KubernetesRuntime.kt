@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.runtime.k8s
 
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
+import dev.httpmarco.polocloud.agent.runtime.RuntimeConfigHolder
 import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -36,5 +37,8 @@ class KubernetesRuntime : Runtime {
     override fun expender() = expender
 
     override fun templates() = templates
+    override fun configHolder(): RuntimeConfigHolder {
+        TODO("Not yet implemented")
+    }
 
 }
