@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.i18n
 
+import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import java.util.*
@@ -7,7 +8,40 @@ import java.util.*
 open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
 
     private val utf8ResourceBundleControl = UTF8ResourceBundleControl()
-    private val locale = Locale.ENGLISH // default/backup locale is English
+    var locale = Agent.instance.config.locale // default/backup locale is English
+
+    val SUPPORTED_LOCALES: List<Locale> = listOf(
+        Locale.forLanguageTag("af"),
+        Locale.forLanguageTag("ar"),
+        Locale.forLanguageTag("ca"),
+        Locale.SIMPLIFIED_CHINESE,
+        Locale.TRADITIONAL_CHINESE,
+        Locale.forLanguageTag("cs"),
+        Locale.forLanguageTag("da"),
+        Locale.GERMAN,
+        Locale.forLanguageTag("el"),
+        Locale.ENGLISH,
+        Locale.forLanguageTag("es"),
+        Locale.forLanguageTag("fi"),
+        Locale.FRENCH,
+        Locale.forLanguageTag("he"),
+        Locale.forLanguageTag("hu"),
+        Locale.ITALIAN,
+        Locale.JAPANESE,
+        Locale.forLanguageTag("ko"),
+        Locale.forLanguageTag("nl"),
+        Locale.forLanguageTag("no"),
+        Locale.forLanguageTag("pl"),
+        Locale.forLanguageTag("pt"),
+        Locale.forLanguageTag("ro"),
+        Locale.forLanguageTag("ru"),
+        Locale.forLanguageTag("sr"),
+        Locale.forLanguageTag("sv"),
+        Locale.forLanguageTag("tr"),
+        Locale.forLanguageTag("uk"),
+        Locale.forLanguageTag("vi"),
+        Locale.forLanguageTag("zh")
+    )
 
     override fun get(key: String): String {
         return get(key, mutableListOf<Any?>())
