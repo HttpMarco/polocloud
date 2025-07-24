@@ -1,8 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.groups.Group
-import dev.httpmarco.polocloud.agent.groups.GroupData
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
@@ -12,11 +10,8 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.Group
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.GroupEditFlagArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.IntArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformVersionArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.GroupSetup
-import dev.httpmarco.polocloud.platforms.PlatformIndex
 
 class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val terminal: JLine3Terminal) : Command("group", "Manage all group actions") {
 
@@ -120,72 +115,8 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val te
             i18n.info("agent.terminal.command.group.deleted", group.data.name)
         }, groupArgument, KeywordArgument("delete"))
 
-        syntax(execution = { context ->
+        syntax(execution = {
             terminal.setupController.start(GroupSetup())
-        }, KeywordArgument("setup"))
-
-        val nameArgument = TextArgument("name")
-        val platformArgument = PlatformArgument()
-        val platformVersionArgument = PlatformVersionArgument(platformArgument)
-        val minOnlineServices = IntArgument("minOnlineServices", minValue = 0)
-        val maxOnlineServices = IntArgument("maxOnlineServices", minValue = 0)
-        val minMemory = IntArgument("minMemory", minValue = 1)
-        val maxMemory = IntArgument("maxMemory", minValue = 1)
-
-        syntax(
-            execution = { context ->
-
-                val minMemory = context.arg(minMemory)
-                val maxMemory = context.arg(maxMemory)
-
-                if (maxMemory < minMemory) {
-                    i18n.warn("agent.terminal.command.group.create.invalid-memory-range")
-                    return@syntax
-                }
-
-                val minOnlineServices = context.arg(minOnlineServices)
-                val maxOnlineServices = context.arg(maxOnlineServices)
-
-                if (maxOnlineServices < minOnlineServices) {
-                    i18n.warn("agent.terminal.command.group.create.invalid-services-range")
-                    return@syntax
-                }
-
-                val platform = context.arg(platformArgument)
-                val groupName = context.arg(nameArgument)
-
-                if (Agent.instance.runtime.groupStorage().items().any { it.data.name.equals(groupName, ignoreCase = true) }) {
-                    i18n.warn("agent.terminal.command.group.create.already-exists", groupName)
-                    return@syntax
-                }
-
-                Agent.instance.runtime.groupStorage().publish(
-                    Group(
-                        GroupData(
-                            groupName,
-                            PlatformIndex(
-                                platform.name,
-                                context.arg(platformVersionArgument).version
-                            ),
-                            minMemory,
-                            maxMemory,
-                            minOnlineServices,
-                            maxOnlineServices,
-                            listOf("EVERY", "EVERY_" + platform.type, groupName),
-                            emptyMap()
-                        )
-                    )
-                )
-                i18n.info("agent.terminal.command.group.create.successful", groupName)
-            },
-            KeywordArgument("create"),
-            nameArgument,
-            platformArgument,
-            platformVersionArgument,
-            minMemory,
-            maxMemory,
-            minOnlineServices,
-            maxOnlineServices
-        )
+        }, KeywordArgument("create"), KeywordArgument("2")) // TODO remove workaround
     }
 }
