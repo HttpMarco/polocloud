@@ -32,9 +32,9 @@ abstract class Setup<T>(private val name: String) {
             this.onComplete(context)
             this.terminal.setupController.completeCurrentSetup()
 
-            terminal.clearScreen()
-            terminal.resetPrompt()
-            logger.info("Setup &8'&a$name&8' &7successfully completed&8.")
+            this.terminal.clearScreen()
+            this.terminal.resetPrompt()
+            i18n.info("agent.local-runtime.setup.completed", this.name)
             return
         }
 
