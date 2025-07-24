@@ -9,7 +9,8 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputConte
 abstract class Setup<T>(private val name: String) {
 
     private lateinit var terminal: JLine3Terminal
-    private val steps: ArrayDeque<SetupStep<*>> = ArrayDeque();
+    private val steps: ArrayDeque<SetupStep<*>> = ArrayDeque()
+    private val completedSteps: ArrayDeque<SetupStep<*>> = ArrayDeque()
     val context = InputContext()
 
     abstract fun bindQuestion()
@@ -17,7 +18,7 @@ abstract class Setup<T>(private val name: String) {
     abstract fun onComplete(result: InputContext): T
 
     fun attach(step: SetupStep<*>) {
-        steps.add(step)
+        this.steps.add(step)
     }
 
     fun start(terminal: JLine3Terminal) {
@@ -25,6 +26,13 @@ abstract class Setup<T>(private val name: String) {
         this.terminal = terminal
         this.terminal.updatePrompt("&7$name&8 » &7")
         this.display()
+    }
+
+    fun stop() {
+        this.terminal.clearScreen()
+        this.terminal.resetPrompt()
+        logger.flushSetupLogs()
+        i18n.info("agent.local-runtime.setup.exited", this.name)
     }
 
     fun next() {
@@ -38,32 +46,62 @@ abstract class Setup<T>(private val name: String) {
             return
         }
 
-        this.steps.removeFirst()
+        val finished = this.steps.removeFirst()
+        this.completedSteps.addLast(finished)
+
         this.display()
     }
 
-    private fun display(wrongAnswer: Boolean = false) {
+    private fun display(wrongAnswer: Boolean = false, noPreviousStep: Boolean = false) {
         val current = step()
         val translatedQuestion = i18n.get(current.questionKey)
 
-        terminal.clearScreen()
-        terminal.display("")
-        terminal.display(LoggingColor.translate("&8 > &f$translatedQuestion"))
+        this.terminal.clearScreen()
+        this.terminal.display("")
+        this.terminal.display(LoggingColor.translate("&8 > &f$translatedQuestion"))
 
         val defaultArgs = current.argument.defaultArgs(context).filter { it != current.argument.key }
         if (defaultArgs.isNotEmpty()) {
-            terminal.display(LoggingColor.translate("&8 > &7Possible answers: &e" + defaultArgs.joinToString("&8, &e")))
+            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.possible-answers", defaultArgs.joinToString("&8, &e"))))
+            this.terminal.display("")
         }
 
         if(wrongAnswer) {
-            terminal.display("")
-            terminal.display(LoggingColor.translate("&8 > &cThe answer you provided is not valid."))
+            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.wrong-answer")))
         }
 
-        terminal.display("")
+        this.terminal.display(i18n.get("agent.local-runtime.setup.info"))
+
+        if (noPreviousStep) {
+            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.no-previous-step")))
+        }
+
+        this.terminal.display("")
     }
 
     fun acceptAnswer(answer: String) {
+        if (answer.equals("exit", ignoreCase = true)) {
+            this.terminal.setupController.exit()
+            this.terminal.clearScreen()
+            this.terminal.resetPrompt()
+            return
+        }
+
+        if (answer.equals("back", ignoreCase = true)) {
+            if (this.completedSteps.isEmpty()) {
+                display(noPreviousStep = true)
+                return
+            }
+
+            val lastSteps = completedSteps.removeLast()
+            steps.addFirst(lastSteps)
+
+            this.context.remove(lastSteps.argument)
+
+            this.display()
+            return
+        }
+
         val argument = step().argument
 
         if (!argument.predication(answer)) {
@@ -76,6 +114,6 @@ abstract class Setup<T>(private val name: String) {
     }
 
     fun step() : SetupStep<*> {
-        return steps.first()
+        return this.steps.first()
     }
 }
