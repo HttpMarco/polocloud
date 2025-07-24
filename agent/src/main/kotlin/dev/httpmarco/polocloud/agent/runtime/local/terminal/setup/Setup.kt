@@ -8,7 +8,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputConte
 abstract class Setup<T>(private val name: String) {
 
     private lateinit var terminal: JLine3Terminal
-    private val steps: ArrayDeque<SetupStep<*>> = ArrayDeque();
+    private val steps: ArrayDeque<SetupStep<*>> = ArrayDeque()
     val context = InputContext()
 
     abstract fun bindQuestion()
@@ -16,7 +16,7 @@ abstract class Setup<T>(private val name: String) {
     abstract fun onComplete(result: InputContext): T
 
     fun attach(step: SetupStep<*>) {
-        steps.add(step)
+        this.steps.add(step)
     }
 
     fun start(terminal: JLine3Terminal) {
@@ -24,6 +24,12 @@ abstract class Setup<T>(private val name: String) {
         this.terminal = terminal
         this.terminal.updatePrompt("&7$name&8 » &7")
         this.display()
+    }
+
+    fun stop() {
+        this.terminal.clearScreen()
+        this.terminal.resetPrompt()
+        i18n.info("agent.local-runtime.setup.stopped", this.name)
     }
 
     fun next() {
@@ -52,17 +58,25 @@ abstract class Setup<T>(private val name: String) {
         val defaultArgs = current.argument.defaultArgs(context).filter { it != current.argument.key }
         if (defaultArgs.isNotEmpty()) {
             this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.possible-answers", defaultArgs.joinToString("&8, &e"))))
+            this.terminal.display("")
         }
 
         if(wrongAnswer) {
-            this.terminal.display("")
             this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.wrong-answer")))
         }
 
+        this.terminal.display(i18n.get("agent.local-runtime.setup.info"))
         this.terminal.display("")
     }
 
     fun acceptAnswer(answer: String) {
+        if (answer.equals("exit", ignoreCase = true)) {
+            this.terminal.setupController.exit()
+            this.terminal.clearScreen()
+            this.terminal.resetPrompt()
+            return
+        }
+
         val argument = step().argument
 
         if (!argument.predication(answer)) {
@@ -75,6 +89,6 @@ abstract class Setup<T>(private val name: String) {
     }
 
     fun step() : SetupStep<*> {
-        return steps.first()
+        return this.steps.first()
     }
 }

@@ -26,4 +26,13 @@ class SetupController(private val terminal: JLine3Terminal) {
     fun completeCurrentSetup() {
         displayedSetup = null
     }
+
+    fun exit() {
+        if (displayedSetup == null) {
+            return
+        }
+
+        this.displayedSetup = null
+        displayedSetup?.stop()
+    }
 }
