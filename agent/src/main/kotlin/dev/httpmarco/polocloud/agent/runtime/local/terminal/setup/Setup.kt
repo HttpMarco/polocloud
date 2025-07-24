@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.setup
 
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
@@ -46,21 +45,21 @@ abstract class Setup<T>(private val name: String) {
         val current = step()
         val translatedQuestion = i18n.get(current.questionKey)
 
-        terminal.clearScreen()
-        terminal.display("")
-        terminal.display(LoggingColor.translate("&8 > &f$translatedQuestion"))
+        this.terminal.clearScreen()
+        this.terminal.display("")
+        this.terminal.display(LoggingColor.translate("&8 > &f$translatedQuestion"))
 
         val defaultArgs = current.argument.defaultArgs(context).filter { it != current.argument.key }
         if (defaultArgs.isNotEmpty()) {
-            terminal.display(LoggingColor.translate("&8 > &7Possible answers: &e" + defaultArgs.joinToString("&8, &e")))
+            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.possible-answers", defaultArgs.joinToString("&8, &e"))))
         }
 
         if(wrongAnswer) {
-            terminal.display("")
-            terminal.display(LoggingColor.translate("&8 > &cThe answer you provided is not valid."))
+            this.terminal.display("")
+            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.wrong-answer")))
         }
 
-        terminal.display("")
+        this.terminal.display("")
     }
 
     fun acceptAnswer(answer: String) {
