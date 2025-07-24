@@ -53,7 +53,6 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
 
             override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
                 try {
-                    System.out.println("Copying $file")
                     Files.copy(
                         file,
                         targetPath.resolve(sourcePath.relativize(file)),
