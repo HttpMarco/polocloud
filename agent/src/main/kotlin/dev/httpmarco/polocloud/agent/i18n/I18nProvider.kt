@@ -41,27 +41,14 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
         Locale.forLanguageTag("uk"),
         Locale.forLanguageTag("vi"),
         Locale.forLanguageTag("zh")
-    )
+    ) // TODO parse from resource bundle
 
-    fun info(key: String, vararg format: Any?) {
-        logger.info(get(key, *format))
-    }
+    fun info(key: String, vararg format: Any?) = logger.info(get(key, *format))
+    fun warn(key: String, vararg format: Any?) = logger.warn(get(key, *format))
+    fun error(key: String, vararg format: Any?) = logger.error(get(key, *format))
+    fun debug(key: String, vararg format: Any?) = logger.debug(get(key, *format))
 
-    fun warn(key: String, vararg format: Any?) {
-        logger.warn(get(key, *format))
-    }
-
-    fun error(key: String, vararg format: Any?) {
-        logger.error(get(key, *format))
-    }
-
-    fun debug(key: String, vararg format: Any?) {
-        logger.debug(get(key, *format))
-    }
-
-    override fun get(key: String): String {
-        return get(key, *emptyArray())
-    }
+    override fun get(key: String): String = get(key, *emptyArray())
 
     override fun get(key: String, vararg format: Any?): String {
         val locale = try {
