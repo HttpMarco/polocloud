@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.configuration
 import java.util.Locale
 
 data class AgentConfig(
-    val locale: Locale = Locale.ENGLISH,
-    val autoUpdate: Boolean = true
-) : Config // TODO port
+    var locale: Locale = Locale.ENGLISH,
+    var autoUpdate: Boolean = true,
+    var port: Int = 8932
+) : Config
