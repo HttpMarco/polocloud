@@ -44,13 +44,14 @@ class Agent {
         }
 
         this.runtime = Runtime.create()
-        this.grpcServerEndpoint.connect()
 
         if (Path("config.json").notExists()) {
             if (this.runtime is LocalRuntime) {
                 this.runtime.terminal.setupController.start(OnboardingSetup())
             }
         }
+
+        this.grpcServerEndpoint.connect()
 
         // read all information about the runtime config
         this.config = this.runtime.configHolder().read("config", AgentConfig())
