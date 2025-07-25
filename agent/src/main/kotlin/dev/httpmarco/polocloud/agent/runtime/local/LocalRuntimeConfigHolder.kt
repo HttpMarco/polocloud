@@ -18,9 +18,17 @@ class LocalRuntimeConfigHolder : RuntimeConfigHolder {
         val target = Path("$key.json")
 
         if (target.exists()) {
-            return gson.fromJson<T>(target.readText(Charsets.UTF_8), defaultValue.javaClass)
+            val config = gson.fromJson(target.readText(Charsets.UTF_8), defaultValue.javaClass)
+            this.write(key, config)
+            return config
         }
-        target.writeText(gson.toJson(defaultValue))
+
+        this.write(key, defaultValue)
         return defaultValue
+    }
+
+    override fun <T : Config> write(key: String, value: T) {
+        val target = Path("$key.json")
+        target.writeText(gson.toJson(value))
     }
 }
