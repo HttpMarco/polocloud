@@ -8,6 +8,7 @@ import java.util.*
 open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
 
     private val utf8ResourceBundleControl = UTF8ResourceBundleControl()
+    private var overrideLocale: Locale? = null
 
     val SUPPORTED_LOCALES: List<Locale> = listOf(
         Locale.forLanguageTag("af"),
@@ -64,7 +65,7 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
 
     override fun get(key: String, vararg format: Any?): String {
         val locale = try {
-            Agent.instance.config.locale
+            overrideLocale ?: Agent.instance.config.locale
         } catch (ex: Throwable) {
             return getDefault(key, *format) // Fallback for startup
         }
@@ -112,5 +113,13 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
         } else {
             LoggingColor.translate(String.format(value, *format))
         }
+    }
+
+    fun overrideLocale(locale: Locale) {
+        this.overrideLocale = locale
+    }
+
+    fun clearOverrideLocale() {
+        this.overrideLocale = null
     }
 }
