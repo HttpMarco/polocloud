@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidExcept
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.jsonPrimitive
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
@@ -56,9 +57,14 @@ class Platform(
         path.parent.createDirectories()
 
         if (path.notExists()) {
+            var replacedUrl = url.replace("%version%", version.version)
+
+            version.additionalProperties.forEach { (key, value) ->
+                replacedUrl = replacedUrl.replace("%$key%", value.jsonPrimitive.content)
+            }
+
             URI(
-                url.replace("%version%", version.version)
-                    .replace("%buildId%", version.buildId ?: "null")
+                replacedUrl
             ).toURL().openStream().use { input ->
                 path.toFile().outputStream().use { output ->
                     input.copyTo(output)
