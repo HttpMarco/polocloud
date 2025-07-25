@@ -87,10 +87,4 @@ interface Runtime {
         // This method can be overridden by specific runtime implementations
         // to perform any necessary shutdown operations.
     }
-
-    fun postInitialize() {
-        // Default implementation does nothing.
-        // This method can be overridden by specific runtime implementations
-        // to perform any necessary post-initialization operations.
-    }
 }
