@@ -13,7 +13,6 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.Onboardin
 import dev.httpmarco.polocloud.agent.security.SecurityProvider
 import dev.httpmarco.polocloud.platforms.PlatformPool
 import kotlin.io.path.Path
-import kotlin.io.path.exists
 import kotlin.io.path.notExists
 
 // global terminal instance for the agent
@@ -25,7 +24,7 @@ val i18n = I18nPolocloudAgent()
 class Agent {
 
     val runtime: Runtime
-    val config: AgentConfig
+    var config: AgentConfig
     val eventService = EventService()
     val securityProvider = SecurityProvider()
 

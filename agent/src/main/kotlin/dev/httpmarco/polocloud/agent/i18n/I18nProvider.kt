@@ -8,7 +8,6 @@ import java.util.*
 open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
 
     private val utf8ResourceBundleControl = UTF8ResourceBundleControl()
-    var locale = Agent.instance.config.locale // default/backup locale is English
 
     val SUPPORTED_LOCALES: List<Locale> = listOf(
         Locale.forLanguageTag("af"),
@@ -43,10 +42,6 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
         Locale.forLanguageTag("zh")
     )
 
-    override fun get(key: String): String {
-        return get(key, mutableListOf<Any?>())
-    }
-
     fun info(key: String, vararg format: Any?) {
         logger.info(get(key, *format))
     }
@@ -63,26 +58,26 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
         logger.debug(get(key, *format))
     }
 
+    override fun get(key: String): String {
+        return get(key, *emptyArray())
+    }
+
     override fun get(key: String, vararg format: Any?): String {
-        val resourceBundle: ResourceBundle = this.resourceBundle(locale)
-
-        if (!resourceBundle.containsKey(key)) {
-            return key
-        }
-        val value = resourceBundle.getString(key)
-        if (format.isEmpty()) {
-            return LoggingColor.translate(value)
+        val locale = try {
+            Agent.instance.config.locale
+        } catch (ex: Throwable) {
+            return getDefault(key, *format) // Fallback for startup
         }
 
-        return LoggingColor.translate(String.format(value, *format))
+        return get(key, locale, *format)
     }
 
-    override fun get(key: String, locale: Locale, vararg format: Any): String {
-        return getDefault(key, *format)
+    override fun get(key: String, locale: Locale, vararg format: Any?): String {
+        return translate(resourceBundle(locale), key, *format)
     }
 
-    override fun getDefault(key: String, vararg format: Any): String {
-        return get(key, this.locale, format)
+    override fun getDefault(key: String, vararg format: Any?): String {
+        return get(key, Locale.ENGLISH, *format)
     }
 
     override fun resourceBundle(locale: Locale): ResourceBundle {
@@ -94,15 +89,28 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
     }
 
     override fun defaultResourceBundle(): ResourceBundle {
-        return this.localBundle(this.locale)
+        return this.localBundle(Locale.ENGLISH)
     }
 
-    fun localBundle(locale: Locale): ResourceBundle {
+    private fun localBundle(locale: Locale): ResourceBundle {
         return ResourceBundle.getBundle(
             this.resourceBundlePrefix,
             locale,
             this.javaClass.classLoader,
             utf8ResourceBundleControl
         )
+    }
+
+    private fun translate(resourceBundle: ResourceBundle, key: String, vararg format: Any?): String {
+        if (!resourceBundle.containsKey(key)) {
+            return key
+        }
+
+        val value = resourceBundle.getString(key)
+        return if (format.isEmpty()) {
+            LoggingColor.translate(value)
+        } else {
+            LoggingColor.translate(String.format(value, *format))
+        }
     }
 }
