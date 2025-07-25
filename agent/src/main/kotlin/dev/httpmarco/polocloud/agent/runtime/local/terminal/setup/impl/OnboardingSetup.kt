@@ -21,7 +21,7 @@ class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup") {
                 i18n.overrideLocale(locale) // todo implement action
             })
         attach(SetupStep("agent.local-runtime.setup.onboarding.auto-update", updateArgument)) // TODO change language after selection
-        attach(SetupStep("agent.local-runtime.setup.onboarding.port", portArgument))
+        attach(SetupStep("agent.local-runtime.setup.onboarding.port", portArgument)) // TODO default port 8932 only press enter
     }
 
     override fun onComplete(result: InputContext): AgentConfig {
