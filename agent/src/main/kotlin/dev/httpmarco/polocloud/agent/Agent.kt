@@ -10,7 +10,6 @@ import dev.httpmarco.polocloud.agent.logging.Logger
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.security.SecurityProvider
 import dev.httpmarco.polocloud.platforms.PlatformPool
-import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 
 // global terminal instance for the agent
 // this is used to print messages to the console
@@ -58,7 +57,6 @@ class Agent {
         i18n.info("agent.starting.successful")
 
         this.onlineStateDetector.detect()
-        this.runtime.postInitialize()
     }
 
     fun close() {
