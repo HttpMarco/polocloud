@@ -6,4 +6,6 @@ interface RuntimeConfigHolder {
 
     fun <T : Config> read(key: String, defaultValue: T) : T
 
+    fun <T : Config> write(key: String, value: T)
+
 }
