@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.platforms.tasks.actions
 
+import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskStep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,11 +20,11 @@ class PlatformFilePropertyUpdateAction(private val key: String, private val valu
     override fun run(
         file: Path,
         step: PlatformTaskStep,
-        environment: Map<String, String>
+        environment: PlatformParameters
     ) {
         file.parent.createDirectories()
 
-        val translatedValue = modifyValueWithEnvironment(value, environment)
+        val translatedValue = environment.modifyValueWithEnvironment(value)
 
         if (step.filename.endsWith(".properties")) {
             val properties = Properties()
@@ -31,7 +32,7 @@ class PlatformFilePropertyUpdateAction(private val key: String, private val valu
                 FileInputStream(file.toFile()).use { input -> properties.load(input) }
             }
 
-            properties.setProperty(key, modifyValueWithEnvironment(translatedValue, environment))
+            properties.setProperty(key, translatedValue)
 
             FileOutputStream(file.toFile()).use { output ->
                 properties.store(
