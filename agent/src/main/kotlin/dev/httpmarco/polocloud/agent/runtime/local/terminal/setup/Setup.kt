@@ -37,12 +37,12 @@ abstract class Setup<T>(private val name: String) {
 
     fun next() {
         if (steps.size <= 1) {
-            this.onComplete(context)
             this.terminal.setupController.completeCurrentSetup()
 
             this.terminal.clearScreen()
             this.terminal.resetPrompt()
             i18n.info("agent.local-runtime.setup.completed", this.name)
+            this.onComplete(context)
             return
         }
 

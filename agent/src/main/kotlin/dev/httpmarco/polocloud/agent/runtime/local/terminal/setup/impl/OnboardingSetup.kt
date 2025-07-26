@@ -29,14 +29,14 @@ class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup") {
         val autoUpdate = result.arg(updateArgument)
         val port = result.arg(portArgument)
 
-        val config = Agent.config
+        val config = AgentConfig()
         config.locale = locale
         config.autoUpdate = autoUpdate.toBoolean()
         config.port = port
 
         config.save("config")
 
-        // start complete booting
+        // todo call sync with coroutines
         Agent.boot()
         return config
     }
