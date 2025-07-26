@@ -11,6 +11,6 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
         request: EventProviderOuterClass.EventSubscribeRequest,
         responseObserver: StreamObserver<EventProviderOuterClass.EventContext>
     ) {
-        Agent.instance.eventService.attach(request.eventName, request.serviceName, responseObserver)
+        Agent.eventService.attach(request.eventName, request.serviceName, responseObserver)
     }
 }

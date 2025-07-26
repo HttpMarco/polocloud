@@ -21,62 +21,61 @@ val logger = Logger()
 val developmentMode = System.getProperty("polocloud.version", "false").toBoolean()
 val i18n = I18nPolocloudAgent()
 
-class Agent {
+object Agent {
 
     val runtime: Runtime
-    var config: AgentConfig
     val eventService = EventService()
     val securityProvider = SecurityProvider()
+
+    lateinit var config: AgentConfig
 
     private val grpcServerEndpoint = GrpcServerEndpoint()
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())
 
-    companion object {
-        val instance = Agent()
-    }
-
     init {
         // display the default log information
-        i18n.info("agent.starting", version())
+        i18n.info("agent.starting", polocloudVersion())
 
-        if (version().endsWith("-SNAPSHOT")) {
+        if (polocloudVersion().endsWith("-SNAPSHOT")) {
             i18n.warn("agent.version.warn")
         }
 
         this.runtime = Runtime.create()
+        this.runtime.initialize()
+    }
 
-        if (Path("config.json").notExists()) {
-            if (this.runtime is LocalRuntime) {
-                this.runtime.terminal.setupController.start(OnboardingSetup())
-            }
-        }
-
-        this.grpcServerEndpoint.connect()
-
+    /**
+     * The boot method is called to start the agent.
+     * Its seperated from the constructor to allow for an onboarding setup.
+     * The context must be fully initialized before calling this method.
+     */
+    fun boot() {
         // read all information about the runtime config
+        // this is done before the runtime is initialized
         this.config = this.runtime.configHolder().read("config", AgentConfig())
 
-        i18n.info("agent.starting.runtime", runtime::class.simpleName)
+        this.grpcServerEndpoint.connect(this.config.port)
+
+        this.runtime.boot()
 
         val groups = runtime.groupStorage().items()
-        i18n.info(
-            "agent.starting.groups.count",
-            groups.size,
-            groups.joinToString(separator = "&8, &7") { it.data.name })
-        i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformPool.versionSize())
 
+        i18n.info("agent.starting.runtime", runtime::class.simpleName)
+        i18n.info("agent.starting.groups.count", groups.size, groups.joinToString(separator = "&8, &7") { it.data.name })
+        i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformPool.versionSize())
         i18n.info("agent.starting.successful")
 
         this.onlineStateDetector.detect()
     }
 
+    /**
+     * Close the agent and all its resources.
+     * This method will shut down the runtime, close the gRPC server endpoint,
+     * and close the online state detector.
+     */
     fun close() {
         this.runtime.shutdown()
         this.grpcServerEndpoint.close()
         this.onlineStateDetector.close()
-    }
-
-    fun version(): String {
-        return System.getenv("polocloud-version")
     }
 }

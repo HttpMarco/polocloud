@@ -8,14 +8,14 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputConte
 class GroupArgument(key: String = "group") : TerminalArgument<Group>(key) {
 
     override fun buildResult(input: String, context: InputContext): Group {
-        return Agent.instance.runtime.groupStorage().item(input)!!
+        return Agent.runtime.groupStorage().item(input)!!
     }
 
     override fun defaultArgs(context: InputContext): MutableList<String> {
-        return Agent.instance.runtime.groupStorage().items().map { it.data.name }.toMutableList()
+        return Agent.runtime.groupStorage().items().map { it.data.name }.toMutableList()
     }
 
     override fun predication(rawInput: String): Boolean {
-        return Agent.instance.runtime.groupStorage().present(rawInput)
+        return Agent.runtime.groupStorage().present(rawInput)
     }
 }

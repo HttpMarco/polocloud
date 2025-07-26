@@ -18,7 +18,7 @@ class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup") {
 
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.onboarding.locale", localeArgument) { locale ->
-                i18n.overrideLocale(locale) // todo implement action
+                i18n.overrideLocale(locale)
             })
         attach(SetupStep("agent.local-runtime.setup.onboarding.auto-update", updateArgument)) // TODO change language after selection
         attach(SetupStep("agent.local-runtime.setup.onboarding.port", portArgument)) // TODO default port 8932 only press enter
@@ -27,16 +27,17 @@ class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup") {
     override fun onComplete(result: InputContext): AgentConfig {
         val locale = result.arg(localeArgument)
         val autoUpdate = result.arg(updateArgument)
-        val port = result.arg(portArgument) // TODO actually implement the port
-        // TODO start the setup before launching the agent
+        val port = result.arg(portArgument)
 
-        val config = Agent.instance.config
+        val config = Agent.config
         config.locale = locale
         config.autoUpdate = autoUpdate.toBoolean()
         config.port = port
 
         config.save("config")
 
+        // start complete booting
+        Agent.boot()
         return config
     }
 

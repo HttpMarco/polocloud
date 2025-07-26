@@ -23,7 +23,7 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
                 lines.forEach { line ->
                     cachedLogs += line
 
-                    val runtime = Agent.instance.runtime
+                    val runtime = Agent.runtime
                     if (runtime !is LocalRuntime) return@forEach
 
                     val screenService = runtime.terminal.screenService

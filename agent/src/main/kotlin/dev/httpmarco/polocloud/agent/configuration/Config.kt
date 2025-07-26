@@ -5,6 +5,6 @@ import dev.httpmarco.polocloud.agent.Agent
 interface Config {
 
     fun save(path: String) {
-        Agent.instance.runtime.configHolder().write(path, this)
+        Agent.runtime.configHolder().write(path, this)
     }
 }

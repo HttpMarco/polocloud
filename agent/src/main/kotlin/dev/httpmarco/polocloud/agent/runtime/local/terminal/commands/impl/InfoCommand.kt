@@ -22,12 +22,12 @@ class InfoCommand : Command("info", "Used to display information about the agent
         defaultExecution {
             i18n.info("agent.terminal.command.info")
             i18n.info("agent.terminal.command.info.line.1", formatDuration(System.currentTimeMillis() - System.getProperty("polocloud.lifecycle.boot-time").toLong()))
-            i18n.info("agent.terminal.command.info.line.2", Agent.instance.runtime.javaClass.simpleName)
+            i18n.info("agent.terminal.command.info.line.2", Agent.runtime.javaClass.simpleName)
             i18n.info("agent.terminal.command.info.line.3", System.getProperty("java.version"))
             i18n.info("agent.terminal.command.info.line.4", cpuUsage(), "%")
             i18n.info("agent.terminal.command.info.line.5", usedMemory())
             i18n.info("agent.terminal.command.info.line.6", maxMemory())
-            i18n.info("agent.terminal.command.info.line.7", Agent.instance.eventService.registeredAmount())
+            i18n.info("agent.terminal.command.info.line.7", Agent.eventService.registeredAmount())
         }
     }
 

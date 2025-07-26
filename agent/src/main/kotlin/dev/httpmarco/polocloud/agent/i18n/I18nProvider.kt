@@ -52,7 +52,7 @@ open class I18nProvider(private val resourceBundlePrefix: String) : I18n {
 
     override fun get(key: String, vararg format: Any?): String {
         val locale = try {
-            overrideLocale ?: Agent.instance.config.locale
+            overrideLocale ?: Agent.config.locale
         } catch (ex: Throwable) {
             return getDefault(key, *format) // Fallback for startup
         }

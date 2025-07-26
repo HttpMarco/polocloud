@@ -11,7 +11,7 @@ import io.grpc.stub.StreamObserver
 class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
 
     override fun find(request: ServiceFindRequest?, responseObserver: StreamObserver<ServiceFindResponse>) {
-        val serviceStorage = Agent.instance.runtime.serviceStorage();
+        val serviceStorage = Agent.runtime.serviceStorage();
         val builder = ServiceFindResponse.newBuilder()
 
         serviceStorage.items().forEach {

@@ -11,7 +11,7 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
 
     override fun run() {
         try {
-            val runtime = Agent.instance.runtime
+            val runtime = Agent.runtime
 
             while (!isInterrupted && !shutdownProcess()) {
                 runtime.groupStorage().items()
@@ -46,7 +46,7 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
 
     private fun findIndex(group: Group): Int {
         var id = 1
-        while (Agent.instance.runtime.serviceStorage().items().stream()
+        while (Agent.runtime.serviceStorage().items().stream()
                 .anyMatch { it.group == group && it.id == id }
         ) {
             id++

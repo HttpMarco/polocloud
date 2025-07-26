@@ -47,6 +47,11 @@ abstract class Setup<T>(private val name: String) {
         }
 
         val finished = this.steps.removeFirst()
+
+        val value = context.arg(finished.argument)
+        val typed = finished.action as (Any?) -> Unit
+        typed(value)
+
         this.completedSteps.addLast(finished)
 
         this.display()
@@ -57,16 +62,23 @@ abstract class Setup<T>(private val name: String) {
         val translatedQuestion = i18n.get(current.questionKey)
 
         this.terminal.clearScreen()
-        this.terminal.display("")
+        this.terminal.emptyLine()
         this.terminal.display(LoggingColor.translate("&8 > &f$translatedQuestion"))
 
         val defaultArgs = current.argument.defaultArgs(context).filter { it != current.argument.key }
         if (defaultArgs.isNotEmpty()) {
-            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.possible-answers", defaultArgs.joinToString("&8, &e"))))
-            this.terminal.display("")
+            this.terminal.display(
+                LoggingColor.translate(
+                    i18n.get(
+                        "agent.local-runtime.setup.possible-answers",
+                        defaultArgs.joinToString("&8, &e")
+                    )
+                )
+            )
+            this.terminal.emptyLine()
         }
 
-        if(wrongAnswer) {
+        if (wrongAnswer) {
             this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.wrong-answer")))
         }
 
@@ -113,7 +125,7 @@ abstract class Setup<T>(private val name: String) {
         this.next()
     }
 
-    fun step() : SetupStep<*> {
+    fun step(): SetupStep<*> {
         return this.steps.first()
     }
 }
