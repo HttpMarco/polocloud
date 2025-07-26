@@ -10,6 +10,10 @@ class YesNotArgument(key: String) : TerminalArgument<Boolean>(key) {
         bindShortcut('n', "no")
     }
 
+    override fun defaultArgs(context: InputContext): MutableList<String> {
+        return mutableListOf("yes", "no")
+    }
+
     override fun buildResult(input: String, context: InputContext): Boolean {
         if (input.equals("yes", ignoreCase = true)) {
             return true

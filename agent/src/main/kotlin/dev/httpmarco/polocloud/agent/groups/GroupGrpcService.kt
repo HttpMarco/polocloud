@@ -14,7 +14,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
     ) {
 
         val builder = GroupProvider.FindGroupResponse.newBuilder()
-        val groupStorage = Agent.instance.runtime.groupStorage()
+        val groupStorage = Agent.runtime.groupStorage()
 
         val groupsToReturn = if (request.name.isNotEmpty()) {
             groupStorage.item(request.name)?.let { listOf(it) } ?: emptyList()

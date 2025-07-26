@@ -11,14 +11,14 @@ class GrpcServerEndpoint {
 
     private lateinit var server: Server
 
-    fun connect() {
-        this.server = ServerBuilder.forPort(8932)
+    fun connect(port: Int) {
+        this.server = ServerBuilder.forPort(port)
             .addService(EventGrpcService())
             .addService(GroupGrpcService())
             .addService(ServiceGrpcService())
             .build()
         this.server.start()
-        i18n.info("agent.starting.grpc.successful")
+        i18n.info("agent.starting.grpc.successful", port)
     }
 
     fun close() {

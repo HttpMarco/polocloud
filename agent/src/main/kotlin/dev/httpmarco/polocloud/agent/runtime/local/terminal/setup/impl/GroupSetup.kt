@@ -4,13 +4,13 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.groups.GroupData
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.IntArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.PlatformVersionArgument
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextArgument
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
 import dev.httpmarco.polocloud.platforms.PlatformIndex
+import dev.httpmarco.polocloud.platforms.PlatformType
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 class GroupSetup : Setup<Group>("Group setup") {
 
@@ -21,10 +21,15 @@ class GroupSetup : Setup<Group>("Group setup") {
     private val maxMemoryArgument = IntArgument("maxMemory", 1)
     private val minOnlineServicesArgument = IntArgument("minOnlineServices", 0)
     private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", 0)
+    private val fallbackArgument = YesNotArgument("fallback")
 
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.group.name", nameArgument))
-        attach(SetupStep("agent.local-runtime.setup.group.platform", platformArgument))
+        attach(SetupStep("agent.local-runtime.setup.group.platform", platformArgument) { platform ->
+            if (platform.type == PlatformType.SERVER) {
+                attach(SetupStep("agent.local-runtime.setup.group.fallback", fallbackArgument))
+            }
+        })
         attach(SetupStep("agent.local-runtime.setup.group.platform.version", platformVersionArgument))
         attach(SetupStep("agent.local-runtime.setup.group.min-memory", minMemoryArgument))
         attach(SetupStep("agent.local-runtime.setup.group.max-memory", maxMemoryArgument))
@@ -39,8 +44,15 @@ class GroupSetup : Setup<Group>("Group setup") {
         val maxMemory = result.arg(maxMemoryArgument)
         val minOnlineServices = result.arg(minOnlineServicesArgument)
         val maxOnlineServices = result.arg(maxOnlineServicesArgument)
+        val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else null
 
-        // TODO implement templates and properties
+        val properties = if (fallback != null) {
+            buildJsonObject {
+                put("fallback", fallback)
+            }
+        } else {
+            emptyMap()
+        }
 
         val group = Group(GroupData(
             name,
@@ -49,11 +61,11 @@ class GroupSetup : Setup<Group>("Group setup") {
             maxMemory,
             minOnlineServices,
             maxOnlineServices,
-            emptyList(),
-            emptyMap())
+            emptyList(), // TODO
+            properties)
         )
 
-        Agent.instance.runtime.groupStorage().publish(group)
+        Agent.runtime.groupStorage().publish(group)
         return group
     }
 }

@@ -11,7 +11,7 @@ open class Group(val data: GroupData) {
 
     fun update() {
         // update the group
-        Agent.instance.runtime.groupStorage().update(group = this)
+        Agent.runtime.groupStorage().update(group = this)
     }
 
     fun serviceCount(): Int {
@@ -23,7 +23,7 @@ open class Group(val data: GroupData) {
     }
 
     fun services(): List<Service> {
-        return Agent.instance.runtime.serviceStorage().findServicesByGroup(this)
+        return Agent.runtime.serviceStorage().findServicesByGroup(this)
     }
 
     fun applicationPlatformFile(): Path {
@@ -31,7 +31,7 @@ open class Group(val data: GroupData) {
     }
 
     fun shutdownAll() {
-        Agent.instance.runtime.serviceStorage().findServicesByGroup(this).forEach { it.shutdown() }
+        Agent.runtime.serviceStorage().findServicesByGroup(this).forEach { it.shutdown() }
     }
 
     override fun equals(other: Any?): Boolean {

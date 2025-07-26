@@ -64,11 +64,8 @@ class Logger {
     }
 
     private fun outputLog(message: String) {
-        val agent = Agent.instance
-
-        if (agent != null && agent.runtime != null && agent.runtime is LocalRuntime && !shutdownProcess()) {
-            val terminal = agent.runtime.terminal
-            terminal.display(message)
+        if (Agent.runtime is LocalRuntime && !shutdownProcess()) {
+            Agent.runtime.terminal.display(message)
             return
         }
 

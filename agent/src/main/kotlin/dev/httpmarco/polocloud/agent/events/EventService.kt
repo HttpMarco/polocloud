@@ -16,7 +16,7 @@ class EventService {
 
     fun attach(event: String, serviceName: String, observer: StreamObserver<EventProviderOuterClass.EventContext>) {
 
-        val service = Agent.instance.runtime.serviceStorage().findService(serviceName)
+        val service = Agent.runtime.serviceStorage().findService(serviceName)
 
         if (service == null) {
             i18n.warn("agent.events.service.not-found", serviceName, event)

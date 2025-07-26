@@ -10,7 +10,7 @@ class ReloadCommand : Command("reload", "Reloads the agent configuration") {
         defaultExecution {
             i18n.info("agent.terminal.command.reload")
 
-            Agent.instance.runtime.groupStorage().reload()
+            Agent.runtime.groupStorage().reload()
 
             i18n.info("agent.terminal.command.reload.successful")
         }

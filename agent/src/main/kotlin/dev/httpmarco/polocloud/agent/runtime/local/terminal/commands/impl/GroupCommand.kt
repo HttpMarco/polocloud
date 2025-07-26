@@ -109,7 +109,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val te
         syntax(execution = { context ->
             val group = context.arg(groupArgument)
 
-            Agent.instance.runtime.groupStorage().destroy(group)
+            Agent.runtime.groupStorage().destroy(group)
             group.shutdownAll()
 
             i18n.info("agent.terminal.command.group.deleted", group.data.name)
