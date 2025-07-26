@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.i18n
+import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformType
@@ -42,14 +43,14 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment["hostname"] = service.hostname
         environment["port"] = service.port.toString()
         environment["service-name"] = service.name()
-        environment["velocityProxyToken"] = Agent.instance.securityProvider.proxySecureToken
+        environment["velocityProxyToken"] = Agent.securityProvider.proxySecureToken
 
         // find a better way here
-        environment["velocity_use"] = Agent.instance.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name.equals("velocity") }.toString()
-        environment["version"] = Agent.instance.version()
+        environment["velocity_use"] = Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name.equals("velocity") }.toString()
+        environment["version"] = polocloudVersion()
 
         // copy all templates to the service path
-        Agent.instance.runtime.templates().bindTemplate(service)
+        Agent.runtime.templates().bindTemplate(service)
 
         // download and copy the platform files to the service path
         platform.prepare(service.path, service.group.data.platform.version, environment)
@@ -95,7 +96,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
-        val eventService = Agent.instance.eventService
+        val eventService = Agent.eventService
 
         eventService.dropServiceSubscriptions(service)
         eventService.call(ServiceShutdownEvent(service))
@@ -130,7 +131,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.path.deleteRecursively()
 
         service.state = ServiceState.STOPPED
-        Agent.instance.runtime.serviceStorage().dropService(service)
+        Agent.runtime.serviceStorage().dropService(service)
         i18n.info("agent.local-runtime.factory.shutdown.successful", service.name())
     }
 }

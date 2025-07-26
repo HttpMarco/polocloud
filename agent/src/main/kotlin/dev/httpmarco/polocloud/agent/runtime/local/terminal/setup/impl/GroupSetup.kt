@@ -53,7 +53,7 @@ class GroupSetup : Setup<Group>("Group setup") {
             emptyMap())
         )
 
-        Agent.instance.runtime.groupStorage().publish(group)
+        Agent.runtime.groupStorage().publish(group)
         return group
     }
 }

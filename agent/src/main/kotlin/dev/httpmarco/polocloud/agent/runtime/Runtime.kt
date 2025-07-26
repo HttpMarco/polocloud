@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime
 
+import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
 import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
@@ -25,9 +26,26 @@ interface Runtime {
                 DockerRuntime(),
                 LocalRuntime() // Fallback if others are not runnable
             ).firstOrNull { it.runnable() } ?: LocalRuntime()
-            runtime.boot() // Boot the runtime if necessary
             return runtime
         }
+    }
+
+    /**
+     * Boot order
+     * 1. Initialize() - called before boot
+     * 2. boot() - called after initialize
+     * 3. Runnable() - check if the runtime is runnable
+     * ...
+     * 4. shutdown - called to shut down the runtime
+     */
+    fun initialize() {
+        // Default implementation does nothing.
+        // This method can be overridden by specific runtime implementations
+        // to perform any necessary initialization.
+        // its called before the boot method
+
+        // if nothing is done here, the boot method is called directly
+        Agent.boot()
     }
 
     fun boot() {

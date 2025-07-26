@@ -9,14 +9,14 @@ class ServiceArgument(key: String = "service") : TerminalArgument<Service>(key) 
 
     override fun buildResult(input: String, context: InputContext): Service {
         // null check is done in the predication method
-        return Agent.instance.runtime.serviceStorage().findService(input)!!
+        return Agent.runtime.serviceStorage().findService(input)!!
     }
 
     override fun defaultArgs(context: InputContext): MutableList<String> {
-        return Agent.instance.runtime.serviceStorage().items().stream().map { it.name() }.toList()
+        return Agent.runtime.serviceStorage().items().stream().map { it.name() }.toList()
     }
 
     override fun predication(rawInput: String): Boolean {
-        return Agent.instance.runtime.serviceStorage().findService(rawInput) != null
+        return Agent.runtime.serviceStorage().findService(rawInput) != null
     }
 }

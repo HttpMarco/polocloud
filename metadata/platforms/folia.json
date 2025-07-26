@@ -1,0 +1,22 @@
+{
+  "name": "folia",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://fill-data.papermc.io/v1/objects/%hash%/folia-%version%-%buildId%.jar",
+  "arguments": [
+    "-nogui"
+  ],
+  "flags": [],
+  "tasks": [
+    "EULA_TASK",
+    "SPIGOT_SERVER_PROPERTIES",
+    "PAPER_PROXY_SUPPORT_TASK"
+  ],
+  "versions": [
+    {
+      "version": "1.21.6",
+      "buildId": "6",
+      "hash": "917a8abaa542c1d0ef0e969693e227a7bfe1c42e671aaa806309e00a64efc234"
+    }
+  ]
+}

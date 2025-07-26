@@ -23,14 +23,14 @@ abstract class Service(val group: Group, val id: Int, val hostname: String = "12
     }
 
     fun shutdown(shutdownCleanUp : Boolean = true) {
-        Agent.instance.runtime.factory().shutdownApplication(this, shutdownCleanUp)
+        Agent.runtime.factory().shutdownApplication(this, shutdownCleanUp)
     }
 
     fun executeCommand(command: String): Boolean {
-        return Agent.instance.runtime.expender().executeCommand(this, command)
+        return Agent.runtime.expender().executeCommand(this, command)
     }
 
     fun logs(limit: Int = 100): List<String> {
-        return Agent.instance.runtime.expender().readLogs(this, limit)
+        return Agent.runtime.expender().readLogs(this, limit)
     }
 }
