@@ -145,7 +145,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             }
 
             PlatformLanguage.GO, PlatformLanguage.RUST -> {
-                commands.add("./${service.group.applicationPlatformFile().name}")
+                commands.add("${service.group.applicationPlatformFile().absolute()}")
             }
         }
         return commands
