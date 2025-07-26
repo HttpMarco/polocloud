@@ -26,7 +26,7 @@ class GroupSetup : Setup<Group>("Group setup") {
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.group.name", nameArgument))
         attach(SetupStep("agent.local-runtime.setup.group.platform", platformArgument) { platform ->
-            if (platform.type == PlatformType.PROXY) {
+            if (platform.type == PlatformType.SERVER) {
                 attach(SetupStep("agent.local-runtime.setup.group.fallback", fallbackArgument))
             }
         })
