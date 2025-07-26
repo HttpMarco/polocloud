@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.sdk.java.groups
+package dev.httpmarco.polocloud.sdk.kotlin.groups
 
 import dev.httpmarco.polocloud.v1.proto.GroupProvider
 

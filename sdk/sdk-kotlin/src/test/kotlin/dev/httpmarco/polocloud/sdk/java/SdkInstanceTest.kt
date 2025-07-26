@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.sdk.java
 
+import dev.httpmarco.polocloud.sdk.kotlin.Polocloud
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull

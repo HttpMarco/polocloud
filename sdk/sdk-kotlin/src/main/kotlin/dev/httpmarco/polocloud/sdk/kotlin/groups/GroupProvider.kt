@@ -1,5 +1,6 @@
-package dev.httpmarco.polocloud.sdk.java.groups
+package dev.httpmarco.polocloud.sdk.kotlin.groups
 
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import dev.httpmarco.polocloud.v1.proto.GroupControllerGrpc
 import dev.httpmarco.polocloud.v1.proto.GroupProvider
@@ -40,7 +41,7 @@ class GroupProvider(channel: ManagedChannel?) {
     }
 
 
-    private fun <T, R> completableFromGuava(guavaFuture: com.google.common.util.concurrent.ListenableFuture<T>, mapper: (T) -> R): CompletableFuture<R> {
+    private fun <T, R> completableFromGuava(guavaFuture: ListenableFuture<T>, mapper: (T) -> R): CompletableFuture<R> {
         val completable = CompletableFuture<R>()
         guavaFuture.addListener({
             try {

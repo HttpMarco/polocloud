@@ -1,9 +1,9 @@
-package dev.httpmarco.polocloud.sdk.java
+package dev.httpmarco.polocloud.sdk.kotlin
 
-import dev.httpmarco.polocloud.sdk.java.events.EventProvider
-import dev.httpmarco.polocloud.sdk.java.groups.GroupProvider
-import dev.httpmarco.polocloud.sdk.java.grpc.SdkGrpcClient
-import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider
+import dev.httpmarco.polocloud.sdk.kotlin.events.EventProvider
+import dev.httpmarco.polocloud.sdk.kotlin.groups.GroupProvider
+import dev.httpmarco.polocloud.sdk.kotlin.grpc.SdkGrpcClient
+import dev.httpmarco.polocloud.sdk.kotlin.services.ServiceProvider
 import dev.httpmarco.polocloud.shared.PolocloudShared
 
 class Polocloud : PolocloudShared() {

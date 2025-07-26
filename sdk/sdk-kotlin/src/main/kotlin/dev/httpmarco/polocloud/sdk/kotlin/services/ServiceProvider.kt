@@ -1,12 +1,13 @@
-package dev.httpmarco.polocloud.sdk.java.services
+package dev.httpmarco.polocloud.sdk.kotlin.services
 
 import com.google.common.util.concurrent.MoreExecutors
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.ServiceControllerGrpc
 import dev.httpmarco.polocloud.v1.ServiceFindRequest
+import io.grpc.ManagedChannel
 import java.util.concurrent.Executor
 
-class ServiceProvider(channel: io.grpc.ManagedChannel?) {
+class ServiceProvider(channel: ManagedChannel?) {
 
     private val directExecutor: Executor = MoreExecutors.directExecutor()
     private val serviceStub = ServiceControllerGrpc.newBlockingStub(channel)

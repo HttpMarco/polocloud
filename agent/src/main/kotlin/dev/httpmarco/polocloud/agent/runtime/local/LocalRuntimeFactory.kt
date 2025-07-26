@@ -46,7 +46,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
 
         val environment = PlatformParameters(
-            platform.version(service.group.data.platform.version))
+            platform.version(service.group.data.platform.version)
+        )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
         environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
@@ -55,7 +56,9 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
 
         // find a better way here
-        environment.addParameter("velocity_use",  Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" });
+        environment.addParameter(
+            "velocity_use",
+            Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" });
         environment.addParameter("version", polocloudVersion())
 
         // copy all templates to the service path
@@ -75,7 +78,12 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val commands = getLanguageSpecificCommands(platform, service)
 
         val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
-        processBuilder.environment().putAll(mapOf(Pair("agent_port", Agent.config.port.toString())))
+        processBuilder.environment().putAll(
+            mapOf(
+                Pair("agent_port", Agent.config.port.toString()),
+                Pair("service-name", service.name())
+            )
+        )
 
         service.process = processBuilder.start()
         service.startTracking()

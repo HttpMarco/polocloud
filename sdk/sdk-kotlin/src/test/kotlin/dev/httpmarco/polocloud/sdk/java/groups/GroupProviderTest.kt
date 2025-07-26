@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.sdk.java.groups
 
-import dev.httpmarco.polocloud.sdk.java.Polocloud
+import dev.httpmarco.polocloud.sdk.kotlin.Polocloud
 import org.junit.jupiter.api.DisplayName
 import kotlin.collections.isNotEmpty
 import kotlin.collections.joinToString

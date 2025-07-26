@@ -1,7 +1,7 @@
-package dev.httpmarco.polocloud.sdk.java.events
+package dev.httpmarco.polocloud.sdk.kotlin.events
 
 import com.google.gson.GsonBuilder
-import dev.httpmarco.polocloud.sdk.java.Polocloud
+import dev.httpmarco.polocloud.sdk.kotlin.Polocloud
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.EventProvider
 import dev.httpmarco.polocloud.v1.proto.EventProviderGrpc

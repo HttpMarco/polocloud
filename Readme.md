@@ -17,7 +17,7 @@ To get started, add the PoloCloud snapshot repository to your `pom.xml` or `buil
 <repositories>
     <repository>
         <id>polocloud-snapshots</id>
-        <url>https://repo.httpmarco.dev/snapshots</url>
+        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
     </repository>
 </repositories>
 
@@ -35,7 +35,7 @@ To get started, add the PoloCloud snapshot repository to your `pom.xml` or `buil
 repositories {
     maven {
         name = "polocloud-snapshots"
-        url = uri("https://repo.httpmarco.dev/snapshots")
+        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
     }
 }
 

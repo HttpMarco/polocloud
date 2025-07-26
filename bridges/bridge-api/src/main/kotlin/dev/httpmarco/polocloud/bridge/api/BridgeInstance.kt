@@ -17,7 +17,7 @@ abstract class BridgeInstance<T> {
 
     init {
         // it is bad, but if sdk ist present, we can use it
-        Class.forName("dev.httpmarco.polocloud.sdk.java.Polocloud")
+        Class.forName("dev.httpmarco.polocloud.sdk.kotlin.Polocloud")
     }
 
     fun initialize() {

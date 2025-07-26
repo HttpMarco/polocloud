@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.sdk.java.grpc
+package dev.httpmarco.polocloud.sdk.kotlin.grpc
 
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
