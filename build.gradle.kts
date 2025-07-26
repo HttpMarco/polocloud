@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.nexus.publish)
 }
 
-subprojects {
+allprojects {
     apply(plugin = "maven-publish")
 
     group = "dev.httpmarco.polocloud"
@@ -12,6 +12,7 @@ subprojects {
         mavenCentral()
     }
 }
+
 
 nexusPublishing {
     repositories {
