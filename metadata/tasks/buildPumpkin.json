@@ -1,0 +1,21 @@
+{
+  "name": "BUILD_PUMPKIN_TASK",
+  "steps": [
+    {
+      "name": "Unzip repo",
+      "description": "Unpacks the repo which was downloaded as zip",
+      "filename": "pumpkin-1.21.7.exe",
+      "action": {
+        "type": "PlatformFileUnzipAction"
+      }
+    },
+    {
+      "name": "Delete repo zip file",
+      "description": "Deletes the downloaded zip file of the repo",
+      "filename": "pumpkin-1.21.7.exe",
+      "action": {
+        "type": "PlatformFileDeleteAction"
+      }
+    }
+  ]
+}
