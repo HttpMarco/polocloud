@@ -21,6 +21,6 @@ jobs:
 
       - name: Publish to Sonatype
         env:
-          ossrhUsername: ${{ secrets.GITHUB_MAVEN_CENTRAL_USERNAME }}
-          ossrhPassword: ${{ secrets.GITHUB_MAVEN_CENTRAL_PASSWORD }}
+          ossrhUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ossrhPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
         run: ./gradlew publish
