@@ -82,7 +82,14 @@ abstract class Setup<T>(private val name: String, private val canExited: Boolean
             this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.wrong-answer")))
         }
 
-        this.terminal.display(i18n.get("agent.local-runtime.setup.info"))
+        this.terminal.display(
+            i18n.get(
+                if (canExited)
+                    "agent.local-runtime.setup.info.with-exit"
+                else
+                    "agent.local-runtime.setup.info.without-exit"
+            )
+        )
 
         if (noPreviousStep) {
             this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.no-previous-step")))
