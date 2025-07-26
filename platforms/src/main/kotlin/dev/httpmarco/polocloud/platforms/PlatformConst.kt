@@ -1,8 +1,13 @@
 package dev.httpmarco.polocloud.platforms
 
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformAction
+import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformDirectoryDeleteAction
+import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformExecuteCommandAction
+import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFileDeleteAction
+import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFileMoveAction
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFilePropertyUpdateAction
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFileReplacementAction
+import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFileUnzipAction
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFileWriteAction
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -18,6 +23,11 @@ val actionModule = SerializersModule {
         subclass(PlatformFileReplacementAction::class)
         subclass(PlatformFileWriteAction::class)
         subclass(PlatformFilePropertyUpdateAction::class)
+        subclass(PlatformFileUnzipAction::class)
+        subclass(PlatformFileDeleteAction::class)
+        subclass(PlatformExecuteCommandAction::class)
+        subclass(PlatformDirectoryDeleteAction::class)
+        subclass(PlatformFileMoveAction::class)
     }
 }
 

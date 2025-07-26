@@ -5,6 +5,8 @@ import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
+import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformType
 import dev.httpmarco.polocloud.v1.ServiceState
@@ -63,22 +65,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         }
 
         // basically current only the java command is supported yet
-        val commands = ArrayList<String>()
-
-        val javaPath = System.getProperty("java.home")
-
-        commands.add("${javaPath}/bin/java")
-        commands.addAll(
-            listOf(
-                "-Dterminal.jline=false",
-                "-Dfile.encoding=UTF-8",
-                "-Xms" + service.group.data.minMemory + "M",
-                "-Xmx" + service.group.data.maxMemory + "M",
-                "-jar",
-                service.group.applicationPlatformFile().name
-            )
-        )
-        commands.addAll(platform.arguments)
+        val commands = getLanguageSpecificCommands(platform, service)
 
         val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
         processBuilder.environment().putAll(environment)
@@ -133,5 +120,33 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.state = ServiceState.STOPPED
         Agent.runtime.serviceStorage().dropService(service)
         i18n.info("agent.local-runtime.factory.shutdown.successful", service.name())
+    }
+
+    private fun getLanguageSpecificCommands(platform: Platform, service: Service): ArrayList<String> {
+        val commands = ArrayList<String>()
+
+        when (platform.language) {
+            PlatformLanguage.JAVA -> {
+                val javaPath = System.getProperty("java.home")
+
+                commands.add("${javaPath}/bin/java")
+                commands.addAll(
+                    listOf(
+                        "-Dterminal.jline=false",
+                        "-Dfile.encoding=UTF-8",
+                        "-Xms" + service.group.data.minMemory + "M",
+                        "-Xmx" + service.group.data.maxMemory + "M",
+                        "-jar",
+                        service.group.applicationPlatformFile().name
+                    )
+                )
+                commands.addAll(platform.arguments)
+            }
+
+            PlatformLanguage.GO, PlatformLanguage.RUST -> {
+                commands.add("./${service.group.applicationPlatformFile().name}")
+            }
+        }
+        return commands
     }
 }
