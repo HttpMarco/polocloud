@@ -88,7 +88,7 @@ abstract class Setup<T>(private val name: String) {
             this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.no-previous-step")))
         }
 
-        this.terminal.display("")
+        this.terminal.emptyLine()
     }
 
     fun acceptAnswer(answer: String) {
