@@ -1,9 +1,10 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments
 
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 
 abstract class TerminalArgument<T>(open val key: String) {
+
+    private val shortcuts = arrayListOf<TerminalShortCut>()
 
     open fun defaultArgs(context: InputContext): MutableList<String> {
         return mutableListOf()
@@ -19,4 +20,8 @@ abstract class TerminalArgument<T>(open val key: String) {
     }
 
     abstract fun buildResult(input: String, context: InputContext): T
+
+    fun bindShortcut(key: Char, value: String) {
+        shortcuts.add(TerminalShortCut(key, value))
+    }
 }

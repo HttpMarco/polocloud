@@ -117,6 +117,6 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val te
 
         syntax(execution = {
             terminal.setupController.start(GroupSetup())
-        }, KeywordArgument("create"), KeywordArgument("2")) // TODO remove workaround
+        }, KeywordArgument("create"))
     }
 }

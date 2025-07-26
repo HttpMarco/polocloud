@@ -20,6 +20,9 @@ class LocalRuntime : Runtime {
     override fun boot() {
         terminal = JLine3Terminal()
 
+        this.terminal.jLine3Reading.start()
+        this.runtimeQueue.start()
+
         terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage, terminal))
         terminal.commandService.registerCommand(ServiceCommand(runtimeServiceStorage, terminal))
         terminal.commandService.registerCommand(PlatformCommand())
@@ -45,10 +48,5 @@ class LocalRuntime : Runtime {
         this.terminal.shutdown()
 
         this.runtimeQueue.interrupt()
-    }
-
-    override fun postInitialize() {
-        this.terminal.jLine3Reading.start()
-        this.runtimeQueue.start()
     }
 }

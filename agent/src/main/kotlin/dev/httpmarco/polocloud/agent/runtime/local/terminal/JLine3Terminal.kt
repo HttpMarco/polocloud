@@ -9,8 +9,11 @@ import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.impl.LineReaderImpl
 import org.jline.terminal.TerminalBuilder
+import org.jline.utils.AttributedStringBuilder
 import org.jline.utils.InfoCmp
+import org.jline.utils.Status
 import java.nio.charset.StandardCharsets
+
 
 class JLine3Terminal {
 
@@ -41,14 +44,23 @@ class JLine3Terminal {
 
     init {
         this.commandService.registerCommand(ClearCommand(this))
+
+
+        val status: Status = Status.getStatus(terminal)
+        // Update the status line
+        status.update(
+            listOf(
+                AttributedStringBuilder().append("").toAttributedString(),
+                AttributedStringBuilder()
+                    .append(LoggingColor.translate("&7Amount of services: &f3 &8| &7Status: &fHealthy"))
+                    .toAttributedString()
+            )
+        )
     }
 
     fun clearScreen() {
-        println("\u001b[H\u001b[2J")
-    }
-
-    fun available(): Boolean {
-        return this.terminal != null && this.lineReader != null
+        terminal.puts(InfoCmp.Capability.clear_screen);
+        terminal.flush();
     }
 
     fun display(message: String) {

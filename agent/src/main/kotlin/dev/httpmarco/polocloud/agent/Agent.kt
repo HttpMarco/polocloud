@@ -68,7 +68,6 @@ class Agent {
         i18n.info("agent.starting.successful")
 
         this.onlineStateDetector.detect()
-        this.runtime.postInitialize()
     }
 
     fun close() {

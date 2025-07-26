@@ -51,6 +51,7 @@ grpc-services = { group = "io.grpc", name = "grpc-services", version.ref = "grpc
 
 # terminal
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
+jline-console-ui = { group = "org.jline", name = "jline-console-ui", version.ref = "jline" }
 
 slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
@@ -75,3 +76,4 @@ confirationPool = ["configurate-yaml", "configurate-core", "configurate-alt-toml
 proto = ["grpc-protobuf", "grpc-stub", "grpc-services"]
 terminal = ["slf4j", "log4j-api", "log4j-core", "log4j-slf4j2-impl"]
 runtime = ["docker", "docker-http", "k8s"]
+jline = ["jline", "jline-console-ui"]
