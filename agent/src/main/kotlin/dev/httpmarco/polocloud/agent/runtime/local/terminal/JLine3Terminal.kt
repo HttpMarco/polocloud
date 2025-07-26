@@ -46,7 +46,7 @@ class JLine3Terminal {
     init {
         this.commandService.registerCommand(ClearCommand(this))
 
-
+        /*
         val status: Status = Status.getStatus(terminal)
         // Update the status line
         status.update(
@@ -57,6 +57,8 @@ class JLine3Terminal {
                     .toAttributedString()
             )
         )
+
+         */
     }
 
     fun clearScreen() {

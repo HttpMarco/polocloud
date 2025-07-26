@@ -44,6 +44,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val environment = HashMap<String, String>()
         environment["hostname"] = service.hostname
         environment["port"] = service.port.toString()
+        environment["agent_port"] = Agent.config.port.toString()
         environment["service-name"] = service.name()
         environment["velocityProxyToken"] = Agent.securityProvider.proxySecureToken
 
