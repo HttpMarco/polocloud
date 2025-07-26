@@ -17,7 +17,7 @@ class LocaleArgument(key: String = "locale") : TerminalArgument<Locale>(key) {
     }
 
     override fun wrongReason(rawInput: String): String {
-        return i18n.get("terminal.arguments.locale.wrong-reason", rawInput)
+        return i18n.get("agent.terminal.command.argument.type.locale.wrong", rawInput)
     }
 
     override fun predication(rawInput: String): Boolean {

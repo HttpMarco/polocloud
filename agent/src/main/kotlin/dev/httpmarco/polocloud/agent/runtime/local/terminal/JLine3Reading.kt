@@ -19,13 +19,20 @@ class JLine3Reading(
         while (!isInterrupted) {
             try {
                 val line = lineReader.readLine(this.terminal.prompt).trim()
+
+                val screenService = terminal.screenService
+                val setupController = terminal.setupController
+
+                if(setupController.active()) {
+                    setupController.currentSetup()!!.acceptAnswer(line)
+                    continue
+                }
+
                 if (line.isBlank()) {
                     // we reset the terminal prompt as message -> we have a clean console
                     println(Ansi.ansi().cursorUpLine().eraseLine().toString() + Ansi.ansi().cursorUp(1).toString())
                     continue
                 }
-
-                val screenService = terminal.screenService
 
                 if (screenService.isRecoding()) {
                     if (line == "exit") {
@@ -33,12 +40,6 @@ class JLine3Reading(
                         continue
                     }
                     screenService.redirectCommand(line)
-                    continue
-                }
-
-                val setupController = terminal.setupController
-                if(setupController.active()) {
-                    setupController.currentSetup()!!.acceptAnswer(line)
                     continue
                 }
 

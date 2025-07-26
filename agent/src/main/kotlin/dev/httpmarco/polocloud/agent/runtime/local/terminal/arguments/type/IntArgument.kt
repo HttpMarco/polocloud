@@ -4,8 +4,9 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.TerminalArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 
-class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = null) : TerminalArgument<Int>(key) {
+class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = null, val defaultValue: Int? = null) : TerminalArgument<Int>(key) {
     override fun predication(rawInput: String): Boolean {
+        if (rawInput.isBlank() && defaultValue != null) return true
         return getError(rawInput) == null
     }
 
@@ -32,6 +33,9 @@ class IntArgument(key: String, val minValue: Int? = null, val maxValue: Int? = n
     }
 
     override fun buildResult(input: String, context: InputContext): Int {
+        if (input.isBlank() && defaultValue != null) {
+            return defaultValue
+        }
         return input.toInt()
     }
 
