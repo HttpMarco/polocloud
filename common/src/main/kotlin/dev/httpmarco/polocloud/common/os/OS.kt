@@ -1,8 +1,9 @@
 package dev.httpmarco.polocloud.common.os
 
-enum class OS(val nativeExecutableSuffix: String?) {
-    WIN("exe"),
-    LINUX(null),
-    MACOS(null),
-    UNKNOWN(null)
+//downloadName will be replace by FlorianLang06 later
+enum class OS(val nativeExecutableSuffix: String?, val downloadName: String) {
+    WIN("exe", "windows"),
+    LINUX(null, "linux"),
+    MACOS(null, "darwin"),
+    UNKNOWN(null, "")
 }

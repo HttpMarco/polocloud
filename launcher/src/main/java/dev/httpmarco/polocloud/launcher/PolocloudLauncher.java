@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 public final class PolocloudLauncher {
 
     public static void main(String[] args) throws URISyntaxException, IOException {
+        System.out.println(System.getProperty("os.arch"));
         var ownPath = Paths.get(PolocloudProcess.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
         // we need to load the current version from the manifest data

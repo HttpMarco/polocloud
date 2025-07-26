@@ -9,3 +9,7 @@ val currentOS: OS by lazy {
         else -> OS.UNKNOWN
     }
 }
+
+val currentCPUArchitecture by lazy {
+    System.getProperty("os.arch")
+}
