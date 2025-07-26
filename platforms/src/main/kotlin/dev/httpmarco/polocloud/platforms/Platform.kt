@@ -65,10 +65,12 @@ class Platform(
                 replacedUrl = replacedUrl.replace("%$key%", value.jsonPrimitive.content)
             }
 
+            val downloadFile = if (preTasks.isEmpty()) path.toFile() else path.parent.resolve("download").toFile()
+
             URI(
                 replacedUrl
             ).toURL().openStream().use { input ->
-                path.toFile().outputStream().use { output ->
+                downloadFile.outputStream().use { output ->
                     input.copyTo(output)
                 }
             }
