@@ -14,8 +14,8 @@ allprojects {
 
     extensions.configure<PublishingExtension> {
         publications {
-            create("library", MavenPublication::class.java) {
-                from(project.components.getByName("java"))
+            create<MavenPublication>("library") {
+                from(components["java"])
 
                 pom {
                     name.set(project.name)
