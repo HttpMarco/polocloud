@@ -18,7 +18,7 @@ class GrpcServerEndpoint {
             .addService(ServiceGrpcService())
             .build()
         this.server.start()
-        i18n.info("agent.starting.grpc.successful")
+        i18n.info("agent.starting.grpc.successful", port)
     }
 
     fun close() {
