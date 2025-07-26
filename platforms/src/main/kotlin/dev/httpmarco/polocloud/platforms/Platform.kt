@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.platforms
 
+import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
+import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
 import dev.httpmarco.polocloud.platforms.bridge.BridgeSerializer
 import dev.httpmarco.polocloud.platforms.bridge.BridgeType
@@ -60,6 +62,9 @@ class Platform(
 
         if (path.notExists()) {
             var replacedUrl = url.replace("%version%", version.version)
+                .replace("%suffix%", language.suffix())
+                .replace("%arch%", currentCPUArchitecture)
+                .replace("%os%", currentOS.downloadName)
 
             version.additionalProperties.forEach { (key, value) ->
                 replacedUrl = replacedUrl.replace("%$key%", value.jsonPrimitive.content)

@@ -1,12 +1,17 @@
 package dev.httpmarco.polocloud.platforms
 
-enum class PlatformLanguage(private var fileSuffix: String?) {
+import dev.httpmarco.polocloud.common.os.currentOS
 
-    JAVA("jar"),
-    GO("exe"),
-    RUST(null);
+
+enum class PlatformLanguage(private var fileSuffix: String?, private val nativeExecutable: Boolean) {
+
+    JAVA("jar", false),
+    GO(null, true),
+    RUST(null, true);
 
     fun suffix(): String {
-        return if (fileSuffix != null) ".$fileSuffix" else ""
+        val suffix = if (nativeExecutable) currentOS.nativeExecutableSuffix else fileSuffix
+
+        return if (suffix!= null) ".$suffix" else ""
     }
 }
