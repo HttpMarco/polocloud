@@ -10,7 +10,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextA
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
 
-class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup") {
+class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup", canExited = false) {
 
     private val localeArgument = LocaleArgument("locale")
     private val updateArgument = TextArgument("auto-update") // TODO select menu

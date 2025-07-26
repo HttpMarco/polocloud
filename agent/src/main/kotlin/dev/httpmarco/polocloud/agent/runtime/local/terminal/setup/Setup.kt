@@ -6,7 +6,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 
-abstract class Setup<T>(private val name: String) {
+abstract class Setup<T>(private val name: String, private val canExited: Boolean = true) {
 
     private lateinit var terminal: JLine3Terminal
     private val steps: ArrayDeque<SetupStep<*>> = ArrayDeque()
@@ -92,7 +92,7 @@ abstract class Setup<T>(private val name: String) {
     }
 
     fun acceptAnswer(answer: String) {
-        if (answer.equals("exit", ignoreCase = true)) {
+        if (canExited && answer.equals("exit", ignoreCase = true)) {
             this.terminal.setupController.exit()
             this.terminal.clearScreen()
             this.terminal.resetPrompt()
