@@ -15,7 +15,7 @@ class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup", canExited = false
     private val localeArgument = LocaleArgument("locale")
     private val updateArgument = YesNotArgument("auto-update")
     private val portArgument = IntArgument("port", defaultValue = 8932)
-    private val statusArgument = YesNotArgument("status")
+    //private val statusArgument = YesNotArgument("status")
 
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.onboarding.locale", localeArgument) { locale ->
@@ -23,20 +23,20 @@ class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup", canExited = false
             })
         attach(SetupStep("agent.local-runtime.setup.onboarding.auto-update", updateArgument))
         attach(SetupStep("agent.local-runtime.setup.onboarding.port", portArgument))
-        attach(SetupStep("agent.local-runtime.setup.onboarding.status", statusArgument))
+        //attach(SetupStep("agent.local-runtime.setup.onboarding.status", statusArgument))
     }
 
     override fun onComplete(result: InputContext): AgentConfig {
         val locale = result.arg(localeArgument)
         val autoUpdate = result.arg(updateArgument)
         val port = result.arg(portArgument)
-        val status = result.arg(statusArgument)
+        //val status = result.arg(statusArgument)
 
         val config = AgentConfig()
         config.locale = locale
         config.autoUpdate = autoUpdate
         config.port = port
-        config.statusLine = status
+        //config.statusLine = status
 
         config.save("config")
 
