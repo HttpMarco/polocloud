@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets
 class OnlineStateDetector : Detector {
 
     override fun tick() {
-        val services = Agent.instance.runtime.serviceStorage().items()
+        val services = Agent.runtime.serviceStorage().items()
 
         services.forEach { service ->
             val host = "127.0.0.1"
@@ -35,7 +35,7 @@ class OnlineStateDetector : Detector {
                         service.state = ServiceState.ONLINE
 
                         // call the services all the events
-                        Agent.instance.eventService.call(ServiceOnlineEvent(service))
+                        Agent.eventService.call(ServiceOnlineEvent(service))
 
                         i18n.info("agent.detector.service.online", service.name())
                     }

@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandService
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.ClearCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.screen.ServiceScreenController
@@ -66,7 +67,12 @@ class JLine3Terminal {
     fun display(message: String) {
         this.terminal.puts(InfoCmp.Capability.carriage_return)
         this.terminal.writer().println(message)
+        this.terminal.flush()
         this.update()
+    }
+
+    fun emptyLine() {
+        this.lineReader.printAbove(" ")
     }
 
     fun update() {
@@ -83,7 +89,7 @@ class JLine3Terminal {
     }
 
     fun resetPrompt() {
-        this.updatePrompt("&bpolocloud&8@&7" + Agent.instance.version() + " &8» &7")
+        this.updatePrompt("&bpolocloud&8@&7" + polocloudVersion() + " &8» &7")
     }
 
     fun shutdown() {

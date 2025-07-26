@@ -25,11 +25,11 @@ fun exitPolocloud(cleanShutdown: Boolean = true) {
 
 
     try {
-        Agent.instance.runtime.serviceStorage().items().forEach {
+        Agent.runtime.serviceStorage().items().forEach {
             it.shutdown(cleanShutdown)
         }
 
-        Agent.instance.close()
+        Agent.close()
 
         i18n.info("agent.shutdown.temp-files.cleanup")
         Path("temp").toFile().deleteRecursively()

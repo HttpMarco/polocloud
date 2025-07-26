@@ -18,7 +18,7 @@ class PortDetector {
         }
 
         private fun isPortUsed(port: Int): Boolean {
-            for (service in Agent.instance.runtime.serviceStorage().items()) {
+            for (service in Agent.runtime.serviceStorage().items()) {
                 if (service.port == port) {
                     return true
                 }

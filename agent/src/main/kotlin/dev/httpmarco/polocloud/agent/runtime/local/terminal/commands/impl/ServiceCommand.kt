@@ -73,7 +73,7 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
             val template = it.arg(templateName)
 
             i18n.info("agent.terminal.command.service.export.start", service.name(), template)
-            Agent.instance.runtime.templates().saveTemplate(template, service)
+            Agent.runtime.templates().saveTemplate(template, service)
             i18n.info("agent.terminal.command.service.export.end", template)
         }, serviceArgument, KeywordArgument("copy"), templateName)
 
@@ -81,7 +81,7 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
         syntax(execution = {
             val service = it.arg(serviceArgument)
 
-            Agent.instance.runtime.expender().executeCommand(service, it.arg(commandArg))
+            Agent.runtime.expender().executeCommand(service, it.arg(commandArg))
             i18n.info("agent.terminal.command.service.execute", service.name(), it.arg(commandArg))
         }, serviceArgument, KeywordArgument("execute"), commandArg)
 
