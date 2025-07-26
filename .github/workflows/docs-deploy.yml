@@ -23,7 +23,7 @@ jobs:
 
       - name: Install project dependencies
         working-directory: ./docs
-        run: npm ci
+        run: npm install
 
       - name: Build docs
         working-directory: ./docs
