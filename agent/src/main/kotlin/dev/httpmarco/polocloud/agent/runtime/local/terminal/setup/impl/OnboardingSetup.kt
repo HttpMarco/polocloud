@@ -14,7 +14,7 @@ class OnboardingSetup : Setup<AgentConfig>("Onboarding Setup", canExited = false
 
     private val localeArgument = LocaleArgument("locale")
     private val updateArgument = TextArgument("auto-update") // TODO select menu
-    private val portArgument = IntArgument("port")
+    private val portArgument = IntArgument("port", defaultValue = 8932)
 
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.onboarding.locale", localeArgument) { locale ->
