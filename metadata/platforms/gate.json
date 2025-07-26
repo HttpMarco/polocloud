@@ -2,7 +2,7 @@
   "name": "gate",
   "type": "PROXY",
   "language": "GO",
-  "url": "https://github.com/minekube/gate/releases/download/v%version%/gate_%version%_windows_386.exe",
+  "url": "https://github.com/minekube/gate/releases/download/v%version%/gate_%version%_%os%_%arch%%suffix%",
   "copyServerIcon": false,
   "tasks": [
     "GATE_SETUP"
