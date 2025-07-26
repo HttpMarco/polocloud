@@ -4,20 +4,47 @@
 [![Discord](https://img.shields.io/discord/1278460874679386244?label=Community&style=for-the-badge&logo=discord&color=7289da)](https://discord.gg/WGzUcuJax7)
 
 
-<details open="open">
-    <summary>Overview</summary>
-    <ol>
-        <li>
-          <a href="#getting-started">Getting Started</a>
-          <ul>
-            <li><a href="#requirements">Requirements</a></li>
-            <li><a href="#installation">Installation</a></li>
-          </ul>
-        </li>
-    </ol>
-</details>
+### 🧩 PoloCloud Kotlin SDK
 
-<br/>
+Bring cloud-native capabilities to your Kotlin applications with the **PoloCloud SDK** — designed for performance, simplicity, and seamless integration.
+
+#### 📦 Maven Snapshot Repository
+
+To get started, add the PoloCloud snapshot repository to your `pom.xml` or `build.gradle.kts`:
+
+##### Maven
+```xml
+<repositories>
+    <repository>
+        <id>polocloud-snapshots</id>
+        <url>https://repo.httpmarco.dev/snapshots</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>dev.httpmarco.polocloud</groupId>
+        <artifactId>sdk-kotlin</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </dependency>
+</dependencies>
+```
+
+##### Gradle (Kotlin DSL)
+```kotlin
+repositories {
+    maven {
+        name = "polocloud-snapshots"
+        url = uri("https://repo.httpmarco.dev/snapshots")
+    }
+}
+
+dependencies {
+    implementation("dev.httpmarco.polocloud:sdk-kotlin:3.0.0-SNAPSHOT")
+}
+```
+
+> 🧪 This version is a snapshot release (`3.0.0-SNAPSHOT`) — ideal for testing the latest features. Expect frequent updates!
 
 
 ### 🌐 Translations
