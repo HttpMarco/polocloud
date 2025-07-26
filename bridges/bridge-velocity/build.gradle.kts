@@ -15,6 +15,6 @@ dependencies {
     compileOnly(libs.velocity)
     kapt(libs.velocity)
 
-    implementation(projects.sdk.kotlin)
+    implementation(projects.sdk.sdkKotlin)
     implementation(projects.bridges.bridgeApi)
 }

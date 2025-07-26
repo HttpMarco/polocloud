@@ -6,7 +6,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "polocloudv3"
 include("sdk")
-include("sdk:kotlin")
+include("sdk:sdk-kotlin")
 include("proto")
 include("agent")
 include("platforms")

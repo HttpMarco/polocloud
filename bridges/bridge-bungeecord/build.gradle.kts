@@ -11,7 +11,7 @@ repositories {
 
 
 dependencies {
-    implementation(projects.sdk.kotlin)
+    implementation(projects.sdk.sdkKotlin)
     implementation(projects.bridges.bridgeApi)
 
     compileOnly(libs.bungeecord)
