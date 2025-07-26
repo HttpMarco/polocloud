@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformType
@@ -41,15 +42,18 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.state = ServiceState.STARTING
         service.path.createDirectories()
 
+        val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
         val environment = HashMap<String, String>()
+
         environment["hostname"] = service.hostname
         environment["port"] = service.port.toString()
         environment["agent_port"] = Agent.config.port.toString()
+        environment["server_icon"] = pngToBase64DataUrl(serverIcon)
         environment["service-name"] = service.name()
         environment["velocityProxyToken"] = Agent.securityProvider.proxySecureToken
 
         // find a better way here
-        environment["velocity_use"] = Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name.equals("velocity") }.toString()
+        environment["velocity_use"] = Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" }.toString()
         environment["version"] = polocloudVersion()
 
         // copy all templates to the service path
@@ -62,7 +66,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val serverIconPath = service.path.resolve("server-icon.png")
         // copy server-icon if not exists
         if (Files.notExists(serverIconPath)) {
-            Files.copy(this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!, serverIconPath)
+            Files.copy(serverIcon, serverIconPath)
         }
 
         // basically current only the java command is supported yet
