@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.nexus.publish)
+}
+
 allprojects {
     group = "dev.httpmarco.polocloud"
     version = "3.0.0-SNAPSHOT"
@@ -5,4 +9,17 @@ allprojects {
     repositories {
         mavenCentral()
     }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/releases/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+
+            username.set(System.getenv("ossrhUsername") ?: "")
+            password.set(System.getenv("ossrhPassword") ?: "")
+        }
+    }
+    useStaging.set(!project.rootProject.version.toString().endsWith("-SNAPSHOT"))
 }

@@ -1,0 +1,23 @@
+name: Kotlin SDK Maven central deploy
+on:
+    push:
+        branches:
+          - master
+          - development
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Publish to Sonatype
+        env:
+          ossrhUsername: ${{ secrets.GITHUB_MAVEN_CENTRAL_USERNAME }}
+          ossrhPassword: ${{ secrets.GITHUB_MAVEN_CENTRAL_PASSWORD }}
+        run: ./gradlew publish

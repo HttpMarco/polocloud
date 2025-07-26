@@ -3,6 +3,8 @@ version = "1.0"
 
 [versions]
 
+nexus-publish = "2.0.0"
+
 # libraries
 json = "1.9.0"
 gson = "2.13.1"
@@ -70,6 +72,9 @@ spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
 
 # utils
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+
+[plugins]
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
 
 [bundles]
 confirationPool = ["configurate-yaml", "configurate-core", "configurate-alt-toml"]
