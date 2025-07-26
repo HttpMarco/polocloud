@@ -8,7 +8,6 @@ import dev.httpmarco.polocloud.v1.proto.EventProviderGrpc
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
 import io.grpc.ManagedChannel
 import io.grpc.stub.StreamObserver
-import java.util.function.Consumer
 import kotlin.reflect.KClass
 
 class EventProvider(channel: ManagedChannel?) : EventProvider {
