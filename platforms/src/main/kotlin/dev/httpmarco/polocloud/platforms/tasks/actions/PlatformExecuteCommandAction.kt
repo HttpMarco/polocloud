@@ -15,7 +15,7 @@ class PlatformExecuteCommandAction(val command: String) : PlatformAction() {
         environment: PlatformParameters
     ) {
         val builder = ProcessBuilder()
-        builder.command("sh", "-c", command)
+        builder.command("sh", "-c", environment.modifyValueWithEnvironment(command))
         builder.directory(file.toFile())
         val process = builder.start()
 

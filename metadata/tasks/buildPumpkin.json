@@ -20,7 +20,7 @@
     {
       "name": "Build Pumpkin",
       "description": "Build the binary for Pumpkin",
-      "filename": "Pumpkin-c01e0b93b94e5239308ad08faf6ae0db72d5b9bb",
+      "filename": "Pumpkin-%version_commitHash%",
       "action": {
         "type": "PlatformExecuteCommandAction",
         "command": "cargo build --release"
@@ -32,14 +32,14 @@
       "filename": "",
       "action": {
         "type": "PlatformFileMoveAction",
-        "oldPath": "Pumpkin-c01e0b93b94e5239308ad08faf6ae0db72d5b9bb/target/release/pumpkin",
+        "oldPath": "Pumpkin-%version_commitHash%/target/release/pumpkin",
         "newPath": "pumpkin-1.21.7"
       }
     },
     {
       "name": "Delete repo folder",
       "description": "Deletes the unpacked folder of the repo",
-      "filename": "Pumpkin-c01e0b93b94e5239308ad08faf6ae0db72d5b9bb",
+      "filename": "Pumpkin-%version_commitHash%",
       "action": {
         "type": "PlatformDirectoryDeleteAction"
       }
