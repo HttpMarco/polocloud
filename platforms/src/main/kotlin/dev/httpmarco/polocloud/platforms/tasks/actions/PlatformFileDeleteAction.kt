@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.platforms.tasks.actions
 
+import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskStep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -12,7 +13,7 @@ class PlatformFileDeleteAction : PlatformAction() {
     override fun run(
         file: Path,
         step: PlatformTaskStep,
-        environment: Map<String, String>
+        environment: PlatformParameters
     ) {
         file.deleteIfExists()
     }

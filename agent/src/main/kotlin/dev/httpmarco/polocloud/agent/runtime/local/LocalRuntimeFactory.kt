@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
@@ -43,18 +44,19 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.path.createDirectories()
 
         val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
-        val environment = HashMap<String, String>()
 
-        environment["hostname"] = service.hostname
-        environment["port"] = service.port.toString()
-        environment["agent_port"] = Agent.config.port.toString()
-        environment["server_icon"] = pngToBase64DataUrl(serverIcon)
-        environment["service-name"] = service.name()
-        environment["velocityProxyToken"] = Agent.securityProvider.proxySecureToken
+        val environment = PlatformParameters(
+            platform.version(service.group.data.platform.version))
+        environment.addParameter("hostname", service.hostname)
+        environment.addParameter("port", service.port)
+        environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
+        environment.addParameter("agent_port", Agent.config.port.toString())
+        environment.addParameter("service-name", service.name())
+        environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
 
         // find a better way here
-        environment["velocity_use"] = Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" }.toString()
-        environment["version"] = polocloudVersion()
+        environment.addParameter("velocity_use",  Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" });
+        environment.addParameter("version", polocloudVersion())
 
         // copy all templates to the service path
         Agent.runtime.templates().bindTemplate(service)
@@ -73,7 +75,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val commands = getLanguageSpecificCommands(platform, service)
 
         val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
-        processBuilder.environment().putAll(environment)
+        processBuilder.environment().putAll(mapOf(Pair("agent_port", Agent.config.port.toString())))
 
         service.process = processBuilder.start()
         service.startTracking()

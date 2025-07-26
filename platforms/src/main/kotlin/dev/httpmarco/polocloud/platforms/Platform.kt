@@ -47,7 +47,7 @@ class Platform(
     private val copyServerIcon: Boolean = true
 ) {
 
-    fun prepare(servicePath: Path, version: String, environment: Map<String, String>) {
+    fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
         // This method should handle the preparation of the platform, such as downloading the necessary files
         // or setting up the environment for the specified version.
         // Implementation details would depend on the specific requirements of the platform.
