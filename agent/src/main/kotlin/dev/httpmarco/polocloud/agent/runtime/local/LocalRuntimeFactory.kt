@@ -50,7 +50,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
-        environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
+      //  environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
         environment.addParameter("agent_port", Agent.config.port.toString())
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
