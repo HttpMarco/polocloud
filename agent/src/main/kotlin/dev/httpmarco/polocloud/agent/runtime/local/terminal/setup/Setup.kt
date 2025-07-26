@@ -71,7 +71,7 @@ abstract class Setup<T>(private val name: String) {
                 LoggingColor.translate(
                     i18n.get(
                         "agent.local-runtime.setup.possible-answers",
-                        defaultArgs.joinToString("&8, &e")
+                        defaultArgs.joinToString("&8, &3")
                     )
                 )
             )
