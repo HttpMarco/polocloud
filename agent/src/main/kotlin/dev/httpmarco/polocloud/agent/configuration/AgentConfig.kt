@@ -6,5 +6,5 @@ data class AgentConfig(
     var locale: Locale = Locale.ENGLISH,
     var autoUpdate: Boolean = true,
     var port: Int = 8932,
-    var statusLine: Boolean = true
+    //var statusLine: Boolean = true
 ) : Config
