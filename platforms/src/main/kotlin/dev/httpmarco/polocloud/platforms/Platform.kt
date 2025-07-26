@@ -39,6 +39,8 @@ class Platform(
     private val bridgePath: String? = null,
     // the tasks that should be run after the platform is prepared
     private val tasks: List<String> = emptyList(),
+    // the tasks that should be run after the platform download
+    private val preTasks: List<String> = emptyList(),
     // if true, the polocloud server icon will be copied to the service path
     private val copyServerIcon: Boolean = true
 ) {
@@ -70,6 +72,8 @@ class Platform(
                     input.copyTo(output)
                 }
             }
+
+            preTasks().forEach { it.runTask(path.parent, environment) }
         }
 
         tasks().forEach { it.runTask(servicePath, environment) }
@@ -100,5 +104,9 @@ class Platform(
 
     fun tasks(): List<PlatformTask> {
         return tasks.map { PlatformTaskPool.find(it)!! }.toList()
+    }
+
+    fun preTasks(): List<PlatformTask> {
+        return preTasks.map { PlatformTaskPool.find(it)!! }.toList()
     }
 }
