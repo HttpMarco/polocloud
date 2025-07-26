@@ -1,0 +1,35 @@
+{
+  "name": "GATE_SETUP",
+  "steps": [
+    {
+      "name": "Setup gate",
+      "description": "Setup the motd",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "config.status.motd",
+        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+      }
+    },
+    {
+      "name": "Enable gate api",
+      "description": "Allow the gate to use the API",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "api.enabled",
+        "value": "true"
+      }
+    },
+    {
+      "name": "Set gate api port",
+      "description": "Set the API bind address",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "api.bind",
+        "value": "localhost:%api_port%"
+      }
+    }
+  ]
+}

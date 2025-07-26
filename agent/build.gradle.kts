@@ -8,18 +8,20 @@ dependencies {
 
     implementation(libs.bundles.proto)
     implementation(libs.grpc.netty)
-    compileOnly(project(":proto"))
+    compileOnly(projects.proto)
 
     implementation(libs.bundles.terminal)
     implementation(libs.bundles.runtime)
+    implementation(libs.bundles.jline)
+
     implementation(libs.json)
     implementation(libs.gson)
-    implementation(libs.jline)
 
 
     implementation(libs.bundles.confirationPool)
-    compileOnly(project(":platforms"))
-    compileOnly(project(":common"))
+    compileOnly(projects.platforms)
+    compileOnly(projects.common)
+    compileOnly(projects.bridges.bridgeApi)
 }
 
 tasks.jar {

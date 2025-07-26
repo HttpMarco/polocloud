@@ -1,0 +1,18 @@
+{
+  "name": "waterfall",
+  "type": "PROXY",
+  "language": "JAVA",
+  "url": "https://fill-data.papermc.io/v1/objects/954b48b95a4300e1493aaa0c9532fc4a89d38136d74ccfb6df8c2b60eea48ee6/waterfall-1.21-598.jar",
+  "bridge": "bungeecord-bridge",
+  "bridgePath": "plugins",
+  "shutdownCommand": "end",
+  "tasks": [
+    "BUNGEECORD_SETUP_TASK"
+  ],
+  "versions": [
+    {
+      "version": "latest",
+      "buildId": "-1"
+    }
+  ]
+}

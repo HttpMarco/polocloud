@@ -38,4 +38,5 @@ enum ServiceState {
   STARTING = 1;
   ONLINE = 2;
   STOPPING = 3;
+  STOPPED = 4;
 }

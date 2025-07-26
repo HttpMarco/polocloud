@@ -1,0 +1,18 @@
+{
+  "name": "bungeecord",
+  "type": "PROXY",
+  "language": "JAVA",
+  "url": "https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar",
+  "bridge": "bungeecord-bridge",
+  "bridgePath": "plugins",
+  "shutdownCommand": "end",
+  "tasks": [
+    "BUNGEECORD_SETUP_TASK"
+  ],
+  "versions": [
+    {
+      "version": "latest",
+      "buildId": "-1"
+    }
+  ]
+}

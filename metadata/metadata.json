@@ -1,11 +1,15 @@
 {
   "platforms": [
     "paper",
-    "velocity"
+    "velocity",
+    "waterfall",
+    "bungeecord",
+    "leaf"
   ],
   "tasks": [
     "eula",
     "spigotSetup",
+    "gateSetup",
     "velocityProxyToken",
     "paperProxySupport",
     "velocitySetup"

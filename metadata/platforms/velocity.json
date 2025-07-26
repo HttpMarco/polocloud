@@ -3,6 +3,7 @@
   "type": "PROXY",
   "language": "JAVA",
   "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",
+  "bridge": "velocity-bridge",
   "bridgePath": "plugins",
   "tasks": [
     "VELOCITY_PROXY_TOKEN_TASK",
@@ -11,7 +12,7 @@
   "versions": [
     {
       "version": "3.4.0-SNAPSHOT",
-      "buildId": "521"
+      "buildId": "522"
     }
   ]
 }
