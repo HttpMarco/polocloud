@@ -8,6 +8,10 @@ class InputContext {
         return contexts[argument.key] as T
     }
 
+    fun contains(argument: TerminalArgument<*>): Boolean {
+        return contexts.containsKey(argument.key)
+    }
+
     fun append(argument: TerminalArgument<*>, value: Any?) {
         this.contexts[argument.key] = value
     }

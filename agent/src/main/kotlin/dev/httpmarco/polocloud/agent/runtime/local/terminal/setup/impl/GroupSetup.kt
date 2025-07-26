@@ -44,10 +44,14 @@ class GroupSetup : Setup<Group>("Group setup") {
         val maxMemory = result.arg(maxMemoryArgument)
         val minOnlineServices = result.arg(minOnlineServicesArgument)
         val maxOnlineServices = result.arg(maxOnlineServicesArgument)
-        val fallback = result.arg(fallbackArgument)
+        val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else null
 
-        val properties = buildJsonObject {
-            put("fallback", fallback)
+        val properties = if (fallback != null) {
+            buildJsonObject {
+                put("fallback", fallback)
+            }
+        } else {
+            emptyMap()
         }
 
         val group = Group(GroupData(
