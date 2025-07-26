@@ -12,6 +12,6 @@ enum class PlatformLanguage(private var fileSuffix: String?, private val nativeE
     fun suffix(): String {
         val suffix = if (nativeExecutable) currentOS.nativeExecutableSuffix else fileSuffix
 
-        return if (suffix!= null) ".$suffix" else ""
+        return if (suffix != null) ".$suffix" else ""
     }
 }
