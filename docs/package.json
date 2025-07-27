@@ -1,6 +1,5 @@
 {
   "name": "docs",
-  "homepage": "https://httpmarco.github.io/polocloud",
   "version": "0.0.0",
   "private": true,
   "scripts": {
