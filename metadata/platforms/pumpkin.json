@@ -6,6 +6,7 @@
   "arguments": [
   ],
   "tasks": [
+    "PUMPKIN_CONFIG_TASK"
   ],
   "preTasks": [
     "BUILD_PUMPKIN_TASK"
