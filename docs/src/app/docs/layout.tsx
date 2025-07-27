@@ -7,6 +7,7 @@ import { GithubInfo } from 'fumadocs-ui/components/github-info';
 const docsOptions: DocsLayoutProps = {
   ...baseOptions,
   tree: source.pageTree,
+  tabMode: 'sidebar',
   links: [
     {
       type: 'custom',
