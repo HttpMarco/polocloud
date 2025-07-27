@@ -7,8 +7,8 @@
       "filename": "config/configuration.toml",
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
-        "key": "java_edition_address",
-        "value": "127.0.0.1:%port%"
+        "key": "java_edition_port",
+        "value": "%port%"
       }
     },
     {
@@ -48,7 +48,7 @@
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
         "key": "networking.proxy.velocity.enabled",
-        "value": "true"
+        "value": "%velocity_use%"
       }
     },
     {
@@ -68,7 +68,7 @@
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
         "key": "motd",
-        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
       }
     }
   ]
