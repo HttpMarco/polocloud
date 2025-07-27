@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CpuIcon } from 'lucide-react';
 
 export default function HomePage() {
   return (

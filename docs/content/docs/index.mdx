@@ -1,13 +1,53 @@
 ---
-title: Hello World
-description: Your first document
+title: Get Started
+description: Getting Started with PoloCloud
+icon: Album
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces } from 'lucide-react';
 
-## What is Next?
+## Introduction
+PoloCloud is the simplest and easiest **Cloud for Minecraft Networks** based on Kotlin, designed to be fast, flexible, and simple.
+
+PoloCloud has different parts:
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.vercel.app" />
+
+<Card icon={<CpuIcon className="text-purple-300" />} title='Agent'>
+
+Manages server instances and handles communication between the master node and individual Minecraft servers within the cloud infrastructure.
+
+</Card>
+
+<Card icon={<Network className="text-blue-300" />} title='Bridges'>
+
+Bridges handle the connection between proxy servers and game servers, enabling players to access game servers through the proxy network.
+
+</Card>
+
+<Card icon={<Layers className="text-green-300" />} title='Platforms'>
+
+Contains shared utilities, models, and common functionality used across all other components of the cloud system.
+
+</Card>
+
+<Card icon={<Braces className="text-red-300" />} title='Proto'>
+
+
+
+</Card>
+
+<Card icon={<Container className="text-cyan-300" />} title='Docker'>
+
+Handles containerization and deployment of PoloCloud services using Docker for isolated execution environments.
+
+</Card>
+
+<Card icon={<Workflow className="text-sky-300" />} title='Kubernetes'>
+
+Enables deployment and orchestration of PoloCloud services on Kubernetes clusters for scalable container management.
+
+</Card>
+
 </Cards>
+
