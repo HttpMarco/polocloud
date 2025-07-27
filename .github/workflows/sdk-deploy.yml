@@ -1,4 +1,4 @@
-name: Kotlin SDK Maven central deploy
+name: SDK Maven central deploy
 on:
     push:
         branches:
