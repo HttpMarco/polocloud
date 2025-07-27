@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.utils.PortDetector
 import dev.httpmarco.polocloud.agent.utils.asStringMap
-import dev.httpmarco.polocloud.v1.ServiceState
+import dev.httpmarco.polocloud.v1.services.ServiceState
 
 abstract class Service(val group: Group, val id: Int, val hostname: String = "127.0.0.1") {
 

@@ -7,11 +7,9 @@ import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.platforms.PlatformParameters
-import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
-import dev.httpmarco.polocloud.platforms.PlatformType
-import dev.httpmarco.polocloud.v1.ServiceState
+import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*

@@ -17,5 +17,6 @@
       "version": "1.21.7",
       "commitHash": "f463b5bc81d7d04fcaf8b889b33552984ecd248c"
     }
-  ]
+  ],
+  "setFileName": false
 }
