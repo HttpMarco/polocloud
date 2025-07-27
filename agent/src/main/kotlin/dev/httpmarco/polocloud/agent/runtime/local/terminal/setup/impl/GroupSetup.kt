@@ -39,7 +39,8 @@ class GroupSetup : Setup<Group>("Group setup") {
 
     override fun onComplete(result: InputContext): Group {
         val name = result.arg(nameArgument)
-        val platform = PlatformIndex(result.arg(platformArgument).name, result.arg(platformVersionArgument).version)
+        val originalPlatform = result.arg(platformArgument)
+        val platform = PlatformIndex(originalPlatform.name, result.arg(platformVersionArgument).version)
         val minMemory = result.arg(minMemoryArgument)
         val maxMemory = result.arg(maxMemoryArgument)
         val minOnlineServices = result.arg(minOnlineServicesArgument)
@@ -61,7 +62,7 @@ class GroupSetup : Setup<Group>("Group setup") {
             maxMemory,
             minOnlineServices,
             maxOnlineServices,
-            emptyList(), // TODO
+            listOf("EVERY", "EVERY_" + originalPlatform.type.name, name),
             properties)
         )
 
