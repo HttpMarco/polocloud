@@ -11,7 +11,8 @@ jobs:
 
     permissions:
       contents: write
-      pull-requests: write
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -26,9 +27,13 @@ jobs:
         working-directory: ./docs
         run: npm install
 
-      - name: Build docs with Next.js export
+      - name: Build and export static site
         working-directory: ./docs
-        run: npm run build
+        env:
+          GITHUB_PAGES: true
+        run: |
+          npm run build
+          npm run export
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
