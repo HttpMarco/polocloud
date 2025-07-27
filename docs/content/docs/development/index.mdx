@@ -4,34 +4,39 @@ description: Getting Started with the PoloCloud SDK
 icon: Album
 ---
 
-## Maven
-```xml
-<repositories>
-    <repository>
-        <id>polocloud-snapshots</id>
-        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-    </repository>
-</repositories>
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
-<dependencies>
-    <dependency>
-        <groupId>dev.httpmarco.polocloud</groupId>
-        <artifactId>sdk-kotlin</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
-    </dependency>
-</dependencies>
-```
+<Tabs items={['Maven', 'Gradle (Kotlin DSL)']}>
+  <Tab value="Maven">
+    ```xml
+    <repositories>
+        <repository>
+            <id>polocloud-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        </repository>
+    </repositories>
 
-## Gradle (Kotlin DSL)
-```kotlin
-repositories {
-    maven {
-        name = "polocloud-snapshots"
-        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+    <dependencies>
+        <dependency>
+            <groupId>dev.httpmarco.polocloud</groupId>
+            <artifactId>sdk-kotlin</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    ```
+  </Tab>
+  <Tab value="Gradle (Kotlin DSL)">
+    ```kotlin
+    repositories {
+        maven {
+            name = "polocloud-snapshots"
+            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+        }
     }
-}
 
-dependencies {
-    implementation("dev.httpmarco.polocloud:sdk-kotlin:3.0.0-SNAPSHOT")
-}
-```
+    dependencies {
+        implementation("dev.httpmarco.polocloud:sdk-kotlin:3.0.0-SNAPSHOT")
+    }
+    ```
+  </Tab>
+</Tabs>
