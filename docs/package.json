@@ -7,7 +7,7 @@
     "dev": "next dev --turbo",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
-    "export": "GITHUB_PAGES=true next build && next export"
+    "build:export": "GITHUB_PAGES=true next build"
   },
   "dependencies": {
     "next": "15.4.4",

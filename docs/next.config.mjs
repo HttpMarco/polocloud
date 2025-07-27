@@ -6,6 +6,7 @@ const isGithubPages = process.env.GITHUB_PAGES === 'true'
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  output: 'export',
   basePath: isGithubPages ? '/polocloud' : '',
     assetPrefix: isGithubPages ? '/polocloud/' : '',
 };

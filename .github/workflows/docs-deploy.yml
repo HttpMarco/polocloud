@@ -31,9 +31,7 @@ jobs:
         working-directory: ./docs
         env:
           GITHUB_PAGES: true
-        run: |
-          npm run build
-          npm run export
+        run: npm run build:export
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
