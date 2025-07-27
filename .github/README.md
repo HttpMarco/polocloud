@@ -1,5 +1,6 @@
 # Polocloud v3
 
+[![license](https://img.shields.io/github/license/HttpMarco/polocloud?style=for-the-badge&color=b2204c)](../LICENSE)
 [![Download](https://img.shields.io/github/downloads/HttpMarco/Polocloud/total?style=for-the-badge&logo=github&color=2ea043)](https://github.com/HttpMarco/polocloud/releases)
 [![Discord](https://img.shields.io/discord/1278460874679386244?label=Community&style=for-the-badge&logo=discord&color=7289da)](https://discord.gg/WGzUcuJax7)
 

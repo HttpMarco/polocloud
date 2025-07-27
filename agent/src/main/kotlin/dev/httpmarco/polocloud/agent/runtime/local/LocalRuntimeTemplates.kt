@@ -65,5 +65,4 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
             }
         })
     }
-
 }
