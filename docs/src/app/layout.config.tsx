@@ -16,8 +16,8 @@ export const baseOptions: BaseLayoutProps = {
         <Image
           src={Logo}
           alt="Logo"
-          width={50}
-          height={50}
+          width={30}
+          height={30}
           />
           PoloCloud
         </>
