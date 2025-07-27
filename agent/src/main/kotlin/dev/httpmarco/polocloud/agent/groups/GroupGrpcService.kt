@@ -23,10 +23,14 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
         }
 
         for (group in groupsToReturn) {
+            val data = group.data
             builder.addGroups(
                 GroupProvider.GroupSnapshot.newBuilder()
-                    .setName(group.data.name)
-                    .putAllProperties(group.data.properties.asStringMap())
+                    .setName(data.name)
+                    .setMinimumMemory(data.minMemory)
+                    .setMaximumMemory(data.maxMemory)
+                    .setPercentageToStartNewService(data.percentageToStartNewService)
+                    .putAllProperties(data.properties.asStringMap())
                     .build()
             )
         }

@@ -19,6 +19,7 @@ class GroupSetup : Setup<Group>("Group setup") {
     private val platformVersionArgument = PlatformVersionArgument(platformArgument)
     private val minMemoryArgument = IntArgument("minMemory", 1)
     private val maxMemoryArgument = IntArgument("maxMemory", 1)
+    private val percentageToStartNewService = IntArgument("percentageToStartNewService", 0)
     private val minOnlineServicesArgument = IntArgument("minOnlineServices", 0)
     private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", 0)
     private val fallbackArgument = YesNotArgument("fallback")
@@ -43,6 +44,7 @@ class GroupSetup : Setup<Group>("Group setup") {
         val platform = PlatformIndex(originalPlatform.name, result.arg(platformVersionArgument).version)
         val minMemory = result.arg(minMemoryArgument)
         val maxMemory = result.arg(maxMemoryArgument)
+        val percentageToStartNewService = result.arg(percentageToStartNewService)
         val minOnlineServices = result.arg(minOnlineServicesArgument)
         val maxOnlineServices = result.arg(maxOnlineServicesArgument)
         val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else null
@@ -55,15 +57,18 @@ class GroupSetup : Setup<Group>("Group setup") {
             emptyMap()
         }
 
-        val group = Group(GroupData(
-            name,
-            platform,
-            minMemory,
-            maxMemory,
-            minOnlineServices,
-            maxOnlineServices,
-            listOf("EVERY", "EVERY_" + originalPlatform.type.name, name),
-            properties)
+        val group = Group(
+            GroupData(
+                name,
+                platform,
+                minMemory,
+                maxMemory,
+                minOnlineServices,
+                maxOnlineServices,
+                percentageToStartNewService,
+                listOf("EVERY", "EVERY_" + originalPlatform.type.name, name),
+                properties
+            )
         )
 
         Agent.runtime.groupStorage().publish(group)
