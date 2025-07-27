@@ -37,6 +37,16 @@
       }
     },
     {
+      "name": "Move assets",
+      "description": "Moves pumpkin assets",
+      "filename": "",
+      "action": {
+        "type": "PlatformFileMoveAction",
+        "oldPath": "Pumpkin-%version_commitHash%/assets",
+        "newPath": "assets"
+      }
+    },
+    {
       "name": "Delete repo folder",
       "description": "Deletes the unpacked folder of the repo",
       "filename": "Pumpkin-%version_commitHash%",
