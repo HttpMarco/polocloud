@@ -3,7 +3,6 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
 import dev.httpmarco.polocloud.v1.GroupType
-import dev.httpmarco.polocloud.v1.proto.GroupProvider
 import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files

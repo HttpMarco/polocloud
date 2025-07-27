@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.sdk.kotlin.groups
 
-import dev.httpmarco.polocloud.v1.proto.GroupProvider
+import dev.httpmarco.polocloud.v1.groups.GroupSnapshot
 
-class Group(private val snapshot: GroupProvider.GroupSnapshot) {
+class Group(private val snapshot: GroupSnapshot) {
 
     fun name(): String = snapshot.name
 

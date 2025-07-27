@@ -34,6 +34,7 @@ class GroupSetup : Setup<Group>("Group setup") {
         attach(SetupStep("agent.local-runtime.setup.group.platform.version", platformVersionArgument))
         attach(SetupStep("agent.local-runtime.setup.group.min-memory", minMemoryArgument))
         attach(SetupStep("agent.local-runtime.setup.group.max-memory", maxMemoryArgument))
+        attach(SetupStep("agent.local-runtime.setup.group.percentageToStartNewService", percentageToStartNewService))
         attach(SetupStep("agent.local-runtime.setup.group.min-online-services", minOnlineServicesArgument))
         attach(SetupStep("agent.local-runtime.setup.group.max-online-services", maxOnlineServicesArgument))
     }
