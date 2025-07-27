@@ -1,0 +1,11 @@
+{
+  "title": "Documentation",
+  "description": "General docs",
+  "icon": "Building",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "installation"
+  ]
+}
