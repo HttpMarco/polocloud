@@ -6,6 +6,7 @@ icon: Album
 
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
+## Repository
 <Tabs items={['Maven', 'Gradle (Kotlin DSL)']}>
   <Tab value="Maven">
     ```xml
@@ -15,14 +16,6 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
             <url>https://central.sonatype.com/repository/maven-snapshots/</url>
         </repository>
     </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>dev.httpmarco.polocloud</groupId>
-            <artifactId>sdk-kotlin</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
     ```
   </Tab>
   <Tab value="Gradle (Kotlin DSL)">
@@ -33,10 +26,37 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
             url = uri("https://central.sonatype.com/repository/maven-snapshots/")
         }
     }
-
-    dependencies {
-        implementation("dev.httpmarco.polocloud:sdk-kotlin:3.0.0-SNAPSHOT")
-    }
     ```
   </Tab>
+</Tabs>
+
+## Dependencies
+
+<Tabs items={['Maven', 'Gradle (Kotlin DSL)']}>
+    <Tab value="Maven">
+        <Tabs items={['Kotlin', 'Java']}>
+            <Tab value="Kotlin">
+            ```xml
+            <dependencies>
+                <dependency>
+                    <groupId>dev.httpmarco.polocloud</groupId>
+                    <artifactId>sdk-kotlin</artifactId>
+                    <version>3.0.0-SNAPSHOT</version>
+                </dependency>
+            </dependencies>
+            ```
+            </Tab>
+        </Tabs>
+    </Tab>
+    <Tab value="Gradle (Kotlin DSL)">
+         <Tabs items={['Kotlin', 'Java']}>
+            <Tab value="Kotlin">
+            ```kotlin
+            dependencies {
+                implementation("dev.httpmarco.polocloud:sdk-kotlin:3.0.0-SNAPSHOT")
+            }
+            ```
+            </Tab>
+         </Tabs>
+    </Tab>
 </Tabs>
