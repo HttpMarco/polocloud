@@ -45,7 +45,9 @@ class Platform(
     // the tasks that should be run after the platform download
     private val preTasks: List<String> = emptyList(),
     // if true, the polocloud server icon will be copied to the service path
-    private val copyServerIcon: Boolean = true
+    private val copyServerIcon: Boolean = true,
+    // if false, the downloaded file will be named "download" to be changed by preTask
+    private val setFileName: Boolean = true
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
@@ -54,6 +56,8 @@ class Platform(
         // Implementation details would depend on the specific requirements of the platform.
         val path = Path("local/metadata/cache/$name/$version/$name-$version" + language.suffix())
         val version = this.version(version)
+
+        environment.addParameter("filename", path.fileName)
 
         if (version == null) {
             throw PlatformVersionInvalidException()
@@ -71,7 +75,7 @@ class Platform(
                 replacedUrl = replacedUrl.replace("%$key%", value.jsonPrimitive.content)
             }
 
-            val downloadFile = if (preTasks.isEmpty()) path.toFile() else path.parent.resolve("download").toFile()
+            val downloadFile = if (setFileName) path.toFile() else path.parent.resolve("download").toFile()
 
             URI(
                 replacedUrl
