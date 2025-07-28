@@ -5,7 +5,7 @@
   "root": true,
   "pages": [
     "index",
-    "---Java SDK---",
+    "---General---",
     "groups",
     "services"
   ]

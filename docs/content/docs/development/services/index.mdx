@@ -4,4 +4,18 @@ description: Getting Started with the Services PoloCloud
 icon: Server
 ---
 
-asd
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+
+## Initialization
+
+You can get access to the services using by using the following code:
+<Tabs items={['Kotlin', 'Java']}>
+    <Tab value="Kotlin">
+        <DynamicCodeBlock lang="kotlin" code='val serverProvider = PoloCloud.serverProvider()' />
+    </Tab>
+    <Tab value="Java">
+        <DynamicCodeBlock lang="java" code='var serverProvider = PoloCloud.serverProvider();' />
+    </Tab>
+</Tabs>
+
