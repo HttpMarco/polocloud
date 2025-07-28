@@ -25,12 +25,20 @@ export default async function Page(props: {
     ? await getGithubLastEdit({
         owner: 'httpMarco',
         repo: 'polocloud',
+        sha: 'docs',
         path: `docs/content/docs/${page.path}`,
       })
     : undefined;
 
+  const editOnGithub = {
+    owner: 'httpMarco',
+    repo: 'polocloud',
+    path: `docs/content/docs/${page.path}`,
+    sha: 'docs',
+  }
+  
   return (
-    <DocsPage toc={page.data.toc} full={page.data.full} lastUpdate={lastModified || undefined}>
+    <DocsPage toc={page.data.toc} editOnGithub={editOnGithub} full={page.data.full} lastUpdate={lastModified || undefined}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
