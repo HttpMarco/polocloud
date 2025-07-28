@@ -89,7 +89,7 @@ impl ServiceProvider {
         }
     }
 
-    pub async fn find(&mut self) -> Result<Vec<Service>, Status> {
+    pub async fn find_async(&mut self) -> Result<Vec<Service>, Status> {
         let request = Request::new(ServiceFindRequest { name: "".to_string() });
         let response = self.service_stub.find(request).await?;
 
@@ -108,11 +108,6 @@ impl ServiceProvider {
 
         Ok(services)
     }
-
-    pub async fn find_async(&mut self) -> Result<Vec<Service>, Status> {
-        // In Rust, async is the default, so this is the same as find()
-        self.find().await
-    }
 }
 
 pub struct GroupProvider {
@@ -126,7 +121,7 @@ impl GroupProvider {
         }
     }
 
-    pub async fn find(&mut self) -> Result<Vec<Group>, Status> {
+    pub async fn find_async(&mut self) -> Result<Vec<Group>, Status> {
         let request = Request::new(FindGroupRequest { name: "".to_string()});
         let response = self.group_stub.find(request).await?;
 
@@ -138,7 +133,7 @@ impl GroupProvider {
         Ok(groups)
     }
 
-    pub async fn find_by_name(&mut self, name: String) -> Result<Option<Group>, Status> {
+    pub async fn find_by_name_async(&mut self, name: String) -> Result<Option<Group>, Status> {
         let request = Request::new(FindGroupRequest { name });
         let response = self.group_stub.find(request).await?;
 
@@ -166,11 +161,6 @@ impl EventProvider {
             event_stub: EventProviderClient::new(channel),
             service_name,
         }
-    }
-
-    pub async fn call<T: Event>(&mut self, _event: T) -> Result<(), Status> {
-        // TODO: Implement event calling
-        todo!("Not yet implemented")
     }
 
     pub async fn subscribe<T, F>(&mut self, event_name: &str, mut callback: F) -> Result<(), Status>
