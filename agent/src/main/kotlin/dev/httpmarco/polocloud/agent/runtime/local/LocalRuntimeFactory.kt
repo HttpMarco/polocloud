@@ -3,9 +3,9 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage

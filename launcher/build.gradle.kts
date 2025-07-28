@@ -26,6 +26,7 @@ tasks.jar {
         includeLibs("agent"),
         includeLibs("platforms"),
         includeLibs("proto"),
+        includeLibs("updater"),
 
         includeLibs(":bridges:bridge-velocity", "shadowJar"),
         includeLibs(":bridges:bridge-bungeecord", "shadowJar")
