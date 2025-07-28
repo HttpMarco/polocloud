@@ -2,6 +2,7 @@ import '@/app/global.css';
 import { RootProvider } from 'fumadocs-ui/provider';
 import { Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
+import { Banner } from 'fumadocs-ui/components/banner';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -11,6 +12,25 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className="flex flex-col min-h-screen">
+        <Banner
+            variant="rainbow"
+            rainbowColors={[
+                'rgba(0, 120, 255, 0.5)',
+                'rgba(0, 120, 255, 0.5)',
+                'transparent',
+                'rgba(0, 120, 255, 0.5)',
+                'transparent',
+                'rgba(0, 120, 255, 0.5)',
+                'transparent',
+            ]}
+            changeLayout={true}
+            id="pre-3-notify"
+            >
+            PoloCloud 🧪 v3.0.0-pre-3 has released.⠀
+            <a href="https://github.com/HttpMarco/polocloud/releases/tag/v3.0.0-pre-3" className="underline">
+                Check it out now.
+            </a>
+        </Banner>
         <RootProvider>{children}</RootProvider>
       </body>
     </html>
