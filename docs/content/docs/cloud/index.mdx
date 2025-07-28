@@ -5,6 +5,7 @@ icon: Album
 ---
 
 import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints } from 'lucide-react';
+import gateIcon from '../../../public/gate.png';
 import velocityIcon from '../../../public/velocity.svg';
 import waterfallIcon from '../../../public/waterfall.svg';
 import paperIcon from '../../../public/paper.svg';
@@ -48,6 +49,14 @@ PoloCloud has different parts:
 Following platforms are supported by PoloCloud:
 
 <Cards>
+    <Card icon={<img
+      src={gateIcon}
+      alt="Gate"
+      className="w-6 h-6"
+        />}
+    title='Gate'>
+        Gate is a modern cloud-native, open source, fast, batteries-included and secure proxy for Minecraft servers that focuses on scalability, flexibility, multi-version support and developer friendliness.
+    </Card>
     <Card icon={<img
       src={velocityIcon}
       alt="Velocity"
