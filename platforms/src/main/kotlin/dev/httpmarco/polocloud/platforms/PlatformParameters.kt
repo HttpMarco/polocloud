@@ -48,7 +48,7 @@ class PlatformParameters(private val version: PlatformVersion?) {
         }
         if (modifiedValue.contains("%$versionPrefix") && version != null) {
             modifiedValue = modifiedValue.replace(versionPrefix, "")
-                .replace(versionPrefix + "version", version.version)
+                .replace("%version%", version.version)
             for ((verKey, verValue) in version.additionalProperties) {
                 modifiedValue = modifiedValue.replace("%$verKey%", verValue.jsonPrimitive.content)
             }

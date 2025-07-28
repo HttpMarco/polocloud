@@ -68,7 +68,17 @@
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
         "key": "motd",
-        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\\\\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+      }
+    },
+    {
+      "name": "Server Icon",
+      "description": "Changes the path of the server icon in config",
+      "filename": "config/configuration.toml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "favicon_path",
+        "value": "server-icon.png"
       }
     }
   ]
