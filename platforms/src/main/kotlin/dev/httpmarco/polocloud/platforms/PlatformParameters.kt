@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.platforms
 
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonPrimitive
 
 class PlatformParameters(private val version: PlatformVersion?) {
@@ -49,6 +48,7 @@ class PlatformParameters(private val version: PlatformVersion?) {
         }
         if (modifiedValue.contains("%$versionPrefix") && version != null) {
             modifiedValue = modifiedValue.replace(versionPrefix, "")
+                .replace(versionPrefix + "version", version.version)
             for ((verKey, verValue) in version.additionalProperties) {
                 modifiedValue = modifiedValue.replace("%$verKey%", verValue.jsonPrimitive.content)
             }

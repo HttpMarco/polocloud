@@ -33,7 +33,7 @@
       "action": {
         "type": "PlatformFileMoveAction",
         "oldPath": "Pumpkin-%version_commitHash%/target/release/pumpkin",
-        "newPath": "pumpkin-1.21.7"
+        "newPath": "pumpkin-%version%"
       }
     },
     {

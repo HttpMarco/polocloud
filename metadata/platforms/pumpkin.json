@@ -2,7 +2,7 @@
   "name": "pumpkin",
   "type": "SERVER",
   "language": "RUST",
-  "url": "https://github.com/Pumpkin-MC/Pumpkin/archive/%commitHash%.zip",
+  "url": "https://github.com/FlorianLang06/Pumpkin/archive/%commitHash%.zip",
   "arguments": [
   ],
   "tasks": [
@@ -14,8 +14,8 @@
   "flags": [],
   "versions": [
     {
-      "version": "1.21.7",
-      "commitHash": "f463b5bc81d7d04fcaf8b889b33552984ecd248c"
+      "version": "1.21.8",
+      "commitHash": "512a3855355b08e307ccab955772131e95605dd8"
     }
   ],
   "setFileName": false
