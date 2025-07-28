@@ -4,7 +4,11 @@ description: Getting Started with PoloCloud
 icon: Album
 ---
 
-import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces } from 'lucide-react';
+import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints } from 'lucide-react';
+import velocityIcon from '../../../public/velocity.svg';
+import waterfallIcon from '../../../public/waterfall.svg';
+import paperIcon from '../../../public/paper.svg';
+import leafIcon from '../../../public/leaf.svg';
 
 ## Introduction
 PoloCloud is the simplest and easiest **Cloud for Minecraft Networks** based on Kotlin, designed to be fast, flexible, and simple.
@@ -40,3 +44,44 @@ PoloCloud has different parts:
 ## Why PoloCloud?
 
 ## Platforms
+
+Following platforms are supported by PoloCloud:
+
+<Cards>
+    <Card icon={<img
+      src={velocityIcon}
+      alt="Velocity"
+      className="w-6 h-6"
+        />}
+    title='Velocity'>
+        A high-performance Minecraft proxy that connects multiple backend servers into a network. Velocity handles player connections and routing, making it ideal for large-scale server setups.
+    </Card>
+    <Card icon={<img
+      src={waterfallIcon}
+      alt="Waterfall"
+      className="w-6 h-6"
+        />}
+    title='Waterfall'>
+        A BungeeCord fork focused on stability, performance, and compatibility. Waterfall connects Minecraft servers into a network, allowing players to seamlessly switch between them.
+    </Card>
+    <Card icon={<Waypoints className="text-yellow-300"/>}
+    title='Bungeecord'>
+        BungeeCord is a Minecraft proxy that connects multiple servers into one network, allowing players to switch smoothly between them.
+    </Card>
+    <Card icon={<img
+      src={paperIcon}
+      alt="Paper"
+      className="w-6 h-6"
+        />}
+    title='Paper'>
+        A fast, optimized Minecraft server implementation based on Spigot. Paper improves performance and adds more features and configuration options for Java Edition multiplayer servers.
+    </Card>
+    <Card icon={<img
+      src={leafIcon}
+      alt="Leaf"
+      className="w-6 h-6"
+        />}
+    title='Leaf'>
+        Leaf is a Paper fork, aim to find balance between Performance, Vanilla, and Stability, designed for large network, high capacity situation.
+    </Card>
+</Cards>
