@@ -2,5 +2,11 @@
   "title": "Development",
   "description": "The documentation for our SDK",
   "icon": "CodeXml",
-  "root": true
+  "root": true,
+  "pages": [
+    "index",
+    "---Java SDK---",
+    "groups",
+    "services"
+  ]
 }
