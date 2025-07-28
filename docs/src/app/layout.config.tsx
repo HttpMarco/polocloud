@@ -1,7 +1,6 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import Image from 'next/image';
+import { Logo } from './docs/components/ui/logo';
 
-import Logo from '../../public/logo.png';
 /**
  * Shared layout configurations
  *
@@ -12,15 +11,7 @@ import Logo from '../../public/logo.png';
 export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
-      <>
-        <Image
-          src={Logo}
-          alt="Logo"
-          width={30}
-          height={30}
-          />
-          PoloCloud
-        </>
+      <Logo />
     ),
   },
   // see https://fumadocs.dev/docs/ui/navigation/links
