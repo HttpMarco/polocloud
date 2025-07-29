@@ -258,10 +258,10 @@ impl Polocloud {
 // Singleton pattern implementation
 use std::sync::{Arc, Mutex, OnceLock};
 use serde::Deserialize;
-use tonic::{Request, Response, Status, Streaming};
+use tonic::{Request, Status};
 use tonic::codegen::tokio_stream::StreamExt;
 use tonic::transport::{Channel, Endpoint};
-use crate::polocloud::{EventContext, GroupType, ServiceState};
+use crate::polocloud::{ GroupType, ServiceState};
 
 static POLOCLOUD_INSTANCE: OnceLock<Arc<Mutex<Polocloud>>> = OnceLock::new();
 
