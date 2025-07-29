@@ -42,8 +42,8 @@
       "filename": "",
       "action": {
         "type": "PlatformFileMoveAction",
-        "oldPath": "../Pumpkin-%version_commitHash%/target/release/pumpkin",
-        "newPath": "pumpkin-%version_version%"
+        "oldPath": "../Pumpkin-%version_commitHash%/target/release/pumpkin%file_suffix%",
+        "newPath": "pumpkin-%version_version%%file_suffix%"
       }
     },
     {
