@@ -1,0 +1,73 @@
+---
+title: Boot Service Instance
+description: How to boot a service instance in PoloCloud.
+---
+---
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Boot a service instance
+
+You can start (boot) a service instance by specifying its name. PoloCloud provides two ways to do this:
+
+- Boot with a custom configuration  
+- Boot with default settings
+
+---
+
+### Boot with configuration
+
+Use `bootInstanceWithConfiguration` to start a service with a custom boot configuration.  
+You provide a lambda function to configure advanced options before the service starts.
+
+<Tabs items={['Kotlin', 'Java']}>
+  <Tab value="Kotlin">
+    <DynamicCodeBlock lang="kotlin" code={`serverProvider.bootInstanceWithConfiguration("Lobby-1") { config ->
+    // Configure the boot process here
+    config.memory = 2048
+    config.property("someKey", "someValue")
+    // other customizations
+}`} />
+  </Tab>
+  <Tab value="Java">
+    <DynamicCodeBlock lang="java" code={`serverProvider.bootInstanceWithConfiguration("Lobby-1", config -> {
+    // Configure the boot process here
+    config.setMemory(2048);
+    config.property("someKey", "someValue");
+    // other customizations
+});`} />
+  </Tab>
+</Tabs>
+
+<Callout type="info">
+  The lambda receives a <code>SharedBootConfiguration</code> object to customize parameters such as memory, properties, and other boot options.
+</Callout>
+
+---
+
+### Boot with default settings
+
+If no customization is needed, simply call `bootInstance` with the service instance name to start it with default settings.
+
+<Tabs items={['Kotlin', 'Java']}>
+  <Tab value="Kotlin">
+    <DynamicCodeBlock lang="kotlin" code={`serverProvider.bootInstance("Lobby-1")`} />
+  </Tab>
+  <Tab value="Java">
+    <DynamicCodeBlock lang="java" code={`serverProvider.bootInstance("Lobby-1");`} />
+  </Tab>
+</Tabs>
+
+---
+
+## Summary
+
+| Method                        | Description                                  | Parameters                      |
+|------------------------------|----------------------------------------------|--------------------------------- |
+| `bootInstanceWithConfiguration` | Boots a service with a custom configuration | `name`, `configuration lambda` |
+| `bootInstance`                | Boots a service with default settings         | `name`                         |
+
+Starting a service instance triggers the provisioning and launch process on PoloCloud based on the group's templates and settings.
+
+---

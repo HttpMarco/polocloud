@@ -1,7 +1,43 @@
 ---
 title: Groups
-description: Getting Started with the Groups PoloCloud
+description: Understanding groups in PoloCloud and how to manage them.
 icon: Boxes
 ---
+---
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { Callout } from 'fumadocs-ui/components/callout';
 
-asd
+## What are Groups?
+
+In PoloCloud, a **Group** represents a logical collection or category of services.  
+Groups help you organize and manage services by their function, environment, or any custom classification.
+
+Typical examples of groups include:  
+- "lobby" for lobby servers  
+- "proxy" for proxy servers  
+- "bw-8x1" for minigame servers like bedwars
+
+Groups allow filtering, bulk operations, and easier service discovery.
+
+### GroupData properties
+
+| Property                  | Type              | Description                                                               |
+| ------------------------- | ----------------- | ------------------------------------------------------------------------- |
+| `name`                    | `String`          | The unique name identifier of the group                                   |
+| `platform`                | `PlatformIndex`   | The Platform that is used for services in this group                      |
+| `minMemory`               | `Int`             | Minimum memory allocated (in MB) for services in this group               |
+| `maxMemory`               | `Int`             | Maximum memory allocated (in MB) for services in this group               |
+| `minOnlineService`        | `Int`             | Minimum number of service instances to keep online                        |
+| `maxOnlineService`        | `Int`             | Maximum number of service instances allowed simultaneously                |
+| `percentageToStartNewService` | `Int`         | Load percentage threshold to trigger starting a new service               |
+| `templates`               | `List<String>`    | List of template names used for launching services in this group          |
+| `properties`              | `Map<String, JsonElement>` | Arbitrary key-value configuration properties for custom settings |
+
+## Group-related enums and constants
+
+See the [Group Types](./groups/group-types) page for an overview of all `GroupType` enums (e.g., SERVICE, SERVER, PROXY) to understand how groups categorize services.
+
+<Callout type="tip">
+Groups are key to structuring your cloud infrastructure logically, making it easier to scale, monitor, and manage services.
+</Callout>
