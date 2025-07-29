@@ -181,10 +181,16 @@ impl EventProvider {
         });
         println!("test1");
 
-        let mut stream = self.event_stub.subscribe(request).await?.into_inner();
+        let mut event_stub = self.event_stub.clone();
 
-        println!("test2");
         tokio::spawn(async move {
+            let mut stream = match event_stub.subscribe(request).await {
+                Ok(s) => s.into_inner(),
+                Err(e) => {
+                    eprintln!("Error subscribing to event: {}", e);
+                    return;
+                }
+            };
             while let Some(event_context_result) = stream.next().await {
                 match event_context_result {
                     Ok(event_context) => {
@@ -252,10 +258,10 @@ impl Polocloud {
 // Singleton pattern implementation
 use std::sync::{Arc, Mutex, OnceLock};
 use serde::Deserialize;
-use tonic::{Request, Status};
+use tonic::{Request, Response, Status, Streaming};
 use tonic::codegen::tokio_stream::StreamExt;
 use tonic::transport::{Channel, Endpoint};
-use crate::polocloud::{GroupType, ServiceState};
+use crate::polocloud::{EventContext, GroupType, ServiceState};
 
 static POLOCLOUD_INSTANCE: OnceLock<Arc<Mutex<Polocloud>>> = OnceLock::new();
 
