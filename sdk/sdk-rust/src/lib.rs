@@ -1,3 +1,6 @@
+mod proto_deserializers;
+pub mod events;
+
 pub mod polocloud {
     tonic::include_proto!("dev.httpmarco.polocloud.v1.proto");
 }
@@ -15,11 +18,15 @@ use polocloud::{
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Service {
+    #[serde(rename(deserialize = "groupName"))]
     pub group_name: String,
     pub id: u32,
     pub hostname: String,
     pub port: u32,
-    pub state: ServiceState,
+    #[serde(deserialize_with = "crate::proto_deserializers::deserialize_service_state_case_insensitive")]
+    pub state: Option<ServiceState>,
+    #[serde(rename(deserialize = "type"))]
+    #[serde(deserialize_with = "crate::proto_deserializers::deserialize_group_type_case_insensitive")]
     pub server_type: GroupType,
     pub properties: HashMap<String, String>,
 }
@@ -100,7 +107,7 @@ impl ServiceProvider {
                 id: proto_service.id,
                 hostname: proto_service.hostname,
                 port: proto_service.port,
-                state: ServiceState::try_from(proto_service.state).unwrap_or(ServiceState::Stopped),
+                state: ServiceState::try_from(proto_service.state).ok(),
                 server_type: GroupType::try_from(proto_service.server_type).unwrap_or(GroupType::Server),
                 properties: proto_service.properties,
             })
@@ -179,6 +186,7 @@ impl EventProvider {
             while let Some(event_context_result) = stream.next().await {
                 match event_context_result {
                     Ok(event_context) => {
+                        println!("Event Context: {:?}", event_context);
                         match serde_json::from_str::<T>(&event_context.event_data) {
                             Ok(event) => callback(event),
                             Err(e) => eprintln!("Error deserializing event: {}", e),
