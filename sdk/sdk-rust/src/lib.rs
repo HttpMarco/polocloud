@@ -13,7 +13,7 @@ use polocloud::{
     EventSubscribeRequest
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct Service {
     pub group_name: String,
     pub id: u32,
@@ -242,6 +242,7 @@ impl Polocloud {
 
 // Singleton pattern implementation
 use std::sync::{Arc, Mutex, OnceLock};
+use serde::Deserialize;
 use tonic::{Request, Status};
 use tonic::codegen::tokio_stream::StreamExt;
 use tonic::transport::{Channel, Endpoint};
