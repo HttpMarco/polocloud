@@ -9,7 +9,7 @@ import java.nio.file.Path
 class PlatformTaskStep(val name: String, val description: String, val filename: String, val action: PlatformAction) {
 
     fun run(servicePath: Path, environment: PlatformParameters) {
-        this.action.run(servicePath.resolve(filename), this, environment)
+        this.action.run(servicePath.resolve(environment.modifyValueWithEnvironment(filename)), this, environment)
     }
 
 }
