@@ -1,5 +1,8 @@
-# Polocloud Rust SDK
+> ⚠️ **Warning** This SDK is in early development and our team has limited Rust experience, so you may encounter some
+> unusual implementations. If you find anything that could be improved, please create an issue and let us know how to make
+> it better!
 
+# Polocloud Rust SDK
 A Rust SDK for interacting with the Polocloud Minecraft cloud system. This SDK provides a simple interface for services to communicate with the cloud infrastructure through gRPC.
 
 ## Overview

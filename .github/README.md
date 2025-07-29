@@ -47,6 +47,9 @@ dependencies {
 
 > 🧪 This version is a snapshot release (`3.0.0-SNAPSHOT`) — ideal for testing the latest features. Expect frequent updates!
 
+### 🧩 PoloCloud Rust SDK
+
+You can find more information in [Rust SDK README](../sdk/sdk-rust/README.md)
 
 ### 🌐 Translations
 
