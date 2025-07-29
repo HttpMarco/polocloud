@@ -179,7 +179,6 @@ impl EventProvider {
             service_name: self.service_name.clone(),
             event_name: T::event_name(),
         });
-        println!("test1");
 
         let mut event_stub = self.event_stub.clone();
 
