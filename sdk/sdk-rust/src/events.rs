@@ -6,8 +6,8 @@ pub struct ServiceOnlineEvent {
 }
 
 impl Event for ServiceOnlineEvent {
-    fn event_name() -> &'static str {
-        "ServiceOnlineEvent"
+    fn event_name() -> String {
+        "ServiceOnlineEvent".to_string()
     }
 }
 
@@ -17,7 +17,7 @@ pub struct ServiceShutdownEvent {
 }
 
 impl Event for ServiceShutdownEvent {
-    fn event_name() -> &'static str {
-        "ServiceShutdownEvent"
+    fn event_name() -> String {
+        "ServiceShutdownEvent".to_string()
     }
 }

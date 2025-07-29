@@ -154,7 +154,7 @@ impl GroupProvider {
 }
 
 pub trait Event: Send + Sync {
-    fn event_name() -> &'static str;
+    fn event_name() -> String;
 }
 
 pub struct EventProvider {
@@ -170,14 +170,14 @@ impl EventProvider {
         }
     }
 
-    pub async fn subscribe<T, F>(&mut self, event_name: &str, mut callback: F) -> Result<(), Status>
+    pub async fn subscribe<T, F>(&mut self, mut callback: F) -> Result<(), Status>
     where
         T: Event + serde::de::DeserializeOwned + Send + 'static,
         F: FnMut(T) + Send + 'static,
     {
         let request = Request::new(EventSubscribeRequest {
             service_name: self.service_name.clone(),
-            event_name: event_name.to_string(),
+            event_name: T::event_name(),
         });
         println!("test1");
 
@@ -188,7 +188,6 @@ impl EventProvider {
             while let Some(event_context_result) = stream.next().await {
                 match event_context_result {
                     Ok(event_context) => {
-                        println!("Event Context: {:?}", event_context);
                         match serde_json::from_str::<T>(&event_context.event_data) {
                             Ok(event) => callback(event),
                             Err(e) => eprintln!("Error deserializing event: {}", e),
