@@ -32,7 +32,9 @@ class PlatformFileUnzipAction : PlatformAction() {
                     println(ex.message)
                 }
                 if (entry.isDirectory) {
-                    newFile.createDirectory()
+                    if (newFile.notExists()) {
+                        newFile.createDirectory()
+                    }
                 } else {
 
                     zip.getInputStream(entry).use { input ->

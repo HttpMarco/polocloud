@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.bundles.confirationPool)
     compileOnly(projects.platforms)
     compileOnly(projects.common)
+    compileOnly(projects.updater)
     compileOnly(projects.bridges.bridgeApi)
 }
 

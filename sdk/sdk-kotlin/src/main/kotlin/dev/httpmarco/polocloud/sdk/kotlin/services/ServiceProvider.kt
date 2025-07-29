@@ -2,8 +2,8 @@ package dev.httpmarco.polocloud.sdk.kotlin.services
 
 import com.google.common.util.concurrent.MoreExecutors
 import dev.httpmarco.polocloud.shared.service.Service
-import dev.httpmarco.polocloud.v1.ServiceControllerGrpc
-import dev.httpmarco.polocloud.v1.ServiceFindRequest
+import dev.httpmarco.polocloud.v1.services.ServiceControllerGrpc
+import dev.httpmarco.polocloud.v1.services.ServiceFindRequest
 import io.grpc.ManagedChannel
 import java.util.concurrent.Executor
 

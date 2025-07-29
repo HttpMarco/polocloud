@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.agent.detector
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.v1.ServiceState
+import dev.httpmarco.polocloud.v1.services.ServiceState
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject

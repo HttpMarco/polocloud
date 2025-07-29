@@ -6,6 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import org.tomlj.Toml
+import org.tomlj.TomlTable
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Path
@@ -74,9 +75,17 @@ class PlatformFilePropertyUpdateAction(private val key: String, private val valu
                 if (keys.size == 1) {
                     map[keys[0]] = value
                 } else {
-                    val subMap = map.getOrPut(keys[0]) {
+                    val subMapAny = map.getOrPut(keys[0]) {
                         mutableMapOf<String, Any?>()
-                    } as? MutableMap<String, Any?> ?: error("Conflict at key: ${keys[0]}")
+                    }
+                    val subMap = if (subMapAny is TomlTable) {
+                        val asMap = subMapAny.toMap().toMutableMap()
+                        map.put(keys[0], asMap)
+
+                        asMap
+                    } else {
+                        subMapAny as? MutableMap<String, Any?> ?: error("Conflict at key: ${keys[0]}")
+                    }
                     setValue(subMap, keys.drop(1), value)
                 }
             }

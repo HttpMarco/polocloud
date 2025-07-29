@@ -17,26 +17,20 @@ class CommandParser(private val commandService: CommandService) {
         }
 
         val command = commands.first()
-        val syntax = findSyntaxCommand(command, args)
 
-        if (syntax == null) {
+        if (args.isEmpty()) {
             if (command.defaultExecution != null) {
                 command.defaultExecution!!.execute(InputContext())
             } else {
-                command.commandSyntaxes.forEach { syntax ->
-                    val commandLayout = StringBuilder()
-
-                    syntax.arguments.forEach {
-                        if (it is KeywordArgument) {
-                            commandLayout.append("&7${it.key}")
-                        } else {
-                            commandLayout.append("&8<&7${it.key}&8>")
-                        }
-                        commandLayout.append(" ")
-                    }
-                    logger.info(" &8- &7${commandLayout}")
-                }
+                printCommandHelp(command)
             }
+            return
+        }
+
+        val syntax = findSyntaxCommand(command, args)
+
+        if (syntax == null) {
+            printCommandHelp(command)
         }
     }
 }
@@ -74,4 +68,11 @@ fun findSyntaxCommand(command: Command, args: Array<String>): CommandSyntax? {
         }
     }
     return null
+}
+
+
+private fun printCommandHelp(command: Command) {
+    command.commandSyntaxes.forEach { syntax ->
+        logger.info(" &8- &7${syntax.usage()}")
+    }
 }

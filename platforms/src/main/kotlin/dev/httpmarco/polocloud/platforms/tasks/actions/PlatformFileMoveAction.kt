@@ -14,9 +14,9 @@ class PlatformFileMoveAction(val oldPath: String, val newPath: String) : Platfor
         step: PlatformTaskStep,
         environment: PlatformParameters
     ) {
-        file.resolve(oldPath).toFile()
+        file.resolve(environment.modifyValueWithEnvironment(oldPath)).toFile()
             .renameTo(
-                file.resolve(newPath).toFile()
+                file.resolve(environment.modifyValueWithEnvironment(newPath)).toFile()
             )
     }
 }

@@ -3,15 +3,13 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.polocloudVersion
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
-import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
-import dev.httpmarco.polocloud.platforms.PlatformType
-import dev.httpmarco.polocloud.v1.ServiceState
+import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
@@ -54,11 +52,12 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment.addParameter("agent_port", Agent.config.port.toString())
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
+        environment.addParameter("file_suffix", platform.language.suffix())
 
         // find a better way here
         environment.addParameter(
             "velocity_use",
-            Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" });
+            Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" })
         environment.addParameter("version", polocloudVersion())
 
         // copy all templates to the service path
@@ -100,8 +99,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         val eventService = Agent.eventService
 
-        eventService.dropServiceSubscriptions(service)
         eventService.call(ServiceShutdownEvent(service))
+        eventService.dropServiceSubscriptions(service)
 
         if (service.process != null) {
             try {

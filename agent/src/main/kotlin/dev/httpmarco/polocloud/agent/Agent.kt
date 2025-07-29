@@ -11,7 +11,9 @@ import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.OnboardingSetup
 import dev.httpmarco.polocloud.agent.security.SecurityProvider
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformPool
+import dev.httpmarco.polocloud.updater.Updater
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
 
@@ -40,6 +42,7 @@ object Agent {
             i18n.warn("agent.version.warn")
         }
 
+        this.checkForUpdates()
         this.runtime = Runtime.create()
         this.runtime.initialize()
     }
@@ -54,6 +57,10 @@ object Agent {
         // this is done before the runtime is initialized
         this.config = this.runtime.configHolder().read("config", AgentConfig())
 
+        if (config.autoUpdate && Updater.newVersionAvailable()) {
+            TODO()
+        }
+
         this.grpcServerEndpoint.connect(this.config.port)
 
         this.runtime.boot()
@@ -61,7 +68,10 @@ object Agent {
         val groups = runtime.groupStorage().items()
 
         i18n.info("agent.starting.runtime", runtime::class.simpleName)
-        i18n.info("agent.starting.groups.count", groups.size, groups.joinToString(separator = "&8, &7") { it.data.name })
+        i18n.info(
+            "agent.starting.groups.count",
+            groups.size,
+            groups.joinToString(separator = "&8, &7") { it.data.name })
         i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformPool.versionSize())
         i18n.info("agent.starting.successful")
 
@@ -77,5 +87,17 @@ object Agent {
         this.runtime.shutdown()
         this.grpcServerEndpoint.close()
         this.onlineStateDetector.close()
+    }
+
+    /**
+     * This method check for updates of the agent.
+     * If a new version is available, it will log the information.
+     */
+    fun checkForUpdates() {
+        if (Updater.newVersionAvailable()) {
+            logger.info("A new version of the agent is available: ${Updater.latestVersion()}")
+            return
+        }
+        logger.info("You are running the latest version of the agent.")
     }
 }

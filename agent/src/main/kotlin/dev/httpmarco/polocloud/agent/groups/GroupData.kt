@@ -12,6 +12,7 @@ data class GroupData(
     var maxMemory: Int,
     var minOnlineService: Int,
     var maxOnlineService: Int,
+    var percentageToStartNewService: Int,
     var templates: List<String>,
     var properties: Map<String, JsonElement>
 )

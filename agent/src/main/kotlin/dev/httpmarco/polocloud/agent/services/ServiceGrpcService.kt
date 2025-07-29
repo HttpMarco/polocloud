@@ -2,10 +2,10 @@ package dev.httpmarco.polocloud.agent.services
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.v1.GroupType
-import dev.httpmarco.polocloud.v1.ServiceControllerGrpc
-import dev.httpmarco.polocloud.v1.ServiceFindRequest
-import dev.httpmarco.polocloud.v1.ServiceFindResponse
-import dev.httpmarco.polocloud.v1.ServiceSnapshot
+import dev.httpmarco.polocloud.v1.services.ServiceControllerGrpc
+import dev.httpmarco.polocloud.v1.services.ServiceFindRequest
+import dev.httpmarco.polocloud.v1.services.ServiceFindResponse
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import io.grpc.stub.StreamObserver
 
 class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
