@@ -5,12 +5,14 @@ icon: Album
 ---
 
 import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints } from 'lucide-react';
+import ButtonLink from '@/app/docs/components/button-link';
 import gateIcon from '../../../public/gate.png';
 import velocityIcon from '../../../public/velocity.svg';
 import waterfallIcon from '../../../public/waterfall.svg';
 import pumpkinIcon from '../../../public/pumkin.svg';
 import paperIcon from '../../../public/paper.svg';
 import leafIcon from '../../../public/leaf.svg';
+import fabricIcon from '../../../public/fabric.png';
 
 ## Introduction
 PoloCloud is the simplest and easiest **Cloud for Minecraft Networks** based on Kotlin, designed to be fast, flexible, and simple.
@@ -47,7 +49,10 @@ PoloCloud has different parts:
 
 ## Platforms
 
-Following platforms are supported by PoloCloud:
+
+<div className="inline">
+Following platforms are supported by PoloCloud: <ButtonLink text="Request platfrom" href="https://github.com/HttpMarco/polocloud/issues/new" />
+</div>
 
 <Cards>
     <Card icon={<img
@@ -101,5 +106,13 @@ Following platforms are supported by PoloCloud:
         />}
     title='Leaf'>
         Leaf is a Paper fork, aim to find balance between Performance, Vanilla, and Stability, designed for large network, high capacity situation.
+    </Card>
+    <Card icon={<img
+      src={fabricIcon}
+      alt="Fabric"
+      className="w-6 h-6"
+        />}
+    title='Fabric'>
+        A lightweight and modular modding platform for Minecraft that focuses on performance, quick updates, and flexibility for custom server experiences.
     </Card>
 </Cards>
