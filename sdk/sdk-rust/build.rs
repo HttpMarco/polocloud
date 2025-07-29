@@ -21,7 +21,7 @@ fn build_protos(paths: &[String]) {
     tonic_prost_build::configure()
         .file_descriptor_set_path(out_dir.join("./polocloud-proto.bin"))
         .type_attribute("ServiceState", "#[derive(serde::Deserialize)]")
-        .type_attribute("GroupState", "#[derive(serde::Deserialize)]")
+        .type_attribute("GroupType", "#[derive(serde::Deserialize)]")
         .compile_protos(
             paths,
             &["../../proto/src/main/proto".to_string()],
