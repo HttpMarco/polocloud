@@ -10,3 +10,14 @@ impl Event for ServiceOnlineEvent {
         "ServiceOnlineEvent"
     }
 }
+
+#[derive(serde::Deserialize, Debug)]
+pub struct ServiceShutdownEvent {
+    pub service: Service
+}
+
+impl Event for ServiceShutdownEvent {
+    fn event_name() -> &'static str {
+        "ServiceShutdownEvent"
+    }
+}

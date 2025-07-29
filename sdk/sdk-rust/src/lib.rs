@@ -23,7 +23,7 @@ pub struct Service {
     pub id: u32,
     pub hostname: String,
     pub port: u32,
-    #[serde(deserialize_with = "crate::proto_deserializers::deserialize_service_state_case_insensitive")]
+    #[serde(default, deserialize_with = "crate::proto_deserializers::deserialize_service_state_case_insensitive")]
     pub state: Option<ServiceState>,
     #[serde(rename(deserialize = "type"))]
     #[serde(deserialize_with = "crate::proto_deserializers::deserialize_group_type_case_insensitive")]
@@ -179,9 +179,11 @@ impl EventProvider {
             service_name: self.service_name.clone(),
             event_name: event_name.to_string(),
         });
+        println!("test1");
 
         let mut stream = self.event_stub.subscribe(request).await?.into_inner();
 
+        println!("test2");
         tokio::spawn(async move {
             while let Some(event_context_result) = stream.next().await {
                 match event_context_result {
