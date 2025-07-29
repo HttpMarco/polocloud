@@ -56,7 +56,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         // find a better way here
         environment.addParameter(
             "velocity_use",
-            Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" });
+            Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" })
         environment.addParameter("version", polocloudVersion())
 
         // copy all templates to the service path
@@ -98,8 +98,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         val eventService = Agent.eventService
 
-        eventService.dropServiceSubscriptions(service)
         eventService.call(ServiceShutdownEvent(service))
+        eventService.dropServiceSubscriptions(service)
 
         if (service.process != null) {
             try {
