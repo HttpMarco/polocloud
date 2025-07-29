@@ -20,6 +20,8 @@ fn build_protos(paths: &[String]) {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     tonic_prost_build::configure()
         .file_descriptor_set_path(out_dir.join("./polocloud-proto.bin"))
+        .type_attribute("ServiceState", "#[derive(serde::Deserialize)]")
+        .type_attribute("GroupState", "#[derive(serde::Deserialize)]")
         .compile_protos(
             paths,
             &["../../proto/src/main/proto".to_string()],
