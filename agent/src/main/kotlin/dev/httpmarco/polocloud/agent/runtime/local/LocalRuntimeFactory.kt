@@ -52,6 +52,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment.addParameter("agent_port", Agent.config.port.toString())
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
+        environment.addParameter("file_suffix", platform.language.suffix())
 
         // find a better way here
         environment.addParameter(
