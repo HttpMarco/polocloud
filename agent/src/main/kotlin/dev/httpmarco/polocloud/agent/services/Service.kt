@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.utils.PortDetector
 import dev.httpmarco.polocloud.agent.utils.asStringMap
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
 abstract class Service(val group: Group, val id: Int, val hostname: String = "127.0.0.1") {
@@ -32,5 +33,15 @@ abstract class Service(val group: Group, val id: Int, val hostname: String = "12
 
     fun logs(limit: Int = 100): List<String> {
         return Agent.runtime.expender().readLogs(this, limit)
+    }
+
+    fun asSnapshot() : ServiceSnapshot {
+        return ServiceSnapshot.newBuilder()
+            .setGroupName(group.data.name)
+            .setId(id)
+            .putAllProperties(properties)
+            .setHostname(hostname)
+            .setPort(port)
+            .build()
     }
 }

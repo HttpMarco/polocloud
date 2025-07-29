@@ -21,7 +21,7 @@ class GroupSetup : Setup<Group>("Group setup") {
     private val maxMemoryArgument = IntArgument("maxMemory", 1)
     private val percentageToStartNewService = IntArgument("percentageToStartNewService", 0)
     private val minOnlineServicesArgument = IntArgument("minOnlineServices", 0)
-    private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", 0)
+    private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", -1)
     private val fallbackArgument = YesNotArgument("fallback")
 
     override fun bindQuestion() {

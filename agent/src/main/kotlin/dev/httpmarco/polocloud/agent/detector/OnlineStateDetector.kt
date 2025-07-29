@@ -1,8 +1,10 @@
 package dev.httpmarco.polocloud.agent.detector
 
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.agent.i18n
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
+import dev.httpmarco.polocloud.shared.service.Service
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.intOrNull
@@ -35,7 +37,8 @@ class OnlineStateDetector : Detector {
                         service.state = ServiceState.ONLINE
 
                         // call the services all the events
-                        Agent.eventService.call(ServiceOnlineEvent(service))
+                        // todo find a better way with service in service
+                        Agent.eventService.call(ServiceOnlineEvent(Service(service.asSnapshot())))
 
                         i18n.info("agent.detector.service.online", service.name())
                     }

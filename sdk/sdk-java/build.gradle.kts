@@ -1,7 +1,27 @@
 plugins {
     id("java")
+    id("com.gradleup.shadow") version "9.0.0-beta17"
 }
 
+dependencies {
+    implementation(projects.shared)
+    implementation(projects.common)
+
+    compileOnly(libs.gson)
+    implementation(libs.bundles.proto)
+    implementation(libs.grpc.netty)
+    implementation(projects.proto)
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = JavaVersion.VERSION_21.toString()
+    targetCompatibility = JavaVersion.VERSION_21.toString()
+    options.encoding = "UTF-8"
+}
+
+tasks.jar {
+    dependsOn(tasks.shadowJar)
+}
 
 extensions.configure<PublishingExtension> {
     publications {

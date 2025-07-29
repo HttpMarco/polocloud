@@ -5,6 +5,7 @@ plugins {
 dependencies {
     testImplementation(kotlin("test"))
     compileOnly(libs.json)
+    compileOnly(projects.proto)
 }
 
 tasks.test {

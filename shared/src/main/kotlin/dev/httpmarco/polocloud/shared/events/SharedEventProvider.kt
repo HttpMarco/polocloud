@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.shared.events
 
 import kotlin.reflect.KClass
 
-interface EventProvider {
+interface SharedEventProvider {
 
     fun call(event: Event)
 

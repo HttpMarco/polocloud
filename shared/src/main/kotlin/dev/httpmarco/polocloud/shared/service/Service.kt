@@ -1,11 +1,27 @@
 package dev.httpmarco.polocloud.shared.service
 
 import dev.httpmarco.polocloud.v1.GroupType
-import dev.httpmarco.polocloud.v1.services.ServiceState
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 
-class Service(val groupName: String, val id: Int, val hostname: String, val port: Int, val state : ServiceState, val type : GroupType, val properties: Map<String, String>) {
+class Service(val serviceSnapshot: ServiceSnapshot) {
 
     fun name(): String {
-        return "${groupName}-$id"
+        return "${serviceSnapshot.groupName}-${serviceSnapshot.id}"
+    }
+
+    fun type(): GroupType {
+        return serviceSnapshot.serverType
+    }
+
+    fun properties(): Map<String, String> {
+        return serviceSnapshot.propertiesMap.toMap()
+    }
+
+    fun hostname(): String {
+        return serviceSnapshot.hostname
+    }
+
+    fun port(): Int {
+        return serviceSnapshot.port
     }
 }
