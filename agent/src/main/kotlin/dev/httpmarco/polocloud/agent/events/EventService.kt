@@ -51,10 +51,7 @@ class EventService : SharedEventProvider {
         events[event.javaClass.simpleName]?.forEach {
             val eventName = event.javaClass.simpleName
 
-            val context = GsonBuilder().registerTypeHierarchyAdapter(
-                Service::class.java,
-                ServiceDefinitionSerializer()
-            ).registerTypeAdapter(Service::class.java, ServiceDefinitionSerializer()).create().toJson(event)
+            val context = GsonBuilder().create().toJson(event)
 
             println(context)
 
