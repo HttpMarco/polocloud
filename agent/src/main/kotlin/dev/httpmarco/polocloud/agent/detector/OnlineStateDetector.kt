@@ -105,7 +105,7 @@ class OnlineStateDetector : Detector {
                         }
                     }
                 }
-            } catch (_: ConnectException) {
+            } catch (_: Throwable) {
                 // ignore connection errors, the service is not online yet
             }
         }
