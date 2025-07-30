@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.agent.utils
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
-import dev.httpmarco.polocloud.platforms.PlatformType
+import dev.httpmarco.polocloud.v1.GroupType
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 
@@ -10,7 +10,7 @@ class PortDetector {
 
     companion object {
         fun nextPort(group: Group): Int {
-            var port = if (group.platform().type == PlatformType.PROXY) 25565 else 30000
+            var port = if (group.platform().type == GroupType.PROXY) 25565 else 30000
             while (isPortUsed(port)) {
                 port += 2
             }

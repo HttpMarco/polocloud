@@ -13,9 +13,7 @@ import kotlin.jvm.functions.Function1;
 import kotlin.reflect.KClass;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Type;
-
-public final class EventProvider implements SharedEventProvider {
+public final class EventProvider extends SharedEventProvider {
 
     private final EventProviderGrpc.EventProviderStub eventStub;
 
@@ -39,8 +37,7 @@ public final class EventProvider implements SharedEventProvider {
         eventStub.subscribe(request, new StreamObserver<>() {
             @Override
             public void onNext(EventProviderOuterClass.EventContext context) {
-                T event = new GsonBuilder().create().fromJson(context.getEventData(), JvmClassMappingKt.getJavaClass(eventType));
-                result.invoke(event);
+                result.invoke(getGsonSerilaizer().fromJson(context.getEventData(), JvmClassMappingKt.getJavaClass(eventType)));
             }
 
             @Override

@@ -1,8 +1,6 @@
 package dev.httpmarco.polocloud.agent.events
 
-import com.google.gson.GsonBuilder
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.events.serializer.ServiceDefinitionSerializer
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.shared.events.Event
@@ -13,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.reflect.KClass
 
-class EventService : SharedEventProvider {
+class EventService : SharedEventProvider() {
 
     private val events = ConcurrentHashMap<String, List<EventSubscription>>()
 
@@ -49,13 +47,13 @@ class EventService : SharedEventProvider {
         }
 
         events[event.javaClass.simpleName]?.forEach {
-            val eventName = event.javaClass.simpleName
-
-            val context = GsonBuilder().create().toJson(event)
-
-            println(context)
-
-            it.sub.onNext(EventProviderOuterClass.EventContext.newBuilder().setEventName(eventName).setEventData(context).build())
+            it.sub.onNext(
+                EventProviderOuterClass.EventContext
+                    .newBuilder()
+                    .setEventName(event.javaClass.simpleName)
+                    .setEventData(gsonSerilaizer.toJson(event))
+                    .build()
+            )
         }
     }
 

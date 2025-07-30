@@ -27,8 +27,7 @@ abstract class BridgeInstance<T> {
         }
 
         polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class) {
-            println("Service online: ${it.service.name()} (${it.service.hostname()}:${it.service.port()})")
-            val service = it.service
+           val service = it.service
             if (service.type() == GroupType.SERVER) {
                 registerService(generateInfo(service.name(), service.hostname(), service.port()), isFallback(service))
             }

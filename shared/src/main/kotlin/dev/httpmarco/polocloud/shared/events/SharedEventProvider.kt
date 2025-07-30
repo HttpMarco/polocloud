@@ -1,11 +1,16 @@
 package dev.httpmarco.polocloud.shared.events
 
+import com.google.gson.GsonBuilder
+import dev.httpmarco.polocloud.shared.service.Service
+import dev.httpmarco.polocloud.shared.service.ServiceSerializer
 import kotlin.reflect.KClass
 
-interface SharedEventProvider {
+abstract class SharedEventProvider {
 
-    fun call(event: Event)
+    protected val gsonSerilaizer = GsonBuilder().registerTypeAdapter(Service::class.java, ServiceSerializer()).create()
 
-    fun <T : Event> subscribe(eventType: KClass<T>, result: (T) -> Any)
+    abstract fun call(event: Event)
+
+    abstract fun <T : Event> subscribe(eventType: KClass<T>, result: (T) -> Any)
 
 }

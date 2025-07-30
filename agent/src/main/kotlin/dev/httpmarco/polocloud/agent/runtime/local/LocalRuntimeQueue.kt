@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.Group
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.shutdownProcess
-import dev.httpmarco.polocloud.platforms.PlatformType
+import dev.httpmarco.polocloud.v1.GroupType
 
 class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
 
@@ -22,7 +22,7 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
                         repeat(required) {
                             val index = findIndex(group)
                             val service = when (group.platform().type) {
-                                PlatformType.PROXY -> LocalService(group, index, "0.0.0.0")
+                                GroupType.PROXY -> LocalService(group, index, "0.0.0.0")
                                 else -> LocalService(group, index)
                             }
 

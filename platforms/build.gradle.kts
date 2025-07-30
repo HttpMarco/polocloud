@@ -6,10 +6,11 @@ plugins {
 dependencies {
     testImplementation(kotlin("test"))
     testImplementation(libs.json)
-    testImplementation(project(":common"))
+    testImplementation(projects.common)
 
     compileOnly(libs.bundles.confirationPool)
 
+    compileOnly(projects.proto)
     compileOnly(libs.json)
     compileOnly(project(":common"))
 }

@@ -39,6 +39,7 @@ abstract class Service(val group: Group, val id: Int, val hostname: String = "12
         return ServiceSnapshot.newBuilder()
             .setGroupName(group.data.name)
             .setId(id)
+            .setServerType(group.platform().type)
             .putAllProperties(properties)
             .setHostname(hostname)
             .setPort(port)

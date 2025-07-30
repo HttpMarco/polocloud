@@ -8,7 +8,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
 import dev.httpmarco.polocloud.platforms.PlatformIndex
-import dev.httpmarco.polocloud.platforms.PlatformType
+import dev.httpmarco.polocloud.v1.GroupType
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
@@ -27,7 +27,7 @@ class GroupSetup : Setup<Group>("Group setup") {
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.group.name", nameArgument))
         attach(SetupStep("agent.local-runtime.setup.group.platform", platformArgument) { platform ->
-            if (platform.type == PlatformType.SERVER) {
+            if (platform.type == GroupType.SERVER) {
                 attach(SetupStep("agent.local-runtime.setup.group.fallback", fallbackArgument))
             }
         })
