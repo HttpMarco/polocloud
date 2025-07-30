@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.detector
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
+import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
@@ -10,14 +11,20 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.apache.hc.core5.net.Host
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.ConnectException
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.nio.ByteBuffer
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
 class OnlineStateDetector : Detector {
@@ -33,15 +40,7 @@ class OnlineStateDetector : Detector {
                 Socket().use { socket ->
                     socket.connect(InetSocketAddress(host, port), 500)
 
-                    if (service.state == ServiceState.STARTING) {
-                        service.state = ServiceState.ONLINE
-
-                        // call the services all the events
-                        // todo find a better way with service in service
-                        Agent.eventService.call(ServiceOnlineEvent(Service(service.asSnapshot())))
-
-                        i18n.info("agent.detector.service.online", service.name())
-                    }
+                    this.callOnline(service)
 
                     val out = socket.getOutputStream()
                     val input = socket.getInputStream()
@@ -64,7 +63,7 @@ class OnlineStateDetector : Detector {
                     try {
                         readVarInt(input) // packet length
                         readVarInt(input) // packet ID
-                    }catch (_: Throwable) {
+                    } catch (_: Throwable) {
                         // if the packet length or ID cannot be read, the service is not online
                         return@forEach
                     }
@@ -79,10 +78,53 @@ class OnlineStateDetector : Detector {
                     service.playerCount = players?.get("online")?.jsonPrimitive?.intOrNull ?: -1
                     service.maxPlayerCount = players?.get("max")?.jsonPrimitive?.intOrNull ?: -1
                 }
+
+                // now try to detect bedrock instance
+                DatagramSocket().use { socket ->
+                    socket.soTimeout = 500
+                    val address = InetAddress.getByName(host)
+
+                    val pingPacket = createBedrockPingPacket()
+                    val sendPacket = DatagramPacket(pingPacket, pingPacket.size, address, port)
+                    socket.send(sendPacket)
+
+                    val buffer = ByteArray(1024)
+                    val responsePacket = DatagramPacket(buffer, buffer.size)
+
+                    socket.receive(responsePacket)
+
+                    val response = String(responsePacket.data, 0, responsePacket.length, Charset.forName("UTF-8"))
+
+                    if (response.contains("MCPE")) {
+                        this.callOnline(service)
+
+                        val split = response.split(";")
+                        if (split.size >= 6) {
+                            service.playerCount = split[4].toIntOrNull() ?: -1
+                            service.maxPlayerCount = split[5].toIntOrNull() ?: -1
+                        }
+                    }
+                }
             } catch (_: ConnectException) {
                 // ignore connection errors, the service is not online yet
             }
         }
+    }
+
+    private fun callOnline(service: dev.httpmarco.polocloud.agent.services.Service) {
+        if (service.state == ServiceState.STARTING) {
+            service.state = ServiceState.ONLINE
+            Agent.eventService.call(ServiceOnlineEvent(Service(service.asSnapshot())))
+            i18n.info("agent.detector.service.online", service.name())
+        }
+    }
+
+    private fun createBedrockPingPacket(): ByteArray {
+        val buffer = ByteBuffer.allocate(50)
+        buffer.put(0x01)
+        buffer.putLong(System.currentTimeMillis())
+        buffer.put("MCPE".toByteArray(Charset.forName("UTF-8")))
+        return buffer.array().copyOf(buffer.position())
     }
 
     override fun cycleLife(): Long {
