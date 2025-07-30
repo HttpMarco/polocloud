@@ -100,8 +100,11 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val eventService = Agent.eventService
 
 
-        eventService.call(ServiceShutdownEvent(dev.httpmarco.polocloud.shared.service.Service(service.asSnapshot())))
+        // first, we need to drop all subscriptions for this service
+        // the service went down, so we don't need to send any events anymore
         eventService.dropServiceSubscriptions(service)
+        // then we call the shutdown event -> for all other services
+        eventService.call(ServiceShutdownEvent(dev.httpmarco.polocloud.shared.service.Service(service.asSnapshot())))
 
         if (service.process != null) {
             try {
