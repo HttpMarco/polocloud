@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.agent.services.Service
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
+import io.grpc.stub.ServerCallStreamObserver
 import io.grpc.stub.StreamObserver
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -27,7 +28,9 @@ class EventService : SharedEventProvider() {
 
         events.computeIfAbsent(event) { CopyOnWriteArrayList() }.let {
             it as MutableList
-            it.add(EventSubscription(service, observer))
+            it.add(EventSubscription(service,
+                observer as ServerCallStreamObserver<EventProviderOuterClass.EventContext>
+            ))
         }
     }
 
@@ -47,13 +50,15 @@ class EventService : SharedEventProvider() {
         }
 
         events[event.javaClass.simpleName]?.forEach {
-            it.sub.onNext(
-                EventProviderOuterClass.EventContext
-                    .newBuilder()
-                    .setEventName(event.javaClass.simpleName)
-                    .setEventData(gsonSerilaizer.toJson(event))
-                    .build()
-            )
+            if(!it.sub.isCancelled) {
+                it.sub.onNext(
+                    EventProviderOuterClass.EventContext
+                        .newBuilder()
+                        .setEventName(event.javaClass.simpleName)
+                        .setEventData(gsonSerilaizer.toJson(event))
+                        .build()
+                )
+            }
         }
     }
 

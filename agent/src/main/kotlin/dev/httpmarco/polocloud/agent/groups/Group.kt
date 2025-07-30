@@ -34,6 +34,10 @@ open class Group(val data: GroupData) {
         Agent.runtime.serviceStorage().findServicesByGroup(this).forEach { it.shutdown() }
     }
 
+    fun playerCount(): Int {
+        return services().sumOf { it.playerCount }
+    }
+
     override fun equals(other: Any?): Boolean {
         return if (other is Group) {
             this.data.name == other.data.name
