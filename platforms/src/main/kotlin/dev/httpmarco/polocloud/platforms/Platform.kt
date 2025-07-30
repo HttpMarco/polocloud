@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.platforms.bridge.BridgeType
 import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidException
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
+import dev.httpmarco.polocloud.v1.GroupType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.jsonPrimitive
 import java.net.URI
@@ -28,7 +29,7 @@ class Platform(
     // default is "stop"
     val shutdownCommand: String = "stop",
     // the type of platform, proxy, server, or service
-    val type: PlatformType,
+    val type: GroupType,
     // all global arguments for the platform after the jar name, for example, 'nogui'
     val arguments: List<String> = emptyList(),
     // all global flags for the platform after the jar name, for example: '-Djava.net.preferIPv4Stack=true'

@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.Service
@@ -9,6 +8,7 @@ import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
@@ -99,7 +99,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         val eventService = Agent.eventService
 
-        eventService.call(ServiceShutdownEvent(service))
+
+        eventService.call(ServiceShutdownEvent(dev.httpmarco.polocloud.shared.service.Service(service.asSnapshot())))
         eventService.dropServiceSubscriptions(service)
 
         if (service.process != null) {

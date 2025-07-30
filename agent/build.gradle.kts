@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.bundles.proto)
     implementation(libs.grpc.netty)
     compileOnly(projects.proto)
+    compileOnly(projects.shared)
 
     implementation(libs.bundles.terminal)
     implementation(libs.bundles.runtime)
