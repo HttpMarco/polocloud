@@ -57,6 +57,11 @@ object Agent {
         this.config = this.runtime.configHolder().read("config", AgentConfig())
 
         if (config.autoUpdate && Updater.newVersionAvailable()) {
+
+            if (this.runtime is LocalRuntime) {
+                this.runtime.terminal.clearScreen()
+            }
+
             Updater.update()
             return
         }
