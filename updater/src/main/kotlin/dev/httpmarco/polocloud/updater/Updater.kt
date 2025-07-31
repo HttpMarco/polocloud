@@ -2,9 +2,11 @@ package dev.httpmarco.polocloud.updater
 
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import kotlinx.serialization.json.Json
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.LinkedList
+import kotlin.system.exitProcess
 
 object Updater {
 
@@ -13,7 +15,7 @@ object Updater {
     }
 
     fun newVersionAvailable(): Boolean {
-        return polocloudVersion() == latestVersion()
+        return polocloudVersion() != latestVersion()
     }
 
     fun availableRelease(): LinkedList<String> {
@@ -39,5 +41,12 @@ object Updater {
         }
 
         return releases
+    }
+
+    fun update(version: String = latestVersion()) {
+        println("Updating to version $version...")
+        //ProcessBuilder().command("java", "-jar", "polocloud-updater-${polocloudVersion()}.jar").directory(File("local/libs")).start()
+
+        exitProcess(0)
     }
 }
