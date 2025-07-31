@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.common.version.polocloudVersion
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.URL
 import java.util.LinkedList
 import kotlin.system.exitProcess
@@ -20,7 +21,7 @@ object Updater {
 
     fun availableRelease(): LinkedList<String> {
         val releases = LinkedList<String>()
-        val url = URL("https://api.github.com/repos/httpmarco/polocloud/tags")
+        val url = URI("https://api.github.com/repos/httpmarco/polocloud/tags").toURL()
 
         with(url.openConnection() as HttpURLConnection) {
             requestMethod = "GET"
@@ -45,7 +46,8 @@ object Updater {
 
     fun update(version: String = latestVersion()) {
         println("Updating to version $version...")
-        //ProcessBuilder().command("java", "-jar", "polocloud-updater-${polocloudVersion()}.jar").directory(File("local/libs")).start()
+
+        ProcessBuilder().command("java", "-jar", "polocloud-updater-${polocloudVersion()}.jar").directory(File("local/libs")).inheritIO().start()
 
         exitProcess(0)
     }
