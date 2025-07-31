@@ -9,13 +9,10 @@ import dev.httpmarco.polocloud.agent.i18n.I18nPolocloudAgent
 import dev.httpmarco.polocloud.agent.logging.Logger
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.OnboardingSetup
 import dev.httpmarco.polocloud.agent.security.SecurityProvider
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformPool
 import dev.httpmarco.polocloud.updater.Updater
-import kotlin.io.path.Path
-import kotlin.io.path.notExists
 
 // global terminal instance for the agent
 // this is used to print messages to the console
@@ -63,6 +60,7 @@ object Agent {
             }
 
             Updater.update()
+            exitPolocloud() // make sure to shut down the process after the update
             return
         }
 

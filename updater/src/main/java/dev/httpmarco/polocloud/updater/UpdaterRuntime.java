@@ -13,8 +13,8 @@ public class UpdaterRuntime {
 
         Thread.sleep(5000);
 
-        String downloadUrl = "https://github.com/HttpMarco/polocloud/releases/download/v3.0.0-pre-3/polocloud-launcher.jar";
-        File targetFile = new File("../../polocloud-launcher.jar");
+        var downloadUrl = "https://github.com/HttpMarco/polocloud/releases/download/v3.0.0-pre-3/polocloud-launcher.jar";
+        var targetFile = new File("../../polocloud-launcher.jar");
 
         downloadJarFromGitHub(downloadUrl, targetFile);
         startLauncherAndExit();
@@ -38,10 +38,22 @@ public class UpdaterRuntime {
 
     public static void startLauncherAndExit() {
         try {
-            ProcessBuilder builder = new ProcessBuilder("java", "-jar", "polocloud-launcher.jar");
-            builder.directory(new File("../../"));
-            builder.start();
+            File launcherDir = new File("../../").getCanonicalFile();
+            File launcherJar = new File(launcherDir, "polocloud-launcher.jar");
 
+            if (!launcherJar.exists()) {
+                System.err.println("❌ Launcher-Datei nicht gefunden: " + launcherJar.getAbsolutePath());
+                return;
+            }
+
+            ProcessBuilder builder = new ProcessBuilder("java", "-jar", launcherJar.getAbsolutePath());
+            builder.directory(launcherDir);
+
+            builder.inheritIO();
+
+            System.out.println("🚀 Starte neuen Launcher: " + launcherJar.getAbsolutePath());
+
+            builder.start();
             System.exit(0);
         } catch (Exception e) {
             System.err.println("❌ Fehler beim Starten des Launchers: " + e.getMessage());
