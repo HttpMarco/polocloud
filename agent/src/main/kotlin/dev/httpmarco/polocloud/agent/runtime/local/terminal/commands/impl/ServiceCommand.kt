@@ -46,6 +46,8 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage, terminal
             i18n.info("agent.terminal.command.service.info.line.3", service.port)
             i18n.info("agent.terminal.command.service.info.line.4", service.hostname)
             i18n.info("agent.terminal.command.service.info.line.5", service.playerCount, service.maxPlayerCount)
+            i18n.info("agent.terminal.command.service.info.line.memory", service.memoryUsage())
+            i18n.info("agent.terminal.command.service.info.line.cpuUsage", service.cpuUsage.toString())
             i18n.info("agent.terminal.command.service.info.line.6")
 
             service.properties.forEach { (key, value) ->

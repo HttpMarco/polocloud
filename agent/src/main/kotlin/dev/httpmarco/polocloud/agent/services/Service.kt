@@ -13,6 +13,8 @@ abstract class Service(val group: Group, val id: Int, val hostname: String = "12
     var state = ServiceState.PREPARING
     var playerCount = -1
     var maxPlayerCount = -1
+    var cpuUsage = -1.0
+    var memoryUsage = -1.0
     var properties = hashMapOf<String, String>()
 
     init {
@@ -22,6 +24,8 @@ abstract class Service(val group: Group, val id: Int, val hostname: String = "12
     fun name(): String {
         return "${group.data.name}-${id}"
     }
+
+    fun memoryUsage() = memoryUsage
 
     fun shutdown(shutdownCleanUp : Boolean = true) {
         Agent.runtime.factory().shutdownApplication(this, shutdownCleanUp)

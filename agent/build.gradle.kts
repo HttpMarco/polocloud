@@ -17,7 +17,7 @@ dependencies {
 
     implementation(libs.json)
     implementation(libs.gson)
-
+    implementation(libs.oshi)
 
     implementation(libs.bundles.confirationPool)
     compileOnly(projects.platforms)

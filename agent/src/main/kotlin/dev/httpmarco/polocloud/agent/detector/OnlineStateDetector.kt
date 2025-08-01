@@ -78,33 +78,6 @@ class OnlineStateDetector : Detector {
                     service.playerCount = players?.get("online")?.jsonPrimitive?.intOrNull ?: -1
                     service.maxPlayerCount = players?.get("max")?.jsonPrimitive?.intOrNull ?: -1
                 }
-
-                // now try to detect bedrock instance
-                DatagramSocket().use { socket ->
-                    socket.soTimeout = 500
-                    val address = InetAddress.getByName(host)
-
-                    val pingPacket = createBedrockPingPacket()
-                    val sendPacket = DatagramPacket(pingPacket, pingPacket.size, address, port)
-                    socket.send(sendPacket)
-
-                    val buffer = ByteArray(1024)
-                    val responsePacket = DatagramPacket(buffer, buffer.size)
-
-                    socket.receive(responsePacket)
-
-                    val response = String(responsePacket.data, 0, responsePacket.length, Charset.forName("UTF-8"))
-
-                    if (response.contains("MCPE")) {
-                        this.callOnline(service)
-
-                        val split = response.split(";")
-                        if (split.size >= 6) {
-                            service.playerCount = split[4].toIntOrNull() ?: -1
-                            service.maxPlayerCount = split[5].toIntOrNull() ?: -1
-                        }
-                    }
-                }
             } catch (_: Throwable) {
                 // ignore connection errors, the service is not online yet
             }
@@ -117,14 +90,6 @@ class OnlineStateDetector : Detector {
             Agent.eventService.call(ServiceOnlineEvent(Service(service.asSnapshot())))
             i18n.info("agent.detector.service.online", service.name())
         }
-    }
-
-    private fun createBedrockPingPacket(): ByteArray {
-        val buffer = ByteBuffer.allocate(50)
-        buffer.put(0x01)
-        buffer.putLong(System.currentTimeMillis())
-        buffer.put("MCPE".toByteArray(Charset.forName("UTF-8")))
-        return buffer.array().copyOf(buffer.position())
     }
 
     override fun cycleLife(): Long {
