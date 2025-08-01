@@ -2,62 +2,91 @@ package dev.httpmarco.polocloud.updater;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 
 public class UpdaterRuntime {
 
-    public static void main(String[] args) throws InterruptedException {
+    private static final String DEFAULT_VERSION = "v3.0.0-pre-4"; // TODO update this to the latest version
+    private static final String LAUNCHER_JAR = "polocloud-launcher.jar";
 
-        Thread.sleep(5000);
+    public static void main(String[] args) {
+        var version = versionFromArgs(args);
 
-        var downloadUrl = "https://github.com/HttpMarco/polocloud/releases/download/v3.0.0-pre-3/polocloud-launcher.jar";
-        var targetFile = new File("../../polocloud-launcher.jar");
+        System.out.println("Updating to version " + version + "...");
 
-        downloadJarFromGitHub(downloadUrl, targetFile);
-        startLauncherAndExit();
+        var targetFile = new File("../../" + LAUNCHER_JAR);
+        var downloadUrl = "https://github.com/HttpMarco/polocloud/releases/download/" + version + "/" + LAUNCHER_JAR;
+
+        if (!downloadJar(downloadUrl, targetFile)) {
+            System.err.println("Update aborted.");
+            return;
+        }
+
+        if (!startLauncher(targetFile)) {
+            System.err.println("Failed to restart launcher.");
+        }
+
+        System.out.println("Update completed successfully.");
     }
 
-    public static void downloadJarFromGitHub(String downloadUrl, File targetFile) {
-        System.out.println("⬇️  Starte Download von: " + downloadUrl);
+    private static String versionFromArgs(String[] args) {
+        for (String arg : args) {
+            if (arg.startsWith("--version=")) {
+                return arg.substring("--version=".length());
+            }
+        }
 
-        try (InputStream input = new URL(downloadUrl).openStream();
-             ReadableByteChannel channel = Channels.newChannel(input);
-             FileOutputStream output = new FileOutputStream(targetFile)) {
+        return DEFAULT_VERSION;
+    }
+
+    public static boolean downloadJar(String url, File target) {
+        System.out.println("Downloading from: " + url);
+
+        try (var input = new URI(url).toURL().openStream();
+             var channel = Channels.newChannel(input);
+             var output = new FileOutputStream(target)) {
 
             output.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-            System.out.println("✅ Download abgeschlossen: " + targetFile.getAbsolutePath());
+            System.out.println("Download completed: " + target.getAbsolutePath());
 
+            return true;
         } catch (Exception e) {
-            System.err.println("❌ Fehler beim Download: " + e.getMessage());
+            System.err.println("Failed to download: " + e.getMessage());
             e.printStackTrace();
+
+            return false;
         }
     }
 
-    public static void startLauncherAndExit() {
+    public static boolean startLauncher(File jarFile) {
+        if (!jarFile.exists()) {
+            System.err.println("Launcher not found: " + jarFile.getAbsolutePath());
+            return false;
+        }
+
         try {
-            File launcherDir = new File("../../").getCanonicalFile();
-            File launcherJar = new File(launcherDir, "polocloud-launcher.jar");
+            var builder = isWindows()
+                    ? new ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", "java", "-jar", jarFile.getAbsolutePath())
+                    : new ProcessBuilder("java", "-jar", jarFile.getAbsolutePath());
 
-            if (!launcherJar.exists()) {
-                System.err.println("❌ Launcher-Datei nicht gefunden: " + launcherJar.getAbsolutePath());
-                return;
-            }
-
-            ProcessBuilder builder = new ProcessBuilder("java", "-jar", launcherJar.getAbsolutePath());
-            builder.directory(launcherDir);
-
+            builder.directory(jarFile.getParentFile());
             builder.inheritIO();
 
-            System.out.println("🚀 Starte neuen Launcher: " + launcherJar.getAbsolutePath());
-
+            System.out.println("Starting launcher...");
             builder.start();
+
             System.exit(0);
+            return true;
         } catch (Exception e) {
-            System.err.println("❌ Fehler beim Starten des Launchers: " + e.getMessage());
+            System.err.println("Failed to start launcher: " + e.getMessage());
             e.printStackTrace();
+
+            return false;
         }
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("windows");
     }
 }
