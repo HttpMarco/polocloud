@@ -5,9 +5,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URI
-import java.net.URL
 import java.util.LinkedList
-import kotlin.system.exitProcess
 
 object Updater {
 
@@ -44,11 +42,11 @@ object Updater {
         return releases
     }
 
-    fun update(version: String = latestVersion()) {
+    fun update(version: String = latestVersion()): Boolean {
         println("Updating to version $version...")
 
         ProcessBuilder().command("java", "-jar", "polocloud-updater-${polocloudVersion()}.jar").directory(File("local/libs")).inheritIO().start()
 
-        exitProcess(0)
+        return true
     }
 }

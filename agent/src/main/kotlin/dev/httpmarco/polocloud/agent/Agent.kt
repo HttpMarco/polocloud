@@ -59,8 +59,10 @@ object Agent {
                 this.runtime.terminal.clearScreen()
             }
 
-            Updater.update()
-            exitPolocloud() // make sure to shut down the process after the update
+            val isUpdating = Updater.update()
+            if (isUpdating) {
+                exitPolocloud(cleanShutdown = true)
+            }
             return
         }
 
