@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.updater
 
+import dev.httpmarco.polocloud.common.os.OS
+import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -42,11 +44,19 @@ object Updater {
         return releases
     }
 
-    fun update(version: String = latestVersion()): Boolean {
-        println("Updating to version $version...")
+    fun update(version: String = latestVersion()) {
+        println("Launching updater...")
 
-        ProcessBuilder().command("java", "-jar", "polocloud-updater-${polocloudVersion()}.jar").directory(File("local/libs")).inheritIO().start()
+        val jarName = "polocloud-updater-3.0.0-SNAPSHOT.jar"
 
-        return true
+        val processBuilder = when (currentOS) {
+            OS.WIN -> ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/c", "java", "-jar", jarName, "--version=$version")
+            else -> ProcessBuilder("java", "-jar", jarName, "--version=$version")
+        }
+
+        processBuilder.directory(File("local/libs"))
+        processBuilder.inheritIO()
+
+        processBuilder.start()
     }
 }
