@@ -14,7 +14,8 @@ fun main(args: Array<String>) {
     registerHook()
 
     Thread.currentThread().uncaughtExceptionHandler = Thread.UncaughtExceptionHandler { _, throwable ->
-        logger.throwable(throwable)
+        // todo fix logging here -> bad logs are printed with the logger
+        throwable.printStackTrace()
     }
 
     Agent

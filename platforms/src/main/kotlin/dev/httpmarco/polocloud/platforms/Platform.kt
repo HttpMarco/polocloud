@@ -10,7 +10,9 @@ import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidExcept
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 import dev.httpmarco.polocloud.v1.GroupType
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import kotlinx.serialization.json.jsonPrimitive
 import java.net.URI
 import java.nio.file.Files
@@ -22,6 +24,8 @@ import kotlin.io.path.name
 import kotlin.io.path.notExists
 
 @Serializable
+@JsonIgnoreUnknownKeys
+@OptIn(ExperimentalSerializationApi::class)
 class Platform(
     val name: String,
     val url: String,

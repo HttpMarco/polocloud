@@ -1,11 +1,13 @@
 package dev.httpmarco.polocloud.agent
 
+import dev.httpmarco.polocloud.updater.Updater
 import org.jline.jansi.AnsiConsole
 import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
 private val SHUTDOWN_HOOK = "polocloud-shutdown-hook"
 private var inShutdown = false
+var shouldUpdate = false
 
 fun registerHook() {
     Runtime.getRuntime().addShutdownHook(Thread({
@@ -41,6 +43,10 @@ fun exitPolocloud(cleanShutdown: Boolean = true) {
     }
 
     i18n.info("agent.shutdown.successful")
+
+    if (shouldUpdate) {
+        Updater.update()
+    }
 
     if (Thread.currentThread().name != SHUTDOWN_HOOK) {
         exitProcess(0)

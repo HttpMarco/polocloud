@@ -9,18 +9,14 @@ import dev.httpmarco.polocloud.agent.i18n.I18nPolocloudAgent
 import dev.httpmarco.polocloud.agent.logging.Logger
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.OnboardingSetup
 import dev.httpmarco.polocloud.agent.security.SecurityProvider
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformPool
 import dev.httpmarco.polocloud.updater.Updater
-import kotlin.io.path.Path
-import kotlin.io.path.notExists
 
 // global terminal instance for the agent
 // this is used to print messages to the console
 val logger = Logger()
-val developmentMode = System.getProperty("polocloud.version", "false").toBoolean()
 val i18n = I18nPolocloudAgent()
 
 object Agent {
@@ -58,7 +54,14 @@ object Agent {
         this.config = this.runtime.configHolder().read("config", AgentConfig())
 
         if (config.autoUpdate && Updater.newVersionAvailable()) {
-            TODO()
+
+            if (this.runtime is LocalRuntime) {
+                this.runtime.terminal.clearScreen()
+            }
+
+            shouldUpdate = true
+            exitPolocloud(cleanShutdown = true)
+            return
         }
 
         this.grpcServerEndpoint.connect(this.config.port)
