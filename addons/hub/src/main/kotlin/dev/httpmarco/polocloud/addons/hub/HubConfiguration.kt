@@ -24,4 +24,4 @@ fun HubConfiguration.mergeWith(other: HubConfiguration): HubConfiguration {
     )
 }
 
-fun HubConfiguration.serialize(): HubConfig = HubSerializer(this)
+fun HubConfiguration.wrap(): HubConfig = HubConfigAccessor(this)
