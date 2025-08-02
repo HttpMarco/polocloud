@@ -19,7 +19,6 @@ class ConfigFactory(dataFolder: File) {
 
     private fun loadOrCreateConfig() {
         if (!this.configFile.exists()) {
-            println("test")
             val default = HubConfiguration()
             this.config = default.serialize()
 
