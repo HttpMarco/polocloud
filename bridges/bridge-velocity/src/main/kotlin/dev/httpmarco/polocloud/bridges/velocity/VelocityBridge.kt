@@ -42,7 +42,7 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
     @Subscribe
     fun onInitialize(event: ProxyInitializeEvent) {
         super.initialize()
-        val pluginId = 26759 // <--- change pluginId @HttpMarco
+        val pluginId = 26763 
         metrics = metricsFactory.make(this, pluginId)
     }
 
