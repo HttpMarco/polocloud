@@ -14,7 +14,7 @@ class LocalService(abstractGroup: AbstractGroup, id: Int, hostname: String = "12
     private val onlineTrack = LocalOnlineTrack(this)
 
     var process: Process? = null
-    val path = (if (isStatic()) LOCAL_FACTORY_PATH else LOCAL_STATIC_FACTORY_PATH).resolve(name())
+    val path = (if (isStatic()) LOCAL_STATIC_FACTORY_PATH else LOCAL_FACTORY_PATH).resolve(name())
 
     var lastCpuSnapshot: OSProcess? = null
     var lastCpuUpdateTimeStamp = System.currentTimeMillis()
