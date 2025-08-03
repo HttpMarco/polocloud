@@ -7,11 +7,13 @@ dependencies {
     compileOnly(projects.common)
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks.jar {
+    manifest {
+        attributes(
+            "Main-Class" to "dev.httpmarco.polocloud.updater.UpdaterRuntime",
+            "polocloud-version" to version
+        )
+    }
     archiveFileName.set("polocloud-updater-$version.jar")
 }
 
