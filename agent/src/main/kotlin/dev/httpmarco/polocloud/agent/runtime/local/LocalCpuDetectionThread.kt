@@ -39,11 +39,14 @@ class LocalCpuDetectionThread : Thread("polocloud-local-cpu-detection") {
         val currentSnapshot = os!!.getProcess(service.pid()!!.toInt())
         val cpu = currentSnapshot.getProcessCpuLoadBetweenTicks(service.lastCpuSnapshot)
 
-        service.lastCpuSnapshot = currentSnapshot
 
-        service.lastCpuUpdateTimeStamp = System.nanoTime()
+        if (currentSnapshot != null) {
+            service.lastCpuSnapshot = currentSnapshot
 
-        service.updateCpuUsage(BigDecimal(cpu).setScale(2, RoundingMode.HALF_UP).toDouble())
-        service.updateMemoryUsage(convertBytesToMegabytes(currentSnapshot.residentSetSize))
+            service.lastCpuUpdateTimeStamp = System.nanoTime()
+
+            service.updateCpuUsage(BigDecimal(cpu).setScale(2, RoundingMode.HALF_UP).toDouble())
+            service.updateMemoryUsage(convertBytesToMegabytes(currentSnapshot.residentSetSize))
+        }
     }
 }

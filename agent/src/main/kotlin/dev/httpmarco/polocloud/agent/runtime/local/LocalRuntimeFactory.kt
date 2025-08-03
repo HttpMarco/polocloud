@@ -16,15 +16,13 @@ import kotlin.io.path.*
 
 class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<LocalService> {
 
-    private val factoryPath = Path("temp")
-
     init {
         // if folder exists, delete all files inside
-        if (factoryPath.exists()) {
-            factoryPath.toFile().listFiles()?.forEach { it.deleteRecursively() }
+        if (LOCAL_FACTORY_PATH.exists()) {
+            LOCAL_FACTORY_PATH.toFile().listFiles()?.forEach { it.deleteRecursively() }
         }
         // init factory path
-        factoryPath.createDirectories()
+        LOCAL_FACTORY_PATH.createDirectories()
     }
 
     override fun bootApplication(service: LocalService) {
@@ -133,7 +131,9 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             Thread.sleep(200) // wait for a process to be destroyed
         }
 
-        service.path.deleteRecursively()
+        if(!service.isStatic()) {
+            service.path.deleteRecursively()
+        }
 
         service.state = ServiceState.STOPPED
         Agent.runtime.serviceStorage().dropAbstractService(service)

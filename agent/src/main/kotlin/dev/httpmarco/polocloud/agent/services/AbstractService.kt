@@ -25,6 +25,10 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         properties += group.properties.map { it.key to it.value.toString() }.toMap()
     }
 
+    fun isStatic() : Boolean {
+        return properties["static"]?.toBoolean() ?: false
+    }
+
     fun shutdown(shutdownCleanUp: Boolean = true) {
         Agent.runtime.factory().shutdownApplication(this, shutdownCleanUp)
     }

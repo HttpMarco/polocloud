@@ -22,6 +22,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
     private val minOnlineServicesArgument = IntArgument("minOnlineServices", 0)
     private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", -1)
     private val fallbackArgument = YesNotArgument("fallback")
+    private val staticArgument = YesNotArgument("static")
 
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.group.name", nameArgument))
@@ -36,6 +37,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
         attach(SetupStep("agent.local-runtime.setup.group.percentageToStartNewService", percentageToStartNewService))
         attach(SetupStep("agent.local-runtime.setup.group.min-online-services", minOnlineServicesArgument))
         attach(SetupStep("agent.local-runtime.setup.group.max-online-services", maxOnlineServicesArgument))
+        attach(SetupStep("agent.local-runtime.setup.group.static", staticArgument))
     }
 
     override fun onComplete(result: InputContext): AbstractGroup {
@@ -47,12 +49,17 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
         val percentageToStartNewService = result.arg(percentageToStartNewService)
         val minOnlineServices = result.arg(minOnlineServicesArgument)
         val maxOnlineServices = result.arg(maxOnlineServicesArgument)
-        val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else null
+        val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else false
+        val static = if (result.contains(staticArgument)) result.arg(staticArgument) else false
 
         val properties = HashMap<String, JsonPrimitive>()
 
-        if (fallback != null) {
-            properties.put("fallback", JsonPrimitive(fallback))
+        if (fallback) {
+            properties.put("fallback", JsonPrimitive(true))
+        }
+
+        if (static) {
+            properties.put("static", JsonPrimitive(true))
         }
 
 
