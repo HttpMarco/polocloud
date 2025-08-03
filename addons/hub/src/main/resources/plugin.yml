@@ -1,0 +1,4 @@
+name: Pololcoud-Hub
+main:  dev.httpmarco.polocloud.addons.hub.platform.BungeecordPlatform
+version: 3.0.0-SNAPSHOT
+author: RECHERGG
