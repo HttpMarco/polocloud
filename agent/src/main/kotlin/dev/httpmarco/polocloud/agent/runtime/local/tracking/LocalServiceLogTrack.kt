@@ -27,9 +27,11 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
                     if (runtime !is LocalRuntime) return@forEach
 
                     val screenService = runtime.terminal.screenService
-                    if (!screenService.isServiceRecoding(service)) return@forEach
+                    if (!screenService.isServiceRecoding(service)) {
+                        return@forEach
+                    }
 
-                    screenService.terminal.display(line)
+                    screenService.terminal.displayApproved(line)
                 }
             }
         }
