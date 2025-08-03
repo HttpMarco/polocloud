@@ -4,7 +4,14 @@
     "velocity",
     "waterfall",
     "bungeecord",
-    "leaf"
+    "nukkit",
+    "limbo",
+    "pumkin",
+    "gate",
+    "purpur",
+    "leaf",
+    "fabric",
+    "folia"
   ],
   "tasks": [
     "eula",
@@ -12,6 +19,13 @@
     "gateSetup",
     "velocityProxyToken",
     "paperProxySupport",
-    "velocitySetup"
+    "velocitySetup",
+    "buildPumkin",
+    "limboSetup",
+    "limboVelocitySupport",
+    "nukkitSupport",
+    "paperLoadDependencies",
+    "pumkinSetup",
+    "setupBungeeCord"
   ]
 }

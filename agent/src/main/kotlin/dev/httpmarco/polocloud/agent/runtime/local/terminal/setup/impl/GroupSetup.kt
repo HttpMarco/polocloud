@@ -1,18 +1,17 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl
 
+import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.groups.Group
-import dev.httpmarco.polocloud.agent.groups.GroupData
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
-import dev.httpmarco.polocloud.platforms.PlatformIndex
-import dev.httpmarco.polocloud.platforms.PlatformType
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import dev.httpmarco.polocloud.shared.groups.Group
+import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.v1.GroupType
 
-class GroupSetup : Setup<Group>("Group setup") {
+class GroupSetup : Setup<AbstractGroup>("Group setup") {
 
     private val nameArgument = TextArgument("name")
     private val platformArgument = PlatformArgument("platform")
@@ -21,13 +20,14 @@ class GroupSetup : Setup<Group>("Group setup") {
     private val maxMemoryArgument = IntArgument("maxMemory", 1)
     private val percentageToStartNewService = IntArgument("percentageToStartNewService", 0)
     private val minOnlineServicesArgument = IntArgument("minOnlineServices", 0)
-    private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", 0)
+    private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", -1)
     private val fallbackArgument = YesNotArgument("fallback")
+    private val staticArgument = YesNotArgument("static")
 
     override fun bindQuestion() {
         attach(SetupStep("agent.local-runtime.setup.group.name", nameArgument))
         attach(SetupStep("agent.local-runtime.setup.group.platform", platformArgument) { platform ->
-            if (platform.type == PlatformType.SERVER) {
+            if (platform.type == GroupType.SERVER) {
                 attach(SetupStep("agent.local-runtime.setup.group.fallback", fallbackArgument))
             }
         })
@@ -37,9 +37,10 @@ class GroupSetup : Setup<Group>("Group setup") {
         attach(SetupStep("agent.local-runtime.setup.group.percentageToStartNewService", percentageToStartNewService))
         attach(SetupStep("agent.local-runtime.setup.group.min-online-services", minOnlineServicesArgument))
         attach(SetupStep("agent.local-runtime.setup.group.max-online-services", maxOnlineServicesArgument))
+        attach(SetupStep("agent.local-runtime.setup.group.static", staticArgument))
     }
 
-    override fun onComplete(result: InputContext): Group {
+    override fun onComplete(result: InputContext): AbstractGroup {
         val name = result.arg(nameArgument)
         val originalPlatform = result.arg(platformArgument)
         val platform = PlatformIndex(originalPlatform.name, result.arg(platformVersionArgument).version)
@@ -48,28 +49,32 @@ class GroupSetup : Setup<Group>("Group setup") {
         val percentageToStartNewService = result.arg(percentageToStartNewService)
         val minOnlineServices = result.arg(minOnlineServicesArgument)
         val maxOnlineServices = result.arg(maxOnlineServicesArgument)
-        val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else null
+        val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else false
+        val static = if (result.contains(staticArgument)) result.arg(staticArgument) else false
 
-        val properties = if (fallback != null) {
-            buildJsonObject {
-                put("fallback", fallback)
-            }
-        } else {
-            emptyMap()
+        val properties = HashMap<String, JsonPrimitive>()
+
+        if (fallback) {
+            properties.put("fallback", JsonPrimitive(true))
         }
 
-        val group = Group(
-            GroupData(
-                name,
-                platform,
-                minMemory,
-                maxMemory,
-                minOnlineServices,
-                maxOnlineServices,
-                percentageToStartNewService,
-                listOf("EVERY", "EVERY_" + originalPlatform.type.name, name),
-                properties
-            )
+        if (static) {
+            properties.put("static", JsonPrimitive(true))
+        }
+
+
+        val group = AbstractGroup(
+            name,
+            minMemory,
+            maxMemory,
+            minOnlineServices,
+            maxOnlineServices,
+            percentageToStartNewService.toDouble(),
+            platform,
+            listOf(
+                "EVERY", "EVERY_" + originalPlatform.type.name, name
+            ),
+            properties
         )
 
         Agent.runtime.groupStorage().publish(group)

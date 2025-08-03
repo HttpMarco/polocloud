@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.platforms
 
-import kotlinx.serialization.json.JsonElement
 
 class PlatformParameters(private val version: PlatformVersion?) {
     val parameters = HashMap<String, Any>()
@@ -16,7 +15,7 @@ class PlatformParameters(private val version: PlatformVersion?) {
 
     fun getStringParameter(key: String): String? {
         if (key.startsWith(versionPrefix) && version != null) {
-            return version.getStringProperty(key)
+            return version.getStringProperty(key.substring(versionPrefix.length))
         }
         return parameters[key] as String
     }
@@ -24,7 +23,7 @@ class PlatformParameters(private val version: PlatformVersion?) {
 
     fun getIntParameter(key: String): Int? {
         if (key.startsWith(versionPrefix) && version != null) {
-            return version.getIntProperty(key)
+            return version.getIntProperty(key.substring(versionPrefix.length))
         }
         return parameters[key] as Int
     }
@@ -32,7 +31,7 @@ class PlatformParameters(private val version: PlatformVersion?) {
 
     fun getBooleanParameter(key: String): Boolean? {
         if (key.startsWith(versionPrefix) && version != null) {
-            return version.getBooleanProperty(key)
+            return version.getBooleanProperty(key.substring(versionPrefix.length))
         }
         return parameters[key] as Boolean
     }
@@ -45,6 +44,13 @@ class PlatformParameters(private val version: PlatformVersion?) {
         var modifiedValue = value
         for ((envKey, envValue) in parameters) {
             modifiedValue = modifiedValue.replace("%$envKey%", "$envValue")
+        }
+        if (modifiedValue.contains("%$versionPrefix") && version != null) {
+            modifiedValue = modifiedValue.replace(versionPrefix, "")
+                .replace("%version%", version.version)
+            for ((verKey, verValue) in version.additionalProperties) {
+                modifiedValue = modifiedValue.replace("%$verKey%", verValue.asJsonPrimitive.asString)
+            }
         }
         return modifiedValue
     }

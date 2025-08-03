@@ -1,16 +1,15 @@
 plugins {
     kotlin("jvm") version "2.2.0"
-    kotlin("plugin.serialization") version "2.2.0"
 }
 
 dependencies {
     testImplementation(kotlin("test"))
-    testImplementation(libs.json)
-    testImplementation(project(":common"))
+    testImplementation(projects.common)
+    testImplementation(projects.proto)
 
     compileOnly(libs.bundles.confirationPool)
 
-    compileOnly(libs.json)
+    compileOnly(projects.proto)
     compileOnly(project(":common"))
 }
 

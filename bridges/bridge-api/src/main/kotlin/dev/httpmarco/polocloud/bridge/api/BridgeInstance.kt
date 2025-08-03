@@ -3,7 +3,9 @@ package dev.httpmarco.polocloud.bridge.api
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.shared.polocloudShared
+import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.GroupType
+import dev.httpmarco.polocloud.v1.services.ServiceState
 
 abstract class BridgeInstance<T> {
 
@@ -17,18 +19,21 @@ abstract class BridgeInstance<T> {
 
     init {
         // it is bad, but if sdk ist present, we can use it
-        Class.forName("dev.httpmarco.polocloud.sdk.kotlin.Polocloud")
+        Class.forName("dev.httpmarco.polocloud.sdk.java.Polocloud")
     }
 
     fun initialize() {
-        // TODO register all services that are already online
+        polocloudShared.serviceProvider().findByType(GroupType.SERVER).forEach {
+            if(it.state !== ServiceState.ONLINE) {
+                return
+            }
+            registerService(generateInfo(it.name(), it.hostname, it.port), isFallback(it))
+        }
 
         polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class) {
-            val service = it.service
-
+           val service = it.service
             if (service.type == GroupType.SERVER) {
-                val fallback = service.properties["fallback"]?.equals("true", ignoreCase = true) == true
-                registerService(generateInfo(service.name(), service.hostname, service.port), fallback)
+                registerService(generateInfo(service.name(), service.hostname, service.port), isFallback(service))
             }
         }
 
@@ -37,5 +42,9 @@ abstract class BridgeInstance<T> {
                 unregisterService(info)
             }!!
         }
+    }
+
+    private fun isFallback(service: Service): Boolean {
+        return service.properties["fallback"]?.equals("true", ignoreCase = true) == true
     }
 }

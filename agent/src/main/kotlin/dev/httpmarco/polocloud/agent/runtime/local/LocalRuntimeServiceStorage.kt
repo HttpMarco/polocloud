@@ -1,39 +1,84 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
-import dev.httpmarco.polocloud.agent.groups.Group
+import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
-import dev.httpmarco.polocloud.agent.services.Service
-import java.util.UUID
+import dev.httpmarco.polocloud.agent.services.AbstractService
+import dev.httpmarco.polocloud.shared.groups.Group
+import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
+import dev.httpmarco.polocloud.v1.GroupType
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
 
-class LocalRuntimeServiceStorage : RuntimeServiceStorage {
+class LocalRuntimeServiceStorage : RuntimeServiceStorage<LocalService> {
 
-    private val services = CopyOnWriteArrayList<Service>()
+    private val services = CopyOnWriteArrayList<LocalService>()
 
-    override fun deployService(service: Service) {
-        this.services.add(service)
-    }
+    override fun findAll(): List<LocalService> = this.services
 
-    override fun findService(name: String): Service? {
+
+    override fun findAllAsync() = CompletableFuture.completedFuture(findAll())
+
+    override fun find(name: String): LocalService? {
         return this.services.stream()
             .filter { it.name() == name }
             .findFirst()
             .orElse(null)
     }
 
-    override fun findServiceByName(name: String): Service? {
-        return this.services.stream().filter { it.name() == name }.findFirst().orElse(null)
+    override fun findAsync(name: String): CompletableFuture<LocalService?> =
+        CompletableFuture.completedFuture<LocalService?>(find(name))
+
+
+    override fun findByType(type: GroupType): List<LocalService> {
+        TODO("Not yet implemented")
     }
 
-    override fun findServicesByGroup(group: Group): List<Service> {
+    override fun findByTypeAsync(type: GroupType): CompletableFuture<List<LocalService>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findByGroup(group: Group): List<LocalService> {
         return this.services.stream()
             .filter { it.group == group }
             .toList()
     }
 
-    override fun items() = services
+    override fun findByGroupAsync(group: Group): CompletableFuture<List<LocalService>> {
+        TODO("Not yet implemented")
+    }
 
-    override fun dropService(service: Service) {
+    override fun findByGroup(group: String): List<LocalService> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findByGroupAsync(group: String): CompletableFuture<List<LocalService>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun bootInstanceWithConfiguration(
+        name: String,
+        configuration: (SharedBootConfiguration) -> Any
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    override fun bootInstance(name: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun shutdownService(name: String) {
+        Agent.runtime.factory().shutdownApplication(find(name) ?: return)
+    }
+
+    override fun deployService(service: LocalService) {
+        this.services.add(service)
+    }
+
+    override fun dropService(service: LocalService) {
         this.services.remove(service)
+    }
+
+    override fun implementedService(abstractService: AbstractService): LocalService {
+        return abstractService as? LocalService ?: throw IllegalArgumentException("AbstractService must be of type LocalService")
     }
 }

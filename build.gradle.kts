@@ -6,13 +6,12 @@ allprojects {
     apply(plugin = "maven-publish")
 
     group = "dev.httpmarco.polocloud"
-    version = "3.0.0-SNAPSHOT"
+    version = "3.0.0-pre.4-SNAPSHOT"
 
     repositories {
         mavenCentral()
     }
 }
-
 
 nexusPublishing {
     repositories {
@@ -24,5 +23,6 @@ nexusPublishing {
             password.set(System.getenv("ossrhPassword") ?: "")
         }
     }
+    // todo find a better way to determine if we are in a staging or release build
     useStaging.set(!project.rootProject.version.toString().endsWith("-SNAPSHOT"))
 }

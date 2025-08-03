@@ -14,6 +14,8 @@ service GroupController {
 
 message FindGroupRequest {
   string name = 1;
+  string group_name = 2;
+  GroupType type = 3;
 }
 
 message FindGroupResponse {
@@ -24,11 +26,17 @@ message FindGroupResponse {
 message GroupSnapshot {
   string name = 1;
   GroupType type = 2;
-  int32 minimumMemory = 3;
-  int32 maximumMemory = 4;
-  int32 minimumOnline = 5;
-  int32 maximumOnline = 6;
-  int32 percentageToStartNewService = 7;
-  repeated string templates = 8;
-  map<string, string> properties = 9;
+  PlatformSnapshot platform = 3;
+  int32 minimumMemory = 4;
+  int32 maximumMemory = 5;
+  int32 minimumOnline = 6;
+  int32 maximumOnline = 7;
+  double percentageToStartNewService = 8;
+  repeated string templates = 9;
+  map<string, string> properties = 10;
+}
+
+message PlatformSnapshot {
+  string name = 2;
+  string version = 1;
 }

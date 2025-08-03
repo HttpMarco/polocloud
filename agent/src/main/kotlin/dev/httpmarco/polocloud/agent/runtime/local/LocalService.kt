@@ -1,18 +1,23 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
-import dev.httpmarco.polocloud.agent.groups.Group
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.local.tracking.LocalOnlineTrack
 import dev.httpmarco.polocloud.agent.runtime.local.tracking.LocalServiceLogTrack
-import dev.httpmarco.polocloud.agent.services.Service
-import kotlin.io.path.Path
+import dev.httpmarco.polocloud.agent.services.AbstractService
+import oshi.software.os.OSProcess
 
-class LocalService(group: Group, id: Int, hostname: String = "127.0.0.1") : Service(group, id, hostname) {
+
+class LocalService(abstractGroup: AbstractGroup, id: Int, hostname: String = "127.0.0.1") :
+    AbstractService(abstractGroup, id, hostname) {
 
     private val logTracker = LocalServiceLogTrack(this)
     private val onlineTrack = LocalOnlineTrack(this)
 
     var process: Process? = null
-    val path = Path("temp/${name()}")
+    val path = (if (isStatic()) LOCAL_STATIC_FACTORY_PATH else LOCAL_FACTORY_PATH).resolve(name())
+
+    var lastCpuSnapshot: OSProcess? = null
+    var lastCpuUpdateTimeStamp = System.currentTimeMillis()
 
     fun startTracking() {
         this.onlineTrack.start()
@@ -24,7 +29,8 @@ class LocalService(group: Group, id: Int, hostname: String = "127.0.0.1") : Serv
         this.onlineTrack.close()
     }
 
-    fun logs() : List<String> {
-        return logTracker.cachedLogs
-    }
+    fun logs(): List<String> = logTracker.cachedLogs
+
+    fun pid() = process?.pid()
+
 }

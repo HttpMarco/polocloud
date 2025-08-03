@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.RuntimeConfigHolder
 import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.agent.services.AbstractService
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -33,7 +33,7 @@ class DockerRuntime : Runtime {
 
     override fun expender() = expender
 
-    override fun templates(): RuntimeTemplates<Service> {
+    override fun templates(): RuntimeTemplates<AbstractService> {
         TODO("Not yet implemented")
     }
 

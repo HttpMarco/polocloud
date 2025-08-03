@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent
 
+import dev.httpmarco.polocloud.updater.Updater
 import org.jline.jansi.AnsiConsole
 import kotlin.io.path.Path
 import kotlin.system.exitProcess
@@ -13,7 +14,7 @@ fun registerHook() {
     }, SHUTDOWN_HOOK))
 }
 
-fun exitPolocloud(cleanShutdown: Boolean = true) {
+fun exitPolocloud(cleanShutdown: Boolean = true, shouldUpdate: Boolean = false) {
 
     if (inShutdown) {
         return
@@ -25,15 +26,11 @@ fun exitPolocloud(cleanShutdown: Boolean = true) {
 
 
     try {
-        Agent.runtime.serviceStorage().items().forEach {
+        Agent.runtime.serviceStorage().findAll().forEach {
             it.shutdown(cleanShutdown)
         }
 
         Agent.close()
-
-        i18n.info("agent.shutdown.temp-files.cleanup")
-        Path("temp").toFile().deleteRecursively()
-        i18n.info("agent.shutdown.temp-files.cleanup.successful")
 
         AnsiConsole.systemUninstall()
     } catch (e: Exception) {
@@ -41,6 +38,10 @@ fun exitPolocloud(cleanShutdown: Boolean = true) {
     }
 
     i18n.info("agent.shutdown.successful")
+
+    if (shouldUpdate) {
+        Updater.update()
+    }
 
     if (Thread.currentThread().name != SHUTDOWN_HOOK) {
         exitProcess(0)
