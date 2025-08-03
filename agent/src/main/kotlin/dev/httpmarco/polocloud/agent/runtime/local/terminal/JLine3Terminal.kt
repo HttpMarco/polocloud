@@ -74,6 +74,11 @@ class JLine3Terminal {
         this.lineReader.printAbove(" ")
     }
 
+    fun displayApproved(message: String) {
+        this.lineReader.printAbove(message)
+        this.update()
+    }
+
     fun update() {
         if (this.lineReader.isReading) {
             this.lineReader.callWidget(LineReader.REDRAW_LINE)

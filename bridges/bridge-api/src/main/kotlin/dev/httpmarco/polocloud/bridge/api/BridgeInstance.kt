@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.GroupType
+import dev.httpmarco.polocloud.v1.services.ServiceState
 
 abstract class BridgeInstance<T> {
 
@@ -23,6 +24,9 @@ abstract class BridgeInstance<T> {
 
     fun initialize() {
         polocloudShared.serviceProvider().findByType(GroupType.SERVER).forEach {
+            if(it.state !== ServiceState.ONLINE) {
+                return
+            }
             registerService(generateInfo(it.name(), it.hostname, it.port), isFallback(it))
         }
 

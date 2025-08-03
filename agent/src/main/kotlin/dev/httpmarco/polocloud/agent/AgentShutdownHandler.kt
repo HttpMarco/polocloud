@@ -32,10 +32,6 @@ fun exitPolocloud(cleanShutdown: Boolean = true, shouldUpdate: Boolean = false) 
 
         Agent.close()
 
-        i18n.info("agent.shutdown.temp-files.cleanup")
-        Path("temp").toFile().deleteRecursively()
-        i18n.info("agent.shutdown.temp-files.cleanup.successful")
-
         AnsiConsole.systemUninstall()
     } catch (e: Exception) {
         logger.throwable(e)

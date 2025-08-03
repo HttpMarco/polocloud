@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.GroupCommand
@@ -65,5 +66,9 @@ class LocalRuntime : Runtime {
         this.terminal.shutdown()
         this.runtimeCpuDetectionThread.interrupt()
         this.runtimeQueue.interrupt()
+
+        i18n.info("agent.shutdown.temp-files.cleanup")
+        LOCAL_FACTORY_PATH.toFile().deleteRecursively()
+        i18n.info("agent.shutdown.temp-files.cleanup.successful")
     }
 }
