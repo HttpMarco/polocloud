@@ -24,5 +24,5 @@ nexusPublishing {
         }
     }
     // todo find a better way to determine if we are in a staging or release build
-    useStaging.set(!project.rootProject.version.toString().endsWith("-pre4"))
+    useStaging.set(!project.rootProject.version.toString().endsWith("-pre-4"))
 }
