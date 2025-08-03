@@ -22,7 +22,7 @@ class VelocityPlatform @Inject constructor(
 
     @Subscribe
     fun onProxyInitialization(event: ProxyInitializeEvent) {
-        this.hubAddon = HubAddon(File("plugins/polocloud-hub"), true)
+        this.hubAddon = HubAddon(File("plugins/polocloud"), true)
         val commandManager = this.server.commandManager
         commandManager.register(
             commandManager.metaBuilder("hub").aliases(*this.hubAddon.config.aliases().toTypedArray()).plugin(this).build(),
