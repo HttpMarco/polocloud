@@ -10,12 +10,16 @@ import dev.httpmarco.polocloud.addons.hub.HubAddon
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.v1.GroupType
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bstats.velocity.Metrics
 import org.slf4j.Logger
 import java.io.File
 
+private lateinit var metrics: Metrics
+
 class VelocityPlatform @Inject constructor(
     private val server: ProxyServer,
-    private val logger: Logger
+    private val logger: Logger,
+    val metricsFactory: Metrics.Factory
 ) {
 
     private lateinit var hubAddon: HubAddon
@@ -28,6 +32,9 @@ class VelocityPlatform @Inject constructor(
             commandManager.metaBuilder("hub").aliases(*this.hubAddon.config.aliases().toTypedArray()).plugin(this).build(),
             VelocityHubCommand(this.hubAddon, server)
         )
+
+        val pluginId = 26767
+        metrics = metricsFactory.make(this, pluginId)
     }
 }
 

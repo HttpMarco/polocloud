@@ -22,7 +22,8 @@ dependencies {
 
     implementation(projects.addons.api)
 
-    implementation(libs.bstats.spigot)
+    implementation(libs.bstats.bungeecord)
+    implementation(libs.bstats.velocity)
 }
 
 tasks.processResources {
