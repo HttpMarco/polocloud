@@ -7,7 +7,7 @@ class SpigotPlugin : JavaPlugin() {
 
     override fun onEnable() {
         try {
-            val metrics = Metrics(this, 26754) // <-- PluginID anpassen bei bStats Webseite
+            val metrics = Metrics(this, 26765) 
             logger.info("bStats Metrics successfully initialized with plugin id 26754")
         } catch (ex: Exception) {
             logger.severe("Failed to initialize bStats Metrics!")
