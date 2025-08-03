@@ -7,21 +7,21 @@ import java.util.concurrent.CompletableFuture
 /**
  * Interface for a shared service provider that allows interaction with services.
  */
-interface SharedServiceProvider {
+interface SharedServiceProvider<S : Service> {
 
     /**
      * Finds all services.
      *
      * @return a list of all services
      */
-    fun findAll() : List<Service>
+    fun findAll(): List<S>
 
     /**
      * Asynchronously finds all services.
      *
      * @return a CompletableFuture that will complete with a list of all services
      */
-    fun findAllAsync() : CompletableFuture<List<Service>>
+    fun findAllAsync(): CompletableFuture<List<S>>
 
     /**
      * Finds a service by its name.
@@ -29,7 +29,7 @@ interface SharedServiceProvider {
      * @param name the name of the service
      * @return the service if found, null otherwise
      */
-    fun find(name: String): Service?
+    fun find(name: String): S?
 
     /**
      * Asynchronously finds a service by its name.
@@ -37,7 +37,7 @@ interface SharedServiceProvider {
      * @param name the name of the service
      * @return a CompletableFuture that will complete with the service if found, or null otherwise
      */
-    fun findAsync(name: String): CompletableFuture<Service?>
+    fun findAsync(name: String): CompletableFuture<S?>
 
     /**
      * Finds all services by their type.
@@ -45,7 +45,7 @@ interface SharedServiceProvider {
      * @param type the type of the services
      * @return a list of services belonging to the specified type
      */
-    fun findByType(type: GroupType): List<Service>
+    fun findByType(type: GroupType): List<S>
 
     /**
      * Asynchronously finds all services by their type.
@@ -53,7 +53,7 @@ interface SharedServiceProvider {
      * @param type the type of the services
      * @return a CompletableFuture that will complete with a list of services belonging to the specified
      */
-    fun findByTypeAsync(type: GroupType): CompletableFuture<List<Service>>
+    fun findByTypeAsync(type: GroupType): CompletableFuture<List<S>>
 
     /**
      * Finds all services by their group.
@@ -61,7 +61,7 @@ interface SharedServiceProvider {
      * @param group the group of the services
      * @return a list of services belonging to the specified group
      */
-    fun findByGroup(group: Group) : List<Service>
+    fun findByGroup(group: Group): List<S>
 
     /**
      * Asynchronously finds all services by their group.
@@ -69,7 +69,7 @@ interface SharedServiceProvider {
      * @param group the group of the services
      * @return a CompletableFuture that will complete with a list of services belonging to the specified
      */
-    fun findByGroupAsync(group: Group) : CompletableFuture<List<Service>>
+    fun findByGroupAsync(group: Group): CompletableFuture<List<S>>
 
     /**
      * Finds all services by their group name.
@@ -77,7 +77,7 @@ interface SharedServiceProvider {
      * @param group the name of the group
      * @return a list of services belonging to the specified group
      */
-    fun findByGroup(group: String) : List<Service>
+    fun findByGroup(group: String): List<S>
 
     /**
      * Asynchronously finds all services by their group name.
@@ -85,7 +85,7 @@ interface SharedServiceProvider {
      * @param group the name of the group
      * @return a CompletableFuture that will complete with a list of services belonging to the specified group
      */
-    fun findByGroupAsync(group: String) : CompletableFuture<List<Service>>
+    fun findByGroupAsync(group: String): CompletableFuture<List<S>>
 
     /**
      * Boots a service instance with the specified name and configuration.
@@ -101,5 +101,12 @@ interface SharedServiceProvider {
      * @param name the name of the service instance to boot
      */
     fun bootInstance(name: String)
+
+    /**
+     * Shuts down the specified service.
+     */
+    fun shutdownService(service: Service) = shutdownService(service.name())
+
+    fun shutdownService(name: String)
 
 }

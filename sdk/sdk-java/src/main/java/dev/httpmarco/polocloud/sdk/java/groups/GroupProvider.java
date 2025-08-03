@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class GroupProvider implements SharedGroupProvider {
+public class GroupProvider implements SharedGroupProvider<Group> {
 
     private final GroupControllerGrpc.GroupControllerBlockingStub blockingStub;
     private final GroupControllerGrpc.GroupControllerFutureStub futureStub;
@@ -23,25 +23,25 @@ public class GroupProvider implements SharedGroupProvider {
     }
 
     @Override
-    public @NotNull List<Group> find() {
-        return blockingStub.find(FindGroupRequest.getDefaultInstance()).getGroupsList().stream().map(Group::new).toList();
+    public @NotNull List<Group> findAll() {
+        return blockingStub.find(FindGroupRequest.getDefaultInstance()).getGroupsList().stream().map(Group.Companion::bindSnapshot).toList();
     }
 
     @Override
     @Nullable
     public Group find(@NotNull String name) {
-        return blockingStub.find(FindGroupRequest.newBuilder().setGroupName(name).build()).getGroupsList().stream().map(Group::new).findFirst().orElse(null);
+        return blockingStub.find(FindGroupRequest.newBuilder().setGroupName(name).build()).getGroupsList().stream().map(Group.Companion::bindSnapshot).findFirst().orElse(null);
     }
 
     @Override
     @NotNull
-    public CompletableFuture<List<Group>> findAsync() {
-        return FutureConverterKt.completableFromGuava(futureStub.find(FindGroupRequest.newBuilder().build()), findGroupResponse -> findGroupResponse.getGroupsList().stream().map(Group::new).toList());
+    public CompletableFuture<List<Group>> findAllAsync() {
+        return FutureConverterKt.completableFromGuava(futureStub.find(FindGroupRequest.newBuilder().build()), findGroupResponse -> findGroupResponse.getGroupsList().stream().map(Group.Companion::bindSnapshot).toList());
     }
 
     @Override
     public CompletableFuture<Group> findAsync(@NotNull String name) {
         return FutureConverterKt.completableFromGuava(futureStub.find(FindGroupRequest.newBuilder().setName(name).build()),
-                findGroupResponse -> findGroupResponse.getGroupsList().stream().map(Group::new).findFirst().orElse(null));
+                findGroupResponse -> findGroupResponse.getGroupsList().stream().map(Group.Companion::bindSnapshot).findFirst().orElse(null));
     }
 }

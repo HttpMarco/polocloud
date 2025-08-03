@@ -6,8 +6,8 @@ version = "1.0"
 nexus-publish = "2.0.0"
 
 # libraries
-json = "1.9.0"
 gson = "2.13.1"
+oshi="6.8.2"
 
 # configuration
 configurate = "4.2.0"
@@ -38,8 +38,8 @@ lombok = "1.18.38"
 [libraries]
 
 # libraries
-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "json" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+oshi = { group = "com.github.oshi", name = "oshi-core", version.ref = "oshi" }
 
 # configuration
 configurate-core = { group = "org.spongepowered", name = "configurate-core", version.ref = "configurate" }

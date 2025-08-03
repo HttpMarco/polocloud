@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.agent.runtime
 
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.agent.services.AbstractService
 
-interface RuntimeTemplates<out S : Service> {
+interface RuntimeTemplates<out S : AbstractService> {
 
     fun bindTemplate(service: @UnsafeVariance S)
 

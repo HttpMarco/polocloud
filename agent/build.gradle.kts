@@ -15,9 +15,8 @@ dependencies {
     implementation(libs.bundles.runtime)
     implementation(libs.bundles.jline)
 
-    implementation(libs.json)
     implementation(libs.gson)
-
+    implementation(libs.oshi)
 
     implementation(libs.bundles.confirationPool)
     compileOnly(projects.platforms)

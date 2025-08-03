@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     testImplementation(kotlin("test"))
-    compileOnly(libs.json)
+    api(libs.gson)
     compileOnly(projects.proto)
 }
 

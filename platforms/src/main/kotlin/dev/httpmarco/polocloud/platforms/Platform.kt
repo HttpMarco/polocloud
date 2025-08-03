@@ -4,14 +4,11 @@ import dev.httpmarco.polocloud.common.filesystem.copyDirectoryContent
 import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
-import dev.httpmarco.polocloud.platforms.bridge.BridgeSerializer
 import dev.httpmarco.polocloud.platforms.bridge.BridgeType
 import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidException
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 import dev.httpmarco.polocloud.v1.GroupType
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.jsonPrimitive
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
@@ -21,7 +18,6 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.name
 import kotlin.io.path.notExists
 
-@Serializable
 class Platform(
     val name: String,
     val url: String,
@@ -37,7 +33,6 @@ class Platform(
     // all versions of the platform that are supported
     val versions: List<PlatformVersion>,
     // if bridge present, the bridge that should be used for this platform
-    @Serializable(with = BridgeSerializer::class)
     val bridge: Bridge? = null,
     // if the path is empty, the platform will not copy the bridge
     private val bridgePath: String? = null,
@@ -73,7 +68,7 @@ class Platform(
                 .replace("%os%", currentOS.downloadName)
 
             version.additionalProperties.forEach { (key, value) ->
-                replacedUrl = replacedUrl.replace("%$key%", value.jsonPrimitive.content)
+                replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
             }
 
             val downloadFile = if (setFileName) path.toFile() else path.parent.resolve("download").toFile()

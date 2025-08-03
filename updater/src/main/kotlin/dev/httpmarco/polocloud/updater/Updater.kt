@@ -1,43 +1,61 @@
 package dev.httpmarco.polocloud.updater
 
+import dev.httpmarco.polocloud.common.os.OS
+import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
-import kotlinx.serialization.json.Json
-import java.net.HttpURLConnection
-import java.net.URL
+import java.io.File
 import java.util.LinkedList
 
 object Updater {
 
+    private val versions = LinkedList<String>()
+
+    init {
+        this.tryUpdate()
+    }
+
     fun latestVersion(): String {
-        return this.availableRelease().first()
+        return versions.first()
     }
 
     fun newVersionAvailable(): Boolean {
-        return polocloudVersion() == latestVersion()
+        return polocloudVersion() != latestVersion() && versions.contains(polocloudVersion())
     }
 
-    fun availableRelease(): LinkedList<String> {
-        val releases = LinkedList<String>()
-        val url = URL("https://api.github.com/repos/httpmarco/polocloud/tags")
+    fun availableVersions(): List<String> {
+        return versions
+    }
 
-        with(url.openConnection() as HttpURLConnection) {
-            requestMethod = "GET"
-            setRequestProperty("Accept", "application/vnd.github+json")
-            setRequestProperty("User-Agent", "Mozilla/5.0")
+    fun update(version: String = latestVersion()) {
+        println("Launching updater...")
 
-            if (responseCode == 200) {
-                inputStream.bufferedReader().use { reader ->
-                    val json = reader.readText()
-                    val tags = Json.decodeFromString<List<GitHubTag>>(json)
-                    for (tag in tags) {
-                        releases.add(tag.name)
-                    }
-                }
-            } else {
-                println("Fehler beim Abrufen: HTTP $responseCode")
-            }
+        val jarName = "polocloud-updater-${polocloudVersion()}.jar"
+
+        val processBuilder = when (currentOS) {
+            OS.WIN -> ProcessBuilder(
+                "cmd.exe",
+                "/c",
+                "start",
+                "cmd.exe",
+                "/c",
+                "java",
+                "-jar",
+                jarName,
+                "--version=$version"
+            )
+
+            else -> ProcessBuilder("java", "-jar", jarName, "--version=$version")
         }
 
-        return releases
+        processBuilder.environment()["polocloud-version"] = polocloudVersion()
+        processBuilder.directory(File("local/libs"))
+        processBuilder.inheritIO()
+
+        processBuilder.start()
+    }
+
+    fun tryUpdate() {
+        this.versions.clear()
+        this.versions += readTags()
     }
 }

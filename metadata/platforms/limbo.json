@@ -1,0 +1,106 @@
+{
+  "name": "limbo",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://ci.loohpjames.com/job/Limbo/%buildId%/artifact/target/Limbo-%jarVersion%-%version%.jar",
+  "arguments": [
+    "--nogui"
+  ],
+  "tasks": [
+    "EULA_TASK",
+    "LIMBO_SERVER_PROPERTIES",
+    "LIMBO_VELOCITY_SUPPORT_TASK"
+  ],
+  "versions": [
+    {
+      "version": "1.21.8",
+      "jarVersion": "0.7.15-ALPHA",
+      "buildId": "58"
+    },
+    {
+      "version": "1.21.7",
+      "jarVersion": "0.7.14-ALPHA",
+      "buildId": "56"
+    },
+    {
+      "version": "1.21.6",
+      "jarVersion": "0.7.14-ALPHA",
+      "buildId": "54"
+    },
+    {
+      "version": "1.21.5",
+      "jarVersion": "0.7.13-ALPHA",
+      "buildId": "52"
+    },
+    {
+      "version": "1.21.4",
+      "jarVersion": "0.7.12-ALPHA",
+      "buildId": "51"
+    },
+    {
+      "version": "1.21.3",
+      "jarVersion": "0.7.11-ALPHA",
+      "buildId": "47"
+    },
+    {
+      "version": "1.21.1",
+      "jarVersion": "0.7.10-ALPHA",
+      "buildId": "46"
+    },
+    {
+      "version": "1.20.6",
+      "jarVersion": "0.7.9-ALPHA",
+      "buildId": "43"
+    },
+    {
+      "version": "1.20.4",
+      "jarVersion": "0.7.8-ALPHA",
+      "buildId": "40"
+    },
+    {
+      "version": "1.20.2",
+      "jarVersion": "0.7.6-ALPHA",
+      "buildId": "38"
+    },
+    {
+      "version": "1.20.1",
+      "jarVersion": "0.7.5-ALPHA",
+      "buildId": "36"
+    },
+    {
+      "version": "1.19.4",
+      "jarVersion": "0.7.4-ALPHA",
+      "buildId": "34"
+    },
+    {
+      "version": "1.19.3",
+      "jarVersion": "0.7.2-ALPHA",
+      "buildId": "32"
+    },
+    {
+      "version": "1.19.2",
+      "jarVersion": "0.6.19-ALPHA",
+      "buildId": "24"
+    },
+    {
+      "version": "1.19",
+      "jarVersion": "0.6.16-ALPHA",
+      "buildId": "17"
+    },
+    {
+      "version": "1.18.2",
+      "jarVersion": "0.6.15-ALPHA",
+      "buildId": "15"
+    },
+    {
+      "version": "1.18.1",
+      "jarVersion": "0.6.11-ALPHA",
+      "buildId": "9"
+    },
+    {
+      "version": "1.17.1",
+      "jarVersion": "0.6.4-ALPHA",
+      "buildId": "1"
+    }
+  ]
+}

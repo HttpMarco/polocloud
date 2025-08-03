@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 
 abstract class SharedEventProvider {
 
-    protected val gsonSerilaizer = GsonBuilder().registerTypeAdapter(Service::class.java, ServiceSerializer()).create()
+    protected val gsonSerilaizer = GsonBuilder().registerTypeHierarchyAdapter(Service::class.java, ServiceSerializer()).create()
 
     abstract fun call(event: Event)
 
