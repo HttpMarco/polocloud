@@ -10,12 +10,18 @@ import io.grpc.stub.StreamObserver
 
 class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
 
-    override fun find(request: ServiceFindRequest?, responseObserver: StreamObserver<ServiceFindResponse>) {
+    override fun find(request: ServiceFindRequest, responseObserver: StreamObserver<ServiceFindResponse>) {
         val serviceStorage = Agent.runtime.serviceStorage();
         val builder = ServiceFindResponse.newBuilder()
 
-        serviceStorage.findAll().forEach {
-            builder.addServices(it.toSnapshot())
+        if (request.hasName()) {
+            builder.addServices(serviceStorage.find(request.name)?.toSnapshot())
+        } else {
+            serviceStorage.findAll().forEach {
+                if (request.hasType() || it.type == request.type) {
+                    builder.addServices(it.toSnapshot())
+                }
+            }
         }
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()

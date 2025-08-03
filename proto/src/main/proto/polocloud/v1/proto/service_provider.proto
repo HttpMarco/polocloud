@@ -12,7 +12,8 @@ service ServiceController {
 }
 
 message ServiceFindRequest {
-  string name = 1;
+  optional string name = 1;
+  optional GroupType type = 2;
 }
 
 message ServiceFindResponse {

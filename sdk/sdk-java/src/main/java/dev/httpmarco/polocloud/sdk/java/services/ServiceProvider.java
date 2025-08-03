@@ -85,13 +85,13 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     @Override
     @NotNull
     public List<Service> findByType(@NotNull GroupType type) {
-        return List.of();
+        return blockingStub.find(ServiceFindRequest.newBuilder().setType(type).build()).getServicesList().stream().map(Service.Companion::bindSnapshot).toList();
     }
 
     @Override
     @NotNull
     public CompletableFuture<List<Service>> findByTypeAsync(@NotNull GroupType type) {
-        return null;
+        return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.newBuilder().setType(type).build()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).toList());
     }
 
     @Override
