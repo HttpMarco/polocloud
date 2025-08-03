@@ -1,9 +1,10 @@
 package dev.httpmarco.polocloud.updater
 
+import com.google.gson.reflect.TypeToken
+import dev.httpmarco.polocloud.common.json.GSON
 import dev.httpmarco.polocloud.common.os.OS
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
-import kotlinx.serialization.json.Json
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URI
@@ -31,7 +32,10 @@ object Updater {
             if (responseCode == 200) {
                 inputStream.bufferedReader().use { reader ->
                     val json = reader.readText()
-                    val tags = Json.decodeFromString<List<GitHubTag>>(json)
+
+                    val type = object : TypeToken<List<GitHubTag>>() {}.type
+                    val tags = GSON.fromJson<List<GitHubTag>>(json, type)
+
                     for (tag in tags) {
                         releases.add(tag.name)
                     }
@@ -50,7 +54,18 @@ object Updater {
         val jarName = "polocloud-updater-3.0.0-SNAPSHOT.jar"
 
         val processBuilder = when (currentOS) {
-            OS.WIN -> ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/c", "java", "-jar", jarName, "--version=$version")
+            OS.WIN -> ProcessBuilder(
+                "cmd.exe",
+                "/c",
+                "start",
+                "cmd.exe",
+                "/c",
+                "java",
+                "-jar",
+                jarName,
+                "--version=$version"
+            )
+
             else -> ProcessBuilder("java", "-jar", jarName, "--version=$version")
         }
 
