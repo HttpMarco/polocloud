@@ -10,7 +10,5 @@ dependencies {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("polocloud-${project.name}-$version.jar")
-
     relocate("org.bstats", "dev.httpmarco.polocloud.libs.bstats")
 }
