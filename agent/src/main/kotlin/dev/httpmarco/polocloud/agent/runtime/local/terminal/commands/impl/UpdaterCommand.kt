@@ -10,7 +10,7 @@ class UpdaterCommand : Command("updater", "Updates the agent to the latest versi
 
     init {
         syntax(execution = {
-            val versions = Updater.availableRelease()
+            val versions = Updater.availableVersions()
             val current = polocloudVersion()
 
             logger.info("Available versions: ${versions.size}")

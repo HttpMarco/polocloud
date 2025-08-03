@@ -1,57 +1,35 @@
 package dev.httpmarco.polocloud.updater
 
-import com.google.gson.reflect.TypeToken
-import dev.httpmarco.polocloud.common.json.GSON
 import dev.httpmarco.polocloud.common.os.OS
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import java.io.File
-import java.net.HttpURLConnection
-import java.net.URI
 import java.util.LinkedList
 
 object Updater {
 
+    private val versions = LinkedList<String>()
+
+    init {
+        this.tryUpdate()
+    }
+
     fun latestVersion(): String {
-        return this.availableRelease().first()
+        return versions.first()
     }
 
     fun newVersionAvailable(): Boolean {
-        return polocloudVersion() != latestVersion()
+        return polocloudVersion() != latestVersion() && versions.contains(polocloudVersion())
     }
 
-    fun availableRelease(): LinkedList<String> {
-        val releases = LinkedList<String>()
-        val url = URI("https://api.github.com/repos/httpmarco/polocloud/tags").toURL()
-
-        with(url.openConnection() as HttpURLConnection) {
-            requestMethod = "GET"
-            setRequestProperty("Accept", "application/vnd.github+json")
-            setRequestProperty("User-Agent", "Mozilla/5.0")
-
-            if (responseCode == 200) {
-                inputStream.bufferedReader().use { reader ->
-                    val json = reader.readText()
-
-                    val type = object : TypeToken<List<GitHubTag>>() {}.type
-                    val tags = GSON.fromJson<List<GitHubTag>>(json, type)
-
-                    for (tag in tags) {
-                        releases.add(tag.name)
-                    }
-                }
-            } else {
-                println("Fehler beim Abrufen: HTTP $responseCode")
-            }
-        }
-
-        return releases
+    fun availableVersions(): List<String> {
+        return versions
     }
 
     fun update(version: String = latestVersion()) {
         println("Launching updater...")
 
-        val jarName = "polocloud-updater-3.0.0-SNAPSHOT.jar"
+        val jarName = "polocloud-updater-${polocloudVersion()}.jar"
 
         val processBuilder = when (currentOS) {
             OS.WIN -> ProcessBuilder(
@@ -73,5 +51,10 @@ object Updater {
         processBuilder.inheritIO()
 
         processBuilder.start()
+    }
+
+    fun tryUpdate() {
+        this.versions.clear()
+        this.versions += readTags()
     }
 }
