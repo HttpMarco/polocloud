@@ -10,14 +10,17 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
+import org.bstats.bungeecord.Metrics
 import java.io.File
 
 private lateinit var hubAddon: HubAddon
 
 class BungeecordPlatform: Plugin() {
     override fun onEnable() {
-        hubAddon = HubAddon(File("plugins/polocloud-hub"), false)
+        hubAddon = HubAddon(File("plugins/polocloud"), false)
         ProxyServer.getInstance().pluginManager.registerCommand(this,BungeecordHubCommand(hubAddon.config))
+
+        Metrics(this, 26766)
     }
 }
 

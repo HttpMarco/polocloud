@@ -24,6 +24,14 @@ dependencies {
     compileOnly(libs.bungeecord)
 }
 
+
 tasks.withType<ShadowJar> {
     relocate("org.bstats", "dev.httpmarco.polocloud.libs.bstats")
+}
+
+tasks.processResources {
+    filesMatching(listOf("plugin.yml")) {
+        expand("version" to version)
+    }
+
 }
