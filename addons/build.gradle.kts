@@ -16,4 +16,8 @@ subprojects {
     kotlin {
         jvmToolchain(21)
     }
+
+    dependencies {
+        compileOnly(parent!!.projects.sdk.sdkJava)
+    }
 }

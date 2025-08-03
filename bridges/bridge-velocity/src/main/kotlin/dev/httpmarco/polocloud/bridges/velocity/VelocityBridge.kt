@@ -5,7 +5,6 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
-import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerInfo
@@ -14,14 +13,6 @@ import org.slf4j.Logger
 import java.net.InetSocketAddress
 import kotlin.jvm.optionals.getOrNull
 
-@Plugin(
-    id = "polocloud-bridge",
-    name = "Polocloud-Bridge",
-    version = "3.0.0-SNAPSHOT",
-    authors = ["Polocloud"],
-    url = "https://github.com/HttpMarco/polocloud",
-    description = "Polocloud-Bridge"
-)
 class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, logger: Logger) : BridgeInstance<ServerInfo>() {
 
     private val registeredFallbacks = ArrayList<RegisteredServer>()
