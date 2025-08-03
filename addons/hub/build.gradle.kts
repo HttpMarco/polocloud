@@ -20,3 +20,9 @@ dependencies {
 
     implementation(projects.addons.api)
 }
+
+tasks.processResources {
+    filesMatching(listOf("plugin.yml", "velocity-plugin.json")) {
+        expand("version" to version)
+    }
+}
