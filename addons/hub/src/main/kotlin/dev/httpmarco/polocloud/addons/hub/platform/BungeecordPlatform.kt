@@ -16,7 +16,7 @@ private lateinit var hubAddon: HubAddon
 
 class BungeecordPlatform: Plugin() {
     override fun onEnable() {
-        hubAddon = HubAddon(File("plugins/polocloud-hub"), false)
+        hubAddon = HubAddon(File("plugins/polocloud"), false)
         ProxyServer.getInstance().pluginManager.registerCommand(this,BungeecordHubCommand(hubAddon.config))
     }
 }
