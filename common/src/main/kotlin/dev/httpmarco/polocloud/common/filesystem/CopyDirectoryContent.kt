@@ -13,7 +13,7 @@ fun copyDirectoryContent(source: Path, destination: Path, vararg options: CopyOp
         val destinationFile = destination.resolve(file.fileName)
         if (file.isDirectory()) {
             destinationFile.toFile().mkdirs()
-            copyDirectoryContent(file, destinationFile)
+            copyDirectoryContent(file, destinationFile, *options)
         } else {
             Files.copy(file, destinationFile, *options)
         }
