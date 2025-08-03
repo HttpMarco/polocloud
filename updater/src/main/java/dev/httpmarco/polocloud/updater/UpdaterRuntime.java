@@ -7,7 +7,7 @@ import java.nio.channels.Channels;
 
 public class UpdaterRuntime {
 
-    private static final String DEFAULT_VERSION = "v3.0.0-pre-4"; // TODO update this to the latest version
+    private static final String DEFAULT_VERSION = System.getenv("polocloud-version");
     private static final String LAUNCHER_JAR = "polocloud-launcher.jar";
 
     public static void main(String[] args) {
@@ -53,7 +53,7 @@ public class UpdaterRuntime {
             return true;
         } catch (Exception e) {
             System.err.println("Failed to download: " + e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace(System.err);
 
             return false;
         }
@@ -80,8 +80,7 @@ public class UpdaterRuntime {
             return true;
         } catch (Exception e) {
             System.err.println("Failed to start launcher: " + e.getMessage());
-            e.printStackTrace();
-
+            e.printStackTrace(System.err);
             return false;
         }
     }

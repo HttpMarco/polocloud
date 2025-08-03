@@ -64,8 +64,7 @@ object Agent : PolocloudShared() {
                 this.runtime.terminal.clearScreen()
             }
 
-            shouldUpdate = true
-            exitPolocloud(cleanShutdown = true)
+            exitPolocloud(cleanShutdown = true, shouldUpdate = true)
             return
         }
 

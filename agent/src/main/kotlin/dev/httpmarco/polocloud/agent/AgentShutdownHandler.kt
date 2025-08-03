@@ -7,7 +7,6 @@ import kotlin.system.exitProcess
 
 private val SHUTDOWN_HOOK = "polocloud-shutdown-hook"
 private var inShutdown = false
-var shouldUpdate = false
 
 fun registerHook() {
     Runtime.getRuntime().addShutdownHook(Thread({
@@ -15,7 +14,7 @@ fun registerHook() {
     }, SHUTDOWN_HOOK))
 }
 
-fun exitPolocloud(cleanShutdown: Boolean = true) {
+fun exitPolocloud(cleanShutdown: Boolean = true, shouldUpdate: Boolean = false) {
 
     if (inShutdown) {
         return

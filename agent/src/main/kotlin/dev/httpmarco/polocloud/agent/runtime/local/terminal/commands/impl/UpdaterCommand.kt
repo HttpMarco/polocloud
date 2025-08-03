@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 
+import dev.httpmarco.polocloud.agent.exitPolocloud
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
@@ -28,10 +29,18 @@ class UpdaterCommand : Command("updater", "Updates the agent to the latest versi
             if(Updater.newVersionAvailable()) {
                 logger.info("New version is available: &b${Updater.latestVersion()}&8 (&7Use&8: &3updater update&8)")
             } else {
-                logger.info("You are already using the latest version: &b${Updater.latestVersion()}")
+                logger.info("You are already using the latest version: &b${polocloudVersion()}")
                 logger.info("No update is required.")
             }
         }, KeywordArgument("check"))
+
+        syntax(execution = {
+            if(!Updater.newVersionAvailable()) {
+                logger.info("You are already using the latest version: &b${polocloudVersion()}")
+                return@syntax
+            }
+            exitPolocloud(shouldUpdate = true)
+        }, KeywordArgument("update"))
 
     }
 }
