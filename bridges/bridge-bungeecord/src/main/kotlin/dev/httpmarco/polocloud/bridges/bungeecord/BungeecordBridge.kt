@@ -13,7 +13,7 @@ class BungeecordBridge : Plugin() {
         ProxyServer.getInstance().reconnectHandler = BungeecordReconnectHandler(bridgeInstance)
         ProxyServer.getInstance().pluginManager.registerListener(this, bridgeInstance)
 
-        val pluginId = 26760 // <--- change pluginId @HttpMarco
+        val pluginId = 26764
         Metrics(this, pluginId)
         logger.info("bStats Metrics successfully initialized for ${this.javaClass.simpleName} (pluginId=$pluginId)")
     }
