@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime
 
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.agent.services.AbstractService
 
 /**
  * Interface for extending the runtime capabilities of a service.
@@ -8,7 +8,7 @@ import dev.httpmarco.polocloud.agent.services.Service
  *
  * @param S The type of service this expander works with.
  */
-interface RuntimeExpender<out S : Service> {
+interface RuntimeExpender<out S : AbstractService> {
 
     /**
      * Executes a command on the service.

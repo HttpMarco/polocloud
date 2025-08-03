@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.agent.runtime
 
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.agent.services.AbstractService
 
-interface RuntimeFactory<out T : Service> {
+interface RuntimeFactory<out T : AbstractService> {
 
     fun bootApplication(service: @UnsafeVariance T)
 

@@ -14,19 +14,8 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
         val serviceStorage = Agent.runtime.serviceStorage();
         val builder = ServiceFindResponse.newBuilder()
 
-        serviceStorage.items().forEach {
-            builder.addServices(
-                ServiceSnapshot.newBuilder()
-                    .setGroupName(it.group.data.name)
-                    .setId(it.id)
-                    .setServerType(GroupType.valueOf(it.group.platform().type.name))
-                    .setHostname(it.hostname)
-                    .setPort(it.port)
-                    .setMaxPlayers(it.maxPlayerCount.toLong())
-                    .setPlayerCount(it.playerCount.toLong())
-                    .putAllProperties(it.properties)
-                    .build()
-            )
+        serviceStorage.findAll().forEach {
+            builder.addServices(it.toSnapshot())
         }
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()

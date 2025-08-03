@@ -2,8 +2,6 @@ package dev.httpmarco.polocloud.platforms.tasks.actions
 
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskStep
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import org.tomlj.Toml
 import org.tomlj.TomlTable
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
@@ -17,8 +15,6 @@ import java.util.*
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 
-@Serializable
-@SerialName("PlatformFilePropertyUpdateAction")
 class PlatformFilePropertyUpdateAction(
     private val key: String,
     private val value: String

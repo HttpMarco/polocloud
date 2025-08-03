@@ -9,6 +9,7 @@ import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
+import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.lang.reflect.Type
 
 class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
@@ -20,12 +21,18 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
     ): JsonElement? {
         val data = JsonObject()
 
-        data.addProperty("name", src.name())
-        data.addProperty("id", src.serviceSnapshot.id)
-        data.addProperty("hostname", src.hostname())
-        data.addProperty("port", src.port())
-        data.addProperty("type", src.type().name)
-        data.add("properties", context.serialize(src.properties().map { it -> it.key to it.value }.toMap()))
+        data.addProperty("name", src.groupName)
+        data.addProperty("id", src.id)
+        data.addProperty("hostname", src.hostname)
+        data.addProperty("port", src.port)
+        data.addProperty("state", src.state.name)
+        data.addProperty("type", src.type.name)
+        data.addProperty("maxPlayerCount", src.maxPlayerCount)
+        data.addProperty("playerCount", src.playerCount)
+        data.addProperty("memoryUsage", src.memoryUsage)
+        data.addProperty("cpuUsage", src.cpuUsage)
+
+        data.add("properties", context.serialize(src.properties.map { it.key to it.value }.toMap()))
 
         return data
     }
@@ -42,21 +49,27 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         val hostname = data.get("hostname").asString
         val port = data.get("port").asInt
         val type = GroupType.valueOf(data.get("type").asString)
+        val state = ServiceState.valueOf(data.get("state").asString)
+        val maxPlayerCount = data.get("maxPlayerCount").asInt
+        val playerCount = data.get("playerCount").asInt
+        val memoryUsage = data.get("memoryUsage").asDouble
+        val cpuUsage = data.get("cpuUsage").asDouble
 
         val propertiesType = object : TypeToken<Map<String, String>>() {}.type
         val properties = context.deserialize<Map<String, String>>(data.get("properties"), propertiesType)
 
         return Service(
-            ServiceSnapshot.newBuilder()
-                .setGroupName(name)
-                .setId(id)
-                .setServerType(type)
-                .setHostname(hostname)
-                .setPort(port)
-                .putAllProperties(properties)
-                .build()
+            name,
+            id,
+            state,
+            type,
+            properties,
+            hostname,
+            port,
+            playerCount,
+            maxPlayerCount,
+            memoryUsage,
+            cpuUsage
         )
     }
-
-
 }

@@ -1,36 +1,25 @@
 package dev.httpmarco.polocloud.agent.detector
 
+import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.runtime.local.LocalService
+import dev.httpmarco.polocloud.common.json.GSON
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.service.Service
-import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import org.apache.hc.core5.net.Host
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.ConnectException
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.nio.ByteBuffer
-import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
 class OnlineStateDetector : Detector {
 
     override fun tick() {
-        val services = Agent.runtime.serviceStorage().items()
+        val services = Agent.runtime.serviceStorage().findAll()
 
         services.forEach { service ->
             val host = "127.0.0.1"
@@ -39,8 +28,6 @@ class OnlineStateDetector : Detector {
             try {
                 Socket().use { socket ->
                     socket.connect(InetSocketAddress(host, port), 500)
-
-                    this.callOnline(service)
 
                     val out = socket.getOutputStream()
                     val input = socket.getInputStream()
@@ -68,15 +55,18 @@ class OnlineStateDetector : Detector {
                         return@forEach
                     }
 
+                    this.callOnline(service)
+
                     val jsonLength = readVarInt(input)
                     val jsonData = ByteArray(jsonLength)
                     input.readFully(jsonData)
 
-                    val json = Json.parseToJsonElement(String(jsonData, StandardCharsets.UTF_8)).jsonObject
+                    val json : JsonObject = GSON.fromJson(String(jsonData), JsonObject::class.java)
 
-                    val players = json["players"]?.jsonObject
-                    service.playerCount = players?.get("online")?.jsonPrimitive?.intOrNull ?: -1
-                    service.maxPlayerCount = players?.get("max")?.jsonPrimitive?.intOrNull ?: -1
+                    val players = json["players"]?.asJsonObject
+
+                    service.updatePlayerCount(players?.get("online")?.asJsonPrimitive?.asInt ?: -1)
+                    service.updateMaxPlayerCount(players?.get("max")?.asJsonPrimitive?.asInt ?: -1)
                 }
             } catch (_: Throwable) {
                 // ignore connection errors, the service is not online yet
@@ -84,10 +74,10 @@ class OnlineStateDetector : Detector {
         }
     }
 
-    private fun callOnline(service: dev.httpmarco.polocloud.agent.services.Service) {
+    private fun callOnline(service: Service) {
         if (service.state == ServiceState.STARTING) {
             service.state = ServiceState.ONLINE
-            Agent.eventService.call(ServiceOnlineEvent(Service(service.asSnapshot())))
+            Agent.eventService.call(ServiceOnlineEvent(service))
             i18n.info("agent.detector.service.online", service.name())
         }
     }

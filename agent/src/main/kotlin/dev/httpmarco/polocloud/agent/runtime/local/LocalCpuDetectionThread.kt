@@ -12,13 +12,13 @@ class LocalCpuDetectionThread : Thread("polocloud-local-cpu-detection") {
 
     override fun run() {
         while (true) {
-            Agent.runtime.serviceStorage().items().forEach {
+            Agent.runtime.serviceStorage().findAll().forEach {
                 detectService(it as LocalService)
             }
 
             try {
                 sleep(1000)
-            }catch (_: InterruptedException) {
+            } catch (_: InterruptedException) {
                 interrupt()
                 break
             }
@@ -27,7 +27,7 @@ class LocalCpuDetectionThread : Thread("polocloud-local-cpu-detection") {
 
     fun detectService(service: LocalService) {
 
-        if(service.pid() == null) {
+        if (service.pid() == null) {
             return
         }
 
@@ -43,7 +43,7 @@ class LocalCpuDetectionThread : Thread("polocloud-local-cpu-detection") {
 
         service.lastCpuUpdateTimeStamp = System.nanoTime()
 
-        service.cpuUsage = BigDecimal(cpu).setScale(2, RoundingMode.HALF_UP).toDouble()
-        service.memoryUsage = convertBytesToMegabytes(currentSnapshot.residentSetSize)
+        service.updateCpuUsage(BigDecimal(cpu).setScale(2, RoundingMode.HALF_UP).toDouble())
+        service.updateMemoryUsage(convertBytesToMegabytes(currentSnapshot.residentSetSize))
     }
 }

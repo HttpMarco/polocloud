@@ -1,7 +1,8 @@
 package dev.httpmarco.polocloud.updater
 
+import com.google.gson.reflect.TypeToken
+import dev.httpmarco.polocloud.common.json.PRETTY_GSON
 import dev.httpmarco.polocloud.common.version.polocloudVersion
-import kotlinx.serialization.json.Json
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.LinkedList
@@ -28,7 +29,9 @@ object Updater {
             if (responseCode == 200) {
                 inputStream.bufferedReader().use { reader ->
                     val json = reader.readText()
-                    val tags = Json.decodeFromString<List<GitHubTag>>(json)
+
+                    val type = object : TypeToken<List<GitHubTag>>() {}.type
+                    val tags : List<GitHubTag> = PRETTY_GSON.fromJson(json, type)
                     for (tag in tags) {
                         releases.add(tag.name)
                     }

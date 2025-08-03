@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public final class ServiceProvider implements SharedServiceProvider {
+public final class ServiceProvider implements SharedServiceProvider<Service> {
 
     private final ServiceControllerGrpc.ServiceControllerFutureStub futureStub;
     private final ServiceControllerGrpc.ServiceControllerBlockingStub blockingStub;
@@ -28,19 +28,19 @@ public final class ServiceProvider implements SharedServiceProvider {
 
     @Override
     public @NotNull List<Service> findAll() {
-        return blockingStub.find(ServiceFindRequest.getDefaultInstance()).getServicesList().stream().map(Service::new).toList();
+        return blockingStub.find(ServiceFindRequest.getDefaultInstance()).getServicesList().stream().map(Service.Companion::bindSnapshot).toList();
     }
 
     @Override
     @Nullable
     public Service find(@NotNull String name) {
-        return blockingStub.find(ServiceFindRequest.newBuilder().setName(name).build()).getServicesList().stream().map(Service::new).findFirst().orElse(null);
+        return blockingStub.find(ServiceFindRequest.newBuilder().setName(name).build()).getServicesList().stream().map(Service.Companion::bindSnapshot).findFirst().orElse(null);
     }
 
     @Override
     @NotNull
     public List<Service> findByGroup(@NotNull Group group) {
-        return this.findByGroup(group.name());
+        return this.findByGroup(group.getName());
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class ServiceProvider implements SharedServiceProvider {
 
     @Override
     public @NotNull CompletableFuture<List<Service>> findAllAsync() {
-        return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.getDefaultInstance()), it -> it.getServicesList().stream().map(Service::new).toList());
+        return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.getDefaultInstance()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).toList());
     }
 
     @Override
@@ -92,5 +92,10 @@ public final class ServiceProvider implements SharedServiceProvider {
     @NotNull
     public CompletableFuture<List<Service>> findByTypeAsync(@NotNull GroupType type) {
         return null;
+    }
+
+    @Override
+    public void shutdownService(@NotNull String name) {
+
     }
 }

@@ -26,7 +26,7 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
     }
 
     override fun bindTemplate(service: LocalService) {
-        service.group.data.templates.forEach {
+        service.group.templates.forEach {
             val sourcePath = TEMPLATE_PATH.resolve(it)
             if (!Files.exists(sourcePath)) {
                 sourcePath.createDirectories()

@@ -1,6 +1,6 @@
 package dev.httpmarco.polocloud.platforms.bridge
 
-import kotlinx.serialization.json.Json
+import dev.httpmarco.polocloud.common.json.GSON
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.util.jar.JarFile
@@ -25,7 +25,7 @@ fun scanForBridges(name: String): List<Bridge> {
                 val jsonContent = readJsonFromJar(file, "bridge.json")
                 if (jsonContent != null) {
                     // Assuming a function parseJsonToBridge exists to convert JSON to Bridge object
-                    val bridge = Json.decodeFromString<Bridge>(jsonContent)
+                    val bridge = GSON.fromJson<Bridge>(jsonContent, Bridge::class.java)
                     bridge.path = file.toPath()
                     bridges.add(bridge)
                 }
