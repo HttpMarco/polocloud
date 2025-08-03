@@ -23,7 +23,7 @@
     "buildPumpkin",
     "limboSetup",
     "limboVelocitySupport",
-    "nukkitSupport",
+    "nukkitSetup.json",
     "paperLoadDependencies",
     "pumkinSetup",
     "setupBungeeCord"
