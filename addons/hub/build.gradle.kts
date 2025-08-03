@@ -1,6 +1,5 @@
-plugins {
-    kotlin("kapt")
-}
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 
 repositories {
     maven {
@@ -14,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    kapt(libs.velocity)
     compileOnly(libs.velocity)
     compileOnly(libs.bungeecord)
 
@@ -23,10 +21,17 @@ dependencies {
     compileOnly(projects.shared)
 
     implementation(projects.addons.api)
+
+    implementation(libs.bstats.bungeecord)
+    implementation(libs.bstats.velocity)
 }
 
 tasks.processResources {
     filesMatching(listOf("plugin.yml", "velocity-plugin.json")) {
         expand("version" to version)
     }
+}
+
+tasks.withType<ShadowJar> {
+    relocate("org.bstats", "dev.httpmarco.polocloud.libs.bstats")
 }
