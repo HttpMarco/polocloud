@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.velocitypowered.api.command.SimpleCommand
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
-import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.httpmarco.polocloud.addons.hub.HubAddon
 import dev.httpmarco.polocloud.sdk.java.Polocloud
@@ -13,14 +12,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.slf4j.Logger
 import java.io.File
 
-@Plugin(
-    id = "polocloud-hub",
-    name = "PoloCloud-Hub",
-    version = "not-found",
-    description = "A hub addon for Polocloud",
-    url = "https://github.com/HttpMarco/polocloud",
-    authors = ["PoloCloud", "RECHERGG"]
-)
 class VelocityPlatform @Inject constructor(
     private val server: ProxyServer,
     private val logger: Logger

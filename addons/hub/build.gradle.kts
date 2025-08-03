@@ -1,3 +1,7 @@
+plugins {
+    kotlin("kapt")
+}
+
 repositories {
     maven {
         name = "papermc"
@@ -10,6 +14,7 @@ repositories {
 }
 
 dependencies {
+    kapt(libs.velocity)
     compileOnly(libs.velocity)
     compileOnly(libs.bungeecord)
 
