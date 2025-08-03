@@ -75,7 +75,7 @@ class JLine3Terminal {
     }
 
     fun displayApproved(message: String) {
-        this.lineReader.printAbove(" ")
+        this.lineReader.printAbove(message)
         this.update()
     }
 
