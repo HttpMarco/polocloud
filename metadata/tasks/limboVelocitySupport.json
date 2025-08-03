@@ -1,0 +1,15 @@
+{
+  "name": "LIMBO_VELOCITY_SUPPORT_TASK",
+  "steps": [
+    {
+      "name": "Change velocity proxy token",
+      "description": "Set up the Velocity proxy token by writing to the file.",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "forwarding-secrets",
+        "value": "%velocityProxyToken%"
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "LIMBO_SERVER_PROPERTIES",
+  "steps": [
+    {
+      "name": "Update server port",
+      "description": "Change Server Port",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "server-port",
+        "value": "%port%"
+      }
+    },
+    {
+      "name": "change Velocity modern",
+      "description": "update Velocity modern",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "velocity-modern",
+        "value": "true"
+      }
+    }
+  ]
+}
