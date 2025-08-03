@@ -17,3 +17,8 @@ dependencies {
     compileOnly(libs.bungeecord)
 }
 
+tasks.processResources {
+    filesMatching(listOf("plugin.yml")) {
+        expand("version" to version)
+    }
+}

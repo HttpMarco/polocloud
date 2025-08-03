@@ -21,7 +21,6 @@ dependencies {
     compileOnly(libs.gson)
     compileOnly(projects.proto)
     compileOnly(projects.shared)
-    compileOnly(projects.sdk.sdkJava)
 
     implementation(projects.addons.api)
 }

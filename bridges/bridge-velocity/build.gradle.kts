@@ -1,9 +1,3 @@
-import org.gradle.kotlin.dsl.projects
-
-plugins {
-    kotlin("kapt")
-}
-
 repositories {
     maven {
         name = "papermc"
@@ -13,8 +7,12 @@ repositories {
 
 dependencies {
     compileOnly(libs.velocity)
-    kapt(libs.velocity)
-
     implementation(projects.sdk.sdkJava)
     implementation(projects.bridges.bridgeApi)
+}
+
+tasks.processResources {
+    filesMatching(listOf("velocity-plugin.json")) {
+        expand("version" to version)
+    }
 }
