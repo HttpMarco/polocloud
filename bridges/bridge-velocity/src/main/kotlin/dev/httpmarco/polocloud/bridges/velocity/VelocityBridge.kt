@@ -9,13 +9,26 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerInfo
 import dev.httpmarco.polocloud.bridge.api.BridgeInstance
+import org.bstats.velocity.Metrics
 import org.slf4j.Logger
 import java.net.InetSocketAddress
 import kotlin.jvm.optionals.getOrNull
 
-class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, logger: Logger) : BridgeInstance<ServerInfo>() {
+
+@Plugin(
+    id = "polocloud-bridge",
+    name = "Polocloud-Bridge",
+    version = "3.0.0-SNAPSHOT",
+    authors = ["Polocloud"],
+    url = "https://github.com/HttpMarco/polocloud",
+    description = "Polocloud-Bridge"
+)
+class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private val logger: Logger, val metricsFactory: Metrics.Factory) : BridgeInstance<ServerInfo>() {
+
 
     private val registeredFallbacks = ArrayList<RegisteredServer>()
+
+    private lateinit var metrics: Metrics
 
     init {
         // remove all registered servers on startup
@@ -25,9 +38,13 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, logger: L
         logger.debug("Unregistered all servers on startup by Polocloud-Bridge")
     }
 
+
+
     @Subscribe
     fun onInitialize(event: ProxyInitializeEvent) {
         super.initialize()
+        val pluginId = 26763 
+        metrics = metricsFactory.make(this, pluginId)
     }
 
     @Subscribe
