@@ -12,7 +12,7 @@ import net.md_5.bungee.api.plugin.Command
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
 
-lateinit var hubAddon: HubAddon
+private lateinit var hubAddon: HubAddon
 
 class BungeecordPlatform: Plugin() {
     override fun onEnable() {

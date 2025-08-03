@@ -1,4 +1,5 @@
-name: Pololcoud-Hub
+name: PoloCloud-Hub
 main:  dev.httpmarco.polocloud.addons.hub.platform.BungeecordPlatform
-version: 3.0.0-SNAPSHOT
-author: RECHERGG
+url: https://github.com/HttpMarco/polocloud
+version: ${version}
+author: PoloCloud, RECHERGG
