@@ -6,7 +6,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "polocloudv3"
 include("sdk")
-include("sdk:sdk-kotlin")
 include("proto")
 include("agent")
 include("platforms")
@@ -21,3 +20,4 @@ include("bridges:bridge-bungeecord")
 include("shared")
 include("addons")
 include("addons:signs")
+include("sdk:sdk-java")

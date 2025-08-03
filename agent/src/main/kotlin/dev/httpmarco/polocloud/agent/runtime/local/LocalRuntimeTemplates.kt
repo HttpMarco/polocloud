@@ -3,7 +3,6 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
 import dev.httpmarco.polocloud.v1.GroupType
-import dev.httpmarco.polocloud.v1.proto.GroupProvider
 import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -27,7 +26,7 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
     }
 
     override fun bindTemplate(service: LocalService) {
-        service.group.data.templates.forEach {
+        service.group.templates.forEach {
             val sourcePath = TEMPLATE_PATH.resolve(it)
             if (!Files.exists(sourcePath)) {
                 sourcePath.createDirectories()
@@ -65,5 +64,4 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
             }
         })
     }
-
 }

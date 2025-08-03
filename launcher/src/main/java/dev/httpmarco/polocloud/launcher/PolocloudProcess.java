@@ -13,8 +13,6 @@ public class PolocloudProcess extends Thread {
     private final List<PolocloudLib> processLibs;
 
     public PolocloudProcess() {
-        setDaemon(false);
-
         this.processLibs = PolocloudLib.of(PolocloudParameters.REQUIRED_LIBS);
         this.processLibs.forEach(PolocloudLib::copyFromClasspath);
     }

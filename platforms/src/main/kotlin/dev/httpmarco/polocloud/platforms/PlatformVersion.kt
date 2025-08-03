@@ -1,23 +1,20 @@
 package dev.httpmarco.polocloud.platforms
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonPrimitive
+import com.google.gson.JsonElement
 
-@Serializable(with = PlatformVersionSerializer::class)
 data class PlatformVersion(val version: String, val additionalProperties: Map<String, JsonElement> = emptyMap()) {
     val buildId: String?
-        get() = additionalProperties["buildId"]?.jsonPrimitive?.content
+        get() = additionalProperties["buildId"]?.asJsonPrimitive?.asString
 
     val requiredRuntimeVersion: String?
-        get() = additionalProperties["requiredRuntimeVersion"]?.jsonPrimitive?.content
+        get() = additionalProperties["requiredRuntimeVersion"]?.asJsonPrimitive?.asString
 
     fun getProperty(key: String): JsonElement? = additionalProperties[key]
 
-    fun getStringProperty(key: String): String? = additionalProperties[key]?.jsonPrimitive?.content
+    fun getStringProperty(key: String): String? = additionalProperties[key]?.asJsonPrimitive?.asString
 
     fun getBooleanProperty(key: String): Boolean? =
-        additionalProperties[key]?.jsonPrimitive?.content?.toBooleanStrictOrNull()
+        additionalProperties[key]?.asJsonPrimitive?.asBoolean
 
-    fun getIntProperty(key: String): Int? = additionalProperties[key]?.jsonPrimitive?.content?.toIntOrNull()
+    fun getIntProperty(key: String): Int? = additionalProperties[key]?.asJsonPrimitive?.asInt
 }

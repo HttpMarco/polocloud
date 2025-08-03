@@ -22,12 +22,15 @@ class LocalRuntime : Runtime {
 
     lateinit var terminal: JLine3Terminal
 
+    private val runtimeCpuDetectionThread = LocalCpuDetectionThread()
+
     override fun boot() {
         terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage, terminal))
         terminal.commandService.registerCommand(ServiceCommand(runtimeServiceStorage, terminal))
         terminal.commandService.registerCommand(PlatformCommand())
 
         this.runtimeQueue.start()
+        this.runtimeCpuDetectionThread.start()
     }
 
     override fun initialize() {
@@ -60,7 +63,7 @@ class LocalRuntime : Runtime {
 
     override fun shutdown() {
         this.terminal.shutdown()
-
+        this.runtimeCpuDetectionThread.interrupt()
         this.runtimeQueue.interrupt()
     }
 }

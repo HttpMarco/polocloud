@@ -1,15 +1,14 @@
 package dev.httpmarco.polocloud.platforms
 
+import dev.httpmarco.polocloud.common.filesystem.copyDirectoryContent
 import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
-import dev.httpmarco.polocloud.platforms.bridge.BridgeSerializer
 import dev.httpmarco.polocloud.platforms.bridge.BridgeType
 import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidException
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.jsonPrimitive
+import dev.httpmarco.polocloud.v1.GroupType
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
@@ -19,7 +18,6 @@ import kotlin.io.path.createDirectories
 import kotlin.io.path.name
 import kotlin.io.path.notExists
 
-@Serializable
 class Platform(
     val name: String,
     val url: String,
@@ -27,7 +25,7 @@ class Platform(
     // default is "stop"
     val shutdownCommand: String = "stop",
     // the type of platform, proxy, server, or service
-    val type: PlatformType,
+    val type: GroupType,
     // all global arguments for the platform after the jar name, for example, 'nogui'
     val arguments: List<String> = emptyList(),
     // all global flags for the platform after the jar name, for example: '-Djava.net.preferIPv4Stack=true'
@@ -35,7 +33,6 @@ class Platform(
     // all versions of the platform that are supported
     val versions: List<PlatformVersion>,
     // if bridge present, the bridge that should be used for this platform
-    @Serializable(with = BridgeSerializer::class)
     val bridge: Bridge? = null,
     // if the path is empty, the platform will not copy the bridge
     private val bridgePath: String? = null,
@@ -44,7 +41,9 @@ class Platform(
     // the tasks that should be run after the platform download
     private val preTasks: List<String> = emptyList(),
     // if true, the polocloud server icon will be copied to the service path
-    private val copyServerIcon: Boolean = true
+    private val copyServerIcon: Boolean = true,
+    // if false, the downloaded file will be named "download" to be changed by preTask
+    private val setFileName: Boolean = true
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
@@ -53,6 +52,8 @@ class Platform(
         // Implementation details would depend on the specific requirements of the platform.
         val path = Path("local/metadata/cache/$name/$version/$name-$version" + language.suffix())
         val version = this.version(version)
+
+        environment.addParameter("filename", path.fileName)
 
         if (version == null) {
             throw PlatformVersionInvalidException()
@@ -67,10 +68,10 @@ class Platform(
                 .replace("%os%", currentOS.downloadName)
 
             version.additionalProperties.forEach { (key, value) ->
-                replacedUrl = replacedUrl.replace("%$key%", value.jsonPrimitive.content)
+                replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
             }
 
-            val downloadFile = if (preTasks.isEmpty()) path.toFile() else path.parent.resolve("download").toFile()
+            val downloadFile = if (setFileName) path.toFile() else path.parent.resolve("download").toFile()
 
             URI(
                 replacedUrl
@@ -86,7 +87,7 @@ class Platform(
         tasks().forEach { it.runTask(servicePath, environment) }
 
         // copy the platform file to the service path
-        Files.copy(path, servicePath.resolve(path.name), StandardCopyOption.REPLACE_EXISTING)
+        copyDirectoryContent(path.parent, servicePath, StandardCopyOption.REPLACE_EXISTING)
 
         if (bridge == null) {
             return
