@@ -14,15 +14,6 @@ import org.slf4j.Logger
 import java.net.InetSocketAddress
 import kotlin.jvm.optionals.getOrNull
 
-
-@Plugin(
-    id = "polocloud-bridge",
-    name = "Polocloud-Bridge",
-    version = "3.0.0-SNAPSHOT",
-    authors = ["Polocloud"],
-    url = "https://github.com/HttpMarco/polocloud",
-    description = "Polocloud-Bridge"
-)
 class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private val logger: Logger, val metricsFactory: Metrics.Factory) : BridgeInstance<ServerInfo>() {
 
 
