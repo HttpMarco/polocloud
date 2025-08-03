@@ -20,10 +20,10 @@
     "velocityProxyToken",
     "paperProxySupport",
     "velocitySetup",
-    "buildPumkin",
+    "buildPumpkin",
     "limboSetup",
     "limboVelocitySupport",
-    "nukkitSupport",
+    "nukkitSetup.json",
     "paperLoadDependencies",
     "pumkinSetup",
     "setupBungeeCord"

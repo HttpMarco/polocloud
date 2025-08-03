@@ -1,0 +1,12 @@
+{
+  "title": "Documentation",
+  "description": "General docs",
+  "icon": "Cloudy",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "installation",
+    "faq"
+  ]
+}

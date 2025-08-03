@@ -1,0 +1,30 @@
+---
+title: Group Types
+description: Overview of all available GroupType enums in PoloCloud.
+---
+---
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+
+## Overview of Group Types
+
+In PoloCloud, services are categorized by their **GroupType**, which defines their role or classification in the system.  
+Understanding these types helps you filter and manage services efficiently.
+
+## GroupType Enum
+
+The `GroupType` enum includes the following values:
+
+<DynamicCodeBlock
+  lang="java"
+  code={`enum class GroupType {
+    SERVICE,
+    SERVER,
+    PROXY
+}`}
+/>
+
+| GroupType | Description                                                               |
+| --------- | ------------------------------------------------------------------------- |
+| SERVICE   | Custom platforms or services not directly related to Minecraft gameplay.  |
+| SERVER    | Minecraft server instances                                                |
+| PROXY     | Proxy servers like Velocity or BungeeCord that handle player routing.     |
