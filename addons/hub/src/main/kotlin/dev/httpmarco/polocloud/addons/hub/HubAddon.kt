@@ -1,30 +1,30 @@
 package dev.httpmarco.polocloud.addons.hub
 
 import dev.httpmarco.polocloud.addons.api.ConfigFactory
+import dev.httpmarco.polocloud.addons.api.LegacyFormatter
+import dev.httpmarco.polocloud.addons.api.MessageFormatter
+import dev.httpmarco.polocloud.addons.api.MiniMessageFormatter
 import java.io.File
 
-class HubAddon(dataFolder: File, minimessagePrefix: Boolean) {
+class HubAddon(dataFolder: File, minimessage: Boolean) {
     private val configFactory = ConfigFactory(HubConfiguration::class.java, dataFolder, "hub-config.json")
-
-    init {
-        changePrefix(minimessagePrefix)
-    }
-
+    private val formatter: MessageFormatter = if (minimessage) MiniMessageFormatter else LegacyFormatter
     val config: HubConfigAccessor = HubConfigAccessor(configFactory.config)
 
+    init {
+        applyFormatting()
+    }
 
-    fun changePrefix(minimessagePrefix: Boolean) {
-        if (!this.configFactory.config.prefix.isEmpty()) {
-            return
+
+    private fun applyFormatting() {
+        val config = this.configFactory.config
+
+        if (config.prefix.isEmpty()) {
+            config.prefix = formatter.formatPrefix()
         }
 
-        if (minimessagePrefix) {
-            this.configFactory.config.prefix = "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>"
-            this.configFactory.save()
-            return
-        }
+        config.messages.replaceAll { _, value -> formatter.format(value) }
 
-        this.configFactory.config.prefix = "§b§lPoloCloud §8» §7"
         this.configFactory.save()
     }
 }

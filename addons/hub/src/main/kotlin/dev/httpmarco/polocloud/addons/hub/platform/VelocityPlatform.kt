@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.velocitypowered.api.command.SimpleCommand
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.httpmarco.polocloud.addons.hub.HubAddon
 import dev.httpmarco.polocloud.sdk.java.Polocloud
@@ -46,7 +47,7 @@ class VelocityHubCommand(
             return
         }
 
-        if (source !is com.velocitypowered.api.proxy.Player) {
+        if (source !is Player) {
             source.sendMessage(mm.deserialize(config.prefix() + config.messages("only_players")))
             return
         }
@@ -89,9 +90,5 @@ class VelocityHubCommand(
                     .replace("{server}", fallback.name())
             )
         )
-    }
-
-    override fun hasPermission(invocation: SimpleCommand.Invocation): Boolean {
-        return invocation.source().hasPermission("polocloud.addons.hub.command")
     }
 }
