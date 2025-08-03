@@ -6,7 +6,7 @@ allprojects {
     apply(plugin = "maven-publish")
 
     group = "dev.httpmarco.polocloud"
-    version = "3.0.0-pre-4"
+    version = "3.0.0-pre.4-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -24,5 +24,5 @@ nexusPublishing {
         }
     }
     // todo find a better way to determine if we are in a staging or release build
-    useStaging.set(!project.rootProject.version.toString().endsWith("-pre-4"))
+    useStaging.set(!project.rootProject.version.toString().endsWith("-SNAPSHOT"))
 }
