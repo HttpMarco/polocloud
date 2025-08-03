@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CpuIcon } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -7,10 +8,10 @@ export default function HomePage() {
       <p className="text-fd-muted-foreground">
         You can open{' '}
         <Link
-          href="/docs"
+          href="/docs/cloud"
           className="text-fd-foreground font-semibold underline"
         >
-          /docs
+          /docs/cloud
         </Link>{' '}
         and see the documentation.
       </p>

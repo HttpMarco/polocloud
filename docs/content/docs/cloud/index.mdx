@@ -1,0 +1,139 @@
+---
+title: Quick Start
+description: Getting Started with PoloCloud
+icon: Album
+---
+
+import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints, FolderCog } from 'lucide-react';
+import { Callout } from 'fumadocs-ui/components/callout';
+import ButtonLink from '@/app/docs/components/button-link';
+import gateIcon from '../../../public/gate.png';
+import velocityIcon from '../../../public/velocity.svg';
+import waterfallIcon from '../../../public/waterfall.svg';
+import pumpkinIcon from '../../../public/pumkin.svg';
+import foliaIcon from '../../../public/folia.svg';
+import paperIcon from '../../../public/paper.svg';
+import leafIcon from '../../../public/leaf.svg';
+import purpurIcon from '../../../public/purpur.svg';
+import fabricIcon from '../../../public/fabric.png';
+
+## Introduction
+PoloCloud is the simplest and easiest **Cloud for Minecraft Networks** based on Kotlin, designed to be fast, flexible, and simple.
+
+PoloCloud has different parts:
+
+<Cards>
+    <Card icon={<CpuIcon className="text-purple-300" />} title='Agent'>
+        Manages server instances and handles communication between the master node and individual Minecraft servers within the cloud infrastructure.
+    </Card>
+
+    <Card icon={<Network className="text-blue-300" />} title='Bridges'>
+        Bridges handle the connection between proxy servers and game servers, enabling players to access game servers through the proxy network.
+    </Card>
+
+    <Card icon={<Layers className="text-green-300" />} title='Platforms'>
+        Contains shared utilities, models, and common functionality used across all other components of the cloud system.
+    </Card>
+
+    <Card icon={<Braces className="text-red-300" />} title='Proto'>
+        sd
+    </Card>
+
+    <Card icon={<Container className="text-cyan-300" />} title='Docker'>
+        Handles containerization and deployment of PoloCloud services using Docker for isolated execution environments.
+    </Card>
+    
+    <Card icon={<Workflow className="text-sky-300" />} title='Kubernetes'>
+        Enables deployment and orchestration of PoloCloud services on Kubernetes clusters for scalable container management.
+    </Card>
+</Cards>
+
+## Why PoloCloud?
+
+## Platforms
+
+
+<div className="inline">
+Following platforms are supported by PoloCloud: <ButtonLink text="Request platform" href="https://github.com/HttpMarco/polocloud/issues/new" />
+</div>
+
+<Cards>
+    <Card icon={<img
+      src={gateIcon}
+      alt="Gate"
+      className="w-6 h-6"
+        />}
+    title='Gate'>
+        Gate is a modern cloud-native, open source, fast, batteries-included and secure proxy for Minecraft servers that focuses on scalability, flexibility, multi-version support and developer friendliness.
+    </Card>
+    <Card icon={<img
+      src={velocityIcon}
+      alt="Velocity"
+      className="w-6 h-6"
+        />}
+    title='Velocity'>
+        A high-performance Minecraft proxy that connects multiple backend servers into a network. Velocity handles player connections and routing, making it ideal for large-scale server setups.
+    </Card>
+    <Card icon={<img
+      src={waterfallIcon}
+      alt="Waterfall"
+      className="w-6 h-6"
+        />}
+    title='Waterfall'>
+        A BungeeCord fork focused on stability, performance, and compatibility. Waterfall connects Minecraft servers into a network, allowing players to seamlessly switch between them.
+    </Card>
+    <Card icon={<Waypoints className="text-yellow-300"/>}
+    title='Bungeecord'>
+        BungeeCord is a Minecraft proxy that connects multiple servers into one network, allowing players to switch smoothly between them.
+    </Card>
+        <Card icon={<img
+      src={pumpkinIcon}
+      alt="Pumpkin"
+      className="w-6 h-6"
+        />}
+    title='Pumpkin'>
+        Pumpkin is a Minecraft server built entirely in Rust, offering a fast, efficient, and customizable experience. It prioritizes performance and player enjoyment while adhering to the core mechanics of the game.
+    </Card>
+    <Card icon={<img
+      src={foliaIcon}
+      alt="Folia"
+      className="w-6 h-6"
+        />}
+    title='Folia'>
+        Folia is a fork of Paper which adds regionized multithreading to the dedicated server.
+    </Card>
+    <Card icon={<img
+      src={paperIcon}
+      alt="Paper"
+      className="w-6 h-6"
+        />}
+    title='Paper'>
+        A fast, optimized Minecraft server implementation based on Spigot. Paper improves performance and adds more features and configuration options for Java Edition multiplayer servers.
+    </Card>
+    <Card icon={<img
+      src={leafIcon}
+      alt="Leaf"
+      className="w-6 h-6"
+        />}
+    title='Leaf'>
+        Leaf is a Paper fork, aim to find balance between Performance, Vanilla, and Stability, designed for large network, high capacity situation.
+    </Card>
+    <Card icon={<img
+      src={purpurIcon}
+      alt="Purpur"
+      className="w-6 h-6"
+        />}
+    title='Purpur'>
+        Purpur is minecraft server software based on Paper. It supports plugins designed for bukkit, spigot and paper APIs. Purpur focuses on providing as much configurability as possible, to allow server owners to customise their server to their liking.
+    </Card>
+    <Card icon={<img
+      src={fabricIcon}
+      alt="fabric"
+      className="w-6 h-6"
+        />}
+    title='Fabric'>
+        A lightweight and modular modding platform for Minecraft that focuses on performance, quick updates, and flexibility for custom server experiences.
+    </Card>
+</Cards>
+
+<Callout icon={<FolderCog />} title="Custom">Run your custom services and microservices seamlessly with PoloCloud.</Callout>

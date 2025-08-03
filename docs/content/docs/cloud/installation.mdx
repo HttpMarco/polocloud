@@ -1,0 +1,91 @@
+---
+title: Installation
+description: Getting Started with PoloCloud
+icon: CloudDownload
+---
+
+import { Download } from 'lucide-react';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import ButtonLink from '@/app/docs/components/button-link';
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+
+<Tabs items={['Local', 'Docker', 'Kubernetes']}>
+  <Tab value="Local">
+    <Callout title="Java Required" type="warn">
+      PoloCloud requires <strong>Java 17 or higher</strong> to run.  
+      Make sure it's installed and available on your machine.
+    </Callout>
+
+    <Steps>
+        <Step>
+            ### Download
+
+            Download the latest version of PoloCloud from our GitHub Releases page.
+
+            You can download the Launcher <code>polocloud-launcher.jar</code>  
+            or the pre-made Zip <code>polocloud-v3.0.0-pre-3.zip</code>.
+
+            <ButtonLink
+              icon={<Download />}
+              text="Download here"
+              href="https://github.com/HttpMarco/polocloud/releases"
+            />
+        </Step>
+        <Step>
+            ### Startup
+
+            <Tabs items={['polocloud-launcher.jar', 'polocloud-v3.0.0-pre-3.zip']}>
+              <Tab value="polocloud-launcher.jar">
+                You can run the PoloCloud by opening a terminal in the folder and typing:
+                <DynamicCodeBlock lang="bash" code='java -jar polocloud-launcher.jar' />
+              </Tab>
+              <Tab value="polocloud-v3.0.0-pre-3.zip">
+                You need to extract the Zip file to a folder of your choice.  
+                You can then run the launcher by double-clicking the <code>start.sh</code> <span className="text-fd-muted-foreground text-sm">(if you're on Windows, use <code>start.bat</code>)</span> file.
+              </Tab>
+            </Tabs>
+        </Step>
+    </Steps>
+
+    ### Folder Structure
+
+    After the first startup, you will see a folder structure like this:
+    <Files>
+      <Folder name="local" defaultOpen>
+        <Folder name="dependencies" />
+        <Folder name="groups" defaultOpen />
+        <Folder name="libs" />
+        <Folder name="metadata" defaultOpen>
+          <Folder name="platforms" />
+          <Folder name="tasks" />
+        </ Folder>
+        <Folder name="templates" />
+      </Folder>
+      <Folder name="temp" defaultOpen />
+      <File name="config.json" />
+      <File name="polocloud-launcher.jar" />
+    </Files>
+
+    | Name                       | Description                                      |
+    |----------------------------|--------------------------------------------------|
+    | `local/`                   | Main runtime folder with all PoloCloud data      |
+    | `local/dependencies/`      | Downloaded dependencies                          |
+    | `local/groups/`            | Server group configurations                      |
+    | `local/libs/`              | Our own libs to run polocloud                    |
+    | `local/metadata/platforms` | Platform configurations                          |
+    | `local/metadata/tasks`     | Required tasks to run platforms in PoloCloud     |
+    | `local/templates/`         | Templates for the platforms                      |
+    | `temp/`                    | The platforms are placed here while running      |
+    | `config.json`              | Main configuration file for PoloCloud            |
+    | `polocloud-launcher.jar`   | The main executable to launch PoloCloud          |
+  </Tab>
+  <Tab value="Docker">
+  </Tab>
+  <Tab value="Kubernetes">
+  </Tab>
+</Tabs>
