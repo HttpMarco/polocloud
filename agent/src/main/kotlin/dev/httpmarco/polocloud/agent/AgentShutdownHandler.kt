@@ -27,7 +27,7 @@ fun exitPolocloud(cleanShutdown: Boolean = true) {
 
 
     try {
-        Agent.runtime.serviceStorage().items().forEach {
+        Agent.runtime.serviceStorage().findAll().forEach {
             it.shutdown(cleanShutdown)
         }
 

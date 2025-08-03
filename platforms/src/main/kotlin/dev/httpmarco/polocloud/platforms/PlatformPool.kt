@@ -4,7 +4,6 @@ import dev.httpmarco.polocloud.platforms.bridge.Bridge
 import dev.httpmarco.polocloud.platforms.bridge.scanForBridges
 import dev.httpmarco.polocloud.platforms.metadata.MetadataReader
 import dev.httpmarco.polocloud.platforms.metadata.MetadataTranslator
-import kotlin.io.path.Path
 
 object PlatformPool {
 

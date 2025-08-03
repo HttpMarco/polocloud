@@ -2,10 +2,9 @@ package dev.httpmarco.polocloud.platforms.tasks.actions
 
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskStep
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import org.tomlj.Toml
 import org.tomlj.TomlTable
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import org.yaml.snakeyaml.Yaml
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -16,8 +15,6 @@ import java.util.*
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 
-@Serializable
-@SerialName("PlatformFilePropertyUpdateAction")
 class PlatformFilePropertyUpdateAction(
     private val key: String,
     private val value: String
@@ -49,6 +46,24 @@ class PlatformFilePropertyUpdateAction(
     }
 
     private fun handleYaml(file: Path, value: Any?) {
+        if (isNukkitConfig(file)) {
+            handleSnakeYaml(file, value)
+            return
+        }
+
+        handleConfigurateYaml(file, value)
+    }
+
+    private fun handleConfigurateYaml(file: Path, value: Any?) {
+        val loader = YamlConfigurationLoader.builder().path(file).build()
+        val root = if (file.exists()) loader.load() else loader.createNode()
+        val path = key.split(".").map { it.toIntOrNull() ?: it }.toTypedArray()
+
+        root.node(*path).set(value)
+        loader.save(root)
+    }
+
+    private fun handleSnakeYaml(file: Path, value: Any?) {
         val yaml = Yaml()
         val data: MutableMap<String, Any?> = if (file.exists()) {
             FileReader(file.toFile()).use { yaml.load(it) as? MutableMap<String, Any?> } ?: mutableMapOf()
@@ -107,5 +122,9 @@ class PlatformFilePropertyUpdateAction(
             this[key] = child.withNestedValue(keys.drop(1), value)
         }
         return this
+    }
+
+    private fun isNukkitConfig(file: Path): Boolean {
+        return file.fileName.toString().equals("nukkit.yml", ignoreCase = true)
     }
 }

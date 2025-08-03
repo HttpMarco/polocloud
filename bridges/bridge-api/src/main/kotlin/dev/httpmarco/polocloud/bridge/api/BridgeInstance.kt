@@ -23,13 +23,13 @@ abstract class BridgeInstance<T> {
 
     fun initialize() {
         polocloudShared.serviceProvider().findByType(GroupType.SERVER).forEach {
-            registerService(generateInfo(it.name(), it.hostname(), it.port()), isFallback(it))
+            registerService(generateInfo(it.name(), it.hostname, it.port), isFallback(it))
         }
 
         polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class) {
            val service = it.service
-            if (service.type() == GroupType.SERVER) {
-                registerService(generateInfo(service.name(), service.hostname(), service.port()), isFallback(service))
+            if (service.type == GroupType.SERVER) {
+                registerService(generateInfo(service.name(), service.hostname, service.port), isFallback(service))
             }
         }
 
@@ -41,6 +41,6 @@ abstract class BridgeInstance<T> {
     }
 
     private fun isFallback(service: Service): Boolean {
-        return service.properties()["fallback"]?.equals("true", ignoreCase = true) == true
+        return service.properties["fallback"]?.equals("true", ignoreCase = true) == true
     }
 }

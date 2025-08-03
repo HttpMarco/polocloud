@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.Platform
@@ -44,7 +44,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
 
         val environment = PlatformParameters(
-            platform.version(service.group.data.platform.version)
+            platform.version(service.group.platform.version)
         )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
@@ -57,14 +57,14 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         // find a better way here
         environment.addParameter(
             "velocity_use",
-            Agent.runtime.groupStorage().items().stream().anyMatch { it -> it.platform().name == "velocity" })
+            Agent.runtime.groupStorage().findAll().stream().anyMatch { it -> it.platform().name == "velocity" })
         environment.addParameter("version", polocloudVersion())
 
         // copy all templates to the service path
         Agent.runtime.templates().bindTemplate(service)
 
         // download and copy the platform files to the service path
-        platform.prepare(service.path, service.group.data.platform.version, environment)
+        platform.prepare(service.path, service.group.platform.version, environment)
 
 
         val serverIconPath = service.path.resolve("server-icon.png")
@@ -104,7 +104,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         // the service went down, so we don't need to send any events anymore
         eventService.dropServiceSubscriptions(service)
         // then we call the shutdown event -> for all other services
-        eventService.call(ServiceShutdownEvent(dev.httpmarco.polocloud.shared.service.Service(service.asSnapshot())))
+        eventService.call(ServiceShutdownEvent(service))
 
         if (service.process != null) {
             try {
@@ -136,11 +136,11 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.path.deleteRecursively()
 
         service.state = ServiceState.STOPPED
-        Agent.runtime.serviceStorage().dropService(service)
+        Agent.runtime.serviceStorage().dropAbstractService(service)
         i18n.info("agent.local-runtime.factory.shutdown.successful", service.name())
     }
 
-    private fun getLanguageSpecificCommands(platform: Platform, service: Service): ArrayList<String> {
+    private fun getLanguageSpecificCommands(platform: Platform, abstractService: AbstractService): ArrayList<String> {
         val commands = ArrayList<String>()
 
         when (platform.language) {
@@ -152,17 +152,17 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
                     listOf(
                         "-Dterminal.jline=false",
                         "-Dfile.encoding=UTF-8",
-                        "-Xms" + service.group.data.minMemory + "M",
-                        "-Xmx" + service.group.data.maxMemory + "M",
+                        "-Xms" + abstractService.group.minMemory + "M",
+                        "-Xmx" + abstractService.group.maxMemory + "M",
                         "-jar",
-                        service.group.applicationPlatformFile().name
+                        abstractService.group.applicationPlatformFile().name
                     )
                 )
                 commands.addAll(platform.arguments)
             }
 
             PlatformLanguage.GO, PlatformLanguage.RUST -> {
-                commands.add("${service.group.applicationPlatformFile().absolute()}")
+                commands.add("${abstractService.group.applicationPlatformFile().absolute()}")
             }
         }
         return commands

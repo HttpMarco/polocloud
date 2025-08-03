@@ -2,9 +2,10 @@ package dev.httpmarco.polocloud.agent.events
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider
+import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass
 import io.grpc.stub.ServerCallStreamObserver
 import io.grpc.stub.StreamObserver
@@ -18,7 +19,7 @@ class EventService : SharedEventProvider() {
 
     fun attach(event: String, serviceName: String, observer: StreamObserver<EventProviderOuterClass.EventContext>) {
 
-        val service = Agent.runtime.serviceStorage().findService(serviceName)
+        val service = Agent.runtime.serviceStorage().find(serviceName)
 
         if (service == null) {
             i18n.warn("agent.events.service.not-found", serviceName, event)

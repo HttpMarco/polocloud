@@ -12,7 +12,8 @@ service ServiceController {
 }
 
 message ServiceFindRequest {
-  string name = 1;
+  optional string name = 1;
+  optional GroupType type = 2;
 }
 
 message ServiceFindResponse {
@@ -27,10 +28,12 @@ message ServiceSnapshot {
   uint32 maximum_memory = 5;
   string hostname = 6;
   uint32 port = 7;
-  uint64 max_players = 8;
-  uint64 player_count = 9;
-  ServiceState state = 10;
-  map<string, string> properties = 11;
+  uint32 max_player_count = 8;
+  uint32 player_count = 9;
+  double memory_usage = 10;
+  double cpu_usage = 11;
+  ServiceState state = 12;
+  map<string, string> properties = 13;
 }
 
 enum ServiceState {

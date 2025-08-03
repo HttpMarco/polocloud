@@ -2,14 +2,14 @@ package dev.httpmarco.polocloud.shared.groups
 
 import java.util.concurrent.CompletableFuture
 
-interface SharedGroupProvider {
+interface SharedGroupProvider<G: Group> {
 
-    fun find() : List<Group>
+    fun findAll() : List<G>
 
-    fun findAsync() : CompletableFuture<List<Group>>
+    fun findAllAsync() : CompletableFuture<List<G>>
 
-    fun find(name: String) : Group?
+    fun find(name: String) : G?
 
-    fun findAsync(name: String) : CompletableFuture<Group?>
+    fun findAsync(name: String) : CompletableFuture<G?>
 
 }

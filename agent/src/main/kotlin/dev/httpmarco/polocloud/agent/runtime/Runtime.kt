@@ -4,9 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
 import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
-import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntimeTemplates
-import dev.httpmarco.polocloud.agent.runtime.local.LocalService
-import dev.httpmarco.polocloud.agent.services.Service
+import dev.httpmarco.polocloud.agent.services.AbstractService
 
 interface Runtime {
 
@@ -64,7 +62,7 @@ interface Runtime {
      * Returns the current storage for the runtime.
      * Only for all service related operations.
      */
-    fun serviceStorage(): RuntimeServiceStorage
+    fun serviceStorage(): RuntimeServiceStorage<*>
 
     /**
      * Returns the current group storage for the runtime.
@@ -76,19 +74,19 @@ interface Runtime {
      * Returns the current factory for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun factory(): RuntimeFactory<Service>
+    fun factory(): RuntimeFactory<AbstractService>
 
     /**
      * Returns the expender for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun expender(): RuntimeExpender<Service>
+    fun expender(): RuntimeExpender<AbstractService>
 
     /**
      * Returns the templates for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun templates(): RuntimeTemplates<Service>
+    fun templates(): RuntimeTemplates<AbstractService>
 
     /**
      * Returns the holder for the runtime configuration.
