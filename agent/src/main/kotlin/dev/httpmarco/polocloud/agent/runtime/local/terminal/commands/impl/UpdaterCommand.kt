@@ -19,9 +19,19 @@ class UpdaterCommand : Command("updater", "Updates the agent to the latest versi
                 logger.info(" &8- &b${current}&8 (&7experimental version&8)")
             }
 
-            versions.forEach {
-                logger.info(" &8- &7${it}&8")
+            versions.forEach { version ->
+                logger.info(" &8- &7${version}&8" + (Updater.latestVersion() == version).let { if (it) " &8(&7latest&8)" else "" })
             }
         }, KeywordArgument("versions"))
+
+        syntax(execution = {
+            if(Updater.newVersionAvailable()) {
+                logger.info("New version is available: &b${Updater.latestVersion()}&8 (&7Use&8: &3updater update&8)")
+            } else {
+                logger.info("You are already using the latest version: &b${Updater.latestVersion()}")
+                logger.info("No update is required.")
+            }
+        }, KeywordArgument("check"))
+
     }
 }
