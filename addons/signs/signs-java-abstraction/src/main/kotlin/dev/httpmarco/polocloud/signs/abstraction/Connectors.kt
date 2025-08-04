@@ -3,10 +3,11 @@ package dev.httpmarco.polocloud.signs.abstraction
 import dev.httpmarco.polocloud.addons.api.ConfigFactory
 import dev.httpmarco.polocloud.signs.abstraction.data.banner.BannerData
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignData
+import java.io.File
 
 abstract class Connectors<M> {
 
-    private val configurationFactory = ConfigFactory(ConnectorConfiguration::class.java, fileName = "connectors.json")
+    private val configurationFactory = ConfigFactory(ConnectorConfiguration::class.java, File("plugins/polocloud"), fileName = "connectors.json")
 
     private val supports = listOf<ConnectorSupport<M>>()
 

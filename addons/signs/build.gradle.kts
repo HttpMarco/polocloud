@@ -14,6 +14,8 @@ tasks.withType<ShadowJar> {
 }
 
 subprojects {
+    apply(plugin = "com.gradleup.shadow")
+
     repositories {
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")

@@ -31,8 +31,6 @@ class ConfigFactory<T : Any>(
     }
 
     fun save(config: T = this.config) {
-        println(configFile)
         configFile.writeText(gson.toJson(config), Charsets.UTF_8)
-        println(configFile.toString() + " saved successfully.")
     }
 }
