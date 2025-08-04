@@ -11,6 +11,10 @@ class ProxyConfigAccessor(val config: ProxyConfiguration): ProxyConfig {
         return this.config.messages[key] ?: "Message $key not found"
     }
 
+    override fun aliases(): List<String> {
+        return this.config.aliases
+    }
+
     override fun tablist(): Tablist {
         return this.config.tablist
     }
