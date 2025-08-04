@@ -1,17 +1,14 @@
 package dev.httpmarco.polocloud.addons.signs.bukkit
 
-import dev.httpmarco.polocloud.signs.abstraction.Connector
 import dev.httpmarco.polocloud.signs.abstraction.Connectors
-import dev.httpmarco.polocloud.signs.abstraction.data.BasedConnectorData
 import dev.httpmarco.polocloud.signs.abstraction.data.banner.BannerData
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignData
+import org.bukkit.Material
 
-class BukkitConnectors : Connectors() {
+class BukkitConnectors : Connectors<Material>() {
 
-    override fun mapData(data: BasedConnectorData): Connector {
-        when(data) {
-            is SignData -> BukkitSignConnector()
-            is BannerData -> BukkitBannerConnector()
-        }
-    }
+    override fun generateSignConnector(data: SignData) = BukkitSignConnector(data)
+
+    override fun generateBannerConnector(data: BannerData) = BukkitBannerConnector(data)
+
 }

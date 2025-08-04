@@ -1,4 +1,7 @@
 package dev.httpmarco.polocloud.signs.abstraction
 
-abstract class Connector {
+import dev.httpmarco.polocloud.signs.abstraction.data.BasedConnectorData
+
+abstract class Connector(val basedConnectorData: BasedConnectorData) {
+
 }
