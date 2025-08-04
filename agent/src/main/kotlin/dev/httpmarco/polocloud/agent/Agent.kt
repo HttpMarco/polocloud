@@ -7,15 +7,16 @@ import dev.httpmarco.polocloud.agent.events.EventService
 import dev.httpmarco.polocloud.agent.grpc.GrpcServerEndpoint
 import dev.httpmarco.polocloud.agent.i18n.I18nPolocloudAgent
 import dev.httpmarco.polocloud.agent.logging.Logger
+import dev.httpmarco.polocloud.agent.player.PlayerStorageImpl
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.security.SecurityProvider
-import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformPool
 import dev.httpmarco.polocloud.shared.PolocloudShared
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
+import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
 import dev.httpmarco.polocloud.updater.Updater
 
@@ -34,6 +35,8 @@ object Agent : PolocloudShared() {
 
     private val grpcServerEndpoint = GrpcServerEndpoint()
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())
+
+    private val playerStorage = PlayerStorageImpl()
 
     init {
         // display the default log information
@@ -112,11 +115,9 @@ object Agent : PolocloudShared() {
         TODO("Not yet implemented")
     }
 
-    override fun serviceProvider(): SharedServiceProvider<*> {
-        return runtime.serviceStorage()
-    }
+    override fun serviceProvider(): SharedServiceProvider<*> = this.runtime.serviceStorage()
 
-    override fun groupProvider(): SharedGroupProvider<*> {
-        return runtime.groupStorage()
-    }
+    override fun groupProvider(): SharedGroupProvider<*> = this.runtime.groupStorage()
+
+    override fun playerProvider(): SharedPlayerProvider<*> = this.playerStorage
 }

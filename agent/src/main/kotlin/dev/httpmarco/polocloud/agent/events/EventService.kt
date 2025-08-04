@@ -2,7 +2,6 @@ package dev.httpmarco.polocloud.agent.events
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider
 import dev.httpmarco.polocloud.shared.service.Service
@@ -11,7 +10,6 @@ import io.grpc.stub.ServerCallStreamObserver
 import io.grpc.stub.StreamObserver
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.reflect.KClass
 
 class EventService : SharedEventProvider() {
 
@@ -64,7 +62,7 @@ class EventService : SharedEventProvider() {
     }
 
     override fun <T : Event> subscribe(
-        eventType: KClass<T>,
+        eventType: Class<T>,
         result: (T) -> Any
     ) {
         TODO("Not yet implemented")

@@ -2,11 +2,14 @@ package dev.httpmarco.polocloud.sdk.java;
 
 import dev.httpmarco.polocloud.sdk.java.events.EventProvider;
 import dev.httpmarco.polocloud.sdk.java.groups.GroupProvider;
+import dev.httpmarco.polocloud.sdk.java.player.PlayerProvider;
 import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider;
 import dev.httpmarco.polocloud.shared.PolocloudShared;
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider;
 import dev.httpmarco.polocloud.shared.groups.Group;
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider;
+import dev.httpmarco.polocloud.shared.player.PolocloudPlayer;
+import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider;
 import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
 import io.grpc.ManagedChannel;
@@ -20,6 +23,7 @@ public final class Polocloud extends PolocloudShared {
     private final SharedEventProvider eventProvider;
     private final SharedServiceProvider<Service> serviceProvider;
     private final SharedGroupProvider<Group> groupProvider;
+    private final SharedPlayerProvider<PolocloudPlayer> playerProvider;
 
     public static Polocloud instance() {
         return instance;
@@ -40,6 +44,7 @@ public final class Polocloud extends PolocloudShared {
         this.eventProvider = new EventProvider(channel);
         this.serviceProvider = new ServiceProvider(channel);
         this.groupProvider = new GroupProvider(channel);
+        this.playerProvider = new PlayerProvider(channel);
     }
 
     public String selfServiceName() {
@@ -60,5 +65,10 @@ public final class Polocloud extends PolocloudShared {
     @NotNull
     public SharedGroupProvider<Group> groupProvider() {
         return this.groupProvider;
+    }
+
+    @Override
+    public @NotNull SharedPlayerProvider<?> playerProvider() {
+        return this.playerProvider;
     }
 }

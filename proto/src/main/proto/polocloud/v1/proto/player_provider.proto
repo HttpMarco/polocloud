@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.v1.proto;
+
+option java_package = "dev.httpmarco.polocloud.v1.player";
+option java_multiple_files = true;
+
+service PlayerController {
+    rpc findAll (PlayerFindRequest) returns (PlayerFindResponse);
+    rpc findByName (PlayerFindByNameRequest) returns (PlayerFindResponse);
+    rpc findByService (PlayerFindByServiceRequest) returns (PlayerFindResponse);
+}
+
+message PlayerFindRequest {}
+
+message PlayerFindByNameRequest {
+    string name = 1;
+}
+
+message PlayerFindByServiceRequest {
+    string current_service_name = 1;
+}
+
+message PlayerSnapshot {
+    string unique_id = 1;
+    string name = 2;
+    string current_service_name = 3;
+}
+
+message PlayerFindResponse {
+    repeated PlayerSnapshot players = 1;
+}
