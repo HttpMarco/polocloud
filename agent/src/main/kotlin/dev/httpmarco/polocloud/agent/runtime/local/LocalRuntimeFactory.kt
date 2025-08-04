@@ -137,7 +137,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         service.state = ServiceState.STOPPED
         Agent.runtime.serviceStorage().dropAbstractService(service)
-        i18n.info("agent.local-runtime.factory.shutdown.successful", service.name())
+        i18n.info("agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful", service.name())
     }
 
     private fun getLanguageSpecificCommands(platform: Platform, abstractService: AbstractService): ArrayList<String> {
