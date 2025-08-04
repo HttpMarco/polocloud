@@ -1,12 +1,13 @@
 package dev.httpmarco.polocloud.addons.signs.bukkit
 
 import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class BukkitSignCommand : Command("signs") {
+class BukkitSignCommand : CommandExecutor {
 
-    override fun execute(sender: CommandSender, commandLabel: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String?>): Boolean {
         val player = sender as Player
 
         if (args.size == 2) {
@@ -17,6 +18,14 @@ class BukkitSignCommand : Command("signs") {
                     player.sendMessage("§cYou must look at a block!")
                     return false
                 }
+
+                if(!BukkitConnectors.isSupported(targetBlock.type)) {
+                    player.sendMessage("§cThis block type is not supported!")
+                    return false
+                }
+
+                // TODO ATTCH SIGN TO BLOCK
+
             }
         }
 

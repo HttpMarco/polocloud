@@ -5,6 +5,6 @@ import org.bukkit.plugin.java.JavaPlugin
 class BukkitBootstrap : JavaPlugin() {
 
     override fun onEnable() {
-        BukkitConnectors()
+        getCommand("signs")!!.setExecutor(BukkitSignCommand())
     }
 }

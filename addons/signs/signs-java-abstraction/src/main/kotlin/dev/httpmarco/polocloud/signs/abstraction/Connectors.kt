@@ -8,6 +8,8 @@ abstract class Connectors<M> {
 
     private val configurationFactory = ConfigFactory(ConnectorConfiguration::class.java, fileName = "connectors.json")
 
+    private val supports = listOf<ConnectorSupport<M>>()
+
     private val connectors = configurationFactory.config.connectors.map {
         when (it) {
             is SignData -> generateSignConnector(it)
@@ -16,8 +18,11 @@ abstract class Connectors<M> {
         }
     }
 
-    abstract fun generateSignConnector(data: SignData): Connector
+    abstract fun generateSignConnector(data: SignData): Connector<SignData.SignAnimationTick>
 
-    abstract fun generateBannerConnector(data: BannerData): Connector
+    abstract fun generateBannerConnector(data: BannerData): Connector<BannerData.BannerAnimationTick>
 
+    fun isSupported(material: M): Boolean {
+        return supports.any { it.isSupported(material) }
+    }
 }
