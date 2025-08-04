@@ -18,6 +18,6 @@ subprojects {
     }
 
     dependencies {
-        compileOnly(parent!!.projects.sdk.sdkJava)
+        compileOnly(parent!!.parent!!.projects.sdk.sdkJava)
     }
 }
