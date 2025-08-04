@@ -23,7 +23,7 @@ class PortDetector {
             }
 
             while (isPortUsed(port)) {
-                port += 2
+                port += 1
             }
             return port
         }
