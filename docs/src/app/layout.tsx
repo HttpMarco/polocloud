@@ -24,10 +24,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                 'transparent',
             ]}
             changeLayout={true}
-            id="pre-3-notify"
+            id="pre-4-notify"
             >
-            PoloCloud 🧪 v3.0.0-pre-3 has released.⠀
-            <a href="https://github.com/HttpMarco/polocloud/releases/tag/v3.0.0-pre-3" className="underline">
+            PoloCloud 🧪 v3.0.0-pre-4 has released.⠀
+            <a href="https://github.com/HttpMarco/polocloud/releases/tag/3.0.0-pre.4-SNAPSHOT" className="underline">
                 Check it out now.
             </a>
         </Banner>
