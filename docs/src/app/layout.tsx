@@ -1,15 +1,15 @@
 import '@/app/global.css';
-import { RootProvider } from 'fumadocs-ui/provider';
-import { Inter } from 'next/font/google';
-import type { ReactNode } from 'react';
-import { Banner } from 'fumadocs-ui/components/banner';
+import {RootProvider} from 'fumadocs-ui/provider';
+import {Inter} from 'next/font/google';
+import type {ReactNode} from 'react';
+import {Banner} from 'fumadocs-ui/components/banner';
 import image from '../../../../../public/logo.png';
 
 const inter = Inter({
-  subsets: ['latin'],
+    subsets: ['latin'],
 });
 
-export function Layout({children}: { children: ReactNode }) {
+export default function Layout({children}: { children: ReactNode }) {
     return (
         <html lang="en" className={inter.className} suppressHydrationWarning>
         <head>
