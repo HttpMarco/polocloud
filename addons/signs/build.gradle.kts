@@ -12,3 +12,15 @@ dependencies {
 tasks.withType<ShadowJar> {
     relocate("org.bstats", "dev.httpmarco.polocloud.libs.bstats")
 }
+
+subprojects {
+    repositories {
+        maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    }
+
+    dependencies{
+        compileOnly(parent!!.projects.sdk.sdkJava)
+        compileOnly(parent!!.projects.addons.api)
+    }
+}

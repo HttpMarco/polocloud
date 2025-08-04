@@ -19,6 +19,7 @@ dependencies {
     compileOnly(libs.gson)
     implementation(projects.addons.api)
 
+    compileOnly(projects.sdk.sdkJava)
     implementation(libs.bstats.bungeecord)
     implementation(libs.bstats.velocity)
 }
