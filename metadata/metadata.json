@@ -6,7 +6,7 @@
     "bungeecord",
     "nukkit",
     "limbo",
-    "pumkin",
+    "pumpkin",
     "gate",
     "purpur",
     "leaf",
@@ -23,9 +23,9 @@
     "buildPumpkin",
     "limboSetup",
     "limboVelocitySupport",
-    "nukkitSetup.json",
+    "nukkitSetup",
     "paperLoadDependencies",
-    "pumkinSetup",
-    "setupBungeeCord"
+    "pumpkinSetup",
+    "setupBungeecord"
   ]
 }
