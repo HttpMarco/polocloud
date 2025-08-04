@@ -14,7 +14,13 @@ tasks.withType<ShadowJar> {
 }
 
 subprojects {
+    repositories {
+        maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    }
+
     dependencies{
         compileOnly(parent!!.projects.sdk.sdkJava)
+        compileOnly(parent!!.projects.addons.api)
     }
 }

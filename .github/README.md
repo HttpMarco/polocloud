@@ -26,7 +26,7 @@ To get started, add the PoloCloud snapshot repository to your `pom.xml` or `buil
     <dependency>
         <groupId>dev.httpmarco.polocloud</groupId>
         <artifactId>sdk-kotlin</artifactId>
-        <version>3.0.0-pre.4-SNAPSHOT</version>
+        <version>3.0.0-pre.5-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
@@ -41,11 +41,11 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.httpmarco.polocloud:sdk-kotlin:3.0.0-pre.4-SNAPSHOT")
+    implementation("dev.httpmarco.polocloud:java-kotlin:3.0.0-pre.5-SNAPSHOT")
 }
 ```
 
-> 🧪 This version is a snapshot release (`3.0.0-pre.4-SNAPSHOT`) — ideal for testing the latest features. Expect frequent updates!
+> 🧪 This version is a snapshot release (`3.0.0-pre.5-SNAPSHOT`) — ideal for testing the latest features. Expect frequent updates!
 
 ### 🧩 PoloCloud Rust SDK
 
