@@ -12,3 +12,9 @@ dependencies {
 tasks.withType<ShadowJar> {
     relocate("org.bstats", "dev.httpmarco.polocloud.libs.bstats")
 }
+
+subprojects {
+    dependencies{
+        compileOnly(parent!!.projects.sdk.sdkJava)
+    }
+}
