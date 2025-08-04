@@ -17,7 +17,7 @@ class PortDetector {
             if (startPortProperty != null) {
                 try {
                     port = startPortProperty.asInt
-                } catch (e: NumberFormatException) {
+                } catch (_: NumberFormatException) {
                     i18n.error("agent.utils.port-detector.port.cast.error", startPortProperty, abstractGroup.name)
                 }
             }
