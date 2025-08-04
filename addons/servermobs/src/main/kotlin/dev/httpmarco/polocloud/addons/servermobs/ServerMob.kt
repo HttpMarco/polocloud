@@ -1,6 +1,8 @@
 package dev.httpmarco.polocloud.addons.servermobs
 
-class ServerMob {
+import location.Position
+
+class ServerMob(val position: Position, val type: ServerMobType) {
 
 
 

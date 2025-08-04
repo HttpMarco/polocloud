@@ -17,9 +17,6 @@ dependencies {
     compileOnly(libs.bungeecord)
 
     compileOnly(libs.gson)
-    compileOnly(projects.proto)
-    compileOnly(projects.shared)
-
     implementation(projects.addons.api)
 
     implementation(libs.bstats.bungeecord)

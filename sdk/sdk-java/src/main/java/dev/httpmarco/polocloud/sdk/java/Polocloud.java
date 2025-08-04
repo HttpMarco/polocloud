@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.sdk.java.groups.GroupProvider;
 import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider;
 import dev.httpmarco.polocloud.shared.PolocloudShared;
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider;
+import dev.httpmarco.polocloud.shared.groups.Group;
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider;
 import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
@@ -18,7 +19,7 @@ public final class Polocloud extends PolocloudShared {
 
     private final SharedEventProvider eventProvider;
     private final SharedServiceProvider<Service> serviceProvider;
-    private final SharedGroupProvider groupProvider;
+    private final SharedGroupProvider<Group> groupProvider;
 
     public static Polocloud instance() {
         return instance;
@@ -57,7 +58,7 @@ public final class Polocloud extends PolocloudShared {
 
     @Override
     @NotNull
-    public SharedGroupProvider groupProvider() {
+    public SharedGroupProvider<Group> groupProvider() {
         return this.groupProvider;
     }
 }
