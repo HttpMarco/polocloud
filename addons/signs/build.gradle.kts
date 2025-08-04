@@ -22,5 +22,10 @@ subprojects {
     dependencies{
         compileOnly(parent!!.projects.sdk.sdkJava)
         compileOnly(parent!!.projects.addons.api)
+
+        runtimeOnly(parent!!.projects.sdk.sdkJava)
+        runtimeOnly(parent!!.projects.addons.api)
+        testImplementation(parent!!.projects.addons.api)
+        testImplementation(parent!!.projects.sdk.sdkJava)
     }
 }

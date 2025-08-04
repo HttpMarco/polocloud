@@ -5,17 +5,19 @@ import java.io.File
 
 class ConfigFactory<T : Any>(
     private val clazz: Class<T>,
-    private val folder: File,
+    private val folder: File? = null,
     fileName: String
 ) {
     private val gson = GsonBuilder().setPrettyPrinting().create()
-    private val configFile = File(folder, fileName)
+    private val configFile = if (folder != null) File(folder, fileName) else File(fileName)
 
     var config: T = loadOrCreate()
         private set
 
     private fun loadOrCreate(): T {
-        if (!folder.exists()) folder.mkdirs()
+        if (folder != null && !folder.exists()){
+            folder.mkdirs()
+        }
 
         if (!configFile.exists()) {
             val defaultInstance = clazz.getDeclaredConstructor().newInstance()
@@ -29,6 +31,8 @@ class ConfigFactory<T : Any>(
     }
 
     fun save(config: T = this.config) {
+        println(configFile)
         configFile.writeText(gson.toJson(config), Charsets.UTF_8)
+        println(configFile.toString() + " saved successfully.")
     }
 }
