@@ -20,7 +20,7 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
                         val required = requiredServersThatStart(group)
 
                         repeat(required) {
-                            if (group.services().size >= group.maxOnlineService) {
+                            if (group.services().size >= group.maxOnlineService && group.maxOnlineService != -1) {
                                 return@repeat
                             }
                             val index = findIndex(group)
