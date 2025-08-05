@@ -5,6 +5,7 @@ class SharedBootConfiguration {
     private var minMemory: Int? = null
     private var maxMemory: Int? = null
     private val templates = arrayListOf<String>()
+    private val excludedTemplates = arrayListOf<String>()
 
     fun withMinMemory(minMemory: Int): SharedBootConfiguration {
         this.minMemory = minMemory
@@ -23,6 +24,16 @@ class SharedBootConfiguration {
 
     fun withTemplates(vararg template: String): SharedBootConfiguration {
         this.templates += template
+        return this
+    }
+
+    fun withExcludedTemplate(template: String): SharedBootConfiguration {
+        this.excludedTemplates += template
+        return this
+    }
+
+    fun withExcludedTemplates(vararg template: String): SharedBootConfiguration {
+        this.excludedTemplates += template
         return this
     }
 }
