@@ -9,6 +9,7 @@ service PlayerController {
     rpc findAll (PlayerFindRequest) returns (PlayerFindResponse);
     rpc findByName (PlayerFindByNameRequest) returns (PlayerFindResponse);
     rpc findByService (PlayerFindByServiceRequest) returns (PlayerFindResponse);
+    rpc playerCount(PlayerCountRequest) returns (PlayerCountResponse);
 }
 
 message PlayerFindRequest {}
@@ -29,4 +30,10 @@ message PlayerSnapshot {
 
 message PlayerFindResponse {
     repeated PlayerSnapshot players = 1;
+}
+
+message PlayerCountRequest {}
+
+message PlayerCountResponse {
+    int32 count = 1;
 }
