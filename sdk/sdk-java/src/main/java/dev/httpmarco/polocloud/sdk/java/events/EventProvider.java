@@ -20,7 +20,29 @@ public final class EventProvider extends SharedEventProvider {
 
     @Override
     public void call(@NotNull Event event) {
+        EventProviderOuterClass.EventContext request = EventProviderOuterClass.EventContext.newBuilder()
+                .setEventName(event.getClass().getSimpleName())
+                .setEventData(getGsonSerializer().toJson(event))
+                .build();
 
+        eventStub.call(request, new StreamObserver<>() {
+            @Override
+            public void onNext(EventProviderOuterClass.CallEventResponse response) {
+                if (!response.getSuccess()) {
+                    System.err.println("Failed to call event: " + response.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                System.err.println("Error while calling event: " + t.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                // No action needed on completion
+            }
+        });
     }
 
     @Override
@@ -31,10 +53,10 @@ public final class EventProvider extends SharedEventProvider {
                         .setEventName(eventType.getSimpleName())
                         .build();
 
-        eventStub.subscribe(request, new StreamObserver<>() {
+        eventStub.withWaitForReady().subscribe(request, new StreamObserver<>() {
             @Override
             public void onNext(EventProviderOuterClass.EventContext context) {
-                result.invoke(getGsonSerilaizer().fromJson(context.getEventData(), eventType));
+                result.invoke(getGsonSerializer().fromJson(context.getEventData(), eventType));
             }
 
             @Override

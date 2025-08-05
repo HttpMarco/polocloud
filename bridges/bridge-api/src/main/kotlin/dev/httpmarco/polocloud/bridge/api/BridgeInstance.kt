@@ -25,20 +25,21 @@ abstract class BridgeInstance<T> {
     fun initialize() {
         polocloudShared.serviceProvider().findByType(GroupType.SERVER).forEach {
             if(it.state !== ServiceState.ONLINE) {
-                return
+                return@forEach
             }
             registerService(generateInfo(it.name(), it.hostname, it.port), isFallback(it))
         }
 
-        polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class) {
-           val service = it.service
+
+        polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class.java) { event ->
+           val service = event.service
             if (service.type == GroupType.SERVER) {
                 registerService(generateInfo(service.name(), service.hostname, service.port), isFallback(service))
             }
         }
 
-        polocloudShared.eventProvider().subscribe(ServiceShutdownEvent::class) {
-            findInfo(it.service.name())?.let { info ->
+        polocloudShared.eventProvider().subscribe(ServiceShutdownEvent::class.java) { event ->
+            findInfo(event.service.name())?.let { info ->
                 unregisterService(info)
             }!!
         }
