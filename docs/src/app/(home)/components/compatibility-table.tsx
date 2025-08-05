@@ -1,5 +1,6 @@
 import { Check, X, AlertTriangle, Minus } from 'lucide-react';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface CompatibilityData {
     platform: string;
@@ -22,7 +23,7 @@ const compatibilityData: CompatibilityData[] = [
         'Signs': 'not-supported',
     },
     {
-        platform: 'Farbric',
+        platform: 'Fabric',
         '1.7-1.12': 'not-supported',
         '1.12-1.16': 'partial',
         '1.18-1.19': 'supported',
@@ -76,7 +77,7 @@ const compatibilityData: CompatibilityData[] = [
         'Signs': 'supported',
     },
     {
-        platform: 'Pumkin',
+        platform: 'Pumpkin',
         '1.7-1.12': 'not-supported',
         '1.12-1.16': 'not-supported',
         '1.18-1.19': 'not-supported',
@@ -102,13 +103,13 @@ const StatusIcon = ({ status }: { status: 'supported' | 'not-supported' | 'parti
 const PlatformIcon = ({ platform }: { platform: string }) => {
     const getIconPath = (platformName: string) => {
         const iconMap: { [key: string]: string } = {
-            'Farbric': '/fabric.png',
+            'Fabric': '/fabric.png',
             'Spigot': '/spigot.svg',
             'Paper': '/paper.svg',
             'Purpur': '/purpur.svg',
             'Limbo': '/limbo.jpg',
             'Leaf': '/leaf.svg',
-            'Pumkin': '/pumkin.svg',
+            'Pumpkin': '/pumkin.svg',
         };
         return iconMap[platformName] || null;
     };
@@ -127,30 +128,48 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
                 width={20}
                 height={20}
                 className="w-full h-full object-contain"
+                onError={(e) => {
+                    console.warn(`Failed to load icon for ${platform}:`, iconPath);
+                    e.currentTarget.style.display = 'none';
+                }}
             />
         </div>
     );
 };
 
 export function CompatibilityTable() {
-    const platforms = ['Vanilla', 'Farbric', 'Spigot', 'Paper', 'Purpur', 'Limbo', 'Leaf', 'Pumkin'];
+    const platforms = ['Vanilla', 'Fabric', 'Spigot', 'Paper', 'Purpur', 'Limbo', 'Leaf', 'Pumpkin'];
     const versionColumns = ['1.7-1.12', '1.12-1.16', '1.18-1.19', '1.20+'];
     const addonColumns = ['Severmobs', 'Signs'];
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsVisible(true);
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
-        <div className="w-full max-w-7xl mx-auto p-6">
+        <div className={`w-full max-w-7xl mx-auto p-6 transition-all duration-1000 ease-out ${
+            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-16'
+        }`}>
             <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl shadow-lg overflow-hidden dark:bg-black/80 dark:border-white/10 shadow-[0_0_25px_rgba(0,120,255,0.3)] dark:shadow-[0_0_25px_rgba(0,120,255,0.2)] ring-1 ring-[rgba(0,120,255,0.3)] dark:ring-[rgba(0,120,255,0.2)]">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        {/* Platform Headers */}
                         <thead>
-                        <tr className="border-b border-border/50 dark:border-white/10">
+                        <tr className={`border-b border-border/50 dark:border-white/10 transition-all duration-500 delay-200 ${
+                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                        }`}>
                             <th className="px-6 py-5 text-left font-semibold text-foreground min-w-[140px] dark:text-white/90">
                                 Platform
                             </th>
-                            {platforms.map((platform) => (
-                                <th key={platform} className="px-4 py-5 text-center font-semibold text-foreground border-l border-border/30 dark:border-white/5 dark:text-white/90">
-                                    <div className="flex items-center justify-center gap-2">
+                            {platforms.map((platform, index) => (
+                                <th key={platform} className={`px-4 py-5 text-center font-semibold text-foreground border-l border-border/30 dark:border-white/5 dark:text-white/90 transition-all duration-500 delay-${300 + index * 50}`}>
+                                    <div className={`flex items-center justify-center gap-2 transition-all duration-500 delay-${400 + index * 50} ${
+                                        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                                    }`}>
                                         <PlatformIcon platform={platform} />
                                         <span>{platform}</span>
                                     </div>
@@ -160,8 +179,9 @@ export function CompatibilityTable() {
                         </thead>
 
                         <tbody>
-                        {/* Version Support Section */}
-                        <tr className="border-b border-border/30 dark:border-white/5">
+                        <tr className={`border-b border-border/30 dark:border-white/5 transition-all duration-500 delay-400 ${
+                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                        }`}>
                             <td className="px-6 py-4 text-left font-bold text-foreground bg-muted/30 dark:bg-white/5 dark:text-white/80">
                                 Version support
                             </td>
@@ -172,9 +192,9 @@ export function CompatibilityTable() {
                         </tr>
 
                         {versionColumns.map((version, index) => (
-                            <tr key={version} className={`border-b border-border/30 hover:bg-muted/20 transition-colors dark:border-white/5 dark:hover:bg-white/5 ${
+                            <tr key={version} className={`border-b border-border/30 hover:bg-muted/20 transition-all duration-500 delay-${500 + index * 100} ${
                                 index % 2 === 0 ? 'bg-transparent' : 'bg-muted/10 dark:bg-white/[0.02]'
-                            }`}>
+                            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                                 <td className="px-6 py-4 text-left font-medium text-muted-foreground pl-8 dark:text-white/70">
                                     {version}
                                 </td>
@@ -191,8 +211,9 @@ export function CompatibilityTable() {
                             </tr>
                         ))}
 
-                        {/* Addons Section */}
-                        <tr className="border-b border-border/30 dark:border-white/5">
+                        <tr className={`border-b border-border/30 dark:border-white/5 transition-all duration-500 delay-900 ${
+                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                        }`}>
                             <td className="px-6 py-4 text-left font-bold text-foreground bg-muted/30 dark:bg-white/5 dark:text-white/80">
                                 Addons
                             </td>
@@ -203,9 +224,9 @@ export function CompatibilityTable() {
                         </tr>
 
                         {addonColumns.map((addon, index) => (
-                            <tr key={addon} className={`border-b border-border/30 hover:bg-muted/20 transition-colors dark:border-white/5 dark:hover:bg-white/5 ${
+                            <tr key={addon} className={`border-b border-border/30 hover:bg-muted/20 transition-all duration-500 delay-${1000 + index * 100} ${
                                 index % 2 === 0 ? 'bg-transparent' : 'bg-muted/10 dark:bg-white/[0.02]'
-                            }`}>
+                            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                                 <td className="px-6 py-4 text-left font-medium text-muted-foreground pl-8 dark:text-white/70">
                                     {addon}
                                 </td>
@@ -225,8 +246,9 @@ export function CompatibilityTable() {
                     </table>
                 </div>
 
-                {/* Legend */}
-                <div className="px-6 py-4 bg-muted/20 border-t border-border/50 dark:bg-white/5 dark:border-white/10">
+                <div className={`px-6 py-4 bg-muted/20 border-t border-border/50 dark:bg-white/5 dark:border-white/10 transition-all duration-500 delay-1200 ${
+                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                }`}>
                     <div className="flex flex-wrap gap-8 text-sm text-muted-foreground dark:text-white/60">
                         <div className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-emerald-500" />
