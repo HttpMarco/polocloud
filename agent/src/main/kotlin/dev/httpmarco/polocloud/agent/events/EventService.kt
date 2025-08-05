@@ -43,9 +43,6 @@ class EventService : SharedEventProvider() {
     override fun call(event: Event) {
         val eventName = event.javaClass.simpleName
 
-        println("EventService.call -> resolved event class = ${event.javaClass.name}, simpleName = $eventName")
-        println("Local subscribers keys: ${localSubscribers.keys}")
-
         localSubscribers[eventName]?.forEach { it(event) }
 
         remoteEvents[eventName]?.forEach {
@@ -62,7 +59,6 @@ class EventService : SharedEventProvider() {
 
     override fun <T : Event> subscribe(eventType: Class<T>, result: (T) -> Any) {
         val eventName = eventType.simpleName
-        println("Subscribing to event: $eventName")
         localSubscribers.computeIfAbsent(eventName) { mutableListOf() }
             .add { e -> result(e as T) }
     }

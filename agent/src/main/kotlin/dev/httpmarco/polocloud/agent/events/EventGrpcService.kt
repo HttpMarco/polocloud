@@ -24,14 +24,12 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
         request: EventProviderOuterClass.EventContext,
         responseObserver: StreamObserver<EventProviderOuterClass.CallEventResponse>
     ) {
-        println("Calling event: ${request.eventName} with data: ${request.eventData}")
         runCatching {
             val fqcn = "dev.httpmarco.polocloud.shared.events.definitions.${request.eventName}"
             val eventClass = Class.forName(fqcn)
             val eventObj = Agent.eventService.gsonSerializer
                 .fromJson(request.eventData, eventClass) as Event
 
-            println("About to call Agent.eventService.call(...) with ${eventObj.javaClass.name}")
             Agent.eventService.call(eventObj)
 
             EventProviderOuterClass.CallEventResponse.newBuilder()
