@@ -4,10 +4,7 @@ import dev.httpmarco.polocloud.common.future.FutureConverterKt;
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer;
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider;
 import dev.httpmarco.polocloud.shared.service.Service;
-import dev.httpmarco.polocloud.v1.player.PlayerControllerGrpc;
-import dev.httpmarco.polocloud.v1.player.PlayerFindByNameRequest;
-import dev.httpmarco.polocloud.v1.player.PlayerFindByServiceRequest;
-import dev.httpmarco.polocloud.v1.player.PlayerFindRequest;
+import dev.httpmarco.polocloud.v1.player.*;
 import io.grpc.ManagedChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +35,7 @@ public class PlayerProvider implements SharedPlayerProvider<PolocloudPlayer> {
     @Override
     @Nullable
     public PolocloudPlayer findByName(@NotNull String name) {
-        return this.blockingStub.findByName(PlayerFindByNameRequest.getDefaultInstance()).getPlayersList().stream().map(PolocloudPlayer.Companion::bindSnapshot).findFirst().orElse(null);
+        return this.blockingStub.findByName(PlayerFindByNameRequest.newBuilder().setName(name).build()).getPlayersList().stream().map(PolocloudPlayer.Companion::bindSnapshot).findFirst().orElse(null);
     }
 
     @Override
@@ -63,6 +60,8 @@ public class PlayerProvider implements SharedPlayerProvider<PolocloudPlayer> {
 
     @Override
     public int playerCount() {
-        return findAll().size();
+        return this.blockingStub
+                .playerCount(PlayerCountRequest.getDefaultInstance())
+                .getCount();
     }
 }

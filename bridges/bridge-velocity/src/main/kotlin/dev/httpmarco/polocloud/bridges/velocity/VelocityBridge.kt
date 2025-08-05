@@ -2,16 +2,22 @@ package dev.httpmarco.polocloud.bridges.velocity
 
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
+import com.velocitypowered.api.event.player.ServerConnectedEvent
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerInfo
 import dev.httpmarco.polocloud.bridge.api.BridgeInstance
+import dev.httpmarco.polocloud.shared.events.definitions.PlayerJoinEvent
+import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
+import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
 import org.bstats.velocity.Metrics
 import org.slf4j.Logger
 import java.net.InetSocketAddress
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private val logger: Logger, val metricsFactory: Metrics.Factory) : BridgeInstance<ServerInfo>() {
@@ -29,8 +35,6 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
         logger.debug("Unregistered all servers on startup by Polocloud-Bridge")
     }
 
-
-
     @Subscribe
     fun onInitialize(event: ProxyInitializeEvent) {
         super.initialize()
@@ -41,6 +45,25 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
     @Subscribe
     fun onConnect(event: PlayerChooseInitialServerEvent) {
         event.setInitialServer(registeredFallbacks.minByOrNull { it.playersConnected.size })
+    }
+
+    @Subscribe
+    fun onPlayerJoin(event: ServerConnectedEvent) {
+        val player = event.player
+        val serviceName = event.server.serverInfo.name
+
+        updatePolocloudPlayer(PlayerJoinEvent(PolocloudPlayer(player.username, player.uniqueId, serviceName)))
+    }
+
+    @Subscribe
+    fun onDisconnect(event: DisconnectEvent) {
+        val player = event.player
+
+        val serviceName = player.currentServer
+            .flatMap { Optional.ofNullable(it.serverInfo.name) }
+            .orElse(null)
+
+        updatePolocloudPlayer(PlayerLeaveEvent(PolocloudPlayer(player.username, player.uniqueId, serviceName)))
     }
 
     @Subscribe

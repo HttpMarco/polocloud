@@ -5,7 +5,7 @@ import java.util.UUID
 
 open class PolocloudPlayer(
     val name: String,
-    val uniqueId: UUID?,
+    val uniqueId: UUID,
     val currentServiceName: String,
 ) {
 

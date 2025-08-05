@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.agent.events.EventService
 import dev.httpmarco.polocloud.agent.grpc.GrpcServerEndpoint
 import dev.httpmarco.polocloud.agent.i18n.I18nPolocloudAgent
 import dev.httpmarco.polocloud.agent.logging.Logger
+import dev.httpmarco.polocloud.agent.player.PlayerListener
 import dev.httpmarco.polocloud.agent.player.PlayerStorageImpl
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
@@ -36,7 +37,7 @@ object Agent : PolocloudShared() {
     private val grpcServerEndpoint = GrpcServerEndpoint()
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())
 
-    private val playerStorage = PlayerStorageImpl()
+    val playerStorage = PlayerStorageImpl()
 
     init {
         // display the default log information
@@ -86,6 +87,7 @@ object Agent : PolocloudShared() {
         i18n.info("agent.starting.successful")
 
         this.onlineStateDetector.detect()
+        PlayerListener()
     }
 
     /**
@@ -111,9 +113,7 @@ object Agent : PolocloudShared() {
         logger.info("You are running the latest version of the agent.")
     }
 
-    override fun eventProvider(): SharedEventProvider {
-        TODO("Not yet implemented")
-    }
+    override fun eventProvider(): SharedEventProvider = this.eventService
 
     override fun serviceProvider(): SharedServiceProvider<*> = this.runtime.serviceStorage()
 

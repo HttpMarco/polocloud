@@ -5,7 +5,7 @@ import java.util.UUID
 
 class AbstractPolocloudPlayer(
     name: String,
-    uniqueId: UUID?,
+    uniqueId: UUID,
     currentServiceName: String,
 ) : PolocloudPlayer(
     name,

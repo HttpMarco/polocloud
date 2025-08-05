@@ -26,6 +26,6 @@ class VelocityPlatform @Inject constructor(
             VelocityCloudCommand(this.proxyAddon)
         )
 
-        this.server.eventManager.register(this, VelocityListener(config, server))
+        VelocityTablistUpdater( this, server, config)
     }
 }

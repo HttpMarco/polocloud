@@ -7,6 +7,10 @@ import org.bukkit.Material
 
 object BukkitConnectors : Connectors<Material>() {
 
+    init {
+        bindSupport(BukkitSignSupport())
+    }
+
     override fun generateSignConnector(data: SignData) = BukkitSignConnector(data)
 
     override fun generateBannerConnector(data: BannerData) = BukkitBannerConnector(data)
