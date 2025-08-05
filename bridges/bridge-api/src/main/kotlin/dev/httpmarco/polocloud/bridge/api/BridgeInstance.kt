@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.bridge.api
 
+import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.shared.polocloudShared
@@ -43,6 +44,10 @@ abstract class BridgeInstance<T> {
                 unregisterService(info)
             }!!
         }
+    }
+
+    fun updatePolocloudPlayer(event: Event) {
+        polocloudShared.eventProvider().call(event)
     }
 
     private fun isFallback(service: Service): Boolean {
