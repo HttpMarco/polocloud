@@ -6,8 +6,10 @@ import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
 import dev.httpmarco.polocloud.v1.GroupType;
+import dev.httpmarco.polocloud.v1.services.ServiceBootRequest;
 import dev.httpmarco.polocloud.v1.services.ServiceControllerGrpc;
 import dev.httpmarco.polocloud.v1.services.ServiceFindRequest;
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot;
 import io.grpc.ManagedChannel;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -73,13 +75,14 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     }
 
     @Override
-    public void bootInstanceWithConfiguration(@NotNull String name, @NotNull Function1<? super SharedBootConfiguration, ?> configuration) {
-
+    public ServiceSnapshot bootInstanceWithConfiguration(@NotNull String name, @NotNull Function1<? super SharedBootConfiguration, ?> configuration) {
+        return null;
     }
 
+    @NotNull
     @Override
-    public void bootInstance(@NotNull String name) {
-
+    public ServiceSnapshot bootInstance(@NotNull String name) {
+        return this.blockingStub.boot(ServiceBootRequest.newBuilder().setGroupName(name).build()).getService(0);
     }
 
     @Override

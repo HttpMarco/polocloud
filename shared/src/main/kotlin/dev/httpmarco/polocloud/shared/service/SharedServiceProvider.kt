@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.shared.service
 
 import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.v1.GroupType
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -93,14 +94,14 @@ interface SharedServiceProvider<S : Service> {
      * @param name the name of the service instance to boot
      * @param configuration a lambda that configures the boot process
      */
-    fun bootInstanceWithConfiguration(name: String, configuration: (SharedBootConfiguration) -> Any)
+    fun bootInstanceWithConfiguration(name: String, configuration: (SharedBootConfiguration) -> Any): ServiceSnapshot
 
     /**
      * Boots a service instance with the specified name.
      *
      * @param name the name of the service instance to boot
      */
-    fun bootInstance(name: String)
+    fun bootInstance(name: String): ServiceSnapshot
 
     /**
      * Shuts down the specified service.
