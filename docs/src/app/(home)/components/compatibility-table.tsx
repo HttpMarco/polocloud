@@ -1,14 +1,14 @@
-import { Check, X, AlertTriangle } from 'lucide-react';
+import { Check, X, AlertTriangle, Minus } from 'lucide-react';
 import Image from 'next/image';
 
 interface CompatibilityData {
     platform: string;
-    '1.7-1.12': 'supported' | 'not-supported' | 'partial';
-    '1.12-1.16': 'supported' | 'not-supported' | 'partial';
-    '1.18-1.19': 'supported' | 'not-supported' | 'partial';
-    '1.20+': 'supported' | 'not-supported' | 'partial';
-    'Severmobs': 'supported' | 'not-supported' | 'partial';
-    'Signs': 'supported' | 'not-supported' | 'partial';
+    '1.7-1.12': 'supported' | 'not-supported' | 'partial' | 'not-possible';
+    '1.12-1.16': 'supported' | 'not-supported' | 'partial' | 'not-possible';
+    '1.18-1.19': 'supported' | 'not-supported' | 'partial' | 'not-possible';
+    '1.20+': 'supported' | 'not-supported' | 'partial' | 'not-possible';
+    'Severmobs': 'supported' | 'not-supported' | 'partial' | 'not-possible';
+    'Signs': 'supported' | 'not-supported' | 'partial' | 'not-possible';
 }
 
 const compatibilityData: CompatibilityData[] = [
@@ -86,7 +86,7 @@ const compatibilityData: CompatibilityData[] = [
     },
 ];
 
-const StatusIcon = ({ status }: { status: 'supported' | 'not-supported' | 'partial' }) => {
+const StatusIcon = ({ status }: { status: 'supported' | 'not-supported' | 'partial' | 'not-possible' }) => {
     switch (status) {
         case 'supported':
             return <Check className="w-4 h-4 text-emerald-500" />;
@@ -94,6 +94,8 @@ const StatusIcon = ({ status }: { status: 'supported' | 'not-supported' | 'parti
             return <X className="w-4 h-4 text-red-500" />;
         case 'partial':
             return <AlertTriangle className="w-4 h-4 text-amber-500" />;
+        case 'not-possible':
+            return <Minus className="w-4 h-4 text-gray-400" />;
     }
 };
 
@@ -158,6 +160,7 @@ export function CompatibilityTable() {
                         </thead>
 
                         <tbody>
+                        {/* Version Support Section */}
                         <tr className="border-b border-border/30 dark:border-white/5">
                             <td className="px-6 py-4 text-left font-bold text-foreground bg-muted/30 dark:bg-white/5 dark:text-white/80">
                                 Version support
@@ -180,7 +183,7 @@ export function CompatibilityTable() {
                                     return (
                                         <td key={platform} className="px-4 py-4 text-center border-l border-border/30 dark:border-white/5">
                                             <div className="flex justify-center">
-                                                <StatusIcon status={data?.[version as keyof CompatibilityData] as 'supported' | 'not-supported' | 'partial'} />
+                                                <StatusIcon status={data?.[version as keyof CompatibilityData] as 'supported' | 'not-supported' | 'partial' | 'not-possible'} />
                                             </div>
                                         </td>
                                     );
@@ -188,6 +191,7 @@ export function CompatibilityTable() {
                             </tr>
                         ))}
 
+                        {/* Addons Section */}
                         <tr className="border-b border-border/30 dark:border-white/5">
                             <td className="px-6 py-4 text-left font-bold text-foreground bg-muted/30 dark:bg-white/5 dark:text-white/80">
                                 Addons
@@ -210,7 +214,7 @@ export function CompatibilityTable() {
                                     return (
                                         <td key={platform} className="px-4 py-4 text-center border-l border-border/30 dark:border-white/5">
                                             <div className="flex justify-center">
-                                                <StatusIcon status={data?.[addon as keyof CompatibilityData] as 'supported' | 'not-supported' | 'partial'} />
+                                                <StatusIcon status={data?.[addon as keyof CompatibilityData] as 'supported' | 'not-supported' | 'partial' | 'not-possible'} />
                                             </div>
                                         </td>
                                     );
@@ -221,6 +225,7 @@ export function CompatibilityTable() {
                     </table>
                 </div>
 
+                {/* Legend */}
                 <div className="px-6 py-4 bg-muted/20 border-t border-border/50 dark:bg-white/5 dark:border-white/10">
                     <div className="flex flex-wrap gap-8 text-sm text-muted-foreground dark:text-white/60">
                         <div className="flex items-center gap-2">
@@ -234,6 +239,10 @@ export function CompatibilityTable() {
                         <div className="flex items-center gap-2">
                             <AlertTriangle className="w-4 h-4 text-amber-500" />
                             <span>Partial Support</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Minus className="w-4 h-4 text-gray-400" />
+                            <span>Not Possible</span>
                         </div>
                     </div>
                 </div>
