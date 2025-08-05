@@ -1,6 +1,11 @@
 package dev.httpmarco.polocloud.agent.services
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.runtime.local.LocalService
+import dev.httpmarco.polocloud.agent.utils.IndexDetector
+import dev.httpmarco.polocloud.v1.GroupType
+import dev.httpmarco.polocloud.v1.services.ServiceBootRequest
+import dev.httpmarco.polocloud.v1.services.ServiceBootResponse
 import dev.httpmarco.polocloud.v1.services.ServiceControllerGrpc
 import dev.httpmarco.polocloud.v1.services.ServiceFindRequest
 import dev.httpmarco.polocloud.v1.services.ServiceFindResponse
@@ -24,4 +29,30 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()
     }
+
+    override fun boot(request: ServiceBootRequest, responseObserver: StreamObserver<ServiceBootResponse>) {
+        val groupStorage = Agent.runtime.groupStorage()
+        val group = groupStorage.find(request.groupName)
+        val builder = ServiceBootResponse.newBuilder()
+
+        if(group == null) {
+            responseObserver.onError(IllegalArgumentException("group not found: ${request.groupName}"))
+            return
+        }
+
+        val index = IndexDetector.findIndex(group)
+        val service = when (group.platform().type) {
+            GroupType.PROXY -> LocalService(group, index, "0.0.0.0")
+            else -> LocalService(group, index)
+        }
+
+        Agent.runtime.serviceStorage().deployAbstractService(service)
+        Agent.runtime.factory().bootApplication(service)
+        builder.addService(service.toSnapshot())
+
+        responseObserver.onNext(builder.build())
+        responseObserver.onCompleted()
+
+    }
+
 }
