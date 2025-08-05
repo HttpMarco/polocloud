@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.shutdownProcess
+import dev.httpmarco.polocloud.agent.utils.IndexDetector
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
@@ -23,7 +24,7 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
                             if (group.services().size >= group.maxOnlineService && group.maxOnlineService != -1) {
                                 return@repeat
                             }
-                            val index = findIndex(group)
+                            val index = IndexDetector.findIndex(group)
                             val service = when (group.platform().type) {
                                 GroupType.PROXY -> LocalService(group, index, "0.0.0.0")
                                 else -> LocalService(group, index)
@@ -55,15 +56,5 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
         }
 
         return minimumValue
-    }
-
-    private fun findIndex(group: AbstractGroup): Int {
-        var id = 1
-        while (Agent.runtime.serviceStorage().findAll().stream()
-                .anyMatch { it.groupName == group.name && it.id == id }
-        ) {
-            id++
-        }
-        return id
     }
 }
