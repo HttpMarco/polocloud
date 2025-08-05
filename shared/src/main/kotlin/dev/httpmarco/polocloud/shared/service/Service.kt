@@ -70,4 +70,17 @@ open class Service(
     fun shutdown() {
         polocloudShared.serviceProvider().shutdownService(this.name())
     }
+
+    override fun equals(other: Any?): Boolean =
+        other is Service &&
+                groupName == other.groupName &&
+                id == other.id &&
+                state == other.state &&
+                type == other.type &&
+                properties == other.properties &&
+                hostname == other.hostname &&
+                port == other.port
+
+    override fun hashCode(): Int =
+        listOf(groupName, id, state, type, properties, hostname, port).hashCode()
 }

@@ -55,7 +55,6 @@ class OnlineStateDetector : Detector {
                         return@forEach
                     }
 
-                    this.callOnline(service)
 
                     val jsonLength = readVarInt(input)
                     val jsonData = ByteArray(jsonLength)
@@ -67,6 +66,8 @@ class OnlineStateDetector : Detector {
 
                     service.updatePlayerCount(players?.get("online")?.asJsonPrimitive?.asInt ?: -1)
                     service.updateMaxPlayerCount(players?.get("max")?.asJsonPrimitive?.asInt ?: -1)
+
+                    this.callOnline(service)
                 }
             } catch (_: Throwable) {
                 // ignore connection errors, the service is not online yet

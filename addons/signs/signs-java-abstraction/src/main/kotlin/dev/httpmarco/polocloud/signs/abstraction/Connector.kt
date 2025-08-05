@@ -16,7 +16,8 @@ abstract class Connector<A : AnimationFrame>(val basedConnectorData: BasedConnec
         this.update()
     }
 
-    init {
+    fun unbind() {
+        this.displayedService = null
         this.update()
     }
 
@@ -37,5 +38,18 @@ abstract class Connector<A : AnimationFrame>(val basedConnectorData: BasedConnec
         } else {
             ConnectorState.FULL
         }
+    }
+
+    fun replaceText(line: String): String {
+        if(displayedService == null) {
+
+            return line;
+        }
+
+        return line.replace("%group%", displayedService!!.groupName)
+            .replace("%service%", displayedService!!.name())
+            .replace("%online_players%", displayedService!!.playerCount.toString())
+            .replace("%max_players%", displayedService!!.maxPlayerCount.toString())
+            .replace("%state%", state.name)
     }
 }
