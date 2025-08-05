@@ -29,8 +29,11 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
 
         val groupName = arguments[0]
 
-        Polocloud.instance().serviceProvider().bootInstance(groupName)
-        source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("starting")))
+        val service = Polocloud.instance().serviceProvider().bootInstance(groupName)
+        source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("starting")
+            .replace("%group%", service.groupName)
+            .replace("%service%", service.groupName + "-" + service.id)
+        ))
     }
 
     private fun usage(config: ProxyConfig): String {
