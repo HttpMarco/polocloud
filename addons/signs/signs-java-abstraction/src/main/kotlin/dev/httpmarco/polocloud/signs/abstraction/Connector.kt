@@ -5,4 +5,6 @@ import dev.httpmarco.polocloud.signs.abstraction.layout.AnimationFrame
 
 abstract class Connector<A : AnimationFrame>(val basedConnectorData: BasedConnectorData<A>) {
 
+    abstract fun display(frame: A)
+
 }

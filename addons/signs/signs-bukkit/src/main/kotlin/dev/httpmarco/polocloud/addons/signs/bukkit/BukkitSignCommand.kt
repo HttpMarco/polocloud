@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.addons.signs.bukkit
 
+import dev.httpmarco.polocloud.addons.api.location.Position
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -19,13 +20,22 @@ class BukkitSignCommand : CommandExecutor {
                     return false
                 }
 
-                if(!BukkitConnectors.isSupported(targetBlock.type)) {
+                if (!BukkitConnectors.isSupported(targetBlock.type)) {
                     player.sendMessage("§cThis block type is not supported!")
                     return false
                 }
 
-                // TODO ATTCH SIGN TO BLOCK
 
+                BukkitConnectors.attachConnector(
+                    Position(
+                        player.world.name,
+                        targetBlock.x.toDouble(),
+                        targetBlock.y.toDouble(),
+                        targetBlock.z.toDouble()
+                    ), targetBlock.type
+                )
+
+                player.sendMessage("§aConnector added at ${targetBlock.x}, ${targetBlock.y}, ${targetBlock.z} in world ${player.world.name}")
             }
         }
 
