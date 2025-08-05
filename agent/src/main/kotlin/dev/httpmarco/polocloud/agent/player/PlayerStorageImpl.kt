@@ -1,22 +1,22 @@
 package dev.httpmarco.polocloud.agent.player
 
 import dev.httpmarco.polocloud.shared.service.Service
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
 
-private val cachedPlayers = mutableListOf<AbstractPolocloudPlayer>()
+private val cachedPlayers =  mutableMapOf<UUID, AbstractPolocloudPlayer>()
 
 class PlayerStorageImpl : PlayerStorage {
-    override fun update(player: AbstractPolocloudPlayer) { // TODO change to events
-        val existing = cachedPlayers.indexOfFirst { it.uniqueId == player.uniqueId }
-        if (existing >= 0) {
-            cachedPlayers[existing] = player
-        } else {
-            cachedPlayers.add(player)
-        }
+    override fun addPlayer(player: AbstractPolocloudPlayer) {
+        cachedPlayers[player.uniqueId] = player
+    }
+
+    override fun removePlayer(uniqueId: UUID) {
+        cachedPlayers.remove(uniqueId)
     }
 
     override fun findAll(): List<AbstractPolocloudPlayer> {
-        return cachedPlayers.toList()
+        return cachedPlayers.values.toList()
     }
 
     override fun findAllAsync(): CompletableFuture<List<AbstractPolocloudPlayer>> {
@@ -24,7 +24,7 @@ class PlayerStorageImpl : PlayerStorage {
     }
 
     override fun findByName(name: String): AbstractPolocloudPlayer? {
-        return cachedPlayers.find { it.name.equals(name, ignoreCase = true) }
+        return cachedPlayers.values.find { it.name.equals(name, ignoreCase = true) }
     }
 
     override fun findByNameAsync(name: String): CompletableFuture<AbstractPolocloudPlayer?> {
@@ -32,14 +32,12 @@ class PlayerStorageImpl : PlayerStorage {
     }
 
     override fun findByService(serviceName: String): List<AbstractPolocloudPlayer> {
-        return cachedPlayers.filter { it.currentServiceName.equals(serviceName, ignoreCase = true) }
+        return cachedPlayers.values.filter { it.currentServiceName.equals(serviceName, ignoreCase = true) }
     }
 
     override fun findByServiceAsync(service: Service): CompletableFuture<List<AbstractPolocloudPlayer>> {
         return CompletableFuture.completedFuture(findByService(service.name()))
     }
 
-    override fun playerCount(): Int {
-        return cachedPlayers.size
-    }
+    override fun playerCount(): Int = cachedPlayers.size
 }

@@ -15,6 +15,7 @@ class PlayerSerializer : JsonSerializer<PolocloudPlayer>, JsonDeserializer<Poloc
 
         json.addProperty("uniqueId", src.uniqueId())
         json.addProperty("name", src.name)
+        json.addProperty("currentService", src.currentServiceName)
 
         return json
     }
