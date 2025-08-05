@@ -15,15 +15,17 @@ class ConnectorLayoutSerializer : JsonSerializer<ConnectorLayout<*>>, JsonDeseri
         context: JsonSerializationContext
     ): JsonElement {
         val data = context.serialize(src).asJsonObject
-        data.addProperty("type", src::class.java.simpleName.replace("Layout", "").uppercase())
+        data.addProperty("type", src.typeId())
         return data
     }
 
     override fun deserialize(
-        json: JsonElement?,
-        typeOfT: Type?,
-        context: JsonDeserializationContext?
+        json: JsonElement,
+        typeOfT: Type,
+        context: JsonDeserializationContext
     ): ConnectorLayout<*>? {
-        TODO("Not yet implemented")
+        val data = json.asJsonObject
+        val layout = context.deserialize<ConnectorLayout<*>>(json, Class.forName("TODO"))
+        return layout
     }
 }
