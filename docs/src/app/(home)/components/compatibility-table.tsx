@@ -14,10 +14,10 @@ interface CompatibilityData {
 const compatibilityData: CompatibilityData[] = [
     {
         platform: 'Vanilla',
-        '1.7-1.12': 'not-supported',
-        '1.12-1.16': 'not-supported',
-        '1.18-1.19': 'not-supported',
-        '1.20+': 'not-supported',
+        '1.7-1.12': 'supported',
+        '1.12-1.16': 'supported',
+        '1.18-1.19': 'supported',
+        '1.20+': 'supported',
         'Severmobs': 'not-supported',
         'Signs': 'not-supported',
     },
