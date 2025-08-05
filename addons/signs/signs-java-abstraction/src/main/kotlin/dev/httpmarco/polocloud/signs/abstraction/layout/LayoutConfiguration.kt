@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.signs.abstraction.layout
 
+import dev.httpmarco.polocloud.signs.abstraction.ConnectorState
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignData
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignLayout
-import dev.httpmarco.polocloud.v1.services.ServiceState
 
 class LayoutConfiguration(
     var layouts: List<ConnectorLayout<*>> = listOf(
@@ -10,17 +10,17 @@ class LayoutConfiguration(
         SignLayout(
             "default",
             mapOf(
-                ServiceState.STARTING to listOf(
+                ConnectorState.LOADING to listOf(
                     SignData.SignAnimationTick(
-                        arrayOf("Starting", "Please wait..."),
+                        arrayOf("","Search for", "Server..."),
                     )
                 ),
-                ServiceState.ONLINE to listOf(
+                ConnectorState.ONLINE to listOf(
                     SignData.SignAnimationTick(
-                        arrayOf("Running", "All systems go!"),
+                        arrayOf(" %group%", "%online_players%/%max_players%"),
                     )
                 ),
-                ServiceState.STOPPING to listOf(
+                ConnectorState.PLAYERS to listOf(
                     SignData.SignAnimationTick(
                         arrayOf("Stopping", "See you soon!"),
                     )

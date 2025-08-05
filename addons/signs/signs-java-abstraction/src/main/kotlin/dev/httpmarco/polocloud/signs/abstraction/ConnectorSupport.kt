@@ -7,6 +7,6 @@ interface ConnectorSupport<M, L : ConnectorLayout<*>> {
 
     fun isSupported(material: M): Boolean
 
-    fun handledConnector(position: Position) : Connector<*>
+    fun handledConnector(group: String, position: Position) : Connector<*>
 
 }

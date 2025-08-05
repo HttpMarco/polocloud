@@ -5,8 +5,8 @@ import dev.httpmarco.polocloud.signs.abstraction.layout.AnimationFrame
 import dev.httpmarco.polocloud.signs.abstraction.data.BasedConnectorData
 import java.util.concurrent.TimeUnit
 
-class BannerData(position: Position, bannerLayout: BannerLayout) :
-    BasedConnectorData<BannerData.BannerAnimationTick>(position, bannerLayout) {
+class BannerData(group: String, position: Position, bannerLayout: BannerLayout) :
+    BasedConnectorData<BannerData.BannerAnimationTick>(group,position, bannerLayout) {
 
     class Pattern(val color: BannerColor, val pattern: BannerPattern)
 

@@ -2,15 +2,21 @@ package dev.httpmarco.polocloud.signs.abstraction
 
 import dev.httpmarco.polocloud.addons.api.ConfigFactory
 import dev.httpmarco.polocloud.addons.api.location.Position
+import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.signs.abstraction.data.banner.BannerData
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignData
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignLayout
+import dev.httpmarco.polocloud.signs.abstraction.layout.AnimationFrame
 import dev.httpmarco.polocloud.signs.abstraction.layout.ConnectorLayout
 import dev.httpmarco.polocloud.signs.abstraction.layout.ConnectorLayoutSerializer
 import dev.httpmarco.polocloud.signs.abstraction.layout.LayoutConfiguration
 import java.io.File
 
 abstract class Connectors<M> {
+
+    companion object {
+        lateinit var context: Connectors<*>
+    }
 
     private val configurationFactory =
         ConfigFactory(
@@ -37,6 +43,12 @@ abstract class Connectors<M> {
         }
     }
 
+    init {
+        context = this
+
+        ConnectorCloudEvents()
+    }
+
     fun bindSupport(support: ConnectorSupport<M, *>) {
         supports += support
     }
@@ -49,11 +61,11 @@ abstract class Connectors<M> {
         return supports.any { it.isSupported(material) }
     }
 
-    fun attachConnector(position: Position, material: M) {
+    fun attachConnector(group: String, position: Position, material: M) {
         // detect with the block material which support is handling this
         val bindSupport = supports.first { it.isSupported(material) }
 
-        val connector = bindSupport.handledConnector(position)
+        val connector = bindSupport.handledConnector(group, position)
         connectors += connector
     }
 
@@ -61,5 +73,13 @@ abstract class Connectors<M> {
         return layouts.first {
             it.id == layoutName && it is SignLayout
         } as SignLayout
+    }
+
+    fun findEmptyConnector(group: String): Connector<out AnimationFrame>? {
+        return connectors.firstOrNull { it.displayedService == null && it.basedConnectorData.group == group }
+    }
+
+    fun findAttachConnector(service: Service): Connector<*>? {
+        return connectors.firstOrNull { it.displayedService == service }
     }
 }

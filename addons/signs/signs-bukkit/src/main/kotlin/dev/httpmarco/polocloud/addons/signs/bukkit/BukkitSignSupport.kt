@@ -14,7 +14,7 @@ class BukkitSignSupport : ConnectorSupport<Material, SignLayout> {
         return material.data == WallSign::class.java
     }
 
-    override fun handledConnector(position: Position): Connector<*> {
-        return BukkitSignConnector(SignData(position, BukkitConnectors.generateSignLayout()))
+    override fun handledConnector(group: String, position: Position): Connector<*> {
+        return BukkitSignConnector(SignData(group, position, BukkitConnectors.generateSignLayout()))
     }
 }

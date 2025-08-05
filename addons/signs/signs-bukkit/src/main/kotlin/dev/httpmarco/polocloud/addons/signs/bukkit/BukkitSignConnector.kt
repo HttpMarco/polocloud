@@ -2,7 +2,6 @@ package dev.httpmarco.polocloud.addons.signs.bukkit
 
 import dev.httpmarco.polocloud.signs.abstraction.SignConnector
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignData
-import dev.httpmarco.polocloud.v1.services.ServiceState
 import org.bukkit.Bukkit
 import org.bukkit.block.Sign
 import org.bukkit.block.sign.Side
@@ -20,8 +19,6 @@ class BukkitSignConnector(data: SignData) : SignConnector(data) {
                 position.y.toInt(),
                 position.z.toInt()
             )?.state as Sign?
-
-        display(data.layout.frames.get(ServiceState.ONLINE)!![0])
     }
 
     override fun display(frame: SignData.SignAnimationTick) {
@@ -32,6 +29,7 @@ class BukkitSignConnector(data: SignData) : SignConnector(data) {
         for ((i, line) in frame.lines.withIndex()) {
             sign.getSide(Side.FRONT).setLine(i, line)
         }
+
         sign.update(true, false)
     }
 }

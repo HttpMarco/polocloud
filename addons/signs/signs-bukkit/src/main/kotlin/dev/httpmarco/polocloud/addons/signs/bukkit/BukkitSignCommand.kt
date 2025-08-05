@@ -8,11 +8,12 @@ import org.bukkit.entity.Player
 
 class BukkitSignCommand : CommandExecutor {
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String?>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val player = sender as Player
 
         if (args.size == 2) {
             if (args[0] == "add") {
+                val group = args[1]
                 val targetBlock = player.getTargetBlock(null, 7)
 
                 if (targetBlock.isEmpty) {
@@ -27,6 +28,7 @@ class BukkitSignCommand : CommandExecutor {
 
 
                 BukkitConnectors.attachConnector(
+                    group,
                     Position(
                         player.world.name,
                         targetBlock.x.toDouble(),
