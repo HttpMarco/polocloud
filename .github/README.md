@@ -12,8 +12,8 @@ It provides a dynamic environment to manage Minecraft server instances (e.g. Pap
 We welcome contributions, testing, and feedback as we shape the future of Minecraft server orchestration.
 
 
-<a href="https://discord.bytemc.de/">
-         <img alt="ByteMC Discord" src="https://discord.com/api/guilds/1278460874679386244/widget.png?style=banner2">
+<a href="https://discord.gg/s9qQTrD5P7">
+         <img alt="PoloCloud Discord" src="https://discord.com/api/guilds/1278460874679386244/widget.png?style=banner2">
 </a>
 
 ### 🌐 Translations
