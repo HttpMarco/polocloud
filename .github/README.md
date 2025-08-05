@@ -2,57 +2,19 @@
 
 [![license](https://img.shields.io/github/license/HttpMarco/polocloud?style=for-the-badge&color=b2204c)](../LICENSE)
 [![Download](https://img.shields.io/github/downloads/HttpMarco/Polocloud/total?style=for-the-badge&logo=github&color=2ea043)](https://github.com/HttpMarco/polocloud/releases)
-[![Discord](https://img.shields.io/discord/1278460874679386244?label=Community&style=for-the-badge&logo=discord&color=7289da)](https://discord.gg/WGzUcuJax7)
 
-<p align="center">
-  <img src="../.img/platform-table.png"/>
-</p>
 
-### 🧩 PoloCloud Kotlin SDK
 
-Bring cloud-native capabilities to your Kotlin applications with the **PoloCloud SDK** — designed for performance, simplicity, and seamless integration.
+**PoloCloud** is a modern and modular Minecraft cloud system designed for high flexibility, performance, and developer freedom.  
+It provides a dynamic environment to manage Minecraft server instances (e.g. Paper, Velocity) with scalable group configurations and powerful runtime tooling.
 
-#### 📦 Maven Snapshot Repository
+⚠️ This project is currently in an early prototype stage and not ready for production use.  
+We welcome contributions, testing, and feedback as we shape the future of Minecraft server orchestration.
 
-To get started, add the PoloCloud snapshot repository to your `pom.xml` or `build.gradle.kts`:
 
-##### Maven
-```xml
-<repositories>
-    <repository>
-        <id>polocloud-snapshots</id>
-        <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-    </repository>
-</repositories>
-
-<dependencies>
-    <dependency>
-        <groupId>dev.httpmarco.polocloud</groupId>
-        <artifactId>sdk-kotlin</artifactId>
-        <version>3.0.0-pre.5-SNAPSHOT</version>
-    </dependency>
-</dependencies>
-```
-
-##### Gradle (Kotlin DSL)
-```kotlin
-repositories {
-    maven {
-        name = "polocloud-snapshots"
-        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
-    }
-}
-
-dependencies {
-    implementation("dev.httpmarco.polocloud:java-kotlin:3.0.0-pre.5-SNAPSHOT")
-}
-```
-
-> 🧪 This version is a snapshot release (`3.0.0-pre.5-SNAPSHOT`) — ideal for testing the latest features. Expect frequent updates!
-
-### 🧩 PoloCloud Rust SDK
-
-You can find more information in [Rust SDK README](../sdk/sdk-rust/README.md)
+<a href="https://discord.bytemc.de/">
+         <img alt="ByteMC Discord" src="https://discord.com/api/guilds/1278460874679386244/widget.png?style=banner2">
+</a>
 
 ### 🌐 Translations
 
