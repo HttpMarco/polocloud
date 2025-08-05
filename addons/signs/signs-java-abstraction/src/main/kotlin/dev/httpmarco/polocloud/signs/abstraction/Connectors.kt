@@ -3,10 +3,22 @@ package dev.httpmarco.polocloud.signs.abstraction
 import dev.httpmarco.polocloud.addons.api.ConfigFactory
 import dev.httpmarco.polocloud.signs.abstraction.data.banner.BannerData
 import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignData
+import dev.httpmarco.polocloud.signs.abstraction.layout.ConnectorLayout
+import dev.httpmarco.polocloud.signs.abstraction.layout.ConnectorLayoutSerializer
+import dev.httpmarco.polocloud.signs.abstraction.layout.LayoutConfiguration
+import java.io.File
 
 abstract class Connectors<M> {
 
-    private val configurationFactory = ConfigFactory(ConnectorConfiguration::class.java, fileName = "connectors.json")
+    private val configurationFactory =
+        ConfigFactory(ConnectorConfiguration::class.java, File("plugins/polocloud"), fileName = "signs-connectors.json")
+
+    private val layoutFactory = ConfigFactory(
+        clazz = LayoutConfiguration::class.java,
+        folder = File("plugins/polocloud"),
+        fileName = "signs-layout.json",
+        adapters = arrayOf(Pair(ConnectorLayout::class.java, ConnectorLayoutSerializer()))
+    )
 
     private val supports = listOf<ConnectorSupport<M>>()
 
