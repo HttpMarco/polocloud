@@ -9,7 +9,7 @@ import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
+class StopSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
 
@@ -19,7 +19,7 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
     ) {
         val config = proxyAddon.config
 
-        if (!source.hasPermission("polocloud.addons.proxy.command.cloud.start")) {
+        if (!source.hasPermission("polocloud.addons.proxy.command.cloud.stop")) {
             source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("no_permission")))
             return
         }
@@ -29,22 +29,27 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
             return
         }
 
-        val groupName = arguments[0]
+        val serviceName = arguments[0]
 
+        source.sendMessage(miniMessage.deserialize(
+            config.prefix() + config.messages("stopping")
+                .replace("%service%", serviceName)
+        ))
         try {
-            val service = Polocloud.instance().serviceProvider().bootInstance(groupName)
+            val service = Polocloud.instance().serviceProvider().shutdownService(serviceName)
             source.sendMessage(
                 miniMessage.deserialize(
-                    config.prefix() + config.messages("starting")
-                        .replace("%group%", service.groupName)
+                    config.prefix() + config.messages("stopped")
                         .replace("%service%", service.groupName + "-" + service.id)
+                        .replace("%group%", service.groupName)
+                        .replace("%type%", service.serverType.toString())
                 )
             )
         } catch (e: StatusRuntimeException) {
             if(e.status.code == Status.NOT_FOUND.code) {
                 source.sendMessage(
                     miniMessage.deserialize(
-                        config.prefix() + "<red>Group <aqua>$groupName</aqua> does not exist!</red>"
+                        config.prefix() + "<red>Service <aqua>$serviceName</aqua> does not exist!</red>"
                     )
                 )
             }
@@ -54,8 +59,8 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
     private fun usage(config: ProxyConfig): String {
         return buildString {
             appendLine("")
-            appendLine(config.prefix() + "<gray>Usage: <aqua>/polocloud start <groupName></aqua>")
-            appendLine(config.prefix() + "<gray>Example: <aqua>/polocloud start lobby</aqua>")
+            appendLine(config.prefix() + "<gray>Usage: <aqua>/polocloud stop <service></aqua>")
+            appendLine(config.prefix() + "<gray>Example: <aqua>/polocloud stop lobby-1</aqua>")
         }
     }
 }

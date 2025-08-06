@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.InfoSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StartSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StopSubCommand
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class VelocityCloudCommand(val proxyAddon: ProxyAddon) : SimpleCommand {
@@ -13,7 +14,7 @@ class VelocityCloudCommand(val proxyAddon: ProxyAddon) : SimpleCommand {
     private val subCommands = mapOf(
         "info" to InfoSubCommand(proxyAddon),
         "start" to StartSubCommand(proxyAddon),
-        //"stop" to StopSubCommand(proxyAddon),
+        "stop" to StopSubCommand(proxyAddon),
         //"list" to ListSubCommand(proxyAddon),
         //"create" to CreateSubCommand(proxyAddon),
         //"delete" to DeleteSubCommand(proxyAddon),
