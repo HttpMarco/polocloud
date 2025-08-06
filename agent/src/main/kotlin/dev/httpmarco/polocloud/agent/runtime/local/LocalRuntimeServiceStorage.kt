@@ -67,8 +67,8 @@ class LocalRuntimeServiceStorage : RuntimeServiceStorage<LocalService> {
         TODO("Not yet implemented")
     }
 
-    override fun shutdownService(name: String) {
-        Agent.runtime.factory().shutdownApplication(find(name) ?: return)
+    override fun shutdownService(name: String): ServiceSnapshot {
+        return Agent.runtime.factory().shutdownApplication(find(name) ?: throw IllegalArgumentException("Service not found: $name"))
     }
 
     override fun deployService(service: LocalService) {

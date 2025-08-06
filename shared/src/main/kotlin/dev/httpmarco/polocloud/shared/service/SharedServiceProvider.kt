@@ -108,6 +108,6 @@ interface SharedServiceProvider<S : Service> {
      */
     fun shutdownService(service: Service) = shutdownService(service.name())
 
-    fun shutdownService(name: String)
+    fun shutdownService(name: String): ServiceSnapshot
 
 }

@@ -60,7 +60,7 @@ class DockerRuntimeServiceStorage : RuntimeServiceStorage<DockerService> {
         TODO("Not yet implemented")
     }
 
-    override fun shutdownService(name: String) {
+    override fun shutdownService(name: String): ServiceSnapshot {
         TODO("Not yet implemented")
     }
 
