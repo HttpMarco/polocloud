@@ -49,50 +49,69 @@ export function Footer() {
                         </div>
                     </div>
 
-                    <div className="text-center">
-                        <h3 className="text-lg font-bold text-foreground dark:text-white font-minecraft mb-6">Useful Links</h3>
-                        <div className="grid grid-cols-2 gap-x-12 gap-y-4">
+                    <div className="flex gap-8">
+                        <div className="flex flex-col gap-2">
+                            <Link
+                                href="/docs"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+                            >
+                                <BookOpen className="w-4 h-4" />
+                                Docs
+                            </Link>
                             <Link
                                 href="/imprint"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
                             >
                                 <FileText className="w-4 h-4" />
                                 Imprint
                             </Link>
+                        </div>
+                        <div className="flex flex-col gap-2">
                             <Link
                                 href="/privacy"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
                             >
                                 <Shield className="w-4 h-4" />
                                 Privacy
                             </Link>
                             <Link
                                 href="/terms"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
                             >
                                 <FileText className="w-4 h-4" />
                                 Terms
                             </Link>
+                        </div>
+                        <div className="flex flex-col gap-2">
                             <a
                                 href="mailto:contact@polocloud.de"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
                             >
                                 <Mail className="w-4 h-4" />
                                 Contact
                             </a>
                             <Link
                                 href="/roadmap"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
                             >
                                 <Map className="w-4 h-4" />
                                 Roadmap
                             </Link>
+                        </div>
+                        <div className="flex flex-col gap-2">
                             <Link
                                 href="/blog"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
                             >
                                 <Newspaper className="w-4 h-4" />
                                 Blog
+                            </Link>
+                            <Link
+                                href="/changelogs"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+                            >
+                                <FileText className="w-4 h-4" />
+                                Changelogs
                             </Link>
                         </div>
                     </div>
