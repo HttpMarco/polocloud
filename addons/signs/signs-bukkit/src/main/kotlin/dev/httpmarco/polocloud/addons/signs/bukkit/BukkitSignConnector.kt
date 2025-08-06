@@ -33,7 +33,7 @@ class BukkitSignConnector(data: SignData) : SignConnector(data) {
         }
 
         for (i in 0 until 4) {
-            sign.getSide(Side.FRONT).setLine(i, replaceText(frame.lines.getOrNull(i) ?: ""))
+            sign.getSide(Side.FRONT).setLine(i, replaceText(frame.lines.getOrNull(i) ?: " "))
         }
 
         Bukkit.getScheduler().callSyncMethod<Any>(BukkitBootstrap.plugin) {

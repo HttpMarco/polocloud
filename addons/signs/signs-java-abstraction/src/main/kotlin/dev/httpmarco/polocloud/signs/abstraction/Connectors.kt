@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.signs.abstraction
 
 import dev.httpmarco.polocloud.addons.api.ConfigFactory
 import dev.httpmarco.polocloud.addons.api.location.Position
+import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.signs.abstraction.data.BasedConnectorData
 import dev.httpmarco.polocloud.signs.abstraction.data.banner.BannerData
@@ -11,6 +12,7 @@ import dev.httpmarco.polocloud.signs.abstraction.layout.AnimationFrame
 import dev.httpmarco.polocloud.signs.abstraction.layout.ConnectorLayout
 import dev.httpmarco.polocloud.signs.abstraction.layout.ConnectorLayoutSerializer
 import dev.httpmarco.polocloud.signs.abstraction.layout.LayoutConfiguration
+import java.util.UUID
 
 /**
  * Manages all types of connectors (e.g., signs, banners) used to visually represent services.
@@ -66,7 +68,17 @@ abstract class Connectors<M> {
      */
     init {
         ConnectorCloudEvents(this)
+
         this.connectors.forEach { it.update() }
+
+        Polocloud.instance().serviceProvider().findAll().forEach {
+            if (it.name() == Polocloud.instance().selfServiceName()) {
+                return@forEach
+            }
+
+            var possibleConnector = findEmptyConnector(it.groupName)
+            possibleConnector?.bindWith(it)
+        }
     }
 
     /**
@@ -144,13 +156,23 @@ abstract class Connectors<M> {
     }
 
     /**
+     * Finds a connector at a specific position.
+     * This method is used to locate a connector based on its in-world position.
+     *
+     * @param position the position to search for
+     */
+    fun find(position: Position): Connector<out AnimationFrame>? {
+        return connectors.firstOrNull { it.basedConnectorData.position == position }
+    }
+
+    /**
      * Finds the connector currently displaying the given service.
      *
      * @param service the service to search for
      * @return the connector displaying the service, or null if not found
      */
     fun findAttachConnector(service: Service): Connector<*>? {
-        return connectors.firstOrNull { it.displayedService == service }
+        return connectors.firstOrNull { it.displayedService != null && it.displayedService!!.name() == service.name() }
     }
 
     /**
@@ -168,4 +190,11 @@ abstract class Connectors<M> {
      * @return the resulting connector
      */
     abstract fun generateBannerConnector(data: BannerData): Connector<BannerData.BannerAnimationTick>
+
+
+    /**
+     * Connect a player to a specific connector by its UUID.
+     * This method is used to establish a connection
+     */
+    abstract fun connect(uuid: UUID, connector: Connector<*>)
 }

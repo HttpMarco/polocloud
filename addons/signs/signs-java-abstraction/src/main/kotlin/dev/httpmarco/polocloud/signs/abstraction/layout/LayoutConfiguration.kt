@@ -17,7 +17,7 @@ class LayoutConfiguration(
                 ),
                 ConnectorState.ONLINE to listOf(
                     SignData.SignAnimationTick(
-                        arrayOf("%group%", "%motd%", "§a§l%state%", "%online_players%/%max_players%"),
+                        arrayOf("%service%", "%motd%", "§a§l%state%", "%online_players%/%max_players%"),
                     )
                 ),
                 ConnectorState.PLAYERS to listOf(
