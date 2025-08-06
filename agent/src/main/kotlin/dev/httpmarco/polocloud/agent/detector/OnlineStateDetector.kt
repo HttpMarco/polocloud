@@ -64,7 +64,9 @@ class OnlineStateDetector : Detector {
 
                     val players = json["players"]?.asJsonObject
 
-                    service.updatePlayerCount(players?.get("online")?.asJsonPrimitive?.asInt ?: -1)
+                    val playerCount = players?.get("online")?.asJsonPrimitive?.asInt ?: -1
+
+                    service.updatePlayerCount(playerCount)
                     service.updateMaxPlayerCount(players?.get("max")?.asJsonPrimitive?.asInt ?: -1)
 
                     this.callOnline(service)

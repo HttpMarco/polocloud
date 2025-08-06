@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.services
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.utils.PortDetector
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceChangePlayerCountEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
@@ -50,6 +51,10 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
     }
 
     fun updatePlayerCount(playerCount: Int) {
+        if (this.state == ServiceState.ONLINE && this.playerCount != playerCount) {
+            Agent.eventProvider().call(ServiceChangePlayerCountEvent(this, playerCount))
+        }
+
         this.playerCount = playerCount
     }
 
