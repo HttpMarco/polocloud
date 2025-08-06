@@ -80,8 +80,12 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
             service.maxMemory = request.maximumMemory
         }
 
-        service.templates = request.templatesList
-        service.excludedTemplates = request.excludedTemplatesList
+        service.templates += request.templatesList
+        request.excludedTemplatesList.forEach { template ->
+            if (service.templates.contains(template)) {
+                service.templates -= template
+            }
+        }
         service.properties += request.propertiesMap
 
         Agent.runtime.serviceStorage().deployAbstractService(service)

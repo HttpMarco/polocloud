@@ -14,7 +14,6 @@ open class Service(
     val hostname: String,
     val port: Int,
     var templates: List<String>,
-    var excludedTemplates: List<String>,
     minMemory: Int,
     maxMemory: Int,
     playerCount: Int,
@@ -54,7 +53,6 @@ open class Service(
                 hostname = snapshot.hostname,
                 port = snapshot.port,
                 templates = snapshot.templatesList,
-                excludedTemplates = snapshot.excludedTemplatesList,
                 minMemory = snapshot.minimumMemory,
                 maxMemory = snapshot.maximumMemory,
                 maxPlayerCount = snapshot.maxPlayerCount,
@@ -73,6 +71,9 @@ open class Service(
             .setServerType(type)
             .putAllProperties(properties)
             .setHostname(hostname)
+            .addAllTemplates(templates)
+            .setMinimumMemory(minMemory)
+            .setMaximumMemory(maxMemory)
             .setMaxPlayerCount(maxPlayerCount)
             .setPlayerCount(playerCount)
             .setPort(port)

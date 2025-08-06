@@ -27,7 +27,6 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         data.addProperty("state", src.state.name)
         data.addProperty("type", src.type.name)
         data.addProperty("templates", src.templates.joinToString(","))
-        data.addProperty("excludedTemplates", src.excludedTemplates.joinToString(","))
         data.addProperty("minMemory", src.minMemory)
         data.addProperty("maxMemory", src.maxMemory)
         data.addProperty("maxPlayerCount", src.maxPlayerCount)
@@ -74,7 +73,6 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
             hostname,
             port,
             templates,
-            excludedTemplates,
             minMemory,
             maxMemory,
             playerCount,

@@ -17,7 +17,6 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         hostname,
         PortDetector.nextPort(group),
         group.templates,
-        emptyList(),
         group.minMemory,
         group.maxMemory,
         -1,
