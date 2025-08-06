@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Minecraft Font */
 @font-face {
   font-family: 'Minecraft';
@@ -10,10 +14,12 @@
   font-family: 'Minecraft', 'Courier New', monospace;
 }
 
+/* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
 }
 
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -31,7 +37,7 @@ html {
   background: rgba(156, 163, 175, 0.5);
 }
 
-
+/* Dark mode scrollbar */
 .dark ::-webkit-scrollbar-thumb {
   background: rgba(75, 85, 99, 0.3);
 }
