@@ -36,9 +36,7 @@ class ConfigFactory<T : Any>(
             return defaultInstance
         }
 
-        return runCatching {
-            gson.fromJson(configFile.readText(Charsets.UTF_8), clazz)
-        }.getOrNull() ?: clazz.getDeclaredConstructor().newInstance()
+        return gson.fromJson(configFile.readText(Charsets.UTF_8), clazz)
     }
 
     fun save(config: T = this.config) {

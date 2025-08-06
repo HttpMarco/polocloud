@@ -13,13 +13,17 @@ class BukkitSignConnector(data: SignData) : SignConnector(data) {
     init {
         val position = data.position
 
-        this.sign = Bukkit.getWorld(position.world)
-            ?.getBlockAt(
+        val block = Bukkit.getWorld(position.world)!!.getBlockAt(
                 position.x.toInt(),
                 position.y.toInt(),
                 position.z.toInt()
-            )?.state as Sign?
+            )
 
+        if(!block.chunk.isLoaded) {
+            block.chunk.load()
+        }
+
+        this.sign = block.state as Sign?
         this.sign?.isWaxed = true
     }
 
