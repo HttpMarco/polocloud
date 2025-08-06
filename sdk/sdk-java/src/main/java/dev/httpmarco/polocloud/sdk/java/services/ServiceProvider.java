@@ -44,7 +44,7 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     @Override
     @NotNull
     public List<Service> findByGroup(@NotNull String group) {
-        return List.of();
+        return blockingStub.find(ServiceFindRequest.newBuilder().setGroupName(group).build()).getServicesList().stream().map(Service.Companion::bindSnapshot).toList();
     }
 
     @Override
@@ -55,19 +55,19 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     @Override
     @NotNull
     public CompletableFuture<Service> findAsync(@NotNull String name) {
-        return null;
+        return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.newBuilder().setName(name).build()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).findFirst().orElse(null));
     }
 
     @Override
     @NotNull
     public CompletableFuture<List<Service>> findByGroupAsync(@NotNull Group group) {
-        return null;
+        return findByGroupAsync(group.getName());
     }
 
     @Override
     @NotNull
     public CompletableFuture<List<Service>> findByGroupAsync(@NotNull String group) {
-        return null;
+        return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.newBuilder().setGroupName(group).build()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).toList());
     }
 
     @NotNull
