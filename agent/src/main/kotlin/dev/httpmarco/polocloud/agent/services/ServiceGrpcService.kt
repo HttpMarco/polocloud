@@ -11,6 +11,10 @@ import dev.httpmarco.polocloud.v1.services.ServiceBootWithConfigurationResponse
 import dev.httpmarco.polocloud.v1.services.ServiceControllerGrpc
 import dev.httpmarco.polocloud.v1.services.ServiceFindRequest
 import dev.httpmarco.polocloud.v1.services.ServiceFindResponse
+import dev.httpmarco.polocloud.v1.services.ServiceShutdownRequest
+import dev.httpmarco.polocloud.v1.services.ServiceShutdownResponse
+import io.grpc.Status
+import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
 
 class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
@@ -32,6 +36,10 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
                 }
             }
         }
+        if (builder.servicesCount == 0) {
+            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
+            return
+        }
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()
     }
@@ -42,7 +50,7 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
         val builder = ServiceBootResponse.newBuilder()
 
         if(group == null) {
-            responseObserver.onError(IllegalArgumentException("group not found: ${request.groupName}"))
+            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
             return
         }
 
@@ -67,7 +75,7 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
         val builder = ServiceBootWithConfigurationResponse.newBuilder()
 
         if(group == null) {
-            responseObserver.onError(IllegalArgumentException("group not found: ${request.groupName}"))
+            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
             return
         }
 
@@ -99,6 +107,23 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()
 
+    }
+
+    override fun shutdown(request: ServiceShutdownRequest, responseObserver: StreamObserver<ServiceShutdownResponse>) {
+        val serviceStorage = Agent.runtime.serviceStorage()
+        val service = serviceStorage.find(request.name)
+        val builder = ServiceShutdownResponse.newBuilder()
+
+        if(service == null) {
+            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
+            return
+        }
+
+        builder.setService(service.toSnapshot())
+        Agent.runtime.factory().shutdownApplication(service)
+
+        responseObserver.onNext(builder.build())
+        responseObserver.onCompleted()
     }
 
 }

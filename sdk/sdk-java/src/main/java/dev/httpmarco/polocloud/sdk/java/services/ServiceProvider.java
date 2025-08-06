@@ -108,8 +108,9 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
         return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.newBuilder().setType(type).build()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).toList());
     }
 
+    @NotNull
     @Override
-    public void shutdownService(@NotNull String name) {
-
+    public ServiceSnapshot shutdownService(@NotNull String name) {
+        return blockingStub.shutdown(ServiceShutdownRequest.newBuilder().setName(name).build()).getService();
     }
 }

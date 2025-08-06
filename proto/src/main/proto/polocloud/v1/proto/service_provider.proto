@@ -11,6 +11,7 @@ service ServiceController {
   rpc find(ServiceFindRequest) returns (ServiceFindResponse);
   rpc boot(ServiceBootRequest) returns (ServiceBootResponse);
   rpc bootWithConfiguration(ServiceBootWithConfigurationRequest) returns (ServiceBootWithConfigurationResponse);
+  rpc shutdown(ServiceShutdownRequest) returns (ServiceShutdownResponse);
 }
 
 message ServiceFindRequest {
@@ -41,6 +42,14 @@ message ServiceBootWithConfigurationRequest {
 }
 
 message ServiceBootWithConfigurationResponse {
+  ServiceSnapshot service = 1;
+}
+
+message ServiceShutdownRequest {
+  string name = 1;
+}
+
+message ServiceShutdownResponse {
   ServiceSnapshot service = 1;
 }
 
