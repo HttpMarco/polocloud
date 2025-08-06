@@ -36,10 +36,6 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
                 }
             }
         }
-        if (builder.servicesCount == 0) {
-            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
-            return
-        }
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()
     }
