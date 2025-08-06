@@ -13,10 +13,17 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
         request: EventProviderOuterClass.EventSubscribeRequest,
         responseObserver: StreamObserver<EventProviderOuterClass.EventContext>
     ) {
+        val observer = responseObserver as ServerCallStreamObserver<EventProviderOuterClass.EventContext>
+
+        observer.setOnCancelHandler {
+            //TODO
+            //Agent.eventService.detach(request.eventName, request.serviceName)
+        }
+
         Agent.eventService.attach(
             request.eventName,
             request.serviceName,
-            responseObserver as ServerCallStreamObserver<EventProviderOuterClass.EventContext>
+            responseObserver
         )
     }
 
@@ -24,24 +31,45 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
         request: EventProviderOuterClass.EventContext,
         responseObserver: StreamObserver<EventProviderOuterClass.CallEventResponse>
     ) {
-        val serverObserver = responseObserver as ServerCallStreamObserver<EventProviderOuterClass.CallEventResponse>
-        if (serverObserver.isCancelled) {
+        if (isCallCancelled(responseObserver)) {
             return
         }
 
-        val fqcn = "dev.httpmarco.polocloud.shared.events.definitions.${request.eventName}"
-        val eventClass = Class.forName(fqcn)
-        val eventObj = Agent.eventService.gsonSerializer
-            .fromJson(request.eventData, eventClass) as Event
+        val response = processEvent(request)
+        safeRespond(responseObserver, response)
+    }
 
-        Agent.eventService.call(eventObj)
+    private fun processEvent(request: EventProviderOuterClass.EventContext): EventProviderOuterClass.CallEventResponse {
+        return try {
+            val fqcn = "dev.httpmarco.polocloud.shared.events.definitions.${request.eventName}"
+            val eventClass = Class.forName(fqcn)
+            val eventObj = Agent.eventService.gsonSerializer
+                .fromJson(request.eventData, eventClass) as Event
 
-        if (!serverObserver.isCancelled) {
-            serverObserver.onNext(
-                EventProviderOuterClass.CallEventResponse.newBuilder()
-                    .setSuccess(true)
-                    .build()
-            )
+            Agent.eventService.call(eventObj)
+
+            EventProviderOuterClass.CallEventResponse.newBuilder()
+                .setSuccess(true)
+                .build()
+        } catch (e: Exception) {
+            EventProviderOuterClass.CallEventResponse.newBuilder()
+                .setSuccess(false)
+                .setMessage(e.message ?: "Unknown error")
+                .build()
+        }
+    }
+
+    private fun isCallCancelled(observer: StreamObserver<*>): Boolean {
+        return observer is ServerCallStreamObserver && observer.isCancelled
+    }
+
+    private fun safeRespond(
+        observer: StreamObserver<EventProviderOuterClass.CallEventResponse>,
+        response: EventProviderOuterClass.CallEventResponse
+    ) {
+        if (!isCallCancelled(observer)) {
+            observer.onNext(response)
+            observer.onCompleted()
         }
     }
 }
