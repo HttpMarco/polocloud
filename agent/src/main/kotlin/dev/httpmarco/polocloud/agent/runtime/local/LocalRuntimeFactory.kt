@@ -152,8 +152,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
                     listOf(
                         "-Dterminal.jline=false",
                         "-Dfile.encoding=UTF-8",
-                        "-Xms" + abstractService.group.minMemory + "M",
-                        "-Xmx" + abstractService.group.maxMemory + "M",
+                        "-Xms" + abstractService.minMemory + "M",
+                        "-Xmx" + abstractService.maxMemory + "M",
                         "-jar",
                         abstractService.group.applicationPlatformFile().name
                     )
