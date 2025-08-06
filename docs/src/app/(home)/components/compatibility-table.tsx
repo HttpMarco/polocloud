@@ -115,7 +115,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
     };
 
     const iconPath = getIconPath(platform);
-    
+
     if (!iconPath) {
         return null;
     }
