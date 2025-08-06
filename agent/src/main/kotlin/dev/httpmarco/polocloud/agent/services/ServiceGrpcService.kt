@@ -21,6 +21,10 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
 
         if (request.hasName()) {
             builder.addServices(serviceStorage.find(request.name)?.toSnapshot())
+        } else if(request.hasGroupName()) {
+            serviceStorage.findByGroup(request.groupName).forEach {
+                builder.addServices(it.toSnapshot())
+            }
         } else {
             serviceStorage.findAll().forEach {
                 if (!request.hasType() || it.type == request.type) {
