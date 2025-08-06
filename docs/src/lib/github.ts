@@ -89,7 +89,6 @@ export async function fetchGitHubStats(): Promise<GitHubStats> {
       lastUpdated: new Date().toISOString(),
     };
 
-
     serverCache = stats;
     serverCacheTimestamp = now;
 
@@ -117,18 +116,18 @@ let clientCacheTimestamp: number = 0;
 const CLIENT_CACHE_DURATION = 5 * 60 * 1000;
 
 export async function getCachedGitHubStats(): Promise<GitHubStats> {
-  const now = Date.now();
+    const now = Date.now();
 
-  if (clientCache && (now - clientCacheTimestamp) < CLIENT_CACHE_DURATION) {
-    return clientCache;
-  }
+    if (clientCache && (now - clientCacheTimestamp) < CLIENT_CACHE_DURATION) {
+        return clientCache;
+    }
 
-  const stats = await fetchGitHubStats();
+    const stats = await fetchGitHubStats();
 
-  clientCache = stats;
-  clientCacheTimestamp = now;
-  
-  return stats;
+    clientCache = stats;
+    clientCacheTimestamp = now;
+
+    return stats;
 }
 
 export function clearGitHubCache(): void {
