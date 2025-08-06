@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Github, BookOpen, FileText, Shield, Mail } from 'lucide-react';
+import { Github, BookOpen, ExternalLink, FileText, Shield, Mail, Info, Map, Newspaper } from 'lucide-react';
 
 export function Footer() {
     return (
@@ -50,36 +50,50 @@ export function Footer() {
                     </div>
 
                     <div className="text-center">
-                        <h3 className="text-lg font-bold text-foreground dark:text-white font-minecraft mb-4">Useful Links</h3>
-                        <div className="flex flex-wrap justify-center gap-4">
+                        <h3 className="text-lg font-bold text-foreground dark:text-white font-minecraft mb-6">Useful Links</h3>
+                        <div className="grid grid-cols-2 gap-x-12 gap-y-4">
                             <Link
                                 href="/imprint"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
                             >
                                 <FileText className="w-4 h-4" />
                                 Imprint
                             </Link>
                             <Link
                                 href="/privacy"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
                             >
                                 <Shield className="w-4 h-4" />
                                 Privacy
                             </Link>
                             <Link
                                 href="/terms"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
                             >
                                 <FileText className="w-4 h-4" />
                                 Terms
                             </Link>
                             <a
                                 href="mailto:contact@polocloud.de"
-                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
                             >
                                 <Mail className="w-4 h-4" />
                                 Contact
                             </a>
+                            <Link
+                                href="/roadmap"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                            >
+                                <Map className="w-4 h-4" />
+                                Roadmap
+                            </Link>
+                            <Link
+                                href="/blog"
+                                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2 justify-center"
+                            >
+                                <Newspaper className="w-4 h-4" />
+                                Blog
+                            </Link>
                         </div>
                     </div>
 
