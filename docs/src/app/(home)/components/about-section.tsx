@@ -79,16 +79,18 @@ export function AboutSection() {
                 <div className={`text-center mb-20 transition-all duration-1000 ease-out ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
-                    <h2 className={`text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
+                    <h2 className={`text-3xl md:text-4xl lg:text-5xl font-black mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 tracking-tight leading-tight ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
                         About PoloCloud
                     </h2>
-                    <p className={`text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
+                    <p className={`text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-light transition-all duration-1000 delay-400 ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
-                        The ultimate cloud platform for Minecraft server hosting. Built for performance, designed for simplicity,
-                        and trusted by thousands of server owners worldwide.
+                        The ultimate cloud platform for Minecraft server hosting.
+                        <span className="block mt-2 text-base md:text-lg lg:text-xl font-normal">
+              Built for performance, designed for simplicity, and trusted by thousands of server owners worldwide.
+            </span>
                     </p>
                 </div>
 
@@ -106,10 +108,10 @@ export function AboutSection() {
                             <div className={`w-12 h-12 bg-card/60 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 ${feature.color}`}>
                                 {feature.icon}
                             </div>
-                            <h3 className="font-bold text-foreground dark:text-white mb-3 text-lg">
+                            <h3 className="font-black text-foreground dark:text-white mb-3 text-lg md:text-xl leading-tight">
                                 {feature.title}
                             </h3>
-                            <p className="text-muted-foreground dark:text-white/70 leading-relaxed">
+                            <p className="text-sm md:text-base text-muted-foreground dark:text-white/70 leading-relaxed font-light">
                                 {feature.description}
                             </p>
                         </div>

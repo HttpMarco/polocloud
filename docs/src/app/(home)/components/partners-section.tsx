@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { Users, Handshake, Star, Cloud, Server } from 'lucide-react';
+import { ExternalLink, Users, Handshake, Star, Cloud, Server } from 'lucide-react';
 
 const PartnershipInfo = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -31,16 +31,16 @@ const PartnershipInfo = () => {
             }`}
         >
             <div className="text-center mb-8">
-                <h3 className="text-3xl font-bold text-foreground dark:text-white mb-4">
+                <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-foreground dark:text-white mb-4 tracking-tight leading-tight">
                     Official Partner Program
                 </h3>
-                <p className="text-lg text-muted-foreground dark:text-white/60 max-w-2xl mx-auto leading-relaxed">
+                <p className="text-base md:text-lg lg:text-xl text-muted-foreground dark:text-white/60 max-w-3xl mx-auto leading-relaxed font-light">
                     Join our exclusive network of official partners and help shape the future of Minecraft server management.
                 </p>
             </div>
 
             <div className="mb-8">
-                <h4 className="text-2xl font-bold text-foreground dark:text-white text-center mb-6">
+                <h4 className="text-xl md:text-2xl lg:text-3xl font-black text-foreground dark:text-white text-center mb-6 tracking-tight leading-tight">
                     Partner Benefits
                 </h4>
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -48,10 +48,10 @@ const PartnershipInfo = () => {
                         <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Users className="w-6 h-6 text-blue-400" />
                         </div>
-                        <h5 className="font-semibold text-foreground dark:text-white mb-2">
+                        <h5 className="font-black text-foreground dark:text-white mb-2 text-base md:text-lg leading-tight">
                             Partner List
                         </h5>
-                        <p className="text-sm text-muted-foreground dark:text-white/60">
+                        <p className="text-xs md:text-sm text-muted-foreground dark:text-white/60 font-light">
                             Featured on polocloud.de partner list
                         </p>
                     </div>
@@ -60,10 +60,10 @@ const PartnershipInfo = () => {
                         <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Handshake className="w-6 h-6 text-blue-400" />
                         </div>
-                        <h5 className="font-semibold text-foreground dark:text-white mb-2">
+                        <h5 className="font-black text-foreground dark:text-white mb-2 text-base md:text-lg leading-tight">
                             Premium Support
                         </h5>
-                        <p className="text-sm text-muted-foreground dark:text-white/60">
+                        <p className="text-xs md:text-sm text-muted-foreground dark:text-white/60 font-light">
                             Direct contact person for support
                         </p>
                     </div>
@@ -72,10 +72,10 @@ const PartnershipInfo = () => {
                         <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Star className="w-6 h-6 text-blue-400" />
                         </div>
-                        <h5 className="font-semibold text-foreground dark:text-white mb-2">
+                        <h5 className="font-black text-foreground dark:text-white mb-2 text-base md:text-lg leading-tight">
                             Higher Priority
                         </h5>
-                        <p className="text-sm text-muted-foreground dark:text-white/60">
+                        <p className="text-xs md:text-sm text-muted-foreground dark:text-white/60 font-light">
                             Priority handling for issues
                         </p>
                     </div>
@@ -84,10 +84,10 @@ const PartnershipInfo = () => {
                         <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Cloud className="w-6 h-6 text-blue-400" />
                         </div>
-                        <h5 className="font-semibold text-foreground dark:text-white mb-2">
+                        <h5 className="font-black text-foreground dark:text-white mb-2 text-base md:text-lg leading-tight">
                             Custom Addons
                         </h5>
-                        <p className="text-sm text-muted-foreground dark:text-white/60">
+                        <p className="text-xs md:text-sm text-muted-foreground dark:text-white/60 font-light">
                             Development of special addons
                         </p>
                     </div>

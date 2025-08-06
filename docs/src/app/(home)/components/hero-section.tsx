@@ -24,17 +24,19 @@ export function HeroSection() {
                 <div className={`text-center max-w-4xl mx-auto transition-all duration-1000 ease-out ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
-                    <h1 className={`text-6xl md:text-8xl font-bold mb-12 text-foreground dark:text-white transition-all duration-1000 delay-200 ${
+                    <h1 className={`text-5xl md:text-7xl lg:text-8xl font-black mb-8 text-foreground dark:text-white transition-all duration-1000 delay-200 tracking-tight leading-tight ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
                         PoloCloud
                     </h1>
 
-                    <p className={`text-2xl md:text-3xl text-muted-foreground mb-16 max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
+                    <p className={`text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-16 max-w-4xl mx-auto leading-relaxed font-light transition-all duration-1000 delay-400 ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
                         Deploy and manage your Minecraft servers with ease.
-                        Built for performance, designed for simplicity.
+                        <span className="block mt-2 text-lg md:text-xl lg:text-2xl font-normal">
+              Built for performance, designed for simplicity.
+            </span>
                     </p>
 
                     <div className={`transition-all duration-1000 delay-600 ${
