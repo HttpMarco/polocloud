@@ -39,16 +39,16 @@ export function CompatibilitySection() {
                 <div className={`text-center mb-20 transition-all duration-1000 ease-out ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
-                    <h2 className={`text-5xl md:text-6xl lg:text-7xl font-black mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 tracking-tight leading-tight ${
+                    <h2 className={`text-3xl md:text-4xl lg:text-5xl font-black mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 tracking-tight leading-tight ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
                         Platform Compatibility
                     </h2>
-                    <p className={`text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
+                    <p className={`text-base md:text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
                         Check which Minecraft versions and platforms are supported by PoloCloud.
-                        <span className="block mt-2 text-base md:text-lg lg:text-xl font-normal">
+                        <span className="block mt-2 text-sm md:text-base font-normal">
               Our comprehensive compatibility ensures you can run your server on your preferred setup.
             </span>
                     </p>
