@@ -53,7 +53,6 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         val type = GroupType.valueOf(data.get("type").asString)
         val state = ServiceState.valueOf(data.get("state").asString)
         val templates = data.get("templates").asString.split(",").filter { it.isNotEmpty() }
-        val excludedTemplates = data.get("excludedTemplates").asString.split(",").filter { it.isNotEmpty() }
         val minMemory = data.get("minMemory").asInt
         val maxMemory = data.get("maxMemory").asInt
         val maxPlayerCount = data.get("maxPlayerCount").asInt
