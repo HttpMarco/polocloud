@@ -8,7 +8,6 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
 import dev.httpmarco.polocloud.v1.GroupType
-import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.lang.reflect.Type
 
@@ -27,6 +26,10 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         data.addProperty("port", src.port)
         data.addProperty("state", src.state.name)
         data.addProperty("type", src.type.name)
+        data.addProperty("templates", src.templates.joinToString(","))
+        data.addProperty("excludedTemplates", src.excludedTemplates.joinToString(","))
+        data.addProperty("minMemory", src.minMemory)
+        data.addProperty("maxMemory", src.maxMemory)
         data.addProperty("maxPlayerCount", src.maxPlayerCount)
         data.addProperty("playerCount", src.playerCount)
         data.addProperty("memoryUsage", src.memoryUsage)
@@ -50,6 +53,10 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         val port = data.get("port").asInt
         val type = GroupType.valueOf(data.get("type").asString)
         val state = ServiceState.valueOf(data.get("state").asString)
+        val templates = data.get("templates").asString.split(",").filter { it.isNotEmpty() }
+        val excludedTemplates = data.get("excludedTemplates").asString.split(",").filter { it.isNotEmpty() }
+        val minMemory = data.get("minMemory").asInt
+        val maxMemory = data.get("maxMemory").asInt
         val maxPlayerCount = data.get("maxPlayerCount").asInt
         val playerCount = data.get("playerCount").asInt
         val memoryUsage = data.get("memoryUsage").asDouble
@@ -66,6 +73,10 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
             properties,
             hostname,
             port,
+            templates,
+            excludedTemplates,
+            minMemory,
+            maxMemory,
             playerCount,
             maxPlayerCount,
             memoryUsage,

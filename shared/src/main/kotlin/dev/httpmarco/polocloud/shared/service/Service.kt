@@ -13,11 +13,19 @@ open class Service(
     var properties: Map<String, String>,
     val hostname: String,
     val port: Int,
+    var templates: List<String>,
+    var excludedTemplates: List<String>,
+    minMemory: Int,
+    maxMemory: Int,
     playerCount: Int,
     maxPlayerCount: Int,
     memoryUsage: Double,
     cpuUsage: Double
 ) {
+
+    var minMemory: Int = minMemory
+
+    var maxMemory: Int = maxMemory
 
     var maxPlayerCount: Int = maxPlayerCount
         protected set
@@ -45,6 +53,10 @@ open class Service(
                 properties = snapshot.propertiesMap,
                 hostname = snapshot.hostname,
                 port = snapshot.port,
+                templates = snapshot.templatesList,
+                excludedTemplates = snapshot.excludedTemplatesList,
+                minMemory = snapshot.minimumMemory,
+                maxMemory = snapshot.maximumMemory,
                 maxPlayerCount = snapshot.maxPlayerCount,
                 playerCount = snapshot.playerCount,
                 memoryUsage = snapshot.memoryUsage,
