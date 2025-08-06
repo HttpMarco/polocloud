@@ -6,12 +6,8 @@ import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
 import dev.httpmarco.polocloud.v1.GroupType;
-import dev.httpmarco.polocloud.v1.services.ServiceBootRequest;
-import dev.httpmarco.polocloud.v1.services.ServiceControllerGrpc;
-import dev.httpmarco.polocloud.v1.services.ServiceFindRequest;
-import dev.httpmarco.polocloud.v1.services.ServiceSnapshot;
+import dev.httpmarco.polocloud.v1.services.*;
 import io.grpc.ManagedChannel;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,15 +70,30 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
         return null;
     }
 
+    @NotNull
     @Override
-    public ServiceSnapshot bootInstanceWithConfiguration(@NotNull String name, @NotNull Function1<? super SharedBootConfiguration, ?> configuration) {
-        return null;
+    public ServiceSnapshot bootInstanceWithConfiguration(@NotNull String name, @NotNull SharedBootConfiguration configuration) {
+        int minMemory = configuration.minMemory() != null ? configuration.minMemory() : 0;
+        int maxMemory = configuration.maxMemory() != null ? configuration.maxMemory() : 0;
+        if (minMemory <= 0 || maxMemory <= 0) {
+            throw new IllegalArgumentException("Minimum and maximum memory must be greater than 0.");
+        }
+        return this.blockingStub.bootWithConfiguration(
+                ServiceBootWithConfigurationRequest.newBuilder()
+                        .setGroupName(name)
+                        .setMinimumMemory(minMemory)
+                        .setMaximumMemory(maxMemory)
+                        .addAllTemplates(configuration.templates())
+                        .addAllExcludedTemplates(configuration.excludedTemplates())
+                        .putAllProperties(configuration.properties())
+                        .build()
+        ).getService();
     }
 
     @NotNull
     @Override
     public ServiceSnapshot bootInstance(@NotNull String name) {
-        return this.blockingStub.boot(ServiceBootRequest.newBuilder().setGroupName(name).build()).getService(0);
+        return this.blockingStub.boot(ServiceBootRequest.newBuilder().setGroupName(name).build()).getService();
     }
 
     @Override
