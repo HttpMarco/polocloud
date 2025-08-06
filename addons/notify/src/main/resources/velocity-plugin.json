@@ -1,0 +1,8 @@
+{
+  "id": "polocloud-notify",
+  "name": "PoloCloud-Notify",
+  "version": "${version}",
+  "main": "dev.httpmarco.polocloud.addons.notify.platform.velocity.VelocityPlatform",
+  "url": "https://github.com/HttpMarco/polocloud",
+  "authors": ["PoloCloud", "RECHERGG"]
+}
