@@ -52,7 +52,7 @@ class KubernetesRuntimeServiceStorage : RuntimeServiceStorage<KubernetesService>
 
     override fun bootInstanceWithConfiguration(
         name: String,
-        configuration: (SharedBootConfiguration) -> Any
+        configuration: SharedBootConfiguration
     ): ServiceSnapshot {
         TODO("Not yet implemented")
     }

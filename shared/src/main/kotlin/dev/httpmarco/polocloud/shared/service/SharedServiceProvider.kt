@@ -94,7 +94,7 @@ interface SharedServiceProvider<S : Service> {
      * @param name the name of the service instance to boot
      * @param configuration a lambda that configures the boot process
      */
-    fun bootInstanceWithConfiguration(name: String, configuration: (SharedBootConfiguration) -> Any): ServiceSnapshot
+    fun bootInstanceWithConfiguration(name: String, configuration: SharedBootConfiguration): ServiceSnapshot
 
     /**
      * Boots a service instance with the specified name.
