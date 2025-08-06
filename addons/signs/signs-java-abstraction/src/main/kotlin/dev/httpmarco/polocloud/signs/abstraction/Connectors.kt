@@ -171,7 +171,7 @@ abstract class Connectors<M> {
      * @param service the service to search for
      * @return the connector displaying the service, or null if not found
      */
-    fun findAttachConnector(service: Service): Connector<*>? {
+    fun findAttachConnector(service: Service): Connector<out AnimationFrame>? {
         return connectors.firstOrNull { it.displayedService != null && it.displayedService!!.name() == service.name() }
     }
 
