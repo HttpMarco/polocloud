@@ -3,11 +3,11 @@ import { HomeLayout } from 'fumadocs-ui/layouts/home';
 import { baseOptions } from '@/app/layout.config';
 
 export default function BlogLayout({ children }: { children: ReactNode }) {
-    return (
-        <HomeLayout {...baseOptions}>
-            <main className="flex flex-1 flex-col">
-                {children}
-            </main>
-        </HomeLayout>
-    );
-}
+  return (
+    <HomeLayout {...baseOptions}>
+      <main className="flex flex-1 flex-col">
+        {children}
+      </main>
+    </HomeLayout>
+  );
+} 

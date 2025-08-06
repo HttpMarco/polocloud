@@ -73,7 +73,7 @@ async function sendDiscordNotification(post) {
     };
 
     if (post.tags && post.tags.length > 0) {
-        const tagEmojis = ['🏷️', '📌', '🎯', '⭐', '🔥', '💡', '🚀', '🎉'];
+        const tagEmojis = ['🏷️'];
         const formattedTags = post.tags.map((tag, index) => {
             const emoji = tagEmojis[index % tagEmojis.length];
             return `${emoji} \`${tag}\``;

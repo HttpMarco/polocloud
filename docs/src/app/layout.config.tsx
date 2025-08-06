@@ -9,11 +9,11 @@ import { Logo } from './docs/components/ui/logo';
  * Docs Layout: app/docs/layout.tsx
  */
 export const baseOptions: BaseLayoutProps = {
-    nav: {
-        title: (
-            <Logo />
-        ),
-    },
-    // see https://fumadocs.dev/docs/ui/navigation/links
-    links: [],
+  nav: {
+    title: (
+      <Logo />
+    ),
+  },
+  // see https://fumadocs.dev/docs/ui/navigation/links
+  links: [],
 };
