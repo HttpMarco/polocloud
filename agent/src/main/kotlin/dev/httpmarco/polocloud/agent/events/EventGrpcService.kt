@@ -24,26 +24,22 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
         request: EventProviderOuterClass.EventContext,
         responseObserver: StreamObserver<EventProviderOuterClass.CallEventResponse>
     ) {
-        runCatching {
-            val fqcn = "dev.httpmarco.polocloud.shared.events.definitions.${request.eventName}"
-            val eventClass = Class.forName(fqcn)
-            val eventObj = Agent.eventService.gsonSerializer
-                .fromJson(request.eventData, eventClass) as Event
+        val serverObserver = responseObserver as ServerCallStreamObserver<EventProviderOuterClass.CallEventResponse>
+        if (serverObserver.isCancelled) {
+            return
+        }
 
-            Agent.eventService.call(eventObj)
+        val fqcn = "dev.httpmarco.polocloud.shared.events.definitions.${request.eventName}"
+        val eventClass = Class.forName(fqcn)
+        val eventObj = Agent.eventService.gsonSerializer
+            .fromJson(request.eventData, eventClass) as Event
 
-            EventProviderOuterClass.CallEventResponse.newBuilder()
-                .setSuccess(true)
-                .build()
-        }.onSuccess { response ->
-            responseObserver.onNext(response)
-        }.onFailure { e ->
-            println(e)
+        Agent.eventService.call(eventObj)
 
-            responseObserver.onNext(
+        if (!serverObserver.isCancelled) {
+            serverObserver.onNext(
                 EventProviderOuterClass.CallEventResponse.newBuilder()
-                    .setSuccess(false)
-                    .setMessage(e.message ?: "Unknown error")
+                    .setSuccess(true)
                     .build()
             )
         }
