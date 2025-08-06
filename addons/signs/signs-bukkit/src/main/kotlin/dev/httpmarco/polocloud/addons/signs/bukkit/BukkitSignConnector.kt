@@ -19,6 +19,8 @@ class BukkitSignConnector(data: SignData) : SignConnector(data) {
                 position.y.toInt(),
                 position.z.toInt()
             )?.state as Sign?
+
+        this.sign?.isWaxed = true
     }
 
     override fun display(frame: SignData.SignAnimationTick) {
@@ -26,10 +28,12 @@ class BukkitSignConnector(data: SignData) : SignConnector(data) {
             return
         }
 
-        for ((i, line) in frame.lines.withIndex()) {
-            sign.getSide(Side.FRONT).setLine(i, line)
+        for (i in 0 until 4) {
+            sign.getSide(Side.FRONT).setLine(i, replaceText(frame.lines.getOrNull(i) ?: ""))
         }
 
-        sign.update(true, false)
+        Bukkit.getScheduler().callSyncMethod<Any>(BukkitBootstrap.plugin) {
+            sign.update(true, false)
+        }
     }
 }

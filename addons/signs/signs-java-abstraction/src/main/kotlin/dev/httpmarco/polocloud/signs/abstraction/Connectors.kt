@@ -67,6 +67,9 @@ abstract class Connectors<M> {
 
         val connector = bindSupport.handledConnector(group, position)
         connectors += connector
+
+        // display the first stream
+        connector.update()
     }
 
     fun generateSignLayout(layoutName: String = "default"): SignLayout {
