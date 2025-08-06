@@ -4,11 +4,11 @@ import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
 
-class ConnectorCloudEvents {
+class ConnectorCloudEvents(connectors: Connectors<*>) {
 
     init {
         Polocloud.instance().eventProvider().subscribe(ServiceOnlineEvent::class.java) {
-            var connector = Connectors.context.findEmptyConnector(it.service.groupName)
+            var connector = connectors.findEmptyConnector(it.service.groupName)
 
             if (connector !== null) {
                 connector.bindWith(it.service)
@@ -16,7 +16,7 @@ class ConnectorCloudEvents {
         }
 
         Polocloud.instance().eventProvider().subscribe(ServiceShutdownEvent::class.java) {
-            val connector = Connectors.context.findAttachConnector(it.service)
+            val connector = connectors.findAttachConnector(it.service)
 
             if (connector != null) {
                 connector.unbind()

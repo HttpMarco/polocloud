@@ -5,6 +5,10 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
+import dev.httpmarco.polocloud.signs.abstraction.Connectors
+import dev.httpmarco.polocloud.signs.abstraction.data.banner.BannerLayout
+import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignData
+import dev.httpmarco.polocloud.signs.abstraction.data.sign.SignLayout
 import java.lang.reflect.Type
 
 class ConnectorLayoutSerializer : JsonSerializer<ConnectorLayout<*>>, JsonDeserializer<ConnectorLayout<*>> {
@@ -25,7 +29,18 @@ class ConnectorLayoutSerializer : JsonSerializer<ConnectorLayout<*>>, JsonDeseri
         context: JsonDeserializationContext
     ): ConnectorLayout<*>? {
         val data = json.asJsonObject
-        val layout = context.deserialize<ConnectorLayout<*>>(json, Class.forName("TODO"))
-        return layout
+        val type = data.get("type")?.asString ?: throw IllegalArgumentException("ConnectorLayout must have a 'type' property")
+
+        return when (type) {
+            "SIGN" -> {
+                context.deserialize<SignLayout>(data, SignLayout::class.java)
+            }
+            "BANNER" -> {
+                context.deserialize<BannerLayout>(data, BannerLayout::class.java)
+            }
+            else -> {
+                throw IllegalArgumentException("ConnectorLayout must have a 'type' property")
+            }
+        }
     }
 }

@@ -8,5 +8,5 @@ import dev.httpmarco.polocloud.v1.services.ServiceState
 import kotlin.collections.listOf
 
 class ConnectorConfiguration(
-    val connectors: List<BasedConnectorData<*>> = listOf()
+    var connectors: List<BasedConnectorData<*>> = listOf()
 )
