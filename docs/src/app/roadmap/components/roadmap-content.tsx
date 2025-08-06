@@ -8,8 +8,8 @@ interface RoadmapItem {
     title: string;
     description: string;
     category: 'ui' | 'platforms' | 'bot' | 'addons';
-    priority: 'high' | 'medium' | 'low';
     estimatedDate?: string;
+    tags?: string[];
 }
 
 interface RoadmapColumn {
@@ -21,34 +21,121 @@ interface RoadmapColumn {
 
 const roadmapData: RoadmapColumn[] = [
     {
-        id: 'future',
-        title: 'IN PLANNING (FUTURE)',
-        color: 'border-yellow-500',
-        items: []
+        id: 'no-status',
+        title: 'No Status',
+        color: 'border-orange-500',
+        items: [
+            {
+                id: 'threaded-server-startup',
+                title: 'Threaded server startup',
+                description: '',
+                category: 'platforms',
+                tags: ['improvement', 'prototype-5'],
+            },
+            {
+                id: 'terminal-command-types',
+                title: 'Terminal Command types lay out',
+                description: '',
+                category: 'ui',
+                tags: ['improvement', 'prototype-5'],
+            },
+        ]
     },
     {
-        id: 'soon',
-        title: 'IN PLANNING (SOON)',
+        id: 'todo',
+        title: 'Todo',
         color: 'border-sky-500',
-        items: []
+        items: [
+            {
+                id: 'status-lines',
+                title: 'Status Lines',
+                description: '',
+                category: 'ui',
+                tags: ['new requirement', 'prototype-5'],
+            },
+            {
+                id: 'gate-support',
+                title: 'Gate Support',
+                description: '',
+                category: 'addons',
+                tags: ['new requirement', 'prototype-5'],
+            },
+            {
+                id: 'fabric-forwarding',
+                title: 'Fabric needs forwarding',
+                description: '',
+                category: 'platforms',
+                tags: ['improvement', 'prototype-5'],
+            },
+            {
+                id: 'forge-mod-support',
+                title: 'Support Forge and any Mod Servers',
+                description: '',
+                category: 'platforms',
+                tags: ['improvement', 'new requirement', 'prototype-5'],
+            },
+            {
+                id: 'reduce-launcher-size',
+                title: 'Reduce launcher file size',
+                description: '',
+                category: 'ui',
+                tags: ['improvement', 'prototype-5'],
+            },
+        ]
     },
     {
         id: 'in-progress',
-        title: 'IN PROGRESS',
+        title: 'In Progress',
         color: 'border-purple-500',
         items: []
     },
     {
-        id: 'coming-soon',
-        title: 'COMING SOON',
-        color: 'border-orange-500',
+        id: 'quality-testing',
+        title: 'Quality-Testing',
+        color: 'border-pink-500',
         items: []
     },
     {
-        id: 'published',
-        title: 'PUBLISHED',
+        id: 'done',
+        title: 'Done',
         color: 'border-green-500',
-        items: []
+        items: [
+            {
+                id: 'shutdown-message',
+                title: 'wrong shutdown message for static services',
+                description: '',
+                category: 'platforms',
+                tags: ['improvement', 'prototype-5'],
+            },
+            {
+                id: 'group-delete-error',
+                title: 'Error when deleting a group and recreating it with the same name',
+                description: '',
+                category: 'ui',
+                tags: ['bug', 'prototype-5'],
+            },
+            {
+                id: 'crowdin-subscription',
+                title: 'We need to update crowdin subscription to make it work again',
+                description: '',
+                category: 'addons',
+                tags: ['bug', 'prototype-5'],
+            },
+            {
+                id: 'github-sponsors',
+                title: 'Setup GitHub Sponsors',
+                description: '',
+                category: 'addons',
+                tags: ['new requirement', 'prototype-5'],
+            },
+            {
+                id: 'cloud-port-ping',
+                title: 'Error while ping cloud port in Minecraft',
+                description: '',
+                category: 'platforms',
+                tags: ['bug', 'improvement', 'prototype-5'],
+            },
+        ]
     }
 ];
 
@@ -72,36 +159,28 @@ const getCategoryColor = (category: string) => {
     }
 };
 
-const getPriorityColor = (priority: string) => {
-    switch (priority) {
-        case 'high': return 'bg-red-500/20 text-red-400';
-        case 'medium': return 'bg-yellow-500/20 text-yellow-400';
-        case 'low': return 'bg-green-500/20 text-green-400';
-        default: return 'bg-gray-500/20 text-gray-400';
-    }
-};
-
 const RoadmapCard = ({ item }: { item: RoadmapItem }) => {
     return (
         <div className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl p-4 mb-3 hover:bg-card/60 transition-all duration-300 hover:shadow-lg hover:border-border/60">
-            <div className="flex items-center justify-between mb-3">
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${getCategoryColor(item.category)}`}>
-                    {getCategoryIcon(item.category)}
-                    <span className="capitalize font-semibold">{item.category}</span>
+            {item.tags && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                    {item.tags.map((tag) => (
+                        <span key={tag} className={
+                            tag === 'improvement' ? 'bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full text-xs font-semibold' :
+                                tag === 'new requirement' ? 'bg-green-100 text-green-800 px-2 py-0.5 rounded-full text-xs font-semibold' :
+                                    tag === 'prototype-5' ? 'bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-semibold' :
+                                        tag === 'bug' ? 'bg-red-100 text-red-800 px-2 py-0.5 rounded-full text-xs font-semibold' :
+                                            'bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full text-xs font-semibold'
+                        }>{tag}</span>
+                    ))}
                 </div>
-                <div className={`px-2.5 py-1 rounded-full text-xs font-medium ${getPriorityColor(item.priority)}`}>
-                    {item.priority.toUpperCase()}
-                </div>
-            </div>
-
+            )}
             <h3 className="font-bold text-foreground dark:text-white mb-2 text-sm leading-tight">
                 {item.title}
             </h3>
-
             <p className="text-xs text-muted-foreground dark:text-white/70 mb-3 leading-relaxed">
                 {item.description}
             </p>
-
             {item.estimatedDate && (
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground dark:text-white/60 bg-muted/30 px-2 py-1 rounded-md w-fit">
                     <Calendar className="w-3 h-3" />
@@ -192,23 +271,19 @@ export function RoadmapContent() {
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
                     <div className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-2xl p-8 shadow-lg">
-                        <h3 className="font-bold text-foreground dark:text-white mb-6 text-lg">Categories</h3>
+                        <h3 className="font-bold text-foreground dark:text-white mb-6 text-lg">Tags</h3>
                         <div className="flex flex-wrap gap-6">
                             <div className="flex items-center gap-3">
-                                <div className="w-4 h-4 bg-blue-500 rounded-full shadow-sm"></div>
-                                <span className="text-sm text-muted-foreground dark:text-white/70 font-medium">UI</span>
+                                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">improvement</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-4 h-4 bg-purple-500 rounded-full shadow-sm"></div>
-                                <span className="text-sm text-muted-foreground dark:text-white/70 font-medium">Platforms</span>
+                                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">new requirement</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-4 h-4 bg-green-500 rounded-full shadow-sm"></div>
-                                <span className="text-sm text-muted-foreground dark:text-white/70 font-medium">Bot</span>
+                                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">prototype-5</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-4 h-4 bg-orange-500 rounded-full shadow-sm"></div>
-                                <span className="text-sm text-muted-foreground dark:text-white/70 font-medium">Addons</span>
+                                <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">bug</span>
                             </div>
                         </div>
                     </div>
