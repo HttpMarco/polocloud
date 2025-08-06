@@ -13,10 +13,17 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
         request: EventProviderOuterClass.EventSubscribeRequest,
         responseObserver: StreamObserver<EventProviderOuterClass.EventContext>
     ) {
+        val observer = responseObserver as ServerCallStreamObserver<EventProviderOuterClass.EventContext>
+
+        observer.setOnCancelHandler {
+            //TODO
+            //Agent.eventService.detach(request.eventName, request.serviceName)
+        }
+
         Agent.eventService.attach(
             request.eventName,
             request.serviceName,
-            responseObserver as ServerCallStreamObserver<EventProviderOuterClass.EventContext>
+            responseObserver
         )
     }
 
@@ -24,7 +31,16 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
         request: EventProviderOuterClass.EventContext,
         responseObserver: StreamObserver<EventProviderOuterClass.CallEventResponse>
     ) {
-        runCatching {
+        if (isCallCancelled(responseObserver)) {
+            return
+        }
+
+        val response = processEvent(request)
+        safeRespond(responseObserver, response)
+    }
+
+    private fun processEvent(request: EventProviderOuterClass.EventContext): EventProviderOuterClass.CallEventResponse {
+        return try {
             val fqcn = "dev.httpmarco.polocloud.shared.events.definitions.${request.eventName}"
             val eventClass = Class.forName(fqcn)
             val eventObj = Agent.eventService.gsonSerializer
@@ -35,17 +51,25 @@ class EventGrpcService : EventProviderGrpc.EventProviderImplBase() {
             EventProviderOuterClass.CallEventResponse.newBuilder()
                 .setSuccess(true)
                 .build()
-        }.onSuccess { response ->
-            responseObserver.onNext(response)
-        }.onFailure { e ->
-            println(e)
+        } catch (e: Exception) {
+            EventProviderOuterClass.CallEventResponse.newBuilder()
+                .setSuccess(false)
+                .setMessage(e.message ?: "Unknown error")
+                .build()
+        }
+    }
 
-            responseObserver.onNext(
-                EventProviderOuterClass.CallEventResponse.newBuilder()
-                    .setSuccess(false)
-                    .setMessage(e.message ?: "Unknown error")
-                    .build()
-            )
+    private fun isCallCancelled(observer: StreamObserver<*>): Boolean {
+        return observer is ServerCallStreamObserver && observer.isCancelled
+    }
+
+    private fun safeRespond(
+        observer: StreamObserver<EventProviderOuterClass.CallEventResponse>,
+        response: EventProviderOuterClass.CallEventResponse
+    ) {
+        if (!isCallCancelled(observer)) {
+            observer.onNext(response)
+            observer.onCompleted()
         }
     }
 }

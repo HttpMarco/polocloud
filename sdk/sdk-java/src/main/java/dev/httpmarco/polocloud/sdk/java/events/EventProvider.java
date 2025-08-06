@@ -6,6 +6,8 @@ import dev.httpmarco.polocloud.shared.events.SharedEventProvider;
 import dev.httpmarco.polocloud.v1.proto.EventProviderGrpc;
 import dev.httpmarco.polocloud.v1.proto.EventProviderOuterClass;
 import io.grpc.ManagedChannel;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,9 @@ public final class EventProvider extends SharedEventProvider {
 
             @Override
             public void onError(Throwable t) {
+                if (!isCancellation(t)) {
+                    return;
+                }
                 System.err.println("Error while calling event: " + t.getMessage());
             }
 
@@ -61,8 +66,11 @@ public final class EventProvider extends SharedEventProvider {
 
             @Override
             public void onError(Throwable t) {
+                if (isCancellation(t)) {
+                    return;
+                }
+
                 System.err.println("Error while subscribing to event: " + t.getMessage());
-                t.printStackTrace(System.err);
             }
 
             @Override
@@ -70,5 +78,10 @@ public final class EventProvider extends SharedEventProvider {
                 // No action needed on completion
             }
         });
+    }
+
+    private boolean isCancellation(Throwable t) {
+        return t instanceof StatusRuntimeException &&
+                ((StatusRuntimeException) t).getStatus().getCode() == Status.Code.CANCELLED;
     }
 }
