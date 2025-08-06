@@ -12,12 +12,12 @@ class LayoutConfiguration(
             mapOf(
                 ConnectorState.LOADING to listOf(
                     SignData.SignAnimationTick(
-                        arrayOf("","Search for", "Server..."),
+                        arrayOf("", "Search for", "Server..."),
                     )
                 ),
                 ConnectorState.ONLINE to listOf(
                     SignData.SignAnimationTick(
-                        arrayOf(" %group%", "%online_players%/%max_players%"),
+                        arrayOf("%group%", "%motd%", "§a§l%state%", "%online_players%/%max_players%"),
                     )
                 ),
                 ConnectorState.PLAYERS to listOf(
