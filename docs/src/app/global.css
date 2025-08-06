@@ -1,3 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Minecraft Font */
+@font-face {
+  font-family: 'Minecraft';
+  src: url('https://fonts.cdnfonts.com/css/minecraft-4') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-minecraft {
+  font-family: 'Minecraft', 'Courier New', monospace;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.5);
+}
+
+@layer utilities {
+  .bg-size-200 {
+    background-size: 200% 200%;
+  }
+  
+  .animate-gradient {
+    animation: gradient 3s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/shadcn.css';
 @import 'fumadocs-ui/css/preset.css';
@@ -98,6 +165,8 @@
   --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.25);
+  --tracking-normal: 0rem;
+  --spacing: 0.25rem;
 }
 
 @theme inline {
@@ -162,4 +231,87 @@
 
 body {
   letter-spacing: var(--tracking-normal);
+}
+
+/* Blog-specific styles */
+.prose {
+  @apply text-foreground;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  @apply text-foreground dark:text-white font-bold;
+}
+
+.prose h1 {
+  @apply text-3xl md:text-4xl mb-6;
+}
+
+.prose h2 {
+  @apply text-2xl md:text-3xl mb-4 mt-8;
+}
+
+.prose h3 {
+  @apply text-xl md:text-2xl mb-3 mt-6;
+}
+
+.prose p {
+  @apply text-muted-foreground leading-relaxed mb-4;
+}
+
+.prose a {
+  @apply text-primary hover:text-primary/80 underline decoration-primary/30 hover:decoration-primary transition-all duration-200;
+}
+
+.prose strong {
+  @apply font-bold text-foreground dark:text-white;
+}
+
+.prose em {
+  @apply italic text-muted-foreground;
+}
+
+.prose code {
+  @apply bg-muted text-foreground px-2 py-1 rounded text-sm font-mono;
+}
+
+.prose pre {
+  @apply bg-muted border border-border/50 rounded-lg p-4 overflow-x-auto;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-primary/30 pl-4 italic text-muted-foreground;
+}
+
+.prose ul,
+.prose ol {
+  @apply mb-4 pl-6;
+}
+
+.prose li {
+  @apply text-muted-foreground mb-1;
+}
+
+.prose table {
+  @apply w-full border-collapse border border-border/50 rounded-lg overflow-hidden;
+}
+
+.prose th {
+  @apply bg-muted text-foreground dark:text-white font-bold p-3 text-left border border-border/50;
+}
+
+.prose td {
+  @apply p-3 border border-border/50 text-muted-foreground;
+}
+
+.prose img {
+  @apply rounded-lg shadow-lg;
 }
