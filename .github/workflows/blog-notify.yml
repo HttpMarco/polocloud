@@ -1,0 +1,70 @@
+name: Blog Post Discord Notification
+
+on:
+  push:
+    branches: [ development ]
+    paths:
+      - 'docs/content/blog/**/*.mdx'
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./docs
+        run: npm install gray-matter
+
+      - name: Check for new blog posts
+        id: check-posts
+        run: |
+          PREV_COMMIT=${{ github.event.before }}
+          CURRENT_COMMIT=${{ github.sha }}
+          
+          CHANGED_FILES=$(git diff --name-only $PREV_COMMIT $CURRENT_COMMIT | grep '^docs/content/blog/.*\.mdx$' || true)
+          
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "Found changed blog files:"
+            echo "$CHANGED_FILES"
+          
+            NEW_FILES=""
+            for file in $CHANGED_FILES; do
+              if [ -f "$file" ]; then
+                NEW_FILES="$NEW_FILES $file"
+              fi
+            done
+          
+            NEW_FILES=$(echo "$NEW_FILES" | sed 's/^ *//')
+          
+            if [ -n "$NEW_FILES" ]; then
+              echo "New blog posts found:"
+              echo "$NEW_FILES"
+              echo "changed_files=$NEW_FILES" >> $GITHUB_OUTPUT
+              echo "has_new_posts=true" >> $GITHUB_OUTPUT
+            else
+              echo "No new blog posts found (only deletions)"
+              echo "has_new_posts=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "No blog files changed"
+            echo "has_new_posts=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Process blog posts and send Discord notifications
+        if: steps.check-posts.outputs.has_new_posts == 'true'
+        working-directory: ./docs
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          FILES_ARRAY=(${{ steps.check-posts.outputs.changed_files }})
+          node .github/scripts/process-blog-posts.js "${FILES_ARRAY[@]}"
