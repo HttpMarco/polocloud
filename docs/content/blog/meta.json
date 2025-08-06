@@ -1,0 +1,13 @@
+{
+  "pages": [
+    {
+      "title": "Blog",
+      "pages": [
+        {
+          "title": "Partner Programm",
+          "url": "/blog/partner"
+        }
+      ]
+    }
+  ]
+}
