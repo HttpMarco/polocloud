@@ -5,6 +5,8 @@ import dev.httpmarco.polocloud.addons.proxy.CloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
 import dev.httpmarco.polocloud.sdk.java.Polocloud
+import io.grpc.Status
+import io.grpc.StatusRuntimeException
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
@@ -29,11 +31,24 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
 
         val groupName = arguments[0]
 
-        val service = Polocloud.instance().serviceProvider().bootInstance(groupName)
-        source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("starting")
-            .replace("%group%", service.groupName)
-            .replace("%service%", service.groupName + "-" + service.id)
-        ))
+        try {
+            val service = Polocloud.instance().serviceProvider().bootInstance(groupName)
+            source.sendMessage(
+                miniMessage.deserialize(
+                    config.prefix() + config.messages("starting")
+                        .replace("%group%", service.groupName)
+                        .replace("%service%", service.groupName + "-" + service.id)
+                )
+            )
+        } catch (e: StatusRuntimeException) {
+            if(e.status.code == Status.NOT_FOUND.code) {
+                source.sendMessage(
+                    miniMessage.deserialize(
+                        config.prefix() + "<red>Group <aqua>$groupName</aqua> does not exist!</red>"
+                    )
+                )
+            }
+        }
     }
 
     private fun usage(config: ProxyConfig): String {
