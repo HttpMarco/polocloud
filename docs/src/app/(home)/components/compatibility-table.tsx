@@ -24,7 +24,7 @@ const compatibilityData: CompatibilityData[] = [
     },
     {
         platform: 'Fabric',
-        '1.7-1.12': 'not-supported',
+        '1.7-1.12': 'not-possible',
         '1.12-1.16': 'partial',
         '1.18-1.19': 'supported',
         '1.20+': 'supported',
@@ -51,27 +51,27 @@ const compatibilityData: CompatibilityData[] = [
     },
     {
         platform: 'Purpur',
-        '1.7-1.12': 'not-supported',
-        '1.12-1.16': 'not-supported',
-        '1.18-1.19': 'partial',
+        '1.7-1.12': 'not-possible',
+        '1.12-1.16': 'partial',
+        '1.18-1.19': 'supported',
         '1.20+': 'supported',
         'Severmobs': 'supported',
         'Signs': 'supported',
     },
     {
         platform: 'Limbo',
-        '1.7-1.12': 'not-supported',
-        '1.12-1.16': 'not-supported',
+        '1.7-1.12': 'not-possible',
+        '1.12-1.16': 'not-possible',
         '1.18-1.19': 'supported',
         '1.20+': 'supported',
-        'Severmobs': 'not-supported',
-        'Signs': 'not-supported',
+        'Severmobs': 'not-possible',
+        'Signs': 'not-possible',
     },
     {
         platform: 'Leaf',
-        '1.7-1.12': 'not-supported',
-        '1.12-1.16': 'not-supported',
-        '1.18-1.19': 'not-supported',
+        '1.7-1.12': 'not-possible',
+        '1.12-1.16': 'not-possible',
+        '1.18-1.19': 'not-possible',
         '1.20+': 'supported',
         'Severmobs': 'supported',
         'Signs': 'supported',
@@ -115,7 +115,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
     };
 
     const iconPath = getIconPath(platform);
-
+    
     if (!iconPath) {
         return null;
     }
