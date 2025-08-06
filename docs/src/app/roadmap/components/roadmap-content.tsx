@@ -193,17 +193,17 @@ const RoadmapColumn = ({ column, columnIndex }: { column: RoadmapColumn; columnI
         animation: 'slideInLeft 0.8s ease-out forwards'
       }}
     >
-      <div 
+      <div
         className="mb-6 p-4 bg-card/50 backdrop-blur-sm border rounded-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:scale-105 relative"
         style={{
           borderColor: getBorderColor(column.id),
-          boxShadow: `inset 0 0 20px ${getBorderColor(column.id)}15, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`
+          boxShadow: `inset 0 0 30px ${getBorderColor(column.id)}25, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`
         }}
       >
-        <div 
-          className="absolute inset-0 rounded-xl opacity-10"
+        <div
+            className="absolute inset-0 rounded-xl opacity-20"
           style={{
-            background: `radial-gradient(circle at center, ${getBorderColor(column.id)}20, transparent 70%)`
+            background: `radial-gradient(circle at center, ${getBorderColor(column.id)}30, transparent 60%)`
           }}
         />
 
