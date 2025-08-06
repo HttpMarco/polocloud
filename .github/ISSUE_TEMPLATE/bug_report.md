@@ -23,6 +23,7 @@ If applicable, add screenshots to help explain your problem.
  - OS
  - Java Version
  - PoloCloud Version
+ - Service information
  - Addons with Version
 
 **Additional context**
