@@ -52,7 +52,7 @@ export function Footer() {
           <div className="flex gap-8">
             <div className="flex flex-col gap-2">
               <Link 
-                href="/docs" 
+                href="/docs/cloud"
                 className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
               >
                 <BookOpen className="w-4 h-4" />
@@ -68,14 +68,14 @@ export function Footer() {
             </div>
             <div className="flex flex-col gap-2">
               <Link 
-                href="/privacy" 
+                href="/"
                 className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
               >
                 <Shield className="w-4 h-4" />
                 Privacy
               </Link>
               <Link 
-                href="/terms" 
+                href="/"
                 className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
