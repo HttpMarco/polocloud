@@ -51,11 +51,12 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
     }
 
     fun updatePlayerCount(playerCount: Int) {
-        if (this.state == ServiceState.ONLINE && this.playerCount != playerCount) {
-            Agent.eventProvider().call(ServiceChangePlayerCountEvent(this, playerCount))
-        }
-
+        val oldPlayerCount = this.playerCount
         this.playerCount = playerCount
+
+        if (this.state == ServiceState.ONLINE && oldPlayerCount != playerCount) {
+            Agent.eventProvider().call(ServiceChangePlayerCountEvent(this))
+        }
     }
 
     fun updateCpuUsage(cpuUsage: Double) {

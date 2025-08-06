@@ -9,6 +9,8 @@ import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceStoppingEvent
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.nio.file.Files
@@ -38,6 +40,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val platform = service.group.platform()
 
         service.state = ServiceState.STARTING
+        Agent.eventService.call(ServiceStartingEvent(service))
+
         service.path.createDirectories()
 
         val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
@@ -92,7 +96,9 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPED) {
             return service.toSnapshot()
         }
+
         service.state = ServiceState.STOPPING
+        Agent.eventService.call(ServiceStoppingEvent(service))
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
