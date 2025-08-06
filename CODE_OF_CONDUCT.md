@@ -29,4 +29,4 @@ Original text courtesy of the [Speak Up! project](http://web.archive.org/web/201
 
 ## Questions?
 
-If you have questions, please see [Faq](https://polocloud.de/docs/cloud/faq). If that doesn't answer your questions, feel free to [contact us](mailto:report@polocloud.de).
+If you have questions, please see [Faq](https://polocloud.de/docs/cloud/faq). If that doesn't answer your questions, feel free to [contact us](http://discord.polocloud.de/).
