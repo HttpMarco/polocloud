@@ -23,7 +23,7 @@ class VelocityPlatform @Inject constructor(
         val commandManager = this.server.commandManager
         commandManager.register(
             commandManager.metaBuilder("polocloud").aliases(*this.proxyAddon.config.aliases().toTypedArray()).plugin(this).build(),
-            VelocityCloudCommand(this.proxyAddon)
+            VelocityCloudCommand(this.proxyAddon, server),
         )
 
         VelocityTablistUpdater( this, server, config)

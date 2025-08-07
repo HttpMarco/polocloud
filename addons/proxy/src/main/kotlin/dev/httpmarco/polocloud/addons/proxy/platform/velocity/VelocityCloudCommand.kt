@@ -1,26 +1,35 @@
 package dev.httpmarco.polocloud.addons.proxy.platform.velocity
 
 import com.velocitypowered.api.command.SimpleCommand
+import com.velocitypowered.api.proxy.ProxyServer
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.InfoSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.KickAllSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.ListSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.PlayersSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.SendSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StartSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StopSubCommand
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class VelocityCloudCommand(val proxyAddon: ProxyAddon) : SimpleCommand {
+class VelocityCloudCommand(
+    val proxyAddon: ProxyAddon,
+    private val proxyServer: ProxyServer
+) : SimpleCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
     private val subCommands = mapOf(
         "info" to InfoSubCommand(proxyAddon),
         "start" to StartSubCommand(proxyAddon),
         "stop" to StopSubCommand(proxyAddon),
-        //"list" to ListSubCommand(proxyAddon),
+        "list" to ListSubCommand(proxyAddon),
+        "players" to PlayersSubCommand(proxyAddon, proxyServer),
         //"create" to CreateSubCommand(proxyAddon),
         //"delete" to DeleteSubCommand(proxyAddon),
         //"maintenance" to MaintenanceSubCommand(proxyAddon),
-        //"kickall" to KickAllSubCommand(proxyAddon),
-        //"send" to SendSubCommand(proxyAddon),
+        "kickall" to KickAllSubCommand(proxyAddon, proxyServer),
+        "send" to SendSubCommand(proxyAddon, proxyServer),
         //"broadcast" to BroadcastSubCommand(proxyAddon)
     )
 
@@ -56,6 +65,7 @@ class VelocityCloudCommand(val proxyAddon: ProxyAddon) : SimpleCommand {
             appendLine(config.prefix() + "<gray>Available <gradient:#00fdee:#118bd1><bold>/polocloud</bold></gradient> commands:")
             appendLine(config.prefix() + "<aqua>/polocloud info</aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud list</aqua>")
+            appendLine(config.prefix() + "<aqua>/polocloud players</aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud start <groupName></aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud stop <server></aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud create <template> [static]</aqua>")
