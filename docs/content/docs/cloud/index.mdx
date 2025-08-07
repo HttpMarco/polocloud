@@ -4,9 +4,9 @@ description: Getting Started with PoloCloud
 icon: Album
 ---
 
-import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints, FolderCog } from 'lucide-react';
+import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints, FolderCog, Plus } from 'lucide-react';
 import { Callout } from 'fumadocs-ui/components/callout';
-import ButtonLink from '@/app/docs/components/button-link';
+import ButtonLink from '@/components/ui/button-link';
 import gateIcon from '../../../public/gate.png';
 import velocityIcon from '../../../public/velocity.svg';
 import waterfallIcon from '../../../public/waterfall.svg';
@@ -54,7 +54,7 @@ PoloCloud has different parts:
 
 
 <div className="inline">
-Following platforms are supported by PoloCloud: <ButtonLink text="Request platform" href="https://github.com/HttpMarco/polocloud/issues/new" />
+Following platforms are supported by PoloCloud: <ButtonLink icon={<Plus />} text="Request platform" href="https://github.com/HttpMarco/polocloud/issues/new" />
 </div>
 
 <Cards>

@@ -8,7 +8,6 @@ import { Download } from 'lucide-react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Callout } from 'fumadocs-ui/components/callout';
-import ButtonLink from '@/app/docs/components/button-link';
 import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
 import { TypeTable } from 'fumadocs-ui/components/type-table';
 import { File, Folder, Files } from 'fumadocs-ui/components/files';
@@ -31,11 +30,10 @@ import { File, Folder, Files } from 'fumadocs-ui/components/files';
             or the pre-made Zip <code>polocloud-v3.0.0-pre-4.zip</code>.
 
             <ButtonLink
-              icon={<Download />}
-              text="Download here"
-              href="https://github.com/HttpMarco/polocloud/releases"
-            />
-        </Step>
+                icon={<Download />}
+                text="Download here"
+                href="https://github.com/HttpMarco/polocloud/releases"
+            />        </Step>
         <Step>
             ### Startup
 
