@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
+import dev.httpmarco.polocloud.agent.utils.JavaUtils
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.Platform
@@ -154,7 +155,10 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         when (platform.language) {
             PlatformLanguage.JAVA -> {
-                val javaPath = System.getProperty("java.home")
+
+                val javaPath = abstractService.group.properties["javaPath"]?.takeIf {
+                    it.isString && JavaUtils().isValidJavaPath(it.asString)
+                } ?: System.getProperty("java.home")
 
                 commands.add("${javaPath}/bin/java")
                 commands.addAll(
