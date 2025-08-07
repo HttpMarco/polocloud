@@ -1,20 +1,17 @@
-import Link from 'next/link';
-import { CpuIcon } from 'lucide-react';
+import { HeroSection } from './components/hero-section';
+import { AboutSection } from './components/about-section';
+import { CompatibilitySection } from './components/compatibility-section';
+import { ComingSoonSection } from './components/coming-soon-section';
+import { Footer } from './components/footer';
 
 export default function HomePage() {
-  return (
-    <main className="flex flex-1 flex-col justify-center text-center">
-      <h1 className="mb-4 text-2xl font-bold">Hello World</h1>
-      <p className="text-fd-muted-foreground">
-        You can open{' '}
-        <Link
-          href="/docs/cloud"
-          className="text-fd-foreground font-semibold underline"
-        >
-          /docs/cloud
-        </Link>{' '}
-        and see the documentation.
-      </p>
-    </main>
-  );
+    return (
+        <main className="flex flex-1 flex-col">
+            <HeroSection />
+            <AboutSection />
+            <CompatibilitySection />
+            <ComingSoonSection />
+            <Footer />
+        </main>
+    );
 }

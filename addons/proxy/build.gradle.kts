@@ -14,10 +14,9 @@ dependencies {
     compileOnly(libs.bungeecord)
 
     compileOnly(libs.gson)
-    compileOnly(projects.sdk.sdkJava)
 
-    compileOnly(projects.addons.api)
-    runtimeOnly(projects.addons.api)
+    implementation(projects.sdk.sdkJava)
+    implementation(projects.addons.api)
 }
 
 tasks.processResources {
