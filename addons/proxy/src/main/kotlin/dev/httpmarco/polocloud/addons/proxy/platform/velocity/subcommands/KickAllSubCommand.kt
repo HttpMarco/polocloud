@@ -16,10 +16,6 @@ class KickAllSubCommand(
     override fun execute(source: CommandSource, arguments: List<String>) {
         val config = this.proxyAddon.config
 
-        if (!source.hasPermission("polocloud.addons.proxy.command.cloud.kickall")) {
-             source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("no_permission")))
-             return
-         }
 
         val allPlayers = proxyServer.allPlayers.toList()
         
