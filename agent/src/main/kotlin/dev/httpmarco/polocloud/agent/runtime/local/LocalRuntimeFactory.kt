@@ -145,6 +145,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.state = ServiceState.STOPPED
         Agent.runtime.serviceStorage().dropAbstractService(service)
         i18n.info("agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful", service.name())
+        
         return service.toSnapshot()
     }
 
