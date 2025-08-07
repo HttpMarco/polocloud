@@ -26,5 +26,6 @@
     "fabric-networking-api-v1": "*",
     "minecraft": ">=1.21",
     "java": ">=21"
-  }
+  },
+  "accessWidener": "polocloud_bridge.accesswidener"
 }

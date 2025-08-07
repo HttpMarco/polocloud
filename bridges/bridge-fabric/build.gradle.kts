@@ -19,6 +19,8 @@ dependencies {
 
 loom {
     serverOnlyMinecraftJar()
+
+    accessWidenerPath = file("src/main/resources/polocloud_bridge.accesswidener")
 }
 
 tasks.processResources {
