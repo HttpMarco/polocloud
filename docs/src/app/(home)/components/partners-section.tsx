@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { ExternalLink, Users, Handshake, Star, Cloud, Server, Award, Zap, Shield, Gift } from 'lucide-react';
+import { ExternalLink, Users, Handshake, Star, Cloud, Award, Zap } from 'lucide-react';
 
 const PartnershipInfo = () => {
   const [isVisible, setIsVisible] = useState(false);
