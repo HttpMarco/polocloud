@@ -3,14 +3,21 @@
   "type": "SERVER",
   "language": "JAVA",
   "url": "https://meta.fabricmc.net/v2/versions/loader/%version%/%buildId%/1.0.3/server/jar",
+  "bridge": "fabric-bridge",
+  "bridgePath": "mods",
   "arguments": [
     "-nogui"
   ],
   "tasks": [
     "EULA_TASK",
-    "SPIGOT_SERVER_PROPERTIES"
+    "SPIGOT_SERVER_PROPERTIES",
+    "FABRIC_VELOCITY_SUPPORT_TASK"
   ],
   "versions": [
+    {
+      "version": "1.21.8",
+      "buildId": "0.16.14"
+    },
     {
       "version": "1.21.7",
       "buildId": "0.16.14"

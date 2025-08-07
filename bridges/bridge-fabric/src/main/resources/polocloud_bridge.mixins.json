@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "compatibilityLevel": "JAVA_16",
+  "package": "dev.httpmarco.polocloud.bridges.fabric.mixin",
+  "server": [
+    "ClientConnectionAccessor",
+    "ServerLoginNetworkHandlerAccessor",
+    "EarlyVelocityPacketSendMixin",
+    "SkipKeyPacketMixin",
+    "SkipOnlineModeCheckMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

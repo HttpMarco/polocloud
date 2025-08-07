@@ -1,28 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "example_mod",
+  "id": "fabric_bridge",
   "version": "${version}",
-  "name": "Example Mod",
-  "description": "A simple example mod for Fabric.",
+  "name": "FabricBridge",
+  "description": "Enables proxy support for Fabric servers in PoloCloud.",
   "authors": [
-    "Example Author"
+    "RECHERGG"
   ],
   "contact": {
-    "homepage": "https://example.com",
-    "sources": "https://github.com/example/example_mod"
+    "homepage": "https://polocloud.de",
+    "sources": "https://github.com/HttpMarco/polocloud"
   },
-  "license": "MIT",
-  "icon": "assets/example_mod/icon.png",
-  "environment": "*",
+  "license": "Apache 2.0",
+  "environment": "server",
   "entrypoints": {
     "main": [
-      "com.example.ExampleMod"
+      "dev.httpmarco.polocloud.bridges.fabric.FabricBridge"
     ]
   },
-  "mixins": [],
+  "mixins": [
+    "polocloud_bridge.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.15.11",
-    "fabric": "*",
-    "minecraft": "1.20.1"
-  },
+    "fabric-networking-api-v1": "*",
+    "minecraft": ">=1.21",
+    "java": ">=21"
+  }
 }

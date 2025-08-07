@@ -1,0 +1,15 @@
+{
+  "name": "FABRIC_VELOCITY_SUPPORT_TASK",
+  "steps": [
+    {
+      "name": "Change velocity proxy token",
+      "description": "Set up the Velocity proxy token by writing to the file.",
+      "filename": "fabric-bridge.json",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "velocitySecret",
+        "value": "%velocityProxyToken%"
+      }
+    }
+  ]
+}
