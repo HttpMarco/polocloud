@@ -16,8 +16,7 @@ service GroupController {
 
 message FindGroupRequest {
   string name = 1;
-  string group_name = 2;
-  GroupType type = 3;
+  GroupType type = 2;
 }
 
 message FindGroupResponse {
