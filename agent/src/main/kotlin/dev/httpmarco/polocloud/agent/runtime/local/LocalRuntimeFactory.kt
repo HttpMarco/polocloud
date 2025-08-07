@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
+import dev.httpmarco.polocloud.agent.utils.JavaUtils
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
@@ -99,11 +100,10 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         }
 
         service.state = ServiceState.STOPPING
-        Agent.eventService.call(ServiceStoppingEvent(service))
+        val eventService = Agent.eventService
+        eventService.call(ServiceStoppingEvent(service))
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
-
-        val eventService = Agent.eventService
 
 
         // first, we need to drop all subscriptions for this service
@@ -131,7 +131,9 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             }
         }
 
-        localRuntime.terminal.screenService.stopCurrentRecording()
+        if(localRuntime.terminal.screenService.isServiceRecoding(service)) {
+            localRuntime.terminal.screenService.stopCurrentRecording()
+        }
         service.stopTracking()
 
         // windows need some time to destroy the process
@@ -155,7 +157,10 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         when (platform.language) {
             PlatformLanguage.JAVA -> {
-                val javaPath = System.getProperty("java.home")
+
+                val javaPath = abstractService.group.properties["javaPath"]?.takeIf {
+                    it.isString && JavaUtils().isValidJavaPath(it.asString)
+                } ?: System.getProperty("java.home")
 
                 commands.add("${javaPath}/bin/java")
                 commands.addAll(

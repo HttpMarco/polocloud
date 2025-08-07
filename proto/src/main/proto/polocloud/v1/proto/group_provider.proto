@@ -10,6 +10,8 @@ import "google/protobuf/struct.proto";
 
 service GroupController {
   rpc find(FindGroupRequest) returns (FindGroupResponse);
+  rpc create(GroupCreateRequest) returns (GroupCreateResponse);
+  rpc delete(GroupDeleteRequest) returns (GroupDeleteResponse);
 }
 
 message FindGroupRequest {
@@ -22,6 +24,30 @@ message FindGroupResponse {
   repeated GroupSnapshot groups = 1;
 }
 
+message GroupCreateRequest {
+  string name = 1;
+  GroupType type = 2;
+  PlatformSnapshot platform = 3;
+  int32 minimumMemory = 4;
+  int32 maximumMemory = 5;
+  int32 minimumOnline = 6;
+  int32 maximumOnline = 7;
+  double percentageToStartNewService = 8;
+  repeated string templates = 9;
+  map<string, string> properties = 10;
+}
+
+message GroupCreateResponse {
+  GroupSnapshot group = 1;
+}
+
+message GroupDeleteRequest {
+  string name = 1;
+}
+
+message GroupDeleteResponse {
+  GroupSnapshot group = 1;
+}
 
 message GroupSnapshot {
   string name = 1;

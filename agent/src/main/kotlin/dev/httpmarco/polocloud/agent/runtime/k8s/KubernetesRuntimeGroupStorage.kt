@@ -46,4 +46,16 @@ class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : 
     override fun findAsync(name: String): CompletableFuture<AbstractGroup?> {
         TODO("Not yet implemented")
     }
+
+    override fun create(group: AbstractGroup): AbstractGroup? {
+        TODO("Not yet implemented")
+    }
+
+    override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun delete(name: String): AbstractGroup? {
+        TODO("Not yet implemented")
+    }
 }
