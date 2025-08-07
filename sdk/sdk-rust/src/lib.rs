@@ -97,7 +97,7 @@ impl ServiceProvider {
     }
 
     pub async fn find_async(&mut self) -> Result<Vec<Service>, Status> {
-        let request = Request::new(ServiceFindRequest { name: "".to_string() });
+        let request = Request::new(ServiceFindRequest::default());
         let response = self.service_stub.find(request).await?;
 
         let services = response.into_inner().services
@@ -128,8 +128,8 @@ impl GroupProvider {
         }
     }
 
-    pub async fn find_async(&mut self) -> Result<Vec<Group>, Status> {
-        let request = Request::new(FindGroupRequest { name: "".to_string()});
+    pub async fn find_all_async(&mut self) -> Result<Vec<Group>, Status> {
+        let request = Request::new(FindGroupRequest::default());
         let response = self.group_stub.find(request).await?;
 
         let groups = response.into_inner().groups
@@ -141,7 +141,7 @@ impl GroupProvider {
     }
 
     pub async fn find_by_name_async(&mut self, name: String) -> Result<Option<Group>, Status> {
-        let request = Request::new(FindGroupRequest { name });
+        let request = Request::new(FindGroupRequest { name, group_name: String::default(), r#type: 0});
         let response = self.group_stub.find(request).await?;
 
         let group = response.into_inner().groups
