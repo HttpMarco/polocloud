@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
+import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.Platform
@@ -171,7 +172,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             }
 
             PlatformLanguage.GO, PlatformLanguage.RUST -> {
-                commands.add("${abstractService.group.applicationPlatformFile().absolute()}")
+                commands.addAll(currentOS.executableCurrentDirectoryCommand(abstractService.group.applicationPlatformFile().name))
             }
         }
         return commands
