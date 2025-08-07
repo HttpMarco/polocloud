@@ -15,10 +15,9 @@ interface StatCardProps {
   icon: React.ReactNode;
   value: number;
   label: string;
-  color: string;
 }
 
-const StatCard = ({ icon, value, label, color }: StatCardProps) => {
+const StatCard = ({ icon, value, label }: StatCardProps) => {
   const [displayValue, setDisplayValue] = useState(0);
   const [shouldStartCounting, setShouldStartCounting] = useState(false);
 
@@ -53,13 +52,17 @@ const StatCard = ({ icon, value, label, color }: StatCardProps) => {
   }, [value, shouldStartCounting]);
 
   return (
-    <div className="flex flex-col items-center justify-center bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl px-8 py-6 transition-all duration-300 hover:bg-card/40 hover:border-border/50 hover:shadow-lg w-44 h-24 shadow-[0_0_25px_rgba(0,120,255,0.3)] dark:shadow-[0_0_25px_rgba(0,120,255,0.2)] ring-1 ring-[rgba(0,120,255,0.3)] dark:ring-[rgba(0,120,255,0.2)] hover:scale-105 hover:-translate-y-1 transform">
-      <div className={`${color} mb-2 transition-transform duration-300 group-hover:scale-110`}>
+    <div className="group flex flex-col items-center justify-center text-center transition-all duration-300 hover:scale-105 transform">
+      <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full border border-primary/20 mb-4 group-hover:scale-110 transition-transform duration-300 text-primary">
         {icon}
       </div>
-      <div className="flex flex-col items-center text-center">
-        <span className="text-xl font-bold">{displayValue.toLocaleString()}</span>
-        <span className="text-sm text-muted-foreground mt-1">{label}</span>
+      <div className="flex flex-col items-center">
+        <span className="text-3xl font-bold text-foreground dark:text-white mb-2">
+          {displayValue.toLocaleString()}
+        </span>
+        <span className="text-sm text-muted-foreground font-medium uppercase tracking-wide">
+          {label}
+        </span>
       </div>
     </div>
   );
@@ -116,13 +119,13 @@ export function GitHubStatsComponent() {
 
   if (loading) {
     return (
-      <div className="flex flex-wrap justify-center gap-8 mb-16">
+      <div className="flex flex-wrap justify-center gap-12 mb-16">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="flex flex-col items-center justify-center bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl px-8 py-6 animate-pulse w-44 h-24 shadow-[0_0_25px_rgba(0,120,255,0.3)] dark:shadow-[0_0_25px_rgba(0,120,255,0.2)] ring-1 ring-[rgba(0,120,255,0.3)] dark:ring-[rgba(0,120,255,0.2)]">
-            <div className="w-6 h-6 bg-muted rounded mb-2" />
-            <div className="flex flex-col items-center gap-1">
-              <div className="w-12 h-6 bg-muted rounded" />
-              <div className="w-16 h-4 bg-muted rounded" />
+          <div key={i} className="flex flex-col items-center justify-center text-center animate-pulse">
+            <div className="w-16 h-16 bg-muted/50 rounded-full mb-4" />
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-20 h-10 bg-muted/50 rounded" />
+              <div className="w-24 h-4 bg-muted/50 rounded" />
             </div>
           </div>
         ))}
@@ -132,33 +135,41 @@ export function GitHubStatsComponent() {
 
   if (error || !stats) {
     return (
-      <div className="flex flex-wrap justify-center gap-8 mb-16">
-        <div className="flex flex-col items-center justify-center bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl px-8 py-6 w-44 h-24 shadow-[0_0_25px_rgba(0,120,255,0.3)] dark:shadow-[0_0_25px_rgba(0,120,255,0.2)] ring-1 ring-[rgba(0,120,255,0.3)] dark:ring-[rgba(0,120,255,0.2)]">
-          <Star className="w-6 h-6 text-yellow-500 mb-2" />
-          <div className="flex flex-col items-center text-center">
-            <span className="text-xl font-bold">61</span>
-            <span className="text-sm text-muted-foreground">Stars</span>
+      <div className="flex flex-wrap justify-center gap-12 mb-16">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full border border-primary/20 mb-4 text-primary">
+            <Star className="w-8 h-8" />
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-foreground dark:text-white mb-2">61</span>
+            <span className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Stars</span>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl px-8 py-6 w-44 h-24 shadow-[0_0_25px_rgba(0,120,255,0.3)] dark:shadow-[0_0_25px_rgba(0,120,255,0.2)] ring-1 ring-[rgba(0,120,255,0.3)] dark:ring-[rgba(0,120,255,0.2)]">
-          <GitFork className="w-6 h-6 text-blue-500 mb-2" />
-          <div className="flex flex-col items-center text-center">
-            <span className="text-xl font-bold">22</span>
-            <span className="text-sm text-muted-foreground">Forks</span>
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full border border-primary/20 mb-4 text-primary">
+            <GitFork className="w-8 h-8" />
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-foreground dark:text-white mb-2">22</span>
+            <span className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Forks</span>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl px-8 py-6 w-44 h-24 shadow-[0_0_25px_rgba(0,120,255,0.3)] dark:shadow-[0_0_25px_rgba(0,120,255,0.2)] ring-1 ring-[rgba(0,120,255,0.3)] dark:ring-[rgba(0,120,255,0.2)]">
-          <Package className="w-6 h-6 text-purple-500 mb-2" />
-          <div className="flex flex-col items-center text-center">
-            <span className="text-xl font-bold">4</span>
-            <span className="text-sm text-muted-foreground">Releases</span>
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full border border-primary/20 mb-4 text-primary">
+            <Package className="w-8 h-8" />
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-foreground dark:text-white mb-2">4</span>
+            <span className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Releases</span>
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl px-8 py-6 w-44 h-24 shadow-[0_0_25px_rgba(0,120,255,0.3)] dark:shadow-[0_0_25px_rgba(0,120,255,0.2)] ring-1 ring-[rgba(0,120,255,0.3)] dark:ring-[rgba(0,120,255,0.2)]">
-          <Download className="w-6 h-6 text-emerald-500 mb-2" />
-          <div className="flex flex-col items-center text-center">
-            <span className="text-xl font-bold">0</span>
-            <span className="text-sm text-muted-foreground">Downloads</span>
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full border border-primary/20 mb-4 text-primary">
+            <Download className="w-8 h-8" />
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-foreground dark:text-white mb-2">0</span>
+            <span className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Downloads</span>
           </div>
         </div>
       </div>
@@ -166,11 +177,11 @@ export function GitHubStatsComponent() {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-8 mb-16">
-      <StatCard icon={<Star className="w-6 h-6" />} value={stats.stars} label="Stars" color="text-yellow-500" />
-      <StatCard icon={<GitFork className="w-6 h-6" />} value={stats.forks} label="Forks" color="text-blue-500" />
-      <StatCard icon={<Package className="w-6 h-6" />} value={stats.releases} label="Releases" color="text-purple-500" />
-      <StatCard icon={<Download className="w-6 h-6" />} value={stats.downloads} label="Downloads" color="text-emerald-500" />
+    <div className="flex flex-wrap justify-center gap-12 mb-16">
+      <StatCard icon={<Star className="w-8 h-8" />} value={stats.stars} label="Stars" />
+      <StatCard icon={<GitFork className="w-8 h-8" />} value={stats.forks} label="Forks" />
+      <StatCard icon={<Package className="w-8 h-8" />} value={stats.releases} label="Releases" />
+      <StatCard icon={<Download className="w-8 h-8" />} value={stats.downloads} label="Downloads" />
     </div>
   );
 } 
