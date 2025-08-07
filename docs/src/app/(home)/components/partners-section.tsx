@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { ExternalLink, Users, Handshake, Star, Cloud, Award, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const PartnershipInfo = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -68,48 +70,147 @@ const PartnershipInfo = () => {
     }
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 20, 
+      scale: 0.9,
+      rotateX: -15
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      rotateX: 0,
+      transition: {
+        type: "spring" as const,
+        stiffness: 300,
+        damping: 20
+      }
+    }
+  };
+
   return (
-    <div 
+    <motion.div 
       ref={infoRef}
-      className={`bg-gradient-to-br from-card/50 via-card/30 to-card/50 backdrop-blur-xl border border-border/50 rounded-xl p-6 shadow-2xl transition-all duration-1000 ease-out ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      }`}
+      className="bg-gradient-to-br from-card/50 via-card/30 to-card/50 backdrop-blur-xl border border-border/50 rounded-xl p-6 shadow-2xl"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
     >
       <div className="text-center mb-8">
-        <h3 className="text-2xl md:text-3xl font-black text-foreground dark:text-white mb-4 tracking-tight leading-tight">
+        <motion.h3 
+          className="text-2xl md:text-3xl font-black text-foreground dark:text-white mb-4 tracking-tight leading-tight"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           Partner with PoloCloud
-        </h3>
-        <p className="text-base md:text-lg text-muted-foreground dark:text-white/70 max-w-4xl mx-auto leading-relaxed">
+        </motion.h3>
+        <motion.p 
+          className="text-base md:text-lg text-muted-foreground dark:text-white/70 max-w-4xl mx-auto leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
           Partner with PoloCloud and help shape the future of Minecraft server management. 
           Enjoy exclusive benefits and grow your business with us.
-        </p>
+        </motion.p>
       </div>
 
       <div className="mb-8">
-        <h4 className="text-xl md:text-2xl font-black text-foreground dark:text-white text-center mb-6 tracking-tight leading-tight">
+        <motion.h4 
+          className="text-xl md:text-2xl font-black text-foreground dark:text-white text-center mb-6 tracking-tight leading-tight"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
           Exclusive Partner Benefits
-        </h4>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        </motion.h4>
+        <motion.div 
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
           {benefits.map((benefit, index) => (
-            <div 
+            <motion.div 
               key={index}
-              className={`group text-center p-4 bg-gradient-to-br ${benefit.color} backdrop-blur-sm rounded-xl border border-border/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1`}
+              className="group text-center p-4 bg-gradient-to-br backdrop-blur-sm rounded-xl border border-border/30 shadow-lg relative overflow-hidden"
+              variants={cardVariants}
+              whileHover={{
+                scale: 1.05,
+                transition: { type: "spring", stiffness: 400, damping: 20 }
+              }}
+              whileTap={{ scale: 0.98 }}
+              style={{
+                background: `linear-gradient(135deg, ${benefit.color.split(' ')[1].replace('to-', '')}20, ${benefit.color.split(' ')[0].replace('from-', '')}20)`
+              }}
             >
-              <div className={`w-12 h-12 bg-gradient-to-br ${benefit.color} rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                <benefit.icon className={`w-6 h-6 ${benefit.iconColor}`} />
-            </div>
-              <h5 className="font-black text-foreground dark:text-white mb-2 text-base leading-tight">
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100"
+                transition={{ duration: 0.3 }}
+              />
+              
+              <motion.div 
+                className={`w-12 h-12 bg-gradient-to-br rounded-xl flex items-center justify-center mx-auto mb-3 relative z-10`}
+                style={{
+                  background: `linear-gradient(135deg, ${benefit.color.split(' ')[1].replace('to-', '')}30, ${benefit.color.split(' ')[0].replace('from-', '')}30)`
+                }}
+                whileHover={{
+                  scale: 1.2,
+                  rotate: 360,
+                  transition: { duration: 0.6, ease: "easeInOut" }
+                }}
+              >
+                <div className={`w-6 h-6 ${benefit.iconColor}`}>
+                  <benefit.icon className="w-full h-full" />
+                </div>
+              </motion.div>
+              
+              <motion.h5 
+                className="font-black text-foreground dark:text-white mb-2 text-base leading-tight relative z-10"
+                transition={{ type: "spring", stiffness: 400 }}
+              >
                 {benefit.title}
-            </h5>
-              <p className="text-xs text-muted-foreground dark:text-white/70 font-medium">
+              </motion.h5>
+              
+              <motion.p 
+                className="text-xs text-muted-foreground dark:text-white/70 font-medium relative z-10"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.3 + index * 0.1 }}
+              >
                 {benefit.description}
-            </p>
-            </div>
+              </motion.p>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
-      <div className="text-center">
+      <motion.div 
+        className="text-center"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, delay: 1.0 }}
+      >
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 mb-6">
           <h4 className="text-lg font-bold text-foreground dark:text-white mb-3">
             Ready to Partner?
@@ -117,25 +218,30 @@ const PartnershipInfo = () => {
           <p className="text-sm text-muted-foreground dark:text-white/70 mb-4">
             Join our Discord to discuss partnership opportunities and take your business to the next level.
           </p>
-        <a
-          href="https://discord.com/channels/1401907740489678912/1402064495857369189"
-          target="_blank"
-          rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground rounded-lg font-semibold text-base transition-all duration-300 shadow-[0_0_20px_rgba(0,120,255,0.3)] hover:shadow-[0_0_30px_rgba(0,120,255,0.5)] hover:scale-105 group"
-        >
+          <motion.a
+            href="https://discord.com/channels/1401907740489678912/1402064495857369189"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground rounded-lg font-semibold text-base shadow-[0_0_20px_rgba(0,120,255,0.3)] hover:shadow-[0_0_30px_rgba(0,120,255,0.5)] group"
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0 0 40px rgba(0,120,255,0.6)"
+            }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Handshake className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-          Apply for Partnership
+            Apply for Partnership
             <ExternalLink className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-        </a>
+          </motion.a>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
-const PartnersShowcase = () => {
+const PartnersCarousel = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const partnersRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -147,39 +253,73 @@ const PartnersShowcase = () => {
       { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }
     );
 
-    if (partnersRef.current) {
-      observer.observe(partnersRef.current);
+    if (carouselRef.current) {
+      observer.observe(carouselRef.current);
     }
 
     return () => observer.disconnect();
   }, []);
 
+  const partnerImages = [
+    {
+      src: '/placeholder.png',
+      alt: 'Partner 1',
+    },
+    {
+      src: '/placeholder.png',
+      alt: 'Partner 2',
+    },
+    {
+      src: '/placeholder.png',
+      alt: 'Partner 3',
+    },
+  ];
+
   return (
     <div 
-      ref={partnersRef}
+      ref={carouselRef}
       className={`text-center py-12 transition-all duration-1000 ease-out ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
     >
-      <div className="bg-gradient-to-br from-card/30 via-card/20 to-card/30 backdrop-blur-xl border border-border/50 rounded-xl p-8 max-w-2xl mx-auto shadow-2xl relative overflow-hidden">
+      <div className="bg-gradient-to-br from-card/30 via-card/20 to-card/30 backdrop-blur-xl border border-border/50 rounded-xl p-6 max-w-4xl mx-auto shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
         <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl" />
         <div className="absolute bottom-0 left-0 w-20 h-20 bg-primary/10 rounded-full blur-xl" />
         
         <div className="relative z-10">
-          <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <Star className="w-8 h-8 text-primary" />
-        </div>
+          <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Star className="w-6 h-6 text-primary" />
+          </div>
           <h3 className="text-2xl md:text-3xl font-black text-foreground dark:text-white mb-4">
-          Could be you
-        </h3>
+            Our Partners
+          </h3>
           <p className="text-base md:text-lg text-muted-foreground dark:text-white/70 mb-6 leading-relaxed max-w-2xl mx-auto">
-            We&apos;re looking for cloud providers and server networks to join our official partner program. 
-            Be the first to partner with PoloCloud and get exclusive benefits.
-        </p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary rounded-lg text-sm font-semibold">
+            Discover our trusted partners and integrations that make PoloCloud the ultimate Minecraft hosting solution.
+          </p>
+          <div className="pt-4 flex items-center justify-center gap-8">
+            {partnerImages.map((img, i) => (
+              <div key={img.alt} className="flex flex-col items-center">
+                <div className="w-20 h-16 flex items-center justify-center mb-2">
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    width={80}
+                    height={64}
+                    className="w-full h-full object-contain"
+                    onError={(e) => {
+                      console.warn(`Failed to load logo for ${img.alt}:`, img.src);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+                <span className="text-sm font-semibold text-foreground dark:text-white/80">{img.alt}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 text-primary rounded-lg text-sm font-semibold">
             <Award className="w-4 h-4" />
-          Apply now to be featured here
+            Become a partner
           </div>
         </div>
       </div>
@@ -237,7 +377,7 @@ export function PartnersSection() {
         <div className={`transition-all duration-1000 delay-600 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <PartnersShowcase />
+          <PartnersCarousel />
         </div>
 
         <div className={`transition-all duration-1000 delay-800 ${

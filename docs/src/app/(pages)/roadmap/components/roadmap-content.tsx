@@ -342,31 +342,31 @@ export function RoadmapContent() {
 
   useEffect(() => {
     const fetchRoadmapData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        
+    try {
+      setIsLoading(true);
+      setError(null);
+      
         const response = await fetch('/api/github-projects');
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
-        setRoadmapData(data);
-      } catch (err) {
-        console.error('Failed to fetch roadmap data:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load roadmap data');
-        setRoadmapData(fallbackData);
-      } finally {
-        setIsLoading(false);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      setRoadmapData(data);
+    } catch (err) {
+      console.error('Failed to fetch roadmap data:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load roadmap data');
+      setRoadmapData(fallbackData);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
     fetchRoadmapData();
   }, []);
