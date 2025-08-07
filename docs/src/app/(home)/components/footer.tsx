@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Github, BookOpen, ExternalLink, FileText, Shield, Mail, Info, Map, Newspaper } from 'lucide-react';
+import { Github, BookOpen, ExternalLink, FileText, Shield, Mail, Info, Map, Newspaper, Scale, Code } from 'lucide-react';
 
 export function Footer() {
   return (
     <footer className="bg-card/30 backdrop-blur-sm border-t border-border/50 dark:bg-black/40 dark:border-white/10 mt-32">
       <div className="container mx-auto px-6 py-12">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="flex flex-col items-start gap-3">
             <div className="flex items-center gap-3">
               <Image
@@ -49,15 +49,12 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="flex gap-8">
+          <div className="flex flex-col gap-4">
+            <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+              <Scale className="w-5 h-5 text-primary" />
+              Legal
+            </h3>
             <div className="flex flex-col gap-2">
-              <Link 
-                href="/docs/cloud"
-                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
-              >
-                <BookOpen className="w-4 h-4" />
-                Docs
-              </Link>
               <Link 
                 href="/imprint" 
                 className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
@@ -65,39 +62,65 @@ export function Footer() {
                 <FileText className="w-4 h-4" />
                 Imprint
               </Link>
-            </div>
-            <div className="flex flex-col gap-2">
               <Link 
-                href="/"
+                href="/privacy" 
                 className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
               >
                 <Shield className="w-4 h-4" />
-                Privacy
+                Privacy Policy
               </Link>
               <Link 
-                href="/"
+                href="/terms" 
                 className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
-                Terms
+                Terms of Service
               </Link>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+              <Code className="w-5 h-5 text-primary" />
+              Documentation
+            </h3>
             <div className="flex flex-col gap-2">
-              <a 
-                href="mailto:contact@polocloud.de" 
-                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
-              >
-                <Mail className="w-4 h-4" />
-                Contact
-              </a>
               <Link 
-                href="/roadmap" 
+                href="/docs/cloud" 
                 className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
               >
-                <Map className="w-4 h-4" />
-                Roadmap
+                <BookOpen className="w-4 h-4" />
+                Getting Started
+              </Link>
+              <Link 
+                href="/docs/cloud/installation" 
+                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+              >
+                <Code className="w-4 h-4" />
+                Installation
+              </Link>
+              <Link 
+                href="/docs/cloud/configuration" 
+                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                Configuration
+              </Link>
+              <Link 
+                href="/docs/cloud/api" 
+                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                API Reference
               </Link>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+              <Info className="w-5 h-5 text-primary" />
+              More
+            </h3>
             <div className="flex flex-col gap-2">
               <Link 
                 href="/blog" 
@@ -113,9 +136,28 @@ export function Footer() {
                 <FileText className="w-4 h-4" />
                 Changelogs
               </Link>
+              <Link 
+                href="/roadmap" 
+                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+              >
+                <Map className="w-4 h-4" />
+                Roadmap
+              </Link>
+              <a 
+                href="mailto:contact@polocloud.de" 
+                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+              >
+                <Mail className="w-4 h-4" />
+                Contact
+              </a>
             </div>
           </div>
 
+          <div className="flex flex-col gap-4">
+            <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+              <Code className="w-5 h-5 text-primary" />
+              Built with
+            </h3>
           <div className="flex items-center gap-4">
             <a 
               href="https://nextjs.org" 
@@ -150,6 +192,7 @@ export function Footer() {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
               </svg>
             </a>
+            </div>
           </div>
         </div>
 
