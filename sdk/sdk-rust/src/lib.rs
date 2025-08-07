@@ -9,6 +9,9 @@ pub mod polocloud {
 
 use std::env;
 
+pub struct SdkGrpcClient {
+    pub channel: Option<Channel>,
+}
 
 impl SdkGrpcClient {
     pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
@@ -37,6 +40,7 @@ pub struct Polocloud {
     service_provider: Arc<Mutex<ServiceProvider>>,
     group_provider: Arc<Mutex<GroupProvider>>,
     event_provider: Arc<Mutex<EventProvider>>,
+    player_provider: Arc<Mutex<PlayerProvider>>
 }
 
 impl Polocloud {
@@ -50,7 +54,8 @@ impl Polocloud {
         Ok(Self {
             service_provider: Arc::new(Mutex::new(ServiceProvider::new(channel.clone()))),
             group_provider: Arc::new(Mutex::new(GroupProvider::new(channel.clone()))),
-            event_provider: Arc::new(Mutex::new(EventProvider::new(channel, service_name))),
+            event_provider: Arc::new(Mutex::new(EventProvider::new(channel.clone(), service_name))),
+            player_provider: Arc::new(Mutex::new(PlayerProvider::new(channel.clone()))),
             grpc_client,
         })
     }
@@ -67,6 +72,10 @@ impl Polocloud {
         self.event_provider.clone()
     }
 
+    pub fn player_provider(&self) -> Arc<Mutex<PlayerProvider>> {
+        self.player_provider.clone()
+    }
+
     pub fn available(&self) -> bool {
         self.grpc_client.channel.is_some()
     }
@@ -79,10 +88,11 @@ impl Polocloud {
 use crate::providers::event_provider::EventProvider;
 use crate::providers::group_provider::GroupProvider;
 use crate::providers::service_provider::ServiceProvider;
-use crate::structs::{SdkGrpcClient, Service};
+use crate::structs::{Service};
 // Singleton pattern implementation
 use std::sync::{Arc, Mutex, OnceLock};
-use tonic::transport::Endpoint;
+use tonic::transport::{Channel, Endpoint};
+use crate::providers::player_provider::PlayerProvider;
 
 static POLOCLOUD_INSTANCE: OnceLock<Arc<Mutex<Polocloud>>> = OnceLock::new();
 
