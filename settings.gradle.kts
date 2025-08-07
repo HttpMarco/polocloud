@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://maven.fabricmc.net/")
+    }
+}
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
@@ -28,3 +35,4 @@ include("addons:servermobs")
 include("addons:signs:signs-java-abstraction")
 include("addons:signs:signs-bukkit")
 include("addons:signs:signs-fabric")
+include("bridges:bridge-fabric")
