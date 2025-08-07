@@ -1,7 +1,6 @@
 import { Check, X, AlertTriangle, Minus } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface CompatibilityData {
     platform: string;
@@ -52,8 +51,8 @@ const compatibilityData: CompatibilityData[] = [
     },
     {
         platform: 'Folia',
-        '1.7-1.12': 'supported',
-        '1.12-1.16': 'supported',
+        '1.7-1.12': 'not-possible',
+        '1.12-1.16': 'not-possible',
         '1.18-1.19': 'supported',
         '1.20+': 'supported',
         'Severmobs': 'supported',
@@ -121,12 +120,13 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
             'Leaf': '/leaf.svg',
             'Pumpkin': '/pumkin.svg',
             'Folia': '/folia.svg',
+            'Vanilla': '/vanilla.svg',
         };
         return iconMap[platformName] || null;
     };
 
     const iconPath = getIconPath(platform);
-    
+
     if (!iconPath) {
         return null;
     }
@@ -152,40 +152,35 @@ export function CompatibilityTable() {
     const platforms = ['Vanilla', 'Fabric', 'Spigot', 'Paper', 'Folia', 'Purpur', 'Limbo', 'Leaf', 'Pumpkin'];
     const versionColumns = ['1.7-1.12', '1.12-1.16', '1.18-1.19', '1.20+'];
     const addonColumns = ['Severmobs', 'Signs'];
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsVisible(true);
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
-        <motion.div
-            className="w-full max-w-7xl mx-auto p-6"
-            initial={{ opacity: 0, x: 120 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-        >
-            <motion.div 
-                className="bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden dark:shadow-[0_0_50px_rgba(0,120,255,0.15)] shadow-[0_0_50px_rgba(0,120,255,0.1)] ring-1 ring-white/20 dark:ring-white/10"
-                whileHover={{
-                    rotateX: 3,
-                    rotateY: -18,
-                    scale: 1.02,
-                    boxShadow: '0 8px 32px 0 rgba(0,80,255,0.18)',
-                }}
-                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-                style={{
-                    background: 'rgba(255,255,255,0.1)',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(10px)',
-                }}
-            >
+        <div className={`w-full max-w-7xl mx-auto p-6 transition-all duration-1000 ease-out ${
+            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-16'
+        }`}>
+            <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden dark:shadow-[0_0_50px_rgba(0,120,255,0.15)] shadow-[0_0_50px_rgba(0,120,255,0.1)] ring-1 ring-white/20 dark:ring-white/10">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
-                        <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-200`}>
+                        <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-200 ${
+                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                        }`}>
                             <th className="px-6 py-5 text-left font-semibold text-foreground min-w-[140px] dark:text-white/90 bg-white/5 dark:bg-white/5">
                                 Platform
                             </th>
                             {platforms.map((platform, index) => (
                                 <th key={platform} className={`px-4 py-5 text-center font-semibold text-foreground border-l border-white/10 dark:border-white/5 dark:text-white/90 bg-white/5 dark:bg-white/5 transition-all duration-500 delay-${300 + index * 50}`}>
-                                    <div className={`flex items-center justify-center gap-2 transition-all duration-500 delay-${400 + index * 50}`}>
+                                    <div className={`flex items-center justify-center gap-2 transition-all duration-500 delay-${400 + index * 50} ${
+                                        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                                    }`}>
                                         <PlatformIcon platform={platform} />
                                         <span>{platform}</span>
                                     </div>
@@ -195,7 +190,9 @@ export function CompatibilityTable() {
                         </thead>
 
                         <tbody>
-                        <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-400`}>
+                        <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-400 ${
+                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                        }`}>
                             <td className="px-6 py-4 text-left font-bold text-foreground bg-white/10 dark:bg-white/10 dark:text-white/80">
                                 Version support
                             </td>
@@ -206,12 +203,9 @@ export function CompatibilityTable() {
                         </tr>
 
                         {versionColumns.map((version, index) => (
-                            <tr
-                                key={version}
-                                className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-${500 + index * 100} ${
+                            <tr key={version} className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-${500 + index * 100} ${
                                 index % 2 === 0 ? 'bg-transparent' : 'bg-white/5 dark:bg-white/5'
-                                }`}
-                            >
+                            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                                 <td className="px-6 py-4 text-left font-medium text-muted-foreground pl-8 dark:text-white/70">
                                     {version}
                                 </td>
@@ -228,7 +222,9 @@ export function CompatibilityTable() {
                             </tr>
                         ))}
 
-                        <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-900`}>
+                        <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-900 ${
+                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                        }`}>
                             <td className="px-6 py-4 text-left font-bold text-foreground bg-white/10 dark:bg-white/10 dark:text-white/80">
                                 Addons
                             </td>
@@ -239,12 +235,9 @@ export function CompatibilityTable() {
                         </tr>
 
                         {addonColumns.map((addon, index) => (
-                            <tr
-                                key={addon}
-                                className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-${1000 + index * 100} ${
+                            <tr key={addon} className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-${1000 + index * 100} ${
                                 index % 2 === 0 ? 'bg-transparent' : 'bg-white/5 dark:bg-white/5'
-                                }`}
-                            >
+                            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                                 <td className="px-6 py-4 text-left font-medium text-muted-foreground pl-8 dark:text-white/70">
                                     {addon}
                                 </td>
@@ -264,7 +257,9 @@ export function CompatibilityTable() {
                     </table>
                 </div>
 
-                <div className={`px-6 py-4 bg-white/10 dark:bg-white/10 border-t border-white/20 dark:border-white/10 transition-all duration-500 delay-1200`}>
+                <div className={`px-6 py-4 bg-white/10 dark:bg-white/10 border-t border-white/20 dark:border-white/10 transition-all duration-500 delay-1200 ${
+                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                }`}>
                     <div className="flex flex-wrap gap-8 text-sm text-muted-foreground dark:text-white/60">
                         <div className="flex items-center gap-2">
                             <Check className="w-4 h-4 text-emerald-500" />
@@ -284,7 +279,7 @@ export function CompatibilityTable() {
                         </div>
                     </div>
                 </div>
-            </motion.div>
-        </motion.div>
+            </div>
+        </div>
     );
 }
