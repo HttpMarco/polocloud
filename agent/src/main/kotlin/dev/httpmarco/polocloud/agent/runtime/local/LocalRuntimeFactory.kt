@@ -9,6 +9,9 @@ import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceStoppingEvent
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
@@ -37,6 +40,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val platform = service.group.platform()
 
         service.state = ServiceState.STARTING
+        Agent.eventService.call(ServiceStartingEvent(service))
+
         service.path.createDirectories()
 
         val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
@@ -87,11 +92,13 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
     }
 
     @OptIn(ExperimentalPathApi::class)
-    override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean) {
+    override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean): ServiceSnapshot {
         if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPED) {
-            return
+            return service.toSnapshot()
         }
+
         service.state = ServiceState.STOPPING
+        Agent.eventService.call(ServiceStoppingEvent(service))
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
@@ -138,6 +145,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.state = ServiceState.STOPPED
         Agent.runtime.serviceStorage().dropAbstractService(service)
         i18n.info("agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful", service.name())
+        
+        return service.toSnapshot()
     }
 
     private fun getLanguageSpecificCommands(platform: Platform, abstractService: AbstractService): ArrayList<String> {
@@ -152,8 +161,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
                     listOf(
                         "-Dterminal.jline=false",
                         "-Dfile.encoding=UTF-8",
-                        "-Xms" + abstractService.group.minMemory + "M",
-                        "-Xmx" + abstractService.group.maxMemory + "M",
+                        "-Xms" + abstractService.minMemory + "M",
+                        "-Xmx" + abstractService.maxMemory + "M",
                         "-jar",
                         abstractService.group.applicationPlatformFile().name
                     )

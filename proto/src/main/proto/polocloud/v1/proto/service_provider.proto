@@ -9,15 +9,48 @@ import "polocloud/v1/proto/object_utils.proto";
 
 service ServiceController {
   rpc find(ServiceFindRequest) returns (ServiceFindResponse);
+  rpc boot(ServiceBootRequest) returns (ServiceBootResponse);
+  rpc bootWithConfiguration(ServiceBootWithConfigurationRequest) returns (ServiceBootWithConfigurationResponse);
+  rpc shutdown(ServiceShutdownRequest) returns (ServiceShutdownResponse);
 }
 
 message ServiceFindRequest {
   optional string name = 1;
-  optional GroupType type = 2;
+  optional string group_name = 2;
+  optional GroupType type = 3;
 }
 
 message ServiceFindResponse {
   repeated ServiceSnapshot services = 1;
+}
+
+message ServiceBootRequest {
+  string group_name = 1;
+}
+
+message ServiceBootResponse {
+  ServiceSnapshot service = 1;
+}
+
+message ServiceBootWithConfigurationRequest {
+  string group_name = 1;
+  optional uint32 minimum_memory = 2;
+  optional uint32 maximum_memory = 3;
+  repeated string templates = 4;
+  repeated string excluded_templates = 5;
+  map<string, string> properties = 6;
+}
+
+message ServiceBootWithConfigurationResponse {
+  ServiceSnapshot service = 1;
+}
+
+message ServiceShutdownRequest {
+  string name = 1;
+}
+
+message ServiceShutdownResponse {
+  ServiceSnapshot service = 1;
 }
 
 message ServiceSnapshot {
@@ -28,12 +61,13 @@ message ServiceSnapshot {
   uint32 maximum_memory = 5;
   string hostname = 6;
   uint32 port = 7;
-  uint32 max_player_count = 8;
-  uint32 player_count = 9;
-  double memory_usage = 10;
-  double cpu_usage = 11;
-  ServiceState state = 12;
-  map<string, string> properties = 13;
+  repeated string templates = 8;
+  uint32 max_player_count = 9;
+  uint32 player_count = 10;
+  double memory_usage = 11;
+  double cpu_usage = 12;
+  ServiceState state = 13;
+  map<string, string> properties = 14;
 }
 
 enum ServiceState {

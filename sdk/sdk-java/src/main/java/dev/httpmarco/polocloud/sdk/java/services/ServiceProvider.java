@@ -6,10 +6,8 @@ import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
 import dev.httpmarco.polocloud.v1.GroupType;
-import dev.httpmarco.polocloud.v1.services.ServiceControllerGrpc;
-import dev.httpmarco.polocloud.v1.services.ServiceFindRequest;
+import dev.httpmarco.polocloud.v1.services.*;
 import io.grpc.ManagedChannel;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +44,7 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     @Override
     @NotNull
     public List<Service> findByGroup(@NotNull String group) {
-        return List.of();
+        return blockingStub.find(ServiceFindRequest.newBuilder().setGroupName(group).build()).getServicesList().stream().map(Service.Companion::bindSnapshot).toList();
     }
 
     @Override
@@ -57,29 +55,45 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     @Override
     @NotNull
     public CompletableFuture<Service> findAsync(@NotNull String name) {
-        return null;
+        return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.newBuilder().setName(name).build()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).findFirst().orElse(null));
     }
 
     @Override
     @NotNull
     public CompletableFuture<List<Service>> findByGroupAsync(@NotNull Group group) {
-        return null;
+        return findByGroupAsync(group.getName());
     }
 
     @Override
     @NotNull
     public CompletableFuture<List<Service>> findByGroupAsync(@NotNull String group) {
-        return null;
+        return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.newBuilder().setGroupName(group).build()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).toList());
     }
 
+    @NotNull
     @Override
-    public void bootInstanceWithConfiguration(@NotNull String name, @NotNull Function1<? super SharedBootConfiguration, ?> configuration) {
-
+    public ServiceSnapshot bootInstanceWithConfiguration(@NotNull String name, @NotNull SharedBootConfiguration configuration) {
+        int minMemory = configuration.minMemory() != null ? configuration.minMemory() : 0;
+        int maxMemory = configuration.maxMemory() != null ? configuration.maxMemory() : 0;
+        if (minMemory <= 0 || maxMemory <= 0) {
+            throw new IllegalArgumentException("Minimum and maximum memory must be greater than 0.");
+        }
+        return this.blockingStub.bootWithConfiguration(
+                ServiceBootWithConfigurationRequest.newBuilder()
+                        .setGroupName(name)
+                        .setMinimumMemory(minMemory)
+                        .setMaximumMemory(maxMemory)
+                        .addAllTemplates(configuration.templates())
+                        .addAllExcludedTemplates(configuration.excludedTemplates())
+                        .putAllProperties(configuration.properties())
+                        .build()
+        ).getService();
     }
 
+    @NotNull
     @Override
-    public void bootInstance(@NotNull String name) {
-
+    public ServiceSnapshot bootInstance(@NotNull String name) {
+        return this.blockingStub.boot(ServiceBootRequest.newBuilder().setGroupName(name).build()).getService();
     }
 
     @Override
@@ -94,8 +108,9 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
         return FutureConverterKt.completableFromGuava(futureStub.find(ServiceFindRequest.newBuilder().setType(type).build()), it -> it.getServicesList().stream().map(Service.Companion::bindSnapshot).toList());
     }
 
+    @NotNull
     @Override
-    public void shutdownService(@NotNull String name) {
-
+    public ServiceSnapshot shutdownService(@NotNull String name) {
+        return blockingStub.shutdown(ServiceShutdownRequest.newBuilder().setName(name).build()).getService();
     }
 }

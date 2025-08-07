@@ -1,21 +1,34 @@
 package dev.httpmarco.polocloud.addons.api
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.File
 
 class ConfigFactory<T : Any>(
     private val clazz: Class<T>,
-    private val folder: File,
-    fileName: String
+    private val folder: File? = null,
+    fileName: String,
+    vararg adapters: Pair<Class<*>, Any>
 ) {
-    private val gson = GsonBuilder().setPrettyPrinting().create()
-    private val configFile = File(folder, fileName)
+    private val gson : Gson
+    private val configFile = if (folder != null) File(folder, fileName) else File(fileName)
+
+    init {
+        val gson = GsonBuilder().setPrettyPrinting()
+
+        adapters.forEach { (type, adapter) ->
+            gson.registerTypeAdapter(type, adapter)
+        }
+        this.gson = gson.create()
+    }
 
     var config: T = loadOrCreate()
         private set
 
     private fun loadOrCreate(): T {
-        if (!folder.exists()) folder.mkdirs()
+        if (folder != null && !folder.exists()) {
+            folder.mkdirs()
+        }
 
         if (!configFile.exists()) {
             val defaultInstance = clazz.getDeclaredConstructor().newInstance()
@@ -23,9 +36,7 @@ class ConfigFactory<T : Any>(
             return defaultInstance
         }
 
-        return runCatching {
-            gson.fromJson(configFile.readText(Charsets.UTF_8), clazz)
-        }.getOrNull() ?: clazz.getDeclaredConstructor().newInstance()
+        return gson.fromJson(configFile.readText(Charsets.UTF_8), clazz)
     }
 
     fun save(config: T = this.config) {

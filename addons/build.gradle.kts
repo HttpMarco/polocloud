@@ -5,7 +5,7 @@ plugins {
     id("com.gradleup.shadow") version "9.0.0-rc3"
 }
 
-subprojects {
+allprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "com.gradleup.shadow")
 
@@ -15,9 +15,5 @@ subprojects {
 
     kotlin {
         jvmToolchain(21)
-    }
-
-    dependencies {
-        compileOnly(parent!!.projects.sdk.sdkJava)
     }
 }

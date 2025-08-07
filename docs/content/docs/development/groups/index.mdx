@@ -32,7 +32,15 @@ Groups allow filtering, bulk operations, and easier service discovery.
 | `maxOnlineService`        | `Int`             | Maximum number of service instances allowed simultaneously                |
 | `percentageToStartNewService` | `Int`         | Load percentage threshold to trigger starting a new service               |
 | `templates`               | `List<String>`    | List of template names used for launching services in this group          |
-| `properties`              | `Map<String, JsonElement>` | Arbitrary key-value configuration properties for custom settings |
+| `properties`              | `Map<String, JsonElement>` | Arbitrary key-value configuration properties for custom settings. See [Group custom properties](./groups/#group-custom-properties)        |
+
+### Group custom properties
+
+| Property                              | Type              | Description                                                               |
+|---------------------------------------| ----------------- | ------------------------------------------------------------------------- |
+| `static`                              | `Boolean`         | Keep server files after shutdown.                                         |
+| `fallback`                            | `Boolean`         | Players connect here on join or fallback.                                 |
+| `startPort`                           | `Int`             | Starting port for servers in this group.                                  |
 
 ## Group-related enums and constants
 

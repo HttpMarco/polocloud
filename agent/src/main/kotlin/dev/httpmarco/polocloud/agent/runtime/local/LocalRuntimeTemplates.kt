@@ -26,7 +26,7 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
     }
 
     override fun bindTemplate(service: LocalService) {
-        service.group.templates.forEach {
+        service.templates.forEach {
             val sourcePath = TEMPLATE_PATH.resolve(it)
             if (!Files.exists(sourcePath)) {
                 sourcePath.createDirectories()
@@ -45,7 +45,7 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
             override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
                 val targetDir = targetPath.resolve(sourcePath.relativize(dir))
                 if (!Files.exists(targetDir)) {
-                    Files.createDirectory(targetDir)
+                    Files.createDirectories(targetDir)
                 }
                 return FileVisitResult.CONTINUE
             }

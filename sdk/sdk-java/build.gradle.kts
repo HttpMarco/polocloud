@@ -1,16 +1,16 @@
 plugins {
-    id("java")
+    id("java-library")
     id("com.gradleup.shadow") version "9.0.0-rc3"
 }
 
 dependencies {
-    implementation(projects.shared)
+    api(projects.shared)
     implementation(projects.common)
 
     compileOnly(libs.gson)
     implementation(libs.bundles.proto)
     implementation(libs.grpc.netty)
-    implementation(projects.proto)
+    api(projects.proto)
 }
 
 tasks.withType<JavaCompile>().configureEach {

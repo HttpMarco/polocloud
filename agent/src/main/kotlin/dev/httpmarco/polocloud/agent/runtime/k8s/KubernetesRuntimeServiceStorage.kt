@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
 import dev.httpmarco.polocloud.v1.GroupType
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import java.util.concurrent.CompletableFuture
 
 class KubernetesRuntimeServiceStorage : RuntimeServiceStorage<KubernetesService> {
@@ -51,16 +52,16 @@ class KubernetesRuntimeServiceStorage : RuntimeServiceStorage<KubernetesService>
 
     override fun bootInstanceWithConfiguration(
         name: String,
-        configuration: (SharedBootConfiguration) -> Any
-    ) {
+        configuration: SharedBootConfiguration
+    ): ServiceSnapshot {
         TODO("Not yet implemented")
     }
 
-    override fun bootInstance(name: String) {
+    override fun bootInstance(name: String): ServiceSnapshot {
         TODO("Not yet implemented")
     }
 
-    override fun shutdownService(name: String) {
+    override fun shutdownService(name: String): ServiceSnapshot {
         TODO("Not yet implemented")
     }
 
