@@ -82,10 +82,10 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
         }
 
         if(request.hasMinimumMemory()) {
-            service.minMemory = request.minimumMemory
+            service.updateMinMemory(request.minimumMemory)
         }
         if(request.hasMaximumMemory()) {
-            service.maxMemory = request.maximumMemory
+            service.updateMaxMemory(request.maximumMemory)
         }
 
         service.templates += request.templatesList

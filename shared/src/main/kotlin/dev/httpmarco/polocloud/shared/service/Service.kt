@@ -19,12 +19,16 @@ open class Service(
     playerCount: Int,
     maxPlayerCount: Int,
     memoryUsage: Double,
-    cpuUsage: Double
+    cpuUsage: Double,
+    motd: String
 ) {
 
+
     var minMemory: Int = minMemory
+        protected set
 
     var maxMemory: Int = maxMemory
+        protected set
 
     var maxPlayerCount: Int = maxPlayerCount
         protected set
@@ -36,6 +40,9 @@ open class Service(
         protected set
 
     var cpuUsage: Double = cpuUsage
+        protected set
+
+    var motd: String = motd
         protected set
 
     fun name(): String {
@@ -58,7 +65,8 @@ open class Service(
                 maxPlayerCount = snapshot.maxPlayerCount,
                 playerCount = snapshot.playerCount,
                 memoryUsage = snapshot.memoryUsage,
-                cpuUsage = snapshot.cpuUsage
+                cpuUsage = snapshot.cpuUsage,
+                motd = snapshot.motd
             )
         }
     }
@@ -77,6 +85,7 @@ open class Service(
             .setMaxPlayerCount(maxPlayerCount)
             .setPlayerCount(playerCount)
             .setPort(port)
+            .setMotd(motd)
             .build()
     }
 

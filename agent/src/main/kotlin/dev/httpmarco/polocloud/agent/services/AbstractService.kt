@@ -23,14 +23,15 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         -1,
         -1,
         -1.0,
-        -1.0
+        -1.0,
+        ""
     ) {
 
     init {
         properties += group.properties.map { it.key to it.value.toString() }.toMap()
     }
 
-    fun isStatic() : Boolean {
+    fun isStatic(): Boolean {
         return properties["static"]?.toBoolean() ?: false
     }
 
@@ -46,6 +47,20 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         return Agent.runtime.expender().readLogs(this, limit)
     }
 
+    fun updateMinMemory(minMemory: Int) {
+        if (state == ServiceState.STARTING || state == ServiceState.ONLINE) {
+            throw IllegalStateException("Cannot update minMemory while service is starting or online")
+        }
+        this.minMemory = minMemory
+    }
+
+    fun updateMaxMemory(maxMemory: Int) {
+        if (state == ServiceState.STARTING || state == ServiceState.ONLINE) {
+            throw IllegalStateException("Cannot update minMemory while service is starting or online")
+        }
+        this.maxMemory = maxMemory
+    }
+
     fun updateMaxPlayerCount(maxPlayerCount: Int) {
         this.maxPlayerCount = maxPlayerCount
     }
@@ -57,6 +72,10 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         if (this.state == ServiceState.ONLINE && oldPlayerCount != playerCount) {
             Agent.eventProvider().call(ServiceChangePlayerCountEvent(this))
         }
+    }
+
+    fun updateMotd(motd: String) {
+        this.motd = motd
     }
 
     fun updateCpuUsage(cpuUsage: Double) {

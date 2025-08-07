@@ -5,6 +5,7 @@ import { baseOptions } from '@/app/layout.config';
 import { source } from '@/lib/source';
 import { GithubInfo } from 'fumadocs-ui/components/github-info';
 import { Logo } from './components/ui/logo';
+import { Footer } from '../(home)/components/footer';
 
 const docsOptions: DocsLayoutProps = {
   ...baseOptions,
@@ -28,5 +29,10 @@ const docsOptions: DocsLayoutProps = {
   ],
 };
 export default function Layout({ children }: { children: ReactNode }) {
-  return <DocsLayout {...docsOptions}>{children}</DocsLayout>;
+  return (
+    <>
+      <DocsLayout {...docsOptions}>{children}</DocsLayout>
+      <Footer />
+    </>
+  );
 }
