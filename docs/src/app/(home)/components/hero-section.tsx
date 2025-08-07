@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, Github, BookOpen } from 'lucide-react';
 import { GitHubStatsComponent } from './github-stats';
 import { useEffect, useState } from 'react';
+import { TextGenerateEffect } from '@/utils/text-generate-effect';
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -27,7 +28,7 @@ export function HeroSection() {
           <h1 className={`text-5xl md:text-7xl lg:text-8xl font-black mb-8 text-foreground dark:text-white transition-all duration-1000 delay-200 tracking-tight leading-tight ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            PoloCloud
+            <TextGenerateEffect words="PoloCloud" />
           </h1>
 
           <p className={`text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-16 max-w-4xl mx-auto leading-relaxed font-light transition-all duration-1000 delay-400 ${

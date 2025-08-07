@@ -17,7 +17,6 @@ function CustomNavbar() {
         <div className="flex items-center w-32">
           <LogoWithLink />
         </div>
-
         <div className="flex flex-1 items-center justify-center space-x-3">
           <HomeDropdown />
           <DocsButton />
