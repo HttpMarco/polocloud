@@ -12,4 +12,10 @@ interface SharedGroupProvider<G: Group> {
 
     fun findAsync(name: String) : CompletableFuture<G?>
 
+    fun create(group: G) : G?
+
+    fun createAsync(group: G) : CompletableFuture<G?>
+
+    fun delete(name: String) : G?
+
 }

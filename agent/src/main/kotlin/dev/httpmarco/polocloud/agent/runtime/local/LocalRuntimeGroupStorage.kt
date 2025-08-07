@@ -68,4 +68,22 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
     }
 
     override fun findAsync(name: String) = CompletableFuture.completedFuture<AbstractGroup?>(find(name))
+
+    override fun create(group: AbstractGroup): AbstractGroup? {
+        if (this.find(group.name) != null) {
+            return null // group already exists
+        }
+        this.publish(group)
+        return group
+    }
+
+    override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        return CompletableFuture.completedFuture(create(group))
+    }
+
+    override fun delete(name: String): AbstractGroup? {
+        val group = this.find(name) ?: return null
+        this.destroy(group)
+        return group
+    }
 }
