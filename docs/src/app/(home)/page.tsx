@@ -2,6 +2,7 @@ import { HeroSection } from './components/hero-section';
 import { AboutSection } from './components/about-section';
 import { CompatibilitySection } from './components/compatibility-section';
 import { ComingSoonSection } from './components/coming-soon-section';
+import { PartnersSection } from './components/partners-section';
 
 export default function HomePage() {
   return (
@@ -13,10 +14,11 @@ export default function HomePage() {
       <section id="platforms">
       <CompatibilitySection />
       </section>
+      <section id="partners">
+        <PartnersSection />
+      </section>
       <section id="addons">
         <ComingSoonSection />
-      </section>
-      <section id="partners">
       </section>
     </main>
   );
