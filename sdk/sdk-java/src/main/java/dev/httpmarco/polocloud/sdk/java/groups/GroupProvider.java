@@ -30,7 +30,7 @@ public class GroupProvider implements SharedGroupProvider<Group> {
     @Override
     @Nullable
     public Group find(@NotNull String name) {
-        return blockingStub.find(FindGroupRequest.newBuilder().setGroupName(name).build()).getGroupsList().stream().map(Group.Companion::bindSnapshot).findFirst().orElse(null);
+        return blockingStub.find(FindGroupRequest.newBuilder().setName(name).build()).getGroupsList().stream().map(Group.Companion::bindSnapshot).findFirst().orElse(null);
     }
 
     @Override
