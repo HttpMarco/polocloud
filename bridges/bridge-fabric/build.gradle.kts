@@ -1,8 +1,7 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id("fabric-loom") version "1.11-SNAPSHOT"
-    id("com.gradleup.shadow") version "9.0.0"
 }
 
 dependencies {
@@ -11,16 +10,15 @@ dependencies {
 
     implementation(projects.sdk.sdkJava)
     implementation(projects.bridges.bridgeApi)
-    modImplementation(libs.bundles.fabric)
-    modImplementation(fabricApi.module("fabric-networking-api-v1", "0.130.0+1.21.8"))
+    modCompileOnly(libs.bundles.fabric)
+    modCompileOnly(fabricApi.module("fabric-networking-api-v1", "0.130.0+1.21.8"))
     include(fabricApi.module("fabric-api-base", "0.130.0+1.21.8"))
     include(fabricApi.module("fabric-networking-api-v1", "0.130.0+1.21.8"))
 }
 
 loom {
     serverOnlyMinecraftJar()
-
-    accessWidenerPath = file("src/main/resources/polocloud_bridge.accesswidener")
+    accessWidenerPath.set(file("src/main/resources/polocloud_bridge.accesswidener"))
 }
 
 tasks.processResources {
@@ -32,7 +30,6 @@ tasks.processResources {
     }
 }
 
-tasks.withType<ShadowJar> {
-    archiveClassifier.set("shadow")
-    relocate("oshi", "dev.httpmarco.polocloud.libs.oshi")
+tasks.named<RemapJarTask>("remapJar") {
+    archiveFileName.set("polocloud-${project.name}-$version.jar")
 }

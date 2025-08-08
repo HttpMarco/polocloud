@@ -28,7 +28,7 @@ tasks.jar {
 
         includeLibs(":bridges:bridge-velocity", "shadowJar"),
         includeLibs(":bridges:bridge-bungeecord", "shadowJar"),
-        includeLibs(":bridges:bridge-fabric", "shadowJar")
+        includeLibs(":bridges:bridge-fabric", "remapJar")
     )
 
     manifest {
