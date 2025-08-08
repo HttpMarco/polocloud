@@ -1,0 +1,14 @@
+{
+    "pages": [
+      {
+        "title": "Changelogs",
+        "pages": [
+          {
+            "title": "Test Changelog",
+            "url": "/changelogs/test"
+          }
+        ]
+      }
+    ]
+  }
+  
