@@ -11,7 +11,11 @@
   "tasks": [
     "EULA_TASK",
     "SPIGOT_SERVER_PROPERTIES",
-    "FABRIC_VELOCITY_SUPPORT_TASK"
+    "FABRIC_VELOCITY_SUPPORT_TASK",
+    "FABRIC_DOWNLOAD_KOTLIN_LANGUAGE_API"
+  ],
+  "preTasks": [
+
   ],
   "versions": [
     {

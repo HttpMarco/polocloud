@@ -7,7 +7,7 @@
     "ServerLoginNetworkHandlerAccessor",
     "EarlyVelocityPacketSendMixin",
     "SkipKeyPacketMixin",
-    "SkipOnlineModeCheckMixin"
+    "ServerPlayNetworkHandlerDisableSecureChatMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -52,7 +52,7 @@ class VelocityPacketHandler(val secret: String) {
             }
 
             handler.onHello(LoginHelloC2SPacket(profile.name, profile.id))
-            (handler as ServerLoginNetworkHandlerAccessor).profile = profile
+            (handler as ServerLoginNetworkHandlerAccessor).setProfile(profile)
         })
     }
 
@@ -69,6 +69,6 @@ class VelocityPacketHandler(val secret: String) {
         val connection = (handler as ServerLoginNetworkHandlerAccessor).connection
         val port = (connection.address as InetSocketAddress).port
         val address = VelocityProtocol.readInetAddress(buf)
-        (connection as ClientConnectionAccessor).address = InetSocketAddress(address, port)
+        (connection as ClientConnectionAccessor).setAddress(InetSocketAddress(address, port))
     }
 }

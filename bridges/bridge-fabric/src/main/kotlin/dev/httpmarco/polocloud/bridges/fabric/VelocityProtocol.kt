@@ -16,11 +16,13 @@ import java.util.Arrays
 
 object VelocityProtocol {
 
+    @JvmField
     val PLAYER_INFO_CHANNEL: Identifier = Identifier.of("velocity", "player_info")
 
     const val FORWARDING_V1 = 1
     const val LAZY_SESSION = 4
 
+    @JvmField
     val PLAYER_INFO_PACKET: PacketByteBuf = PacketByteBuf(
         Unpooled.wrappedBuffer(byteArrayOf(LAZY_SESSION.toByte())).asReadOnly()
     )
