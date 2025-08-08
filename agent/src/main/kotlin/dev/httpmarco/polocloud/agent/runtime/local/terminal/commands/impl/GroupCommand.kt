@@ -12,6 +12,9 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.IntAr
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.GroupSetup
+import dev.httpmarco.polocloud.agent.utils.IndexDetector
+import dev.httpmarco.polocloud.agent.runtime.local.LocalService
+import dev.httpmarco.polocloud.v1.GroupType
 
 class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val terminal: JLine3Terminal) :
     Command("group", "Manage all group actions") {
@@ -129,5 +132,27 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val te
         syntax(execution = {
             terminal.setupController.start(GroupSetup())
         }, KeywordArgument("create"))
+
+        syntax(execution = { context ->
+            val group = context.arg(groupArgument)
+            val amount = context.arg(IntArgument("amount", minValue = 1))
+
+            if (!group.canStartServices(amount)) {
+                val currentServices = group.serviceCount()
+                val maxServices = group.maxOnlineService
+                i18n.info("agent.terminal.command.group.start.max-exceeded", amount, group.name, maxServices, currentServices, amount)
+                return@syntax
+            }
+
+            i18n.info("agent.terminal.command.group.start.beginning", amount, group.name)
+            
+            val startedServices = group.startServices(amount)
+            
+            startedServices.forEach { service ->
+                i18n.info("agent.terminal.command.group.start.service-started", service.name())
+            }
+            
+            i18n.info("agent.terminal.command.group.start.completed", amount, group.name)
+        }, groupArgument, KeywordArgument("start"), IntArgument("amount", minValue = 1))
     }
 }
