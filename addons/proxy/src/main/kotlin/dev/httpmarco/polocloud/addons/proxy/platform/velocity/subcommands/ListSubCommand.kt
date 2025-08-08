@@ -26,11 +26,7 @@ class ListSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
             val services = Polocloud.instance().serviceProvider().findAll()
             
             if (services.isEmpty()) {
-                source.sendMessage(
-                    miniMessage.deserialize(
-                        config.prefix() + "<gray>No services found.</gray>"
-                    )
-                )
+                source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("no_server_found")))
                 return
             }
 

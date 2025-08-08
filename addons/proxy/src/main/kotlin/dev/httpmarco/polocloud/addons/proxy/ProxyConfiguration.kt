@@ -10,6 +10,8 @@ data class ProxyConfiguration(
         "starting" to "<dark_gray>[</dark_gray><green>+</green><dark_gray>]</dark_gray> <gray>Service <aqua>%service%</aqua> starting...</gray>",
         "stopping" to "<dark_gray>[</dark_gray><gold>*</gold><dark_gray>]</dark_gray> <gray>Service <aqua>%service%</aqua> stopping...</gray>",
         "stopped" to "<dark_gray>[</dark_gray><red>-</red><dark_gray>]</dark_gray> <gray>Service <aqua>%service%</aqua> stopped.</gray>",
+        "no_players_online" to "<gray>There are no players online.</gray>",
+        "no_server_found" to "<gray>No services found.</gray>",
     ),
     val aliases: List<String> = listOf("cloud", "p"),
     val tablist: Tablist = Tablist()

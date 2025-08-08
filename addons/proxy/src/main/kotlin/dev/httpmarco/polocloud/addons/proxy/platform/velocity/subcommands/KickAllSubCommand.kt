@@ -20,9 +20,7 @@ class KickAllSubCommand(
         val allPlayers = proxyServer.allPlayers.toList()
         
         if (allPlayers.isEmpty()) {
-            source.sendMessage(miniMessage.deserialize(
-                config.prefix() + "<gray>No players are currently online."
-            ))
+            source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("no_players_online")))
             return
         }
 
