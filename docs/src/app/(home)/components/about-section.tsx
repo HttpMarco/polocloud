@@ -13,7 +13,7 @@ const features: FeatureCard[] = [
   {
     icon: <Server className="w-6 h-6" />,
     title: 'Multi Platform',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    description: 'Set up your server with different platforms, from Spigot to Pumpkin, everything is included.',
     color: 'text-blue-400'
   },
   {
@@ -24,14 +24,14 @@ const features: FeatureCard[] = [
   },
   {
     icon: <Shield className="w-6 h-6" />,
-    title: 'Lorem Ipsum Feature 1',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    title: 'API Documentation',
+    description: 'We have a very clear and powerful API that you can view in the documentation.',
     color: 'text-green-400'
   },
   {
     icon: <Users className="w-6 h-6" />,
-    title: 'Lorem Ipsum Feature 2',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    title: 'Fast Support',
+    description: 'If you have any questions about the cloud or need help with the cloud, we are here to assist you.',
     color: 'text-purple-400'
   },
   {

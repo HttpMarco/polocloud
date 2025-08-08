@@ -48,6 +48,7 @@ export function ContributorsSection() {
                     projectForks: statsData?.forks || 22,
                     projectReleases: statsData?.releases || 4
                 });
+
             } catch (err) {
                 console.error('Failed to fetch contributors:', err);
                 setError('Failed to load contributors');
