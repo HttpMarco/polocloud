@@ -4,88 +4,289 @@ description: Getting Started with PoloCloud
 icon: CloudDownload
 ---
 
-import { Download } from 'lucide-react';
+import { Download, CloudDownload, Server, Box } from 'lucide-react';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
-import { Callout } from 'fumadocs-ui/components/callout';
-import ButtonLink from '@/app/docs/components/button-link';
-import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
-import { TypeTable } from 'fumadocs-ui/components/type-table';
 import { File, Folder, Files } from 'fumadocs-ui/components/files';
 
+<div className="max-w-4xl mx-auto px-4 my-20">
+  <div className="h-[2px] bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+  <div className="h-px mt-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent blur-sm" />
+</div>
 
-<Tabs items={['Local', 'Docker', 'Kubernetes']}>
-    <Tab value="Local">
-        <Callout title="Java Required" type="warn">
-            PoloCloud requires <strong>Java 17 or higher</strong> to run.
-            Make sure it's installed and available on your machine.
-        </Callout>
+<div className="relative py-12">
+  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-[100px] opacity-40" />
+  <div className="text-center mb-10 relative">
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 blur-[32px] opacity-20" />
+    <h2 className="relative text-3xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight">
+      Choose Your Installation Method
+    </h2>
+    <div className="w-20 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full mx-auto mt-4" />
+  </div>
+
+  <div className="max-w-4xl mx-auto px-4">
+    <Tabs items={['Local', 'Docker', 'Kubernetes']}>
+      <Tab value="Local">
+        <div className="relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-4 mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+          <div className="relative flex items-center gap-3">
+            <div className="flex-shrink-0">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-yellow-500/10 ring-1 ring-yellow-500/20">
+                <svg className="h-4 w-4 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 9v4" />
+                  <path d="M12 17h.01" />
+                  <path d="M3.34 17a10 10 0 1 1 17.32 0" />
+                </svg>
+              </div>
+            </div>
+            <div className="text-sm">
+              <span className="font-medium text-foreground/90">Java 17 or higher required</span>
+              <span className="text-muted-foreground/70"> — Make sure it's installed and available on your machine.</span>
+            </div>
+          </div>
+        </div>
 
         <Steps>
-            <Step>
-                ### Download
+          <Step>
+            <div className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-6 mb-8">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+              <div className="relative">
+                <h3 className="text-xl font-bold text-foreground mb-4">Download</h3>
+                <div className="text-muted-foreground/90 leading-relaxed mb-4">
+                  Download the latest version of PoloCloud from our GitHub Releases page.
+                  You can download the Launcher <code className="bg-primary/10 px-1.5 py-0.5 rounded text-primary">polocloud-launcher.jar</code> or 
+                  the pre-made Zip <code className="bg-primary/10 px-1.5 py-0.5 rounded text-primary">polocloud-v3.0.0-pre-4.zip</code>.
+                </div>
+                <a
+                  href="https://github.com/HttpMarco/polocloud/releases"
+                  className="group inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-background/80 hover:bg-background border border-border/30 hover:border-border/50 transition-all duration-300 text-muted-foreground hover:text-foreground"
+                >
+                  <Download className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-all" />
+                  <span className="font-medium">Download Latest Release</span>
+                </a>
+              </div>
+            </div>
+          </Step>
 
-                Download the latest version of PoloCloud from our GitHub Releases page.
-
-                You can download the Launcher <code>polocloud-launcher.jar</code>
-                or the pre-made Zip <code>polocloud-v3.0.0-pre-4.zip</code>.
-
-                <ButtonLink
-                    icon={<Download />}
-                    text="Download here"
-                    href="https://github.com/HttpMarco/polocloud/releases"
-                />
-            </Step>
-            <Step>
-                ### Startup
-
+          <Step>
+            <div className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-6 mb-8">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+              <div className="relative">
+                <h3 className="text-xl font-bold text-foreground mb-4">Startup</h3>
+                <div className="text-muted-foreground/90 leading-relaxed mb-4">
+                  Choose your preferred installation method:
+                </div>
                 <Tabs items={['polocloud-launcher.jar', 'polocloud-v3.0.0-pre-4.zip']}>
-                    <Tab value="polocloud-launcher.jar">
-                        You can run the PoloCloud by opening a terminal in the folder and typing:
-                        <DynamicCodeBlock lang="bash" code='java -jar polocloud-launcher.jar' />
-                    </Tab>
-                    <Tab value="polocloud-v3.0.0-pre-4.zip">
-                        You need to extract the Zip file to a folder of your choice.
-                        You can then run the launcher by double-clicking the <code>start.sh</code> <span className="text-fd-muted-foreground text-sm">(if you're on Windows, use <code>start.bat</code>)</span> file.
-                    </Tab>
+                  <Tab value="polocloud-launcher.jar">
+                    <div className="text-muted-foreground/90 leading-relaxed mb-4">
+                      You can run the PoloCloud by opening a terminal in the folder and typing:
+                    </div>
+                    <div className="relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-4">
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+                      <div className="relative font-mono text-sm text-foreground/90">
+                        java -jar polocloud-launcher.jar
+                      </div>
+                    </div>
+                  </Tab>
+                  <Tab value="polocloud-v3.0.0-pre-4.zip">
+                    <div className="text-muted-foreground/90 leading-relaxed">
+                      Extract the Zip file to a folder of your choice, then run the launcher by double-clicking:
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                      <div className="relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-4 flex-1">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+                        <div className="relative">
+                          <div className="font-medium mb-2 text-foreground">Linux / macOS</div>
+                          <code className="font-mono text-sm text-foreground/90">start.sh</code>
+                        </div>
+                      </div>
+                      <div className="relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-4 flex-1">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+                        <div className="relative">
+                          <div className="font-medium mb-2 text-foreground">Windows</div>
+                          <code className="font-mono text-sm text-foreground/90">start.bat</code>
+                        </div>
+                      </div>
+                    </div>
+                  </Tab>
                 </Tabs>
-            </Step>
+              </div>
+            </div>
+          </Step>
         </Steps>
+      </Tab>
 
-        ### Folder Structure
+      <Tab value="Docker">
+        <div className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-6">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+          <div className="relative">
+            <div className="text-center py-12">
+              <Box className="w-12 h-12 text-primary/60 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-foreground mb-4">Docker Installation Coming Soon</h3>
+              <div className="text-muted-foreground/90 leading-relaxed max-w-2xl mx-auto">
+                Docker support is currently under development. This will allow you to run PoloCloud in containers for better isolation and easier deployment.
+              </div>
+              <div className="mt-8">
+                <a
+                  href="https://github.com/HttpMarco/polocloud/issues"
+                  className="group inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-background/80 hover:bg-background border border-border/30 hover:border-border/50 transition-all duration-300 text-muted-foreground hover:text-foreground"
+                >
+                  <Box className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-all" />
+                  <span className="font-medium">Track Progress</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Tab>
 
-        After the first startup, you will see a folder structure like this:
-        <Files>
+      <Tab value="Kubernetes">
+        <div className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-6">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+          <div className="relative">
+            <div className="text-center py-12">
+              <Server className="w-12 h-12 text-primary/60 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-foreground mb-4">Kubernetes Installation Coming Soon</h3>
+              <div className="text-muted-foreground/90 leading-relaxed max-w-2xl mx-auto">
+                Kubernetes support is under active development. This will enable you to run PoloCloud at scale with automated deployment, scaling, and management.
+              </div>
+              <div className="mt-8">
+                <a
+                  href="https://github.com/HttpMarco/polocloud/issues"
+                  className="group inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-background/80 hover:bg-background border border-border/30 hover:border-border/50 transition-all duration-300 text-muted-foreground hover:text-foreground"
+                >
+                  <Server className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-all" />
+                  <span className="font-medium">Track Progress</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Tab>
+    </Tabs>
+  </div>
+</div>
+
+<div className="max-w-4xl mx-auto px-4 my-20">
+  <div className="h-[2px] bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+  <div className="h-px mt-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent blur-sm" />
+</div>
+
+<div className="relative py-12">
+  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-[100px] opacity-40" />
+  <div className="text-center mb-10 relative">
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 blur-[32px] opacity-20" />
+    <h2 className="relative text-3xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight">
+      Folder Structure
+    </h2>
+    <div className="w-20 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full mx-auto mt-4" />
+  </div>
+
+  <div className="max-w-4xl mx-auto px-4">
+    <div className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-6">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+      <div className="relative">
+        <div className="text-muted-foreground/90 leading-relaxed mb-6">
+          After the first startup, you will see a folder structure like this:
+        </div>
+        <div className="mb-8">
+          <Files>
             <Folder name="local" defaultOpen>
-                <Folder name="dependencies" />
-                <Folder name="groups" defaultOpen />
-                <Folder name="libs" />
-                <Folder name="metadata" defaultOpen>
-                    <Folder name="platforms" />
-                    <Folder name="tasks" />
-                </ Folder>
-                <Folder name="templates" />
+              <Folder name="dependencies" />
+              <Folder name="groups" defaultOpen />
+              <Folder name="libs" />
+              <Folder name="metadata" defaultOpen>
+                <Folder name="platforms" />
+                <Folder name="tasks" />
+              </Folder>
+              <Folder name="templates" />
             </Folder>
             <Folder name="temp" defaultOpen />
             <File name="config.json" />
             <File name="polocloud-launcher.jar" />
-        </Files>
+          </Files>
+        </div>
 
-        | Name                       | Description                                      |
-        |----------------------------|--------------------------------------------------|
-        | `local/`                   | Main runtime folder with all PoloCloud data      |
-        | `local/dependencies/`      | Downloaded dependencies                          |
-        | `local/groups/`            | Server group configurations                      |
-        | `local/libs/`              | Our own libs to run polocloud                    |
-        | `local/metadata/platforms` | Platform configurations                          |
-        | `local/metadata/tasks`     | Required tasks to run platforms in PoloCloud     |
-        | `local/templates/`         | Templates for the platforms                      |
-        | `temp/`                    | The platforms are placed here while running      |
-        | `config.json`              | Main configuration file for PoloCloud            |
-        | `polocloud-launcher.jar`   | The main executable to launch PoloCloud          |
-    </Tab>
-    <Tab value="Docker">
-    </Tab>
-    <Tab value="Kubernetes">
-    </Tab>
-</Tabs>
+        <div className="overflow-x-auto rounded-xl border border-border/30 bg-background/20 backdrop-blur-xl backdrop-saturate-150">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 rounded-xl" />
+            <table className="w-full border-collapse relative">
+              <thead>
+                <tr>
+                  <th className="text-left py-5 px-6 border-b border-border/30 bg-background/40">
+                    <div className="font-bold text-base bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">Name</div>
+                  </th>
+                  <th className="text-left py-5 px-6 border-b border-border/30 bg-background/40">
+                    <div className="font-bold text-base bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">Description</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">local/</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Main runtime folder with all PoloCloud data</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">local/dependencies/</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Downloaded dependencies</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">local/groups/</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Server group configurations</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">local/libs/</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Our own libs to run polocloud</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">local/metadata/platforms</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Platform configurations</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">local/metadata/tasks</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Required tasks to run platforms in PoloCloud</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">local/templates/</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Templates for the platforms</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">temp/</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">The platforms are placed here while running</td>
+                </tr>
+                <tr className="border-b border-border/[0.15] transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">config.json</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">Main configuration file for PoloCloud</td>
+                </tr>
+                <tr className="transition-all hover:bg-white/[0.02]">
+                  <td className="py-4 px-6">
+                    <code className="px-2.5 py-1.5 rounded-md bg-primary/[0.07] border border-primary/10 font-mono text-sm text-primary/90 font-medium">polocloud-launcher.jar</code>
+                  </td>
+                  <td className="py-4 px-6 text-foreground/70">The main executable to launch PoloCloud</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

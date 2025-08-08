@@ -4,6 +4,7 @@ import { CompatibilitySection } from './components/compatibility-section';
 import { PartnersSection } from './components/partners-section';
 import { ContributorsSection } from './components/contributors-section';
 import { AddonsSection } from './components/addons-section';
+import { FAQSection } from './components/faq-section';
 
 export default function HomePage() {
     return (
@@ -23,6 +24,9 @@ export default function HomePage() {
             </section>
             <section id="addons">
                 <AddonsSection />
+            </section>
+            <section id="faq">
+                <FAQSection />
             </section>
         </main>
     );

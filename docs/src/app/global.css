@@ -315,3 +315,16 @@ body {
 .prose img {
   @apply rounded-lg shadow-lg;
 }
+
+/* Sidebar Background */
+.fuma-sidebar {
+  background-color: hsl(var(--background));
+  backdrop-filter: blur(8px);
+  border-right: 1px solid hsl(var(--border));
+}
+
+/* Ensure sidebar content is above grid */
+.fuma-sidebar-content {
+  position: relative;
+  z-index: 1;
+}
