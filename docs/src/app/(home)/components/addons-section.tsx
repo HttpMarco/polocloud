@@ -33,7 +33,8 @@ export function AddonsSection() {
         fetchModrinthData();
     }, []);
 
-    const getProjectIcon = (projectType: string) => {
+    const getProjectIcon = (projectTypes: string[]) => {
+        const projectType = projectTypes[0] || 'plugin';
         switch (projectType) {
             case 'plugin':
                 return <Zap className="w-6 h-6 text-primary" />;
@@ -42,6 +43,29 @@ export function AddonsSection() {
             default:
                 return <FileText className="w-6 h-6 text-primary" />;
         }
+    };
+
+    const cleanDescription = (description: string) => {
+        let cleaned = description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
+        cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
+        cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+        cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
+        cleaned = cleaned.replace(/^[-*+]\s+/gm, '');
+        cleaned = cleaned.replace(/^\d+\.\s+/gm, '');
+        cleaned = cleaned.replace(/```[\s\S]*?```/g, '');
+        cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+        cleaned = cleaned.replace(/ID:\s*[a-zA-Z0-9]+/gi, '');
+        cleaned = cleaned.replace(/Project ID:\s*[a-zA-Z0-9]+/gi, '');
+        cleaned = cleaned.replace(/[a-zA-Z0-9]{8,}/g, '');
+        cleaned = cleaned.replace(/\n\s*\n/g, '\n');
+        cleaned = cleaned.trim();
+
+        if (cleaned.length > 150) {
+            cleaned = cleaned.substring(0, 147) + '...';
+        }
+
+        return cleaned;
     };
 
     const containerVariants = {
@@ -194,7 +218,7 @@ export function AddonsSection() {
                     >
                         {[1, 2, 3].map((i) => (
                             <motion.div
-                                key={i}
+                                key={`loading-${i}`}
                                 variants={itemVariants}
                                 className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-6 animate-pulse"
                             >
@@ -226,7 +250,7 @@ export function AddonsSection() {
                     >
                         {organization?.projects.map((project, index) => (
                             <motion.div
-                                key={project.project_id}
+                                key={project.id}
                                 variants={itemVariants}
                                 whileHover={{
                                     scale: 1.03,
@@ -252,14 +276,14 @@ export function AddonsSection() {
                                         }}
                                         transition={{ type: "spring", stiffness: 300 }}
                                     >
-                                        {getProjectIcon(project.project_type)}
+                                        {getProjectIcon(project.project_types)}
                                     </motion.div>
                                     <div>
                                         <h3 className="text-lg font-bold text-foreground dark:text-white group-hover:text-primary transition-colors duration-200">
-                                            {project.title}
+                                            {project.name}
                                         </h3>
                                         <p className="text-sm text-muted-foreground dark:text-white/70">
-                                            {project.project_type}
+                                            {project.project_types[0] || 'plugin'}
                                         </p>
                                     </div>
                                 </motion.div>
@@ -269,7 +293,7 @@ export function AddonsSection() {
                                     whileHover={{ color: "hsl(var(--muted-foreground) / 0.9)" }}
                                     transition={{ duration: 0.2 }}
                                 >
-                                    {project.description}
+                                    {cleanDescription(project.summary || project.description)}
                                 </motion.p>
 
                                 <motion.div
@@ -281,15 +305,15 @@ export function AddonsSection() {
                                 >
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Download className="w-4 h-4" />
-                                        {project.download_count}
+                                        {project.downloads}
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Users className="w-4 h-4" />
-                                        {project.follower_count}
+                                        {project.followers}
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Code className="w-4 h-4" />
-                                        {project.latest_version}
+                                        {project.versions[0] || '1.0.0'}
                                     </div>
                                 </motion.div>
 
@@ -302,22 +326,12 @@ export function AddonsSection() {
                                 >
                                     {project.loaders.slice(0, 2).map((loader) => (
                                         <motion.span
-                                            key={loader}
+                                            key={`${project.id}-loader-${loader}`}
                                             className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md font-medium"
                                             whileHover={{ scale: 1.05, backgroundColor: "hsl(var(--primary) / 0.2)" }}
                                             transition={{ type: "spring", stiffness: 400 }}
                                         >
                                             {loader}
-                                        </motion.span>
-                                    ))}
-                                    {project.game_versions.slice(0, 1).map((version) => (
-                                        <motion.span
-                                            key={version}
-                                            className="px-2 py-1 bg-muted/50 text-muted-foreground text-xs rounded-md"
-                                            whileHover={{ scale: 1.05 }}
-                                            transition={{ type: "spring", stiffness: 400 }}
-                                        >
-                                            {version}
                                         </motion.span>
                                     ))}
                                 </motion.div>
@@ -330,7 +344,7 @@ export function AddonsSection() {
                                     transition={{ delay: 0.5 + index * 0.1 }}
                                 >
                                     <motion.a
-                                        href={`https://modrinth.com/${project.project_type}/${project.slug}`}
+                                        href={`https://modrinth.com/${project.project_types[0] || 'plugin'}/${project.slug}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors duration-200"
@@ -358,14 +372,17 @@ export function AddonsSection() {
                     transition={{ duration: 0.8, delay: 1, type: "spring", stiffness: 200 }}
                     className="text-center mt-16"
                 >
-                    <motion.div
+                    <motion.a
+                        href="https://modrinth.com/organization/polocloud"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         whileHover={{
                             scale: 1.05,
                             boxShadow: "0 20px 40px rgba(99, 102, 241, 0.3)",
                             y: -2
                         }}
                         whileTap={{ scale: 0.95 }}
-                        className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl font-semibold text-lg hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl"
+                        className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl font-semibold text-lg hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
                     >
                         <motion.div
                             animate={{ rotate: [0, 10, -10, 0] }}
@@ -374,7 +391,7 @@ export function AddonsSection() {
                             <Package className="w-5 h-5" />
                         </motion.div>
                         View on Modrinth
-                    </motion.div>
+                    </motion.a>
                     <motion.p
                         className="text-sm text-muted-foreground dark:text-white/70 mt-4"
                         initial={{ opacity: 0 }}

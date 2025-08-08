@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCachedModrinthOrganization } from '@/lib/modrinth';
+import { getCachedModrinthOrganization, clearModrinthCache } from '@/lib/modrinth';
 
 export async function GET(request: NextRequest) {
     try {
@@ -79,5 +79,25 @@ export async function GET(request: NextRequest) {
         const response = NextResponse.json(fallbackData);
         response.headers.set('Cache-Control', 'public, s-maxage=60');
         return response;
+    }
+}
+
+export async function POST(request: NextRequest) {
+    try {
+        clearModrinthCache();
+        const organization = await getCachedModrinthOrganization();
+
+        const response = NextResponse.json({
+            success: true,
+            message: 'Cache cleared and fresh data fetched',
+            organization
+        });
+        return response;
+    } catch (error) {
+        console.error('POST API Error:', error);
+        return NextResponse.json({
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error'
+        }, { status: 500 });
     }
 }

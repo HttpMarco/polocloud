@@ -1,80 +1,77 @@
 export interface ModrinthProject {
-    project_id: string;
-    project_type: string;
+    id: string;
     slug: string;
-    title: string;
+    project_types: string[];
+    games: string[];
+    team_id: string;
+    organization: string;
+    name: string;
+    summary: string;
     description: string;
-    author: string;
-    display_categories: string[];
-    download_count: number;
-    follower_count: number;
-    date_created: string;
-    date_modified: string;
-    latest_version: string;
-    gallery: Array<{
-        url: string;
-        featured: boolean;
-    }>;
-    icon_url?: string;
-    color?: number;
-    client_side: string;
-    server_side: string;
-    body_url?: string;
-    source_url?: string;
-    wiki_url?: string;
-    discord_url?: string;
-    donation_urls: Array<{
-        id: string;
-        platform: string;
-        url: string;
-    }>;
-    issues_url?: string;
+    published: string;
+    updated: string;
+    approved?: string;
+    queued?: string;
+    status: string;
+    requested_status: string;
+    moderator_message?: string;
     license: {
         id: string;
         name: string;
         url?: string;
     };
-    team: string;
-    body?: string;
-    moderator_message?: string;
-    published: string;
-    updated: string;
-    approved?: string;
-    queued?: string;
+    downloads: number;
     followers: number;
+    categories: string[];
     additional_categories: string[];
     loaders: string[];
-    game_versions: string[];
-    license_url?: string;
     versions: string[];
-    follows: number;
-    rating: {
-        count: number;
-        average: number;
+    icon_url?: string;
+    link_urls?: {
+        discord?: string[];
+        wiki?: string[];
+        github?: string[];
+        issues?: string[];
+        source?: string[];
     };
-    status: string;
+    gallery: Array<{
+        url: string;
+        featured: boolean;
+    }>;
+    color?: number;
+    thread_id?: string;
+    monetization_status?: string;
+    side_types_migration_review_status?: string;
+    game_versions: string[];
 }
 
 export interface ModrinthOrganization {
     id: string;
+    slug: string;
     name: string;
+    team_id: string;
     description: string;
     icon_url?: string;
     color?: number;
     projects: ModrinthProject[];
     members: Array<{
+        team_id: string;
         user: {
             username: string;
             avatar_url?: string;
         };
         role: string;
+        is_owner: boolean;
+        permissions: unknown;
+        organization_permissions: unknown;
+        accepted: boolean;
+        payouts_split: unknown;
+        ordering: number;
     }>;
-    created: string;
-    updated: string;
 }
 
-const MODRINTH_API_BASE = 'https://api.modrinth.com/v2';
-const ORGANIZATION_ID = 'polocloud';
+const MODRINTH_API_BASE = 'https://api.modrinth.com/v3';
+const ORGANIZATION_ID = 'tMaLb2wR';
 
 let organizationCache: ModrinthOrganization | null = null;
 let organizationCacheTimestamp: number = 0;
@@ -124,22 +121,9 @@ export async function fetchModrinthOrganization(): Promise<ModrinthOrganization>
         const projectsResponse = await makeModrinthRequest(`${MODRINTH_API_BASE}/organization/${ORGANIZATION_ID}/projects`);
         const projectsData: ModrinthProject[] = await projectsResponse.json();
 
-        const detailedProjects = await Promise.all(
-            projectsData.map(async (project) => {
-                try {
-                    const projectResponse = await makeModrinthRequest(`${MODRINTH_API_BASE}/project/${project.project_id}`);
-                    const detailedProject = await projectResponse.json();
-                    return detailedProject;
-                } catch (error) {
-                    console.error(`Error fetching project ${project.project_id}:`, error);
-                    return project;
-                }
-            })
-        );
-
         const organization: ModrinthOrganization = {
             ...orgData,
-            projects: detailedProjects
+            projects: projectsData
         };
 
         organizationCache = organization;
@@ -155,65 +139,70 @@ export async function fetchModrinthOrganization(): Promise<ModrinthOrganization>
         }
 
         return {
-            id: 'polocloud',
+            id: 'tMaLb2wR',
+            slug: 'polocloud',
             name: 'Polocloud',
+            team_id: 'lDBLJKIJ',
             description: 'Simple and easy minecraft cloud',
             projects: [
                 {
-                    project_id: 'polocloud-hub',
-                    project_type: 'plugin',
+                    id: '6xoY6tfS',
                     slug: 'polocloud-hub',
-                    title: 'polocloud-hub',
+                    project_types: ['plugin'],
+                    games: ['minecraft-java'],
+                    team_id: 'sllGRGdp',
+                    organization: 'tMaLb2wR',
+                    name: 'polocloud-hub',
+                    summary: 'This plugin is an addon for PoloCloud that adds a /hub command, allowing players to quickly return to the fallback server.',
                     description: 'This plugin is an addon for PoloCloud that adds a /hub command, allowing players to quickly return to the fallback server.',
-                    author: 'HttpMarco',
-                    display_categories: ['utility'],
-                    download_count: 3,
-                    follower_count: 5,
-                    date_created: '2024-01-01T00:00:00Z',
-                    date_modified: '2024-01-01T00:00:00Z',
-                    latest_version: '1.0.0',
-                    gallery: [],
-                    client_side: 'unsupported',
-                    server_side: 'required',
-                    donation_urls: [],
+                    published: '2024-01-01T00:00:00Z',
+                    updated: '2024-01-01T00:00:00Z',
+                    status: 'approved',
+                    requested_status: 'approved',
                     license: {
                         id: 'MIT',
                         name: 'MIT License'
                     },
-                    team: 'polocloud',
-                    published: '2024-01-01T00:00:00Z',
-                    updated: '2024-01-01T00:00:00Z',
+                    downloads: 3,
                     followers: 5,
+                    categories: ['utility'],
                     additional_categories: [],
                     loaders: ['bungeecord', 'velocity'],
-                    game_versions: ['1.20'],
                     versions: ['1.0.0'],
-                    follows: 5,
-                    rating: {
-                        count: 0,
-                        average: 0
-                    },
-                    status: 'approved'
+                    game_versions: ['1.20'],
+                    gallery: []
                 }
             ],
             members: [
                 {
+                    team_id: 'lDBLJKIJ',
                     user: {
                         username: 'HttpMarco',
                         avatar_url: 'https://github.com/HttpMarco.png'
                     },
-                    role: 'Member'
+                    role: 'Member',
+                    is_owner: true,
+                    permissions: null,
+                    organization_permissions: null,
+                    accepted: true,
+                    payouts_split: null,
+                    ordering: 0
                 },
                 {
+                    team_id: 'lDBLJKIJ',
                     user: {
                         username: 'RECHERGG',
                         avatar_url: undefined
                     },
-                    role: 'Member'
+                    role: 'Member',
+                    is_owner: false,
+                    permissions: null,
+                    organization_permissions: null,
+                    accepted: true,
+                    payouts_split: null,
+                    ordering: 1
                 }
-            ],
-            created: '2024-01-01T00:00:00Z',
-            updated: '2024-01-01T00:00:00Z'
+            ]
         };
     }
 }
