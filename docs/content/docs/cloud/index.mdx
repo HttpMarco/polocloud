@@ -1,139 +1,450 @@
 ---
-title: Quick Start
-description: Getting Started with PoloCloud
-icon: Album
+title: Getting Started
+description: Learn how to set up and manage your Minecraft infrastructure with PoloCloud.
+icon: Rocket
 ---
 
-import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints, FolderCog } from 'lucide-react';
+import { CpuIcon, Network, Layers, Container, BookOpen, Workflow, Braces, Waypoints, FolderCog, Server, Github, ArrowRight } from 'lucide-react';
 import { Callout } from 'fumadocs-ui/components/callout';
 import ButtonLink from '@/app/docs/components/button-link';
-import gateIcon from '../../../public/gate.png';
-import velocityIcon from '../../../public/velocity.svg';
-import waterfallIcon from '../../../public/waterfall.svg';
-import pumpkinIcon from '../../../public/pumkin.svg';
-import foliaIcon from '../../../public/folia.svg';
-import paperIcon from '../../../public/paper.svg';
-import leafIcon from '../../../public/leaf.svg';
-import purpurIcon from '../../../public/purpur.svg';
-import fabricIcon from '../../../public/fabric.png';
+import Image from 'next/image';
 
-## Introduction
-PoloCloud is the simplest and easiest **Cloud for Minecraft Networks** based on Kotlin, designed to be fast, flexible, and simple.
-
-PoloCloud has different parts:
-
-<Cards>
-    <Card icon={<CpuIcon className="text-purple-300" />} title='Agent'>
-        Manages server instances and handles communication between the master node and individual Minecraft servers within the cloud infrastructure.
-    </Card>
-
-    <Card icon={<Network className="text-blue-300" />} title='Bridges'>
-        Bridges handle the connection between proxy servers and game servers, enabling players to access game servers through the proxy network.
-    </Card>
-
-    <Card icon={<Layers className="text-green-300" />} title='Platforms'>
-        Contains shared utilities, models, and common functionality used across all other components of the cloud system.
-    </Card>
-
-    <Card icon={<Braces className="text-red-300" />} title='Proto'>
-        sd
-    </Card>
-
-    <Card icon={<Container className="text-cyan-300" />} title='Docker'>
-        Handles containerization and deployment of PoloCloud services using Docker for isolated execution environments.
-    </Card>
-    
-    <Card icon={<Workflow className="text-sky-300" />} title='Kubernetes'>
-        Enables deployment and orchestration of PoloCloud services on Kubernetes clusters for scalable container management.
-    </Card>
-</Cards>
-
-## Why PoloCloud?
-
-## Platforms
-
-
-<div className="inline">
-Following platforms are supported by PoloCloud: <ButtonLink text="Request platform" href="https://github.com/HttpMarco/polocloud/issues/new" />
+<div className="max-w-4xl mx-auto px-4 my-20">
+  <div className="h-[2px] bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+  <div className="h-px mt-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent blur-sm" />
 </div>
 
-<Cards>
-    <Card icon={<img
-      src={gateIcon}
-      alt="Gate"
-      className="w-6 h-6"
-        />}
-    title='Gate'>
-        Gate is a modern cloud-native, open source, fast, batteries-included and secure proxy for Minecraft servers that focuses on scalability, flexibility, multi-version support and developer friendliness.
-    </Card>
-    <Card icon={<img
-      src={velocityIcon}
-      alt="Velocity"
-      className="w-6 h-6"
-        />}
-    title='Velocity'>
-        A high-performance Minecraft proxy that connects multiple backend servers into a network. Velocity handles player connections and routing, making it ideal for large-scale server setups.
-    </Card>
-    <Card icon={<img
-      src={waterfallIcon}
-      alt="Waterfall"
-      className="w-6 h-6"
-        />}
-    title='Waterfall'>
-        A BungeeCord fork focused on stability, performance, and compatibility. Waterfall connects Minecraft servers into a network, allowing players to seamlessly switch between them.
-    </Card>
-    <Card icon={<Waypoints className="text-yellow-300"/>}
-    title='Bungeecord'>
-        BungeeCord is a Minecraft proxy that connects multiple servers into one network, allowing players to switch smoothly between them.
-    </Card>
-        <Card icon={<img
-      src={pumpkinIcon}
-      alt="Pumpkin"
-      className="w-6 h-6"
-        />}
-    title='Pumpkin'>
-        Pumpkin is a Minecraft server built entirely in Rust, offering a fast, efficient, and customizable experience. It prioritizes performance and player enjoyment while adhering to the core mechanics of the game.
-    </Card>
-    <Card icon={<img
-      src={foliaIcon}
-      alt="Folia"
-      className="w-6 h-6"
-        />}
-    title='Folia'>
-        Folia is a fork of Paper which adds regionized multithreading to the dedicated server.
-    </Card>
-    <Card icon={<img
-      src={paperIcon}
-      alt="Paper"
-      className="w-6 h-6"
-        />}
-    title='Paper'>
-        A fast, optimized Minecraft server implementation based on Spigot. Paper improves performance and adds more features and configuration options for Java Edition multiplayer servers.
-    </Card>
-    <Card icon={<img
-      src={leafIcon}
-      alt="Leaf"
-      className="w-6 h-6"
-        />}
-    title='Leaf'>
-        Leaf is a Paper fork, aim to find balance between Performance, Vanilla, and Stability, designed for large network, high capacity situation.
-    </Card>
-    <Card icon={<img
-      src={purpurIcon}
-      alt="Purpur"
-      className="w-6 h-6"
-        />}
-    title='Purpur'>
-        Purpur is minecraft server software based on Paper. It supports plugins designed for bukkit, spigot and paper APIs. Purpur focuses on providing as much configurability as possible, to allow server owners to customise their server to their liking.
-    </Card>
-    <Card icon={<img
-      src={fabricIcon}
-      alt="fabric"
-      className="w-6 h-6"
-        />}
-    title='Fabric'>
-        A lightweight and modular modding platform for Minecraft that focuses on performance, quick updates, and flexibility for custom server experiences.
-    </Card>
-</Cards>
+<div className="relative py-12">
+  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-[100px] opacity-40" />
+  <div className="text-center mb-10 relative">
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 blur-[32px] opacity-20" />
+    <h2 className="relative text-3xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight">
+      Core Components
+    </h2>
+    <div className="w-20 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full mx-auto mt-4" />
+  </div>
 
-<Callout icon={<FolderCog />} title="Custom">Run your custom services and microservices seamlessly with PoloCloud.</Callout>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-purple-500/10 ring-1 ring-purple-500/20">
+              <CpuIcon className="h-5 w-5 text-purple-500" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Agent</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Manages server instances and handles communication between master node and servers.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-500/10 ring-1 ring-blue-500/20">
+              <Network className="h-5 w-5 text-blue-500" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Bridges</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Connects proxy servers and game servers, enabling seamless player access.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-green-500/10 ring-1 ring-green-500/20">
+              <Layers className="h-5 w-5 text-green-500" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Platforms</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Core utilities and shared functionality powering all cloud components.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-red-500/10 ring-1 ring-red-500/20">
+              <Braces className="h-5 w-5 text-red-500" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Proto</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Protocol definitions and standards for seamless component communication.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-cyan-500/10 ring-1 ring-cyan-500/20">
+              <Container className="h-5 w-5 text-cyan-500" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Docker</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Containerized deployment ensuring isolated and efficient service execution.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-sky-500/10 ring-1 ring-sky-500/20">
+              <Workflow className="h-5 w-5 text-sky-500" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Kubernetes</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Advanced orchestration for scalable and resilient service management.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="max-w-4xl mx-auto px-4 my-20">
+  <div className="h-[2px] bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+  <div className="h-px mt-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent blur-sm" />
+</div>
+
+<div className="relative py-12">
+  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-[100px] opacity-40" />
+  <div className="text-center mb-10 relative">
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 blur-[32px] opacity-20" />
+    <h2 className="relative text-3xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight">
+      Supported Platforms
+    </h2>
+    <div className="w-20 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full mx-auto mt-4" />
+    <div className="relative mt-6 flex flex-col items-center justify-center gap-4">
+      <p className="text-base text-muted-foreground/90">Choose from our wide range of supported platforms</p>
+      <a
+        href="https://github.com/HttpMarco/polocloud/issues/new"
+        className="group inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-background/80 hover:bg-background border border-border/30 hover:border-border/50 transition-all duration-300 text-muted-foreground hover:text-foreground"
+      >
+        <Github className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-all" />
+        <span className="font-medium">Request Platform</span>
+        <ArrowRight className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+      </a>
+    </div>
+  </div>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/gate.png"
+        alt="Gate"
+                width={24}
+                height={24}
+        className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Gate</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            A modern cloud-native, open source, fast, batteries-included and secure proxy for Minecraft servers that focuses on scalability, flexibility, multi-version support and developer friendliness.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/velocity.svg"
+    alt="Velocity"
+                width={24}
+                height={24}
+    className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Velocity</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            A high-performance Minecraft proxy that connects multiple backend servers into a network. Velocity handles player connections and routing, making it ideal for large-scale server setups.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/waterfall.svg"
+          alt="Waterfall"
+                width={24}
+                height={24}
+          className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Waterfall</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            A BungeeCord fork focused on stability, performance, and compatibility. Waterfall connects Minecraft servers into a network, allowing players to seamlessly switch between them.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Server className="h-5 w-5 text-orange-500" />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">BungeeCord</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+        BungeeCord is a Minecraft proxy that connects multiple servers into one network, allowing players to switch smoothly between them.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/pumkin.svg"
+    alt="Pumpkin"
+                width={24}
+                height={24}
+    className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Pumpkin</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Pumpkin is a Minecraft server built entirely in Rust, offering a fast, efficient, and customizable experience. It prioritizes performance and player enjoyment while adhering to the core mechanics of the game.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/folia.svg"
+              alt="Folia"
+                width={24}
+                height={24}
+              className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Folia</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+        Folia is a fork of Paper which adds regionized multithreading to the dedicated server.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/paper.svg"
+    alt="Paper"
+                width={24}
+                height={24}
+    className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Paper</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            A fast, optimized Minecraft server implementation based on Spigot. Paper improves performance and adds more features and configuration options for Java Edition multiplayer servers.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/leaf.svg"
+          alt="Leaf"
+                width={24}
+                height={24}
+          className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Leaf</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+        Leaf is a Paper fork, aim to find balance between Performance, Vanilla, and Stability, designed for large network, high capacity situation.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/purpur.svg"
+    alt="Purpur"
+                width={24}
+                height={24}
+    className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Purpur</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            Purpur is minecraft server software based on Paper. It supports plugins designed for bukkit, spigot and paper APIs. Purpur focuses on providing as much configurability as possible, to allow server owners to customise their server to their liking.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="group relative overflow-hidden rounded-lg border border-border/50 bg-gradient-to-b from-background/50 to-background/80 hover:border-border/50 hover:shadow-[0_0_1.5rem_-0.5rem_rgba(0,0,0,0.15)] dark:hover:shadow-[0_0_1.5rem_-0.5rem_rgba(255,255,255,0.05)] transition-all duration-300">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+      <div className="relative p-5">
+        <div className="flex gap-3 items-center">
+          <div className="flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-card/40 ring-1 ring-border/50">
+              <Image
+                src="/fabric.png"
+                alt="Fabric"
+                width={24}
+                height={24}
+          className="w-6 h-6"
+              />
+            </div>
+          </div>
+          <h3 className="font-semibold text-base text-foreground/90 -mt-0.25">Fabric</h3>
+        </div>
+        <div className="mt-3 pl-[52px]">
+          <div className="text-sm text-muted-foreground/70 leading-relaxed">
+            A lightweight and modular modding platform for Minecraft that focuses on performance, quick updates, and flexibility for custom server implementations.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div className="max-w-4xl mx-auto px-4 my-20">
+  <div className="h-[2px] bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+  <div className="h-px mt-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent blur-sm" />
+</div>
+
+<div className="relative py-12">
+  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-[100px] opacity-40" />
+  <div className="text-center mb-10 relative">
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/30 to-primary/20 blur-[32px] opacity-20" />
+    <h2 className="relative text-3xl font-bold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight">
+      Custom Services
+    </h2>
+    <div className="w-20 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full mx-auto mt-4" />
+  </div>
+
+  <div className="max-w-4xl mx-auto px-4">
+    <div className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-6">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-40" />
+      <div className="relative flex items-start gap-4">
+        <div className="flex-shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
+            <FolderCog className="h-5 w-5 text-primary" />
+          </div>
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">Flexible Integration</h3>
+          <div className="text-muted-foreground/90 leading-relaxed">
+            Run your custom services and microservices seamlessly with PoloCloud. Our flexible platform supports any containerized application, making it perfect for mixed workloads and custom integrations.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

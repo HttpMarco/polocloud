@@ -50,6 +50,15 @@ const compatibilityData: CompatibilityData[] = [
         'Signs': 'supported',
     },
     {
+        platform: 'Folia',
+        '1.7-1.12': 'not-possible',
+        '1.12-1.16': 'not-possible',
+        '1.18-1.19': 'supported',
+        '1.20+': 'supported',
+        'Severmobs': 'supported',
+        'Signs': 'supported',
+    },
+    {
         platform: 'Purpur',
         '1.7-1.12': 'not-possible',
         '1.12-1.16': 'partial',
@@ -110,12 +119,14 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
             'Limbo': '/limbo.jpg',
             'Leaf': '/leaf.svg',
             'Pumpkin': '/pumkin.svg',
+            'Folia': '/folia.svg',
+            'Vanilla': '/vanilla.svg',
         };
         return iconMap[platformName] || null;
     };
 
     const iconPath = getIconPath(platform);
-    
+
     if (!iconPath) {
         return null;
     }
@@ -138,7 +149,7 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
 };
 
 export function CompatibilityTable() {
-    const platforms = ['Vanilla', 'Fabric', 'Spigot', 'Paper', 'Purpur', 'Limbo', 'Leaf', 'Pumpkin'];
+    const platforms = ['Vanilla', 'Fabric', 'Spigot', 'Paper', 'Folia', 'Purpur', 'Limbo', 'Leaf', 'Pumpkin'];
     const versionColumns = ['1.7-1.12', '1.12-1.16', '1.18-1.19', '1.20+'];
     const addonColumns = ['Severmobs', 'Signs'];
     const [isVisible, setIsVisible] = useState(false);
