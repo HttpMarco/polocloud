@@ -26,7 +26,7 @@ class ServiceScreenController(val terminal: JLine3Terminal) {
 
     fun stopCurrentRecording() {
 
-        if (!isRecoding()) {
+        if (!isRecording()) {
             return
         }
 
@@ -38,17 +38,21 @@ class ServiceScreenController(val terminal: JLine3Terminal) {
     }
 
     fun isServiceRecoding(abstractService: AbstractService): Boolean {
-        return isRecoding() && displayedAbstractService!!.name() == abstractService.name()
+        return isRecording() && displayedAbstractService!!.name() == abstractService.name()
     }
 
-    fun isRecoding(): Boolean {
+    fun isRecording(): Boolean {
         return displayedAbstractService != null
     }
 
     fun redirectCommand(command: String) {
-        if (!isRecoding()) {
+        if (!isRecording()) {
             throw IllegalStateException("Cannot redirect command to service because no service is currently being recorded.")
         }
         this.displayedAbstractService?.executeCommand(command)
+    }
+
+    fun displayedAbstractService(): AbstractService? {
+        return displayedAbstractService
     }
 }
