@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.bridges.fabric
 
-
 import com.google.common.net.InetAddresses
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
