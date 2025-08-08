@@ -5,10 +5,8 @@ import com.velocitypowered.api.proxy.ProxyServer
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.InfoSubCommand
-import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.KickAllSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.ListSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.PlayersSubCommand
-import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.SendSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StartSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StopSubCommand
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -28,8 +26,6 @@ class VelocityCloudCommand(
         //"create" to CreateSubCommand(proxyAddon),
         //"delete" to DeleteSubCommand(proxyAddon),
         //"maintenance" to MaintenanceSubCommand(proxyAddon),
-        "kickall" to KickAllSubCommand(proxyAddon, proxyServer),
-        "send" to SendSubCommand(proxyAddon, proxyServer),
         //"broadcast" to BroadcastSubCommand(proxyAddon)
     )
 
@@ -70,8 +66,6 @@ class VelocityCloudCommand(
             appendLine(config.prefix() + "<aqua>/polocloud create <template> [static]</aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud delete <server></aqua> <gray>")
             appendLine(config.prefix() + "<aqua>/polocloud maintenance <on|off> [group]</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud kickall [server]</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud send <player> <server></aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud broadcast <message></aqua>")
         }
     }

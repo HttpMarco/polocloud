@@ -21,19 +21,6 @@ data class ProxyConfiguration(
         "service_not_found" to "<red>Service <aqua>%service%</aqua> does not exist!</red>",
         "usage_stop" to "<gray>Usage: <aqua>/polocloud stop <service></aqua>",
         
-        // SendSubCommand messages
-        "player_not_online" to "<gray>Player <aqua>%player%</aqua> is not online.</gray>",
-        "server_not_found" to "<gray>Server <aqua>%server%</aqua> not found.</gray>",
-        "player_already_on_server" to "<gray>Player <aqua>%player%</aqua> is already on server <aqua>%server%</aqua>.</gray>",
-        "send_success" to "<green>Successfully</green> <gray>sent <aqua>%player%</aqua> to server <aqua>%server%</aqua>.</gray>",
-        "usage_send" to "<gray>Usage: <aqua>/polocloud send <player> <server></aqua>",
-        
-        // KickAllSubCommand messages
-        "no_players_on_server" to "<gray>No players found on server <aqua>%server%</aqua>.</gray>",
-        "kick_success_server" to "<green>Successfully kicked <aqua>%count%</aqua> player(s) from server <aqua>%server%</aqua>.</green>",
-        "kick_success_network" to "<green>Successfully kicked <aqua>%count%</aqua> player(s) from the network.</green>",
-        "usage_kickall" to "<gray>Usage: <aqua>/polocloud kickall [server]</aqua>",
-        
         // PlayersSubCommand messages
         "no_players_online_players" to "<gray>No players are currently online.</gray>",
         "players_header" to "<gradient:#00fdee:#118bd1><bold>Online Players (%count%)</bold></gradient>",
