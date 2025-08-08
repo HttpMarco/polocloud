@@ -25,13 +25,14 @@ class PlayersSubCommand(
 
         if (onlinePlayers.isEmpty()) {
             source.sendMessage(miniMessage.deserialize(
-                config.prefix() + "<gray>No players are currently online."
+                config.prefix() + config.messages("no_players_online_players")
             ))
             return
         }
 
         source.sendMessage(miniMessage.deserialize(
-            config.prefix() + "<gradient:#00fdee:#118bd1><bold>Online Players (${onlinePlayers.size})</bold></gradient>"
+            config.prefix() + config.messages("players_header")
+                .replace("%count%", onlinePlayers.size.toString())
         ))
 
         for (player in onlinePlayers) {
@@ -39,13 +40,16 @@ class PlayersSubCommand(
             val serverName = currentServer?.serverInfo?.name ?: "Unknown"
             
             source.sendMessage(miniMessage.deserialize(
-                config.prefix() + "<aqua>${player.username}</aqua> <gray>→</gray> <green>$serverName</green>"
+                config.prefix() + config.messages("player_server_info")
+                    .replace("%player%", player.username)
+                    .replace("%server%", serverName)
             ))
         }
 
         val serverCount = onlinePlayers.map { it.currentServer.orElse(null)?.serverInfo?.name }.distinct().size
         source.sendMessage(miniMessage.deserialize(
-            config.prefix() + "<gray>Distributed across $serverCount server(s)</gray>"
+            config.prefix() + config.messages("players_footer")
+                .replace("%serverCount%", serverCount.toString())
         ))
     }
 } 

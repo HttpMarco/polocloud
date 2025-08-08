@@ -16,7 +16,6 @@ class KickAllSubCommand(
     override fun execute(source: CommandSource, arguments: List<String>) {
         val config = this.proxyAddon.config
 
-
         val allPlayers = proxyServer.allPlayers.toList()
         
         if (allPlayers.isEmpty()) {
@@ -37,9 +36,9 @@ class KickAllSubCommand(
 
         if (playersToKick.isEmpty()) {
             val message = if (targetServer != null) {
-                "<gray>No players found on server <aqua>$targetServer</aqua>."
+                config.messages("no_players_on_server").replace("%server%", targetServer)
             } else {
-                "<gray>No players are currently online."
+                config.messages("no_players_online")
             }
             source.sendMessage(miniMessage.deserialize(config.prefix() + message))
             return
@@ -53,9 +52,12 @@ class KickAllSubCommand(
 
         val kickedCount = playersToKick.size
         val confirmationMessage = if (targetServer != null) {
-            "<green>Successfully kicked <aqua>$kickedCount</aqua> player(s) from server <aqua>$targetServer</aqua>.</green>"
+            config.messages("kick_success_server")
+                .replace("%count%", kickedCount.toString())
+                .replace("%server%", targetServer)
         } else {
-            "<green>Successfully kicked <aqua>$kickedCount</aqua> player(s) from the network.</green>"
+            config.messages("kick_success_network")
+                .replace("%count%", kickedCount.toString())
         }
         
         source.sendMessage(miniMessage.deserialize(config.prefix() + confirmationMessage))

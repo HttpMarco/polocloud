@@ -24,7 +24,7 @@ class SendSubCommand(
 
         if (arguments.size < 2) {
             source.sendMessage(miniMessage.deserialize(
-                config.prefix() + "<gray>Usage: <aqua>/polocloud send <player> <server></aqua>"
+                config.prefix() + config.messages("usage_send")
             ))
             return
         }
@@ -35,7 +35,8 @@ class SendSubCommand(
         val player = proxyServer.getPlayer(playerName).orElse(null)
         if (player == null) {
             source.sendMessage(miniMessage.deserialize(
-                config.prefix() + "<gray>Player <aqua>$playerName</aqua> is not online."
+                config.prefix() + config.messages("player_not_online")
+                    .replace("%player%", playerName)
             ))
             return
         }
@@ -43,7 +44,8 @@ class SendSubCommand(
         val targetServer = proxyServer.getServer(targetServerName).orElse(null)
         if (targetServer == null) {
             source.sendMessage(miniMessage.deserialize(
-                config.prefix() + "<gray>Server <aqua>$targetServerName</aqua> not found."
+                config.prefix() + config.messages("server_not_found")
+                    .replace("%server%", targetServerName)
             ))
             return
         }
@@ -51,7 +53,9 @@ class SendSubCommand(
         val currentServer = player.currentServer.orElse(null)
         if (currentServer?.serverInfo?.name == targetServerName) {
             source.sendMessage(miniMessage.deserialize(
-                config.prefix() + "<gray>Player <aqua>$playerName</aqua> is already on server <aqua>$targetServerName</aqua>."
+                config.prefix() + config.messages("player_already_on_server")
+                    .replace("%player%", playerName)
+                    .replace("%server%", targetServerName)
             ))
             return
         }
@@ -59,7 +63,9 @@ class SendSubCommand(
         player.createConnectionRequest(targetServer).fireAndForget()
 
         source.sendMessage(miniMessage.deserialize(
-            config.prefix() + "<green>Successfully</green> <gray>sent <aqua>$playerName</aqua> to server <aqua>$targetServerName</aqua>.</gray>"
+            config.prefix() + config.messages("send_success")
+                .replace("%player%", playerName)
+                .replace("%server%", targetServerName)
         ))
     }
 } 

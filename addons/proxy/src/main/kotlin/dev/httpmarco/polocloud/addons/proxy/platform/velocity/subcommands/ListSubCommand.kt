@@ -34,7 +34,7 @@ class ListSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
                 miniMessage.deserialize(
                     buildString {
                         appendLine("")
-                        appendLine(config.prefix() + "<gray>Found ${services.size} services:</gray>")
+                        appendLine(config.prefix() + config.messages("services_header"))
                         
                         for (service in services) {
                             val statusColor = when (service.state.name) {
@@ -46,10 +46,11 @@ class ListSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
                             }
                             
                             appendLine(
-                                config.prefix() + " <gray>-</gray> <aqua>${service.groupName}-${service.id}</aqua> " +
-                                "<gray>(</gray>${statusColor}${service.state.name}<gray>)</gray> " +
-                                "<gray>Port:</gray> <aqua>${service.port}</aqua> " +
-                                "<gray>Players:</gray> <aqua>${service.playerCount}/${service.maxPlayerCount}</aqua>"
+                                config.prefix() + config.messages("service_info")
+                                    .replace("%service%", "${service.groupName}-${service.id}")
+                                    .replace("%status%", "${statusColor}${service.state.name}")
+                                    .replace("%players%", service.playerCount.toString())
+                                    .replace("%maxPlayers%", service.maxPlayerCount.toString())
                             )
                         }
                     }
@@ -65,10 +66,6 @@ class ListSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
     }
 
     private fun usage(config: ProxyConfig): String {
-        return buildString {
-            appendLine("")
-            appendLine(config.prefix() + "<gray>Usage: <aqua>/polocloud list</aqua>")
-            appendLine(config.prefix() + "<gray>Lists all available services and their status.</gray>")
-        }
+        return config.prefix() + config.messages("usage_list")
     }
 } 

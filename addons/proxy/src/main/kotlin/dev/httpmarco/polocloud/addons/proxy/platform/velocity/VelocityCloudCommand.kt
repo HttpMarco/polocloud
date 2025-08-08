@@ -65,7 +65,6 @@ class VelocityCloudCommand(
             appendLine(config.prefix() + "<gray>Available <gradient:#00fdee:#118bd1><bold>/polocloud</bold></gradient> commands:")
             appendLine(config.prefix() + "<aqua>/polocloud info</aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud list</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud players</aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud start <groupName></aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud stop <server></aqua>")
             appendLine(config.prefix() + "<aqua>/polocloud create <template> [static]</aqua>")
