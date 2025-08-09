@@ -31,10 +31,20 @@ object MiniMessageFormatter : MessageFormatter {
             .replace("§", "")
     }
 
+    override fun tablistEnabled(): Boolean = true
+
     override fun formatTablistHeader(): String =
         "\n          <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>- <gray>Simplest and easiest CloudSystem          \n<gray>Current Server: <aqua>%server% <dark_gray>| <gray>Players: <aqua>%online_players%/%max_players%</aqua>\n"
 
     override fun formatTablistFooter(): String
         =   "\n<gray>Version: <aqua>%polocloud_version%</aqua>\n" +
             "<dark_gray>» <gray>Powered by <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>«\n"
+
+    override fun formatMotdLineOne(): String =
+        "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>Simple and lightweight </gray><dark_gray>- </dark_gray><white>%version%"
+
+    override fun formatMotdLineTwo(): String =
+        "</white><dark_gray>» </dark_gray><gray>GitHub</gray><dark_gray>: </dark_gray><underlined><white>github.polocloud.de"
+
+    override fun motdEnabled(): Boolean = true
 }

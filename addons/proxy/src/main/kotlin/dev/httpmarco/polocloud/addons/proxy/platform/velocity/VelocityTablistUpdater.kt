@@ -24,6 +24,10 @@ class VelocityTablistUpdater (
     }
 
     private fun updateAll() {
+        if( !this.config.tablist().enabled) {
+            // tablist module is disabled
+            return
+        }
         val configHeader = this.config.tablist().header
         val configFooter = this.config.tablist().footer
 
