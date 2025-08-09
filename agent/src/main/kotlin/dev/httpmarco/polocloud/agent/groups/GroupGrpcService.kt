@@ -49,7 +49,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
 
         val properties = HashMap<String, JsonPrimitive>()
         request.propertiesMap.forEach { t, u -> {
-            properties[t] = JsonPrimitive(u)
+            properties.put(t, JsonPrimitive(u))
         } }
 
         val group = AbstractGroup(
@@ -81,9 +81,15 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
         }
 
         val properties = HashMap<String, JsonPrimitive>()
-        request.propertiesMap.forEach { t, u -> {
-            properties[t] = JsonPrimitive(u)
-        } }
+        request.propertiesMap.forEach { (key, value) ->
+            properties[key] = when {
+                value.lowercase().toBooleanStrictOrNull() != null -> JsonPrimitive(value.toBoolean())
+                value.toIntOrNull() != null -> JsonPrimitive(value.toInt())
+                value.toDoubleOrNull() != null -> JsonPrimitive(value.toDouble())
+                value.toFloatOrNull() != null -> JsonPrimitive(value.toFloat())
+                else -> JsonPrimitive(value)
+            }
+        }
 
         val group = AbstractGroup(
             request.name,
