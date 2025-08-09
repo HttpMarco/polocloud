@@ -46,6 +46,7 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
                     }
                 }
                 properties["maintenance"] = JsonPrimitive(true)
+                group.properties = properties
                 Polocloud.instance().groupProvider().update(group)
 
                 source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_enabled")))
@@ -66,6 +67,7 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
                         properties[it.key] = it.value
                     }
                 }
+                group.properties = properties
                 Polocloud.instance().groupProvider().update(group)
 
                 source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_disabled")))
