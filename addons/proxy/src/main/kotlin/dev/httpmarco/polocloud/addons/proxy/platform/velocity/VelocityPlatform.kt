@@ -26,6 +26,13 @@ class VelocityPlatform @Inject constructor(
             VelocityCloudCommand(this.proxyAddon, server),
         )
 
+        val eventManager = this.server.eventManager
+        eventManager.register(this, VelocityMotdUpdater(this, server, config))
+
         VelocityTablistUpdater( this, server, config)
+    }
+
+    fun proxyAddon(): ProxyAddon {
+        return this.proxyAddon
     }
 }
