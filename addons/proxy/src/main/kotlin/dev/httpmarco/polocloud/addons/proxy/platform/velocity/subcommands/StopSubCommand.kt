@@ -49,7 +49,8 @@ class StopSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
             if(e.status.code == Status.NOT_FOUND.code) {
                 source.sendMessage(
                     miniMessage.deserialize(
-                        config.prefix() + "<red>Service <aqua>$serviceName</aqua> does not exist!</red>"
+                        config.prefix() + config.messages("service_not_found")
+                            .replace("%service%", serviceName)
                     )
                 )
             }
@@ -57,10 +58,6 @@ class StopSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
     }
 
     private fun usage(config: ProxyConfig): String {
-        return buildString {
-            appendLine("")
-            appendLine(config.prefix() + "<gray>Usage: <aqua>/polocloud stop <service></aqua>")
-            appendLine(config.prefix() + "<gray>Example: <aqua>/polocloud stop lobby-1</aqua>")
-        }
+        return config.prefix() + config.messages("usage_stop")
     }
 }

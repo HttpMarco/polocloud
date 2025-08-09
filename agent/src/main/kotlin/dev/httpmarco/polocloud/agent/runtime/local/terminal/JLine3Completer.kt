@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal
 
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
-import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandService
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.CommandSyntax
 import org.jline.reader.Candidate
 import org.jline.reader.Completer
@@ -25,6 +24,25 @@ class JLine3Completer(private val terminal: JLine3Terminal) : Completer {
             return
         }
 
+        if(terminal.screenService.isRecording()) {
+            if(line.wordIndex() != 0) {
+                // we have no arguments for service commands
+                return
+            }
+            val service = terminal.screenService.displayedAbstractService()
+            if(service == null) {
+                // service is not set
+                return
+            }
+
+            val commands = arrayOf("exit", service.group.platform().shutdownCommand)
+            for (command in commands) {
+                if (command.startsWith(line.word())) {
+                    candidates.add(Candidate(command))
+                }
+            }
+            return
+        }
 
         if (line.wordIndex() == 0) {
             // we only display the command names -> not aliases

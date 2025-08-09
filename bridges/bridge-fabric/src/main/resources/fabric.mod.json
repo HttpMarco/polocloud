@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "example_mod",
+  "version": "${version}",
+  "name": "Example Mod",
+  "description": "A simple example mod for Fabric.",
+  "authors": [
+    "Example Author"
+  ],
+  "contact": {
+    "homepage": "https://example.com",
+    "sources": "https://github.com/example/example_mod"
+  },
+  "license": "MIT",
+  "icon": "assets/example_mod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.example.ExampleMod"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric": "*",
+    "minecraft": "1.20.1"
+  },
+}

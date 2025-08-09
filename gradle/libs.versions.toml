@@ -18,7 +18,7 @@ tomlj = "1.1.1"
 grpc = "1.74.0"
 
 # terminal
-jline = "3.30.4"
+jline = "3.30.5"
 
 slf4j = "2.0.17"
 log4j = "2.25.1"
@@ -31,6 +31,7 @@ k8s = "7.3.1"
 velocity = "3.4.0-SNAPSHOT"
 bungeecord = "1.21-R0.4-SNAPSHOT"
 spigot = "1.21.5-R0.1-SNAPSHOT"
+fabric = "0.17.1"
 
 npc-bukkit = "3.0.0-beta13"
 
@@ -76,6 +77,7 @@ k8s = { group = "io.fabric8", name = "kubernetes-client", version.ref = "k8s" }
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
+fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
 
 npc-bukkit = { group = "io.github.juliarn", name = "npc-lib-bukkit", version.ref = "npc-bukkit" }
 

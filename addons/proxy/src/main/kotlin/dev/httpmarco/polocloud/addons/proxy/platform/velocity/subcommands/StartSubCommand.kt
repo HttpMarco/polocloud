@@ -44,7 +44,8 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
             if(e.status.code == Status.NOT_FOUND.code) {
                 source.sendMessage(
                     miniMessage.deserialize(
-                        config.prefix() + "<red>Group <aqua>$groupName</aqua> does not exist!</red>"
+                        config.prefix() + config.messages("group_not_found")
+                            .replace("%group%", groupName)
                     )
                 )
             }
@@ -52,10 +53,6 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
     }
 
     private fun usage(config: ProxyConfig): String {
-        return buildString {
-            appendLine("")
-            appendLine(config.prefix() + "<gray>Usage: <aqua>/polocloud start <groupName></aqua>")
-            appendLine(config.prefix() + "<gray>Example: <aqua>/polocloud start lobby</aqua>")
-        }
+        return config.prefix() + config.messages("usage_start")
     }
 }

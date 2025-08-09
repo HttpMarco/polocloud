@@ -100,6 +100,7 @@ abstract class Connector<A : AnimationFrame>(
             .replace("%service%", service.name())
             .replace("%online_players%", service.playerCount.toString())
             .replace("%max_players%", service.maxPlayerCount.toString())
+            .replace("%motd%", service.motd)
             .replace("%state%", state.name)
     }
 }

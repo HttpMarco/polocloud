@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.detector
 import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.common.json.GSON
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.service.Service
@@ -60,12 +61,28 @@ class OnlineStateDetector : Detector {
                     val jsonData = ByteArray(jsonLength)
                     input.readFully(jsonData)
 
-                    val json : JsonObject = GSON.fromJson(String(jsonData), JsonObject::class.java)
+                    val json: JsonObject = GSON.fromJson(String(jsonData), JsonObject::class.java)
+                    val description = json["description"]
+
+                    val motd = when {
+                        description?.isJsonPrimitive == true -> description.asString
+                        description?.isJsonObject == true -> {
+                            val descriptionObj = description.asJsonObject
+                            if (descriptionObj.has("extra")) {
+                                descriptionObj["extra"].asJsonArray.joinToString("") {
+                                    it.asJsonObject["text"]?.asString ?: ""
+                                }
+                            } else {
+                                descriptionObj["text"]?.asString
+                            }
+                        }
+                        else -> null
+                    }
 
                     val players = json["players"]?.asJsonObject
-
                     val playerCount = players?.get("online")?.asJsonPrimitive?.asInt ?: -1
 
+                    service.updateMotd(motd!!)
                     service.updatePlayerCount(playerCount)
                     service.updateMaxPlayerCount(players?.get("max")?.asJsonPrimitive?.asInt ?: -1)
 

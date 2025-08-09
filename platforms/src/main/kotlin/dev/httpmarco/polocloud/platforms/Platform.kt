@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.platforms
 
 import dev.httpmarco.polocloud.common.filesystem.copyDirectoryContent
+import dev.httpmarco.polocloud.common.os.OS
 import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
@@ -43,7 +44,9 @@ class Platform(
     // if true, the polocloud server icon will be copied to the service path
     private val copyServerIcon: Boolean = true,
     // if false, the downloaded file will be named "download" to be changed by preTask
-    private val setFileName: Boolean = true
+    private val setFileName: Boolean = true,
+    // mapping how the OS names will be named in the %os% placeholder (optional)
+    private val osNameMapping: Map<OS, String> = emptyMap(),
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
@@ -65,7 +68,7 @@ class Platform(
             var replacedUrl = url.replace("%version%", version.version)
                 .replace("%suffix%", language.suffix())
                 .replace("%arch%", currentCPUArchitecture)
-                .replace("%os%", currentOS.downloadName)
+                .replace("%os%", osDownloadName())
 
             version.additionalProperties.forEach { (key, value) ->
                 replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
@@ -116,5 +119,9 @@ class Platform(
 
     fun preTasks(): List<PlatformTask> {
         return preTasks.map { PlatformTaskPool.find(it)!! }.toList()
+    }
+
+    private fun osDownloadName(): String {
+        return osNameMapping.getOrElse(currentOS) { -> currentOS.name }
     }
 }
