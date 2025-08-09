@@ -10,6 +10,8 @@ import dev.httpmarco.polocloud.v1.groups.GroupCreateRequest
 import dev.httpmarco.polocloud.v1.groups.GroupCreateResponse
 import dev.httpmarco.polocloud.v1.groups.GroupDeleteRequest
 import dev.httpmarco.polocloud.v1.groups.GroupDeleteResponse
+import dev.httpmarco.polocloud.v1.groups.GroupUpdateRequest
+import dev.httpmarco.polocloud.v1.groups.GroupUpdateResponse
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
@@ -67,6 +69,38 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
         responseObserver.onNext(builder.build())
         responseObserver.onCompleted()
 
+    }
+
+    override fun update(request: GroupUpdateRequest, responseObserver: StreamObserver<GroupUpdateResponse>) {
+        val groupStorage = Agent.runtime.groupStorage()
+        val builder = GroupUpdateResponse.newBuilder()
+
+        if (groupStorage.find(request.name) == null) {
+            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
+            return
+        }
+
+        val properties = HashMap<String, JsonPrimitive>()
+        request.propertiesMap.forEach { t, u -> {
+            properties[t] = JsonPrimitive(u)
+        } }
+
+        val group = AbstractGroup(
+            request.name,
+            request.minimumMemory,
+            request.maximumMemory,
+            request.minimumOnline,
+            request.maximumOnline,
+            request.percentageToStartNewService,
+            PlatformIndex(request.platform.name, request.platform.version),
+            request.templatesList,
+            properties
+        )
+
+        Agent.runtime.groupStorage().updateGroup(group)
+        builder.setGroup(group.toSnapshot())
+        responseObserver.onNext(builder.build())
+        responseObserver.onCompleted()
     }
 
     override fun delete(request: GroupDeleteRequest, responseObserver: StreamObserver<GroupDeleteResponse>) {

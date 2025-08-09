@@ -85,6 +85,44 @@ public class GroupProvider implements SharedGroupProvider<Group> {
     }
 
     @Override
+    public Group update(@NotNull Group group) {
+        var snapshot = group.toSnapshot();
+        return Group.Companion.bindSnapshot(blockingStub.update(
+                GroupUpdateRequest.newBuilder()
+                        .setName(snapshot.getName())
+                        .setType(snapshot.getType())
+                        .setPlatform(snapshot.getPlatform())
+                        .setMinimumMemory(snapshot.getMinimumMemory())
+                        .setMaximumMemory(snapshot.getMaximumMemory())
+                        .setMinimumOnline(snapshot.getMinimumOnline())
+                        .setMaximumOnline(snapshot.getMaximumOnline())
+                        .setPercentageToStartNewService(snapshot.getPercentageToStartNewService())
+                        .addAllTemplates(snapshot.getTemplatesList())
+                        .putAllProperties(snapshot.getPropertiesMap())
+                        .build()
+        ).getGroup());
+    }
+
+    @Override
+    public CompletableFuture<Group> updateAsync(@NotNull Group group) {
+        var snapshot = group.toSnapshot();
+        return FutureConverterKt.completableFromGuava(futureStub.update(
+                GroupUpdateRequest.newBuilder()
+                        .setName(snapshot.getName())
+                        .setType(snapshot.getType())
+                        .setPlatform(snapshot.getPlatform())
+                        .setMinimumMemory(snapshot.getMinimumMemory())
+                        .setMaximumMemory(snapshot.getMaximumMemory())
+                        .setMinimumOnline(snapshot.getMinimumOnline())
+                        .setMaximumOnline(snapshot.getMaximumOnline())
+                        .setPercentageToStartNewService(snapshot.getPercentageToStartNewService())
+                        .addAllTemplates(snapshot.getTemplatesList())
+                        .putAllProperties(snapshot.getPropertiesMap())
+                        .build()
+        ), groupSnapshot -> Group.Companion.bindSnapshot(groupSnapshot.getGroup()));
+    }
+
+    @Override
     @Nullable
     public Group delete(@NotNull String name) {
         return Group.Companion.bindSnapshot(blockingStub.delete(GroupDeleteRequest.newBuilder().setName(name).build()).getGroup());

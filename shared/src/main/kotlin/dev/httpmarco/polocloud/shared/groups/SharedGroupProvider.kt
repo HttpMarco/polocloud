@@ -16,6 +16,10 @@ interface SharedGroupProvider<G: Group> {
 
     fun createAsync(group: G) : CompletableFuture<G?>
 
+    fun update(group: G): G?
+
+    fun updateAsync(group: G) : CompletableFuture<G?>
+
     fun delete(name: String) : G?
 
 }

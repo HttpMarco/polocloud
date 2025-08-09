@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture
 
 class DockerRuntimeGroupStorage : RuntimeGroupStorage {
 
-    override fun update(group: AbstractGroup) {
+    override fun updateGroup(group: AbstractGroup) {
         TODO("Not yet implemented")
     }
 
@@ -44,6 +44,14 @@ class DockerRuntimeGroupStorage : RuntimeGroupStorage {
     }
 
     override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun update(group: AbstractGroup): AbstractGroup? {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
         TODO("Not yet implemented")
     }
 
