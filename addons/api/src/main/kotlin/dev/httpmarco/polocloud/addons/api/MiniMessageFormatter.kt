@@ -47,4 +47,10 @@ object MiniMessageFormatter : MessageFormatter {
         "</white><dark_gray>» </dark_gray><gray>GitHub</gray><dark_gray>: </dark_gray><underlined><white>github.polocloud.de"
 
     override fun motdEnabled(): Boolean = true
+
+    override fun formatMaintenanceMotdLineOne(): String =
+        "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>Maintenance mode is currently enabled</gray>"
+
+    override fun formatMaintenanceMotdLineTwo(): String =
+        "<dark_gray>» </dark_gray><gray>GitHub</gray><dark_gray>: </dark_gray><underlined><white>github.polocloud.de"
 }

@@ -23,4 +23,10 @@ object LegacyFormatter : MessageFormatter {
 
     override fun formatMotdLineTwo(): String =
         "§f§8» §7GitHub§8: §n§fgithub.polocloud.de"
+
+    override fun formatMaintenanceMotdLineOne(): String =
+        "§b§lPoloCloud §8» §7Maintenance mode is currently enabled"
+
+    override fun formatMaintenanceMotdLineTwo(): String =
+        "§8» §7GitHub§8: §n§fgithub.polocloud.de"
 }

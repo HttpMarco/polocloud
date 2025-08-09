@@ -9,4 +9,6 @@ interface MessageFormatter {
     fun motdEnabled(): Boolean
     fun formatMotdLineOne(): String
     fun formatMotdLineTwo(): String
+    fun formatMaintenanceMotdLineOne(): String
+    fun formatMaintenanceMotdLineTwo(): String
 }

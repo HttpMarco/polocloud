@@ -42,6 +42,14 @@ class ProxyAddon(dataFolder: File, minimessage: Boolean) {
             config.motd.lineTwo = formatter.formatMotdLineTwo()
         }
 
+        if(config.maintenanceMotd.lineOne.isEmpty()) {
+            config.maintenanceMotd.lineOne = formatter.formatMaintenanceMotdLineOne()
+        }
+
+        if(config.maintenanceMotd.lineTwo.isEmpty()) {
+            config.maintenanceMotd.lineTwo = formatter.formatMaintenanceMotdLineTwo()
+        }
+
         this.configFactory.save()
     }
 }
