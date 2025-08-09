@@ -45,6 +45,13 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
     override fun updateGroup(group: AbstractGroup) {
         // overwrite the existing group file with the new data
         Files.writeString(groupPath(group), PRETTY_GSON.toJson(group))
+        // update the cached group
+        val index = this.cachedAbstractGroups.indexOfFirst { it.name == group.name }
+        if (index != -1) {
+            this.cachedAbstractGroups[index] = group
+        } else {
+            i18n.warn("agent.local-runtime.group-storage.update-group.not-found", group.name)
+        }
     }
 
     override fun reload() {
