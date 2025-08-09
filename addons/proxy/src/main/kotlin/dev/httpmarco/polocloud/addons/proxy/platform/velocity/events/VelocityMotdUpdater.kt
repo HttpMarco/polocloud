@@ -1,10 +1,11 @@
-package dev.httpmarco.polocloud.addons.proxy.platform.velocity
+package dev.httpmarco.polocloud.addons.proxy.platform.velocity.events
 
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyPingEvent
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfigAccessor
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityPlatform
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.kyori.adventure.text.minimessage.MiniMessage
 
