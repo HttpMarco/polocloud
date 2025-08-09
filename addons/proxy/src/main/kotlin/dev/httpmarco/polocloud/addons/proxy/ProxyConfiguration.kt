@@ -37,6 +37,7 @@ data class ProxyConfiguration(
         "maintenance_disabled" to "<gray>Maintenance mode has been <green>disabled</green>.</gray>",
         "maintenance_enabled_already" to "<gray>Maintenance mode is already <green>enabled</green>.</gray>",
         "maintenance_disabled_already" to "<gray>Maintenance mode is already <green>disabled</green>.</gray>",
+        "maintenance_kick" to "<red>Maintenance mode is currently enabled. Please try again later.</red>",
 
         // General usage messages
         "usage_header" to "<gray>Available <gradient:#00fdee:#118bd1><bold>/polocloud</bold></gradient> commands:",
