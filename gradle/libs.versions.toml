@@ -80,9 +80,8 @@ k8s = { group = "io.fabric8", name = "kubernetes-client", version.ref = "k8s" }
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
+
 fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
-fabric-mappings = { group = "net.fabricmc", name = "yarn", version.ref = "fabric-mappings" }
-fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
 fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
 
 npc-bukkit = { group = "io.github.juliarn", name = "npc-lib-bukkit", version.ref = "npc-bukkit" }
@@ -104,4 +103,4 @@ proto = ["grpc-protobuf", "grpc-stub", "grpc-services"]
 terminal = ["slf4j", "log4j-api", "log4j-core", "log4j-slf4j2-impl"]
 runtime = ["docker", "docker-http", "k8s"]
 jline = ["jline", "jline-console-ui"]
-fabric = ["fabric", "fabric-api", "fabric-language-kotlin"]
+fabric = ["fabric", "fabric-language-kotlin"]
