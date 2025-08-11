@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!feedbackId) {
       return NextResponse.json({ error: 'feedbackId is required' }, { status: 400 });
     }
-b
+
     await updateFeedbackStatusOnGitHub(feedbackId, 'APPROVED', adminUser);
 
     return NextResponse.json({
