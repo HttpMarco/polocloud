@@ -143,18 +143,18 @@ const PartnersCarousel = () => {
                                             }}
                                         >
                                             <img
-                                                src={partner.logo}
-                                                alt={partner.name}
-                                                className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300"
-                                                onError={(e) => {
-                                                    console.warn(`Failed to load logo for ${partner.name}:`, partner.logo);
-                                                    e.currentTarget.style.display = 'none';
-                                                }}
-                                            />
-                                        </div>
-                                        <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
-                                            {partner.name}
-                                        </span>
+                                            src={partner.logo}
+                                            alt={partner.name}
+                                            className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                                            onError={(e) => {
+                                                console.warn(`Failed to load logo for ${partner.name}:`, partner.logo);
+                                                e.currentTarget.style.display = 'none';
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
+                    {partner.name}
+                  </span>
                                         {partner.website && (
                                             <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
                                         )}
@@ -184,14 +184,14 @@ const PartnersCarousel = () => {
                                             />
                                         </div>
                                         <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
-                                            {partner.name}
-                                        </span>
+                      {partner.name}
+                    </span>
                                         {partner.website && (
                                             <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
                                         )}
                                     </div>
-                                ))}
-                            </div>
+                            ))}
+                        </div>
                         )}
                     </div>
 

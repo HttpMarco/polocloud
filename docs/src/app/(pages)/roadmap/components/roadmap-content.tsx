@@ -209,8 +209,8 @@ const RoadmapColumn = ({ column, columnIndex }: { column: RoadmapColumn; columnI
 
         <div className="relative z-10">
           <h2 className="font-bold text-foreground dark:text-white text-sm uppercase tracking-wider mb-1">
-            {column.title}
-          </h2>
+              {column.title}
+            </h2>
           <div className="text-xs text-muted-foreground dark:text-white/60 font-medium">
             {column.items.length} items
           </div>
@@ -544,114 +544,114 @@ export function RoadmapContent() {
       {isFilterModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-card/95 backdrop-blur-sm border border-border/40 rounded-2xl p-6 shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-foreground">Filter by Tags</h3>
-              <button
-                onClick={() => setIsFilterModalOpen(false)}
+              <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-foreground">Filter by Tags</h3>
+                <button
+                  onClick={() => setIsFilterModalOpen(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-200"
-              >
+                >
                 <X className="w-5 h-5" />
-              </button>
-            </div>
+                </button>
+              </div>
 
-            {activeFilters.length > 0 && (
+              {activeFilters.length > 0 && (
               <div className="mb-6 p-4 bg-muted/30 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-3">Active filters:</div>
-                <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2">
                   {activeFilters.map((tag) => (
                     <span
-                      key={tag}
+                        key={tag}
                       className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium border"
-                      style={{
+                        style={{
                         backgroundColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
                                           tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                                           tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                                           tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
                                           'rgba(156, 163, 175, 0.3)',
-                        color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                               tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                               tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                               tag === 'bug' ? 'rgb(236, 161, 168)' :
-                               'rgb(156, 163, 175)',
+                          color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
+                                 tag === 'new requirement' ? 'rgb(130, 247, 29)' :
+                                 tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
+                                 tag === 'bug' ? 'rgb(236, 161, 168)' :
+                                 'rgb(156, 163, 175)',
                         borderColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
                                     tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                                     tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                                     tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
                                     'rgba(156, 163, 175, 0.3)'
-                      }}
-                    >
-                      {tag}
-                      <button
-                        onClick={() => toggleFilter(tag)}
-                        className="hover:bg-black/10 rounded-full p-0.5 transition-colors duration-200"
+                        }}
                       >
-                        <X className="w-3 h-3" />
-                      </button>
+                        {tag}
+                        <button
+                          onClick={() => toggleFilter(tag)}
+                        className="hover:bg-black/10 rounded-full p-0.5 transition-colors duration-200"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
                     </span>
-                  ))}
-                </div>
-                <button
-                  onClick={clearAllFilters}
+                    ))}
+                  </div>
+                  <button
+                    onClick={clearAllFilters}
                   className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-1"
-                >
-                  <X className="w-3 h-3" />
-                  Clear all filters
-                </button>
+                  >
+                    <X className="w-3 h-3" />
+                    Clear all filters
+                  </button>
               </div>
             )}
 
             <div className="space-y-3 mb-6">
               {allTags.map((tag) => (
                 <label
-                  key={tag}
+                    key={tag}
                   className="flex items-center gap-3 p-4 rounded-lg hover:bg-muted/30 transition-colors duration-200 cursor-pointer"
                 >
-                  <input
-                    type="checkbox"
-                    checked={activeFilters.includes(tag)}
-                    onChange={() => toggleFilter(tag)}
+                      <input
+                        type="checkbox"
+                        checked={activeFilters.includes(tag)}
+                        onChange={() => toggleFilter(tag)}
                     className="w-5 h-5 rounded border-border/50 text-blue-500 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2"
                   />
-                  <span
+                    <span
                     className="flex-1 text-sm font-medium"
-                    style={{
-                      color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                             tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                             tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                             tag === 'bug' ? 'rgb(236, 161, 168)' :
-                             'rgb(156, 163, 175)'
-                    }}
-                  >
-                    {tag}
-                  </span>
+                      style={{
+                        color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
+                               tag === 'new requirement' ? 'rgb(130, 247, 29)' :
+                               tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
+                               tag === 'bug' ? 'rgb(236, 161, 168)' :
+                               'rgb(156, 163, 175)'
+                      }}
+                    >
+                      {tag}
+                    </span>
                   <div
                     className="w-4 h-4 rounded-full"
-                    style={{
-                      backgroundColor: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                                     tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                                     tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                                     tag === 'bug' ? 'rgb(236, 161, 168)' :
-                                     'rgb(156, 163, 175)'
-                    }}
-                  />
+                      style={{
+                        backgroundColor: tag === 'improvement' ? 'rgb(234, 187, 44)' :
+                                         tag === 'new requirement' ? 'rgb(130, 247, 29)' :
+                                         tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
+                                         tag === 'bug' ? 'rgb(236, 161, 168)' :
+                                         'rgb(156, 163, 175)'
+                      }}
+                    />
                 </label>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            <div className="pt-4 border-t border-border/30">
+              <div className="pt-4 border-t border-border/30">
               <div className="text-sm text-muted-foreground mb-4">
-                Showing {filteredData.reduce((total, column) => total + column.items.length, 0)} items
-                {activeFilters.length > 0 && ` (filtered by ${activeFilters.length} tag${activeFilters.length > 1 ? 's' : ''})`}
+                  Showing {filteredData.reduce((total, column) => total + column.items.length, 0)} items
+                  {activeFilters.length > 0 && ` (filtered by ${activeFilters.length} tag${activeFilters.length > 1 ? 's' : ''})`}
               </div>
               <button
-                onClick={() => setIsFilterModalOpen(false)}
+                  onClick={() => setIsFilterModalOpen(false)}
                 className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors duration-200"
-              >
-                Apply Filters
+                >
+                  Apply Filters
               </button>
             </div>
-          </div>
-        </div>
+              </div>
+            </div>
       )}
     </>
   );
