@@ -24,10 +24,7 @@ class VelocityCloudCommand(
         "stop" to StopSubCommand(proxyAddon),
         "list" to ListSubCommand(proxyAddon),
         "players" to PlayersSubCommand(proxyAddon, proxyServer),
-        //"create" to CreateSubCommand(proxyAddon),
-        //"delete" to DeleteSubCommand(proxyAddon),
-        "maintenance" to MaintenanceSubCommand(proxyAddon),
-        //"broadcast" to BroadcastSubCommand(proxyAddon)
+        "maintenance" to MaintenanceSubCommand(proxyAddon)
     )
 
     override fun execute(invocation: SimpleCommand.Invocation) {
