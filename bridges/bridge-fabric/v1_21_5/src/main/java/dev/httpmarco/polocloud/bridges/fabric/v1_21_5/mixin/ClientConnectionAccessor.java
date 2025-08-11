@@ -9,6 +9,6 @@ import java.net.SocketAddress;
 @Mixin(ClientConnection.class)
 public interface ClientConnectionAccessor {
 
-    @Accessor
+    @Accessor("address")
     void setAddress(SocketAddress address);
 }

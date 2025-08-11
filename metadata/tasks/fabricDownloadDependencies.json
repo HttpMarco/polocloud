@@ -16,11 +16,7 @@
       "filename": "mods/fabric-api-0.131.0%2B1.21.8.jar",
       "action": {
         "type": "PlatformDownloadAction",
-        "url": "https://github.com/FabricMC/fabric/releases/download/%fabricVersion%%2B%minecraftVersion%/fabric-api-%fabricVersion%+%minecraftVersion%.jar",
-        "versions": {
-          "minecraftVersion": "1.21.8",
-          "fabricVersion": "0.131.0"
-        }
+        "url": "https://github.com/FabricMC/fabric/releases/download/%version_fabricAPIVersion%%2B%version_version%/fabric-api-%version_fabricAPIVersion%+%version_version%.jar"
       }
     }
   ]

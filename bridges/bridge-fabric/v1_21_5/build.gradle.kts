@@ -23,7 +23,6 @@ dependencies {
 
 loom {
     serverOnlyMinecraftJar()
-    accessWidenerPath.set(file("src/main/resources/polocloud_bridge_1_21_5.accesswidener"))
 }
 
 tasks.named<RemapJarTask>("remapJar") {

@@ -14,13 +14,11 @@
     "FABRIC_VELOCITY_SUPPORT_TASK",
     "FABRIC_DOWNLOAD_DEPENDENCIES"
   ],
-  "preTasks": [
-
-  ],
   "versions": [
     {
       "version": "1.21.8",
-      "buildId": "0.16.14"
+      "buildId": "0.16.14",
+      "fabricAPIVersion": "0.131.0"
     },
     {
       "version": "1.21.7",
@@ -32,7 +30,8 @@
     },
     {
       "version": "1.21.5",
-      "buildId": "0.16.14"
+      "buildId": "0.16.14",
+      "fabricAPIVersion": "0.128.2"
     },
     {
       "version": "1.21.4",
