@@ -435,30 +435,30 @@ export function HeroSection() {
                 />
             </div>
 
-            <div className="relative container mx-auto px-6 py-20 z-10">
-                <div className={`grid lg:grid-cols-2 gap-12 items-center transition-all duration-1000 ease-out ${
+            <div className="relative container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-20 z-10">
+                <div className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center transition-all duration-1000 ease-out ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
-                    <div className="order-1 text-center lg:text-left">
+                    <div className="order-2 lg:order-1 text-center lg:text-left">
 
-                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6 transition-all duration-1000 delay-100 ${
+                        <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4 sm:mb-6 transition-all duration-1000 delay-100 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                         }`}>
                             <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                            <span>{latestVersion}</span>
+                            <span className="text-xs sm:text-sm">{latestVersion}</span>
                         </div>
 
-                        <h1 className={`text-5xl md:text-7xl lg:text-8xl font-black mb-8 text-foreground dark:text-white transition-all duration-1000 delay-200 tracking-tight leading-tight ${
+                        <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-6 sm:mb-8 text-foreground dark:text-white transition-all duration-1000 delay-200 tracking-tight leading-tight ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                         }`}>
                             <TextGenerateEffect words="PoloCloud" />
                         </h1>
 
-                        <p className={`text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-16 max-w-4xl mx-auto lg:mx-0 leading-relaxed font-light transition-all duration-1000 delay-400 ${
+                        <p className={`text-lg sm:text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-12 sm:mb-16 max-w-4xl mx-auto lg:mx-0 leading-relaxed font-light transition-all duration-1000 delay-400 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                         }`}>
                             Deploy and manage your Minecraft servers with ease.
-                            <span className="block mt-2 text-lg md:text-xl lg:text-2xl font-normal">
+                            <span className="block mt-2 text-base sm:text-lg md:text-xl lg:text-2xl font-normal">
                 Built for performance, designed for simplicity.
               </span>
                         </p>
@@ -469,52 +469,52 @@ export function HeroSection() {
                             <GitHubStatsComponent />
                         </div>
 
-                        <div className={`flex flex-col sm:flex-row gap-6 justify-center lg:justify-start transition-all duration-1000 delay-800 relative z-20 ${
+                        <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start transition-all duration-1000 delay-800 relative z-20 ${
                             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                         }`}>
                             <Link
                                 href="/docs/cloud"
-                                className="group bg-[rgba(0,120,255,0.9)] hover:bg-[rgba(0,120,255,1)] text-white px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,120,255,0.3)] hover:shadow-[0_0_25px_rgba(0,120,255,0.4)] flex items-center justify-center gap-3 relative z-10"
+                                className="group bg-[rgba(0,120,255,0.9)] hover:bg-[rgba(0,120,255,1)] text-white px-6 sm:px-8 py-3 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,120,255,0.3)] hover:shadow-[0_0_25px_rgba(0,120,255,0.4)] flex items-center justify-center gap-3 relative z-10"
                             >
-                                <BookOpen className="w-5 h-5" />
+                                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
                                 Get Started
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                             </Link>
                             <Link
                                 href="https://github.com/HttpMarco/polocloud"
-                                className="group bg-card/50 hover:bg-card border border-border/50 px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl flex items-center justify-center gap-3 relative z-10"
+                                className="group bg-card/50 hover:bg-card border border-border/50 px-6 sm:px-8 py-3 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-xl flex items-center justify-center gap-3 relative z-10"
                             >
-                                <Github className="w-5 h-5" />
+                                <Github className="w-4 h-4 sm:w-5 sm:h-5" />
                                 View on GitHub
                             </Link>
                         </div>
                     </div>
 
                     <motion.div
-                        className="order-2"
+                        className="order-1 lg:order-2"
                         initial={{ opacity: 0, x: 50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
                     >
-                        <div className="bg-[#282c34] rounded-lg shadow-2xl border border-border/50 overflow-hidden h-[26rem]">
-                            <div className="bg-[#21252b] px-4 py-3 flex items-center justify-between border-b border-border/30">
+                        <div className="bg-[#282c34] rounded-lg shadow-2xl border border-border/50 overflow-hidden h-[20rem] sm:h-[24rem] lg:h-[26rem]">
+                            <div className="bg-[#21252b] px-3 sm:px-4 py-3 flex items-center justify-between border-b border-border/30">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
+                                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                                 </div>
                                 <div className="text-xs text-muted-foreground font-mono">
                                     PoloCloud Terminal
                                 </div>
-                                <div className="w-16"></div>
+                                <div className="w-12 sm:w-16"></div>
                             </div>
 
-                            <div className="p-4 font-mono text-sm">
+                            <div className="p-3 sm:p-4 font-mono text-xs sm:text-sm">
                                 {showCommand && (
                                     <div className="flex items-center gap-2 mb-4">
-                                        <span className="text-cyan-400 font-mono text-sm">/home/polocloud</span>
-                                        <span className="text-gray-400 font-mono text-sm">$</span>
-                                        <span className="text-gray-300 font-mono text-sm">
+                                        <span className="text-cyan-400 font-mono text-xs sm:text-sm">/home/polocloud</span>
+                                        <span className="text-gray-400 font-mono text-xs sm:text-sm">$</span>
+                                        <span className="text-gray-300 font-mono text-xs sm:text-sm">
                       {typedText}
                                             {currentIndex < commandText.length && (
                                                 <motion.span

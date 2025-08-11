@@ -10,17 +10,18 @@ import { FeedbackButton } from '@/components/layout/header/feedback-button';
 import { DashboardButton } from '@/components/layout/header/dashboard-button';
 import { LogoWithLink } from '@/components/layout/header/logo';
 import { Footer } from './components/footer';
-
+import { MobileNav } from '@/components/layout/header/mobile-nav';
 
 function CustomHomeNavbar() {
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
             <div className="container flex h-16 max-w-screen-2xl items-center px-4">
+
                 <div className="flex items-center w-32">
                     <LogoWithLink />
                 </div>
 
-                <div className="flex flex-1 items-center justify-center space-x-3">
+                <div className="hidden lg:flex flex-1 items-center justify-center space-x-3">
                     <HomeDropdown />
                     <DocsButton />
                     <RoadmapButton />
@@ -29,10 +30,14 @@ function CustomHomeNavbar() {
                     <FeedbackButton />
                 </div>
 
-                <div className="flex items-center space-x-2 w-32 justify-end">
+                <div className="hidden lg:flex items-center space-x-2 w-32 justify-end">
                     <DownloadButton />
                     <SponsorsButton />
                     <DashboardButton />
+                </div>
+
+                <div className="lg:hidden flex-1 flex justify-end">
+                    <MobileNav />
                 </div>
             </div>
         </nav>
