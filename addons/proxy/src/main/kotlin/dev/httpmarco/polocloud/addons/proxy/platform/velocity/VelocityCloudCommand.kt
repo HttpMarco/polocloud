@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.InfoSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.ListSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.MaintenanceSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.PlayersSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StartSubCommand
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StopSubCommand
@@ -23,10 +24,7 @@ class VelocityCloudCommand(
         "stop" to StopSubCommand(proxyAddon),
         "list" to ListSubCommand(proxyAddon),
         "players" to PlayersSubCommand(proxyAddon, proxyServer),
-        //"create" to CreateSubCommand(proxyAddon),
-        //"delete" to DeleteSubCommand(proxyAddon),
-        //"maintenance" to MaintenanceSubCommand(proxyAddon),
-        //"broadcast" to BroadcastSubCommand(proxyAddon)
+        "maintenance" to MaintenanceSubCommand(proxyAddon)
     )
 
     override fun execute(invocation: SimpleCommand.Invocation) {

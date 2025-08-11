@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.addons.proxy
 
+import dev.httpmarco.polocloud.addons.proxy.motd.Motd
 import dev.httpmarco.polocloud.addons.proxy.tablist.Tablist
 
 data class ProxyConfiguration(
@@ -30,7 +31,14 @@ data class ProxyConfiguration(
         // ListSubCommand messages
         "services_header" to "<gradient:#00fdee:#118bd1><bold>Available Services</bold></gradient>",
         "service_info" to "<aqua>%service%</aqua> <gray>(</gray><green>%status%</green><gray>)</gray> <gray>→</gray> <yellow>%players%</yellow><gray>/</gray><yellow>%maxPlayers%</yellow>",
-        
+
+        // MaintenanceSubCommand messages
+        "maintenance_enabled" to "<gray>Maintenance mode has been <green>enabled</green>.</gray>",
+        "maintenance_disabled" to "<gray>Maintenance mode has been <green>disabled</green>.</gray>",
+        "maintenance_enabled_already" to "<gray>Maintenance mode is already <green>enabled</green>.</gray>",
+        "maintenance_disabled_already" to "<gray>Maintenance mode is already <green>disabled</green>.</gray>",
+        "maintenance_kick" to "<red>Maintenance mode is currently enabled. Please try again later.</red>",
+
         // General usage messages
         "usage_header" to "<gray>Available <gradient:#00fdee:#118bd1><bold>/polocloud</bold></gradient> commands:",
         "usage_info" to "<aqua>/polocloud info</aqua>",
@@ -42,5 +50,7 @@ data class ProxyConfiguration(
         "usage_broadcast" to "<aqua>/polocloud broadcast <message></aqua>"
     ),
     val aliases: List<String> = listOf("cloud", "p"),
-    val tablist: Tablist = Tablist()
+    val tablist: Tablist = Tablist(),
+    val motd: Motd = Motd(),
+    val maintenanceMotd: Motd = Motd()
 )

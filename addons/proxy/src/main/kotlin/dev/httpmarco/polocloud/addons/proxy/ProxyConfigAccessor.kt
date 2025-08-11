@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.addons.proxy
 
+import dev.httpmarco.polocloud.addons.proxy.motd.Motd
 import dev.httpmarco.polocloud.addons.proxy.tablist.Tablist
 
 class ProxyConfigAccessor(val config: ProxyConfiguration): ProxyConfig {
@@ -17,5 +18,13 @@ class ProxyConfigAccessor(val config: ProxyConfiguration): ProxyConfig {
 
     override fun tablist(): Tablist {
         return this.config.tablist
+    }
+
+    override fun motd(): Motd {
+        return this.config.motd
+    }
+
+    override fun maintenanceMotd(): Motd {
+        return this.config.maintenanceMotd
     }
 }

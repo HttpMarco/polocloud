@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.screen
 
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.services.AbstractService
@@ -16,6 +17,7 @@ class ServiceScreenController(val terminal: JLine3Terminal) {
         displayedAbstractService = abstractService
 
         terminal.clearScreen()
+        logger.enableLogBuffering()
 
         abstractService.logs(5000).forEach {
             terminal.display(it)
@@ -34,7 +36,7 @@ class ServiceScreenController(val terminal: JLine3Terminal) {
 
         terminal.clearScreen()
         terminal.resetPrompt()
-        // todo display the context before the recording
+        logger.flushLogs()
     }
 
     fun isServiceRecoding(abstractService: AbstractService): Boolean {

@@ -13,4 +13,16 @@ object LegacyFormatter : MessageFormatter {
     override fun formatTablistFooter(): String =
         "\n§7Version: §b%polocloud_version%\n" +
         "§8» §7Powered by §b§lPoloCloud §8«\n"
+
+    override fun formatMotdLineOne(): String =
+        "§b§lPoloCloud §8» §7Simple and lightweight §8- §f%version%"
+
+    override fun formatMotdLineTwo(): String =
+        "§f§8» §7GitHub§8: §n§fgithub.polocloud.de"
+
+    override fun formatMaintenanceMotdLineOne(): String =
+        "§b§lPoloCloud §8» §7Maintenance mode is currently enabled"
+
+    override fun formatMaintenanceMotdLineTwo(): String =
+        "§8» §7GitHub§8: §n§fgithub.polocloud.de"
 }

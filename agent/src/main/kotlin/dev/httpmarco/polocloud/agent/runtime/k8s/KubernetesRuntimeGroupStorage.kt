@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture
 
 class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : RuntimeGroupStorage {
 
-    override fun update(group: AbstractGroup) {
+    override fun updateGroup(group: AbstractGroup) {
         TODO("Not yet implemented")
     }
 
@@ -31,7 +31,19 @@ class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : 
             .getItems()
             .stream()
             // todo
-            .map({ group -> AbstractGroup(group.name, 0, 0, 0, 0, 0.0, PlatformIndex("", ""), emptyList(), hashMapOf()) })
+            .map { group ->
+                AbstractGroup(
+                    group.name,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0.0,
+                    PlatformIndex("", ""),
+                    emptyList(),
+                    hashMapOf()
+                )
+            }
             .toList()
     }
 
@@ -52,6 +64,14 @@ class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : 
     }
 
     override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun update(group: AbstractGroup): AbstractGroup? {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
         TODO("Not yet implemented")
     }
 

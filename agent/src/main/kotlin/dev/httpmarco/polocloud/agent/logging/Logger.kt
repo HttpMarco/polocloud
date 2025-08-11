@@ -40,12 +40,12 @@ class Logger {
         log("DEBUG", "&f", message)
     }
 
-    fun enableSetupLogBuffering() {
+    fun enableLogBuffering() {
         this.bufferingLogs = true
         this.logBuffer.clear()
     }
 
-    fun flushSetupLogs() {
+    fun flushLogs() {
         this.bufferingLogs = false
         this.logBuffer.forEach { outputLog(it) }
         this.logBuffer.clear()
