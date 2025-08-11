@@ -12,12 +12,13 @@ object FabricBridge : ModInitializer {
 
     val logger = LoggerFactory.getLogger("FabricBridge")
     val config: FabricBridgeConfig = ConfigLoader.load()
+    val bridgeVersion: String = "1.21.5"
 
     override fun onInitialize() {
         val version = FabricLoader.getInstance()
             .getModContainer("minecraft")
             .get().metadata.version.friendlyString
-        if (version != "1.21.8") {
+        if (version != bridgeVersion) {
             return
         }
 

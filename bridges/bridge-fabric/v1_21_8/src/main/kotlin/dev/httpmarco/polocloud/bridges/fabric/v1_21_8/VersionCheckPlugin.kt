@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.bridges.fabric.v1_21_8
 
+import dev.httpmarco.polocloud.bridges.fabric.v1_21_8.FabricBridge.bridgeVersion
 import net.fabricmc.loader.api.FabricLoader
 import org.objectweb.asm.tree.ClassNode
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin
@@ -11,14 +12,14 @@ class VersionCheckPlugin : IMixinConfigPlugin {
     }
 
     override fun getRefMapperConfig(): String? {
-        return "v1_21_8-refmap.json"
+        return "v${bridgeVersion.replace(".", "_")}-refmap.json"
     }
 
     override fun shouldApplyMixin(p0: String?, p1: String?): Boolean {
         val mcVersion: String = FabricLoader.getInstance()
             .getModContainer("minecraft")
             .get().metadata.version.friendlyString
-        return mcVersion.startsWith("1.21.8")
+        return mcVersion.startsWith(bridgeVersion)
     }
 
     override fun acceptTargets(
