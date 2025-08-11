@@ -8,7 +8,7 @@ object LegacyFormatter : MessageFormatter {
     }
 
     override fun formatTablistHeader(): String =
-        "\n          §b§lPoloCloud §8- §7Simplest and easiest CloudSystem          \n§7Current Server: §b%server% $8| §7Players: §b%online_players%/%max_players%\n"
+        "\n          §b§lPoloCloud §8- §7Simplest and easiest CloudSystem          \n§7Current Server: §b%server% §8| §7Players: §b%online_players%/%max_players%\n"
 
     override fun formatTablistFooter(): String =
         "\n§7Version: §b%polocloud_version%\n" +

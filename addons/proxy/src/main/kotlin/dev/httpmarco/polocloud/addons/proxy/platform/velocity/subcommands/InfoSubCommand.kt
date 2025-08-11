@@ -1,11 +1,11 @@
 package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
 
 import com.velocitypowered.api.command.CommandSource
-import dev.httpmarco.polocloud.addons.proxy.CloudSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class InfoSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
+class InfoSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
     private val polocloudVersion = System.getenv("polocloud-version")?: "unknown"

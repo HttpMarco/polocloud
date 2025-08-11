@@ -2,14 +2,14 @@ package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
 
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.ProxyServer
-import dev.httpmarco.polocloud.addons.proxy.CloudSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class PlayersSubCommand(
     private val proxyAddon: ProxyAddon,
     private val proxyServer: ProxyServer
-) : CloudSubCommand {
+) : VelocityCloudSubCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
 

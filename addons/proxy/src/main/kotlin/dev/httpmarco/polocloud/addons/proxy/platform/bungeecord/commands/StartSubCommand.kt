@@ -1,40 +1,39 @@
-package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
+package dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.commands
 
-import com.velocitypowered.api.command.CommandSource
-import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
+import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordCloudSubCommand
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
-import net.kyori.adventure.text.minimessage.MiniMessage
+import net.md_5.bungee.api.CommandSender
+import net.md_5.bungee.api.chat.TextComponent
 
-class StartSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
+class StartSubCommand(
+    val proxyAddon: ProxyAddon
+) : BungeecordCloudSubCommand {
 
-    private val miniMessage = MiniMessage.miniMessage()
+    private val polocloudVersion = System.getenv("polocloud-version")?: "unknown"
 
-    override fun execute(
-        source: CommandSource,
-        arguments: List<String>
-    ) {
-        val config = proxyAddon.config
+    override fun execute(sender: CommandSender, args: List<String?>) {
+        val config = this.proxyAddon.config
 
-        if (!source.hasPermission("polocloud.addons.proxy.command.cloud.start")) {
-            source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("no_permission")))
+        if (!sender.hasPermission("polocloud.addons.proxy.command.cloud.start")) {
+            sender.sendMessage(TextComponent(config.prefix() + config.messages("no_permission")))
             return
         }
 
-        if (arguments.isEmpty()) {
-            source.sendMessage(miniMessage.deserialize(usage(config)))
+        if (args.isEmpty()) {
+            sender.sendMessage(TextComponent(usage(config)))
             return
         }
 
-        val groupName = arguments[0]
+        val groupName = args[0]?: ""
 
         try {
             val service = Polocloud.instance().serviceProvider().bootInstance(groupName)
-            source.sendMessage(
-                miniMessage.deserialize(
+            sender.sendMessage(
+                TextComponent(
                     config.prefix() + config.messages("starting")
                         .replace("%group%", service.groupName)
                         .replace("%service%", service.groupName + "-" + service.id)
@@ -42,17 +41,20 @@ class StartSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
             )
         } catch (e: StatusRuntimeException) {
             if(e.status.code == Status.NOT_FOUND.code) {
-                source.sendMessage(
-                    miniMessage.deserialize(
+                sender.sendMessage(
+                    TextComponent(
                         config.prefix() + config.messages("group_not_found")
                             .replace("%group%", groupName)
                     )
                 )
             }
         }
+
+
     }
 
     private fun usage(config: ProxyConfig): String {
         return config.prefix() + config.messages("usage_start")
     }
+
 }

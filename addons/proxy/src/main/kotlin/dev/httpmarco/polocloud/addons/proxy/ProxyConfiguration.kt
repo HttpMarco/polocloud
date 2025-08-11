@@ -8,46 +8,46 @@ data class ProxyConfiguration(
     val messages: MutableMap<String, String> = mutableMapOf(
         "no_permission" to "§cYou have no permission!",
         "only_players" to "§cOnly players can use this command!",
-        "starting" to "<dark_gray>[</dark_gray><green>✔</green><dark_gray>]</dark_gray> <gray>Command for <aqua>%service%</aqua> executed.</gray>",
-        "stopping" to "<dark_gray>[</dark_gray><green>✔</green><dark_gray>]</dark_gray> <gray>Command for <aqua>%service%</aqua> executed.</gray>",
-        "stopped" to "<dark_gray>[</dark_gray><green>✔</green><dark_gray>]</dark_gray> <gray>Command for <aqua>%service%</aqua> executed.</gray>",
-        "no_players_online" to "<gray>There are no players online.</gray>",
-        "no_server_found" to "<gray>No services found.</gray>",
+        "starting" to "§8[§a✔§8] §7Command for §b%service% §7executed.",
+        "stopping" to "§8[§a✔§8] §7Command for §b%service% §7executed.",
+        "stopped" to "§8[§a✔§8] §7Command for §b%service% §7executed.",
+        "no_players_online" to "§7There are no players online.",
+        "no_server_found" to "§7No services found.",
         
         // StartSubCommand messages
-        "group_not_found" to "<red>Group <aqua>%group%</aqua> does not exist!</red>",
-        "usage_start" to "<gray>Usage: <aqua>/polocloud start <groupName></aqua>",
+        "group_not_found" to "§cGroup §b%group% does not exist!",
+        "usage_start" to "§7Usage: §b/polocloud start <groupName>",
         
         // StopSubCommand messages
-        "service_not_found" to "<red>Service <aqua>%service%</aqua> does not exist!</red>",
-        "usage_stop" to "<gray>Usage: <aqua>/polocloud stop <service></aqua>",
+        "service_not_found" to "§cService §b%service% does not exist!",
+        "usage_stop" to "§7Usage: §b/polocloud stop <service>",
         
         // PlayersSubCommand messages
-        "no_players_online_players" to "<gray>No players are currently online.</gray>",
-        "players_header" to "<gradient:#00fdee:#118bd1><bold>Online Players (%count%)</bold></gradient>",
-        "player_server_info" to "<aqua>%player%</aqua> <gray>→</gray> <green>%server%</green>",
-        "players_footer" to "<gray>Distributed across %serverCount% server(s)</gray>",
+        "no_players_online_players" to "§7No players are currently online.",
+        "players_header" to "§b§lOnline Players (%count%)",
+        "player_server_info" to "§b%player% §7→ §a%server%",
+        "players_footer" to "§7Distributed across %serverCount% server(s)",
         
         // ListSubCommand messages
-        "services_header" to "<gradient:#00fdee:#118bd1><bold>Available Services</bold></gradient>",
-        "service_info" to "<aqua>%service%</aqua> <gray>(</gray><green>%status%</green><gray>)</gray> <gray>→</gray> <yellow>%players%</yellow><gray>/</gray><yellow>%maxPlayers%</yellow>",
+        "services_header" to "§b§lAvailable Services",
+        "service_info" to "§b%service% §7(§a%status%§7) §7→ §e%players%§7/§e%maxPlayers%",
 
         // MaintenanceSubCommand messages
-        "maintenance_enabled" to "<gray>Maintenance mode has been <green>enabled</green>.</gray>",
-        "maintenance_disabled" to "<gray>Maintenance mode has been <green>disabled</green>.</gray>",
-        "maintenance_enabled_already" to "<gray>Maintenance mode is already <green>enabled</green>.</gray>",
-        "maintenance_disabled_already" to "<gray>Maintenance mode is already <green>disabled</green>.</gray>",
-        "maintenance_kick" to "<red>Maintenance mode is currently enabled. Please try again later.</red>",
+        "maintenance_enabled" to "§7Maintenance mode has been §aenabled.",
+        "maintenance_disabled" to "§7Maintenance mode has been §adisabled.",
+        "maintenance_enabled_already" to "§7Maintenance mode is already §aenabled.",
+        "maintenance_disabled_already" to "§7Maintenance mode is already §adisabled.",
+        "maintenance_kick" to "§cMaintenance mode is currently enabled. Please try again later.",
 
         // General usage messages
-        "usage_header" to "<gray>Available <gradient:#00fdee:#118bd1><bold>/polocloud</bold></gradient> commands:",
-        "usage_info" to "<aqua>/polocloud info</aqua>",
-        "usage_list" to "<aqua>/polocloud list</aqua>",
-        "usage_players" to "<aqua>/polocloud players</aqua>",
-        "usage_create" to "<aqua>/polocloud create <template> [static]</aqua>",
-        "usage_delete" to "<aqua>/polocloud delete <server></aqua>",
-        "usage_maintenance" to "<aqua>/polocloud maintenance <on|off> [group]</aqua>",
-        "usage_broadcast" to "<aqua>/polocloud broadcast <message></aqua>"
+        "usage_header" to "§7Available §b§l/polocloud> commands:",
+        "usage_info" to "§b/polocloud info",
+        "usage_list" to "§b/polocloud list",
+        "usage_players" to "§b/polocloud players",
+        "usage_create" to "§b/polocloud create <template> [static]",
+        "usage_delete" to "§b/polocloud delete <server>",
+        "usage_maintenance" to "§b/polocloud maintenance <on|off> [group]",
+        "usage_broadcast" to "§b/polocloud broadcast <message>"
     ),
     val aliases: List<String> = listOf("cloud", "p"),
     val tablist: Tablist = Tablist(),

@@ -1,33 +1,32 @@
-package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
+package dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.commands
 
 import com.google.gson.JsonPrimitive
-import com.velocitypowered.api.command.CommandSource
-import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
+import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordCloudSubCommand
 import dev.httpmarco.polocloud.sdk.java.Polocloud
-import net.kyori.adventure.text.minimessage.MiniMessage
+import net.md_5.bungee.api.CommandSender
+import net.md_5.bungee.api.chat.TextComponent
 
-class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
+class MaintenanceSubCommand(
+    val proxyAddon: ProxyAddon
+) : BungeecordCloudSubCommand {
 
-    private val miniMessage = MiniMessage.miniMessage()
+    private val polocloudVersion = System.getenv("polocloud-version")?: "unknown"
 
-    override fun execute(
-        source: CommandSource,
-        arguments: List<String>
-    ) {
-        val config = proxyAddon.config
+    override fun execute(sender: CommandSender, args: List<String?>) {
+        val config = this.proxyAddon.config
 
-        if (!source.hasPermission("polocloud.addons.proxy.command.cloud.maintenance")) {
-            source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("no_permission")))
+        if (!sender.hasPermission("polocloud.addons.proxy.command.cloud.maintenance")) {
+            sender.sendMessage(TextComponent(config.prefix() + config.messages("no_permission")))
             return
         }
 
-        if (arguments.isEmpty()) {
-            source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("usage_maintenance")))
+        if (args.isEmpty()) {
+            sender.sendMessage(TextComponent(config.prefix() + config.messages("usage_maintenance")))
             return
         }
 
-        val action = arguments[0].lowercase()
+        val action = args[0]?.lowercase() ?: ""
 
         when (action) {
             "on" -> {
@@ -35,7 +34,7 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand
                 val group = Polocloud.instance().groupProvider().find(proxyAddon.poloService.groupName)!!
                 val maintenanceEnabled = group.properties["maintenance"]?.asBoolean ?: false
                 if(maintenanceEnabled) {
-                    source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_enabled_already")))
+                    sender.sendMessage(TextComponent(config.prefix() + config.messages("maintenance_enabled_already")))
                     return
                 }
 
@@ -47,9 +46,8 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand
                 }
                 properties.put("maintenance", JsonPrimitive(true))
                 group.properties = properties
-                Polocloud.instance().groupProvider().update(group)
 
-                source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_enabled")))
+                sender.sendMessage(TextComponent(config.prefix() + config.messages("maintenance_enabled")))
 
             }
             "off" -> {
@@ -57,7 +55,7 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand
                 val group = Polocloud.instance().groupProvider().find(proxyAddon.poloService.groupName)!!
                 val maintenanceEnabled = group.properties["maintenance"]?.asBoolean ?: false
                 if(!maintenanceEnabled) {
-                    source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_disabled_already")))
+                    sender.sendMessage(TextComponent(config.prefix() + config.messages("maintenance_disabled_already")))
                     return
                 }
 
@@ -70,13 +68,14 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand
                 group.properties = properties
                 Polocloud.instance().groupProvider().update(group)
 
-                source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_disabled")))
+                sender.sendMessage(TextComponent(config.prefix() + config.messages("maintenance_disabled")))
 
             }
             else -> {
-                source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("usage_maintenance")))
+                sender.sendMessage(TextComponent(config.prefix() + config.messages("usage_maintenance")))
             }
         }
 
     }
+
 }

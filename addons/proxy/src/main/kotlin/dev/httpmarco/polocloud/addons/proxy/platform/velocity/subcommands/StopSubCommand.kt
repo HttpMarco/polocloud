@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
 
 import com.velocitypowered.api.command.CommandSource
-import dev.httpmarco.polocloud.addons.proxy.CloudSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
 import dev.httpmarco.polocloud.sdk.java.Polocloud
@@ -9,7 +9,7 @@ import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class StopSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
+class StopSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
 
