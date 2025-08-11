@@ -60,14 +60,25 @@ export default function AdminPage() {
   });
   const [addingPartner, setAddingPartner] = useState(false);
 
-  const filtered = useMemo(() => {
-    return feedbacks.filter(fb => {
+  const filteredFeedbacks = useMemo(() => {
+    const filtered = feedbacks.filter(fb => {
       const q = query.toLowerCase().trim();
       const matchesQuery = !q || fb.username.toLowerCase().includes(q) || fb.description.toLowerCase().includes(q);
       const matchesRating = ratingFilter == null || fb.rating === ratingFilter;
       const matchesStatus = statusFilter === 'ALL' || fb.status === statusFilter;
       return matchesQuery && matchesRating && matchesStatus;
     });
+    
+    console.log('🔍 Filtered Feedbacks:', {
+      total: feedbacks.length,
+      filtered: filtered.length,
+      query,
+      ratingFilter,
+      statusFilter,
+      feedbacks: feedbacks.map(f => ({ id: f.id, username: f.username, status: f.status }))
+    });
+    
+    return filtered;
   }, [feedbacks, query, ratingFilter, statusFilter]);
 
   const statusCounts = useMemo(() => {
@@ -119,8 +130,14 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/feedback', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
+        console.log('🔍 Admin Feedback API Response:', data);
         setFeedbacks(data.feedbacks || []);
+        console.log('📊 Feedbacks set to state:', data.feedbacks || []);
+      } else {
+        console.error('❌ Admin Feedback API Error:', res.status, res.statusText);
       }
+    } catch (error) {
+      console.error('❌ Admin Feedback API Exception:', error);
     } finally {
       setLoadingFeedbacks(false);
     }
@@ -357,17 +374,6 @@ export default function AdminPage() {
     }, {} as Record<string, number>);
   }, [feedbacks]);
 
-  const filteredFeedbacks = useMemo(() => {
-    return feedbacks.filter(feedback => {
-      const matchesQuery = feedback.username.toLowerCase().includes(query.toLowerCase()) ||
-                          feedback.description.toLowerCase().includes(query.toLowerCase());
-      const matchesRating = ratingFilter === null || feedback.rating === ratingFilter;
-      const matchesStatus = statusFilter === 'ALL' || feedback.status === statusFilter;
-
-      return matchesQuery && matchesRating && matchesStatus;
-    });
-  }, [feedbacks, query, ratingFilter, statusFilter]);
-
   return (
     <div className="relative min-h-screen">
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
@@ -532,8 +538,100 @@ export default function AdminPage() {
                   );
                 })}
               </div>
-                </div>
-              )}
+
+                   <div className="grid gap-4 md:grid-cols-2">
+                     {loadingFeedbacks && (
+                       <div className="text-center text-muted-foreground">Loading feedbacks...</div>
+                     )}
+                     {!loadingFeedbacks && (
+                       <>
+                         {console.log('🎯 Rendering Feedback Section:', {
+                           loadingFeedbacks,
+                           feedbacksLength: feedbacks.length,
+                           filteredFeedbacksLength: filteredFeedbacks.length,
+                           activeTab
+                         })}
+                         {filteredFeedbacks.map((fb) => (
+                           <div key={`${fb.userId}-${fb.createdAt}`} className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-5">
+                             <div className="flex items-start justify-between mb-3">
+                               <div className="flex items-center gap-3">
+                                 {fb.avatar ? (
+                                   <img
+                                     src={fb.avatar}
+                                     alt={fb.username}
+                                     className="w-10 h-10 rounded-full ring-2 ring-primary/20"
+                                   />
+                                 ) : (
+                                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                                     <User className="w-5 h-5 text-primary" />
+                                   </div>
+                                 )}
+                                 <div>
+                                   <div className="font-semibold text-foreground">{fb.username}</div>
+                                   <div className="text-xs text-muted-foreground">{new Date(fb.createdAt).toLocaleString()}</div>
+                                 </div>
+                               </div>
+                               <div className="flex items-center gap-2">
+                                 <div className="inline-flex items-center gap-1 px-2 py-1 rounded bg-muted/40 text-sm">
+                                   {Array.from({ length: 5 }).map((_, i) => (
+                                     <span key={i} className={i < fb.rating ? 'text-yellow-400' : 'text-gray-300'}>★</span>
+                                   ))}
+                                 </div>
+                                 <div className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
+                                   fb.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' :
+                                   fb.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
+                                   'bg-red-500/20 text-red-400'
+                                 }`}>
+                                   {fb.status === 'PENDING' && <Clock className="w-3 h-3" />}
+                                   {fb.status === 'APPROVED' && <Check className="w-3 h-3" />}
+                                   {fb.status === 'REJECTED' && <X className="w-3 h-3" />}
+                                   {fb.status}
+                                 </div>
+                               </div>
+                             </div>
+
+                             <div className="text-sm text-foreground/90 leading-relaxed mb-4">
+                               {fb.description}
+                             </div>
+
+                             {fb.status === 'PENDING' && (
+                               <div className="flex gap-2 pt-3 border-t border-border/30">
+                                 <button
+                                   onClick={() => handleApprove(fb.id)}
+                                   className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                                 >
+                                   <Check className="w-4 h-4" /> Approve
+                                 </button>
+                                 <button
+                                   onClick={() => handleReject(fb.id)}
+                                   className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
+                                 >
+                                   <X className="w-4 h-4" /> Reject
+                                 </button>
+                               </div>
+                             )}
+
+                             {fb.status === 'APPROVED' && fb.approvedBy && (
+                               <div className="pt-3 border-t border-border/30 text-xs text-muted-foreground">
+                                 Approved by {fb.approvedBy} on {fb.approvedAt ? new Date(fb.approvedAt).toLocaleString() : 'Unknown'}
+                               </div>
+                             )}
+
+                             {fb.status === 'REJECTED' && fb.rejectedBy && (
+                               <div className="pt-3 border-t border-border/30 text-xs text-muted-foreground">
+                                 Rejected by {fb.rejectedBy} on {fb.rejectedAt ? new Date(fb.rejectedAt).toLocaleString() : 'Unknown'}
+                               </div>
+                             )}
+                           </div>
+                         ))}
+                         {!loadingFeedbacks && filteredFeedbacks.length === 0 && (
+                           <div className="text-center text-muted-foreground py-10">No feedbacks found.</div>
+                         )}
+                       </>
+                     )}
+                   </div>
+                 </div>
+               )}
 
               {activeTab === 'users' && isSuperAdmin && (
                 <div className="mb-6 p-6 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-500/5 border border-amber-500/20 rounded-xl">
@@ -719,8 +817,12 @@ export default function AdminPage() {
                                   alt={partner.name}
                                   className="w-12 h-12 rounded-lg object-contain bg-background border border-border/50"
                                   onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                    e.currentTarget.nextElementSibling!.style.display = 'flex';
+                                    const target = e.currentTarget as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    const nextSibling = target.nextElementSibling as HTMLElement;
+                                    if (nextSibling) {
+                                      nextSibling.style.display = 'flex';
+                                    }
                                   }}
                                 />
                               ) : null}
@@ -760,88 +862,6 @@ export default function AdminPage() {
                         ))}
                       </div>
                     )}
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {loadingFeedbacks && (
-                      <div className="text-center text-muted-foreground">Loading feedbacks...</div>
-                    )}
-                    {!loadingFeedbacks && filteredFeedbacks.map((fb) => (
-                  <div key={`${fb.userId}-${fb.createdAt}`} className="relative overflow-hidden rounded-xl border border-border/50 bg-gradient-to-b from-background/50 to-background/80 p-5">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        {fb.avatar ? (
-                          <img
-                            src={fb.avatar}
-                            alt={fb.username}
-                            className="w-10 h-10 rounded-full ring-2 ring-primary/20"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <User className="w-5 h-5 text-primary" />
-                          </div>
-                        )}
-                        <div>
-                          <div className="font-semibold text-foreground">{fb.username}</div>
-                          <div className="text-xs text-muted-foreground">{new Date(fb.createdAt).toLocaleString()}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="inline-flex items-center gap-1 px-2 py-1 rounded bg-muted/40 text-sm">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <span key={i} className={i < fb.rating ? 'text-yellow-400' : 'text-gray-300'}>★</span>
-                          ))}
-                        </div>
-                        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
-                          fb.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' :
-                          fb.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' :
-                          'bg-red-500/20 text-red-400'
-                        }`}>
-                          {fb.status === 'PENDING' && <Clock className="w-3 h-3" />}
-                          {fb.status === 'APPROVED' && <Check className="w-3 h-3" />}
-                          {fb.status === 'REJECTED' && <X className="w-3 h-3" />}
-                          {fb.status}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-sm text-foreground/90 leading-relaxed mb-4">
-                      {fb.description}
-                    </div>
-
-                    {fb.status === 'PENDING' && (
-                      <div className="flex gap-2 pt-3 border-t border-border/30">
-                        <button
-                          onClick={() => handleApprove(fb.id)}
-                          className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
-                        >
-                          <Check className="w-4 h-4" /> Approve
-                        </button>
-                        <button
-                          onClick={() => handleReject(fb.id)}
-                          className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
-                        >
-                          <X className="w-4 h-4" /> Reject
-                        </button>
-                      </div>
-                    )}
-
-                    {fb.status === 'APPROVED' && fb.approvedBy && (
-                      <div className="pt-3 border-t border-border/30 text-xs text-muted-foreground">
-                        Approved by {fb.approvedBy} on {fb.approvedAt ? new Date(fb.approvedAt).toLocaleString() : 'Unknown'}
-                      </div>
-                    )}
-
-                    {fb.status === 'REJECTED' && fb.rejectedBy && (
-                      <div className="pt-3 border-t border-border/30 text-xs text-muted-foreground">
-                        Rejected by {fb.rejectedBy} on {fb.rejectedAt ? new Date(fb.rejectedAt).toLocaleString() : 'Unknown'}
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {!loadingFeedbacks && filteredFeedbacks.length === 0 && (
-                  <div className="text-center text-muted-foreground py-10">No feedbacks found.</div>
-                )}
                   </div>
                 </div>
               )}
