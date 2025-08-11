@@ -47,7 +47,6 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
                 }
                 properties.put("maintenance", JsonPrimitive(true))
                 group.properties = properties
-                println(Polocloud.instance().groupProvider().update(group)?.properties ?: "No properties updated for group ${group.name}")
 
                 source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_enabled")))
 
