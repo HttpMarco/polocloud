@@ -17,7 +17,6 @@ export function MobileNav() {
 
     return (
         <div className="relative">
-
             <button
                 onClick={toggleMenu}
                 className="p-2.5 rounded-xl bg-background/90 border border-border/50 hover:border-border/70 hover:bg-background/95 transition-all duration-200 shadow-md hover:shadow-lg"
@@ -32,14 +31,12 @@ export function MobileNav() {
 
             {isOpen && (
                 <div className="fixed inset-0 z-50 lg:hidden">
-
-                    <div 
+                    <div
                         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                         onClick={closeMenu}
                     />
-
+                    
                     <div className="absolute right-0 top-16 w-80 h-full bg-background/95 backdrop-blur-xl border-l border-border/50 shadow-2xl">
-
                         <div className="flex items-center justify-between p-4 border-b border-border/30">
                             <h2 className="text-lg font-bold text-foreground">Menu</h2>
                             <button
@@ -51,7 +48,6 @@ export function MobileNav() {
                         </div>
 
                         <div className="p-4 space-y-6 overflow-y-auto h-[calc(100vh-5rem)]">
-
                             <div className="space-y-3">
                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                                     Navigation
