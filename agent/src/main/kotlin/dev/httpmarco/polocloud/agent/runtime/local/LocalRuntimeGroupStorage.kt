@@ -49,9 +49,9 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
         val index = this.cachedAbstractGroups.indexOfFirst { it.name == group.name }
         if (index != -1) {
             this.cachedAbstractGroups[index] = group
-        } else {
-            i18n.warn("agent.local-runtime.group-storage.update-group.not-found", group.name)
+            return
         }
+        i18n.warn("agent.local-runtime.group-storage.update-group.not-found", group.name)
     }
 
     override fun reload() {
