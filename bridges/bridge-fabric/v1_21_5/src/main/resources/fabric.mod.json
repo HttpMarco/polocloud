@@ -14,10 +14,12 @@
   "license": "Apache 2.0",
   "environment": "server",
   "entrypoints": {
-    "main": ${mainClasses}
+    "main": "${mainClasses}"
   },
-  "mixins": ${mixins},
+  "mixins": ["${mixins}"],
+  "accessWidener": "polocloud_bridge_1_21_5.accesswidener",
   "depends": {
+    "fabric-networking-api-v1": "*",
     "fabric-language-kotlin": ">=1.13.4+kotlin.2.2.0"
   }
 }
