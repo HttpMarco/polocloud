@@ -2,12 +2,12 @@ package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
 
 import com.google.gson.JsonPrimitive
 import com.velocitypowered.api.command.CommandSource
-import dev.httpmarco.polocloud.addons.proxy.CloudSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class MaintenanceSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
+class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
 
@@ -47,6 +47,7 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
                 }
                 properties.put("maintenance", JsonPrimitive(true))
                 group.properties = properties
+                Polocloud.instance().groupProvider().update(group)
 
                 source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_enabled")))
 
