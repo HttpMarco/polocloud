@@ -27,6 +27,7 @@
     "nukkitSetup",
     "paperLoadDependencies",
     "pumpkinSetup",
-    "setupBungeecord"
+    "setupBungeecord",
+    "fabricDownloadDependencies"
   ]
 }
