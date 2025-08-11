@@ -13,9 +13,9 @@ export function LogoWithLink() {
                 alt="Logo"
                 width={30}
                 height={30}
-                className="group-hover:scale-110 transition-transform duration-300"
+                className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 group-hover:scale-110 transition-transform duration-300"
             />
-            <span className="font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
+            <span className="font-semibold text-foreground group-hover:text-primary transition-colors duration-300 text-sm sm:text-base lg:text-lg">
                 PoloCloud
             </span>
         </Link>
@@ -31,8 +31,9 @@ export function Logo() {
                 alt="Logo"
                 width={30}
                 height={30}
+                className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8"
             />
-            <span className="font-semibold text-foreground">
+            <span className="font-semibold text-foreground text-sm sm:text-base lg:text-lg">
             PoloCloud
             </span>
         </div>
