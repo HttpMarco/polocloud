@@ -67,6 +67,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Name and logo are required' }, { status: 400 });
     }
 
+    if (!logo.startsWith('https://') || !logo.includes('vercel-storage.com')) {
+      return NextResponse.json({ 
+        error: 'Invalid logo URL. Please upload an image first.' 
+      }, { status: 400 });
+    }
+
     const currentPartners = await getPartnersFromGitHub();
 
     const newPartner = {
@@ -81,7 +87,7 @@ export async function POST(req: NextRequest) {
 
     const updatedPartners = [...currentPartners, newPartner];
 
-    await savePartnersToGitHub(updatedPartners);
+    await savePartnersToGitHub(updatedPartners, `Add new partner: ${newPartner.name}`);
 
     console.log('✅ Partner added successfully, cache will refresh automatically');
 
@@ -100,18 +106,29 @@ export async function DELETE(req: NextRequest) {
   try {
 
     const githubAdminAuth = req.cookies.get('github_admin_auth')?.value;
+    const adminAuth = req.cookies.get('admin_auth')?.value;
+    const discordUser = req.cookies.get('discord_user')?.value;
 
-
-    if (!githubAdminAuth) {
-      return NextResponse.json({ error: 'GitHub admin authentication required' }, { status: 401 });
+    if (!githubAdminAuth && !adminAuth && !discordUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const adminAuthData = JSON.parse(githubAdminAuth);
-
-    if (adminAuthData.username !== 'jakubbbdev') {
-      return NextResponse.json({
-        error: `Only jakubbbdev can manage partners. Your username: ${adminAuthData.username}`
-      }, { status: 403 });
+    if (githubAdminAuth) {
+      const adminAuthData = JSON.parse(githubAdminAuth);
+      if (adminAuthData.username !== 'jakubbbdev') {
+        return NextResponse.json({
+          error: `Only jakubbbdev can manage partners. Your username: ${adminAuthData.username}`
+        }, { status: 403 });
+      }
+    } else if (adminAuth) {
+      const adminData = JSON.parse(adminAuth);
+      if (adminData.username !== 'jakubbbdev' && adminData.username !== 'admin') {
+        return NextResponse.json({
+          error: `Only admin can manage partners. Your username: ${adminData.username}`
+        }, { status: 403 });
+      }
+    } else {
+      return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
 
     const { partnerId } = await req.json();
@@ -121,14 +138,29 @@ export async function DELETE(req: NextRequest) {
     }
 
     const currentPartners = await getPartnersFromGitHub();
+    const partnerToRemove = currentPartners.find(p => p.id === partnerId);
 
-    const updatedPartners = currentPartners.filter(p => p.id !== partnerId);
-
-    if (updatedPartners.length === currentPartners.length) {
+    if (!partnerToRemove) {
       return NextResponse.json({ error: 'Partner not found' }, { status: 404 });
     }
 
-    await savePartnersToGitHub(updatedPartners);
+    const updatedPartners = currentPartners.filter(p => p.id !== partnerId);
+    await savePartnersToGitHub(updatedPartners, `Remove partner: ${partnerToRemove.name}`);
+
+    if (partnerToRemove.logo && partnerToRemove.logo.includes('vercel-storage.com')) {
+      try {
+
+        const urlParts = partnerToRemove.logo.split('/');
+        const blobId = `/polocloud/storage/images/partners/${urlParts[urlParts.length - 1]}`;
+
+        const { del } = await import('@vercel/blob');
+        await del(blobId);
+        
+        console.log('✅ Partner logo deleted from Vercel Blob:', blobId);
+      } catch (error) {
+        console.warn('⚠️ Error deleting partner logo from Vercel Blob:', error);
+      }
+    }
 
     console.log('✅ Partner removed successfully, cache will refresh automatically');
 
@@ -139,5 +171,76 @@ export async function DELETE(req: NextRequest) {
   } catch (error) {
     console.error('Error removing partner:', error);
     return NextResponse.json({ error: 'Failed to remove partner' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+
+    const githubAdminAuth = req.cookies.get('github_admin_auth')?.value;
+    const adminAuth = req.cookies.get('admin_auth')?.value;
+    const discordUser = req.cookies.get('discord_user')?.value;
+
+    if (!githubAdminAuth && !adminAuth && !discordUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (githubAdminAuth) {
+      const adminAuthData = JSON.parse(githubAdminAuth);
+      if (adminAuthData.username !== 'jakubbbdev') {
+        return NextResponse.json({
+          error: `Only jakubbbdev can manage partners. Your username: ${adminAuthData.username}`
+        }, { status: 403 });
+      }
+    } else if (adminAuth) {
+      const adminData = JSON.parse(adminAuth);
+      if (adminData.username !== 'jakubbbdev' && adminData.username !== 'admin') {
+        return NextResponse.json({
+          error: `Only admin can manage partners. Your username: ${adminData.username}`
+        }, { status: 403 });
+      }
+    } else {
+      return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
+    }
+
+    const { id, name, logo, website, description } = await req.json();
+
+    if (!id || !name || !logo) {
+      return NextResponse.json({ error: 'ID, name, and logo are required' }, { status: 400 });
+    }
+    if (!logo.startsWith('https://') || !logo.includes('vercel-storage.com')) {
+      return NextResponse.json({ 
+        error: 'Invalid logo URL. Please upload an image first.' 
+      }, { status: 400 });
+    }
+
+    const currentPartners = await getPartnersFromGitHub();
+    const partnerIndex = currentPartners.findIndex(p => p.id === id);
+
+    if (partnerIndex === -1) {
+      return NextResponse.json({ error: 'Partner not found' }, { status: 404 });
+    }
+
+    const updatedPartner = {
+      ...currentPartners[partnerIndex],
+      name: name.trim(),
+      logo: logo.trim(),
+      website: website.trim(),
+      description: description.trim()
+    };
+
+    currentPartners[partnerIndex] = updatedPartner;
+    await savePartnersToGitHub(currentPartners, `Update partner: ${updatedPartner.name}`);
+
+    console.log('✅ Partner updated successfully, cache will refresh automatically');
+
+    return NextResponse.json({
+      success: true,
+      partner: updatedPartner,
+      message: 'Partner updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating partner:', error);
+    return NextResponse.json({ error: 'Failed to update partner' }, { status: 500 });
   }
 }
