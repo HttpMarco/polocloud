@@ -40,14 +40,63 @@ export type Partner = {
   logo: string;
   website: string;
   description: string;
-  createdAt: string;
+  addedAt: string;
 };
 
 export type NewPartner = {
   name: string;
   logo: string;
+  logoFile?: File;
   website: string;
   description: string;
 };
 
-export type ActiveTab = 'feedback' | 'users' | 'partners' | 'blog';
+export type EditPartner = {
+  id: string;
+  name: string;
+  logo: string;
+  logoFile?: File;
+  website: string;
+  description: string;
+};
+
+export type Platform = {
+  id: string;
+  name: string;
+  icon: string;
+  versions: {
+    [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+  };
+  addons: {
+    [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+  };
+  addedAt: string;
+  addedBy: string;
+};
+
+export type NewPlatform = {
+  name: string;
+  icon: string;
+  iconFile?: File;
+  versions: {
+    [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+  };
+  addons: {
+    [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+  };
+};
+
+export type EditPlatform = {
+  id: string;
+  name: string;
+  icon: string;
+  iconFile?: File;
+  versions: {
+    [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+  };
+  addons: {
+    [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+  };
+};
+
+export type ActiveTab = 'feedback' | 'users' | 'partners' | 'platforms';
