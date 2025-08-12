@@ -553,64 +553,168 @@ export async function getUserFeedbackFromGitHub(userId: string): Promise<Feedbac
 export async function getPartnersFromGitHub() {
   try {
     console.log('🔍 Fetching partners from GitHub...');
-    const response = await blogOctokit.rest.repos.getContent({
-      owner: BLOG_REPO_CONFIG.owner,
-      repo: BLOG_REPO_CONFIG.repo,
-      path: 'data/partners.json',
-      ref: BLOG_REPO_CONFIG.branch,
-    });
-
-    if ('content' in response.data) {
-      const content = Buffer.from(response.data.content, 'base64').toString('utf8');
-      const partners = JSON.parse(content);
+    const partnersFile = await getBlogFileFromGitHub('docs/data/partners.json');
+    
+    if (partnersFile) {
+      const partners = JSON.parse(partnersFile.content);
       console.log('✅ Partners loaded from GitHub:', partners.length, 'partners');
+
+      try {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        const localPath = path.join(process.cwd(), 'data', 'partners.json');
+        await fs.writeFile(localPath, partnersFile.content);
+        console.log('💾 Partners also saved locally as backup');
+      } catch (localError) {
+        console.warn('⚠️ Could not save partners locally:', localError);
+      }
+      
       return partners;
     }
 
     return [];
   } catch (error) {
     console.error('❌ Error fetching partners from GitHub:', error);
-    if (error.status === 404) {
-      console.log('📁 Partners file does not exist on GitHub, returning empty array');
+
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const localPath = path.join(process.cwd(), 'data', 'partners.json');
+      const localContent = await fs.readFile(localPath, 'utf8');
+      const localPartners = JSON.parse(localContent);
+      console.log('✅ Partners loaded from local file:', localPartners.length, 'partners');
+      return localPartners;
+    } catch (localError) {
+      console.log('📁 No local partners file found, returning empty array');
+      return [];
     }
-    return [];
   }
 }
 
-export async function savePartnersToGitHub(partners: any[]) {
+export async function savePartnersToGitHub(partners: any[], commitMessage?: string): Promise<void> {
   try {
-    const path = 'data/partners.json';
     const content = JSON.stringify(partners, null, 2);
+    const partnersFile = await getBlogFileFromGitHub('docs/data/partners.json');
+    
+    const message = commitMessage || `Update partners list - ${new Date().toISOString()}`;
+    
+    await createOrUpdateBlogFile(
+      'docs/data/partners.json',
+      content,
+      message,
+      partnersFile?.sha
+    );
 
-    let sha: string | undefined;
+    console.log('✅ Partners saved to GitHub successfully');
+
     try {
-      const existingFile = await blogOctokit.rest.repos.getContent({
-        owner: BLOG_REPO_CONFIG.owner,
-        repo: BLOG_REPO_CONFIG.repo,
-        path,
-        ref: BLOG_REPO_CONFIG.branch,
-      });
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const localPath = path.join(process.cwd(), 'data', 'partners.json');
+      await fs.writeFile(localPath, content);
+      console.log('💾 Partners also saved locally as backup');
+    } catch (localError) {
+      console.warn('⚠️ Could not save partners locally:', localError);
+    }
+    
+  } catch (error) {
+    console.error('❌ Error saving partners to GitHub:', error);
 
-      if ('sha' in existingFile.data) {
-        sha = existingFile.data.sha;
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const localPath = path.join(process.cwd(), 'data', 'partners.json');
+      await fs.writeFile(localPath, JSON.stringify(partners, null, 2));
+      console.log('💾 Partners saved locally as fallback');
+    } catch (localError) {
+      console.error('❌ Could not save partners locally either:', localError);
+    }
+    
+    throw error;
+  }
+}
+
+export async function getPlatformsFromGitHub() {
+  try {
+    console.log('🔍 Fetching platforms from GitHub...');
+    const platformsFile = await getBlogFileFromGitHub('docs/data/platforms.json');
+    
+    if (platformsFile) {
+      const platforms = JSON.parse(platformsFile.content);
+      console.log('✅ Platforms loaded from GitHub:', platforms.length, 'platforms');
+
+      try {
+        const fs = await import('fs/promises');
+        const path = await import('path');
+        const localPath = path.join(process.cwd(), 'data', 'platforms.json');
+        await fs.writeFile(localPath, platformsFile.content);
+        console.log('💾 Platforms also saved locally as backup');
+      } catch (localError) {
+        console.warn('⚠️ Could not save platforms locally:', localError);
       }
-    } catch (error) {
-
+      
+      return platforms;
     }
 
-    await blogOctokit.rest.repos.createOrUpdateFileContents({
-      owner: BLOG_REPO_CONFIG.owner,
-      repo: BLOG_REPO_CONFIG.repo,
-      path,
-      message: `Update partners list - ${new Date().toISOString()}`,
-      content: Buffer.from(content).toString('base64'),
-      branch: BLOG_REPO_CONFIG.branch,
-      sha,
-    });
+    return [];
+  } catch (error: any) {
+    console.error('❌ Error fetching platforms from GitHub:', error);
 
-    console.log('Partners saved to GitHub successfully');
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const localPath = path.join(process.cwd(), 'data', 'platforms.json');
+      const localContent = await fs.readFile(localPath, 'utf8');
+      const localPlatforms = JSON.parse(localContent);
+      console.log('✅ Platforms loaded from local file:', localPlatforms.length, 'platforms');
+      return localPlatforms;
+    } catch (localError) {
+      console.log('📁 No local platforms file found, creating empty file');
+      await savePlatformsToGitHub([]);
+      return [];
+    }
+  }
+}
+
+export async function savePlatformsToGitHub(platforms: any[], commitMessage?: string): Promise<void> {
+  try {
+    const content = JSON.stringify(platforms, null, 2);
+    const platformsFile = await getBlogFileFromGitHub('docs/data/platforms.json');
+    
+    const message = commitMessage || `Update platforms list - ${new Date().toISOString()}`;
+    
+    await createOrUpdateBlogFile(
+      'docs/data/platforms.json',
+      content,
+      message,
+      platformsFile?.sha
+    );
+
+    console.log('✅ Platforms saved to GitHub successfully');
+
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const localPath = path.join(process.cwd(), 'data', 'platforms.json');
+      await fs.writeFile(localPath, content);
+      console.log('💾 Platforms also saved locally as backup');
+    } catch (localError) {
+      console.warn('⚠️ Could not save platforms locally:', localError);
+    }
+    
   } catch (error) {
-    console.error('Error saving partners to GitHub:', error);
+    console.error('❌ Error saving platforms to GitHub:', error);
+
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const localPath = path.join(process.cwd(), 'data', 'platforms.json');
+      await fs.writeFile(localPath, JSON.stringify(platforms, null, 2));
+      console.log('💾 Platforms saved locally as fallback');
+    } catch (localError) {
+      console.error('❌ Could not save platforms locally either:', localError);
+    }
+    
     throw error;
   }
 }

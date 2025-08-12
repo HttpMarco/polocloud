@@ -8,14 +8,21 @@ import {
   FeedbackTab, 
   UsersTab, 
   PartnersTab, 
-  LoginForm,
+  PlatformsTab, 
+  LoginForm
+} from '@/components/admin';
+import { 
   MeResp, 
   Feedback, 
   AdminUser, 
   Partner, 
   NewPartner, 
-  ActiveTab 
-} from '@/components/admin';
+  Platform, 
+  NewPlatform, 
+  ActiveTab,
+  EditPlatform,
+  EditPartner
+} from '@/components/admin/types';
 
 export default function AdminPage() {
   const [loading, setLoading] = useState(true);
@@ -36,6 +43,9 @@ export default function AdminPage() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loadingPartners, setLoadingPartners] = useState(false);
 
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [loadingPlatforms, setLoadingPlatforms] = useState(false);
+
   const [activeTab, setActiveTab] = useState<ActiveTab>('feedback');
   const [newPartner, setNewPartner] = useState<NewPartner>({
     name: '',
@@ -44,6 +54,26 @@ export default function AdminPage() {
     description: ''
   });
   const [addingPartner, setAddingPartner] = useState(false);
+  const [editingPartner, setEditingPartner] = useState<EditPartner | null>(null);
+  const [editingPartnerId, setEditingPartnerId] = useState<string | null>(null);
+
+  const [newPlatform, setNewPlatform] = useState<NewPlatform>({
+    name: '',
+    icon: '',
+    versions: {
+      '1.7-1.12': 'not-supported',
+      '1.12-1.16': 'not-supported',
+      '1.18-1.19': 'not-supported',
+      '1.20+': 'not-supported'
+    },
+    addons: {
+      'Severmobs': 'not-supported',
+      'Signs': 'not-supported'
+    }
+  });
+  const [addingPlatform, setAddingPlatform] = useState(false);
+  const [editingPlatform, setEditingPlatform] = useState<EditPlatform | null>(null);
+  const [editingPlatformId, setEditingPlatformId] = useState<string | null>(null);
 
   const filteredFeedbacks = useMemo(() => {
     const filtered = feedbacks.filter(fb => {
@@ -242,15 +272,40 @@ export default function AdminPage() {
   };
 
   const handleAddPartner = async () => {
-    if (!newPartner.name.trim() || !newPartner.logo.trim()) return;
+    if (!newPartner.name.trim() || (!newPartner.logo.trim() && !newPartner.logoFile)) return;
     
     setAddingPartner(true);
     try {
+      let logoUrl = newPartner.logo;
+
+      if (newPartner.logoFile) {
+        const formData = new FormData();
+        formData.append('file', newPartner.logoFile);
+        formData.append('partnerName', newPartner.name);
+        
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        
+        if (!uploadRes.ok) {
+          const error = await uploadRes.json();
+          throw new Error(`Upload failed: ${error.error}`);
+        }
+        
+        const uploadData = await uploadRes.json();
+        logoUrl = uploadData.url;
+      }
+
       const res = await fetch('/api/admin/partners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(newPartner)
+        body: JSON.stringify({
+          ...newPartner,
+          logo: logoUrl
+        })
       });
       
       if (res.ok) {
@@ -263,7 +318,8 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error adding partner:', error);
-      showToast('Error adding partner', 'error');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      showToast(`Error adding partner: ${errorMessage}`, 'error');
     } finally {
       setAddingPartner(false);
     }
@@ -291,6 +347,260 @@ export default function AdminPage() {
     }
   };
 
+  const handleEditPartner = (partner: Partner) => {
+    setEditingPartner({
+      id: partner.id,
+      name: partner.name,
+      logo: partner.logo,
+      website: partner.website,
+      description: partner.description
+    });
+    setEditingPartnerId(partner.id);
+  };
+
+  const handleUpdatePartner = async () => {
+    if (!editingPartner || !editingPartnerId) return;
+    
+    setAddingPartner(true);
+    try {
+      let logoUrl = editingPartner.logo;
+
+      if (editingPartner.logoFile) {
+        const formData = new FormData();
+        formData.append('file', editingPartner.logoFile);
+        formData.append('partnerName', editingPartner.name);
+        
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        
+        if (!uploadRes.ok) {
+          const error = await uploadRes.json();
+          throw new Error(`Upload failed: ${error.error}`);
+        }
+        
+        const uploadData = await uploadRes.json();
+        logoUrl = uploadData.url;
+      }
+
+      const res = await fetch('/api/admin/partners', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          id: editingPartnerId,
+          name: editingPartner.name,
+          logo: logoUrl,
+          website: editingPartner.website,
+          description: editingPartner.description
+        })
+      });
+      
+      if (res.ok) {
+        showToast('Partner updated successfully', 'success');
+        setEditingPartner(null);
+        setEditingPartnerId(null);
+        fetchPartners();
+      } else {
+        const error = await res.json();
+        showToast(`Error updating partner: ${error.error}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error updating partner:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      showToast(`Error updating partner: ${errorMessage}`, 'error');
+    } finally {
+      setAddingPartner(false);
+    }
+  };
+
+  const handleCancelEditPartner = () => {
+    setEditingPartner(null);
+    setEditingPartnerId(null);
+  };
+
+  const fetchPlatforms = async () => {
+    setLoadingPlatforms(true);
+    try {
+      const res = await fetch('/api/admin/platforms', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        setPlatforms(data.platforms || []);
+      } else {
+        console.error('Failed to fetch platforms');
+      }
+    } catch (error) {
+      console.error('Error fetching platforms:', error);
+    } finally {
+      setLoadingPlatforms(false);
+    }
+  };
+
+  const handleAddPlatform = async () => {
+    if (!newPlatform.name.trim() || !newPlatform.iconFile) return;
+    
+    setAddingPlatform(true);
+    try {
+      let iconUrl = newPlatform.icon;
+
+      if (newPlatform.iconFile) {
+        const formData = new FormData();
+        formData.append('file', newPlatform.iconFile);
+        formData.append('platformName', newPlatform.name);
+        
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        
+        if (!uploadRes.ok) {
+          const error = await uploadRes.json();
+          throw new Error(`Upload failed: ${error.error}`);
+        }
+        
+        const uploadData = await uploadRes.json();
+        iconUrl = uploadData.url;
+      }
+
+      const res = await fetch('/api/admin/platforms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...newPlatform,
+          icon: iconUrl
+        })
+      });
+      
+      if (res.ok) {
+        showToast('Platform added successfully', 'success');
+        setNewPlatform({
+          name: '',
+          icon: '',
+          versions: {
+            '1.7-1.12': 'not-supported',
+            '1.12-1.16': 'not-supported',
+            '1.18-1.19': 'not-supported',
+            '1.20+': 'not-supported'
+          },
+          addons: {
+            'Severmobs': 'not-supported',
+            'Signs': 'not-supported'
+          }
+        });
+        fetchPlatforms();
+      } else {
+        const error = await res.json();
+        showToast(`Error adding platform: ${error.error}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error adding platform:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      showToast(`Error adding platform: ${errorMessage}`, 'error');
+    } finally {
+      setAddingPlatform(false);
+    }
+  };
+
+  const handleRemovePlatform = async (platformId: string) => {
+    try {
+      const res = await fetch('/api/admin/platforms', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ platformId })
+      });
+      
+      if (res.ok) {
+        showToast('Platform removed successfully', 'success');
+        fetchPlatforms();
+      } else {
+        const error = await res.json();
+        showToast(`Error removing platform: ${error.error}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error removing platform:', error);
+      showToast('Error removing platform', 'error');
+    }
+  };
+
+  const handleEditPlatform = (platform: Platform) => {
+    setEditingPlatform({
+      id: platform.id,
+      name: platform.name,
+      icon: platform.icon,
+      versions: { ...platform.versions },
+      addons: { ...platform.addons }
+    });
+    setEditingPlatformId(platform.id);
+  };
+
+  const handleUpdatePlatform = async () => {
+    if (!editingPlatform || !editingPlatformId) return;
+    
+    setAddingPlatform(true);
+    try {
+      let iconUrl = editingPlatform.icon;
+
+      if (editingPlatform.iconFile) {
+        const formData = new FormData();
+        formData.append('file', editingPlatform.iconFile);
+        formData.append('platformName', editingPlatform.name);
+        
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        
+        if (!uploadRes.ok) {
+          const error = await uploadRes.json();
+          throw new Error(`Upload failed: ${error.error}`);
+        }
+        
+        const uploadData = await uploadRes.json();
+        iconUrl = uploadData.url;
+      }
+
+      const res = await fetch('/api/admin/platforms', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          id: editingPlatformId,
+          name: editingPlatform.name,
+          icon: iconUrl,
+          versions: editingPlatform.versions,
+          addons: editingPlatform.addons
+        })
+      });
+      
+      if (res.ok) {
+        showToast('Platform updated successfully', 'success');
+        setEditingPlatform(null);
+        setEditingPlatformId(null);
+        fetchPlatforms();
+      } else {
+        const error = await res.json();
+        showToast(`Error updating platform: ${error.error}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error updating platform:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      showToast(`Error updating platform: ${errorMessage}`, 'error');
+    } finally {
+      setAddingPlatform(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPlatform(null);
+    setEditingPlatformId(null);
+  };
+
   const handleLogout = () => {
     document.cookie = 'github_admin_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     document.cookie = 'admin_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -298,19 +608,23 @@ export default function AdminPage() {
     setFeedbacks([]);
     setAdminUsers([]);
     setPartners([]);
+    setPlatforms([]);
+    setEditingPlatform(null);
+    setEditingPlatformId(null);
+    setEditingPartner(null);
+    setEditingPartnerId(null);
   };
 
   useEffect(() => {
     fetchMe();
-    
-    // Check for URL parameters (errors, success messages)
+
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
     const success = urlParams.get('success');
     
     if (error === 'unauthorized') {
       showToast('Access denied. You are not authorized to access the admin dashboard.', 'error');
-      // Clean up URL
+
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (error === 'oauth_failed') {
       showToast('GitHub OAuth failed. Please try again.', 'error');
@@ -329,6 +643,7 @@ export default function AdminPage() {
       fetchFeedbacks();
       fetchAdminUsers();
       fetchPartners();
+      fetchPlatforms();
     }
   }, [auth?.authenticated]);
 
@@ -380,6 +695,7 @@ export default function AdminPage() {
           feedbacksCount={feedbacks.length}
           adminUsersCount={adminUsers.length}
           partnersCount={partners.length}
+          platformsCount={platforms.length}
           isSuperAdmin={isSuperAdmin}
         />
 
@@ -423,6 +739,29 @@ export default function AdminPage() {
             onAddPartner={handleAddPartner}
             onRemovePartner={handleRemovePartner}
             onRefresh={fetchPartners}
+            editingPartner={editingPartner}
+            setEditingPartner={setEditingPartner}
+            onEditPartner={handleEditPartner}
+            onUpdatePartner={handleUpdatePartner}
+            onCancelEditPartner={handleCancelEditPartner}
+          />
+        )}
+
+        {activeTab === 'platforms' && isSuperAdmin && (
+          <PlatformsTab
+            platforms={platforms}
+            loadingPlatforms={loadingPlatforms}
+            newPlatform={newPlatform}
+            setNewPlatform={setNewPlatform}
+            addingPlatform={addingPlatform}
+            onAddPlatform={handleAddPlatform}
+            onRemovePlatform={handleRemovePlatform}
+            onRefresh={fetchPlatforms}
+            editingPlatform={editingPlatform}
+            setEditingPlatform={setEditingPlatform}
+            onEditPlatform={handleEditPlatform}
+            onUpdatePlatform={handleUpdatePlatform}
+            onCancelEdit={handleCancelEdit}
           />
         )}
       </div>
