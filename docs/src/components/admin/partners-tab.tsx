@@ -1,7 +1,7 @@
 "use client";
 
-import { Handshake, Plus, Trash2, RefreshCcw, ExternalLink, Image as ImageIcon } from 'lucide-react';
-import { Partner, NewPartner } from './types';
+import { Handshake, Plus, Trash2, RefreshCcw, ExternalLink, Image as ImageIcon, Save, Edit, X } from 'lucide-react';
+import { Partner, NewPartner, EditPartner } from './types';
 
 interface PartnersTabProps {
   partners: Partner[];
@@ -12,6 +12,11 @@ interface PartnersTabProps {
   onAddPartner: () => void;
   onRemovePartner: (partnerId: string) => void;
   onRefresh: () => void;
+  editingPartner: EditPartner | null;
+  setEditingPartner: (partner: EditPartner | null) => void;
+  onEditPartner: (partner: Partner) => void;
+  onUpdatePartner: () => void;
+  onCancelEditPartner: () => void;
 }
 
 export function PartnersTab({
@@ -22,8 +27,16 @@ export function PartnersTab({
   addingPartner,
   onAddPartner,
   onRemovePartner,
-  onRefresh
+  onRefresh,
+  editingPartner,
+  setEditingPartner,
+  onEditPartner,
+  onUpdatePartner,
+  onCancelEditPartner
 }: PartnersTabProps) {
+  const currentPartner = editingPartner || newPartner;
+  const isEditing = !!editingPartner;
+
   return (
     <div className="mb-6 p-6 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/5 border border-green-500/20 rounded-xl">
       <div className="flex items-center gap-3 mb-4">
@@ -39,34 +52,84 @@ export function PartnersTab({
       </div>
 
       <div className="mb-6 p-4 bg-background/30 rounded-lg border border-border/30">
-        <h4 className="font-medium text-foreground mb-3">Add New Partner</h4>
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="font-medium text-foreground">
+            {isEditing ? `Edit Partner: ${editingPartner?.name}` : 'Add New Partner'}
+          </h4>
+          {isEditing && (
+            <button
+              onClick={onCancelEditPartner}
+              className="inline-flex items-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300"
+            >
+              <X className="w-4 h-4" />
+              Cancel
+            </button>
+          )}
+        </div>
         <div className="grid md:grid-cols-2 gap-4 mb-3">
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">Partner Name *</label>
             <input
               type="text"
-              value={newPartner.name}
-              onChange={(e) => setNewPartner({...newPartner, name: e.target.value})}
+              value={currentPartner.name}
+              onChange={(e) => {
+                if (isEditing) {
+                  setEditingPartner({ ...editingPartner!, name: e.target.value });
+                } else {
+                  setNewPartner({...newPartner, name: e.target.value});
+                }
+              }}
               placeholder="e.g. HGLabor"
               className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Logo URL *</label>
-            <input
-              type="url"
-              value={newPartner.logo}
-              onChange={(e) => setNewPartner({...newPartner, logo: e.target.value})}
-              placeholder="https://example.com/logo.png"
-              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50"
-            />
+            <label className="block text-sm font-medium text-foreground mb-1">Logo Upload *</label>
+            <div className="space-y-2">
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+
+                    if (file.size > 5 * 1024 * 1024) {
+                      alert('File too large. Maximum size is 5MB.');
+                      return;
+                    }
+
+                    if (isEditing) {
+                      setEditingPartner({...editingPartner!, logoFile: file, logo: ''});
+                    } else {
+                      setNewPartner({...newPartner, logoFile: file, logo: ''});
+                    }
+                  }
+                }}
+                className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700"
+              />
+              {(currentPartner.logoFile || currentPartner.logo) && (
+                <div className="text-xs text-green-600">
+                  {currentPartner.logoFile ? (
+                    `✓ ${currentPartner.logoFile.name} (${(currentPartner.logoFile.size / 1024 / 1024).toFixed(2)}MB)`
+                  ) : (
+                    `✓ Current logo: ${currentPartner.logo.split('/').pop()}`
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">Website URL</label>
             <input
               type="url"
-              value={newPartner.website}
-              onChange={(e) => setNewPartner({...newPartner, website: e.target.value})}
+              value={currentPartner.website}
+              onChange={(e) => {
+                if (isEditing) {
+                  setEditingPartner({ ...editingPartner!, website: e.target.value });
+                } else {
+                  setNewPartner({...newPartner, website: e.target.value});
+                }
+              }}
               placeholder="https://partner-website.com"
               className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50"
             />
@@ -75,27 +138,33 @@ export function PartnersTab({
             <label className="block text-sm font-medium text-foreground mb-1">Description</label>
             <input
               type="text"
-              value={newPartner.description}
-              onChange={(e) => setNewPartner({...newPartner, description: e.target.value})}
+              value={currentPartner.description}
+              onChange={(e) => {
+                if (isEditing) {
+                  setEditingPartner({ ...editingPartner!, description: e.target.value });
+                } else {
+                  setNewPartner({...newPartner, description: e.target.value});
+                }
+              }}
               placeholder="Brief description of the partner"
               className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50"
             />
           </div>
         </div>
         <button
-          onClick={onAddPartner}
-          disabled={addingPartner || !newPartner.name.trim() || !newPartner.logo.trim()}
+          onClick={isEditing ? onUpdatePartner : onAddPartner}
+          disabled={addingPartner || !currentPartner.name.trim() || (!currentPartner.logo.trim() && !currentPartner.logoFile)}
           className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
         >
           {addingPartner ? (
             <>
               <RefreshCcw className="w-4 h-4 animate-spin" />
-              Adding...
+              {isEditing ? 'Updating...' : 'Adding...'}
             </>
           ) : (
             <>
-              <Plus className="w-4 h-4" />
-              Add Partner
+              {isEditing ? <Save className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+              {isEditing ? 'Update Partner' : 'Add Partner'}
             </>
           )}
         </button>
@@ -145,22 +214,31 @@ export function PartnersTab({
                     )}
                   </div>
                 </div>
-                <button
-                  onClick={() => onRemovePartner(partner.id)}
-                  className="inline-flex items-center gap-1 px-2 py-1 bg-red-600/10 text-red-600 rounded-lg hover:bg-red-600/20 text-xs transition-all duration-300"
-                >
-                  <Trash2 className="w-3 h-3" />
-                  Remove
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onEditPartner(partner)}
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-blue-600/10 text-blue-600 rounded-lg hover:bg-blue-600/20 text-xs transition-all duration-300"
+                  >
+                    <Edit className="w-3 h-3" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => onRemovePartner(partner.id)}
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-red-600/10 text-red-600 rounded-lg hover:bg-red-600/20 text-xs transition-all duration-300"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Remove
+                  </button>
+                </div>
               </div>
               
               {partner.description && (
                 <p className="text-sm text-muted-foreground mb-3">{partner.description}</p>
               )}
               
-              <div className="text-xs text-muted-foreground">
-                Added on {new Date(partner.createdAt).toLocaleDateString('de-DE')}
-              </div>
+                             <div className="text-xs text-muted-foreground">
+                 Added on {new Date(partner.addedAt).toLocaleDateString('de-DE')}
+               </div>
             </div>
           ))}
         </div>
