@@ -27,11 +27,11 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
     val cacheThreadPool: ExecutorService by lazy { Executors.newFixedThreadPool(4) }
     val runningCacheProcesses: MutableList<Tuple<String, String>> by lazy {
-        Collections.synchronizedList<Tuple<String, String>>(
+        Collections.synchronizedList(
             mutableListOf()
         )
     }
-    val waitingServices: MutableList<LocalService> by lazy { Collections.synchronizedList<LocalService>(mutableListOf()) }
+    val waitingServices: MutableList<LocalService> by lazy { Collections.synchronizedList(mutableListOf()) }
 
     init {
         // if folder exists, delete all files inside
@@ -70,28 +70,15 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             Agent.runtime.groupStorage().findAll().stream().anyMatch { it.platform().name == "velocity" })
         environment.addParameter("version", polocloudVersion())
 
+        //loading cache before starting service
         val cacheIsRunning = runningCacheProcesses.any { platform.name == it._1() && version == it._2() }
         if (!platform.cacheExists(version) || cacheIsRunning) {
             waitingServices.add(service)
 
-            if (cacheIsRunning) {
-                return
+            if (!cacheIsRunning) {
+                this.handleMissingCache(platform, version, environment)
             }
 
-            val processEntry = Tuple(platform.name, version)
-            runningCacheProcesses.add(processEntry)
-
-            cacheThreadPool.execute {
-                platform.cachePrepare(version, environment)
-                runningCacheProcesses.remove(processEntry)
-
-                val servicesToBoot =
-                    waitingServices.filter { it.group.platform.name == platform.name && it.group.platform.version == version }
-                servicesToBoot.forEach {
-                    this.bootApplication(it)
-                }
-                waitingServices.removeAll(servicesToBoot)
-            }
             return
         }
 
@@ -103,7 +90,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.path.createDirectories()
 
         val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
-
 
 
         // copy all templates to the service path
@@ -172,7 +158,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             }
         }
 
-        if(localRuntime.terminal.screenService.isServiceRecoding(service)) {
+        if (localRuntime.terminal.screenService.isServiceRecoding(service)) {
             localRuntime.terminal.screenService.stopCurrentRecording()
         }
         service.stopTracking()
@@ -182,15 +168,22 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             Thread.sleep(200) // wait for a process to be destroyed
         }
 
-        if(!service.isStatic()) {
+        if (!service.isStatic()) {
             service.path.deleteRecursively()
         }
 
         service.state = ServiceState.STOPPED
         Agent.runtime.serviceStorage().dropAbstractService(service)
-        i18n.info("agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful", service.name())
-        
+        i18n.info(
+            "agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful",
+            service.name()
+        )
+
         return service.toSnapshot()
+    }
+
+    fun shutdown() {
+        cacheThreadPool.shutdown()
     }
 
     private fun getLanguageSpecificCommands(platform: Platform, abstractService: AbstractService): ArrayList<String> {
@@ -222,5 +215,25 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             }
         }
         return commands
+    }
+
+    private fun handleMissingCache(platform: Platform, version: String, environment: PlatformParameters) {
+        val platformName = platform.name
+        i18n.info("agent.local-runtime.factory.boot.platform.prepare", platformName)
+
+        val processEntry = Tuple(platformName, version)
+        runningCacheProcesses.add(processEntry)
+
+        cacheThreadPool.execute {
+            platform.cachePrepare(version, environment)
+            runningCacheProcesses.remove(processEntry)
+
+            val servicesToBoot =
+                waitingServices.filter { it.group.platform.name == platform.name && it.group.platform.version == version }
+            servicesToBoot.forEach {
+                this.bootApplication(it)
+            }
+            waitingServices.removeAll(servicesToBoot)
+        }
     }
 }
