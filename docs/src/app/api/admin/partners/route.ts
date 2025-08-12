@@ -114,8 +114,7 @@ export async function DELETE(req: NextRequest) {
       }, { status: 403 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const partnerId = searchParams.get('id');
+    const { partnerId } = await req.json();
 
     if (!partnerId) {
       return NextResponse.json({ error: 'Partner ID is required' }, { status: 400 });
