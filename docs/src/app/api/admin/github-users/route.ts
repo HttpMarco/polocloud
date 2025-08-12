@@ -132,12 +132,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Only admin can add users' }, { status: 403 });
     }
 
-    const { githubUsername } = await request.json();
+    const { username } = await request.json();
 
-    if (!githubUsername || typeof githubUsername !== 'string') {
+    if (!username || typeof username !== 'string') {
       return NextResponse.json({ error: 'GitHub username is required' }, { status: 400 });
     }
-    const githubResponse = await fetch(`https://api.github.com/users/${githubUsername}`, {
+    const githubResponse = await fetch(`https://api.github.com/users/${username}`, {
       headers: {
         'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
         'Accept': 'application/vnd.github.v3+json',
@@ -152,12 +152,12 @@ export async function POST(request: NextRequest) {
 
     const users = await loadGitHubAdminUsers();
 
-    if (users.find(u => u.username === githubUsername)) {
+    if (users.find(u => u.username === username)) {
       return NextResponse.json({ error: 'User already has admin access' }, { status: 409 });
     }
 
     const newUser: GitHubAdminUser = {
-      username: githubUsername,
+      username: username,
       id: githubUser.id.toString(),
       name: githubUser.name,
       avatar: githubUser.avatar_url,
@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       user: newUser,
-      message: `${githubUsername} has been added as admin`
+      message: `${username} has been added as admin`
     });
   } catch (error) {
     console.error('Error adding GitHub admin user:', error);
