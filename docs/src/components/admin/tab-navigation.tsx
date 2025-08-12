@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Users, Handshake, FileText } from 'lucide-react';
+import { Star, Users, Handshake, Server, FileText } from 'lucide-react';
 import { ActiveTab } from './types';
 
 interface TabNavigationProps {
@@ -9,6 +9,7 @@ interface TabNavigationProps {
   feedbacksCount: number;
   adminUsersCount: number;
   partnersCount: number;
+  platformsCount: number;
   isSuperAdmin: boolean;
 }
 
@@ -18,6 +19,7 @@ export function TabNavigation({
   feedbacksCount, 
   adminUsersCount, 
   partnersCount, 
+  platformsCount, 
   isSuperAdmin 
 }: TabNavigationProps) {
   return (
@@ -57,6 +59,19 @@ export function TabNavigation({
         >
           <Handshake className="w-4 h-4" />
           Partners ({partnersCount})
+        </button>
+      )}
+      {isSuperAdmin && (
+        <button
+          onClick={() => onTabChange('platforms')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+            activeTab === 'platforms'
+              ? 'bg-primary text-primary-foreground shadow-lg'
+              : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+          }`}
+        >
+          <Server className="w-4 h-4" />
+          Platforms ({platformsCount})
         </button>
       )}
       <button
