@@ -302,6 +302,26 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchMe();
+    
+    // Check for URL parameters (errors, success messages)
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const success = urlParams.get('success');
+    
+    if (error === 'unauthorized') {
+      showToast('Access denied. You are not authorized to access the admin dashboard.', 'error');
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (error === 'oauth_failed') {
+      showToast('GitHub OAuth failed. Please try again.', 'error');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (error === 'oauth_error') {
+      showToast('GitHub OAuth error occurred. Please try again.', 'error');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (success === 'github_login') {
+      showToast('Successfully logged in with GitHub!', 'success');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
   }, []);
 
   useEffect(() => {
