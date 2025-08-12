@@ -2,7 +2,7 @@
 
 [![license](https://img.shields.io/github/license/HttpMarco/polocloud?style=for-the-badge&color=b2204c)](../LICENSE)
 [![Download](https://img.shields.io/github/downloads/HttpMarco/Polocloud/total?style=for-the-badge&logo=github&color=2ea043)](https://github.com/HttpMarco/polocloud/releases)
-
+[![Besuche Modrinth: polocloud](https://img.shields.io/badge/Modrinth-polocloud-grün?logo=modrinth&style=flat)](https://modrinth.com/organization/polocloud)
 
 
 **PoloCloud** is a modern and modular Minecraft cloud system designed for high flexibility, performance, and developer freedom.  
