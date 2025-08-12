@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   if (!code) {
 
-    const githubClientId = process.env.GITHUB_ADMIN_CLIENT_ID;
+    const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
 
     if (!githubClientId) {
       return NextResponse.json(
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const githubClientId = process.env.GITHUB_ADMIN_CLIENT_ID;
-    const githubClientSecret = process.env.GITHUB_ADMIN_CLIENT_SECRET;
+    const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
 
     if (!githubClientId || !githubClientSecret) {
       return NextResponse.json(
