@@ -22,6 +22,8 @@ export function CopyButton({ text, className = "", title = "Copy" }: CopyButtonP
     }
   };
 
+
+
   return (
     <button
       onClick={handleCopy}
