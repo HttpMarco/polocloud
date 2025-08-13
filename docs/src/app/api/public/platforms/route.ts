@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getPlatformsFromGitHub } from '@/lib/github';
+import { Platform } from '@/components/admin/types';
 
-let cachedPlatforms: any[] = [];
+let cachedPlatforms: Platform[] = [];
 let lastFetch = 0;
 const CACHE_DURATION = 30 * 1000;
 

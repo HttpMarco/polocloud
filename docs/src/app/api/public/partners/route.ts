@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getPartnersFromGitHub } from '@/lib/github';
+import { Partner } from '@/components/admin/types';
 
-let cachedPartners: any[] = [];
+let cachedPartners: Partner[] = [];
 let lastFetch = 0;
 const CACHE_DURATION = 30 * 1000;
 

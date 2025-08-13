@@ -7,7 +7,7 @@ export interface Partner {
 }
 
 export interface Benefit {
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
     title: string;
     description: string;
     color: string;
