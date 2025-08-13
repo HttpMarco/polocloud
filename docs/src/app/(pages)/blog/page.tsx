@@ -84,7 +84,7 @@ export default function BlogIndexPage() {
                 </h2>
               </div>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {sortedPinnedPosts.map((post, index) => (
+                {sortedPinnedPosts.map((post) => (
                   <article
                     key={post.slug}
                     className="group bg-primary/5 hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/30 rounded-xl p-6 transition-all duration-300 hover:shadow-lg backdrop-blur-sm hover:scale-[1.02] transform relative"
@@ -160,7 +160,7 @@ export default function BlogIndexPage() {
                 All Posts
               </h2>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {sortedUnpinnedPosts.map((post, index) => (
+                {sortedUnpinnedPosts.map((post) => (
                   <article
                     key={post.slug}
                     className="group bg-card/50 hover:bg-card border border-border/50 hover:border-border rounded-xl p-6 transition-all duration-300 hover:shadow-lg backdrop-blur-sm hover:scale-[1.02] transform"

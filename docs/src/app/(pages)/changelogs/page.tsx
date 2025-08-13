@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
-import { Calendar, Tag, GitBranch, ArrowRight, Download, Star, MessageCircle } from 'lucide-react';
+import { Calendar, Tag, GitBranch, ArrowRight, MessageCircle } from 'lucide-react';
 
 interface ChangelogPost {
   title: string;

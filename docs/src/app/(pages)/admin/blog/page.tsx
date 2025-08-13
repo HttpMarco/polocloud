@@ -1,19 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   FileText,
   Edit3,
   Plus,
   Eye,
   Edit,
-  Calendar,
   User,
-  Sparkles,
-  Tags
+  Sparkles
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
