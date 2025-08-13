@@ -56,25 +56,27 @@ const fallbackData: RoadmapColumn[] = [
   }
 ];
 
-const getCategoryIcon = (category: string) => {
-  switch (category) {
-    case 'ui': return <Star className="w-4 h-4" />;
-    case 'platforms': return <Server className="w-4 h-4" />;
-    case 'bot': return <Code className="w-4 h-4" />;
-    case 'addons': return <Package className="w-4 h-4" />;
-    default: return <Code className="w-4 h-4" />;
-  }
-};
 
-const getCategoryColor = (category: string) => {
-  switch (category) {
-    case 'ui': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
-    case 'platforms': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
-    case 'bot': return 'bg-green-500/20 border-green-500/30 text-green-400';
-    case 'addons': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
-    default: return 'bg-gray-500/20 border-gray-500/30 text-gray-400';
-  }
-};
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'ui': return <Star className="w-4 h-4" />;
+      case 'platforms': return <Server className="w-4 h-4" />;
+      case 'bot': return <Code className="w-4 h-4" />;
+      case 'addons': return <Package className="w-4 h-4" />;
+      default: return <Code className="w-4 h-4" />;
+    }
+  };
+
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'ui': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
+      case 'platforms': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
+      case 'bot': return 'bg-green-500/20 border-green-500/30 text-green-400';
+      case 'addons': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
+      default: return 'bg-gray-500/20 border-gray-500/30 text-gray-400';
+    }
+  };
 
 const RoadmapCard = ({ item, index }: { item: RoadmapItem; index: number }) => {
   return (

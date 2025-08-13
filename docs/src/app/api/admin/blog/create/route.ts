@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       try {
         userData = JSON.parse(userCookie.value);
 
-        if (adminUsers.includes(userData.id)) {
+        if (userData && userData.id && adminUsers.includes(userData.id)) {
           isAuthenticated = true;
         }
       } catch {
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
       title: title.trim(),
       description: description.trim(),
       date: currentDate,
-      author: author?.trim() || userData.username,
+      author: author?.trim() || userData?.username || 'Unknown',
       tags: Array.isArray(tags) ? tags.map((tag: string) => tag.trim()) : [],
       pinned: Boolean(pinned),
       slug

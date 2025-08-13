@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
         userData = JSON.parse(userCookie.value);
 
 
-        if (adminUsers.includes(userData.id)) {
+        if (userData && userData.id && adminUsers.includes(userData.id)) {
           isAuthenticated = true;
         }
       } catch {
@@ -129,8 +129,12 @@ export async function GET(req: NextRequest) {
       })
     );
 
-    const validPosts = posts.filter(post => post !== null)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const validPosts = posts.filter((post): post is NonNullable<typeof post> => post !== null)
+      .sort((a, b) => {
+        const dateA = a.date ? new Date(a.date as string).getTime() : 0;
+        const dateB = b.date ? new Date(b.date as string).getTime() : 0;
+        return dateB - dateA;
+      });
 
     return NextResponse.json({ posts: validPosts });
 
