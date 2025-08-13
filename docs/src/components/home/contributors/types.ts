@@ -1,5 +1,3 @@
-import { GitHubContributor } from "@/lib/github";
-
 export interface ContributorStats {
     totalContributors: number;
     projectStars: number;
@@ -10,5 +8,5 @@ export interface ContributorStats {
 export interface StatData {
     label: string;
     value: string;
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
 }

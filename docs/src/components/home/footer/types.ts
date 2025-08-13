@@ -1,13 +1,13 @@
 export interface FooterLink {
     href: string;
     label: string;
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
     external?: boolean;
 }
 
 export interface FooterSection {
     title: string;
-    titleIcon: any;
+    titleIcon: React.ComponentType<{ className?: string }>;
     links: FooterLink[];
 }
 
