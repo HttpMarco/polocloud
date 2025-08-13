@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogFileFromGitHub } from '@/lib/github';
+import { getFileFromGitHub } from '@/lib/github';
 
 async function loadAllowedAdminUsers(): Promise<string[]> {
   try {
     console.log('🔍 [ME] Loading allowed admin users...');
-    const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+    const adminFile = await getFileFromGitHub('docs/data/github-admin-users.json');
     console.log('📁 [ME] Admin file found:', !!adminFile);
     
     if (adminFile && adminFile.content) {

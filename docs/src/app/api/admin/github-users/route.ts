@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogFileFromGitHub, createOrUpdateBlogFile } from '@/lib/github';
+import { getFileFromGitHub, createOrUpdateBlogFile } from '@/lib/github';
 
 interface GitHubAdminUser {
   username: string;
@@ -14,7 +14,7 @@ interface GitHubAdminUser {
 
 async function loadGitHubAdminUsers(): Promise<GitHubAdminUser[]> {
   try {
-    const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+    const adminFile = await getFileFromGitHub('docs/data/github-admin-users.json');
     if (adminFile && adminFile.content) {
       try {
         const users = JSON.parse(adminFile.content);
@@ -59,7 +59,7 @@ async function saveGitHubAdminUsers(users: GitHubAdminUser[]): Promise<void> {
 
   let sha: string | undefined;
   try {
-    const existingFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+    const existingFile = await getFileFromGitHub('docs/data/github-admin-users.json');
     if (existingFile) {
       sha = existingFile.sha;
     }

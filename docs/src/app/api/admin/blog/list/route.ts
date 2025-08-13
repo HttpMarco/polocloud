@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { readFile } from 'fs/promises';
 import path from 'path';
-import { getBlogFileFromGitHub, BLOG_REPO_CONFIG, BlogMeta } from '@/lib/github';
+import { getFileFromGitHub, BLOG_REPO_CONFIG, BlogMeta } from '@/lib/github';
 import matter from 'gray-matter';
 
 let adminUsers: string[] = [];
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const metaFile = await getBlogFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
+    const metaFile = await getFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
 
     if (!metaFile) {
       return NextResponse.json({ posts: [] });
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
           const slug = page.url.replace('/blog/', '');
           const filePath = `${BLOG_REPO_CONFIG.blogPath}/${slug}.mdx`;
 
-          const file = await getBlogFileFromGitHub(filePath);
+          const file = await getFileFromGitHub(filePath);
           if (!file) return null;
 
           let frontmatter: Record<string, unknown>;

@@ -349,7 +349,7 @@ export async function createOrUpdateBlogFile(
   }
 }
 
-export async function getBlogFileFromGitHub(path: string): Promise<{ content: string; sha: string } | null> {
+export async function getFileFromGitHub(path: string): Promise<{ content: string; sha: string } | null> {
   try {
     const response = await blogOctokit.rest.repos.getContent({
       owner: BLOG_REPO_CONFIG.owner,
@@ -375,7 +375,7 @@ export async function getBlogFileFromGitHub(path: string): Promise<{ content: st
 
 export async function updateBlogMeta(newPost: { title: string; slug: string }): Promise<void> {
   try {
-    const metaFile = await getBlogFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
+            const metaFile = await getFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
 
     let meta: BlogMeta;
     let sha: string | undefined;
@@ -465,7 +465,7 @@ export interface FeedbackData {
 
 export async function getFeedbackFromGitHub(): Promise<FeedbackData[]> {
   try {
-    const feedbackFile = await getBlogFileFromGitHub('docs/data/feedback.json');
+    const feedbackFile = await getFileFromGitHub('docs/data/feedback.json');
 
     if (feedbackFile) {
       const feedbackData = JSON.parse(feedbackFile.content);
@@ -481,7 +481,7 @@ export async function getFeedbackFromGitHub(): Promise<FeedbackData[]> {
 
 export async function saveFeedbackToGitHub(feedbackData: FeedbackData[], commitMessage: string): Promise<void> {
   try {
-    const feedbackFile = await getBlogFileFromGitHub('docs/data/feedback.json');
+    const feedbackFile = await getFileFromGitHub('docs/data/feedback.json');
     const content = JSON.stringify(feedbackData, null, 2);
 
     await createOrUpdateBlogFile(
@@ -561,7 +561,7 @@ export async function getUserFeedbackFromGitHub(userId: string): Promise<Feedbac
 export async function getPartnersFromGitHub() {
   try {
     console.log('🔍 Fetching partners from GitHub...');
-    const partnersFile = await getBlogFileFromGitHub('docs/data/partners.json');
+    const partnersFile = await getFileFromGitHub('docs/data/partners.json');
     
     if (partnersFile) {
       const partners = JSON.parse(partnersFile.content);
@@ -610,7 +610,7 @@ export async function savePartnersToGitHub(partners: Array<{
 }>, commitMessage?: string): Promise<void> {
   try {
     const content = JSON.stringify(partners, null, 2);
-    const partnersFile = await getBlogFileFromGitHub('docs/data/partners.json');
+    const partnersFile = await getFileFromGitHub('docs/data/partners.json');
     
     const message = commitMessage || `Update partners list - ${new Date().toISOString()}`;
     
@@ -653,7 +653,7 @@ export async function savePartnersToGitHub(partners: Array<{
 export async function getPlatformsFromGitHub() {
   try {
     console.log('🔍 Fetching platforms from GitHub...');
-    const platformsFile = await getBlogFileFromGitHub('docs/data/platforms.json');
+    const platformsFile = await getFileFromGitHub('docs/data/platforms.json');
     
     if (platformsFile) {
       const platforms = JSON.parse(platformsFile.content);
@@ -703,7 +703,7 @@ export async function savePlatformsToGitHub(platforms: Array<{
 }>, commitMessage?: string): Promise<void> {
   try {
     const content = JSON.stringify(platforms, null, 2);
-    const platformsFile = await getBlogFileFromGitHub('docs/data/platforms.json');
+    const platformsFile = await getFileFromGitHub('docs/data/platforms.json');
     
     const message = commitMessage || `Update platforms list - ${new Date().toISOString()}`;
     

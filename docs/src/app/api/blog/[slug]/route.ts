@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogFileFromGitHub, BLOG_REPO_CONFIG } from '@/lib/github';
+import { getFileFromGitHub, BLOG_REPO_CONFIG } from '@/lib/github';
 import matter from 'gray-matter';
 
 interface BlogPostData {
@@ -37,7 +37,7 @@ export async function GET(
     }
 
     const filePath = `${BLOG_REPO_CONFIG.blogPath}/${slug}.mdx`;
-    const file = await getBlogFileFromGitHub(filePath);
+    const file = await getFileFromGitHub(filePath);
 
     if (!file) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getBlogFileFromGitHub, BLOG_REPO_CONFIG, BlogMeta } from '@/lib/github';
+import { getFileFromGitHub, BLOG_REPO_CONFIG, BlogMeta } from '@/lib/github';
 import matter from 'gray-matter';
 
 interface BlogPost {
@@ -28,7 +28,7 @@ export async function GET() {
       return response;
     }
 
-    const metaFile = await getBlogFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
+    const metaFile = await getFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
 
     if (!metaFile) {
       return NextResponse.json({ posts: [] });
@@ -47,7 +47,7 @@ export async function GET() {
           const slug = page.url.replace('/blog/', '');
           const filePath = `${BLOG_REPO_CONFIG.blogPath}/${slug}.mdx`;
 
-          const file = await getBlogFileFromGitHub(filePath);
+          const file = await getFileFromGitHub(filePath);
           if (!file) return null;
 
           let frontmatter: Record<string, unknown>;

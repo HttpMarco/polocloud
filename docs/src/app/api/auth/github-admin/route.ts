@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogFileFromGitHub, createOrUpdateBlogFile } from '@/lib/github';
+import { getFileFromGitHub, createOrUpdateBlogFile } from '@/lib/github';
 
 async function loadAllowedAdminUsers(): Promise<string[]> {
   try {
     console.log('🔍 Loading allowed admin users...');
-    const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+    const adminFile = await getFileFromGitHub('docs/data/github-admin-users.json');
     console.log('📁 Admin file found:', !!adminFile);
     
     if (adminFile && adminFile.content) {
@@ -50,7 +50,7 @@ async function addUserToAdminList(username: string, userId: string): Promise<voi
     }> = [];
     
     try {
-      const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+      const adminFile = await getFileFromGitHub('docs/data/github-admin-users.json');
       if (adminFile && adminFile.content) {
         currentUsers = JSON.parse(adminFile.content);
         if (!Array.isArray(currentUsers)) {
