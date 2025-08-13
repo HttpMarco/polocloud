@@ -2,7 +2,7 @@
 
 import { Star, GitFork, Download, Package, GitCommit } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+
 
 interface GitHubStats {
     stars: number;
@@ -73,18 +73,18 @@ const StatCard = ({ icon, value, label }: StatCardProps) => {
 export function GitHubStatsComponent() {
     const [stats, setStats] = useState<GitHubStats | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                setError(null);
+                // setError(null);
 
                 let response;
                 try {
                     response = await fetch('/api/github-stats');
-                } catch (apiError) {
+                } catch {
                     console.log('API route failed, using fallback data');
                     throw new Error('API not available');
                 }
@@ -102,7 +102,7 @@ export function GitHubStatsComponent() {
                 setStats(data);
             } catch (err) {
                 console.error('Failed to fetch GitHub stats:', err);
-                setError('Failed to load statistics');
+                // setError('Failed to load statistics');
 
                 setStats({
                     stars: 61,
@@ -157,7 +157,7 @@ export function GitHubStatsComponent() {
         );
     }
 
-    if (error || !stats) {
+    if (!stats) {
         return (
             <div className="flex flex-wrap justify-start gap-12 mb-16">
                 <div className="flex flex-col items-center justify-center text-center">

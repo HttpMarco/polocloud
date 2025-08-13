@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { MessageSquare, Star, Send, CheckCircle, LogOut, User, Info, Home, Clock } from 'lucide-react';
+import { MessageSquare, Send, CheckCircle, LogOut, User, Info, Home, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
