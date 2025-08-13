@@ -2,7 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getBlogFileFromGitHub, BLOG_REPO_CONFIG } from '@/lib/github';
 import matter from 'gray-matter';
 
-const postCache = new Map<string, { data: any; timestamp: number }>();
+interface BlogPostData {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  tags: string[];
+  pinned: boolean;
+  content: string;
+}
+
+const postCache = new Map<string, { data: BlogPostData; timestamp: number }>();
 const POST_CACHE_DURATION = 10 * 60 * 1000;
 
 export async function GET(
@@ -32,7 +43,7 @@ export async function GET(
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
 
-    let frontmatter: any;
+    let frontmatter: Record<string, unknown>;
     let content: string;
 
     try {

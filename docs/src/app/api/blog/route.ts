@@ -2,7 +2,19 @@ import { NextResponse } from 'next/server';
 import { getBlogFileFromGitHub, BLOG_REPO_CONFIG, BlogMeta } from '@/lib/github';
 import matter from 'gray-matter';
 
-let blogCache: any = null;
+interface BlogPost {
+  slug: string;
+  title: string;
+  description: string;
+  date: string;
+  author: string;
+  tags: string[];
+  pinned: boolean;
+  contentPreview: string;
+  wordCount: number;
+}
+
+let blogCache: BlogPost[] | null = null;
 let blogCacheTimestamp = 0;
 const BLOG_CACHE_DURATION = 5 * 60 * 1000;
 
@@ -38,7 +50,7 @@ export async function GET() {
           const file = await getBlogFileFromGitHub(filePath);
           if (!file) return null;
 
-          let frontmatter: any;
+          let frontmatter: Record<string, unknown>;
           let content: string;
 
           try {
