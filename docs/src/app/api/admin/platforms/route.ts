@@ -149,14 +149,21 @@ export async function DELETE(req: NextRequest) {
       try {
 
         const urlParts = platformToRemove.icon.split('/');
-        const blobId = `/polocloud/storage/images/platforms/${urlParts[urlParts.length - 1]}`;
+        const fileName = urlParts[urlParts.length - 1];
+
+        const blobId = `/polocloud/storage/images/platforms/${fileName}`;
+        
+        console.log('🗑️ Attempting to delete blob:', blobId);
+        console.log('🗑️ Original icon URL:', platformToRemove.icon);
+        console.log('🗑️ Extracted filename:', fileName);
 
         const { del } = await import('@vercel/blob');
         await del(blobId);
         
         console.log('✅ Platform icon deleted from Vercel Blob:', blobId);
       } catch (error) {
-        console.warn('⚠️ Error deleting platform icon from Vercel Blob:', error);
+        console.error('❌ Error deleting platform icon from Vercel Blob:', error);
+        console.error('❌ Error details:', error);
       }
     }
 

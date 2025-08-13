@@ -152,14 +152,21 @@ export async function DELETE(req: NextRequest) {
       try {
 
         const urlParts = partnerToRemove.logo.split('/');
-        const blobId = `/polocloud/storage/images/partners/${urlParts[urlParts.length - 1]}`;
+        const fileName = urlParts[urlParts.length - 1];
+
+        const blobId = `/polocloud/storage/images/partners/${fileName}`;
+        
+        console.log('🗑️ Attempting to delete blob:', blobId);
+        console.log('🗑️ Original logo URL:', partnerToRemove.logo);
+        console.log('🗑️ Extracted filename:', fileName);
 
         const { del } = await import('@vercel/blob');
         await del(blobId);
         
         console.log('✅ Partner logo deleted from Vercel Blob:', blobId);
       } catch (error) {
-        console.warn('⚠️ Error deleting partner logo from Vercel Blob:', error);
+        console.error('❌ Error deleting partner logo from Vercel Blob:', error);
+        console.error('❌ Error details:', error);
       }
     }
 
