@@ -1,7 +1,3 @@
-> [!CAUTION]
-> This project is currently in an early prototype stage and not ready for production use.  
-> We welcome contributions, testing, and feedback as we shape the future of Minecraft server orchestration.
-
 <div align="center">
 
 # ☁️ PoloCloud v3
@@ -12,20 +8,24 @@
 
 [![Crowdin](https://badges.crowdin.net/polocloud/localized.svg)](https://crowdin.com/project/polocloud)
 
----
+</div>
+
+> [!CAUTION]
+> This project is currently in an early prototype stage and not ready for production use.  
+> We welcome contributions, testing, and feedback as we shape the future of Minecraft server orchestration.
 
 **PoloCloud** is a modern and modular Minecraft cloud system designed for high flexibility, performance, and developer freedom.  
 It provides a dynamic environment to manage Minecraft server instances (e.g. Paper, Velocity) with scalable group configurations and powerful runtime tooling.
 
-🚀 Manage Minecraft server instances (Paper, Velocity, etc.) with scalable group configs and powerful runtime tooling.
+<div align="center">
+
+#
+    
+### 🌐 Translations
+Help us translate PoloCloud on [Crowdin](https://crowdin.com/project/polocloud)!
 
 <a href="https://discord.polocloud.de">
     <img alt="PoloCloud Discord" src="https://discord.com/api/guilds/1278460874679386244/widget.png?style=banner2">
 </a>
-
----
-
-### 🌐 Translations
-Help us translate PoloCloud on [Crowdin](https://crowdin.com/project/polocloud)!
 
 </div>
