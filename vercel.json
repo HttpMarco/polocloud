@@ -1,10 +1,24 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev",
+  "regions": ["fra1"],
   "git": {
     "deploymentEnabled": {
-      "improve-web": true,
-      "docs": false,
-      "master": false
+      "improve-web": true
     }
-  }
+  },
+  "functions": {
+    "src/app/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
 }
