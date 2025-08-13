@@ -6,7 +6,7 @@ async function loadAllowedAdminUsers(): Promise<string[]> {
     const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
     if (adminFile) {
       const users = JSON.parse(adminFile.content);
-      return users.map((user: any) => user.username);
+      return users.map((user: { username: string }) => user.username);
     }
     return ['jakubbbdev'];
   } catch (error) {

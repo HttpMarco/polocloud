@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     const adminCookie = cookieStore.get('admin_auth');
 
     let isAuthenticated = false;
-    let userData: any = null;
+    let userData: { username?: string; id?: string } | null = null;
 
     if (githubAdminCookie) {
       try {
@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
           const file = await getBlogFileFromGitHub(filePath);
           if (!file) return null;
 
-          let frontmatter: any;
+          let frontmatter: Record<string, unknown>;
           let content: string;
 
           try {

@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     const adminCookie = cookieStore.get('admin_auth');
 
     let isAuthenticated = false;
-    let userData: any = null;
+    let userData: { username?: string; id?: string } | null = null;
 
     if (githubAdminCookie) {
       try {
