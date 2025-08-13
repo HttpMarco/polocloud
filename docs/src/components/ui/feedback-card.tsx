@@ -73,7 +73,7 @@ export default function FeedbackCard({
         </div>
 
         <div className="text-muted-foreground text-base leading-relaxed line-clamp-4">
-          "{description}"
+          &ldquo;{description}&rdquo;
         </div>
 
         <div className="mt-6 pt-4 border-t border-border/30">
