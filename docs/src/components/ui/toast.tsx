@@ -74,9 +74,9 @@ export function ToastContainer() {
   };
 
   useEffect(() => {
-    (window as any).showToast = addToast;
+    (window as Window & { showToast?: typeof addToast }).showToast = addToast;
     return () => {
-      delete (window as any).showToast;
+      delete (window as Window & { showToast?: typeof addToast }).showToast;
     };
   }, []);
 
@@ -94,7 +94,7 @@ export function ToastContainer() {
 }
 
 export function showToast(message: string, type: ToastType = 'info', duration?: number) {
-  if (typeof window !== 'undefined' && (window as any).showToast) {
-    (window as any).showToast({ message, type, duration });
+  if (typeof window !== 'undefined' && (window as Window & { showToast?: typeof addToast }).showToast) {
+    (window as Window & { showToast?: typeof addToast }).showToast({ message, type, duration });
   }
 }

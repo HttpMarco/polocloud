@@ -321,7 +321,15 @@ export async function createOrUpdateBlogFile(
   sha?: string
 ): Promise<void> {
   try {
-    const params: any = {
+    const params: {
+      owner: string;
+      repo: string;
+      path: string;
+      message: string;
+      content: string;
+      branch: string;
+      sha?: string;
+    } = {
       owner: BLOG_REPO_CONFIG.owner,
       repo: BLOG_REPO_CONFIG.repo,
       path,
@@ -358,7 +366,7 @@ export async function getBlogFileFromGitHub(path: string): Promise<{ content: st
     }
     return null;
   } catch (error) {
-    if ((error as any).status === 404) {
+    if ((error as { status?: number }).status === 404) {
       return null;
     }
     throw error;
@@ -584,14 +592,22 @@ export async function getPartnersFromGitHub() {
       const localPartners = JSON.parse(localContent);
       console.log('✅ Partners loaded from local file:', localPartners.length, 'partners');
       return localPartners;
-    } catch (localError) {
+    } catch {
       console.log('📁 No local partners file found, returning empty array');
       return [];
     }
   }
 }
 
-export async function savePartnersToGitHub(partners: any[], commitMessage?: string): Promise<void> {
+export async function savePartnersToGitHub(partners: Array<{
+  id: string;
+  name: string;
+  logo: string;
+  website?: string;
+  description?: string;
+  addedAt: string;
+  addedBy: string;
+}>, commitMessage?: string): Promise<void> {
   try {
     const content = JSON.stringify(partners, null, 2);
     const partnersFile = await getBlogFileFromGitHub('docs/data/partners.json');
@@ -657,7 +673,7 @@ export async function getPlatformsFromGitHub() {
     }
 
     return [];
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Error fetching platforms from GitHub:', error);
 
     try {
@@ -668,7 +684,7 @@ export async function getPlatformsFromGitHub() {
       const localPlatforms = JSON.parse(localContent);
       console.log('✅ Platforms loaded from local file:', localPlatforms.length, 'platforms');
       return localPlatforms;
-    } catch (localError) {
+    } catch {
       console.log('📁 No local platforms file found, creating empty file');
       await savePlatformsToGitHub([]);
       return [];
@@ -676,7 +692,15 @@ export async function getPlatformsFromGitHub() {
   }
 }
 
-export async function savePlatformsToGitHub(platforms: any[], commitMessage?: string): Promise<void> {
+export async function savePlatformsToGitHub(platforms: Array<{
+  id: string;
+  name: string;
+  icon: string;
+  website?: string;
+  description?: string;
+  addedAt: string;
+  addedBy: string;
+}>, commitMessage?: string): Promise<void> {
   try {
     const content = JSON.stringify(platforms, null, 2);
     const platformsFile = await getBlogFileFromGitHub('docs/data/platforms.json');
