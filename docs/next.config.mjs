@@ -5,6 +5,10 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
     reactStrictMode: true,
+    output: 'standalone',
+    trailingSlash: false,
+    basePath: '',
+    assetPrefix: '',
     images: {
         remotePatterns: [
             {
@@ -13,7 +17,26 @@ const config = {
                 port: '',
                 pathname: '/avatars/**',
             },
+            {
+                protocol: 'https',
+                hostname: '*.vercel-storage.com',
+                port: '',
+                pathname: '/**',
+            },
         ],
+        unoptimized: true,
+    },
+    experimental: {
+        appDir: true,
+    },
+    async redirects() {
+        return [
+            {
+                source: '/',
+                destination: '/',
+                permanent: false,
+            },
+        ];
     },
 };
 
