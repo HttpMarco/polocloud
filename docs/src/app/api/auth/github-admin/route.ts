@@ -4,9 +4,16 @@ import { getBlogFileFromGitHub } from '@/lib/github';
 async function loadAllowedAdminUsers(): Promise<string[]> {
   try {
     const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
-    if (adminFile) {
-      const users = JSON.parse(adminFile.content);
-      return users.map((user: { username: string }) => user.username);
+    if (adminFile && adminFile.content) {
+      try {
+        const users = JSON.parse(adminFile.content);
+
+        if (Array.isArray(users) && users.length > 0) {
+          return users.map((user: { username: string }) => user.username);
+        }
+      } catch (parseError) {
+        console.error('Error parsing admin users JSON:', parseError);
+      }
     }
 
     return ['jakubbbdev'];

@@ -12,7 +12,7 @@ export function PartnersInfo() {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    // Animation trigger handled by framer-motion
+
                 }
             },
             { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }

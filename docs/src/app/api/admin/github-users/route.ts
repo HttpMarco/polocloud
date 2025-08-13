@@ -15,8 +15,16 @@ interface GitHubAdminUser {
 async function loadGitHubAdminUsers(): Promise<GitHubAdminUser[]> {
   try {
     const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
-    if (adminFile) {
-      return JSON.parse(adminFile.content);
+    if (adminFile && adminFile.content) {
+      try {
+        const users = JSON.parse(adminFile.content);
+
+        if (Array.isArray(users) && users.length > 0) {
+          return users;
+        }
+      } catch (parseError) {
+        console.error('Error parsing admin users JSON:', parseError);
+      }
     }
 
     return [

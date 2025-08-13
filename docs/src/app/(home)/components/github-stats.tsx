@@ -79,7 +79,7 @@ export function GitHubStatsComponent() {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                // setError(null);
+
 
                 let response;
                 try {
@@ -102,7 +102,7 @@ export function GitHubStatsComponent() {
                 setStats(data);
             } catch (err) {
                 console.error('Failed to fetch GitHub stats:', err);
-                // setError('Failed to load statistics');
+
 
                 setStats({
                     stars: 61,
