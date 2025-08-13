@@ -105,7 +105,8 @@ class Platform(
         }
 
         if (bridge.type == BridgeType.OFF_PREMISE) {
-            TODO()
+            val classLoader = Thread.currentThread().contextClassLoader
+            val resources = classLoader.resources(bridge.path.toString())
         }
     }
 
