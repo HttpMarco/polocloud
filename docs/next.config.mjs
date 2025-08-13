@@ -7,6 +7,8 @@ const config = {
     reactStrictMode: true,
     output: 'standalone',
     trailingSlash: false,
+    basePath: '',
+    assetPrefix: '',
     images: {
         remotePatterns: [
             {
