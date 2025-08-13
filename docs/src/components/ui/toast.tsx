@@ -94,7 +94,10 @@ export function ToastContainer() {
 }
 
 export function showToast(message: string, type: ToastType = 'info', duration?: number) {
-  if (typeof window !== 'undefined' && (window as Window & { showToast?: typeof addToast }).showToast) {
-    (window as Window & { showToast?: typeof addToast }).showToast({ message, type, duration });
+  if (typeof window !== 'undefined') {
+    const windowWithToast = window as Window & { showToast?: (toast: Omit<Toast, 'id'>) => void };
+    if (windowWithToast.showToast) {
+      windowWithToast.showToast({ message, type, duration });
+    }
   }
 }

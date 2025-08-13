@@ -57,14 +57,14 @@ export async function GET(
       }, { status: 400 });
     }
 
-    const post = {
+    const post: BlogPostData = {
       slug,
-      title: frontmatter.title || 'Untitled',
-      description: frontmatter.description || '',
-      date: frontmatter.date || '',
-      author: frontmatter.author || '',
-      tags: frontmatter.tags || [],
-      pinned: frontmatter.pinned || false,
+      title: (frontmatter.title as string) || 'Untitled',
+      description: (frontmatter.description as string) || '',
+      date: (frontmatter.date as string) || '',
+      author: (frontmatter.author as string) || '',
+      tags: (frontmatter.tags as string[]) || [],
+      pinned: (frontmatter.pinned as boolean) || false,
       content: content.trim(),
     };
 

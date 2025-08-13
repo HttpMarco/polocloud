@@ -18,11 +18,11 @@ export async function GET() {
       });
     }
 
-    const partners = await getPartnersFromGitHub();
+    const partners: Partner[] = await getPartnersFromGitHub();
 
     const validPartners = partners
-      .filter(partner => partner.name && partner.logo)
-      .sort((a, b) => new Date(b.addedAt || 0).getTime() - new Date(a.addedAt || 0).getTime());
+      .filter((partner: Partner) => partner.name && partner.logo)
+      .sort((a: Partner, b: Partner) => new Date(b.addedAt || 0).getTime() - new Date(a.addedAt || 0).getTime());
 
     cachedPartners = validPartners;
     lastFetch = now;

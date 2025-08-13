@@ -114,12 +114,12 @@ export async function GET(req: NextRequest) {
 
           return {
             slug,
-            title: frontmatter.title || page.title,
-            description: frontmatter.description || '',
-            date: frontmatter.date || '',
-            author: frontmatter.author || '',
-            tags: frontmatter.tags || [],
-            pinned: frontmatter.pinned || false,
+            title: (frontmatter.title as string) || page.title,
+            description: (frontmatter.description as string) || '',
+            date: (frontmatter.date as string) || '',
+            author: (frontmatter.author as string) || '',
+            tags: (frontmatter.tags as string[]) || [],
+            pinned: (frontmatter.pinned as boolean) || false,
             contentPreview: content.substring(0, 200) + (content.length > 200 ? '...' : ''),
             wordCount: content.split(/\s+/).length,
           };
