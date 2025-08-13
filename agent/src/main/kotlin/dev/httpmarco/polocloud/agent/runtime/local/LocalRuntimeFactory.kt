@@ -25,7 +25,7 @@ import kotlin.io.path.*
 
 class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<LocalService> {
 
-    val cacheThreadPool: ExecutorService by lazy { Executors.newFixedThreadPool(2) }
+    val cacheThreadPool: ExecutorService by lazy { Executors.newFixedThreadPool(4) }
     val runningCacheProcesses: MutableList<Tuple<String, String>> by lazy {
         Collections.synchronizedList(
             mutableListOf()
@@ -224,7 +224,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         runningCacheProcesses.add(processEntry)
 
         cacheThreadPool.execute {
-            i18n.info("agent.local-runtime.factory.boot.platform.prepare", platformName)
+            i18n.info("agent.local-runtime.factory.boot.platform.prepare", version, platformName)
             platform.cachePrepare(version, environment)
             runningCacheProcesses.remove(processEntry)
 
