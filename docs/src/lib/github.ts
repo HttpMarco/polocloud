@@ -33,6 +33,33 @@ export interface GitHubRelease {
     }>;
 }
 
+const CACHE_STRATEGIES = {
+    stats: { 
+        duration: 10 * 60 * 1000,
+        refreshThreshold: 0.8
+    },
+    contributors: { 
+        duration: 60 * 60 * 1000,
+        refreshThreshold: 0.9
+    },
+    partners: { 
+        duration: 30 * 60 * 1000,
+        refreshThreshold: 0.7
+    },
+    platforms: { 
+        duration: 30 * 60 * 1000,
+        refreshThreshold: 0.7
+    }
+};
+
+
+const REFRESH_OFFSETS = {
+    stats: 0,
+    contributors: 30000,
+    partners: 60000,
+    platforms: 90000
+};
+
 const GITHUB_API_BASE = 'https://api.github.com';
 const REPO_OWNER = 'HttpMarco';
 const REPO_NAME = 'polocloud';
@@ -44,6 +71,88 @@ const SERVER_CACHE_DURATION = 10 * 60 * 1000;
 
 let lastRequestTime: number = 0;
 const MIN_REQUEST_INTERVAL = 1000;
+
+function shouldRefreshCache(cacheType: keyof typeof CACHE_STRATEGIES, timestamp: number): boolean {
+    const now = Date.now();
+    const strategy = CACHE_STRATEGIES[cacheType];
+    const cacheAge = now - timestamp;
+    const refreshThreshold = strategy.duration * strategy.refreshThreshold;
+    
+    return cacheAge > refreshThreshold;
+}
+
+function getStaggeredRefreshTime(cacheType: keyof typeof REFRESH_OFFSETS): number {
+    return Date.now() + REFRESH_OFFSETS[cacheType];
+}
+
+function isValidCache<T>(cache: T | null, timestamp: number, maxAge: number): boolean {
+    if (!cache || !timestamp) return false;
+    
+    const now = Date.now();
+    const cacheAge = now - timestamp;
+    
+    return cacheAge < maxAge;
+}
+
+async function refreshStatsInBackground(): Promise<void> {
+    try {
+
+        setTimeout(async () => {
+            try {
+                await fetchGitHubStatsInternal();
+            } catch (error) {
+                console.log('Background refresh failed, using existing cache');
+            }
+        }, 0);
+    } catch (error) {
+
+        console.log('Background refresh setup failed');
+    }
+}
+
+async function fetchGitHubStatsInternal(): Promise<GitHubStats> {
+    const repoResponse = await makeGitHubRequest(`${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}`);
+    const repoData = await repoResponse.json();
+
+    const releasesResponse = await makeGitHubRequest(`${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
+    const releasesData: GitHubRelease[] = await releasesResponse.json();
+
+    const commitsResponse = await makeGitHubRequest(`${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=1`);
+    const linkHeader = commitsResponse.headers.get('link');
+    let totalCommits = 0;
+
+    if (linkHeader) {
+        const lastLinkMatch = linkHeader.match(/<[^>]*page=(\d+)[^>]*>;\s*rel="last"/);
+        if (lastLinkMatch) {
+            totalCommits = parseInt(lastLinkMatch[1]);
+        }
+    }
+
+    if (totalCommits === 0) {
+        const commitsData = await commitsResponse.json();
+        totalCommits = commitsData.length;
+    }
+
+    const totalDownloads = releasesData.reduce((total, release) => {
+        return total + release.assets.reduce((assetTotal, asset) => {
+            return assetTotal + asset.download_count;
+        }, 0);
+    }, 0);
+
+    const stats: GitHubStats = {
+        stars: repoData.stargazers_count || 0,
+        forks: repoData.forks_count || 0,
+        releases: releasesData.length || 0,
+        downloads: totalDownloads,
+        commits: totalCommits,
+        lastUpdated: new Date().toISOString(),
+    };
+
+    serverCache = stats;
+    serverCacheTimestamp = Date.now();
+
+    return stats;
+}
 
 async function makeGitHubRequest(url: string): Promise<Response> {
     const now = Date.now();
@@ -80,51 +189,18 @@ async function makeGitHubRequest(url: string): Promise<Response> {
 export async function fetchGitHubStats(): Promise<GitHubStats> {
     try {
         const now = Date.now();
-        if (serverCache && (now - serverCacheTimestamp) < SERVER_CACHE_DURATION) {
+        
+
+        if (serverCache && isValidCache(serverCache, serverCacheTimestamp, SERVER_CACHE_DURATION)) {
+
+            if (shouldRefreshCache('stats', serverCacheTimestamp)) {
+
+                refreshStatsInBackground();
+            }
             return serverCache;
         }
 
-        const repoResponse = await makeGitHubRequest(`${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}`);
-        const repoData = await repoResponse.json();
-
-        const releasesResponse = await makeGitHubRequest(`${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
-        const releasesData: GitHubRelease[] = await releasesResponse.json();
-
-        const commitsResponse = await makeGitHubRequest(`${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/commits?per_page=1`);
-        const linkHeader = commitsResponse.headers.get('link');
-        let totalCommits = 0;
-
-        if (linkHeader) {
-            const lastLinkMatch = linkHeader.match(/<[^>]*page=(\d+)[^>]*>;\s*rel="last"/);
-            if (lastLinkMatch) {
-                totalCommits = parseInt(lastLinkMatch[1]);
-            }
-        }
-
-        if (totalCommits === 0) {
-            const commitsData = await commitsResponse.json();
-            totalCommits = commitsData.length;
-        }
-
-        const totalDownloads = releasesData.reduce((total, release) => {
-            return total + release.assets.reduce((assetTotal, asset) => {
-                return assetTotal + asset.download_count;
-            }, 0);
-        }, 0);
-
-        const stats: GitHubStats = {
-            stars: repoData.stargazers_count || 0,
-            forks: repoData.forks_count || 0,
-            releases: releasesData.length || 0,
-            downloads: totalDownloads,
-            commits: totalCommits,
-            lastUpdated: new Date().toISOString(),
-        };
-
-        serverCache = stats;
-        serverCacheTimestamp = now;
-
-        return stats;
+        return fetchGitHubStatsInternal();
     } catch (error) {
         console.error('Error fetching GitHub stats:', error);
 
@@ -257,6 +333,27 @@ export function clearGitHubCache(): void {
     clientCacheTimestamp = 0;
     contributorsCache = null;
     contributorsCacheTimestamp = 0;
+    
+    console.log('🗑️ All GitHub caches cleared');
+}
+
+export function clearSpecificCache(cacheType: 'stats' | 'contributors' | 'partners' | 'platforms'): void {
+    switch (cacheType) {
+        case 'stats':
+            serverCache = null;
+            serverCacheTimestamp = 0;
+            clientCache = null;
+            clientCacheTimestamp = 0;
+            break;
+        case 'contributors':
+            contributorsCache = null;
+            contributorsCacheTimestamp = 0;
+            break;
+        default:
+            console.log(`Cache type '${cacheType}' not implemented yet`);
+    }
+    
+    console.log(`🗑️ ${cacheType} cache cleared`);
 }
 
 export function getCacheStatus(): {
@@ -266,15 +363,36 @@ export function getCacheStatus(): {
     hasServerCache: boolean;
     hasClientCache: boolean;
     hasContributorsCache: boolean;
+    cacheHealth: 'healthy' | 'warning' | 'expired';
+    nextRefreshIn: number;
 } {
     const now = Date.now();
+    const serverAge = serverCache ? now - serverCacheTimestamp : 0;
+    const clientAge = clientCache ? now - clientCacheTimestamp : 0;
+    const contributorsAge = contributorsCache ? now - contributorsCacheTimestamp : 0;
+
+    let cacheHealth: 'healthy' | 'warning' | 'expired' = 'healthy';
+    if (serverAge > SERVER_CACHE_DURATION || clientAge > CACHE_STRATEGIES.stats.duration) {
+        cacheHealth = 'expired';
+    } else if (shouldRefreshCache('stats', serverCacheTimestamp)) {
+        cacheHealth = 'warning';
+    }
+
+    const nextRefreshIn = Math.max(
+        SERVER_CACHE_DURATION - serverAge,
+        CACHE_STRATEGIES.stats.duration - clientAge,
+        0
+    );
+    
     return {
-        serverCacheAge: serverCache ? now - serverCacheTimestamp : 0,
-        clientCacheAge: clientCache ? now - clientCacheTimestamp : 0,
-        contributorsCacheAge: contributorsCache ? now - contributorsCacheTimestamp : 0,
+        serverCacheAge: serverAge,
+        clientCacheAge: clientAge,
+        contributorsCacheAge: contributorsAge,
         hasServerCache: !!serverCache,
         hasClientCache: !!clientCache,
         hasContributorsCache: !!contributorsCache,
+        cacheHealth,
+        nextRefreshIn
     };
 }
 
@@ -741,4 +859,21 @@ export async function savePlatformsToGitHub(platforms: Array<{
     
     throw error;
   }
+}
+
+export function testCacheSystem(): void {
+  console.log('🧪 Testing new cache system...');
+  
+  const status = getCacheStatus();
+  console.log('📊 Cache Status:', {
+    health: status.cacheHealth,
+    nextRefresh: `${Math.round(status.nextRefreshIn / 1000)}s`,
+    serverAge: `${Math.round(status.serverCacheAge / 1000)}s`,
+    clientAge: `${Math.round(status.clientCacheAge / 1000)}s`
+  });
+  
+  console.log('⚙️ Cache Strategies:', CACHE_STRATEGIES);
+  console.log('🕐 Refresh Offsets:', REFRESH_OFFSETS);
+  
+  console.log('✅ Cache system test completed');
 }
