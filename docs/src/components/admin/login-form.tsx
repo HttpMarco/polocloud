@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { LogIn, Github, Shield, ArrowRight, Lock, UserCheck } from 'lucide-react';
 import { showToast, ToastContainer } from '@/components/ui/toast';
 
@@ -78,13 +79,13 @@ export function LoginForm() {
 
 
         <div className="text-center mt-6">
-          <a 
+          <Link 
             href="/"
             className="inline-flex items-center gap-2 text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 text-sm"
           >
             <ArrowRight className="w-4 h-4 rotate-180" />
             Back to Homepage
-          </a>
+          </Link>
         </div>
       </div>
       

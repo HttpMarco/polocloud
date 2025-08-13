@@ -435,7 +435,7 @@ export function FeedbackContent() {
                     <span className="text-sm font-medium">Waiting for approval</span>
                   </div>
                   <p className="text-xs text-yellow-600/80 mt-1">
-                    Thanks for your feedback! We'll review it and make it public soon.
+                    Thanks for your feedback! We&apos;ll review it and make it public soon.
                   </p>
                 </div>
               )}

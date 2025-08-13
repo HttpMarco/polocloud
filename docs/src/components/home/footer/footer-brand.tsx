@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Github, BookOpen } from 'lucide-react';
 
 export function FooterBrand() {
@@ -37,13 +38,13 @@ export function FooterBrand() {
                 >
                     <Github className="w-5 h-5" />
                 </a>
-                <a 
+                <Link 
                     href="/docs/cloud" 
                     className="text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 transform p-2 rounded-lg border border-border/30 dark:border-white/10 hover:border-border/50 dark:hover:border-white/20"
                     title="Documentation"
                 >
                     <BookOpen className="w-5 h-5" />
-                </a>
+                </Link>
             </div>
         </div>
     );
