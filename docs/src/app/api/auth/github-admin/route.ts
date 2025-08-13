@@ -1,26 +1,91 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getBlogFileFromGitHub } from '@/lib/github';
+import { getBlogFileFromGitHub, createOrUpdateBlogFile } from '@/lib/github';
 
 async function loadAllowedAdminUsers(): Promise<string[]> {
   try {
+    console.log('🔍 Loading allowed admin users...');
     const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+    console.log('📁 Admin file found:', !!adminFile);
+    
     if (adminFile && adminFile.content) {
+      console.log('📄 Admin file content length:', adminFile.content.length);
       try {
         const users = JSON.parse(adminFile.content);
-
+        console.log('✅ Parsed users:', users);
+        
         if (Array.isArray(users) && users.length > 0) {
-          return users.map((user: { username: string }) => user.username);
+          const usernames = users.map((user: { username: string }) => user.username);
+          console.log('👥 Returning usernames from file:', usernames);
+          return usernames;
+        } else {
+          console.log('⚠️ Users array is empty or invalid, using fallback');
         }
       } catch (parseError) {
-        console.error('Error parsing admin users JSON:', parseError);
+        console.error('❌ Error parsing admin users JSON:', parseError);
       }
+    } else {
+      console.log('⚠️ No admin file or content, using fallback');
     }
 
+    console.log('🔄 Using fallback: jakubbbdev');
     return ['jakubbbdev'];
   } catch (error) {
-    console.error('Error loading allowed admin users:', error);
-
+    console.error('❌ Error loading allowed admin users:', error);
+    console.log('🔄 Using fallback due to error: jakubbbdev');
     return ['jakubbbdev'];
+  }
+}
+
+async function addUserToAdminList(username: string, userId: string): Promise<void> {
+  try {
+    console.log('➕ Adding user to admin list:', username);
+    
+    // Lade aktuelle Admin-User-Liste
+    let currentUsers: any[] = [];
+    try {
+      const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+      if (adminFile && adminFile.content) {
+        currentUsers = JSON.parse(adminFile.content);
+        if (!Array.isArray(currentUsers)) {
+          currentUsers = [];
+        }
+      }
+    } catch (error) {
+      console.log('⚠️ Could not load existing admin users, starting fresh');
+      currentUsers = [];
+    }
+
+    // Prüfe, ob User bereits existiert
+    const userExists = currentUsers.find((user: any) => user.username === username);
+    if (userExists) {
+      console.log('ℹ️ User already exists in admin list:', username);
+      return;
+    }
+
+    // Füge neuen User hinzu
+    const newUser = {
+      username,
+      id: userId,
+      role: 'ADMIN',
+      addedBy: 'system',
+      addedAt: new Date().toISOString(),
+      isFounder: username === 'jakubbbdev'
+    };
+
+    currentUsers.push(newUser);
+    
+    // Speichere aktualisierte Liste
+    const content = JSON.stringify(currentUsers, null, 2);
+    await createOrUpdateBlogFile(
+      'docs/data/github-admin-users.json',
+      content,
+      `Add admin user: ${username}`,
+      undefined // Kein SHA, da wir eine neue Datei erstellen oder überschreiben
+    );
+
+    console.log('✅ User successfully added to admin list:', username);
+  } catch (error) {
+    console.error('❌ Error adding user to admin list:', error);
   }
 }
 
@@ -97,11 +162,13 @@ export async function GET(request: NextRequest) {
     console.log(`Allowed users:`, allowedUsers);
 
     if (!allowedUsers.includes(userData.login)) {
-
+      console.log('❌ User not authorized:', userData.login);
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
       return NextResponse.redirect(`${baseUrl}/admin?error=unauthorized`);
     }
 
+    // ✅ User ist autorisiert - füge ihn zur Admin-Liste hinzu
+    await addUserToAdminList(userData.login, userData.id.toString());
 
     const adminSession = {
       id: userData.id,

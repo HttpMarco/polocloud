@@ -3,22 +3,35 @@ import { getBlogFileFromGitHub } from '@/lib/github';
 
 async function loadAllowedAdminUsers(): Promise<string[]> {
   try {
+    console.log('🔍 [ME] Loading allowed admin users...');
     const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
+    console.log('📁 [ME] Admin file found:', !!adminFile);
+    
     if (adminFile && adminFile.content) {
+      console.log('📄 [ME] Admin file content length:', adminFile.content.length);
       try {
         const users = JSON.parse(adminFile.content);
-
+        console.log('✅ [ME] Parsed users:', users);
+        
         if (Array.isArray(users) && users.length > 0) {
-          return users.map((user: { username: string }) => user.username);
+          const usernames = users.map((user: { username: string }) => user.username);
+          console.log('👥 [ME] Returning usernames from file:', usernames);
+          return usernames;
+        } else {
+          console.log('⚠️ [ME] Users array is empty or invalid, using fallback');
         }
       } catch (parseError) {
-        console.error('Error parsing admin users JSON:', parseError);
+        console.error('❌ [ME] Error parsing admin users JSON:', parseError);
       }
+    } else {
+      console.log('⚠️ [ME] No admin file or content, using fallback');
     }
+
+    console.log('🔄 [ME] Using fallback: jakubbbdev');
     return ['jakubbbdev'];
   } catch (error) {
-    console.error('Error loading allowed admin users:', error);
-
+    console.error('❌ [ME] Error loading allowed admin users:', error);
+    console.log('🔄 [ME] Using fallback due to error: jakubbbdev');
     return ['jakubbbdev'];
   }
 }
