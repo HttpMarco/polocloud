@@ -39,9 +39,16 @@ async function loadAllowedAdminUsers(): Promise<string[]> {
 async function addUserToAdminList(username: string, userId: string): Promise<void> {
   try {
     console.log('➕ Adding user to admin list:', username);
+
+    let currentUsers: Array<{
+      username: string;
+      id: string;
+      role: string;
+      addedBy: string;
+      addedAt: string;
+      isFounder: boolean;
+    }> = [];
     
-    // Lade aktuelle Admin-User-Liste
-    let currentUsers: any[] = [];
     try {
       const adminFile = await getBlogFileFromGitHub('docs/data/github-admin-users.json');
       if (adminFile && adminFile.content) {
@@ -50,19 +57,17 @@ async function addUserToAdminList(username: string, userId: string): Promise<voi
           currentUsers = [];
         }
       }
-    } catch (error) {
+    } catch {
       console.log('⚠️ Could not load existing admin users, starting fresh');
       currentUsers = [];
     }
 
-    // Prüfe, ob User bereits existiert
-    const userExists = currentUsers.find((user: any) => user.username === username);
+    const userExists = currentUsers.find((user) => user.username === username);
     if (userExists) {
       console.log('ℹ️ User already exists in admin list:', username);
       return;
     }
 
-    // Füge neuen User hinzu
     const newUser = {
       username,
       id: userId,
@@ -73,14 +78,13 @@ async function addUserToAdminList(username: string, userId: string): Promise<voi
     };
 
     currentUsers.push(newUser);
-    
-    // Speichere aktualisierte Liste
+
     const content = JSON.stringify(currentUsers, null, 2);
     await createOrUpdateBlogFile(
       'docs/data/github-admin-users.json',
       content,
       `Add admin user: ${username}`,
-      undefined // Kein SHA, da wir eine neue Datei erstellen oder überschreiben
+      undefined
     );
 
     console.log('✅ User successfully added to admin list:', username);
@@ -167,7 +171,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${baseUrl}/admin?error=unauthorized`);
     }
 
-    // ✅ User ist autorisiert - füge ihn zur Admin-Liste hinzu
     await addUserToAdminList(userData.login, userData.id.toString());
 
     const adminSession = {
