@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPlatformsFromGitHub, savePlatformsToGitHub } from '@/lib/github';
+import { Platform } from '@/components/admin/types';
 
 export async function GET(req: NextRequest) {
   try {
@@ -135,13 +136,13 @@ export async function DELETE(req: NextRequest) {
     }
 
     const currentPlatforms = await getPlatformsFromGitHub();
-    const platformToRemove = currentPlatforms.find(p => p.id === platformId);
+    const platformToRemove = currentPlatforms.find((p: Platform) => p.id === platformId);
 
     if (!platformToRemove) {
       return NextResponse.json({ error: 'Platform not found' }, { status: 404 });
     }
 
-    const updatedPlatforms = currentPlatforms.filter(p => p.id !== platformId);
+    const updatedPlatforms = currentPlatforms.filter((p: Platform) => p.id !== platformId);
     await savePlatformsToGitHub(updatedPlatforms, `Remove platform: ${platformToRemove.name}`);
 
     if (platformToRemove.icon && platformToRemove.icon.includes('vercel-storage.com')) {
@@ -213,7 +214,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const currentPlatforms = await getPlatformsFromGitHub();
-    const platformIndex = currentPlatforms.findIndex(p => p.id === id);
+    const platformIndex = currentPlatforms.findIndex((p: Platform) => p.id === id);
 
     if (platformIndex === -1) {
       return NextResponse.json({ error: 'Platform not found' }, { status: 404 });
