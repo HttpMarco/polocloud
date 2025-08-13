@@ -29,6 +29,7 @@ export default function AdminPage() {
   const [auth, setAuth] = useState<MeResp | null>(null);
 
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [loadingFeedbacks, setLoadingFeedbacks] = useState(false);
 
   const [query, setQuery] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);

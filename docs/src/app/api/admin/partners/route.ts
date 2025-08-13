@@ -138,13 +138,13 @@ export async function DELETE(req: NextRequest) {
     }
 
     const currentPartners = await getPartnersFromGitHub();
-    const partnerToRemove = currentPartners.find(p => p.id === partnerId);
+    const partnerToRemove = currentPartners.find((p: any) => p.id === partnerId);
 
     if (!partnerToRemove) {
       return NextResponse.json({ error: 'Partner not found' }, { status: 404 });
     }
 
-    const updatedPartners = currentPartners.filter(p => p.id !== partnerId);
+    const updatedPartners = currentPartners.filter((p: any) => p.id !== partnerId);
     await savePartnersToGitHub(updatedPartners, `Remove partner: ${partnerToRemove.name}`);
 
     if (partnerToRemove.logo && partnerToRemove.logo.includes('vercel-storage.com')) {
@@ -215,7 +215,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const currentPartners = await getPartnersFromGitHub();
-    const partnerIndex = currentPartners.findIndex(p => p.id === id);
+    const partnerIndex = currentPartners.findIndex((p: any) => p.id === id);
 
     if (partnerIndex === -1) {
       return NextResponse.json({ error: 'Partner not found' }, { status: 404 });

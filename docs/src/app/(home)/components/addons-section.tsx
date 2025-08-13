@@ -8,7 +8,7 @@ import { ModrinthOrganization } from '@/lib/modrinth';
 export function AddonsSection() {
     const [organization, setOrganization] = useState<ModrinthOrganization | null>(null);
     const [loading, setLoading] = useState(true);
-  
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchModrinthData = async () => {

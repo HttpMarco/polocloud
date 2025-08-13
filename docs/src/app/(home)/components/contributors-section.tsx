@@ -22,7 +22,7 @@ export function ContributorsSection() {
         projectReleases: 0
     });
     const [loading, setLoading] = useState(true);
-  
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchContributors = async () => {

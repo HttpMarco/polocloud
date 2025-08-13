@@ -4,6 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 export function ComingSoonSection() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isBuilding, setIsBuilding] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
 
