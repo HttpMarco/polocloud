@@ -7,8 +7,6 @@ const config = {
     reactStrictMode: true,
     output: 'standalone',
     trailingSlash: false,
-    basePath: '',
-    assetPrefix: '',
     images: {
         remotePatterns: [
             {
@@ -28,15 +26,6 @@ const config = {
     },
     experimental: {
         appDir: true,
-    },
-    async redirects() {
-        return [
-            {
-                source: '/',
-                destination: '/',
-                permanent: false,
-            },
-        ];
     },
 };
 
