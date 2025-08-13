@@ -219,7 +219,7 @@ export function PlatformsTab({
                 <label className="block text-sm font-medium text-foreground">{version}</label>
                 <select
                   value={currentPlatform.versions[version] || 'not-supported'}
-                  onChange={(e) => handleVersionChange(version, e.target.value as any)}
+                  onChange={(e) => handleVersionChange(version, e.target.value as 'supported' | 'not-supported' | 'partial' | 'not-possible')}
                   className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   <option value="supported">Supported</option>
@@ -266,7 +266,7 @@ export function PlatformsTab({
                 </div>
                 <select
                   value={status}
-                  onChange={(e) => handleAddonChange(addon, e.target.value as any)}
+                  onChange={(e) => handleAddonChange(addon, e.target.value as 'supported' | 'not-supported' | 'partial' | 'not-possible')}
                   className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   <option value="supported">Supported</option>

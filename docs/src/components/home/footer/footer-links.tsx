@@ -24,7 +24,7 @@ export function FooterLinks() {
         { href: 'mailto:contact@polocloud.de', label: 'Contact', icon: Mail, external: true }
     ];
 
-    const renderLink = (link: { href: string; label: string; icon: any; external?: boolean }) => {
+    const renderLink = (link: { href: string; label: string; icon: React.ComponentType<{ className?: string }>; external?: boolean }) => {
         const LinkComponent = link.external ? 'a' : Link;
         const props = link.external ? { href: link.href, target: '_blank', rel: 'noopener noreferrer' } : { href: link.href };
         

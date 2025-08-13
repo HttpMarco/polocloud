@@ -6,14 +6,13 @@ import { motion } from 'framer-motion';
 import { Benefit } from './types';
 
 export function PartnersInfo() {
-    const [isVisible, setIsVisible] = useState(false);
     const infoRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    setIsVisible(true);
+                    // Animation trigger handled by framer-motion
                 }
             },
             { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }
