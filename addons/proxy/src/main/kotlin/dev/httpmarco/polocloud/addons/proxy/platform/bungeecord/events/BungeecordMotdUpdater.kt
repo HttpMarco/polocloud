@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.events
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfigAccessor
 import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordPlatform
 import dev.httpmarco.polocloud.sdk.java.Polocloud
+import net.md_5.bungee.api.ServerPing
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.event.ProxyPingEvent
 import net.md_5.bungee.api.plugin.Listener
@@ -29,6 +30,9 @@ class BungeecordMotdUpdater (
                 .replace("%version%", polocloudVersion)
             val ping = event.response
             ping.descriptionComponent = TextComponent(motdLines)
+            if(!config.maintenanceMotd().pingMessage.isEmpty()) {
+                ping.version = ServerPing.Protocol(config.maintenanceMotd().pingMessage, 1)
+            }
             event.response = ping
             return
         }
