@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getFileFromGitHub, BLOG_REPO_CONFIG, BlogMeta } from '@/lib/github';
+import { getFileFromGitHub, GITHUB_REPO_CONFIG, BlogMeta } from '@/lib/github';
 import matter from 'gray-matter';
 
 interface BlogPost {
@@ -16,19 +16,19 @@ interface BlogPost {
 
 let blogCache: BlogPost[] | null = null;
 let blogCacheTimestamp = 0;
-const BLOG_CACHE_DURATION = 5 * 60 * 1000;
+const GITHUB_CACHE_DURATION = 5 * 60 * 1000;
 
 export async function GET() {
   try {
     const now = Date.now();
 
-    if (blogCache && (now - blogCacheTimestamp) < BLOG_CACHE_DURATION) {
+    if (blogCache && (now - blogCacheTimestamp) < GITHUB_CACHE_DURATION) {
       const response = NextResponse.json({ posts: blogCache });
       response.headers.set('Cache-Control', 'public, max-age=300');
       return response;
     }
 
-    const metaFile = await getFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
+    const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.metaFile);
 
     if (!metaFile) {
       return NextResponse.json({ posts: [] });
@@ -45,7 +45,7 @@ export async function GET() {
       blogSection.pages.map(async (page) => {
         try {
           const slug = page.url.replace('/blog/', '');
-          const filePath = `${BLOG_REPO_CONFIG.blogPath}/${slug}.mdx`;
+          const filePath = `${GITHUB_REPO_CONFIG.blogPath}/${slug}.mdx`;
 
           const file = await getFileFromGitHub(filePath);
           if (!file) return null;

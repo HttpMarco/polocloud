@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getFileFromGitHub, BLOG_REPO_CONFIG } from '@/lib/github';
+import { getFileFromGitHub, GITHUB_REPO_CONFIG } from '@/lib/github';
 import matter from 'gray-matter';
 
 interface BlogPostData {
@@ -36,7 +36,7 @@ export async function GET(
       return response;
     }
 
-    const filePath = `${BLOG_REPO_CONFIG.blogPath}/${slug}.mdx`;
+    const filePath = `${GITHUB_REPO_CONFIG.blogPath}/${slug}.mdx`;
     const file = await getFileFromGitHub(filePath);
 
     if (!file) {

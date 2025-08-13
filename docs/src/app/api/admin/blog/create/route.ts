@@ -7,7 +7,7 @@ import {
   updateBlogMeta,
   createSlug,
   generateMDXContent,
-  BLOG_REPO_CONFIG,
+  GITHUB_REPO_CONFIG,
   BlogPostMetadata
 } from '@/lib/github';
 
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
 
     const mdxContent = generateMDXContent(metadata, content.trim());
 
-    const filePath = `${BLOG_REPO_CONFIG.blogPath}/${slug}.mdx`;
+    const filePath = `${GITHUB_REPO_CONFIG.blogPath}/${slug}.mdx`;
 
     await createOrUpdateBlogFile(
       filePath,

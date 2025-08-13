@@ -286,7 +286,7 @@ export const blogOctokit = new Octokit({
   auth: GITHUB_TOKEN,
 });
 
-export const BLOG_REPO_CONFIG = {
+export const GITHUB_REPO_CONFIG = {
   owner: process.env.GITHUB_REPO_OWNER || 'jakubbbdev',
   repo: process.env.GITHUB_REPO_NAME || 'polocloud',
   branch: process.env.GITHUB_BRANCH || 'improve-web',
@@ -330,12 +330,12 @@ export async function createOrUpdateBlogFile(
       branch: string;
       sha?: string;
     } = {
-      owner: BLOG_REPO_CONFIG.owner,
-      repo: BLOG_REPO_CONFIG.repo,
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
       path,
       message,
       content: Buffer.from(content).toString('base64'),
-      branch: BLOG_REPO_CONFIG.branch,
+      branch: GITHUB_REPO_CONFIG.branch,
     };
 
     if (sha) {
@@ -352,10 +352,10 @@ export async function createOrUpdateBlogFile(
 export async function getFileFromGitHub(path: string): Promise<{ content: string; sha: string } | null> {
   try {
     const response = await blogOctokit.rest.repos.getContent({
-      owner: BLOG_REPO_CONFIG.owner,
-      repo: BLOG_REPO_CONFIG.repo,
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
       path,
-      ref: BLOG_REPO_CONFIG.branch,
+      ref: GITHUB_REPO_CONFIG.branch,
     });
 
     if ('content' in response.data) {
@@ -375,7 +375,7 @@ export async function getFileFromGitHub(path: string): Promise<{ content: string
 
 export async function updateBlogMeta(newPost: { title: string; slug: string }): Promise<void> {
   try {
-            const metaFile = await getFileFromGitHub(BLOG_REPO_CONFIG.metaFile);
+            const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.metaFile);
 
     let meta: BlogMeta;
     let sha: string | undefined;
@@ -412,7 +412,7 @@ export async function updateBlogMeta(newPost: { title: string; slug: string }): 
 
     const updatedContent = JSON.stringify(meta, null, 2);
     await createOrUpdateBlogFile(
-      BLOG_REPO_CONFIG.metaFile,
+      GITHUB_REPO_CONFIG.metaFile,
       updatedContent,
       `Update blog meta for: ${newPost.title}`,
       sha
