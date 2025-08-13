@@ -106,7 +106,7 @@ export function DownloadContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const clearCacheAndReload = () => {
+  const _clearCacheAndReload = () => {
     localStorage.removeItem('github-releases-cache');
     localStorage.removeItem('github-releases-cache-time');
     fetchReleases();

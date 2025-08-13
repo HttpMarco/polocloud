@@ -1,12 +1,10 @@
 'use client';
-import { Clock, Sparkles, ArrowRight, Puzzle, Users, BarChart3, Code, ExternalLink, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Puzzle, Users, BarChart3, MessageCircle, ExternalLink } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 export function ComingSoonSection() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isBuilding, setIsBuilding] = useState(false);
+
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -83,7 +81,7 @@ export function ComingSoonSection() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-16">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <div 
               key={feature.title}
               className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-6 hover:bg-card/40 hover:border-border/70 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group relative overflow-hidden"
