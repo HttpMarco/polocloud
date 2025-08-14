@@ -4,5 +4,6 @@ export { FeedbackTab } from './feedback-tab';
 export { UsersTab } from './users-tab';
 export { PartnersTab } from './partners-tab';
 export { PlatformsTab } from './platforms-tab';
+export { ChangelogTab } from './changelog-tab';
 export { LoginForm } from './login-form';
 export * from './types';

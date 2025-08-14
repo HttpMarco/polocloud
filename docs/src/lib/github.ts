@@ -399,6 +399,7 @@ export function getCacheStatus(): {
 
 
 import { Octokit } from '@octokit/rest';
+import matter from 'gray-matter';
 
 export const blogOctokit = new Octokit({
   auth: GITHUB_TOKEN,
@@ -409,7 +410,9 @@ export const GITHUB_REPO_CONFIG = {
   repo: process.env.GITHUB_REPO_NAME || 'polocloud',
   branch: process.env.GITHUB_BRANCH || 'improve-web',
   blogPath: 'docs/content/blog',
+  changelogPath: 'docs/content/changelog',
   metaFile: 'docs/content/blog/meta.json',
+  changelogMetaFile: 'docs/content/changelog/meta.json',
 };
 
 export interface BlogPostMetadata {
@@ -422,7 +425,28 @@ export interface BlogPostMetadata {
   slug: string;
 }
 
+export interface ChangelogMetadata {
+  version: string;
+  title: string;
+  description: string;
+  changes: string[];
+  type: 'major' | 'minor' | 'patch' | 'hotfix';
+  releaseDate: string;
+  author: string;
+  slug: string;
+}
+
 export interface BlogMeta {
+  pages: Array<{
+    title: string;
+    pages: Array<{
+      title: string;
+      url: string;
+    }>;
+  }>;
+}
+
+export interface ChangelogMeta {
   pages: Array<{
     title: string;
     pages: Array<{
@@ -876,4 +900,273 @@ export function testCacheSystem(): void {
   console.log('🕐 Refresh Offsets:', REFRESH_OFFSETS);
   
   console.log('✅ Cache system test completed');
+}
+
+export async function createOrUpdateChangelogFile(
+  path: string,
+  content: string,
+  message: string,
+  sha?: string
+): Promise<void> {
+  try {
+    const params: {
+      owner: string;
+      repo: string;
+      path: string;
+      message: string;
+      content: string;
+      branch: string;
+      sha?: string;
+    } = {
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
+      path,
+      message,
+      content: Buffer.from(content).toString('base64'),
+      branch: GITHUB_REPO_CONFIG.branch,
+    };
+
+    if (sha) {
+      params.sha = sha;
+    }
+
+    await blogOctokit.rest.repos.createOrUpdateFileContents(params);
+  } catch (error) {
+    console.error('Error creating/updating changelog file:', error);
+    throw error;
+  }
+}
+
+export async function updateChangelogMeta(newEntry: { title: string; slug: string }): Promise<void> {
+  try {
+    const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.changelogMetaFile);
+
+    let meta: ChangelogMeta;
+    let sha: string | undefined;
+
+    if (metaFile) {
+      meta = JSON.parse(metaFile.content);
+      sha = metaFile.sha;
+    } else {
+      meta = {
+        pages: [
+          {
+            title: "Changelog",
+            pages: []
+          }
+        ]
+      };
+    }
+
+    const changelogSection = meta.pages.find(p => p.title === "Changelog");
+    if (changelogSection) {
+      const existingEntry = changelogSection.pages.find(p => p.url === `/changelog/${newEntry.slug}`);
+
+      if (!existingEntry) {
+        changelogSection.pages.unshift({
+          title: newEntry.title,
+          url: `/changelog/${newEntry.slug}`
+        });
+      } else {
+        existingEntry.title = newEntry.title;
+      }
+    }
+
+    const updatedContent = JSON.stringify(meta, null, 2);
+    await createOrUpdateBlogFile(
+      GITHUB_REPO_CONFIG.changelogMetaFile,
+      updatedContent,
+      `Update changelog meta for: ${newEntry.title}`,
+      sha
+    );
+  } catch (error) {
+    console.error('Error updating changelog meta:', error);
+    throw error;
+  }
+}
+
+export function generateChangelogMDXContent(metadata: ChangelogMetadata, content: string): string {
+  const frontmatter = `---
+version: "${metadata.version}"
+title: "${metadata.title}"
+description: "${metadata.description}"
+changes: [${metadata.changes.map(change => `"${change}"`).join(', ')}]
+type: "${metadata.type}"
+releaseDate: "${metadata.releaseDate}"
+author: "${metadata.author}"
+---
+
+${content}`;
+
+  return frontmatter;
+}
+
+export async function getChangelogFromGitHub(): Promise<ChangelogMetadata[]> {
+  try {
+    const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.changelogMetaFile);
+
+    if (!metaFile) {
+      return [];
+    }
+
+    const meta: ChangelogMeta = JSON.parse(metaFile.content);
+    const changelogSection = meta.pages.find(p => p.title === "Changelog");
+
+    if (!changelogSection) {
+      return [];
+    }
+
+    const changelogEntries = await Promise.all(
+      changelogSection.pages.map(async (page) => {
+        try {
+          const slug = page.url.replace('/changelog/', '');
+          const filePath = `${GITHUB_REPO_CONFIG.changelogPath}/${slug}.mdx`;
+
+          const file = await getFileFromGitHub(filePath);
+          if (!file) return null;
+
+          let frontmatter: Record<string, unknown>;
+
+          try {
+            const parsed = matter(file.content);
+            frontmatter = parsed.data;
+          } catch (yamlError) {
+            return {
+              slug,
+              version: 'Unknown',
+              title: `${slug} (YAML Error)`,
+              description: 'This changelog entry has invalid YAML frontmatter',
+              changes: ['This entry needs to be fixed...'],
+              type: 'patch' as const,
+              releaseDate: new Date().toISOString().split('T')[0],
+              author: 'System'
+            };
+          }
+
+          return {
+            slug,
+            version: (frontmatter.version as string) || 'Unknown',
+            title: (frontmatter.title as string) || page.title,
+            description: (frontmatter.description as string) || '',
+            changes: (frontmatter.changes as string[]) || [],
+            type: (frontmatter.type as 'major' | 'minor' | 'patch' | 'hotfix') || 'patch',
+            releaseDate: (frontmatter.releaseDate as string) || '',
+            author: (frontmatter.author as string) || ''
+          };
+        } catch (error) {
+          return null;
+        }
+      })
+    );
+
+    const validEntries = changelogEntries.filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+      .sort((a, b) => {
+        const dateA = a.releaseDate ? new Date(a.releaseDate).getTime() : 0;
+        const dateB = b.releaseDate ? new Date(b.releaseDate).getTime() : 0;
+        return dateB - dateA;
+      });
+
+    return validEntries;
+  } catch (error) {
+    console.error('Error getting changelog from GitHub:', error);
+    return [];
+  }
+}
+
+export async function saveChangelogToGitHub(changelogData: ChangelogMetadata[], commitMessage: string): Promise<void> {
+  try {
+    const changelogFile = await getFileFromGitHub('docs/data/changelog.json');
+    const content = JSON.stringify(changelogData, null, 2);
+
+    await createOrUpdateBlogFile(
+      'docs/data/changelog.json',
+      content,
+      commitMessage,
+      changelogFile?.sha
+    );
+  } catch (error) {
+    console.error('Error saving changelog to GitHub:', error);
+    throw error;
+  }
+}
+
+export async function addChangelogToGitHub(newChangelog: Omit<ChangelogMetadata, 'slug'>): Promise<ChangelogMetadata> {
+  const slug = createSlug(newChangelog.title);
+  
+  const changelogData: ChangelogMetadata = {
+    ...newChangelog,
+    slug
+  };
+
+  const mdxContent = generateChangelogMDXContent(changelogData, '');
+
+  const filePath = `${GITHUB_REPO_CONFIG.changelogPath}/${slug}.mdx`;
+
+  await createOrUpdateChangelogFile(
+    filePath,
+    mdxContent,
+    `Add changelog entry: ${newChangelog.version} - ${newChangelog.title}`
+  );
+
+  await updateChangelogMeta({ title: newChangelog.title, slug });
+
+  return changelogData;
+}
+
+export async function updateChangelogOnGitHub(
+  changelogId: string,
+  updatedChangelog: Omit<ChangelogMetadata, 'slug'>,
+  adminUser: string
+): Promise<void> {
+  const slug = createSlug(updatedChangelog.title);
+  
+  const changelogData: ChangelogMetadata = {
+    ...updatedChangelog,
+    slug
+  };
+
+  const mdxContent = generateChangelogMDXContent(changelogData, '');
+
+  const filePath = `${GITHUB_REPO_CONFIG.changelogPath}/${slug}.mdx`;
+
+  const oldFile = await getFileFromGitHub(filePath);
+  
+  await createOrUpdateChangelogFile(
+    filePath,
+    mdxContent,
+    `Update changelog entry: ${updatedChangelog.version} - ${updatedChangelog.title} by ${adminUser}`,
+    oldFile?.sha
+  );
+
+  await updateChangelogMeta({ title: updatedChangelog.title, slug });
+}
+
+export async function deleteChangelogFromGitHub(changelogId: string, adminUser: string): Promise<void> {
+
+  
+  try {
+
+    const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.changelogMetaFile);
+    
+    if (metaFile) {
+      const meta: ChangelogMeta = JSON.parse(metaFile.content);
+      const changelogSection = meta.pages.find(p => p.title === "Changelog");
+      
+      if (changelogSection) {
+
+        changelogSection.pages = changelogSection.pages.filter(p => p.url !== `/changelog/${changelogId}`);
+        
+        const updatedContent = JSON.stringify(meta, null, 2);
+        await createOrUpdateBlogFile(
+          GITHUB_REPO_CONFIG.changelogMetaFile,
+          updatedContent,
+          `Remove changelog entry by ${adminUser}`,
+          metaFile.sha
+        );
+      }
+    }
+  } catch (error) {
+    console.error('Error deleting changelog entry:', error);
+    throw error;
+  }
 }

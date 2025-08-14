@@ -99,4 +99,34 @@ export type EditPlatform = {
   };
 };
 
-export type ActiveTab = 'feedback' | 'users' | 'partners' | 'platforms';
+export type ActiveTab = 'feedback' | 'users' | 'partners' | 'platforms' | 'changelog';
+
+export type ChangelogEntry = {
+  slug: string;
+  version: string;
+  title: string;
+  description: string;
+  changes: string[];
+  type: 'major' | 'minor' | 'patch' | 'hotfix';
+  releaseDate: string;
+  author: string;
+};
+
+export type NewChangelogEntry = {
+  version: string;
+  title: string;
+  description: string;
+  changes: string[];
+  type: 'major' | 'minor' | 'patch' | 'hotfix';
+  releaseDate: string;
+};
+
+export type EditChangelogEntry = {
+  slug: string;
+  version: string;
+  title: string;
+  description: string;
+  changes: string[];
+  type: 'major' | 'minor' | 'patch' | 'hotfix';
+  releaseDate: string;
+};

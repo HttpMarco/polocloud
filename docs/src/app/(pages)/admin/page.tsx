@@ -9,6 +9,7 @@ import {
   UsersTab, 
   PartnersTab, 
   PlatformsTab, 
+  ChangelogTab,
   LoginForm
 } from '@/components/admin';
 import { 
@@ -21,7 +22,8 @@ import {
   NewPlatform, 
   ActiveTab,
   EditPlatform,
-  EditPartner
+  EditPartner,
+  ChangelogEntry
 } from '@/components/admin/types';
 
 export default function AdminPage() {
@@ -46,6 +48,9 @@ export default function AdminPage() {
 
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [loadingPlatforms, setLoadingPlatforms] = useState(false);
+
+  const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
+  const [loadingChangelog, setLoadingChangelog] = useState(false);
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('feedback');
   const [newPartner, setNewPartner] = useState<NewPartner>({
@@ -616,6 +621,22 @@ export default function AdminPage() {
     setEditingPartnerId(null);
   };
 
+  const fetchChangelog = async () => {
+    setLoadingChangelog(true);
+    try {
+      const res = await fetch('/api/admin/changelog/list', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        setChangelog(data.changelog || []);
+      }
+    } catch (error) {
+      console.error('Error fetching changelog:', error);
+      showToast('Error loading changelog', 'error');
+    } finally {
+      setLoadingChangelog(false);
+    }
+  };
+
   useEffect(() => {
     fetchMe();
 
@@ -645,6 +666,7 @@ export default function AdminPage() {
       fetchAdminUsers();
       fetchPartners();
       fetchPlatforms();
+      fetchChangelog();
     }
   }, [auth?.authenticated]);
 
@@ -697,6 +719,7 @@ export default function AdminPage() {
           adminUsersCount={adminUsers.length}
           partnersCount={partners.length}
           platformsCount={platforms.length}
+          changelogCount={changelog.length}
           isSuperAdmin={isSuperAdmin}
         />
 
@@ -764,6 +787,10 @@ export default function AdminPage() {
             onUpdatePlatform={handleUpdatePlatform}
             onCancelEdit={handleCancelEdit}
           />
+        )}
+
+        {activeTab === 'changelog' && (
+          <ChangelogTab />
         )}
       </div>
       
