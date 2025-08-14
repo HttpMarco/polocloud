@@ -18,7 +18,7 @@ object LegacyFormatter : MessageFormatter {
         "§b§lPoloCloud §8» §7github.polocloud.de"
 
     override fun formatMotdLineTwo(): String =
-        "§7§lVersion §8§l» §f§l3.0.0-pre.5-SNAPSHOT"
+        "§7§lVersion §8§l» §f§l%version%"
 
     override fun formatMaintenanceMotdLineOne(): String =
         "§c§lPoloCloud §8» §7github.polocloud.de"

@@ -42,7 +42,7 @@ object MiniMessageFormatter : MessageFormatter {
         "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>github.polocloud.de</gray>"
 
     override fun formatMotdLineTwo(): String =
-        "<bold><gray>Version</gray> <dark_gray>»</dark_gray> <white>3.0.0-pre.5-SNAPSHOT</bold>"
+        "<bold><gray>Version</gray> <dark_gray>»</dark_gray> <white>%version%</bold>"
 
     override fun formatMaintenanceMotdLineOne(): String =
         "<gradient:#b30000:#ff4d4d><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>github.polocloud.de</gray>"

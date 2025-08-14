@@ -27,6 +27,8 @@ class VelocityMotdUpdater (
                 return
             }
             val motdLines = config.maintenanceMotd().lineOne + "\n" + config.maintenanceMotd().lineTwo
+                .replace("%version%", polocloudVersion)
+                .replace("%online_players%", server.playerCount.toString())
             val newVersionName = config.maintenanceMotd().pingMessage
             val newPing = ServerPing.builder()
                 .description(MiniMessage.miniMessage().deserialize(motdLines))

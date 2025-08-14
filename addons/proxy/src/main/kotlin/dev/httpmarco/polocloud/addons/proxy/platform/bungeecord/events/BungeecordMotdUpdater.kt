@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.events
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfigAccessor
 import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordPlatform
 import dev.httpmarco.polocloud.sdk.java.Polocloud
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.ServerPing
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.event.ProxyPingEvent
@@ -25,9 +26,9 @@ class BungeecordMotdUpdater (
                 // maintenance motd is disabled
                 return
             }
-            var motdLines = config.maintenanceMotd().lineOne + "\n" + config.maintenanceMotd().lineTwo
-            motdLines = motdLines
+            val motdLines = config.maintenanceMotd().lineOne + "\n" + config.maintenanceMotd().lineTwo
                 .replace("%version%", polocloudVersion)
+                .replace("%online_players%", ProxyServer.getInstance().players.size.toString())
             val ping = event.response
             ping.descriptionComponent = TextComponent(motdLines)
             if(!config.maintenanceMotd().pingMessage.isEmpty()) {
@@ -51,6 +52,7 @@ class BungeecordMotdUpdater (
         var motdLines = config.motd().lineOne + "\n" + config.motd().lineTwo
         motdLines = motdLines
             .replace("%version%", polocloudVersion)
+            .replace("%online_players%", ProxyServer.getInstance().players.size.toString())
 
         ping.descriptionComponent = TextComponent(motdLines)
 
