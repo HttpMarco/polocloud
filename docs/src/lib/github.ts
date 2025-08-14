@@ -1142,10 +1142,8 @@ export async function updateChangelogOnGitHub(
 }
 
 export async function deleteChangelogFromGitHub(changelogId: string, adminUser: string): Promise<void> {
-
-  
   try {
-
+    // First, get the current meta file to find the changelog entry
     const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.changelogMetaFile);
     
     if (metaFile) {
@@ -1153,16 +1151,38 @@ export async function deleteChangelogFromGitHub(changelogId: string, adminUser: 
       const changelogSection = meta.pages.find(p => p.title === "Changelog");
       
       if (changelogSection) {
-
-        changelogSection.pages = changelogSection.pages.filter(p => p.url !== `/changelog/${changelogId}`);
+        // Find the entry to get its slug for file deletion
+        const entryToDelete = changelogSection.pages.find(p => p.url === `/changelog/${changelogId}`);
         
-        const updatedContent = JSON.stringify(meta, null, 2);
-        await createOrUpdateBlogFile(
-          GITHUB_REPO_CONFIG.changelogMetaFile,
-          updatedContent,
-          `Remove changelog entry by ${adminUser}`,
-          metaFile.sha
-        );
+        if (entryToDelete) {
+          // Remove the entry from meta
+          changelogSection.pages = changelogSection.pages.filter(p => p.url !== `/changelog/${changelogId}`);
+          
+          // Update the meta file
+          const updatedContent = JSON.stringify(meta, null, 2);
+          await createOrUpdateBlogFile(
+            GITHUB_REPO_CONFIG.changelogMetaFile,
+            updatedContent,
+            `Remove changelog entry by ${adminUser}`,
+            metaFile.sha
+          );
+          
+          // Delete the MDX file
+          const mdxFilePath = `${GITHUB_REPO_CONFIG.changelogPath}/${changelogId}.mdx`;
+          try {
+            await blogOctokit.rest.repos.deleteFile({
+              owner: GITHUB_REPO_CONFIG.owner,
+              repo: GITHUB_REPO_CONFIG.repo,
+              path: mdxFilePath,
+              message: `Delete changelog MDX file: ${changelogId} by ${adminUser}`,
+              branch: GITHUB_REPO_CONFIG.branch,
+              sha: (await getFileFromGitHub(mdxFilePath))?.sha
+            });
+          } catch (deleteError) {
+            console.warn(`Could not delete MDX file ${mdxFilePath}:`, deleteError);
+            // Continue even if file deletion fails
+          }
+        }
       }
     }
   } catch (error) {

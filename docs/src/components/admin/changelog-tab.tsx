@@ -1,24 +1,17 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Calendar, User, GitBranch, ExternalLink } from 'lucide-react';
-import { ChangelogEntry, NewChangelogEntry, EditChangelogEntry } from './types';
+import { Plus, Trash2, Calendar, User, GitBranch } from 'lucide-react';
+import { ChangelogEntry } from './types';
 import { useRouter } from 'next/navigation';
 
 export function ChangelogTab() {
   const router = useRouter();
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingEntry, setEditingEntry] = useState<ChangelogEntry | null>(null);
-  const [formData, setFormData] = useState<NewChangelogEntry>({
-    version: '',
-    title: '',
-    description: '',
-    changes: [''],
-    type: 'patch',
-    releaseDate: new Date().toISOString().split('T')[0]
-  });
+
+
+
 
   useEffect(() => {
     fetchChangelog();
@@ -43,11 +36,9 @@ export function ChangelogTab() {
     e.preventDefault();
     
     try {
-      const url = editingEntry ? '/api/admin/changelog/update' : '/api/admin/changelog/create';
-      const method = editingEntry ? 'PUT' : 'POST';
-      const body = editingEntry 
-        ? { ...formData, slug: editingEntry.slug }
-        : formData;
+      const url = '/api/admin/changelog/create';
+      const method = 'POST';
+      const body = {};
 
       const response = await fetch(url, {
         method,
@@ -57,9 +48,7 @@ export function ChangelogTab() {
 
       if (response.ok) {
         await fetchChangelog();
-        resetForm();
-        setShowCreateForm(false);
-        setEditingEntry(null);
+
       } else {
         const error = await response.json();
         alert(`Error: ${error.error}`);
@@ -92,50 +81,9 @@ export function ChangelogTab() {
     }
   };
 
-  const handleEdit = (entry: ChangelogEntry) => {
-    setEditingEntry(entry);
-    setFormData({
-      version: entry.version,
-      title: entry.title,
-      description: entry.description,
-      changes: entry.changes,
-      type: entry.type,
-      releaseDate: entry.releaseDate
-    });
-    setShowCreateForm(true);
-  };
 
-  const resetForm = () => {
-    setFormData({
-      version: '',
-      title: '',
-      description: '',
-      changes: [''],
-      type: 'patch',
-      releaseDate: new Date().toISOString().split('T')[0]
-    });
-  };
 
-  const addChange = () => {
-    setFormData(prev => ({
-      ...prev,
-      changes: [...prev.changes, '']
-    }));
-  };
 
-  const removeChange = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      changes: prev.changes.filter((_, i) => i !== index)
-    }));
-  };
-
-  const updateChange = (index: number, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      changes: prev.changes.map((change, i) => i === index ? value : change)
-    }));
-  };
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -167,147 +115,16 @@ export function ChangelogTab() {
             <Plus className="w-4 h-4" />
             Create New Entry
           </button>
+
           <button
-            onClick={() => {
-              setShowCreateForm(true);
-              setEditingEntry(null);
-              resetForm();
-            }}
+            onClick={fetchChangelog}
             className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors"
           >
-            <Edit className="w-4 h-4" />
-            Quick Edit
+            <GitBranch className="w-4 h-4" />
+            Refresh
           </button>
         </div>
       </div>
-
-      {showCreateForm && (
-        <div className="bg-card border rounded-lg p-6">
-          <h3 className="text-lg font-semibold mb-4">
-            {editingEntry ? 'Edit Changelog Entry' : 'Quick Create Changelog Entry'}
-          </h3>
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Version *</label>
-                <input
-                  type="text"
-                  value={formData.version}
-                  onChange={(e) => setFormData(prev => ({ ...prev, version: e.target.value }))}
-                  placeholder="e.g., 1.2.3"
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium mb-2">Type *</label>
-                <select
-                  value={formData.type}
-                  onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as 'major' | 'minor' | 'patch' | 'hotfix' }))}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  required
-                >
-                  <option value="major">Major</option>
-                  <option value="minor">Minor</option>
-                  <option value="patch">Patch</option>
-                  <option value="hotfix">Hotfix</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Title *</label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Release title"
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Description *</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Brief description of the release"
-                rows={3}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Release Date *</label>
-              <input
-                type="date"
-                value={formData.releaseDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, releaseDate: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Changes *</label>
-              <div className="space-y-2">
-                {formData.changes.map((change, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={change}
-                      onChange={(e) => updateChange(index, e.target.value)}
-                      placeholder={`Change ${index + 1}`}
-                      className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                      required
-                    />
-                    {formData.changes.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeChange(index)}
-                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addChange}
-                  className="text-sm text-primary hover:text-primary/80 transition-colors"
-                >
-                  + Add another change
-                </button>
-              </div>
-            </div>
-
-            <div className="flex gap-3 pt-4">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                {editingEntry ? 'Update Entry' : 'Create Entry'}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCreateForm(false);
-                  setEditingEntry(null);
-                  resetForm();
-                }}
-                className="px-6 py-2 border rounded-lg hover:bg-muted transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
 
       <div className="space-y-4">
         {changelog.map((entry) => (
@@ -322,12 +139,7 @@ export function ChangelogTab() {
               </div>
               
               <div className="flex gap-2">
-                <button
-                  onClick={() => handleEdit(entry)}
-                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+
                 <button
                   onClick={() => handleDelete(entry.slug)}
                   className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
@@ -365,7 +177,7 @@ export function ChangelogTab() {
           </div>
         ))}
 
-        {changelog.length === 0 && !showCreateForm && (
+        {changelog.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             <GitBranch className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg">No changelog entries yet</p>
