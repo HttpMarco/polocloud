@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Calendar, User, GitBranch } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, User, GitBranch, ExternalLink } from 'lucide-react';
 import { ChangelogEntry, NewChangelogEntry, EditChangelogEntry } from './types';
+import { useRouter } from 'next/navigation';
 
 export function ChangelogTab() {
+  const router = useRouter();
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -157,23 +159,32 @@ export function ChangelogTab() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Changelog Management</h2>
-        <button
-          onClick={() => {
-            setShowCreateForm(true);
-            setEditingEntry(null);
-            resetForm();
-          }}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add Entry
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => router.push('/admin/changelog/create')}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Create New Entry
+          </button>
+          <button
+            onClick={() => {
+              setShowCreateForm(true);
+              setEditingEntry(null);
+              resetForm();
+            }}
+            className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors"
+          >
+            <Edit className="w-4 h-4" />
+            Quick Edit
+          </button>
+        </div>
       </div>
 
       {showCreateForm && (
         <div className="bg-card border rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">
-            {editingEntry ? 'Edit Changelog Entry' : 'Create New Changelog Entry'}
+            {editingEntry ? 'Edit Changelog Entry' : 'Quick Create Changelog Entry'}
           </h3>
           
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -358,7 +369,14 @@ export function ChangelogTab() {
           <div className="text-center py-12 text-muted-foreground">
             <GitBranch className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg">No changelog entries yet</p>
-            <p className="text-sm">Create your first changelog entry to get started</p>
+            <p className="text-sm mb-4">Create your first changelog entry to get started</p>
+            <button
+              onClick={() => router.push('/admin/changelog/create')}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Create First Entry
+            </button>
           </div>
         )}
       </div>
