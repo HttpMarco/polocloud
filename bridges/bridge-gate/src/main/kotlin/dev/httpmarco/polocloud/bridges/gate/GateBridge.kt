@@ -1,10 +1,16 @@
 package dev.httpmarco.polocloud.bridges.gate
 
 import dev.httpmarco.polocloud.bridge.api.BridgeInstance
+import dev.httpmarco.polocloud.sdk.java.Polocloud
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import java.nio.file.Path
 
-class GateBridge(val servicePath: Path) : BridgeInstance<Server>() {
+class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : BridgeInstance<Server>() {
+
+    init {
+        initialize(Polocloud(serviceName, agentPort))
+    }
+
     override fun generateInfo(
         name: String,
         hostname: String,
@@ -68,7 +74,7 @@ class GateBridge(val servicePath: Path) : BridgeInstance<Server>() {
                 }
             }
             null
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.bridge.api
 
+import dev.httpmarco.polocloud.shared.PolocloudShared
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
@@ -23,8 +24,11 @@ abstract class BridgeInstance<T> {
         Class.forName("dev.httpmarco.polocloud.sdk.java.Polocloud")
     }
 
-    fun initialize() {
-        polocloudShared.serviceProvider().findByType(GroupType.SERVER).forEach {
+    private lateinit var polocloud: PolocloudShared
+
+    fun initialize(polocloud: PolocloudShared) {
+        this.polocloud = polocloud
+        polocloud.serviceProvider().findByType(GroupType.SERVER).forEach {
             if(it.state !== ServiceState.ONLINE) {
                 return@forEach
             }
@@ -32,22 +36,26 @@ abstract class BridgeInstance<T> {
         }
 
 
-        polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class.java) { event ->
-           val service = event.service
+        polocloud.eventProvider().subscribe(ServiceOnlineEvent::class.java) { event ->
+            val service = event.service
             if (service.type == GroupType.SERVER) {
                 registerService(generateInfo(service.name(), service.hostname, service.port), isFallback(service))
             }
         }
 
-        polocloudShared.eventProvider().subscribe(ServiceShutdownEvent::class.java) { event ->
+        polocloud.eventProvider().subscribe(ServiceShutdownEvent::class.java) { event ->
             findInfo(event.service.name())?.let { info ->
                 unregisterService(info)
             }!!
         }
     }
 
+    fun initialize() {
+        this.initialize(polocloudShared)
+    }
+
     fun updatePolocloudPlayer(event: Event) {
-        polocloudShared.eventProvider().call(event)
+        polocloud.eventProvider().call(event)
     }
 
     private fun isFallback(service: Service): Boolean {

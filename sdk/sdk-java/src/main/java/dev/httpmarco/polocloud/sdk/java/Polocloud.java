@@ -25,6 +25,8 @@ public final class Polocloud extends PolocloudShared {
     private final SharedGroupProvider<Group> groupProvider;
     private final SharedPlayerProvider<PolocloudPlayer> playerProvider;
 
+    private final String serviceName;
+
     public static Polocloud instance() {
         return instance;
     }
@@ -34,10 +36,15 @@ public final class Polocloud extends PolocloudShared {
     }
 
     Polocloud() {
+        this(null, Integer.parseInt(System.getenv("agent_port")));
         instance = this;
+    }
 
+    //for off premise bridges
+    public Polocloud(String serviceName, int agentPort) {
+        this.serviceName = serviceName;
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("127.0.0.1", Integer.parseInt(System.getenv("agent_port")))
+                .forAddress("127.0.0.1", agentPort)
                 .usePlaintext()
                 .build();
 
@@ -48,6 +55,9 @@ public final class Polocloud extends PolocloudShared {
     }
 
     public String selfServiceName() {
+        if (serviceName != null) {
+            return serviceName;
+        }
         return System.getenv("service-name");
     }
 
