@@ -99,7 +99,7 @@ export type EditPlatform = {
   };
 };
 
-export type ActiveTab = 'feedback' | 'users' | 'partners' | 'platforms' | 'changelog';
+export type ActiveTab = 'feedback' | 'users' | 'partners' | 'platforms' | 'changelog' | 'blog';
 
 export type ChangelogEntry = {
   slug: string;

@@ -11,6 +11,7 @@ interface TabNavigationProps {
   partnersCount: number;
   platformsCount: number;
   changelogCount: number;
+  blogCount: number;
   isSuperAdmin: boolean;
 }
 
@@ -22,6 +23,7 @@ export function TabNavigation({
   partnersCount, 
   platformsCount, 
   changelogCount,
+  blogCount,
   isSuperAdmin 
 }: TabNavigationProps) {
   return (
@@ -88,11 +90,15 @@ export function TabNavigation({
         Changelog ({changelogCount})
       </button>
       <button
-        onClick={() => window.open('/admin/blog', '_blank')}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-muted-foreground hover:text-foreground hover:bg-background/50 transition-all duration-200"
+        onClick={() => onTabChange('blog')}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+          activeTab === 'blog'
+            ? 'bg-primary text-primary-foreground shadow-lg'
+            : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+        }`}
       >
         <FileText className="w-4 h-4" />
-        Blog Management
+        Blog ({blogCount})
       </button>
     </div>
   );

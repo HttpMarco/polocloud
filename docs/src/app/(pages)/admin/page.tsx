@@ -10,6 +10,7 @@ import {
   PartnersTab, 
   PlatformsTab, 
   ChangelogTab,
+  BlogTab,
   LoginForm
 } from '@/components/admin';
 import { 
@@ -51,6 +52,9 @@ export default function AdminPage() {
 
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
   const [loadingChangelog, setLoadingChangelog] = useState(false);
+
+  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [loadingBlog, setLoadingBlog] = useState(false);
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('feedback');
   const [newPartner, setNewPartner] = useState<NewPartner>({
@@ -637,6 +641,22 @@ export default function AdminPage() {
     }
   };
 
+  const fetchBlogPosts = async () => {
+    setLoadingBlog(true);
+    try {
+      const res = await fetch('/api/admin/blog/list', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        setBlogPosts(data.posts || []);
+      }
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+      showToast('Error loading blog posts', 'error');
+    } finally {
+      setLoadingBlog(false);
+    }
+  };
+
   useEffect(() => {
     fetchMe();
 
@@ -667,6 +687,7 @@ export default function AdminPage() {
       fetchPartners();
       fetchPlatforms();
       fetchChangelog();
+      fetchBlogPosts();
     }
   }, [auth?.authenticated]);
 
@@ -720,6 +741,7 @@ export default function AdminPage() {
           partnersCount={partners.length}
           platformsCount={platforms.length}
           changelogCount={changelog.length}
+          blogCount={blogPosts.length}
           isSuperAdmin={isSuperAdmin}
         />
 
@@ -791,6 +813,10 @@ export default function AdminPage() {
 
         {activeTab === 'changelog' && (
           <ChangelogTab />
+        )}
+
+        {activeTab === 'blog' && (
+          <BlogTab />
         )}
       </div>
       
