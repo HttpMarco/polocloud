@@ -1170,14 +1170,19 @@ export async function deleteChangelogFromGitHub(changelogId: string, adminUser: 
           // Delete the MDX file
           const mdxFilePath = `${GITHUB_REPO_CONFIG.changelogPath}/${changelogId}.mdx`;
           try {
-            await blogOctokit.rest.repos.deleteFile({
-              owner: GITHUB_REPO_CONFIG.owner,
-              repo: GITHUB_REPO_CONFIG.repo,
-              path: mdxFilePath,
-              message: `Delete changelog MDX file: ${changelogId} by ${adminUser}`,
-              branch: GITHUB_REPO_CONFIG.branch,
-              sha: (await getFileFromGitHub(mdxFilePath))?.sha
-            });
+            const mdxFile = await getFileFromGitHub(mdxFilePath);
+            if (mdxFile?.sha) {
+              await blogOctokit.rest.repos.deleteFile({
+                owner: GITHUB_REPO_CONFIG.owner,
+                repo: GITHUB_REPO_CONFIG.repo,
+                path: mdxFilePath,
+                message: `Delete changelog MDX file: ${changelogId} by ${adminUser}`,
+                branch: GITHUB_REPO_CONFIG.branch,
+                sha: mdxFile.sha
+              });
+            } else {
+              console.warn(`Could not get SHA for MDX file ${mdxFilePath}, skipping deletion`);
+            }
           } catch (deleteError) {
             console.warn(`Could not delete MDX file ${mdxFilePath}:`, deleteError);
             // Continue even if file deletion fails
