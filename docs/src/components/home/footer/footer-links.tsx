@@ -19,7 +19,7 @@ export function FooterLinks() {
 
     const moreLinks = [
         { href: '/blog', label: 'Blog', icon: Newspaper },
-        { href: '/changelogs', label: 'Changelogs', icon: FileText },
+        { href: '/changelog', label: 'Changelog', icon: FileText },
         { href: '/roadmap', label: 'Roadmap', icon: Map },
         { href: 'mailto:contact@polocloud.de', label: 'Contact', icon: Mail, external: true }
     ];

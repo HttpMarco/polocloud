@@ -78,7 +78,7 @@ export function MobileNav() {
                                         <span>Roadmap</span>
                                     </Link>
                                     <Link
-                                        href="/changelogs"
+                                        href="/changelog"
                                         onClick={closeMenu}
                                         className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-muted/30 transition-all duration-200"
                                     >

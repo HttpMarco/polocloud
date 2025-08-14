@@ -17,7 +17,7 @@ interface ChangelogPost {
 
 function getChangelogPosts(): ChangelogPost[] {
   try {
-    const changelogDir = join(process.cwd(), 'content', 'changelogs');
+    const changelogDir = join(process.cwd(), 'content', 'changelog');
     const files = readdirSync(changelogDir).filter(file => file.endsWith('.mdx'));
     
     const posts = files.map(file => {

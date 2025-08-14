@@ -19,14 +19,14 @@ interface ChangelogPost {
 }
 
 function getChangelogSlugs(): string[] {
-  const changelogDir = join(process.cwd(), 'content', 'changelogs');
+  const changelogDir = join(process.cwd(), 'content', 'changelog');
   const files = readdirSync(changelogDir).filter(file => file.endsWith('.mdx'));
   return files.map(file => file.replace('.mdx', ''));
 }
 
 function getChangelogPost(slug: string): ChangelogPost | null {
   try {
-    const changelogDir = join(process.cwd(), 'content', 'changelogs');
+    const changelogDir = join(process.cwd(), 'content', 'changelog');
     const filePath = join(changelogDir, `${slug}.mdx`);
     const fileContent = readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContent);
