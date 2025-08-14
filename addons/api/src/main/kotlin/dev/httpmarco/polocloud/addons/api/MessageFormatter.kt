@@ -9,4 +9,5 @@ interface MessageFormatter {
     fun formatMotdLineTwo(): String
     fun formatMaintenanceMotdLineOne(): String
     fun formatMaintenanceMotdLineTwo(): String
+    fun formatMaintenancePingMessage(): String
 }
