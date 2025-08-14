@@ -1,237 +1,408 @@
-'use client';
-import { useEffect, useState, useRef } from 'react';
-import { Download, ExternalLink, Package, Star, Zap, Shield, Code, Rocket } from 'lucide-react';
+"use client"
 
-interface Addon {
-  name: string;
-  description: string;
-  version: string;
-  category: 'bukkit' | 'proxy';
-  downloadUrl: string;
-  githubUrl: string;
-  features: string[];
-  icon: React.ComponentType<{ className?: string }>;
-  color: string;
-  gradient: string;
-}
-
-const addons: Addon[] = [
-  {
-    name: 'polocloud-hub',
-    description: 'Advanced hub management system for PoloCloud servers with seamless server switching and lobby management.',
-    version: '1.0.0',
-    category: 'proxy',
-    downloadUrl: 'https://github.com/HttpMarco/polocloud-hub/releases',
-    githubUrl: 'https://github.com/HttpMarco/polocloud/tree/master/addons/hub',
-    features: [
-      'Server hub management',
-      'Automatic server switching',
-      'Lobby system integration',
-      'Player distribution'
-    ],
-    icon: Rocket,
-    color: 'text-blue-400',
-    gradient: 'from-blue-500/20 to-blue-600/20'
-  },
-  {
-    name: 'polocloud-proxy',
-    description: 'Enhanced proxy addon with custom MOTD, Tablist integration, and advanced player management features.',
-    version: '1.0.0',
-    category: 'proxy',
-    downloadUrl: 'https://github.com/HttpMarco/polocloud-proxy/releases',
-    githubUrl: 'https://github.com/HttpMarco/polocloud/tree/master/addons/signs',
-    features: [
-      'Custom Tablist',
-      'Dynamic MOTD',
-      'Player management',
-      'Server status display'
-    ],
-    icon: Shield,
-    color: 'text-green-400',
-    gradient: 'from-green-500/20 to-green-600/20'
-  },
-];
-
-const AddonCard = ({ addon }: { addon: Addon }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'bukkit': return 'bg-green-500/20 border-green-500/30 text-green-400';
-      case 'proxy': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
-      default: return 'bg-gray-500/20 border-gray-500/30 text-gray-400';
-    }
-  };
-
-  const getCategoryLabel = (category: string) => {
-    switch (category) {
-      case 'bukkit': return 'Bukkit';
-      case 'proxy': return 'Proxy';
-      default: return 'Addon';
-    }
-  };
-
-  return (
-    <div 
-      className={`group relative bg-gradient-to-br from-card/30 via-card/20 to-card/30 backdrop-blur-xl border border-border/50 rounded-xl p-6 transition-all duration-500 hover:scale-105 hover:-translate-y-2 shadow-xl hover:shadow-2xl`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className={`absolute inset-0 bg-gradient-to-br ${addon.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl`} />
-      <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      
-      <div className="relative z-10">
-        <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-sm ${getCategoryColor(addon.category)}`}>
-        {getCategoryLabel(addon.category)}
-      </div>
-
-      <div className="mb-4">
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`w-12 h-12 bg-gradient-to-br ${addon.gradient} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-              <addon.icon className={`w-6 h-6 ${addon.color}`} />
-          </div>
-          <div>
-              <h3 className="text-lg md:text-xl font-black text-foreground dark:text-white group-hover:text-primary transition-colors duration-300">
-              {addon.name}
-            </h3>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground dark:text-white/60">
-              v{addon.version}
-                </span>
-                <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-              </div>
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground dark:text-white/70 leading-relaxed">
-          {addon.description}
-        </p>
-      </div>
-
-      <div className="mb-6">
-          <h4 className="text-sm font-bold text-foreground dark:text-white mb-3 flex items-center gap-2">
-            <Zap className="w-4 h-4 text-primary" />
-            Key Features
-          </h4>
-          <div className="grid grid-cols-1 gap-2">
-          {addon.features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-2 text-muted-foreground dark:text-white/70 group/feature">
-                <div className="w-1.5 h-1.5 bg-primary rounded-full group-hover/feature:scale-150 transition-transform duration-300" />
-                <span className="text-xs font-medium">{feature}</span>
-              </div>
-          ))}
-          </div>
-      </div>
-
-        <div className="flex gap-3">
-        <button
-          onClick={() => window.open(addon.downloadUrl, '_blank')}
-            className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground rounded-lg text-xs font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl group/btn"
-        >
-            <Download className="w-3 h-3 group-hover/btn:animate-bounce" />
-          Download
-        </button>
-        <button
-          onClick={() => window.open(addon.githubUrl, '_blank')}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-xs font-semibold transition-all duration-300 hover:scale-105 group/btn"
-        >
-            <ExternalLink className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
-          GitHub
-        </button>
-        </div>
-      </div>
-
-      <div className={`absolute inset-0 rounded-xl border-2 border-primary/20 opacity-0 transition-opacity duration-500 pointer-events-none ${isHovered ? 'opacity-100' : ''}`} />
-    </div>
-  );
-};
+import { motion } from "framer-motion";
+import { Package, Download, Users, Star, ExternalLink, Code, Zap, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ModrinthOrganization, ModrinthProject } from "@/lib/modrinth";
 
 export function AddonsSection() {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
+    const [organization, setOrganization] = useState<ModrinthOrganization | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
+    useEffect(() => {
+        const fetchModrinthData = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const response = await fetch('/api/modrinth-organization');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch Modrinth data');
+                }
+                const data: ModrinthOrganization = await response.json();
+                setOrganization(data);
+            } catch (err) {
+                console.error('Failed to fetch Modrinth data:', err);
+                setError('Failed to load Modrinth projects');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchModrinthData();
+    }, []);
+
+    const getProjectIcon = (projectTypes: string[]) => {
+        const projectType = projectTypes[0] || 'plugin';
+        switch (projectType) {
+            case 'plugin':
+                return <Zap className="w-6 h-6 text-primary" />;
+            case 'mod':
+                return <Package className="w-6 h-6 text-primary" />;
+            default:
+                return <FileText className="w-6 h-6 text-primary" />;
         }
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }
-    );
+    };
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    const cleanDescription = (description: string) => {
+        let cleaned = description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
+        cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
+        cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+        cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
+        cleaned = cleaned.replace(/^[-*+]\s+/gm, '');
+        cleaned = cleaned.replace(/^\d+\.\s+/gm, '');
+        cleaned = cleaned.replace(/```[\s\S]*?```/g, '');
+        cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+        cleaned = cleaned.replace(/ID:\s*[a-zA-Z0-9]+/gi, '');
+        cleaned = cleaned.replace(/Project ID:\s*[a-zA-Z0-9]+/gi, '');
+        cleaned = cleaned.replace(/[a-zA-Z0-9]{8,}/g, '');
+        cleaned = cleaned.replace(/\n\s*\n/g, '\n');
+        cleaned = cleaned.trim();
 
-    return () => observer.disconnect();
-  }, []);
+        if (cleaned.length > 150) {
+            cleaned = cleaned.substring(0, 147) + '...';
+        }
 
-  return (
-    <section ref={sectionRef} className="relative py-32 overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-background via-background/95 via-background/80 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/5 to-muted/5" />
+        return cleaned;
+    };
 
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.2
+            }
+        }
+    };
 
-      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl animate-pulse delay-1000" />
+    const itemVariants = {
+        hidden: {
+            opacity: 0,
+            y: 30,
+            scale: 0.9,
+            rotateX: -15
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            rotateX: 0,
+            transition: {
+                type: "spring" as const,
+                stiffness: 200,
+                damping: 20,
+                duration: 0.6
+            }
+        }
+    };
 
-      <div className="relative container mx-auto px-6">
-        <div className={`text-center mb-20 transition-all duration-1000 ease-out ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <h2 className={`text-3xl md:text-4xl lg:text-5xl font-black mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
-            Addons
-          </h2>
-          <p className={`text-base md:text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
-            Extend your PoloCloud experience with our official addons. Each addon is designed to enhance your server management capabilities and provide powerful features.
-          </p>
-        </div>
+    return (
+        <section className="relative py-32 overflow-hidden">
+            <motion.div
+                className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-background via-background/95 via-background/80 to-transparent"
+                initial={{ opacity: 0, scaleY: 0 }}
+                whileInView={{ opacity: 1, scaleY: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+            />
 
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 transition-all duration-1000 delay-600 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          {addons.map((addon, index) => (
-            <div
-              key={addon.name}
-              className={`transition-all duration-1000 delay-${(index + 1) * 200} ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
-            >
-              <AddonCard addon={addon} />
+            <motion.div
+                className="absolute inset-0 bg-gradient-to-b from-background via-muted/5 to-muted/5"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.2, delay: 0.3 }}
+            />
+
+            <motion.div
+                className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]"
+                initial={{ opacity: 0, scale: 1.1 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.5, delay: 0.6, ease: "easeOut" }}
+            />
+
+            <motion.div
+                className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl"
+                initial={{ opacity: 0, scale: 0, rotate: 180, x: -100 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                animate={{
+                    y: [0, -20, 0],
+                    rotate: [0, 5, 0],
+                }}
+                transition={{
+                    duration: 1.8,
+                    delay: 0.8,
+                    type: 'spring',
+                    stiffness: 100,
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
+            />
+            <motion.div
+                className="absolute bottom-20 right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"
+                initial={{ opacity: 0, scale: 0, rotate: -180, x: 100 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                animate={{
+                    y: [0, 20, 0],
+                    rotate: [0, -5, 0],
+                }}
+                transition={{
+                    duration: 1.8,
+                    delay: 1.0,
+                    type: 'spring',
+                    stiffness: 100,
+                    y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+                    rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                }}
+            />
+
+            <motion.div
+                className="absolute top-1/3 right-1/4 w-24 h-24 bg-primary/3 rounded-full blur-2xl"
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                animate={{
+                    x: [0, 15, 0],
+                    y: [0, -15, 0],
+                }}
+                transition={{
+                    duration: 1.5,
+                    delay: 1.2,
+                    x: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+                    y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
+                }}
+            />
+
+            <div className="relative container mx-auto px-6">
+                <motion.div
+                    className="text-center mb-20"
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }}
+                >
+                    <motion.h2
+                        className="text-3xl md:text-4xl lg:text-5xl font-black mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight"
+                        initial={{ opacity: 0, y: 30, scale: 0.9, rotateX: -15 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 1.2, delay: 0.3, type: 'spring', stiffness: 200 }}
+                    >
+                        Addons
+                    </motion.h2>
+                    <motion.p
+                        className="text-base md:text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed"
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 1.2, delay: 0.6, ease: 'easeOut' }}
+                    >
+                        Extend your PoloCloud experience with our official addons. Each addon is designed to enhance your server management capabilities and provide powerful features.
+                    </motion.p>
+                </motion.div>
+
+                {loading ? (
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.1 }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
+                        {[1, 2, 3].map((i) => (
+                            <motion.div
+                                key={`loading-${i}`}
+                                variants={itemVariants}
+                                className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-6 animate-pulse"
+                            >
+                                <div className="flex items-center mb-4">
+                                    <div className="w-12 h-12 bg-muted/50 rounded-lg mr-4" />
+                                    <div>
+                                        <div className="w-32 h-4 bg-muted/50 rounded mb-2" />
+                                        <div className="w-24 h-3 bg-muted/50 rounded" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="w-full h-3 bg-muted/50 rounded" />
+                                    <div className="w-3/4 h-3 bg-muted/50 rounded" />
+                                </div>
+                                <div className="flex justify-between mt-4">
+                                    <div className="w-16 h-4 bg-muted/50 rounded" />
+                                    <div className="w-16 h-4 bg-muted/50 rounded" />
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.1 }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
+                        {organization?.projects.map((project, index) => (
+                            <motion.div
+                                key={project.id}
+                                variants={itemVariants}
+                                whileHover={{
+                                    scale: 1.03,
+                                    rotateY: 8,
+                                    rotateX: 2,
+                                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
+                                    transition: { type: "spring", stiffness: 300, damping: 20 }
+                                }}
+                                whileTap={{ scale: 0.98 }}
+                                className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-6 hover:bg-card/40 hover:border-border/70 transition-all duration-300 group cursor-pointer"
+                            >
+                                <motion.div
+                                    className="flex items-center mb-4"
+                                    whileHover={{ x: 5 }}
+                                    transition={{ type: "spring", stiffness: 400 }}
+                                >
+                                    <motion.div
+                                        className="w-12 h-12 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center mr-4"
+                                        whileHover={{
+                                            scale: 1.1,
+                                            rotate: 5,
+                                            boxShadow: "0 0 20px rgba(99, 102, 241, 0.3)"
+                                        }}
+                                        transition={{ type: "spring", stiffness: 300 }}
+                                    >
+                                        {getProjectIcon(project.project_types)}
+                                    </motion.div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-foreground dark:text-white group-hover:text-primary transition-colors duration-200">
+                                            {project.name}
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground dark:text-white/70">
+                                            {project.project_types[0] || 'plugin'}
+                                        </p>
+                                    </div>
+                                </motion.div>
+
+                                <motion.p
+                                    className="text-sm text-muted-foreground dark:text-white/70 mb-4 line-clamp-3"
+                                    whileHover={{ color: "hsl(var(--muted-foreground) / 0.9)" }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    {cleanDescription(project.summary || project.description)}
+                                </motion.p>
+
+                                <motion.div
+                                    className="flex justify-between items-center mb-4"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.3 + index * 0.1 }}
+                                >
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Download className="w-4 h-4" />
+                                        {project.downloads}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Users className="w-4 h-4" />
+                                        {project.followers}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                        <Code className="w-4 h-4" />
+                                        {project.versions[0] || '1.0.0'}
+                                    </div>
+                                </motion.div>
+
+                                <motion.div
+                                    className="flex flex-wrap gap-2 mb-4"
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.4 + index * 0.1 }}
+                                >
+                                    {project.loaders.slice(0, 2).map((loader) => (
+                                        <motion.span
+                                            key={`${project.id}-loader-${loader}`}
+                                            className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md font-medium"
+                                            whileHover={{ scale: 1.05, backgroundColor: "hsl(var(--primary) / 0.2)" }}
+                                            transition={{ type: "spring", stiffness: 400 }}
+                                        >
+                                            {loader}
+                                        </motion.span>
+                                    ))}
+                                </motion.div>
+
+                                <motion.div
+                                    className="flex justify-end"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.5 + index * 0.1 }}
+                                >
+                                    <motion.a
+                                        href={`https://modrinth.com/${project.project_types[0] || 'plugin'}/${project.slug}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors duration-200"
+                                        whileHover={{
+                                            scale: 1.05,
+                                            x: 5,
+                                            textShadow: "0 0 8px rgba(99, 102, 241, 0.5)"
+                                        }}
+                                        whileTap={{ scale: 0.95 }}
+                                        transition={{ type: "spring", stiffness: 400 }}
+                                    >
+                                        <Download className="w-4 h-4" />
+                                        Download
+                                    </motion.a>
+                                </motion.div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+
+                <motion.div
+                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 1, type: "spring", stiffness: 200 }}
+                    className="text-center mt-16"
+                >
+                    <motion.a
+                        href="https://modrinth.com/organization/polocloud"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{
+                            scale: 1.05,
+                            boxShadow: "0 20px 40px rgba(99, 102, 241, 0.3)",
+                            y: -2
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl font-semibold text-lg hover:from-primary/90 hover:to-primary/70 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
+                    >
+                        <motion.div
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                            <Package className="w-5 h-5" />
+                        </motion.div>
+                        View on Modrinth
+                    </motion.a>
+                    <motion.p
+                        className="text-sm text-muted-foreground dark:text-white/70 mt-4"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1.2 }}
+                    >
+                        Check out all our projects!
+                    </motion.p>
+                </motion.div>
             </div>
-          ))}
-        </div>
-
-        <div className={`text-center mt-16 transition-all duration-1000 delay-1000 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-8 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-foreground dark:text-white mb-4">
-              Need a Custom Addon?
-            </h3>
-            <p className="text-muted-foreground dark:text-white/70 mb-6">
-              We can develop custom addons tailored to your specific needs. Contact us to discuss your requirements.
-            </p>
-            <a
-              href="https://discord.polocloud.de"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground rounded-xl font-semibold text-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,120,255,0.3)] hover:shadow-[0_0_30px_rgba(0,120,255,0.5)] hover:scale-105 group"
-            >
-              <Code className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-              Request Custom Addon
-              <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/95 via-background/80 to-transparent" />
-    </section>
-  );
+        </section>
+    );
 } 
