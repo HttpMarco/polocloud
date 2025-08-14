@@ -26,6 +26,7 @@ import {
   EditPartner,
   ChangelogEntry
 } from '@/components/admin/types';
+import { BlogPostMetadata } from '@/lib/github';
 
 export default function AdminPage() {
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,7 @@ export default function AdminPage() {
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
   const [loadingChangelog, setLoadingChangelog] = useState(false);
 
-  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPostMetadata[]>([]);
   const [loadingBlog, setLoadingBlog] = useState(false);
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('feedback');
