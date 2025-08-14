@@ -103,7 +103,7 @@ export default function ChangelogsPage() {
           {posts.length === 0 ? (
             <div className="text-center py-12">
               <GitBranch className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">No changelogs yet</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No changelog entries yet</h3>
               <p className="text-muted-foreground">We&apos;ll post release notes here as we ship new versions.</p>
             </div>
           ) : (
@@ -174,7 +174,7 @@ export default function ChangelogsPage() {
                     )}
 
                     <Link
-                      href={`/changelogs/${post.slug}`}
+                      href={`/changelog/${post.slug}`}
                       className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium text-sm group/link"
                     >
                       Read Release Notes

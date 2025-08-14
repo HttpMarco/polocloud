@@ -95,11 +95,11 @@ export default async function ChangelogPage({ params }: { params: Promise<{ slug
         <div className="container mx-auto px-6 py-12 max-w-4xl relative z-10">
           <div className="mb-8">
             <Link
-              href="/changelogs"
+              href="/changelog"
               className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              Back to Changelogs
+              Back to Changelog
             </Link>
           </div>
 
