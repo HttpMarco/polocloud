@@ -17,7 +17,7 @@ interface PublicFeedback {
   approvedAt?: string;
 }
 
-export default function FeedbackSection() {
+export default function CommunityFeedbackSection() {
   const [feedbacks, setFeedbacks] = useState<PublicFeedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -88,7 +88,7 @@ export default function FeedbackSection() {
 
             <Link
               href="/feedback"
-              className="group bg-[rgba(0,120,255,0.9)] hover:bg-[rgba(0,120,255,1)] text-white px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,120,255,0.3)] hover:shadow-[0_0_25px_rgba(0,120,255,0.4)] flex items-center justify-center gap-3 relative z-10"
+              className="group bg-[rgba(0,120,255,0.9)] hover:bg-[rgba(0,120,255,1)] text-white px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,120,255,0.3)] hover:shadow-[0_25px_rgba(0,120,255,0.4)] flex items-center justify-center gap-3 relative z-10"
             >
               <MessageSquare className="w-5 h-5" />
               Share Your First Feedback
