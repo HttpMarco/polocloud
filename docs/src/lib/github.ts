@@ -36,19 +36,23 @@ export interface GitHubRelease {
 const CACHE_STRATEGIES = {
     stats: { 
         duration: 10 * 60 * 1000,
-        refreshThreshold: 0.8
+        refreshThreshold: 0.8,
+        backgroundRefresh: true
     },
     contributors: { 
         duration: 60 * 60 * 1000,
-        refreshThreshold: 0.9
+        refreshThreshold: 0.9,
+        backgroundRefresh: true
     },
     partners: { 
         duration: 30 * 60 * 1000,
-        refreshThreshold: 0.7
+        refreshThreshold: 0.7,
+        backgroundRefresh: true
     },
     platforms: { 
         duration: 30 * 60 * 1000,
-        refreshThreshold: 0.7
+        refreshThreshold: 0.7,
+        backgroundRefresh: true
     }
 };
 
@@ -243,6 +247,14 @@ let contributorsCache: GitHubContributor[] | null = null;
 let contributorsCacheTimestamp: number = 0;
 const CONTRIBUTORS_CACHE_DURATION = 60 * 60 * 1000;
 
+let partnersCache: Partner[] | null = null;
+let partnersCacheTimestamp: number = 0;
+const PARTNERS_CACHE_DURATION = 30 * 60 * 1000;
+
+let platformsCache: Platform[] | null = null;
+let platformsCacheTimestamp: number = 0;
+const PLATFORMS_CACHE_DURATION = 30 * 60 * 1000;
+
 export async function fetchGitHubContributors(): Promise<GitHubContributor[]> {
     try {
         const response = await makeGitHubRequest(`${GITHUB_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/contributors?per_page=100`);
@@ -333,6 +345,10 @@ export function clearGitHubCache(): void {
     clientCacheTimestamp = 0;
     contributorsCache = null;
     contributorsCacheTimestamp = 0;
+    partnersCache = null;
+    partnersCacheTimestamp = 0;
+    platformsCache = null;
+    platformsCacheTimestamp = 0;
     
     console.log('🗑️ All GitHub caches cleared');
 }
@@ -360,39 +376,97 @@ export function getCacheStatus(): {
     serverCacheAge: number;
     clientCacheAge: number;
     contributorsCacheAge: number;
+    partnersCacheAge: number;
+    platformsCacheAge: number;
     hasServerCache: boolean;
     hasClientCache: boolean;
     hasContributorsCache: boolean;
+    hasPartnersCache: boolean;
+    hasPlatformsCache: boolean;
     cacheHealth: 'healthy' | 'warning' | 'expired';
     nextRefreshIn: number;
+    cacheEfficiency: number;
+    totalCacheSize: number;
+    recommendations: string[];
 } {
     const now = Date.now();
+    
     const serverAge = serverCache ? now - serverCacheTimestamp : 0;
     const clientAge = clientCache ? now - clientCacheTimestamp : 0;
     const contributorsAge = contributorsCache ? now - contributorsCacheTimestamp : 0;
+    const partnersAge = partnersCache ? now - partnersCacheTimestamp : 0;
+    const platformsAge = platformsCache ? now - platformsCacheTimestamp : 0;
 
     let cacheHealth: 'healthy' | 'warning' | 'expired' = 'healthy';
+    const recommendations: string[] = [];
+    
     if (serverAge > SERVER_CACHE_DURATION || clientAge > CACHE_STRATEGIES.stats.duration) {
         cacheHealth = 'expired';
+        recommendations.push('Server or client cache has expired');
     } else if (shouldRefreshCache('stats', serverCacheTimestamp)) {
         cacheHealth = 'warning';
+        recommendations.push('Cache refresh recommended soon');
+    }
+    
+    if (contributorsAge > CACHE_STRATEGIES.contributors.duration) {
+        cacheHealth = 'expired';
+        recommendations.push('Contributors cache has expired');
+    }
+    
+    if (partnersAge > CACHE_STRATEGIES.partners.duration) {
+        cacheHealth = 'warning';
+        recommendations.push('Partners cache should be refreshed');
+    }
+    
+    if (platformsAge > CACHE_STRATEGIES.platforms.duration) {
+        cacheHealth = 'warning';
+        recommendations.push('Platforms cache should be refreshed');
     }
 
     const nextRefreshIn = Math.max(
         SERVER_CACHE_DURATION - serverAge,
         CACHE_STRATEGIES.stats.duration - clientAge,
+        CACHE_STRATEGIES.contributors.duration - contributorsAge,
+        CACHE_STRATEGIES.partners.duration - partnersAge,
+        CACHE_STRATEGIES.platforms.duration - platformsAge,
         0
     );
+
+    const totalPossibleAge = Math.max(
+        SERVER_CACHE_DURATION,
+        CACHE_STRATEGIES.stats.duration,
+        CACHE_STRATEGIES.contributors.duration,
+        CACHE_STRATEGIES.partners.duration,
+        CACHE_STRATEGIES.platforms.duration
+    );
+    
+    const averageAge = (serverAge + clientAge + contributorsAge + partnersAge + platformsAge) / 5;
+    const cacheEfficiency = Math.max(0, 100 - (averageAge / totalPossibleAge) * 100);
+
+    const totalCacheSize = [
+        serverCache ? JSON.stringify(serverCache).length : 0,
+        clientCache ? JSON.stringify(clientCache).length : 0,
+        contributorsCache ? JSON.stringify(contributorsCache).length : 0,
+        partnersCache ? JSON.stringify(partnersCache).length : 0,
+        platformsCache ? JSON.stringify(platformsCache).length : 0
+    ].reduce((sum, size) => sum + size, 0);
     
     return {
         serverCacheAge: serverAge,
         clientCacheAge: clientAge,
         contributorsCacheAge: contributorsAge,
+        partnersCacheAge: partnersAge,
+        platformsCacheAge: platformsAge,
         hasServerCache: !!serverCache,
         hasClientCache: !!clientCache,
         hasContributorsCache: !!contributorsCache,
+        hasPartnersCache: !!partnersCache,
+        hasPlatformsCache: !!platformsCache,
         cacheHealth,
-        nextRefreshIn
+        nextRefreshIn,
+        cacheEfficiency: Math.round(cacheEfficiency),
+        totalCacheSize,
+        recommendations
     };
 }
 
@@ -400,6 +474,7 @@ export function getCacheStatus(): {
 
 import { Octokit } from '@octokit/rest';
 import matter from 'gray-matter';
+import { Partner, Platform } from '@/components/admin/types';
 
 export const blogOctokit = new Octokit({
   auth: GITHUB_TOKEN,
