@@ -15,14 +15,17 @@ object LegacyFormatter : MessageFormatter {
         "§8» §7Powered by §b§lPoloCloud §8«\n"
 
     override fun formatMotdLineOne(): String =
-        "§b§lPoloCloud §8» §7Simple and lightweight §8- §f%version%"
+        "§b§lPoloCloud §8» §7github.polocloud.de"
 
     override fun formatMotdLineTwo(): String =
-        "§f§8» §7GitHub§8: §n§fgithub.polocloud.de"
+        "§7§lVersion §8§l» §f§l%version%"
 
     override fun formatMaintenanceMotdLineOne(): String =
-        "§b§lPoloCloud §8» §7Maintenance mode is currently enabled"
+        "§c§lPoloCloud §8» §7github.polocloud.de"
 
     override fun formatMaintenanceMotdLineTwo(): String =
-        "§8» §7GitHub§8: §n§fgithub.polocloud.de"
+        "§7§lMaintenance - Please try again later"
+
+    override fun formatMaintenancePingMessage(): String =
+        "§c§lMaintenance"
 }

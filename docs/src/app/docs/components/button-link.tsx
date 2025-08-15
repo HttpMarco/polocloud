@@ -4,11 +4,11 @@ import { buttonVariants } from "fumadocs-ui/components/ui/button";
 import { cn } from "fumadocs-ui/utils/cn";
 
 export default function ButtonLink({
-    icon,
-    text,
-    href,
-    className
-}: {
+                                       icon,
+                                       text,
+                                       href,
+                                       className
+                                   }: {
     icon?: React.ReactNode,
     text: string,
     href: string;
@@ -25,7 +25,7 @@ export default function ButtonLink({
                     }),
                 )}
             >
-               {icon} {text}
+                {icon} {text}
             </button>
         </a>
     );
