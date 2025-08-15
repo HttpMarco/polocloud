@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.platforms
 import dev.httpmarco.polocloud.common.os.currentOS
 
 
-enum class PlatformLanguage(private var fileSuffix: String?, private val nativeExecutable: Boolean) {
+enum class PlatformLanguage(private var fileSuffix: String?, val nativeExecutable: Boolean) {
 
     JAVA("jar", false),
     GO(null, true),

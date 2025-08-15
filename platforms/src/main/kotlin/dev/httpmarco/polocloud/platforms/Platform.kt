@@ -14,10 +14,13 @@ import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
+import kotlin.io.path.getPosixFilePermissions
 import kotlin.io.path.name
 import kotlin.io.path.notExists
+import kotlin.io.path.setPosixFilePermissions
 
 class Platform(
     val name: String,
@@ -85,6 +88,14 @@ class Platform(
             }
 
             preTasks().forEach { it.runTask(path.parent, environment) }
+
+            if (language.nativeExecutable && listOf(OS.LINUX, OS.MACOS).contains(currentOS)) {
+                val perms = downloadFile.toPath().getPosixFilePermissions().toMutableSet()
+                if (!perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
+                    perms.add(PosixFilePermission.OWNER_EXECUTE)
+                    downloadFile.toPath().setPosixFilePermissions(perms)
+                }
+            }
         }
 
         tasks().forEach { it.runTask(servicePath, environment) }
