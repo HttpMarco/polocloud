@@ -1,4 +1,4 @@
-org.jetbrains.kotlin;kotlin-stdlib;2.2.0;kotlin-stdlib-2.2.0.jar;https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.2.0/kotlin-stdlib-2.2.0.jar;65d12d85a3b865c160db9147851712a64b10dadd68b22eea22a95bf8a8670dca
+org.jetbrains.kotlin;kotlin-stdlib;2.2.10;kotlin-stdlib-2.2.10.jar;https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.2.10/kotlin-stdlib-2.2.10.jar;9c67cc79efd6b9215b49d2a4308f5f3433537376c7c88e89bdd6729bd096e61a
 io.grpc;grpc-services;1.74.0;grpc-services-1.74.0.jar;https://repo1.maven.org/maven2/io/grpc/grpc-services/1.74.0/grpc-services-1.74.0.jar;6bcbe483db7aa31aaa1621d95bfa7a07e9ed5ba44d2eb0903b63f5b4ad250862
 io.grpc;grpc-protobuf;1.74.0;grpc-protobuf-1.74.0.jar;https://repo1.maven.org/maven2/io/grpc/grpc-protobuf/1.74.0/grpc-protobuf-1.74.0.jar;08cc7cf406d027aebf2fcb464fa82f4387c8f3e96e96900257dfa251efcce4f4
 io.grpc;grpc-stub;1.74.0;grpc-stub-1.74.0.jar;https://repo1.maven.org/maven2/io/grpc/grpc-stub/1.74.0/grpc-stub-1.74.0.jar;5e5557b7d72a20f12e05b05ad1b4473efb3375daa36e5289a3954c200a67f284
