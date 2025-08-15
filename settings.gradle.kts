@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://maven.fabricmc.net/")
+    }
+}
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
@@ -16,6 +23,7 @@ include("updater")
 include("bridges:bridge-api")
 include("bridges:bridge-gate")
 include("bridges:bridge-velocity")
+include("bridges:bridge-fabric")
 include("bridges:bridge-bungeecord")
 include("shared")
 include("addons")
@@ -29,3 +37,6 @@ include("addons:signs:signs-java-abstraction")
 include("addons:signs:signs-bukkit")
 include("addons:signs:signs-fabric")
 include("addons:notify")
+include("bridges:bridge-fabric:v1_21_8")
+include("bridges:bridge-fabric:v1_21_5")
+include("bridges:bridge-waterdog")

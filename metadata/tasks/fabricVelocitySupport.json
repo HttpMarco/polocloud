@@ -1,0 +1,14 @@
+{
+  "name": "FABRIC_VELOCITY_SUPPORT_TASK",
+  "steps": [
+    {
+      "name": "Create velocity config",
+      "description": "Initializes the config file with default values.",
+      "filename": "fabric-bridge.json",
+      "action": {
+        "type": "PlatformFileWriteAction",
+        "content": "{\n  \"velocitySecret\": \"%velocityProxyToken%\"\n}"
+      }
+    }
+  ]
+}

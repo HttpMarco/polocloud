@@ -5,7 +5,7 @@ import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 
 interface RuntimeGroupStorage : SharedGroupProvider<AbstractGroup>{
 
-    fun update(group: AbstractGroup)
+    fun updateGroup(group: AbstractGroup)
 
     fun reload()
 
