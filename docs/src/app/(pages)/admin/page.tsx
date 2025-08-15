@@ -714,8 +714,8 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-primary mx-auto mb-3 sm:mb-4"></div>
+          <p className="text-sm sm:text-base text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -727,10 +727,9 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Grid Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] pointer-events-none"></div>
       
-      <div className="container mx-auto py-8 relative z-10">
+      <div className="container mx-auto py-6 sm:py-8 px-4 sm:px-6 relative z-10">
         <AdminHeader 
           auth={auth} 
           onLogout={handleLogout} 
