@@ -5,16 +5,19 @@ import dev.httpmarco.polocloud.common.os.OS
 import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
+import dev.httpmarco.polocloud.platforms.bridge.BridgeType
 import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidException
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 import dev.httpmarco.polocloud.v1.GroupType
 import java.lang.reflect.InvocationTargetException
 import java.net.URI
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
+import kotlin.io.path.name
 import kotlin.io.path.notExists
 
 class Platform(
@@ -90,12 +93,12 @@ class Platform(
         // copy the platform file to the service path
         copyDirectoryContent(path.parent, servicePath, StandardCopyOption.REPLACE_EXISTING)
 
-        /*println(bridge?.type)
+        println(bridge?.type)
         if (bridge == null) {
             return
         }
 
-        // on_promise situation -> copy files to the service path
+        //on_promise situation -> copy files to the service path
         if (bridge.type == BridgeType.ON_PREMISE) {
             val targetBridge = servicePath.resolve(bridgePath + "/" + bridge.path.name)
             targetBridge.parent.createDirectories()
@@ -103,20 +106,24 @@ class Platform(
             return
         }
 
-        if (bridge.type == BridgeType.OFF_PREMISE) {*/
-        try {
+        if (bridge.type == BridgeType.OFF_PREMISE) {
+            println("test")
+            try {
 
-            val bridgeClass = Class.forName("dev.httpmarco.polocloud.bridges.gate.GateBridge")
-            val path = Path.of("./")
-            val instance = bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java)
-                .newInstance(path, "gate-1", 8932)
-        } catch (e: InvocationTargetException) {
-            println(e.targetException)
-            (e.targetException as ExceptionInInitializerError).exception.stackTrace.forEach {
-                println("${it.className} ${it.fileName} ${it.lineNumber}")
+                val bridgeClass = Class.forName("dev.httpmarco.polocloud.bridges.gate.GateBridge")
+                val path = Path.of("./")
+                val instance = bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java)
+                    .newInstance(path, "gate-1", 8932)
+            } catch (e: Exception) {
+                println(e)
+                if (e is InvocationTargetException) {
+                    println(e.targetException)
+                    e.targetException.stackTrace.forEach {
+                        println("${it.className} ${it.fileName} ${it.lineNumber}")
+                    }
+                }
             }
         }
-        //}
     }
 
     fun version(version: String): PlatformVersion? {

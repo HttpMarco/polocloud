@@ -28,11 +28,10 @@ public final class Polocloud extends PolocloudShared {
     private final String serviceName;
 
     public static Polocloud instance() {
+        if (instance == null) {
+            new Polocloud();
+        }
         return instance;
-    }
-
-    static {
-        new Polocloud();
     }
 
     Polocloud() {
@@ -48,7 +47,7 @@ public final class Polocloud extends PolocloudShared {
                 .usePlaintext()
                 .build();
 
-        this.eventProvider = new EventProvider(channel);
+        this.eventProvider = new EventProvider(channel, this);
         this.serviceProvider = new ServiceProvider(channel);
         this.groupProvider = new GroupProvider(channel);
         this.playerProvider = new PlayerProvider(channel);
