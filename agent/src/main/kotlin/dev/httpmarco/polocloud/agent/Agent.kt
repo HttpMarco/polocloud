@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.agent.events.EventService
 import dev.httpmarco.polocloud.agent.grpc.GrpcServerEndpoint
 import dev.httpmarco.polocloud.agent.i18n.I18nPolocloudAgent
 import dev.httpmarco.polocloud.agent.logging.Logger
+import dev.httpmarco.polocloud.agent.module.ModuleProvider
 import dev.httpmarco.polocloud.agent.player.PlayerListener
 import dev.httpmarco.polocloud.agent.player.PlayerStorageImpl
 import dev.httpmarco.polocloud.agent.runtime.Runtime
@@ -31,6 +32,7 @@ object Agent : PolocloudShared() {
     val runtime: Runtime
     val eventService = EventService()
     val securityProvider = SecurityProvider()
+    val moduleProvider = ModuleProvider()
 
     lateinit var config: AgentConfig
 
@@ -71,6 +73,8 @@ object Agent : PolocloudShared() {
             exitPolocloud(cleanShutdown = true, shouldUpdate = true)
             return
         }
+
+        this.moduleProvider.loadModules()
 
         this.grpcServerEndpoint.connect(this.config.port)
 

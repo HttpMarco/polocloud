@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.agent.module
+package dev.httpmarco.polocloud.shared.module
 
 data class ModuleMetadata(
     val id: String,
