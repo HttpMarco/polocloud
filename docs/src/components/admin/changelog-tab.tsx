@@ -84,7 +84,6 @@ export function ChangelogTab() {
 
 
 
-
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'major': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
@@ -97,45 +96,47 @@ export function ChangelogTab() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center p-6 sm:p-8">
+        <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Changelog Management</h2>
-        <div className="flex gap-3">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
+        <h2 className="text-xl sm:text-2xl font-bold">Changelog Management</h2>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button
             onClick={() => router.push('/admin/changelog/create')}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
           >
-            <Plus className="w-4 h-4" />
-            Create New Entry
+            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Create New Entry</span>
+            <span className="sm:hidden">Create Entry</span>
           </button>
 
           <button
             onClick={fetchChangelog}
-            className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors text-sm"
           >
-            <GitBranch className="w-4 h-4" />
-            Refresh
+            <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Ref</span>
           </button>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {changelog.map((entry) => (
-          <div key={entry.slug} className="bg-card border rounded-lg p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-3">
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(entry.type)}`}>
+          <div key={entry.slug} className="bg-card border rounded-lg p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-0 mb-3 sm:mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(entry.type)}`}>
                   {entry.type.toUpperCase()}
                 </span>
-                <h3 className="text-xl font-semibold">{entry.version}</h3>
-                <h4 className="text-lg font-medium text-muted-foreground">{entry.title}</h4>
+                <h3 className="text-lg sm:text-xl font-semibold">{entry.version}</h3>
+                <h4 className="text-base sm:text-lg font-medium text-muted-foreground">{entry.title}</h4>
               </div>
               
               <div className="flex gap-2">
@@ -144,33 +145,33 @@ export function ChangelogTab() {
                   onClick={() => handleDelete(entry.slug)}
                   className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               </div>
             </div>
 
-            <p className="text-muted-foreground mb-4">{entry.description}</p>
+            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{entry.description}</p>
 
-            <div className="space-y-2 mb-4">
+            <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
               {entry.changes.map((change, index) => (
                 <div key={index} className="flex items-start gap-2">
                   <span className="text-primary mt-1">•</span>
-                  <span>{change}</span>
+                  <span className="text-sm sm:text-base">{change}</span>
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {new Date(entry.releaseDate).toLocaleDateString()}
               </div>
               <div className="flex items-center gap-1">
-                <User className="w-4 h-4" />
+                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {entry.author}
               </div>
               <div className="flex items-center gap-1">
-                <GitBranch className="w-4 h-4" />
+                <GitBranch className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {entry.slug}
               </div>
             </div>
@@ -178,16 +179,17 @@ export function ChangelogTab() {
         ))}
 
         {changelog.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            <GitBranch className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p className="text-lg">No changelog entries yet</p>
-            <p className="text-sm mb-4">Create your first changelog entry to get started</p>
+          <div className="text-center py-8 sm:py-12 text-muted-foreground">
+            <GitBranch className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+            <p className="text-base sm:text-lg">No changelog entries yet</p>
+            <p className="text-sm mb-3 sm:mb-4">Create your first changelog entry to get started</p>
             <button
               onClick={() => router.push('/admin/changelog/create')}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
             >
-              <Plus className="w-4 h-4" />
-              Create First Entry
+              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Create First Entry</span>
+              <span className="sm:hidden">Create Entry</span>
             </button>
           </div>
         )}

@@ -69,60 +69,63 @@ export function BlogTab() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center p-6 sm:p-8">
+        <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Blog Management</h2>
-        <div className="flex gap-3">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
+        <h2 className="text-xl sm:text-2xl font-bold">Blog Management</h2>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button
             onClick={() => router.push('/admin/blog/create')}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
           >
-            <Plus className="w-4 h-4" />
-            Create New Post
+            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Create New Post</span>
+            <span className="sm:hidden">Create Post</span>
           </button>
           <button
             onClick={loadPosts}
-            className="flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-border text-foreground rounded-lg hover:bg-muted transition-colors text-sm"
           >
-            <FileText className="w-4 h-4" />
-            Refresh
+            <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Ref</span>
           </button>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {posts.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p className="text-lg">No blog posts yet</p>
-            <p className="text-sm mb-4">Create your first blog post to get started</p>
+          <div className="text-center py-8 sm:py-12 text-muted-foreground">
+            <FileText className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 opacity-50" />
+            <p className="text-base sm:text-lg">No blog posts yet</p>
+            <p className="text-sm mb-3 sm:mb-4">Create your first blog post to get started</p>
             <button
               onClick={() => router.push('/admin/blog/create')}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
             >
-              <Plus className="w-4 h-4" />
-              Create First Post
+              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Create First Post</span>
+              <span className="sm:hidden">Create Post</span>
             </button>
           </div>
         ) : (
           posts.map((post) => (
-            <div key={post.slug} className="bg-card border rounded-lg p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center gap-3">
+            <div key={post.slug} className="bg-card border rounded-lg p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-0 mb-3 sm:mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                   {post.pinned && (
                     <div className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium">
                       <Sparkles className="w-3 h-3 inline mr-1" />
                       Pinned
                     </div>
                   )}
-                  <h3 className="text-xl font-semibold">{post.title}</h3>
+                  <h3 className="text-lg sm:text-xl font-semibold">{post.title}</h3>
                 </div>
                 
                 <div className="flex gap-2">
@@ -131,46 +134,46 @@ export function BlogTab() {
                     className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                     title="View post"
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                   <button
                     onClick={() => router.push(`/admin/blog/edit/${post.slug}`)}
                     className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
                     title="Edit post"
                   >
-                    <Edit className="w-4 h-4" />
+                    <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(post.slug)}
                     className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                     title="Delete post"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>
 
               {post.description && (
-                <p className="text-muted-foreground mb-4">{post.description}</p>
+                <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{post.description}</p>
               )}
 
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   {new Date(post.date).toLocaleDateString()}
                 </div>
                 <div className="flex items-center gap-1">
-                  <User className="w-4 h-4" />
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   {post.author}
                 </div>
                 <div className="flex items-center gap-1">
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   {post.wordCount} words
                 </div>
               </div>
 
               {post.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
