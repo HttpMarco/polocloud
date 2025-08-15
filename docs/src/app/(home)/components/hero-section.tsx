@@ -117,8 +117,8 @@ export function HeroSection() {
         <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 min-h-screen flex items-center justify-center">
             <HeroBackground />
 
-            <div className="relative container mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-20 z-10">
-                <div className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center transition-all duration-1000 ease-out ${
+            <div className="relative container mx-auto px-3 sm:px-4 md:px-6 py-8 sm:py-12 md:py-16 lg:py-20 z-10">
+                <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center transition-all duration-1000 ease-out ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
                     <div className="order-2 lg:order-1 text-center lg:text-left">
@@ -133,23 +133,25 @@ export function HeroSection() {
                         <HeroActions isVisible={isVisible} />
                     </div>
 
-                    <HeroTerminal
-                        showCommand={showCommand}
-                        showLogsPhase1={showLogsPhase1}
-                        showLogsPhase2={showLogsPhase2}
-                        showLogsPhase3={showLogsPhase3}
-                        typedText={typedText}
-                        currentIndex={currentIndex}
-                        commandText={commandText}
-                        latestVersion={latestVersion}
-                        terminalLinesPhase1={terminalLinesPhase1}
-                        terminalLinesPhase2={terminalLinesPhase2}
-                        terminalLinesPhase3={terminalLinesPhase3}
-                    />
+                    <div className="hidden lg:block order-1 lg:order-2">
+                        <HeroTerminal
+                            showCommand={showCommand}
+                            showLogsPhase1={showLogsPhase1}
+                            showLogsPhase2={showLogsPhase2}
+                            showLogsPhase3={showLogsPhase3}
+                            typedText={typedText}
+                            currentIndex={currentIndex}
+                            commandText={commandText}
+                            latestVersion={latestVersion}
+                            terminalLinesPhase1={terminalLinesPhase1}
+                            terminalLinesPhase2={terminalLinesPhase2}
+                            terminalLinesPhase3={terminalLinesPhase3}
+                        />
+                    </div>
                 </div>
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background via-background/95 via-background/80 to-transparent z-5" />
+            <div className="absolute bottom-0 left-0 right-0 h-32 sm:h-48 md:h-64 bg-gradient-to-t from-background via-background/95 via-background/80 to-transparent z-5" />
         </section>
     );
 } 

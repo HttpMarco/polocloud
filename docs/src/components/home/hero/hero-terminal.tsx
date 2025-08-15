@@ -57,9 +57,9 @@ export function HeroTerminal({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
         >
-            <div className="bg-[#282c34] rounded-lg shadow-2xl border border-border/50 overflow-hidden h-[20rem] sm:h-[24rem] lg:h-[26rem]">
-                <div className="bg-[#21252b] px-3 sm:px-4 py-3 flex items-center justify-between border-b border-border/30">
-                    <div className="flex items-center gap-2">
+            <div className="bg-[#282c34] rounded-lg shadow-2xl border border-border/50 overflow-hidden h-[16rem] sm:h-[20rem] md:h-[24rem] lg:h-[26rem]">
+                <div className="bg-[#21252b] px-2 sm:px-3 md:px-4 py-2 sm:py-3 flex items-center justify-between border-b border-border/30">
+                    <div className="flex items-center gap-1 sm:gap-2">
                         <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
                         <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
                         <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
@@ -67,12 +67,12 @@ export function HeroTerminal({
                     <div className="text-xs text-muted-foreground font-mono">
                         PoloCloud Terminal
                     </div>
-                    <div className="w-12 sm:w-16"></div>
+                    <div className="w-8 sm:w-12 md:w-16"></div>
                 </div>
 
-                <div className="p-3 sm:p-4 font-mono text-xs sm:text-sm">
+                <div className="p-2 sm:p-3 md:p-4 font-mono text-xs sm:text-sm">
                     {showCommand && (
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-1 sm:gap-2 mb-3 sm:mb-4">
                             <span className="text-cyan-400 font-mono text-xs sm:text-sm">/home/polocloud</span>
                             <span className="text-gray-400 font-mono text-xs sm:text-sm">$</span>
                             <span className="text-gray-300 font-mono text-xs sm:text-sm">

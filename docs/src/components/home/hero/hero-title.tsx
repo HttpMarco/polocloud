@@ -17,17 +17,17 @@ export function HeroTitle({ isVisible, latestVersion }: HeroTitleProps) {
                 <span className="text-xs sm:text-sm">{latestVersion}</span>
             </div>
 
-            <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black mb-6 sm:mb-8 text-foreground dark:text-white transition-all duration-1000 delay-200 tracking-tight leading-tight ${
+            <h1 className={`text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-black mb-4 sm:mb-6 md:mb-8 text-foreground dark:text-white transition-all duration-1000 delay-200 tracking-tight leading-tight ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
                 <TextGenerateEffect words="PoloCloud" />
             </h1>
 
-            <p className={`text-lg sm:text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-12 sm:mb-16 max-w-4xl mx-auto lg:mx-0 leading-relaxed font-light transition-all duration-1000 delay-400 ${
+            <p className={`text-xl sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-muted-foreground mb-8 sm:mb-12 md:mb-16 max-w-4xl mx-auto lg:mx-0 leading-relaxed font-light transition-all duration-1000 delay-400 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
                 Deploy and manage your Minecraft servers with ease.
-                <span className="block mt-2 text-base sm:text-lg md:text-xl lg:text-2xl font-normal">
+                <span className="block mt-2 text-lg sm:text-base md:text-lg lg:text-xl xl:text-2xl font-normal">
                     Built for performance, designed for simplicity.
                 </span>
             </p>
