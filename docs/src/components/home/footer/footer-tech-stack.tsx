@@ -4,12 +4,12 @@ import { Code } from 'lucide-react';
 
 export function FooterTechStack() {
     return (
-        <div className="flex flex-col gap-4 sm:col-span-2 lg:col-span-1">
-            <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+        <div className="flex flex-col gap-4 sm:col-span-2 lg:col-span-1 text-center sm:text-left">
+            <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center justify-center sm:justify-start gap-2">
                 <Code className="w-5 h-5 text-primary" />
                 Built with
             </h3>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center sm:justify-start gap-3">
                 <a 
                     href="https://nextjs.org" 
                     target="_blank" 

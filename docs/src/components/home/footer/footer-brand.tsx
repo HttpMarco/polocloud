@@ -6,7 +6,7 @@ import { Github, BookOpen } from 'lucide-react';
 
 export function FooterBrand() {
     return (
-        <div className="sm:col-span-2 lg:col-span-1 flex flex-col items-start gap-3">
+        <div className="sm:col-span-2 lg:col-span-1 flex flex-col items-center sm:items-start gap-4 sm:gap-3">
             <div className="flex items-center gap-3">
                 <Image
                     src="/logo.png"
@@ -17,7 +17,7 @@ export function FooterBrand() {
                 />
                 <span className="font-minecraft font-bold text-foreground dark:text-white text-lg">POLOCLOUD</span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
                 <a 
                     href="https://discord.com/invite/mQ39S2EWNV"
                     target="_blank" 

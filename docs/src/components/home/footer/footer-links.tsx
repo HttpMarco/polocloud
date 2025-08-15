@@ -32,7 +32,7 @@ export function FooterLinks() {
             <LinkComponent 
                 key={link.href}
                 {...props}
-                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center gap-2"
+                className="text-sm text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 font-minecraft flex items-center justify-center sm:justify-start gap-2"
             >
                 <link.icon className="w-4 h-4" />
                 {link.label}
@@ -42,8 +42,8 @@ export function FooterLinks() {
 
     return (
         <>
-            <div className="flex flex-col gap-4">
-                <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+            <div className="flex flex-col gap-4 text-center sm:text-left">
+                <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center justify-center sm:justify-start gap-2">
                     <Scale className="w-5 h-5 text-primary" />
                     Legal
                 </h3>
@@ -52,8 +52,8 @@ export function FooterLinks() {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-                <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+            <div className="flex flex-col gap-4 text-center sm:text-left">
+                <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center justify-center sm:justify-start gap-2">
                     <Code className="w-5 h-5 text-primary" />
                     Documentation
                 </h3>
@@ -62,8 +62,8 @@ export function FooterLinks() {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-                <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center gap-2">
+            <div className="flex flex-col gap-4 text-center sm:text-left">
+                <h3 className="font-minecraft font-bold text-foreground dark:text-white text-lg flex items-center justify-center sm:justify-start gap-2">
                     <Info className="w-5 h-5 text-primary" />
                     More
                 </h3>
