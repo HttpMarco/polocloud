@@ -6,7 +6,6 @@ import { CompatibilitySection } from './components/compatibility-section';
 import { ContributorsSection } from './components/contributors-section';
 import { PartnersSection } from './components/partners-section';
 import { FAQSection } from './components/faq-section';
-import { Footer } from './components/footer';
 import CommunityFeedbackSection from '@/components/sections/feedback-section';
 
 export default function HomePage() {
@@ -22,7 +21,6 @@ export default function HomePage() {
         <CommunityFeedbackSection />
       </Suspense>
       <FAQSection />
-      <Footer />
     </main>
   );
 }
