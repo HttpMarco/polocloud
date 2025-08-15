@@ -11,6 +11,7 @@ import {
   PlatformsTab, 
   ChangelogTab,
   BlogTab,
+  ImagesTab,
   LoginForm
 } from '@/components/admin';
 import { 
@@ -24,7 +25,8 @@ import {
   ActiveTab,
   EditPlatform,
   EditPartner,
-  ChangelogEntry
+  ChangelogEntry,
+  ImageFile
 } from '@/components/admin/types';
 import { BlogPostMetadata } from '@/lib/github';
 
@@ -56,6 +58,9 @@ export default function AdminPage() {
 
   const [blogPosts, setBlogPosts] = useState<BlogPostMetadata[]>([]);
   const [loadingBlog, setLoadingBlog] = useState(false);
+
+  const [images, setImages] = useState<ImageFile[]>([]);
+  const [loadingImages, setLoadingImages] = useState(false);
 
   const [activeTab, setActiveTab] = useState<ActiveTab>('feedback');
   const [newPartner, setNewPartner] = useState<NewPartner>({
@@ -620,6 +625,9 @@ export default function AdminPage() {
     setAdminUsers([]);
     setPartners([]);
     setPlatforms([]);
+    setChangelog([]);
+    setBlogPosts([]);
+    setImages([]);
     setEditingPlatform(null);
     setEditingPlatformId(null);
     setEditingPartner(null);
@@ -658,6 +666,25 @@ export default function AdminPage() {
     }
   };
 
+  const fetchImages = async () => {
+    setLoadingImages(true);
+    try {
+      console.log('🔄 Fetching images...');
+      const res = await fetch('/api/admin/images', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        console.log('✅ Images fetched:', data.images?.length || 0, 'images');
+        setImages(data.images || []);
+      } else {
+        console.error('❌ Failed to fetch images:', res.status, res.statusText);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching images:', error);
+    } finally {
+      setLoadingImages(false);
+    }
+  };
+
   useEffect(() => {
     fetchMe();
 
@@ -689,6 +716,7 @@ export default function AdminPage() {
       fetchPlatforms();
       fetchChangelog();
       fetchBlogPosts();
+      fetchImages();
     }
   }, [auth?.authenticated]);
 
@@ -745,6 +773,7 @@ export default function AdminPage() {
           platformsCount={platforms.length}
           changelogCount={changelog.length}
           blogCount={blogPosts.length}
+          imagesCount={images.length}
           isSuperAdmin={isSuperAdmin}
         />
 
@@ -820,6 +849,14 @@ export default function AdminPage() {
 
         {activeTab === 'blog' && (
           <BlogTab />
+        )}
+
+        {activeTab === 'images' && (
+          <ImagesTab
+            images={images}
+            loadingImages={loadingImages}
+            onRefresh={fetchImages}
+          />
         )}
       </div>
       

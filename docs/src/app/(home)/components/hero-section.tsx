@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { GitHubStatsComponent } from './github-stats';
 import { 
     HeroTitle, 
@@ -19,11 +19,6 @@ export function HeroSection() {
     const [typedText, setTypedText] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
     const [latestVersion, setLatestVersion] = useState('v3.0.0-pre.4-SNAPSHOT');
-    const [statsVisible, setStatsVisible] = useState(false);
-    const [terminalVisible, setTerminalVisible] = useState(false);
-    
-    const sectionRef = useRef<HTMLElement>(null);
-    const statsRef = useRef<HTMLDivElement>(null);
 
     const commandText = "java -jar polocloud-launcher.jar";
 
@@ -48,49 +43,20 @@ export function HeroSection() {
         { time: "16:42:30", level: "INFO", message: "The service lobby-1 is now online.", color: "text-gray-300", highlight: "lobby-1", highlightColor: "text-cyan-400" }
     ];
 
-    const observerCallback = useCallback((entries: IntersectionObserverEntry[]) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-            setIsVisible(true);
-
-            setTimeout(() => setStatsVisible(true), 800);
-            
-            setTimeout(() => setTerminalVisible(true), 1200);
-        }
-    }, []);
-
     useEffect(() => {
-        const observer = new IntersectionObserver(observerCallback, {
-            threshold: 0.1,
-            rootMargin: '100px'
-        });
-
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
-        }
-
-        return () => observer.disconnect();
-    }, [observerCallback]);
-
-    useEffect(() => {
-        if (!isVisible) return;
-
         const timer = setTimeout(() => {
             setIsVisible(true);
         }, 100);
-
-        return () => clearTimeout(timer);
-    }, [isVisible]);
-
-    useEffect(() => {
-        if (!isVisible) return;
 
         const commandTimer = setTimeout(() => {
             setShowCommand(true);
         }, 1500);
 
-        return () => clearTimeout(commandTimer);
-    }, [isVisible]);
+        return () => {
+            clearTimeout(timer);
+            clearTimeout(commandTimer);
+        };
+    }, []);
 
     useEffect(() => {
         const fetchLatestVersion = async () => {
@@ -111,10 +77,8 @@ export function HeroSection() {
             }
         };
 
-        if (isVisible) {
-            fetchLatestVersion();
-        }
-    }, [isVisible]);
+        fetchLatestVersion();
+    }, []);
 
     useEffect(() => {
         if (showCommand && currentIndex < commandText.length) {
@@ -150,10 +114,7 @@ export function HeroSection() {
     }, [showLogsPhase2]);
 
     return (
-        <section 
-            ref={sectionRef}
-            className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 min-h-screen flex items-center justify-center"
-        >
+        <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 min-h-screen flex items-center justify-center">
             <HeroBackground />
 
             <div className="relative container mx-auto px-3 sm:px-4 md:px-6 py-8 sm:py-12 md:py-16 lg:py-20 z-10">
@@ -163,12 +124,9 @@ export function HeroSection() {
                     <div className="order-2 lg:order-1 text-center lg:text-left">
                         <HeroTitle isVisible={isVisible} latestVersion={latestVersion} />
 
-                        <div 
-                            ref={statsRef}
-                            className={`transition-all duration-1000 delay-600 ${
-                                statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                            }`}
-                        >
+                        <div className={`transition-all duration-1000 delay-600 ${
+                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                        }`}>
                             <GitHubStatsComponent />
                         </div>
 
@@ -176,21 +134,19 @@ export function HeroSection() {
                     </div>
 
                     <div className="hidden lg:block order-1 lg:order-2">
-                        {terminalVisible && (
-                            <HeroTerminal
-                                showCommand={showCommand}
-                                showLogsPhase1={showLogsPhase1}
-                                showLogsPhase2={showLogsPhase2}
-                                showLogsPhase3={showLogsPhase3}
-                                typedText={typedText}
-                                currentIndex={currentIndex}
-                                commandText={commandText}
-                                latestVersion={latestVersion}
-                                terminalLinesPhase1={terminalLinesPhase1}
-                                terminalLinesPhase2={terminalLinesPhase2}
-                                terminalLinesPhase3={terminalLinesPhase3}
-                            />
-                        )}
+                        <HeroTerminal
+                            showCommand={showCommand}
+                            showLogsPhase1={showLogsPhase1}
+                            showLogsPhase2={showLogsPhase2}
+                            showLogsPhase3={showLogsPhase3}
+                            typedText={typedText}
+                            currentIndex={currentIndex}
+                            commandText={commandText}
+                            latestVersion={latestVersion}
+                            terminalLinesPhase1={terminalLinesPhase1}
+                            terminalLinesPhase2={terminalLinesPhase2}
+                            terminalLinesPhase3={terminalLinesPhase3}
+                        />
                     </div>
                 </div>
             </div>
