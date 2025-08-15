@@ -9,7 +9,6 @@ export function FooterTechStack() {
                 <Code className="w-5 h-5 text-primary" />
                 Built with
             </h3>
-
             <div className="flex items-center justify-center sm:justify-start gap-3">
                 <a 
                     href="https://nextjs.org" 
@@ -42,42 +41,6 @@ export function FooterTechStack() {
                 >
                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
-                </a>
-            </div>
-
-            <div className="flex items-center justify-center sm:justify-start gap-3">
-                <a 
-                    href="https://www.framer.com/motion/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 transform p-2 rounded-lg border border-border/30 dark:border-white/10 hover:border-border/50 dark:hover:border-white/20"
-                    title="Framer Motion"
-                >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1-6v2h2v-2h1a2.5 2.5 0 1 0 0-5h-4a.5.5 0 1 1 0-1h5a2.5 2.5 0 0 1 0 5h-1v-2h-2v2h-1a.5.5 0 1 1 0 1h1zm-6-4a2.5 2.5 0 1 0 0-5H4v2h2v2h1a.5.5 0 1 1 0 1H6v2h2v2H4v2h4a2.5 2.5 0 0 0 0-5H6v-2h1z"/>
-                    </svg>
-                </a>
-                <a 
-                    href="https://ui.shadcn.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 transform p-2 rounded-lg border border-border/30 dark:border-white/10 hover:border-border/50 dark:hover:border-white/20"
-                    title="Shadcn/ui"
-                >
-                    <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="m19.01 11.55-7.46 7.46c-.46.46-.46 1.19 0 1.65a1.16 1.16 0 0 0 1.64 0l7.46-7.46c.46-.46.46-1.19 0-1.65s-1.19-.46-1.65 0ZM19.17 3.34c-.46-.46-1.19-.46-1.65 0L3.34 17.52c-.46.46-.46 1.19 0 1.65a1.16 1.16 0 0 0 1.64 0L19.16 4.99c.46-.46.46-1.19 0-1.65Z"/>
-                    </svg>
-                </a>
-                <a 
-                    href="https://vercel.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 transform p-2 rounded-lg border border-border/30 dark:border-white/10 hover:border-border/50 dark:hover:border-white/20"
-                    title="Vercel"
-                >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M24 22.525H0l12-21.05 12 21.05z"/>
                     </svg>
                 </a>
             </div>
