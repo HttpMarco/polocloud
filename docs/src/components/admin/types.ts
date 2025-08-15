@@ -99,7 +99,7 @@ export type EditPlatform = {
   };
 };
 
-export type ActiveTab = 'feedback' | 'users' | 'partners' | 'platforms' | 'changelog' | 'blog';
+export type ActiveTab = 'feedback' | 'users' | 'partners' | 'platforms' | 'changelog' | 'blog' | 'images';
 
 export type ChangelogEntry = {
   slug: string;
@@ -129,4 +129,21 @@ export type EditChangelogEntry = {
   changes: string[];
   type: 'major' | 'minor' | 'patch' | 'hotfix';
   releaseDate: string;
+};
+
+export type ImageFile = {
+  id: string;
+  name: string;
+  url: string;
+  blobId: string;
+  size: number;
+  type: string;
+  uploadedAt: string;
+  uploadedBy: string;
+  category?: 'general' | 'partners' | 'platforms' | 'blog' | 'changelog';
+};
+
+export type NewImageFile = {
+  file: File | null;
+  category?: 'general' | 'partners' | 'platforms' | 'blog' | 'changelog';
 };

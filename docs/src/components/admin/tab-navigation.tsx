@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, Users, Handshake, Server, FileText, GitBranch } from 'lucide-react';
+import { Star, Users, Handshake, Server, FileText, GitBranch, Image } from 'lucide-react';
 import { ActiveTab } from './types';
 
 interface TabNavigationProps {
@@ -12,6 +12,7 @@ interface TabNavigationProps {
   platformsCount: number;
   changelogCount: number;
   blogCount: number;
+  imagesCount: number;
   isSuperAdmin: boolean;
 }
 
@@ -24,6 +25,7 @@ export function TabNavigation({
   platformsCount, 
   changelogCount,
   blogCount,
+  imagesCount,
   isSuperAdmin 
 }: TabNavigationProps) {
   return (
@@ -105,6 +107,18 @@ export function TabNavigation({
         <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         <span className="hidden sm:inline">Blog ({blogCount})</span>
         <span className="sm:hidden">Blog ({blogCount})</span>
+      </button>
+      <button
+        onClick={() => onTabChange('images')}
+        className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-xs sm:text-sm ${
+          activeTab === 'images'
+            ? 'bg-primary text-primary-foreground shadow-lg'
+            : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+        }`}
+      >
+        <Image className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        <span className="hidden sm:inline">Images ({imagesCount})</span>
+        <span className="sm:hidden">Img ({imagesCount})</span>
       </button>
     </div>
   );
