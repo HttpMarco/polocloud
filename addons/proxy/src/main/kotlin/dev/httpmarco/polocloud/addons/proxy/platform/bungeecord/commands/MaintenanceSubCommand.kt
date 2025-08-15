@@ -46,6 +46,7 @@ class MaintenanceSubCommand(
                 }
                 properties.put("maintenance", JsonPrimitive(true))
                 group.properties = properties
+                Polocloud.instance().groupProvider().update(group)
 
                 sender.sendMessage(TextComponent(config.prefix() + config.messages("maintenance_enabled")))
 

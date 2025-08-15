@@ -50,6 +50,10 @@ class ProxyAddon(dataFolder: File, minimessage: Boolean) {
             config.maintenanceMotd.lineTwo = formatter.formatMaintenanceMotdLineTwo()
         }
 
+        if(config.maintenanceMotd.pingMessage.isEmpty()) {
+            config.maintenanceMotd.pingMessage = formatter.formatMaintenancePingMessage()
+        }
+
         this.configFactory.save()
     }
 }
