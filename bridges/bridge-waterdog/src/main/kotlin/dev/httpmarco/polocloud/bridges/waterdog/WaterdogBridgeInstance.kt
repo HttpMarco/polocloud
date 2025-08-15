@@ -13,9 +13,9 @@ import dev.waterdog.waterdogpe.network.serverinfo.BedrockServerInfo
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo
 import java.net.InetSocketAddress
 
-class WaterdogBridgeInstance : BridgeInstance<ServerInfo>() {
+class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
 
-    val registeredFallbacks = ArrayList<ServerInfo>()
+    val registeredFallbacks = ArrayList<BedrockServerInfo>()
 
     init {
         registerEvents()
@@ -26,7 +26,7 @@ class WaterdogBridgeInstance : BridgeInstance<ServerInfo>() {
         name: String,
         hostname: String,
         port: Int
-    ): ServerInfo {
+    ): BedrockServerInfo {
         val serverInfo = BedrockServerInfo(name, InetSocketAddress(hostname, port), null)
         ProxyServer.getInstance().registerServerInfo(serverInfo)
 
@@ -34,7 +34,7 @@ class WaterdogBridgeInstance : BridgeInstance<ServerInfo>() {
     }
 
     override fun registerService(
-        identifier: ServerInfo,
+        identifier: BedrockServerInfo,
         fallback: Boolean
     ) {
         ProxyServer.getInstance().registerServerInfo(identifier)
@@ -44,13 +44,13 @@ class WaterdogBridgeInstance : BridgeInstance<ServerInfo>() {
         }
     }
 
-    override fun unregisterService(identifier: ServerInfo) {
+    override fun unregisterService(identifier: BedrockServerInfo) {
         ProxyServer.getInstance().removeServerInfo(identifier.serverName)
         registeredFallbacks.remove(identifier)
     }
 
-    override fun findInfo(name: String): ServerInfo? {
-        return ProxyServer.getInstance().getServerInfo(name)
+    override fun findInfo(name: String): BedrockServerInfo? {
+        return ProxyServer.getInstance().getServerInfo(name) as BedrockServerInfo?
     }
 
     private fun registerEvents() {

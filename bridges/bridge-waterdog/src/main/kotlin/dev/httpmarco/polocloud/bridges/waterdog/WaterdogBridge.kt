@@ -9,6 +9,7 @@ class WaterdogBridge : Plugin() {
         for (info in ProxyServer.getInstance().servers) {
             ProxyServer.getInstance().removeServerInfo(info.serverName)
         }
+
         val bridgeInstance = WaterdogBridgeInstance()
         ProxyServer.getInstance().reconnectHandler = WaterdogReconnectHandler(bridgeInstance)
     }
