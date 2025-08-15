@@ -25,33 +25,34 @@ export function ImprintContent() {
     }, []);
 
     return (
-        <section ref={contentRef} className="relative py-12 overflow-hidden">
+        <section ref={contentRef} className="relative py-8 sm:py-12 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/5 to-muted/5" />
 
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-            <div className="relative container mx-auto px-6">
-                <div className={`mb-8 transition-all duration-1000 ease-out ${
+            <div className="relative container mx-auto px-4 sm:px-6">
+                <div className={`mb-6 sm:mb-8 transition-all duration-1000 ease-out ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                        className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        Back to Home
+                        <span className="hidden sm:inline">Back to Home</span>
+                        <span className="sm:hidden">Back</span>
                     </Link>
                 </div>
 
-                <div className={`text-center mb-16 transition-all duration-1000 ease-out ${
+                <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ease-out ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
-                    <h1 className={`text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
+                    <h1 className={`text-2xl sm:text-3xl md:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
                         Imprint
                     </h1>
-                    <p className={`text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
+                    <p className={`text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4 sm:px-0 transition-all duration-1000 delay-400 ${
                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
                         Legal information and contact details for PoloCloud
@@ -61,13 +62,13 @@ export function ImprintContent() {
                 <div className={`max-w-4xl mx-auto transition-all duration-1000 delay-600 ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                 }`}>
-                    <div className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-2xl p-8 shadow-lg">
-                        <div className="space-y-8">
+                    <div className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg">
+                        <div className="space-y-6 sm:space-y-8">
                             <div>
-                                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">
+                                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4">
                                     Company Information
                                 </h2>
-                                <div className="space-y-3 text-muted-foreground dark:text-white/60">
+                                <div className="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground dark:text-white/60">
                                     <p><strong className="text-foreground dark:text-white">Developer:</strong> Mirco Lindenau</p>
                                     <p><strong className="text-foreground dark:text-white">c/o:</strong> MDC Management#2167</p>
                                     <p><strong className="text-foreground dark:text-white">Address:</strong> Welserstraße 3</p>
@@ -76,10 +77,10 @@ export function ImprintContent() {
                             </div>
 
                             <div>
-                                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">
+                                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4">
                                     Legal Notice
                                 </h2>
-                                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                                     <p>
                                         <strong className="text-foreground dark:text-white">Content Liability</strong><br />
                                         The contents of our pages have been created with the utmost care. However, we cannot
@@ -99,10 +100,10 @@ export function ImprintContent() {
                             </div>
 
                             <div>
-                                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">
+                                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4">
                                     Privacy Policy
                                 </h2>
-                                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                                     <p>
                                         <strong className="text-foreground dark:text-white">Data Protection Declaration</strong><br />
                                         The use of our website is generally possible without providing personal data.
@@ -118,10 +119,10 @@ export function ImprintContent() {
                             </div>
 
                             <div>
-                                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">
+                                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4">
                                     Contact Information
                                 </h2>
-                                <div className="space-y-3 text-muted-foreground dark:text-white/60">
+                                <div className="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground dark:text-white/60">
                                     <p><strong className="text-foreground dark:text-white">Developer:</strong> Mirco Lindenau</p>
                                     <p><strong className="text-foreground dark:text-white">Address:</strong> Welserstraße 3, 87463 Dietmannsried</p>
                                     <p><strong className="text-foreground dark:text-white">c/o:</strong> MDC Management#2167</p>

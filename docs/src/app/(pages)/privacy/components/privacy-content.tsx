@@ -25,33 +25,34 @@ export function PrivacyContent() {
   }, []);
 
   return (
-    <section ref={contentRef} className="relative py-12 overflow-hidden">
+    <section ref={contentRef} className="relative py-8 sm:py-12 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/5 to-muted/5" />
 
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-      <div className="relative container mx-auto px-6">
-        <div className={`mb-8 transition-all duration-1000 ease-out ${
+      <div className="relative container mx-auto px-4 sm:px-6">
+        <div className={`mb-6 sm:mb-8 transition-all duration-1000 ease-out ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
           <Link 
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Home
+            <span className="hidden sm:inline">Back to Home</span>
+            <span className="sm:hidden">Back</span>
           </Link>
         </div>
 
-        <div className={`text-center mb-16 transition-all duration-1000 ease-out ${
+        <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ease-out ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <h1 className={`text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
+          <h1 className={`text-2xl sm:text-3xl md:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
             Privacy Policy
           </h1>
-          <p className={`text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
+          <p className={`text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4 sm:px-0 transition-all duration-1000 delay-400 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
             How we collect, use, and protect your personal information
@@ -61,14 +62,14 @@ export function PrivacyContent() {
         <div className={`max-w-4xl mx-auto transition-all duration-1000 delay-600 ${
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <div className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-2xl p-8 shadow-lg">
-            <div className="space-y-8">
+          <div className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg">
+            <div className="space-y-6 sm:space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4 flex items-center gap-3">
-                  <Shield className="w-6 h-6 text-blue-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+                  <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
                   Introduction
                 </h2>
-                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                   <p>
                     At PoloCloud, we take your privacy seriously. This Privacy Policy explains how we collect, 
                     use, disclose, and safeguard your information when you use our Minecraft server management 
@@ -83,11 +84,11 @@ export function PrivacyContent() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4 flex items-center gap-3">
-                  <Database className="w-6 h-6 text-green-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+                  <Database className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
                   Information We Collect
                 </h2>
-                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                   <p>
                     <strong className="text-foreground dark:text-white">Personal Information:</strong> 
                     We may collect personal information such as your name, email address, and Discord username 
@@ -107,13 +108,13 @@ export function PrivacyContent() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4 flex items-center gap-3">
-                  <Eye className="w-6 h-6 text-purple-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+                  <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" />
                   How We Use Your Information
                 </h2>
-                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                   <p>We use the collected information for various purposes:</p>
-                  <ul className="list-disc list-inside space-y-2 ml-4">
+                  <ul className="list-disc list-inside space-y-1.5 sm:space-y-2 ml-3 sm:ml-4">
                     <li>To provide and maintain our services</li>
                     <li>To notify you about changes to our services</li>
                     <li>To provide customer support and respond to inquiries</li>
@@ -125,16 +126,16 @@ export function PrivacyContent() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4 flex items-center gap-3">
-                  <Lock className="w-6 h-6 text-red-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
+                  <Lock className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" />
                   Data Protection
                 </h2>
-                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                   <p>
                     We implement appropriate security measures to protect your personal information against 
                     unauthorized access, alteration, disclosure, or destruction. These measures include:
                   </p>
-                  <ul className="list-disc list-inside space-y-2 ml-4">
+                  <ul className="list-disc list-inside space-y-1.5 sm:space-y-2 ml-3 sm:ml-4">
                     <li>Encryption of data in transit and at rest</li>
                     <li>Regular security assessments and updates</li>
                     <li>Access controls and authentication mechanisms</li>
@@ -149,10 +150,10 @@ export function PrivacyContent() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4">
                   Third-Party Services
                 </h2>
-                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                   <p>
                     Our services may contain links to third-party websites or services that are not owned or 
                     controlled by PoloCloud. We have no control over and assume no responsibility for the 
@@ -166,10 +167,10 @@ export function PrivacyContent() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4">
                   Changes to This Policy
                 </h2>
-                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                   <p>
                     We may update our Privacy Policy from time to time. We will notify you of any changes by 
                     posting the new Privacy Policy on this page and updating the &ldquo;Last updated&rdquo; date.
@@ -182,14 +183,14 @@ export function PrivacyContent() {
               </div>
 
               <div>
-                <h2 className="text-2xl font-bold text-foreground dark:text-white mb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground dark:text-white mb-3 sm:mb-4">
                   Contact Us
                 </h2>
-                <div className="space-y-4 text-muted-foreground dark:text-white/60 leading-relaxed">
+                <div className="space-y-3 sm:space-y-4 text-sm sm:text-base text-muted-foreground dark:text-white/60 leading-relaxed">
                   <p>
                     If you have any questions about this Privacy Policy, please contact us:
                   </p>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5 sm:space-y-2">
                     <p><strong className="text-foreground dark:text-white">Email:</strong> privacy@polocloud.de</p>
                     <p><strong className="text-foreground dark:text-white">Discord:</strong> discord.polocloud.de</p>
                     <p><strong className="text-foreground dark:text-white">Last Updated:</strong> January 2025</p>
