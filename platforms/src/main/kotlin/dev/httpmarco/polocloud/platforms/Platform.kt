@@ -10,7 +10,6 @@ import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidExcept
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
 import dev.httpmarco.polocloud.v1.GroupType
-import java.lang.reflect.InvocationTargetException
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
@@ -93,7 +92,6 @@ class Platform(
         // copy the platform file to the service path
         copyDirectoryContent(path.parent, servicePath, StandardCopyOption.REPLACE_EXISTING)
 
-        println(bridge?.type)
         if (bridge == null) {
             return
         }
@@ -107,22 +105,13 @@ class Platform(
         }
 
         if (bridge.type == BridgeType.OFF_PREMISE) {
-            println("test")
-            try {
-
-                val bridgeClass = Class.forName("dev.httpmarco.polocloud.bridges.gate.GateBridge")
-                val path = Path.of("./")
-                val instance = bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java)
-                    .newInstance(path, "gate-1", 8932)
-            } catch (e: Exception) {
-                println(e)
-                if (e is InvocationTargetException) {
-                    println(e.targetException)
-                    e.targetException.stackTrace.forEach {
-                        println("${it.className} ${it.fileName} ${it.lineNumber}")
-                    }
-                }
-            }
+            val bridgeClass = Class.forName(bridge.bridgeClass)
+            bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java)
+                .newInstance(
+                    servicePath,
+                    environment.getStringParameter("service-name"),
+                    environment.getIntParameter("agent_port")
+                )
         }
     }
 

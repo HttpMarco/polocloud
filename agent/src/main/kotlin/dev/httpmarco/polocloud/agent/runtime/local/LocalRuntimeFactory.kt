@@ -54,15 +54,16 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
       //  environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
-        environment.addParameter("agent_port", Agent.config.port.toString())
+        environment.addParameter("agent_port", Agent.config.port)
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
         environment.addParameter("file_suffix", platform.language.suffix())
 
         // find a better way here
+        val velocityPlatforms = listOf("velocity", "gate")
         environment.addParameter(
             "velocity_use",
-            Agent.runtime.groupStorage().findAll().stream().anyMatch { it -> it.platform().name == "velocity" })
+            Agent.runtime.groupStorage().findAll().stream().anyMatch { it -> velocityPlatforms.contains(it.platform().name) })
         environment.addParameter("version", polocloudVersion())
 
         // copy all templates to the service path

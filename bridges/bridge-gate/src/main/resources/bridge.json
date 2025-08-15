@@ -1,0 +1,5 @@
+{
+  "name": "gate-bridge",
+  "type": "OFF_PREMISE",
+  "bridgeClass": "dev.httpmarco.polocloud.bridges.gate.GateBridge"
+}
