@@ -17,7 +17,14 @@ abstract class PolocloudShared {
 
     abstract fun playerProvider(): SharedPlayerProvider<*>
 
+    /**
+     * Specifies if lateinit variable <c>polocloudShared</c> should be set
+     */
+    abstract val setShared: Boolean
+
     init {
-        polocloudShared = this
+        if (setShared) {
+            polocloudShared = this
+        }
     }
 }
