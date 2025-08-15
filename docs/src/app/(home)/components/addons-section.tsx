@@ -34,9 +34,9 @@ export function AddonsSection() {
     }, []);
 
     return (
-        <section className="relative py-32 overflow-hidden">
+        <section className="relative py-16 sm:py-20 md:py-24 lg:py-32 overflow-hidden">
             <motion.div
-                className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-background via-background/95 via-background/80 to-transparent"
+                className="absolute top-0 left-0 right-0 h-32 sm:h-48 md:h-64 bg-gradient-to-b from-background via-background/95 via-background/80 to-transparent"
                 initial={{ opacity: 0, scaleY: 0 }}
                 whileInView={{ opacity: 1, scaleY: 1 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -60,7 +60,7 @@ export function AddonsSection() {
             />
 
             <motion.div
-                className="absolute top-20 left-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl"
+                className="absolute top-10 sm:top-20 left-5 sm:left-10 w-16 h-16 sm:w-32 sm:h-32 bg-primary/5 rounded-full blur-3xl"
                 initial={{ opacity: 0, scale: 0, rotate: 180, x: -100 }}
                 whileInView={{ opacity: 1, scale: 1, rotate: 0, x: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -78,7 +78,7 @@ export function AddonsSection() {
                 }}
             />
             <motion.div
-                className="absolute bottom-20 right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl"
+                className="absolute bottom-10 sm:bottom-20 right-5 sm:right-10 w-20 h-20 sm:w-40 sm:h-40 bg-primary/5 rounded-full blur-3xl"
                 initial={{ opacity: 0, scale: 0, rotate: -180, x: 100 }}
                 whileInView={{ opacity: 1, scale: 1, rotate: 0, x: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -97,7 +97,7 @@ export function AddonsSection() {
             />
 
             <motion.div
-                className="absolute top-1/3 right-1/4 w-24 h-24 bg-primary/3 rounded-full blur-2xl"
+                className="absolute top-1/3 right-1/4 w-12 h-12 sm:w-24 sm:h-24 bg-primary/3 rounded-full blur-2xl"
                 initial={{ opacity: 0, scale: 0 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -113,7 +113,7 @@ export function AddonsSection() {
                 }}
             />
 
-            <div className="relative container mx-auto px-6">
+            <div className="relative container mx-auto px-3 sm:px-4 md:px-6">
                 <AddonsHeader />
                 <AddonsList projects={organization?.projects || []} loading={loading} />
                 <AddonsCTA />
