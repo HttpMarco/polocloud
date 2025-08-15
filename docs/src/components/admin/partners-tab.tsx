@@ -38,37 +38,40 @@ export function PartnersTab({
   const isEditing = !!editingPartner;
 
   return (
-    <div className="mb-6 p-6 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/5 border border-green-500/20 rounded-xl">
-      <div className="flex items-center gap-3 mb-4">
-        <Handshake className="w-5 h-5 text-green-500" />
-        <h3 className="text-lg font-semibold text-foreground">Partner Management</h3>
+    <div className="mb-4 sm:mb-6 p-4 sm:p-6 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/5 border border-green-500/20 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Handshake className="w-5 h-5 text-green-500" />
+          <h3 className="text-base sm:text-lg font-semibold text-foreground">Partner Management</h3>
+        </div>
         <button
           onClick={onRefresh}
-          className="ml-auto inline-flex items-center gap-2 px-3 py-1 bg-green-600/10 text-green-600 rounded-lg hover:bg-green-600/20 text-sm transition-all duration-300"
+          className="sm:ml-auto inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-green-600/10 text-green-600 rounded-lg hover:bg-green-600/20 text-xs sm:text-sm transition-all duration-300"
         >
-          <RefreshCcw className="w-4 h-4" />
-          Refresh
+          <RefreshCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Refresh</span>
+          <span className="sm:hidden">Ref</span>
         </button>
       </div>
 
-      <div className="mb-6 p-4 bg-background/30 rounded-lg border border-border/30">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium text-foreground">
+      <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-background/30 rounded-lg border border-border/30">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
+          <h4 className="font-medium text-foreground text-sm sm:text-base">
             {isEditing ? `Edit Partner: ${editingPartner?.name}` : 'Add New Partner'}
           </h4>
           {isEditing && (
             <button
               onClick={onCancelEditPartner}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300"
+              className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300 text-sm"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Cancel
             </button>
           )}
         </div>
-        <div className="grid md:grid-cols-2 gap-4 mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Partner Name *</label>
+            <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">Partner Name *</label>
             <input
               type="text"
               value={currentPartner.name}
@@ -80,11 +83,11 @@ export function PartnersTab({
                 }
               }}
               placeholder="e.g. HGLabor"
-              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm sm:text-base"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Logo Upload *</label>
+            <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">Logo Upload *</label>
             <div className="space-y-2">
               <input
                 type="file"
@@ -119,7 +122,7 @@ export function PartnersTab({
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Website URL</label>
+            <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">Website URL</label>
             <input
               type="url"
               value={currentPartner.website}
@@ -131,11 +134,11 @@ export function PartnersTab({
                 }
               }}
               placeholder="https://partner-website.com"
-              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm sm:text-base"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Description</label>
+            <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">Description</label>
             <input
               type="text"
               value={currentPartner.description}
@@ -147,60 +150,62 @@ export function PartnersTab({
                 }
               }}
               placeholder="Brief description of the partner"
-              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500/50 text-sm sm:text-base"
             />
           </div>
         </div>
         <button
           onClick={isEditing ? onUpdatePartner : onAddPartner}
           disabled={addingPartner || !currentPartner.name.trim() || (!currentPartner.logo.trim() && !currentPartner.logoFile)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-sm"
         >
           {addingPartner ? (
             <>
-              <RefreshCcw className="w-4 h-4 animate-spin" />
-              {isEditing ? 'Updating...' : 'Adding...'}
+              <RefreshCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+              <span className="hidden sm:inline">{isEditing ? 'Updating...' : 'Adding...'}</span>
+              <span className="sm:hidden">{isEditing ? 'Update...' : 'Add...'}</span>
             </>
           ) : (
             <>
-              {isEditing ? <Save className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-              {isEditing ? 'Update Partner' : 'Add Partner'}
+              {isEditing ? <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+              <span className="hidden sm:inline">{isEditing ? 'Update Partner' : 'Add Partner'}</span>
+              <span className="sm:hidden">{isEditing ? 'Update' : 'Add'}</span>
             </>
           )}
         </button>
       </div>
 
       {loadingPartners ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <RefreshCcw className="w-8 h-8 animate-spin mx-auto mb-2" />
+        <div className="text-center py-6 sm:py-8 text-muted-foreground text-sm sm:text-base">
+          <RefreshCcw className="w-6 h-6 sm:w-8 sm:h-8 animate-spin mx-auto mb-2" />
           Loading partners...
         </div>
       ) : partners.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-6 sm:py-8 text-muted-foreground text-sm sm:text-base">
           No partners found. Add your first partner above.
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {partners.map((partner) => (
             <div
               key={partner.id}
-              className="p-4 bg-background/30 rounded-lg border border-border/30 hover:border-green-500/30 transition-all duration-300"
+              className="p-3 sm:p-4 bg-background/30 rounded-lg border border-border/30 hover:border-green-500/30 transition-all duration-300"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0 mb-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   {partner.logo ? (
                     <img
                       src={partner.logo}
                       alt={partner.name}
-                      className="w-12 h-12 rounded-lg border border-border/50 object-cover"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-border/50 object-cover"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <ImageIcon className="w-6 h-6 text-muted-foreground" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-muted flex items-center justify-center">
+                      <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
                     </div>
                   )}
                   <div>
-                    <h4 className="font-medium text-foreground">{partner.name}</h4>
+                    <h4 className="font-medium text-foreground text-sm sm:text-base">{partner.name}</h4>
                     {partner.website && (
                       <a
                         href={partner.website}
@@ -209,7 +214,8 @@ export function PartnersTab({
                         className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
                       >
                         <ExternalLink className="w-3 h-3" />
-                        Visit Website
+                        <span className="hidden sm:inline">Visit Website</span>
+                        <span className="sm:hidden">Website</span>
                       </a>
                     )}
                   </div>
@@ -233,7 +239,7 @@ export function PartnersTab({
               </div>
               
               {partner.description && (
-                <p className="text-sm text-muted-foreground mb-3">{partner.description}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground mb-3">{partner.description}</p>
               )}
               
                              <div className="text-xs text-muted-foreground">

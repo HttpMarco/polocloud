@@ -130,38 +130,41 @@ export function PlatformsTab({
   const isEditing = !!editingPlatform;
 
   return (
-    <div className="mb-6 p-6 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/5 border border-blue-500/20 rounded-xl">
-      <div className="flex items-center gap-3 mb-4">
-        <Server className="w-5 h-5 text-blue-500" />
-        <h3 className="text-lg font-semibold text-foreground">Platform Management</h3>
+    <div className="mb-4 sm:mb-6 p-4 sm:p-6 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/5 border border-blue-500/20 rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Server className="w-5 h-5 text-blue-500" />
+          <h3 className="text-base sm:text-lg font-semibold text-foreground">Platform Management</h3>
+        </div>
         <button
           onClick={onRefresh}
-          className="ml-auto inline-flex items-center gap-2 px-3 py-1 bg-blue-600/10 text-blue-600 rounded-lg hover:bg-blue-600/20 text-sm transition-all duration-300"
+          className="sm:ml-auto inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-blue-600/10 text-blue-600 rounded-lg hover:bg-blue-600/20 text-xs sm:text-sm transition-all duration-300"
         >
-          <RefreshCcw className="w-4 h-4" />
-          Refresh
+          <RefreshCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Refresh</span>
+          <span className="sm:hidden">Ref</span>
         </button>
       </div>
 
-      <div className="mb-6 p-4 bg-background/30 rounded-lg border border-border/30">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium text-foreground">
+      <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-background/30 rounded-lg border border-border/30">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3">
+          <h4 className="font-medium text-foreground text-sm sm:text-base">
             {isEditing ? `Edit Platform: ${editingPlatform?.name}` : 'Add New Platform'}
           </h4>
           {isEditing && (
             <button
               onClick={onCancelEdit}
-              className="inline-flex items-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300"
+              className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300 text-sm"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Cancel
             </button>
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4 mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Platform Name *</label>
+            <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">Platform Name *</label>
             <input
               type="text"
               value={currentPlatform.name}
@@ -173,11 +176,11 @@ export function PlatformsTab({
                 }
               }}
               placeholder="e.g. Spigot"
-              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm sm:text-base"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Icon Upload *</label>
+            <label className="block text-xs sm:text-sm font-medium text-foreground mb-1">Icon Upload *</label>
             <div className="space-y-2">
               <input
                 type="file"
@@ -212,15 +215,15 @@ export function PlatformsTab({
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-foreground mb-2">Version Support</label>
-          <div className="grid md:grid-cols-2 gap-4">
+          <label className="block text-xs sm:text-sm font-medium text-foreground mb-2">Version Support</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {VERSION_OPTIONS.map(version => (
               <div key={version} className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">{version}</label>
+                <label className="block text-xs sm:text-sm font-medium text-foreground">{version}</label>
                 <select
                   value={currentPlatform.versions[version] || 'not-supported'}
                   onChange={(e) => handleVersionChange(version, e.target.value as 'supported' | 'not-supported' | 'partial' | 'not-possible')}
-                  className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm sm:text-base"
                 >
                   <option value="supported">Supported</option>
                   <option value="not-supported">Not Supported</option>
@@ -233,7 +236,7 @@ export function PlatformsTab({
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-foreground mb-2">Addon Support</label>
+          <label className="block text-xs sm:text-sm font-medium text-foreground mb-2">Addon Support</label>
 
           <div className="flex gap-2 mb-3">
             <input
@@ -241,22 +244,22 @@ export function PlatformsTab({
               value={newAddonName}
               onChange={(e) => setNewAddonName(e.target.value)}
               placeholder="New addon name..."
-              className="flex-1 px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              className="flex-1 px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm sm:text-base"
             />
             <button
               onClick={handleAddAddon}
               disabled={!newAddonName.trim() || !!currentPlatform.addons[newAddonName.trim()]}
               className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {Object.entries(currentPlatform.addons).map(([addon, status]) => (
               <div key={addon} className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <label className="block text-sm font-medium text-foreground flex-1">{addon}</label>
+                  <label className="block text-xs sm:text-sm font-medium text-foreground flex-1">{addon}</label>
                   <button
                     onClick={() => handleRemoveAddon(addon)}
                     className="inline-flex items-center gap-1 px-2 py-1 bg-red-600/10 text-red-600 rounded-lg hover:bg-red-600/20 text-xs transition-all duration-300"
@@ -267,7 +270,7 @@ export function PlatformsTab({
                 <select
                   value={status}
                   onChange={(e) => handleAddonChange(addon, e.target.value as 'supported' | 'not-supported' | 'partial' | 'not-possible')}
-                  className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                  className="w-full px-3 py-2 bg-background border border-border/50 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm sm:text-base"
                 >
                   <option value="supported">Supported</option>
                   <option value="not-supported">Not Supported</option>
@@ -282,53 +285,55 @@ export function PlatformsTab({
         <button
           onClick={isEditing ? onUpdatePlatform : onAddPlatform}
           disabled={addingPlatform || !currentPlatform.name.trim() || (!currentPlatform.iconFile && !currentPlatform.icon)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+          className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-sm"
         >
           {addingPlatform ? (
             <>
-              <RefreshCcw className="w-4 h-4 animate-spin" />
-              {isEditing ? 'Updating...' : 'Adding...'}
+              <RefreshCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" />
+              <span className="hidden sm:inline">{isEditing ? 'Updating...' : 'Adding...'}</span>
+              <span className="sm:hidden">{isEditing ? 'Update...' : 'Add...'}</span>
             </>
           ) : (
             <>
-              {isEditing ? <Save className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-              {isEditing ? 'Update Platform' : 'Add Platform'}
+              {isEditing ? <Save className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+              <span className="hidden sm:inline">{isEditing ? 'Update Platform' : 'Add Platform'}</span>
+              <span className="sm:hidden">{isEditing ? 'Update' : 'Add'}</span>
             </>
           )}
         </button>
       </div>
 
       {loadingPlatforms ? (
-        <div className="text-center py-8 text-muted-foreground">
-          <RefreshCcw className="w-8 h-8 animate-spin mx-auto mb-2" />
+        <div className="text-center py-6 sm:py-8 text-muted-foreground text-sm sm:text-base">
+          <RefreshCcw className="w-6 h-6 sm:w-8 sm:h-8 animate-spin mx-auto mb-2" />
           Loading platforms...
         </div>
       ) : platforms.length === 0 ? (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-6 sm:py-8 text-muted-foreground text-sm sm:text-base">
           No platforms found. Add your first platform above.
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {platforms.map((platform) => (
             <div
               key={platform.id}
-              className="p-4 bg-background/30 rounded-lg border border-border/30 hover:border-blue-500/30 transition-all duration-300"
+              className="p-3 sm:p-4 bg-background/30 rounded-lg border border-border/30 hover:border-blue-500/30 transition-all duration-300"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-0 mb-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   {platform.icon ? (
                     <img
                       src={platform.icon}
                       alt={platform.name}
-                      className="w-12 h-12 rounded-lg border border-border/50 object-cover"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-border/50 object-cover"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
-                      <ImageIcon className="w-6 h-6 text-muted-foreground" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-muted flex items-center justify-center">
+                      <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
                     </div>
                   )}
                   <div>
-                    <h4 className="font-medium text-foreground">{platform.name}</h4>
+                    <h4 className="font-medium text-foreground text-sm sm:text-base">{platform.name}</h4>
                   </div>
                 </div>
                 <div className="flex gap-2">

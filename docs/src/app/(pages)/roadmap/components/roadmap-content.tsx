@@ -81,13 +81,13 @@ const fallbackData: RoadmapColumn[] = [
 const RoadmapCard = ({ item, index }: { item: RoadmapItem; index: number }) => {
   return (
     <div 
-      className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl p-4 mb-3 hover:bg-card/60 transition-all duration-500 hover:shadow-lg hover:border-border/60 hover:scale-105 group"
+      className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl p-3 sm:p-4 mb-3 hover:bg-card/60 transition-all duration-500 hover:shadow-lg hover:border-border/60 hover:scale-105 group"
       style={{
         animationDelay: `${index * 100}ms`
       }}
     >
       {item.tags && (
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
           {item.tags.map((tag, tagIndex) => (
             <span 
               key={tag} 
@@ -196,7 +196,7 @@ const RoadmapColumn = ({ column, columnIndex }: { column: RoadmapColumn; columnI
       }}
     >
       <div
-        className="mb-6 p-4 bg-card/50 backdrop-blur-sm border rounded-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:scale-105 relative"
+        className="mb-4 sm:mb-6 p-3 sm:p-4 bg-card/50 backdrop-blur-sm border rounded-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:scale-105 relative"
         style={{
           borderColor: getBorderColor(column.id),
           boxShadow: `inset 0 0 30px ${getBorderColor(column.id)}25, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`
@@ -219,7 +219,7 @@ const RoadmapColumn = ({ column, columnIndex }: { column: RoadmapColumn; columnI
         </div>
       </div>
 
-      <div className="flex-1 space-y-3 max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent">
+      <div className="flex-1 space-y-3 max-h-[500px] sm:max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent">
         {column.items.map((item, index) => (
           <RoadmapCard key={item.id} item={item} index={index} />
         ))}
@@ -397,35 +397,36 @@ export function RoadmapContent() {
 
   return (
     <>
-      <section ref={contentRef} className="relative py-12 overflow-hidden">
+      <section ref={contentRef} className="relative py-8 sm:py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/5 to-muted/5" />
 
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-        <div className="relative container mx-auto px-6">
-          <div className={`mb-8 transition-all duration-1000 ease-out ${
+        <div className="relative container mx-auto px-4 sm:px-6">
+          <div className={`mb-6 sm:mb-8 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
             <div className="flex justify-between items-center">
               <Link 
                 href="/"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
               </Link>
             </div>
           </div>
 
-          <div className={`text-center mb-16 transition-all duration-1000 ease-out ${
+          <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            <h1 className={`text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
               Development Roadmap
             </h1>
-            <p className={`text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
+            <p className={`text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4 sm:px-0 transition-all duration-1000 delay-400 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
               Track our progress and see what&apos;s coming next for PoloCloud
@@ -433,10 +434,10 @@ export function RoadmapContent() {
           </div>
 
           {isLoading && (
-            <div className={`text-center mb-12 transition-all duration-1000 delay-500 ${
+            <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 delay-500 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl">
+              <div className="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-foreground"></div>
                 <span className="text-sm font-medium">Loading roadmap data...</span>
               </div>
@@ -444,25 +445,25 @@ export function RoadmapContent() {
           )}
 
           {error && (
-            <div className={`text-center mb-12 transition-all duration-1000 delay-500 ${
+            <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 delay-500 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-xl">
+              <div className="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-xl">
                 <span className="text-sm font-medium text-red-400">Error: {error}</span>
               </div>
             </div>
           )}
 
-          <div className={`mb-12 transition-all duration-1000 delay-500 ${
+          <div className={`mb-8 sm:mb-12 transition-all duration-1000 delay-500 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            <div className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-8 shadow-lg relative overflow-hidden">
+            <div className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-4 sm:p-8 shadow-lg relative overflow-hidden">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-muted/20 via-background/50 to-muted/20"></div>
 
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h3 className="font-bold text-foreground dark:text-white text-xl mb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
+                  <div className="text-center sm:text-left">
+                    <h3 className="font-bold text-foreground dark:text-white text-lg sm:text-xl mb-2">
                       Categories
                     </h3>
                     <p className="text-sm text-muted-foreground">
@@ -471,10 +472,11 @@ export function RoadmapContent() {
                   </div>
                   <button
                     onClick={() => setIsFilterModalOpen(true)}
-                    className="inline-flex items-center gap-3 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm"
+                    className="inline-flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm"
                   >
                     <Filter className="w-4 h-4" />
-                    <span>Filter Tags</span>
+                    <span className="hidden sm:inline">Filter Tags</span>
+                    <span className="sm:hidden">Filter</span>
                     {activeFilters.length > 0 && (
                       <span className="bg-primary text-primary-foreground text-xs rounded-full px-2 py-1 min-w-[24px] flex items-center justify-center font-bold">
                         {activeFilters.length}
@@ -483,9 +485,9 @@ export function RoadmapContent() {
                   </button>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(234, 187, 44, 0.15)',
                       color: 'rgb(234, 187, 44)',
                       borderColor: 'rgba(234, 187, 44, 0.3)'
@@ -493,8 +495,8 @@ export function RoadmapContent() {
                     <span className="text-xs text-muted-foreground text-center">Enhancements & improvements</span>
                   </div>
                   
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(130, 247, 29, 0.15)',
                       color: 'rgb(130, 247, 29)',
                       borderColor: 'rgba(130, 247, 29, 0.3)'
@@ -502,8 +504,8 @@ export function RoadmapContent() {
                     <span className="text-xs text-muted-foreground text-center">New features & requirements</span>
                   </div>
                   
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(136, 252, 202, 0.15)',
                       color: 'rgb(136, 252, 202)',
                       borderColor: 'rgba(136, 252, 202, 0.3)'
@@ -511,8 +513,8 @@ export function RoadmapContent() {
                     <span className="text-xs text-muted-foreground text-center">Prototype & experimental</span>
                   </div>
                   
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(236, 161, 168, 0.15)',
                       color: 'rgb(236, 161, 168)',
                       borderColor: 'rgba(236, 161, 168, 0.3)'
@@ -527,7 +529,7 @@ export function RoadmapContent() {
           <div className={`transition-all duration-1000 delay-600 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6 sm:gap-8">
               {filteredData.map((column, index) => (
                 <div
                   key={column.id}
@@ -545,7 +547,7 @@ export function RoadmapContent() {
 
       {isFilterModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card/95 backdrop-blur-sm border border-border/40 rounded-2xl p-6 shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-card/95 backdrop-blur-sm border border-border/40 rounded-2xl p-4 sm:p-6 shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-foreground">Filter by Tags</h3>
                 <button
