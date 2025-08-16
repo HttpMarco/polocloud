@@ -51,6 +51,7 @@ open class Group(
             .setMaximumMemory(maxMemory)
             .setMinimumOnline(minOnlineService)
             .setMaximumOnline(maxOnlineService)
+            .setPlatform(platform.toSnapshot())
             .setPercentageToStartNewService(percentageToStartNewService)
             .addAllTemplates(templates)
             .putAllProperties(properties.map { it.key to it.value.toString() }.toMap())

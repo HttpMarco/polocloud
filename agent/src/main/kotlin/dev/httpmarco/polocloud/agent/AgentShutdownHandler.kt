@@ -2,7 +2,6 @@ package dev.httpmarco.polocloud.agent
 
 import dev.httpmarco.polocloud.updater.Updater
 import org.jline.jansi.AnsiConsole
-import kotlin.io.path.Path
 import kotlin.system.exitProcess
 
 private val SHUTDOWN_HOOK = "polocloud-shutdown-hook"
@@ -29,6 +28,8 @@ fun exitPolocloud(cleanShutdown: Boolean = true, shouldUpdate: Boolean = false) 
         Agent.runtime.serviceStorage().findAll().forEach {
             it.shutdown(cleanShutdown)
         }
+
+        Agent.moduleProvider.unloadModules()
 
         Agent.close()
 

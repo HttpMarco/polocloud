@@ -1,13 +1,12 @@
 package dev.httpmarco.polocloud.agent.runtime
 
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
+import dev.httpmarco.polocloud.agent.utils.Reloadable
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 
-interface RuntimeGroupStorage : SharedGroupProvider<AbstractGroup>{
+interface RuntimeGroupStorage : SharedGroupProvider<AbstractGroup>, Reloadable {
 
-    fun update(group: AbstractGroup)
-
-    fun reload()
+    fun updateGroup(group: AbstractGroup)
 
     fun destroy(abstractGroup: AbstractGroup)
 

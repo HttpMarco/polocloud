@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.screen
 
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.services.AbstractService
@@ -16,6 +17,7 @@ class ServiceScreenController(val terminal: JLine3Terminal) {
         displayedAbstractService = abstractService
 
         terminal.clearScreen()
+        logger.enableLogBuffering()
 
         abstractService.logs(5000).forEach {
             terminal.display(it)
@@ -26,7 +28,7 @@ class ServiceScreenController(val terminal: JLine3Terminal) {
 
     fun stopCurrentRecording() {
 
-        if (!isRecoding()) {
+        if (!isRecording()) {
             return
         }
 
@@ -34,21 +36,25 @@ class ServiceScreenController(val terminal: JLine3Terminal) {
 
         terminal.clearScreen()
         terminal.resetPrompt()
-        // todo display the context before the recording
+        logger.flushLogs()
     }
 
     fun isServiceRecoding(abstractService: AbstractService): Boolean {
-        return isRecoding() && displayedAbstractService!!.name() == abstractService.name()
+        return isRecording() && displayedAbstractService!!.name() == abstractService.name()
     }
 
-    fun isRecoding(): Boolean {
+    fun isRecording(): Boolean {
         return displayedAbstractService != null
     }
 
     fun redirectCommand(command: String) {
-        if (!isRecoding()) {
+        if (!isRecording()) {
             throw IllegalStateException("Cannot redirect command to service because no service is currently being recorded.")
         }
         this.displayedAbstractService?.executeCommand(command)
+    }
+
+    fun displayedAbstractService(): AbstractService? {
+        return displayedAbstractService
     }
 }

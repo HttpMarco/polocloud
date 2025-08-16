@@ -2,7 +2,7 @@ import com.google.protobuf.gradle.id
 
 plugins {
     id("java")
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.2.10"
     id("com.google.protobuf") version "0.9.5"
 }
 

@@ -1,7 +1,7 @@
-package dev.httpmarco.polocloud.addons.proxy
+package dev.httpmarco.polocloud.addons.proxy.platform.velocity
 
 import com.velocitypowered.api.command.CommandSource
 
-interface CloudSubCommand {
+interface VelocityCloudSubCommand {
     fun execute(source: CommandSource, arguments: List<String>)
 }

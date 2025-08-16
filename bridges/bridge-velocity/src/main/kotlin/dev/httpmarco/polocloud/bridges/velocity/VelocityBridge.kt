@@ -62,6 +62,10 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
         val serviceName = player.currentServer
             .flatMap { Optional.ofNullable(it.serverInfo.name) }
             .orElse(null)
+        if(serviceName == null) {
+            // Player was not connected to any service
+            return
+        }
 
         updatePolocloudPlayer(PlayerLeaveEvent(PolocloudPlayer(player.username, player.uniqueId, serviceName)))
     }
@@ -69,6 +73,10 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
     @Subscribe
     fun onKick(event: KickedFromServerEvent) {
         if (event.player.isActive) {
+            if(event.server.serverInfo == null) {
+                // Player was not connected to any service
+                return
+            }
             event.result =
                 KickedFromServerEvent.RedirectPlayer.create(registeredFallbacks.filter { it.serverInfo.name != event.server.serverInfo.name }
                     .minByOrNull { it.playersConnected.size })

@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.platforms.bridge.Bridge
 import dev.httpmarco.polocloud.platforms.bridge.BridgeSerializer
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformAction
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformDirectoryDeleteAction
+import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformDownloadAction
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformExecuteCommandAction
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFileDeleteAction
 import dev.httpmarco.polocloud.platforms.tasks.actions.PlatformFileMoveAction
@@ -34,5 +35,6 @@ val PLATFORM_GSON =
                 .registerSubtype(PlatformExecuteCommandAction::class.java, "PlatformExecuteCommandAction")
                 .registerSubtype(PlatformDirectoryDeleteAction::class.java, "PlatformDirectoryDeleteAction")
                 .registerSubtype(PlatformFileMoveAction::class.java, "PlatformFileMoveAction")
+                .registerSubtype(PlatformDownloadAction::class.java, "PlatformDownloadAction")
         )
         .create()

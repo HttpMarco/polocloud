@@ -11,7 +11,9 @@
     "purpur",
     "leaf",
     "fabric",
-    "folia"
+    "folia",
+    "advancedslimepaper",
+    "waterdog"
   ],
   "tasks": [
     "eula",
@@ -26,6 +28,7 @@
     "nukkitSetup",
     "paperLoadDependencies",
     "pumpkinSetup",
-    "setupBungeecord"
+    "setupBungeecord",
+    "fabricDownloadDependencies"
   ]
 }

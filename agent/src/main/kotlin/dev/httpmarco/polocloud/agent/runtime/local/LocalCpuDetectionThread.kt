@@ -37,11 +37,10 @@ class LocalCpuDetectionThread : Thread("polocloud-local-cpu-detection") {
         }
 
         val currentSnapshot = os!!.getProcess(service.pid()!!.toInt())
-        val cpu = currentSnapshot.getProcessCpuLoadBetweenTicks(service.lastCpuSnapshot)
-
 
         if (currentSnapshot != null) {
             service.lastCpuSnapshot = currentSnapshot
+            val cpu = currentSnapshot.getProcessCpuLoadBetweenTicks(service.lastCpuSnapshot)
 
             service.lastCpuUpdateTimeStamp = System.nanoTime()
 

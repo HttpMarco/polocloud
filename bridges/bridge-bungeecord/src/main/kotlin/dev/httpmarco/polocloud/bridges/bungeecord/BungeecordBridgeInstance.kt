@@ -26,6 +26,7 @@ class BungeecordBridgeInstance : BridgeInstance<ServerInfo>(), Listener {
 
     override fun unregisterService(identifier: ServerInfo) {
         ProxyServer.getInstance().servers.remove(identifier.name)
+        registeredFallbacks.remove(identifier)
     }
 
     override fun findInfo(name: String): ServerInfo? {

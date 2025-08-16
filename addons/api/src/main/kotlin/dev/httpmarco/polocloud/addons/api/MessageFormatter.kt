@@ -5,4 +5,9 @@ interface MessageFormatter {
     fun format(message: String): String
     fun formatTablistHeader(): String
     fun formatTablistFooter(): String
+    fun formatMotdLineOne(): String
+    fun formatMotdLineTwo(): String
+    fun formatMaintenanceMotdLineOne(): String
+    fun formatMaintenanceMotdLineTwo(): String
+    fun formatMaintenancePingMessage(): String
 }

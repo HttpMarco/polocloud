@@ -31,7 +31,7 @@ abstract class Setup<T>(private val name: String, private val canExited: Boolean
     fun stop() {
         this.terminal.clearScreen()
         this.terminal.resetPrompt()
-        logger.flushSetupLogs()
+        logger.flushLogs()
         i18n.info("agent.local-runtime.setup.exited", this.name)
     }
 
@@ -57,7 +57,7 @@ abstract class Setup<T>(private val name: String, private val canExited: Boolean
         this.display()
     }
 
-    private fun display(wrongAnswer: Boolean = false, noPreviousStep: Boolean = false) {
+    private fun display(wrongAnswer: Boolean = false, noPreviousStep: Boolean = false, answer: String = "") {
         val current = step()
         val translatedQuestion = i18n.get(current.questionKey)
 
@@ -79,7 +79,7 @@ abstract class Setup<T>(private val name: String, private val canExited: Boolean
         }
 
         if (wrongAnswer) {
-            this.terminal.display(LoggingColor.translate(i18n.get("agent.local-runtime.setup.wrong-answer")))
+            this.terminal.display(LoggingColor.translate("&8 > &c" + current.argument.wrongReason(answer)))
         }
 
         this.terminal.display(
@@ -124,7 +124,7 @@ abstract class Setup<T>(private val name: String, private val canExited: Boolean
         val argument = step().argument
 
         if (!argument.predication(answer)) {
-            this.display(true)
+            this.display(true, answer = answer)
             return
         }
 

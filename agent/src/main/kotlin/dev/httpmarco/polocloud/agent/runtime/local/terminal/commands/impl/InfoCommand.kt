@@ -1,17 +1,15 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl
 
-import com.sun.management.OperatingSystemMXBean
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.Command
-import dev.httpmarco.polocloud.common.math.convertBytesToMegabytes
-import java.lang.management.ManagementFactory
+import dev.httpmarco.polocloud.common.os.cpuUsage
+import dev.httpmarco.polocloud.common.os.maxMemory
+import dev.httpmarco.polocloud.common.os.usedMemory
 import java.time.Duration
-import kotlin.math.roundToInt
 
 class InfoCommand : Command("info", "Used to display information about the agent") {
 
-    val osBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
 
     init {
         // call cpuUsage() to ensure the bean is initialized -> this is necessary because the bean might not be initialized yet when the command is executed
@@ -27,30 +25,6 @@ class InfoCommand : Command("info", "Used to display information about the agent
             i18n.info("agent.terminal.command.info.line.6", maxMemory())
             i18n.info("agent.terminal.command.info.line.7", Agent.eventService.registeredAmount())
         }
-    }
-
-    private fun cpuUsage(): Double {
-        val load = osBean.cpuLoad
-
-        if (load < 0) {
-            return -1.0
-        }
-
-        return (load * 10000.0).roundToInt() / 100.0
-    }
-
-    private fun usedMemory(): Double {
-        val runtime = Runtime.getRuntime()
-        val usedBytes = runtime.totalMemory() - runtime.freeMemory()
-
-        return convertBytesToMegabytes(usedBytes)
-    }
-
-    private fun maxMemory(): Double {
-        val runtime = Runtime.getRuntime()
-        val maxBytes = runtime.maxMemory()
-
-        return convertBytesToMegabytes(maxBytes)
     }
 
      fun formatDuration(millis: Long): String {

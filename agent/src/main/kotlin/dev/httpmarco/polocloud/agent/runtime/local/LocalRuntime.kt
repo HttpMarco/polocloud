@@ -66,6 +66,7 @@ class LocalRuntime : Runtime {
         this.terminal.shutdown()
         this.runtimeCpuDetectionThread.interrupt()
         this.runtimeQueue.interrupt()
+        this.runtimeFactory.shutdown()
 
         i18n.info("agent.shutdown.temp-files.cleanup")
         LOCAL_FACTORY_PATH.toFile().deleteRecursively()

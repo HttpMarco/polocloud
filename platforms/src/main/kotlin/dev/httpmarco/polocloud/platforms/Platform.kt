@@ -1,10 +1,12 @@
 package dev.httpmarco.polocloud.platforms
 
 import dev.httpmarco.polocloud.common.filesystem.copyDirectoryContent
+import dev.httpmarco.polocloud.common.os.OS
 import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
 import dev.httpmarco.polocloud.platforms.bridge.BridgeType
+import dev.httpmarco.polocloud.platforms.exceptions.PlatformCacheMissingException
 import dev.httpmarco.polocloud.platforms.exceptions.PlatformVersionInvalidException
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTask
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskPool
@@ -15,8 +17,8 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 import kotlin.io.path.name
-import kotlin.io.path.notExists
 
 class Platform(
     val name: String,
@@ -43,14 +45,15 @@ class Platform(
     // if true, the polocloud server icon will be copied to the service path
     private val copyServerIcon: Boolean = true,
     // if false, the downloaded file will be named "download" to be changed by preTask
-    private val setFileName: Boolean = true
+    private val setFileName: Boolean = true,
+    // mapping how the OS names will be named in the %os% placeholder (optional)
+    private val osNameMapping: Map<OS, String> = emptyMap(),
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
-        // This method should handle the preparation of the platform, such as downloading the necessary files
-        // or setting up the environment for the specified version.
+        // This method should handle the preparation of the platform setting up the environment for the specified version.
         // Implementation details would depend on the specific requirements of the platform.
-        val path = Path("local/metadata/cache/$name/$version/$name-$version" + language.suffix())
+        val path = cachePath(version)
         val version = this.version(version)
 
         environment.addParameter("filename", path.fileName)
@@ -59,29 +62,9 @@ class Platform(
             throw PlatformVersionInvalidException()
         }
 
-        path.parent.createDirectories()
 
-        if (path.notExists()) {
-            var replacedUrl = url.replace("%version%", version.version)
-                .replace("%suffix%", language.suffix())
-                .replace("%arch%", currentCPUArchitecture)
-                .replace("%os%", currentOS.downloadName)
-
-            version.additionalProperties.forEach { (key, value) ->
-                replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
-            }
-
-            val downloadFile = if (setFileName) path.toFile() else path.parent.resolve("download").toFile()
-
-            URI(
-                replacedUrl
-            ).toURL().openStream().use { input ->
-                downloadFile.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
-
-            preTasks().forEach { it.runTask(path.parent, environment) }
+        if (!path.exists()) {
+            throw PlatformCacheMissingException()
         }
 
         tasks().forEach { it.runTask(servicePath, environment) }
@@ -106,6 +89,43 @@ class Platform(
         }
     }
 
+    fun cachePrepare(version: String, environment: PlatformParameters) {
+        // This method should build the cache for a platform version, such as downloading files,
+        // loading dependencies or compile the platform
+        val cachePath = cachePath(version)
+        cachePath.parent.createDirectories()
+        val version = this.version(version) ?: throw PlatformVersionInvalidException()
+
+        var replacedUrl = url.replace("%version%", version.version)
+            .replace("%suffix%", language.suffix())
+            .replace("%arch%", currentCPUArchitecture)
+            .replace("%os%", osDownloadName())
+
+        version.additionalProperties.forEach { (key, value) ->
+            replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
+        }
+
+        val downloadFile = if (setFileName) cachePath.toFile() else cachePath.parent.resolve("download").toFile()
+
+        URI(
+            replacedUrl
+        ).toURL().openStream().use { input ->
+            downloadFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        preTasks().forEach { it.runTask(cachePath.parent, environment) }
+    }
+
+    fun cacheExists(version: String): Boolean {
+        return cachePath(version).exists()
+    }
+
+    private fun cachePath(version: String): Path {
+        return Path("local/metadata/cache/$name/$version/$name-$version" + language.suffix())
+    }
+
     fun version(version: String): PlatformVersion? {
         return versions.firstOrNull { it.version == version }
     }
@@ -116,5 +136,9 @@ class Platform(
 
     fun preTasks(): List<PlatformTask> {
         return preTasks.map { PlatformTaskPool.find(it)!! }.toList()
+    }
+
+    private fun osDownloadName(): String {
+        return osNameMapping.getOrElse(currentOS) { currentOS.name }
     }
 }

@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
 import dev.httpmarco.polocloud.shared.service.Service
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Plugin
 import java.io.File
@@ -14,8 +15,6 @@ import java.io.File
 private lateinit var notifyAddon: NotifyAddon
 
 class BungeecordPlatform: Plugin() {
-
-    private val server = this.proxy
 
     override fun onEnable() {
         notifyAddon = NotifyAddon(File("plugins/polocloud"), false)
@@ -35,17 +34,17 @@ class BungeecordPlatform: Plugin() {
 
     private fun announceNotification(messageKey: String, service: Service, permission: String) {
         val config = notifyAddon.config
-        val message = config.messages(messageKey)
-        val formattedMessage = MiniMessageFormatter.format(message)
+        var message = config.messages(messageKey)
+        message = message
             .replace("%service%", service.groupName + "-" + service.id)
             .replace("%group%", service.groupName)
             .replace("%type%", service.type.toString())
             .replace("%id%", service.id.toString())
 
-        server.players.forEach { player -> {
+        ProxyServer.getInstance().players.forEach { player ->
             if (player.hasPermission(permission)) {
-                player.sendMessage(TextComponent(config.prefix() + formattedMessage))
+                player.sendMessage(TextComponent(config.prefix() + message))
             }
-        } }
+        }
     }
 }
