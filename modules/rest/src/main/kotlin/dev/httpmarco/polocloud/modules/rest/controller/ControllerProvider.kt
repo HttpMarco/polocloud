@@ -52,7 +52,7 @@ class ControllerProvider {
         }
     }
 
-    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?) {
+    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?, token: String?) {
         try {
             if (ctx.result() == null) {
                 val params = mutableListOf<Any?>()
@@ -61,6 +61,7 @@ class ControllerProvider {
                     when (param.type) {
                         Context::class.java -> params.add(ctx)
                         User::class.java -> params.add(user)
+                        String::class.java -> params.add(token)
                         else -> params.add(null)
                     }
                 }

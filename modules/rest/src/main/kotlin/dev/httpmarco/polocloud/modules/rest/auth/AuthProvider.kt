@@ -15,6 +15,7 @@ class AuthProvider(
 
     fun handle(context: Context) {
         var user: User? = null
+        var token: String? = null
 
         if (!isUserCreationAllowed(context)) {
             if (!isLogin(context) && !isAlive(context)) {
@@ -22,6 +23,13 @@ class AuthProvider(
 
                 if (user == null) {
                     context.status(401).result("Unauthorized")
+                    return
+                }
+
+                token = context.cookie("token")
+
+                if (token !in user.tokens) {
+                    context.status(401).result("Invalid or expired token")
                     return
                 }
 
@@ -36,7 +44,8 @@ class AuthProvider(
             requestMethodData.method,
             requestMethodData.controller,
             context,
-            user
+            user,
+            token
         )
     }
 
