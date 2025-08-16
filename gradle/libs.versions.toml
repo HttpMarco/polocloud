@@ -30,6 +30,11 @@ k8s = "7.3.1"
 # rest
 javalin = "6.7.0"
 
+jwt = "4.5.0"
+javalin-jwt = "0.7.0"
+
+argon2 = "2.12"
+
 # platforms
 velocity = "3.4.0-SNAPSHOT"
 waterdog = "2.0.4-SNAPSHOT"
@@ -80,6 +85,9 @@ k8s = { group = "io.fabric8", name = "kubernetes-client", version.ref = "k8s" }
 
 # rest
 javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
+javalin-jwt = { group = "com.github.kmehrunes", name = "javalin-jwt", version.ref = "javalin-jwt" }
+argon2 = { group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2" }
 
 # platforms
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
@@ -110,3 +118,4 @@ terminal = ["slf4j", "log4j-api", "log4j-core", "log4j-slf4j2-impl"]
 runtime = ["docker", "docker-http", "k8s"]
 jline = ["jline", "jline-console-ui"]
 fabric = ["fabric", "fabric-language-kotlin"]
+jwt = [ "java-jwt", "javalin-jwt" ]

@@ -13,7 +13,7 @@ class ConfigProvider(
         .create()
 ) {
 
-    fun read(key: String, defaultValue: Config): Config {
+    fun <T : Config> read(key: String, defaultValue: T): T {
         val target = Path("$key.json")
 
         if (target.exists()) {
@@ -26,7 +26,7 @@ class ConfigProvider(
         return defaultValue
     }
 
-    fun write(key: String, value: Config) {
+    fun <T : Config> write(key: String, value: T) {
         val target = Path("$key.json")
         target.writeText(gson.toJson(value))
     }
