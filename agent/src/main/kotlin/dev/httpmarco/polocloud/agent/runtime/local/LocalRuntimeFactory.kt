@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.agent.utils.JavaUtils
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.PlatformParameters
@@ -46,14 +47,14 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         service.path.createDirectories()
 
-        val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
+        val serverIcon = this.javaClass.classLoader.getResource("server-icon.png")!!
 
         val environment = PlatformParameters(
             platform.version(service.group.platform.version)
         )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
-      //  environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
+        environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon.openStream()))
         environment.addParameter("agent_port", Agent.config.port)
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
@@ -63,7 +64,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val velocityPlatforms = listOf("velocity", "gate")
         environment.addParameter(
             "velocity_use",
-            Agent.runtime.groupStorage().findAll().stream().anyMatch { it -> velocityPlatforms.contains(it.platform().name) })
+            Agent.runtime.groupStorage().findAll().stream().anyMatch { velocityPlatforms.contains(it.platform().name) })
         environment.addParameter("version", polocloudVersion())
 
         // copy all templates to the service path
@@ -76,7 +77,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val serverIconPath = service.path.resolve("server-icon.png")
         // copy server-icon if not exists
         if (Files.notExists(serverIconPath)) {
-            Files.copy(serverIcon, serverIconPath)
+            Files.copy(serverIcon.openStream(), serverIconPath)
         }
 
         // basically current only the java command is supported yet

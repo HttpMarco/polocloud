@@ -12,6 +12,16 @@
       }
     },
     {
+      "name": "Set server icon",
+      "description": "Set server icon as base64",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "config.status.favicon",
+        "value": "%server_icon%"
+      }
+    },
+    {
       "name": "Set velocity",
       "description": "Setup gate to support velocity forwarding",
       "filename": "config.yml",
