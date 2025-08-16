@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 class UserController : Controller("/user") {
 
     @Request(requestType = RequestType.POST, path = "/")
-    fun createUser(context: Context, user: User?) {
+    fun createUser(context: Context) {
         val userModel = try {
             context.bodyAsClass(UserModel::class.java)
         } catch (e: Exception) {

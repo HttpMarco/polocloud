@@ -55,7 +55,17 @@ class ControllerProvider {
     fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?) {
         try {
             if (ctx.result() == null) {
-                method.invoke(controller, ctx, user)
+                val params = mutableListOf<Any?>()
+
+                method.parameters.forEach { param ->
+                    when (param.type) {
+                        Context::class.java -> params.add(ctx)
+                        User::class.java -> params.add(user)
+                        else -> params.add(null)
+                    }
+                }
+
+                method.invoke(controller, *params.toTypedArray())
             }
         } catch (e: Exception) {
             ctx.status(500).result("Internal Server Error")
