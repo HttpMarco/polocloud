@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.agent.utils.JavaUtils
+import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.Platform
@@ -81,7 +82,11 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             return
         }
 
-        while (Agent.runtime.serviceStorage().findAll().count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts) {
+        while (Agent.runtime.serviceStorage().findAll()
+                .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
+            ||
+            cpuUsage() > Agent.config.maxCPUPercentageToStart
+        ) {
             Thread.sleep(1000)
         }
 

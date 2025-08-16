@@ -9,5 +9,5 @@ data class AgentConfig(
     //var statusLine: Boolean = true,
     var maxConcurrentServersStarts: Int = 4,
     var maxCachingProcesses: Int = 4,
-    var maxCPUPercentageToStart: Int = 75
+    var maxCPUPercentageToStart: Double = 75.0
 ) : Config
