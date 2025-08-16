@@ -12,23 +12,33 @@
       }
     },
     {
-      "name": "Enable gate api",
-      "description": "Allow the gate to use the API",
+      "name": "Set server icon",
+      "description": "Set server icon as base64",
       "filename": "config.yml",
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
-        "key": "api.enabled",
-        "value": "true"
+        "key": "config.status.favicon",
+        "value": "%server_icon%"
       }
     },
     {
-      "name": "Set gate api port",
-      "description": "Set the API bind address",
+      "name": "Set velocity",
+      "description": "Setup gate to support velocity forwarding",
       "filename": "config.yml",
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
-        "key": "api.bind",
-        "value": "localhost:%api_port%"
+        "key": "config.forwarding.mode",
+        "value": "velocity"
+      }
+    },
+    {
+      "name": "Set velocitySecret",
+      "description": "Set velocitySecret into config",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "config.forwarding.velocitySecret",
+        "value": "%velocityProxyToken%"
       }
     }
   ]

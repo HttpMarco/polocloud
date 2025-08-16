@@ -28,6 +28,7 @@ tasks.jar {
 
         includeLibs(":bridges:bridge-velocity", "shadowJar"),
         includeLibs(":bridges:bridge-bungeecord", "shadowJar"),
+        includeLibs(":bridges:bridge-gate", "shadowJar"),
         includeLibs(":bridges:bridge-waterdog", "shadowJar"),
         includeLibs(":bridges:bridge-fabric", "mergeFabricVersions")
     )

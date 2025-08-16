@@ -20,7 +20,14 @@ abstract class PolocloudShared {
 
     abstract fun logger(): Logger
 
+    /**
+     * Specifies if lateinit variable <c>polocloudShared</c> should be set
+     */
+    abstract val setShared: Boolean
+
     init {
-        polocloudShared = this
+        if (setShared) {
+            polocloudShared = this
+        }
     }
 }

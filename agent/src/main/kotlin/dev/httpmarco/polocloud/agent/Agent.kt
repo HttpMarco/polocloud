@@ -20,6 +20,7 @@ import dev.httpmarco.polocloud.shared.events.SharedEventProvider
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 import dev.httpmarco.polocloud.shared.logging.Logger
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
+import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
 import dev.httpmarco.polocloud.updater.Updater
 
@@ -43,6 +44,7 @@ object Agent : PolocloudShared() {
     val playerStorage = PlayerStorageImpl()
 
     init {
+        polocloudShared = this
         // display the default log information
         i18n.info("agent.starting", polocloudVersion())
 
@@ -127,4 +129,7 @@ object Agent : PolocloudShared() {
     override fun playerProvider(): SharedPlayerProvider<*> = this.playerStorage
 
     override fun logger(): Logger = logger
+
+    override val setShared: Boolean
+        get() = true
 }

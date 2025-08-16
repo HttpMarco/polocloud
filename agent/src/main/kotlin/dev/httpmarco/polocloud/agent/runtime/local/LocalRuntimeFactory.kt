@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.agent.utils.JavaUtils
 import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformParameters
@@ -52,22 +53,31 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val platform = service.group.platform()
         val version = service.group.platform.version
 
+        service.state = ServiceState.STARTING
+        Agent.eventService.call(ServiceStartingEvent(service))
+
+        service.path.createDirectories()
+
+        val serverIcon = this.javaClass.classLoader.getResource("server-icon.png")!!
+
         val environment = PlatformParameters(
             platform.version(version)
         )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
-        //  environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
         environment.addParameter("agent_port", Agent.config.port.toString())
+        environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon.openStream()))
+        environment.addParameter("agent_port", Agent.config.port)
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
         environment.addParameter("file_suffix", platform.language.suffix())
         environment.addParameter("filename", service.group.applicationPlatformFile().name)
 
         // find a better way here
+        val velocityPlatforms = listOf("velocity", "gate")
         environment.addParameter(
             "velocity_use",
-            Agent.runtime.groupStorage().findAll().stream().anyMatch { it.platform().name == "velocity" })
+            Agent.runtime.groupStorage().findAll().stream().anyMatch { velocityPlatforms.contains(it.platform().name) })
         environment.addParameter("version", polocloudVersion())
 
         //loading cache before starting service
@@ -97,9 +107,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         service.path.createDirectories()
 
-        val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
-
-
         // copy all templates to the service path
         Agent.runtime.templates().bindTemplate(service)
 
@@ -110,7 +117,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val serverIconPath = service.path.resolve("server-icon.png")
         // copy server-icon if not exists
         if (Files.notExists(serverIconPath)) {
-            Files.copy(serverIcon, serverIconPath)
+            Files.copy(serverIcon.openStream(), serverIconPath)
         }
 
         // basically current only the java command is supported yet
