@@ -1,0 +1,8 @@
+services:
+  polocloud:
+    image: openjdk:24
+    container_name: polocloud
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: ["java", "-jar", "polocloud-launcher.jar"]

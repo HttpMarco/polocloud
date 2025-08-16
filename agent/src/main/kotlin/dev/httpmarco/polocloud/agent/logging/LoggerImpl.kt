@@ -5,23 +5,24 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.shutdownProcess
+import dev.httpmarco.polocloud.shared.logging.Logger
 import java.time.LocalTime
 
-class Logger {
+class LoggerImpl : Logger {
 
     private val logBuffer = mutableListOf<String>()
     private var bufferingLogs = false
     private var debugMode = false
 
-    fun info(message: String) {
+    override fun info(message: String) {
         log("INFO", "&f", message)
     }
 
-    fun warn(message: String) {
+    override fun warn(message: String) {
         log("WARN", "&e", message)
     }
 
-    fun error(message: String) {
+    override fun error(message: String) {
         log("ERROR", "&c", message)
     }
 
@@ -34,7 +35,7 @@ class Logger {
         }
     }
 
-    fun debug(message: String) {
+    override fun debug(message: String) {
         if (!debugMode) return
         log("DEBUG", "&f", message)
     }

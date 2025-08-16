@@ -6,7 +6,8 @@ import dev.httpmarco.polocloud.agent.detector.OnlineStateDetector
 import dev.httpmarco.polocloud.agent.events.EventService
 import dev.httpmarco.polocloud.agent.grpc.GrpcServerEndpoint
 import dev.httpmarco.polocloud.agent.i18n.I18nPolocloudAgent
-import dev.httpmarco.polocloud.agent.logging.Logger
+import dev.httpmarco.polocloud.agent.logging.LoggerImpl
+import dev.httpmarco.polocloud.agent.module.ModuleProvider
 import dev.httpmarco.polocloud.agent.player.PlayerListener
 import dev.httpmarco.polocloud.agent.player.PlayerStorageImpl
 import dev.httpmarco.polocloud.agent.runtime.Runtime
@@ -17,6 +18,7 @@ import dev.httpmarco.polocloud.platforms.PlatformPool
 import dev.httpmarco.polocloud.shared.PolocloudShared
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
+import dev.httpmarco.polocloud.shared.logging.Logger
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
 import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
@@ -24,7 +26,7 @@ import dev.httpmarco.polocloud.updater.Updater
 
 // global terminal instance for the agent
 // this is used to print messages to the console
-val logger = Logger()
+val logger = LoggerImpl()
 val i18n = I18nPolocloudAgent()
 
 object Agent : PolocloudShared() {
@@ -32,6 +34,7 @@ object Agent : PolocloudShared() {
     val runtime: Runtime
     val eventService = EventService()
     val securityProvider = SecurityProvider()
+    val moduleProvider = ModuleProvider()
 
     lateinit var config: AgentConfig
 
@@ -73,6 +76,8 @@ object Agent : PolocloudShared() {
             exitPolocloud(cleanShutdown = true, shouldUpdate = true)
             return
         }
+
+        this.moduleProvider.loadModules()
 
         this.grpcServerEndpoint.connect(this.config.port)
 
@@ -122,6 +127,9 @@ object Agent : PolocloudShared() {
     override fun groupProvider(): SharedGroupProvider<*> = this.runtime.groupStorage()
 
     override fun playerProvider(): SharedPlayerProvider<*> = this.playerStorage
+
+    override fun logger(): Logger = logger
+
     override val setShared: Boolean
         get() = true
 }

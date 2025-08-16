@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.shared.PolocloudShared;
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider;
 import dev.httpmarco.polocloud.shared.groups.Group;
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider;
+import dev.httpmarco.polocloud.shared.logging.Logger;
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer;
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider;
 import dev.httpmarco.polocloud.shared.service.Service;
@@ -82,6 +83,12 @@ public final class Polocloud extends PolocloudShared {
     @Override
     public @NotNull SharedPlayerProvider<?> playerProvider() {
         return this.playerProvider;
+    }
+
+    @Override
+    @Deprecated
+    public @NotNull Logger logger() {
+        return null; // TODO
     }
 
     @Override

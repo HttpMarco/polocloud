@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.shared
 
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
+import dev.httpmarco.polocloud.shared.logging.Logger
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
 
@@ -16,6 +17,8 @@ abstract class PolocloudShared {
     abstract fun groupProvider(): SharedGroupProvider<*>
 
     abstract fun playerProvider(): SharedPlayerProvider<*>
+
+    abstract fun logger(): Logger
 
     /**
      * Specifies if lateinit variable <c>polocloudShared</c> should be set
