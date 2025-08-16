@@ -2,19 +2,21 @@ package dev.httpmarco.polocloud.modules.rest.auth.user
 
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.EncryptionUtil
-import dev.httpmarco.polocloud.modules.rest.auth.TokenInformation
 import dev.httpmarco.polocloud.modules.rest.usersConfiguration
 import java.util.UUID
 
 class UserProvider {
 
-    fun login(username: String, password: String, ip: String, userAgent: String?): String? {
+    fun login(username: String, password: String, ip: String, userAgent: String?): Token? {
         val user = users().firstOrNull { it.username == username } ?: return null
         if (!EncryptionUtil.verify(user.passwordHash, password)) {
             return null
         }
 
-        val token = generateToken(user, ip, userAgent)
+        val tokenData = TokenData(user.uuid, ip, userAgent, System.currentTimeMillis())
+        val generatedToken = generateToken(tokenData)
+
+        val token = Token(generatedToken, tokenData)
 
         user.tokens.add(token)
         saveUsers()
@@ -22,12 +24,12 @@ class UserProvider {
         return token
     }
 
-    fun logout(user: User, token: String) {
+    fun logout(user: User, token: Token) {
         user.tokens.remove(token)
         saveUsers()
     }
 
-    fun create(user: User, ip: String, userAgent: String?): String? {
+    fun create(user: User, ip: String, userAgent: String?): Token? {
         val currentUsers = users()
         if (currentUsers.any { it.username == user.username }) {
             return null
@@ -37,13 +39,26 @@ class UserProvider {
             user.addPermission("*")
         }
 
-        val token = generateToken(user, ip, userAgent)
+        val tokenData = TokenData(user.uuid, ip, userAgent, System.currentTimeMillis())
+        val generatedToken = generateToken(tokenData)
+
+        val token = Token(generatedToken, tokenData)
 
         user.tokens.add(token)
         currentUsers.add(user)
 
         saveUsers()
         return token
+    }
+
+    fun updateActivity(user: User, token: Token) {
+        val storedTokens = user.tokens.find { it.value == token.value }
+        if (storedTokens == null) {
+            return
+        }
+
+        storedTokens.data.lastActivity = System.currentTimeMillis()
+        saveUsers()
     }
 
     fun userByUUID(uuid: UUID): User? = users().byUUID(uuid)
@@ -54,7 +69,7 @@ class UserProvider {
         usersConfiguration.save("local/modules/rest/users")
     }
 
-    private fun generateToken(user: User, ip: String, userAgent: String?): String = RestModule.instance.jwtProvider.provider().generateToken(TokenInformation(user.uuid, ip, userAgent))
+    private fun generateToken(data: TokenData): String = RestModule.instance.jwtProvider.provider().generateToken(data)
 
 }
 

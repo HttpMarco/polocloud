@@ -8,5 +8,5 @@ data class User(
     var username: String,
     var passwordHash: String,
     val createdAt: Long,
-    val tokens: MutableList<String> = mutableListOf(),
+    val tokens: MutableList<Token> = mutableListOf(),
 ) : Permission()

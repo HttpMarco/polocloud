@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.modules.rest.controller
 
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.AuthProvider
+import dev.httpmarco.polocloud.modules.rest.auth.user.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AliveController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AuthController
@@ -52,7 +53,7 @@ class ControllerProvider {
         }
     }
 
-    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?, token: String?) {
+    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?, token: Token?) {
         try {
             if (ctx.result() == null) {
                 val params = mutableListOf<Any?>()
@@ -61,7 +62,7 @@ class ControllerProvider {
                     when (param.type) {
                         Context::class.java -> params.add(ctx)
                         User::class.java -> params.add(user)
-                        String::class.java -> params.add(token)
+                        Token::class.java -> params.add(token)
                         else -> params.add(null)
                     }
                 }

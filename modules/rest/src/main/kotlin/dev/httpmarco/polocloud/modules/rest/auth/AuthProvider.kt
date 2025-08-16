@@ -15,7 +15,7 @@ class AuthProvider(
 
     fun handle(context: Context) {
         var user: User? = null
-        var token: String? = null
+        var tokenRaw: String? = null
 
         if (!isUserCreationAllowed(context)) {
             if (!isLogin(context) && !isAlive(context)) {
@@ -26,9 +26,9 @@ class AuthProvider(
                     return
                 }
 
-                token = context.cookie("token")
+                tokenRaw = context.cookie("token")
 
-                if (token !in user.tokens) {
+                if (tokenRaw !in user.tokens.map { it.value }) {
                     context.status(401).result("Invalid or expired token")
                     return
                 }
@@ -37,6 +37,8 @@ class AuthProvider(
                     context.status(403).result("Forbidden")
                     return
                 }
+
+                RestModule.instance.userProvider.updateActivity(user, user.tokens.first { it.value == tokenRaw })
             }
         }
 
@@ -45,7 +47,7 @@ class AuthProvider(
             requestMethodData.controller,
             context,
             user,
-            token
+            user?.tokens?.firstOrNull { it.value == tokenRaw }
         )
     }
 

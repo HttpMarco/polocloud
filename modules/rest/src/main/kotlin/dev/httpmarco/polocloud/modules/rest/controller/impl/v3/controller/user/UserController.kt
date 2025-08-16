@@ -40,7 +40,7 @@ class UserController : Controller("/user") {
 
         val cookie = Cookie(
             "token",
-            token,
+            token.value,
             maxAge = TimeUnit.DAYS.toSeconds(7).toInt(),
             isHttpOnly = true,
             secure = true,
@@ -56,6 +56,22 @@ class UserController : Controller("/user") {
                 addProperty("uuid", user.uuid.toString())
                 addProperty("username", user.username)
                 addProperty("createdAt", user.createdAt)
+            }.toString()
+        )
+    }
+
+    @Request(requestType = RequestType.GET, path = "/tokens")
+    fun tokens(context: Context, user: User) {
+        context.status(200).json(
+            JsonObject().apply {
+                user.tokens.forEach { token ->
+                    add(token.value.substring(28, 32), JsonObject().apply {
+                        addProperty("ip", token.data.ip)
+                        addProperty("userUUID", token.data.userUUID.toString())
+                        addProperty("userAgent", token.data.userAgent)
+                        addProperty("lastActivity", token.data.lastActivity)
+                    })
+                }
             }.toString()
         )
     }

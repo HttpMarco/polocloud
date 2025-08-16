@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller
 
 import dev.httpmarco.polocloud.modules.rest.RestModule
+import dev.httpmarco.polocloud.modules.rest.auth.user.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.AuthModel
@@ -34,7 +35,7 @@ class AuthController : Controller("/auth") {
 
         val cookie = Cookie(
             "token",
-            token,
+            token.value,
             maxAge = TimeUnit.DAYS.toSeconds(7).toInt(),
             isHttpOnly = true,
             secure = true,
@@ -44,7 +45,7 @@ class AuthController : Controller("/auth") {
     }
 
     @Request(requestType = RequestType.POST, path = "/logout")
-    fun logout(context: Context, user: User, token: String) {
+    fun logout(context: Context, user: User, token: Token) {
         RestModule.instance.userProvider.logout(user, token)
 
         context.removeCookie("token")
