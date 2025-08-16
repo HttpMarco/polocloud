@@ -26,7 +26,6 @@ import kotlin.io.path.*
 class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<LocalService> {
 
     val cacheThreadPool: ExecutorService by lazy { Executors.newFixedThreadPool(Agent.config.maxCachingProcesses) }
-    val startingThreadPool: ExecutorService by lazy { Executors.newFixedThreadPool(Agent.config.maxConcurrentServersStarts) }
     val runningCacheProcesses: MutableList<Tuple<String, String>> by lazy {
         Collections.synchronizedList(
             mutableListOf()
@@ -44,82 +43,84 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
     }
 
     override fun bootApplication(service: LocalService) {
-        this.startingThreadPool.execute {
-            if (service.state != ServiceState.PREPARING) {
-                i18n.error("agent.local-runtime.factory.boot.error", service.name(), service.state)
-                return@execute
-            }
-
-            val platform = service.group.platform()
-            val version = service.group.platform.version
-
-            val environment = PlatformParameters(
-                platform.version(version)
-            )
-            environment.addParameter("hostname", service.hostname)
-            environment.addParameter("port", service.port)
-            //  environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
-            environment.addParameter("agent_port", Agent.config.port.toString())
-            environment.addParameter("service-name", service.name())
-            environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
-            environment.addParameter("file_suffix", platform.language.suffix())
-            environment.addParameter("filename", service.group.applicationPlatformFile().name)
-
-            // find a better way here
-            environment.addParameter(
-                "velocity_use",
-                Agent.runtime.groupStorage().findAll().stream().anyMatch { it.platform().name == "velocity" })
-            environment.addParameter("version", polocloudVersion())
-
-            //loading cache before starting service
-            val cacheIsRunning = runningCacheProcesses.any { platform.name == it._1() && version == it._2() }
-            if (!platform.cacheExists(version) || cacheIsRunning) {
-                waitingServices.add(service)
-
-                if (!cacheIsRunning) {
-                    this.handleMissingCache(platform, version, environment)
-                }
-
-                return@execute
-            }
-
-            i18n.info("agent.local-runtime.factory.boot.up", service.name())
-
-            service.state = ServiceState.STARTING
-            Agent.eventService.call(ServiceStartingEvent(service))
-
-            service.path.createDirectories()
-
-            val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
-
-
-            // copy all templates to the service path
-            Agent.runtime.templates().bindTemplate(service)
-
-            // copy the platform files to the service path and setup service
-            platform.prepare(service.path, service.group.platform.version, environment)
-
-
-            val serverIconPath = service.path.resolve("server-icon.png")
-            // copy server-icon if not exists
-            if (Files.notExists(serverIconPath)) {
-                Files.copy(serverIcon, serverIconPath)
-            }
-
-            // basically current only the java command is supported yet
-            val commands = getLanguageSpecificCommands(platform, service)
-
-            val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
-            processBuilder.environment().putAll(
-                mapOf(
-                    Pair("agent_port", Agent.config.port.toString()),
-                    Pair("service-name", service.name())
-                )
-            )
-
-            service.process = processBuilder.start()
-            service.startTracking()
+        if (service.state != ServiceState.PREPARING) {
+            i18n.error("agent.local-runtime.factory.boot.error", service.name(), service.state)
+            return
         }
+
+        val platform = service.group.platform()
+        val version = service.group.platform.version
+
+        val environment = PlatformParameters(
+            platform.version(version)
+        )
+        environment.addParameter("hostname", service.hostname)
+        environment.addParameter("port", service.port)
+        //  environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon))
+        environment.addParameter("agent_port", Agent.config.port.toString())
+        environment.addParameter("service-name", service.name())
+        environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
+        environment.addParameter("file_suffix", platform.language.suffix())
+        environment.addParameter("filename", service.group.applicationPlatformFile().name)
+
+        // find a better way here
+        environment.addParameter(
+            "velocity_use",
+            Agent.runtime.groupStorage().findAll().stream().anyMatch { it.platform().name == "velocity" })
+        environment.addParameter("version", polocloudVersion())
+
+        //loading cache before starting service
+        val cacheIsRunning = runningCacheProcesses.any { platform.name == it._1() && version == it._2() }
+        if (!platform.cacheExists(version) || cacheIsRunning) {
+            waitingServices.add(service)
+
+            if (!cacheIsRunning) {
+                this.handleMissingCache(platform, version, environment)
+            }
+
+            return
+        }
+
+        while (Agent.runtime.serviceStorage().findAll().count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts) {
+            Thread.sleep(1000)
+        }
+
+        i18n.info("agent.local-runtime.factory.boot.up", service.name())
+
+        service.state = ServiceState.STARTING
+        Agent.eventService.call(ServiceStartingEvent(service))
+
+        service.path.createDirectories()
+
+        val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
+
+
+        // copy all templates to the service path
+        Agent.runtime.templates().bindTemplate(service)
+
+        // copy the platform files to the service path and setup service
+        platform.prepare(service.path, service.group.platform.version, environment)
+
+
+        val serverIconPath = service.path.resolve("server-icon.png")
+        // copy server-icon if not exists
+        if (Files.notExists(serverIconPath)) {
+            Files.copy(serverIcon, serverIconPath)
+        }
+
+        // basically current only the java command is supported yet
+        val commands = getLanguageSpecificCommands(platform, service)
+
+        val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
+        processBuilder.environment().putAll(
+            mapOf(
+                Pair("agent_port", Agent.config.port.toString()),
+                Pair("service-name", service.name())
+            )
+        )
+
+        service.process = processBuilder.start()
+        service.startTracking()
     }
 
     @OptIn(ExperimentalPathApi::class)
