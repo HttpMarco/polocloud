@@ -49,7 +49,9 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
         val averageMaxPlayers = group.services().stream().filter { it.maxPlayerCount != -1 }.mapToInt { it.maxPlayerCount }.average()
         val averageOnlinePlayers = group.services().stream().filter { it.playerCount != -1 }.mapToInt { it.playerCount }.average()
 
-        if (minimumValue <= 0 && averageMaxPlayers.isPresent && averageOnlinePlayers.isPresent && group.services().none { it -> it.state != ServiceState.ONLINE }) {
+        if (minimumValue <= 0 && averageMaxPlayers.isPresent && averageOnlinePlayers.isPresent && group.services()
+                .none { it.state != ServiceState.ONLINE }
+        ) {
             if (group.percentageToStartNewService < (100 / averageMaxPlayers.asDouble) * averageOnlinePlayers.asDouble) {
                 minimumValue += 1
             }
