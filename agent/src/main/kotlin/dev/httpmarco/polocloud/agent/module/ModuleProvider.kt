@@ -42,7 +42,7 @@ class ModuleProvider : Reloadable {
                     metadata.name to true
                 },
                 onFailure = {
-                    i18n.error("agent.module.load.failed", metadata.id, it)
+                    i18n.error("agent.module.load.failed", metadata.id, it.stackTrace)
                     metadata.name to false
                 }
             )
