@@ -69,16 +69,17 @@ class AuthProvider(
     }
 
     private fun userByContext(context: Context): User? {
-        val decodedToken = context.cookie("token")?.let {
+        val decodedTokenOpt = context.cookie("token")?.let {
             RestModule.instance.jwtProvider.provider().validateToken(it)
         }
 
-        if (decodedToken == null) {
+        if (decodedTokenOpt == null || !decodedTokenOpt.isPresent) {
             context.status(401).result("Missing or invalid token")
             return null
         }
 
-        val uuid = decodedToken.get().getClaim("uuid").asString()?.let {
+        val decodedToken = decodedTokenOpt.get()
+        val uuid = decodedToken.getClaim("uuid").asString()?.let {
             try { UUID.fromString(it) } catch (e: IllegalArgumentException) { null }
         }
 
@@ -92,6 +93,15 @@ class AuthProvider(
 
     private fun isPermitted(user: User): Boolean {
         val permission = requestMethodData.permission
-        return permission.isEmpty() || user.hasPermission(permission)
+
+        if (permission.isEmpty()) {
+            return true
+        }
+
+        if (user.role == null) {
+            return false
+        }
+
+        return user.role!!.hasPermission(permission)
     }
 }

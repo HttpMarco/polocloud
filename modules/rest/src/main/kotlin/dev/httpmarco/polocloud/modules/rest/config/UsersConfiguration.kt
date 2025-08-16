@@ -1,10 +1,12 @@
 package dev.httpmarco.polocloud.modules.rest.config
 
+import dev.httpmarco.polocloud.modules.rest.auth.role.Role
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import java.security.SecureRandom
 
 data class Users(
     val secret: String = generateJwtSecret(),
+    val roles: MutableList<Role> = mutableListOf(),
     val users: MutableList<User> = mutableListOf()
 ) : Config
 

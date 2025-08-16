@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.modules.rest.auth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
-import dev.httpmarco.polocloud.modules.rest.auth.user.TokenData
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.TokenData
 import javalinjwt.JWTGenerator
 import javalinjwt.JWTProvider
 import java.util.Date

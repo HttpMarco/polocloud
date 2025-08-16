@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.modules.rest.auth.user
+package dev.httpmarco.polocloud.modules.rest.auth.user.token
 
 import java.util.UUID
 

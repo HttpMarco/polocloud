@@ -2,6 +2,9 @@ package dev.httpmarco.polocloud.modules.rest.auth.user
 
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.EncryptionUtil
+import dev.httpmarco.polocloud.modules.rest.auth.role.Role
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.TokenData
 import dev.httpmarco.polocloud.modules.rest.usersConfiguration
 import java.util.UUID
 
@@ -36,7 +39,11 @@ class UserProvider {
         }
 
         if (currentUsers.isEmpty()) {
-            user.addPermission("*")
+            user.role = roles().first { it.id == -1 }
+        }
+
+        if (user.role == null) {
+            user.role = roles().first { it.id == 0 }
         }
 
         val tokenData = TokenData(user.uuid, ip, userAgent, System.currentTimeMillis())
@@ -51,6 +58,18 @@ class UserProvider {
         return token
     }
 
+    fun edit(user: User): User? {
+        val currentUsers = users()
+        val existingUser = currentUsers.firstOrNull { it.uuid == user.uuid } ?: return null
+
+        existingUser.username = user.username
+        existingUser.passwordHash = user.passwordHash
+        existingUser.role = user.role
+
+        saveUsers()
+        return existingUser
+    }
+
     fun updateActivity(user: User, token: Token) {
         val storedTokens = user.tokens.find { it.value == token.value }
         if (storedTokens == null) {
@@ -63,7 +82,9 @@ class UserProvider {
 
     fun userByUUID(uuid: UUID): User? = users().byUUID(uuid)
 
-    private fun users(): MutableList<User> = usersConfiguration.users
+    fun users(): MutableList<User> = usersConfiguration.users
+
+    private fun roles(): MutableList<Role> = usersConfiguration.roles
 
     private fun saveUsers() {
         usersConfiguration.save("local/modules/rest/users")

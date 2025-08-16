@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller
 
 import dev.httpmarco.polocloud.modules.rest.RestModule
-import dev.httpmarco.polocloud.modules.rest.auth.user.Token
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.AuthModel
@@ -18,7 +18,7 @@ class AuthController : Controller("/auth") {
         val authModel = try {
             context.bodyAsClass(AuthModel::class.java)
         } catch (e: Exception) {
-            context.status(400).result("Invalid body")
+            context.status(400).json(message("Invalid body"))
             return
         }
 

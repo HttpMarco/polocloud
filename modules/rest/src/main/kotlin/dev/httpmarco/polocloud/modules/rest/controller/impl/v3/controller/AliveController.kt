@@ -9,6 +9,6 @@ class AliveController : Controller("/alive") {
 
     @Request(requestType = RequestType.GET, path = "/")
     fun alive(context: Context) {
-        context.status(200).result(message("OK"))
+        context.status(200).json(message("OK"))
     }
 }
