@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.agent.utils.JavaUtils
 import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformParameters
@@ -105,9 +106,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         Agent.eventService.call(ServiceStartingEvent(service))
 
         service.path.createDirectories()
-
-        val serverIcon = this.javaClass.classLoader.getResourceAsStream("server-icon.png")!!
-
 
         // copy all templates to the service path
         Agent.runtime.templates().bindTemplate(service)
