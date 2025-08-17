@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.utils.PortDetector
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceChangePlayerCountEvent
 import dev.httpmarco.polocloud.shared.service.Service
+import dev.httpmarco.polocloud.shared.service.ServiceInformation
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
 abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: String = "127.0.0.1") :
@@ -18,6 +19,7 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         hostname,
         PortDetector.nextPort(group),
         group.templates,
+        ServiceInformation(System.currentTimeMillis()),
         group.minMemory,
         group.maxMemory,
         -1,
