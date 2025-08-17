@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 public class PolocloudProcess extends Thread {
 
     private final List<PolocloudLib> processLibs;
+    private final boolean developmentMode;
 
-    public PolocloudProcess() {
+    public PolocloudProcess(boolean developmentMode) {
         this.processLibs = PolocloudLib.of(PolocloudParameters.REQUIRED_LIBS);
         this.processLibs.forEach(PolocloudLib::copyFromClasspath);
+        this.developmentMode = developmentMode;
     }
 
     @Override
@@ -51,6 +53,13 @@ public class PolocloudProcess extends Thread {
                 .orElseThrow(() -> new PolocloudLibNotFoundException(PolocloudParameters.BOOT_LIB));
 
         arguments.add(usedJava != null ? usedJava + "/bin/java" : "java");
+
+        /* DISABLE CONSOLE WARNINGS FOR PRODUCTION USAGE */
+        if(!this.developmentMode) {
+            arguments.add("--enable-native-access=ALL-UNNAMED");
+            arguments.add("--sun-misc-unsafe-memory-access=allow");
+        }
+
         arguments.add(String.format("-javaagent:%s", bootLib.target()));
 
         arguments.add("-cp");
