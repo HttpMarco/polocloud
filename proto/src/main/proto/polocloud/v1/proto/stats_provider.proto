@@ -18,6 +18,10 @@ message GetStatsResponse {
 
 message StatsSnapshot {
   int64 started = 1;
-  double cpuUsage = 2;
-  double usedMemory = 3;
+  string runtime = 2;
+  string javaVersion = 3;
+  double cpuUsage = 4;
+  double usedMemory = 5;
+  double maxMemory = 6;
+  int32 subscribedEvents = 7;
 }
