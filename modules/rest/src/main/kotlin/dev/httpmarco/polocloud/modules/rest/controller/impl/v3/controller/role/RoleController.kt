@@ -118,6 +118,7 @@ class RoleController : Controller("/role") {
                         addProperty("label", role.label)
                         addProperty("hexColor", role.hexColor)
                         addProperty("default", role.default)
+                        addProperty("userCount", RestModule.instance.userProvider.roleCount(role.id))
                     })
                 }
             }.toString()

@@ -70,6 +70,18 @@ class UserProvider {
         return existingUser
     }
 
+    fun delete(uuid: UUID): Boolean {
+        val currentUsers = users()
+        val existingUser = currentUsers.firstOrNull { it.uuid == uuid } ?: return false
+
+        currentUsers.remove(existingUser)
+        saveUsers()
+        return true
+    }
+
+    //TODO token deletion
+    //TODO user creation without token
+
     fun updateActivity(user: User, token: Token) {
         val storedTokens = user.tokens.find { it.value == token.value }
         if (storedTokens == null) {
@@ -79,6 +91,8 @@ class UserProvider {
         storedTokens.data.lastActivity = System.currentTimeMillis()
         saveUsers()
     }
+
+    fun roleCount(roleId: Int): Int = users().count { it.role?.id == roleId }
 
     fun userByUUID(uuid: UUID): User? = users().byUUID(uuid)
 

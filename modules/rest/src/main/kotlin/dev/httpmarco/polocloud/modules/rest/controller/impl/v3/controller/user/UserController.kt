@@ -109,6 +109,27 @@ class UserController : Controller("/user") {
         context.status(201).json(message("User updated"))
     }
 
+    @Request(requestType = RequestType.DELETE, path = "/{uuid}", permission = "polocloud.user.delete")
+    fun delete(context: Context) {
+        val uuidString = context.pathParam("uuid")
+        val userUUID = try {
+            UUID.fromString(uuidString)
+        } catch (e: IllegalArgumentException) {
+            context.status(400).json(message("Invalid UUID format"))
+            return
+        }
+
+        RestModule.instance.userProvider.delete(userUUID)
+        context.status(204).json(message("User deleted"))
+    }
+
+    @Request(requestType = RequestType.DELETE, path = "/self")
+    fun deleteSelf(context: Context, user: User) {
+        RestModule.instance.userProvider.delete(user.uuid)
+        context.removeCookie("token")
+        context.status(204).json(message("User deleted"))
+    }
+
     @Request(requestType = RequestType.GET, path = "s/", permission = "polocloud.user.list")
     fun list(context: Context) {
         context.status(200).json(
