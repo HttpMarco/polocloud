@@ -19,5 +19,5 @@ message GetStatsResponse {
 message StatsSnapshot {
   int64 started = 1;
   double cpuUsage = 2;
-  double memoryUsage = 3;
+  double usedMemory = 3;
 }
