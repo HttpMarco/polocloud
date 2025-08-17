@@ -63,7 +63,7 @@ class AuthProvider(
     }
 
     private fun isUserCreationAllowed(context: Context): Boolean {
-        return context.path().trimEnd('/') == "$API_PATH/user"
+        return context.path().trimEnd('/') == "$API_PATH/user/self"
                 && context.method() == HandlerType.POST
                 && usersConfiguration.users.isEmpty()
     }

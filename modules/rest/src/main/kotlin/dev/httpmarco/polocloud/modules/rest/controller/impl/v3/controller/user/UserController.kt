@@ -5,10 +5,12 @@ import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.EncryptionUtil
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserSelfCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserEditModel
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserPasswordChangeModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserSelfEditModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
@@ -40,7 +42,7 @@ class UserController : Controller("/user") {
         }
 
         val password = RestModule.instance.userProvider.create(userCreateModel.username, role)
-        context.status(201).json(JsonObject().apply { addProperty("password", password) })
+        context.status(201).json(JsonObject().apply { addProperty("password", password) }.toString())
     }
 
     @Request(requestType = RequestType.POST, path = "/self")
@@ -134,6 +136,27 @@ class UserController : Controller("/user") {
         context.status(201).json(message("User updated"))
     }
 
+    @Request(requestType = RequestType.PATCH, path = "/self/change-password")
+    fun changePassword(context: Context, user: User) {
+        val userPasswordChangeModel = try {
+            context.bodyAsClass(UserPasswordChangeModel::class.java)
+        } catch (e: Exception) {
+            context.status(400).json(message("Invalid body"))
+            return
+        }
+
+        if (userPasswordChangeModel.password.isBlank()) {
+            context.status(400).json(message("New password cannot be empty"))
+            return
+        }
+
+        user.passwordHash = EncryptionUtil.encrypt(userPasswordChangeModel.password)
+        user.hasChangedPassword = true
+
+        RestModule.instance.userProvider.edit(user)
+        context.status(200).json(message("Password changed successfully"))
+    }
+
     @Request(requestType = RequestType.DELETE, path = "/{uuid}", permission = "polocloud.user.delete")
     fun delete(context: Context) {
         val uuidString = context.pathParam("uuid")
@@ -193,7 +216,7 @@ class UserController : Controller("/user") {
                 addProperty("username", user.username)
                 addProperty("createdAt", user.createdAt)
                 addProperty("role", user.role?.id ?: 0)
-            }
+            }.toString()
         )
     }
 
@@ -224,5 +247,30 @@ class UserController : Controller("/user") {
                 }
             }.toString()
         )
+    }
+
+    @Request(requestType = RequestType.DELETE, path = "/token/{token}")
+    fun deleteToken(context: Context, user: User, token: Token) {
+        val tokenValue = context.pathParam("token")
+        val deletionToken = user.tokens.firstOrNull { it.value == tokenValue }
+
+        if (deletionToken == null) {
+            context.status(404).json(message("Token not found"))
+            return
+        }
+
+        if (deletionToken == token) {
+            context.removeCookie("token")
+        }
+
+        RestModule.instance.userProvider.deleteToken(user, deletionToken)
+        context.status(204).json(message("Token deleted"))
+    }
+
+    @Request(requestType = RequestType.DELETE, path = "/tokens")
+    fun deleteAllTokens(context: Context, user: User) {
+        context.removeCookie("token")
+        RestModule.instance.userProvider.deleteAllTokens(user)
+        context.status(204).json(message("All tokens deleted"))
     }
 }

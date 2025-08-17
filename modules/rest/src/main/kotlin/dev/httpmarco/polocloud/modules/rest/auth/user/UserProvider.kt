@@ -87,6 +87,7 @@ class UserProvider {
 
         existingUser.username = user.username
         existingUser.passwordHash = user.passwordHash
+        existingUser.hasChangedPassword = user.hasChangedPassword
         existingUser.role = user.role
 
         saveUsers()
@@ -102,7 +103,18 @@ class UserProvider {
         return true
     }
 
-    //TODO token deletion
+    fun deleteToken(user: User, token: Token): Boolean {
+        val storedToken = user.tokens.firstOrNull { it.value == token.value } ?: return false
+        user.tokens.remove(storedToken)
+        saveUsers()
+        return true
+    }
+
+    fun deleteAllTokens(user: User): Boolean {
+        user.tokens.clear()
+        saveUsers()
+        return true
+    }
 
     fun updateActivity(user: User, token: Token) {
         val storedTokens = user.tokens.find { it.value == token.value }
