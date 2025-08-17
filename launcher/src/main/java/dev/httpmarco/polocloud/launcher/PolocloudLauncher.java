@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 public final class PolocloudLauncher {
 
@@ -20,7 +21,8 @@ public final class PolocloudLauncher {
 
         Files.createDirectories(PolocloudParameters.LIB_DIRECTORY);
 
-        var development = Arrays.stream(args).toList().contains("--development") || Arrays.stream(args).toList().contains("--dev");
+        List<String> argumentList = Arrays.stream(args).toList();
+        var development = argumentList.contains("--development") || argumentList.contains("--dev");
         var process = new PolocloudProcess(development);
         process.start();
     }
