@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.sdk.java;
 
 import dev.httpmarco.polocloud.sdk.java.events.EventProvider;
 import dev.httpmarco.polocloud.sdk.java.groups.GroupProvider;
+import dev.httpmarco.polocloud.sdk.java.logger.LoggerProvider;
 import dev.httpmarco.polocloud.sdk.java.player.PlayerProvider;
 import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider;
 import dev.httpmarco.polocloud.sdk.java.information.CloudInformationProvider;
@@ -29,6 +30,7 @@ public final class Polocloud extends PolocloudShared {
     private final SharedGroupProvider<Group> groupProvider;
     private final SharedPlayerProvider<PolocloudPlayer> playerProvider;
     private final SharedCloudInformationProvider<CloudInformation> cloudInformationProvider;
+    private final Logger logger;
 
     public static Polocloud instance() {
         return instance;
@@ -51,6 +53,7 @@ public final class Polocloud extends PolocloudShared {
         this.groupProvider = new GroupProvider(channel);
         this.playerProvider = new PlayerProvider(channel);
         this.cloudInformationProvider = new CloudInformationProvider(channel);
+        this.logger = new LoggerProvider(channel);
     }
 
     public String selfServiceName() {
@@ -84,8 +87,7 @@ public final class Polocloud extends PolocloudShared {
     }
 
     @Override
-    @Deprecated
     public @NotNull Logger logger() {
-        return null; // TODO
+        return this.logger;
     }
 }
