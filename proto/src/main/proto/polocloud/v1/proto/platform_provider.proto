@@ -22,25 +22,10 @@ message PlatformFindResponse {
 
 message PlatformSnapshot {
   string name = 1;
-  string url = 2;
-  PlatformLanguageSnapshot language = 3;
-  string shutdownCommand = 4;
-  GroupType type = 5;
-  repeated string arguments = 6;
-  repeated string flags = 7;
-  repeated PlatformVersionSnapshot versions = 8;
-  repeated string tasks = 9;
-  repeated string preTasks = 10;
-  bool copyServerIcon = 11;
-  bool setFileName = 12;
-}
-
-message PlatformLanguageSnapshot {
-  string fileSuffix = 1;
-  bool nativeExecutable = 2;
+  GroupType type = 2;
+  repeated PlatformVersionSnapshot versions = 3;
 }
 
 message PlatformVersionSnapshot {
   string version = 1;
-  map<string, string> additionalProperties = 2;
 }
