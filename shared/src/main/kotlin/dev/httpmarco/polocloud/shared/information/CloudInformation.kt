@@ -1,8 +1,8 @@
-package dev.httpmarco.polocloud.shared.stats
+package dev.httpmarco.polocloud.shared.information
 
-import dev.httpmarco.polocloud.v1.stats.StatsSnapshot
+import dev.httpmarco.polocloud.v1.information.CloudInformationSnapshot
 
-open class Stats(
+open class CloudInformation(
     val started: Long,
     val runtime: String,
     val javaVersion: String,
@@ -13,8 +13,8 @@ open class Stats(
 ) {
 
     companion object {
-        fun bindSnapshot(snapshot: StatsSnapshot): Stats {
-            return Stats(
+        fun bindSnapshot(snapshot: CloudInformationSnapshot): CloudInformation {
+            return CloudInformation(
                 snapshot.started,
                 snapshot.runtime,
                 snapshot.javaVersion,
@@ -26,8 +26,8 @@ open class Stats(
         }
     }
 
-    fun toSnapshot(): StatsSnapshot {
-        return StatsSnapshot.newBuilder()
+    fun toSnapshot(): CloudInformationSnapshot {
+        return CloudInformationSnapshot.newBuilder()
             .setStarted(started)
             .setRuntime(runtime)
             .setJavaVersion(javaVersion)
@@ -39,7 +39,7 @@ open class Stats(
     }
 
     override fun equals(other: Any?): Boolean =
-        other is Stats &&
+        other is CloudInformation &&
                 started == other.started &&
                 runtime == other.runtime &&
                 javaVersion == other.javaVersion &&

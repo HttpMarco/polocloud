@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.sdk.java.events.EventProvider;
 import dev.httpmarco.polocloud.sdk.java.groups.GroupProvider;
 import dev.httpmarco.polocloud.sdk.java.player.PlayerProvider;
 import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider;
-import dev.httpmarco.polocloud.sdk.java.stats.StatsProvider;
+import dev.httpmarco.polocloud.sdk.java.information.CloudInformationProvider;
 import dev.httpmarco.polocloud.shared.PolocloudShared;
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider;
 import dev.httpmarco.polocloud.shared.groups.Group;
@@ -14,8 +14,8 @@ import dev.httpmarco.polocloud.shared.player.PolocloudPlayer;
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider;
 import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
-import dev.httpmarco.polocloud.shared.stats.SharedStatsProvider;
-import dev.httpmarco.polocloud.shared.stats.Stats;
+import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider;
+import dev.httpmarco.polocloud.shared.information.CloudInformation;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ public final class Polocloud extends PolocloudShared {
     private final SharedServiceProvider<Service> serviceProvider;
     private final SharedGroupProvider<Group> groupProvider;
     private final SharedPlayerProvider<PolocloudPlayer> playerProvider;
-    private final SharedStatsProvider<Stats> statsProvider;
+    private final SharedCloudInformationProvider<CloudInformation> cloudInformationProvider;
 
     public static Polocloud instance() {
         return instance;
@@ -50,7 +50,7 @@ public final class Polocloud extends PolocloudShared {
         this.serviceProvider = new ServiceProvider(channel);
         this.groupProvider = new GroupProvider(channel);
         this.playerProvider = new PlayerProvider(channel);
-        this.statsProvider = new StatsProvider(channel);
+        this.cloudInformationProvider = new CloudInformationProvider(channel);
     }
 
     public String selfServiceName() {
@@ -79,8 +79,8 @@ public final class Polocloud extends PolocloudShared {
     }
 
     @Override
-    public @NotNull SharedStatsProvider<?> statsProvider() {
-        return this.statsProvider;
+    public @NotNull SharedCloudInformationProvider<?> cloudInformationProvider() {
+        return this.cloudInformationProvider;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.agent.stats
+package dev.httpmarco.polocloud.agent.information
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
@@ -6,15 +6,15 @@ import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
 import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.common.os.maxMemory
 import dev.httpmarco.polocloud.common.os.usedMemory
-import dev.httpmarco.polocloud.shared.stats.SharedStatsProvider
-import dev.httpmarco.polocloud.shared.stats.Stats
+import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider
+import dev.httpmarco.polocloud.shared.information.CloudInformation
 
-class StatsStorageImpl : SharedStatsProvider<Stats> {
+class CloudInformationStorageImpl : SharedCloudInformationProvider<CloudInformation> {
 
-    override fun get(): Stats {
+    override fun get(): CloudInformation {
         val runtime = Agent.runtime
         val runtimeString = if(runtime is KubernetesRuntime) "Kubernetes" else (if(runtime is DockerRuntime) "Docker" else "Local")
-        return Stats(
+        return CloudInformation(
             Agent.runtime.started(),
             runtimeString,
             System.getProperty("java.version"),

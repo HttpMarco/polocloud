@@ -1,9 +1,9 @@
-package dev.httpmarco.polocloud.shared.stats
+package dev.httpmarco.polocloud.shared.information
 
 /**
  * Interface for a shared service provider that allows interaction with services.
  */
-interface SharedStatsProvider<S : Stats> {
+interface SharedCloudInformationProvider<S : CloudInformation> {
 
     /**
      * Get cloud statistics.

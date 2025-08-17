@@ -23,7 +23,7 @@ class InfoSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
             return
         }
 
-        val stats = Polocloud.instance().statsProvider().get()
+        val stats = Polocloud.instance().cloudInformationProvider().get()
 
         source.sendMessage(
             miniMessage.deserialize(
