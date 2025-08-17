@@ -8,6 +8,11 @@ option java_multiple_files = true;
 service CloudInformationController {
   rpc find(CloudInformationFindRequest) returns (CloudInformationFindResponse);
   rpc findAll(CloudInformationFindAllRequest) returns (CloudInformationFindAllResponse);
+  rpc findMinutes(CloudInformationFindMinutesRequest) returns (CloudInformationFindMinutesResponse);
+  rpc findHours(CloudInformationFindHoursRequest) returns (CloudInformationFindHoursResponse);
+  rpc findDays(CloudInformationFindDaysRequest) returns (CloudInformationFindDaysResponse);
+  rpc findAverage(CloudInformationFindAverageRequest) returns (CloudInformationFindAverageResponse);
+  rpc cleanUp(CloudInformationCleanUpRequest) returns (CloudInformationCleanUpResponse);
 }
 
 message CloudInformationFindRequest {
@@ -25,6 +30,48 @@ message CloudInformationFindAllResponse {
   repeated CloudInformationSnapshot information = 1;
 }
 
+message CloudInformationFindMinutesRequest {
+  optional int64 from = 1;
+  optional int64 to = 2;
+}
+
+message CloudInformationFindMinutesResponse {
+  repeated AggregateCloudInformationSnapshot information = 1;
+}
+
+message CloudInformationFindHoursRequest {
+  optional int64 from = 1;
+  optional int64 to = 2;
+}
+
+message CloudInformationFindHoursResponse {
+  repeated AggregateCloudInformationSnapshot information = 1;
+}
+
+message CloudInformationFindDaysRequest {
+  optional int64 from = 1;
+  optional int64 to = 2;
+}
+
+message CloudInformationFindDaysResponse {
+  repeated AggregateCloudInformationSnapshot information = 1;
+}
+
+message CloudInformationFindAverageRequest {
+  optional int64 from = 1;
+  optional int64 to = 2;
+}
+
+message CloudInformationFindAverageResponse {
+  AggregateCloudInformationSnapshot information = 1;
+}
+
+message CloudInformationCleanUpRequest {
+  int64 maxAgeMillis = 1;
+}
+
+message CloudInformationCleanUpResponse {}
+
 
 message CloudInformationSnapshot {
   int64 started = 1;
@@ -35,4 +82,10 @@ message CloudInformationSnapshot {
   double maxMemory = 6;
   int32 subscribedEvents = 7;
   int64 timestamp = 8;
+}
+
+message AggregateCloudInformationSnapshot {
+  int64 timestamp = 1;
+  double avgCpu = 2;
+  double avgRam = 3;
 }
