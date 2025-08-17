@@ -6,7 +6,9 @@ import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AliveController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AuthController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.group.GroupController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role.RoleController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.service.ServiceController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.user.UserController
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData
@@ -27,7 +29,9 @@ class ControllerProvider {
             AliveController(),
             UserController(),
             AuthController(),
-            RoleController()
+            RoleController(),
+            GroupController(),
+            ServiceController()
         )
 
         this.controllers.forEach { handle(it) }
