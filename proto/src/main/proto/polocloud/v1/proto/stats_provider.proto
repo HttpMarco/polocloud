@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package dev.httpmarco.polocloud.v1.proto;
 
-option java_package = "dev.httpmarco.polocloud.v1.groups";
+option java_package = "dev.httpmarco.polocloud.v1.stats";
 option java_multiple_files = true;
 
 service StatsController {
