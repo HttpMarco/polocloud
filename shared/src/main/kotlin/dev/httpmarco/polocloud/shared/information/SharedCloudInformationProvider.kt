@@ -28,4 +28,29 @@ interface SharedCloudInformationProvider<S : CloudInformation> {
      */
     fun findAll(): List<S>
 
+    /**
+     * Aggregated by minutes (avg cpu/ram per minute).
+     */
+    fun findMinutes(from: Long, to: Long): List<AggregateCloudInformation>
+
+    /**
+     * Aggregated by hours (avg cpu/ram per hour).
+     */
+    fun findHours(from: Long, to: Long): List<AggregateCloudInformation>
+
+    /**
+     * Aggregated by days (avg cpu/ram per day).
+     */
+    fun findDays(from: Long, to: Long): List<AggregateCloudInformation>
+
+    /**
+     * Average CPU/RAM usage across a range.
+     */
+    fun findAverage(from: Long, to: Long): AggregateCloudInformation
+
+    /**
+     * Cleanup old entries older than `maxAgeMillis` (raw + aggregates).
+     */
+    fun cleanup(maxAgeMillis: Long)
+
 }
