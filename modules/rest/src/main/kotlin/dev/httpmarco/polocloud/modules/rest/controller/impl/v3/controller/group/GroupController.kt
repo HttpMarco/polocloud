@@ -31,14 +31,20 @@ class GroupController : Controller("/group") {
             return
         }
 
-        val filteredGroups = groups.filter { it.information.createdAt in from..to }
+        val current = groups.count { it.information.createdAt in from..to }
 
-        val filteredCount = filteredGroups.count()
-        val percentage = if (totalCount > 0) (filteredCount.toDouble() / totalCount * 100).toInt() else 0
+        val rangeLength = to - from
+        val previous = groups.count { it.information.createdAt in (from - rangeLength)..<from }
+
+        val percentage = when {
+            previous > 0 -> ((current - previous) * 100.0 / previous)
+            current > 0 && previous == 0 -> current * 100.0
+            else         -> 0.0
+        }
 
         context.status(200).json(
             JsonObject().apply {
-                addProperty("groupCount", filteredCount)
+                addProperty("groupCount", current)
                 addProperty("percentage", percentage)
             }.toString()
         )
