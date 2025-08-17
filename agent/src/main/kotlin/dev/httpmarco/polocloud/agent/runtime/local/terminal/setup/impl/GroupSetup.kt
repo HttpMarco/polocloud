@@ -7,7 +7,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputConte
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
-import dev.httpmarco.polocloud.shared.groups.Group
+import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.v1.GroupType
 
@@ -71,6 +71,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             maxOnlineServices,
             percentageToStartNewService.toDouble(),
             platform,
+            GroupInformation(System.currentTimeMillis()),
             listOf(
                 "EVERY", "EVERY_" + originalPlatform.type.name, name
             ),

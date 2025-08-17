@@ -11,6 +11,7 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import dev.httpmarco.polocloud.agent.utils.IndexDetector
 import dev.httpmarco.polocloud.agent.runtime.local.LocalService
+import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.v1.GroupType
 
 open class AbstractGroup(
@@ -21,6 +22,7 @@ open class AbstractGroup(
     maxOnlineServices: Int,
     percentageToStartNewService: Double,
     platform: PlatformIndex,
+    information: GroupInformation,
     templates: List<String>,
     properties: Map<String, JsonPrimitive>
 ) :
@@ -32,6 +34,7 @@ open class AbstractGroup(
         maxOnlineServices,
         platform,
         percentageToStartNewService,
+        information,
         templates,
         properties
     ) {
