@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.shared.logging.Logger
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
 import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider
+import dev.httpmarco.polocloud.shared.platform.SharedPlatformProvider
 
 lateinit var polocloudShared: PolocloudShared
 
@@ -22,6 +23,8 @@ abstract class PolocloudShared {
     abstract fun cloudInformationProvider(): SharedCloudInformationProvider<*>
 
     abstract fun logger(): Logger
+
+    abstract fun platformProvider(): SharedPlatformProvider<*>
 
     init {
         polocloudShared = this
