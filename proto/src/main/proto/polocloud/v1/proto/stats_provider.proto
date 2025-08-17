@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.v1.proto;
+
+option java_package = "dev.httpmarco.polocloud.v1.stats";
+option java_multiple_files = true;
+
+service StatsController {
+  rpc get(GetStatsRequest) returns (GetStatsResponse);
+}
+
+message GetStatsRequest {}
+
+message GetStatsResponse {
+  StatsSnapshot stats = 1;
+}
+
+
+message StatsSnapshot {
+  int64 started = 1;
+  double cpuUsage = 2;
+  double usedMemory = 3;
+}

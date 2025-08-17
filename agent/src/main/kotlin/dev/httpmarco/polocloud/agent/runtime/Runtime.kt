@@ -93,6 +93,11 @@ interface Runtime {
      */
     fun configHolder(): RuntimeConfigHolder
 
+    /*
+    Returns the start time of the cloud
+     */
+    fun started(): Long
+
     /**
      * Shuts down the runtime.
      * This method can be overridden by specific runtime implementations

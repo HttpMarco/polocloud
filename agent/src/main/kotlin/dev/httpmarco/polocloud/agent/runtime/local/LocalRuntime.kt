@@ -20,6 +20,7 @@ class LocalRuntime : Runtime {
     private val runtimeExpender = LocalRuntimeExpender()
     private val templates = LocalRuntimeTemplates()
     private val configHolder = LocalRuntimeConfigHolder()
+    private val started = System.currentTimeMillis()
 
     lateinit var terminal: JLine3Terminal
 
@@ -61,6 +62,8 @@ class LocalRuntime : Runtime {
     override fun templates() = templates
 
     override fun configHolder() = configHolder
+
+    override fun started() = started
 
     override fun shutdown() {
         this.terminal.shutdown()
