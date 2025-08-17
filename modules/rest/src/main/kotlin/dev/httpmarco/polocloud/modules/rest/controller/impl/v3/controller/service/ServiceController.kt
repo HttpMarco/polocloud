@@ -32,12 +32,10 @@ class ServiceController : Controller("/service") {
         }
 
         val current = services.count { it.information.createdAt in from..to }
-
-        val rangeLength = to - from
-        val previous = services.count { it.information.createdAt in (from - rangeLength)..from }
+        val previous = services.count { it.information.createdAt < from }
 
         val percentage = when {
-            previous > 0 -> ((current - previous) * 100.0 / previous)
+            previous > 0 -> (current * 100.0 / previous)
             current > 0 && previous == 0 -> current * 100.0
             else         -> 0.0
         }
