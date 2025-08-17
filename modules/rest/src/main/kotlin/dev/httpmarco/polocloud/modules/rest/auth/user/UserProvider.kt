@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.modules.rest.auth.role.Role
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.TokenData
 import dev.httpmarco.polocloud.modules.rest.usersConfiguration
+import dev.httpmarco.polocloud.modules.rest.utils.generateRandom
 import java.util.UUID
 
 class UserProvider {
@@ -32,7 +33,29 @@ class UserProvider {
         saveUsers()
     }
 
-    fun create(user: User, ip: String, userAgent: String?): Token? {
+    fun create(username: String, role: Role): String? {
+        if (users().any { it.username == username }) {
+            return null
+        }
+
+        val password = generateRandom(12)
+        val hashedPassword = EncryptionUtil.encrypt(password)
+
+        val user = User(
+            uuid = UUID.randomUUID(),
+            username = username,
+            passwordHash = hashedPassword,
+            role = role,
+            createdAt = System.currentTimeMillis(),
+            tokens = mutableListOf()
+        )
+
+        users().add(user)
+        saveUsers()
+        return password
+    }
+
+    fun createSelf(user: User, ip: String, userAgent: String?): Token? {
         val currentUsers = users()
         if (currentUsers.any { it.username == user.username }) {
             return null
@@ -80,7 +103,6 @@ class UserProvider {
     }
 
     //TODO token deletion
-    //TODO user creation without token
 
     fun updateActivity(user: User, token: Token) {
         val storedTokens = user.tokens.find { it.value == token.value }

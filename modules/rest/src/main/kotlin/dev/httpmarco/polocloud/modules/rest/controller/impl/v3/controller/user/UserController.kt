@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.modules.rest.auth.EncryptionUtil
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserCreateModel
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserSelfCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserEditModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserSelfEditModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
@@ -27,16 +28,40 @@ class UserController : Controller("/user") {
             return
         }
 
-        if (userCreateModel.username.isBlank() || userCreateModel.password.isBlank()) {
+        if (userCreateModel.username.isBlank()) {
             context.status(400).json(message("Invalid body: missing fields"))
             return
         }
 
-        val hashedPassword = EncryptionUtil.encrypt(userCreateModel.password)
         val role = RestModule.instance.roleProvider.roleById(userCreateModel.roleId)
-        val user = User(UUID.randomUUID(), userCreateModel.username, role, hashedPassword, System.currentTimeMillis())
+        if (role == null) {
+            context.status(400).json(message("Invalid role ID"))
+            return
+        }
 
-        val token = RestModule.Companion.instance.userProvider.create(user, context.ip(), context.userAgent())
+        val password = RestModule.instance.userProvider.create(userCreateModel.username, role)
+        context.status(201).json(JsonObject().apply { addProperty("password", password) })
+    }
+
+    @Request(requestType = RequestType.POST, path = "/self")
+    fun createSelfUser(context: Context) {
+        val userSelfCreateModel = try {
+            context.bodyAsClass(UserSelfCreateModel::class.java)
+        } catch (e: Exception) {
+            context.status(400).json(message("Invalid body"))
+            return
+        }
+
+        if (userSelfCreateModel.username.isBlank() || userSelfCreateModel.password.isBlank()) {
+            context.status(400).json(message("Invalid body: missing fields"))
+            return
+        }
+
+        val hashedPassword = EncryptionUtil.encrypt(userSelfCreateModel.password)
+        val role = RestModule.instance.roleProvider.roleById(userSelfCreateModel.roleId)
+        val user = User(UUID.randomUUID(), userSelfCreateModel.username, role, hashedPassword, true, System.currentTimeMillis())
+
+        val token = RestModule.instance.userProvider.createSelf(user, context.ip(), context.userAgent())
         if (token == null) {
             context.status(400).json(message("User already exists"))
             return
@@ -178,6 +203,7 @@ class UserController : Controller("/user") {
             JsonObject().apply {
                 addProperty("uuid", user.uuid.toString())
                 addProperty("username", user.username)
+                addProperty("hasChangedPassword", user.hasChangedPassword)
                 addProperty("createdAt", user.createdAt)
                 addProperty("role", user.role?.id ?: 0)
             }.toString()

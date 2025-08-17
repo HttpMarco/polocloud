@@ -9,6 +9,7 @@ data class User(
     var username: String,
     var role: Role?,
     var passwordHash: String,
+    var hasChangedPassword: Boolean = false,
     val createdAt: Long,
     val tokens: MutableList<Token> = mutableListOf(),
 )
