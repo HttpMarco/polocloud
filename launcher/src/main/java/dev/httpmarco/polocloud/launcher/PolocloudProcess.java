@@ -51,7 +51,6 @@ public class PolocloudProcess extends Thread {
                 .orElseThrow(() -> new PolocloudLibNotFoundException(PolocloudParameters.BOOT_LIB));
 
         arguments.add(usedJava != null ? usedJava + "/bin/java" : "java");
-
         arguments.add(String.format("-javaagent:%s", bootLib.target()));
 
         arguments.add("-cp");
