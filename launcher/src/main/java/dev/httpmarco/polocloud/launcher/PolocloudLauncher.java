@@ -20,6 +20,7 @@ public final class PolocloudLauncher {
         Files.createDirectories(PolocloudParameters.LIB_DIRECTORY);
 
         var process = new PolocloudProcess();
+        // start the main context of the polocloud agent
         process.start();
     }
 }
