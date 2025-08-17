@@ -21,6 +21,8 @@ import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 import dev.httpmarco.polocloud.shared.logging.Logger
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
+import dev.httpmarco.polocloud.shared.stats.SharedStatsProvider
+import dev.httpmarco.polocloud.agent.stats.StatsStorageImpl
 import dev.httpmarco.polocloud.updater.Updater
 
 // global terminal instance for the agent
@@ -41,6 +43,7 @@ object Agent : PolocloudShared() {
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())
 
     val playerStorage = PlayerStorageImpl()
+    val statsStorage = StatsStorageImpl()
 
     init {
         // display the default log information
@@ -125,6 +128,8 @@ object Agent : PolocloudShared() {
     override fun groupProvider(): SharedGroupProvider<*> = this.runtime.groupStorage()
 
     override fun playerProvider(): SharedPlayerProvider<*> = this.playerStorage
+
+    override fun statsProvider(): SharedStatsProvider<*> = this.statsStorage
 
     override fun logger(): Logger = logger
 }

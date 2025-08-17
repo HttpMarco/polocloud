@@ -2,8 +2,8 @@ package dev.httpmarco.polocloud.sdk.java.stats;
 
 import dev.httpmarco.polocloud.shared.stats.SharedStatsProvider;
 import dev.httpmarco.polocloud.shared.stats.Stats;
-import dev.httpmarco.polocloud.v1.groups.GetStatsRequest;
-import dev.httpmarco.polocloud.v1.groups.StatsControllerGrpc;
+import dev.httpmarco.polocloud.v1.stats.GetStatsRequest;
+import dev.httpmarco.polocloud.v1.stats.StatsControllerGrpc;
 import io.grpc.ManagedChannel;
 import org.jetbrains.annotations.NotNull;
 
