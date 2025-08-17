@@ -22,8 +22,7 @@ public final class PolocloudLauncher {
         Files.createDirectories(PolocloudParameters.LIB_DIRECTORY);
 
         List<String> argumentList = Arrays.stream(args).toList();
-        var development = argumentList.contains("--development") || argumentList.contains("--dev");
-        var process = new PolocloudProcess(development);
+        var process = new PolocloudProcess();
         process.start();
     }
 }
