@@ -25,6 +25,7 @@ class LocalRuntime : Runtime {
     lateinit var terminal: JLine3Terminal
 
     private val runtimeCpuDetectionThread = LocalCpuDetectionThread()
+    private val runtimeCloudInformationThread = LocalCloudInformationThread()
 
     override fun boot() {
         terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage, terminal))
@@ -33,6 +34,7 @@ class LocalRuntime : Runtime {
 
         this.runtimeQueue.start()
         this.runtimeCpuDetectionThread.start()
+        this.runtimeCloudInformationThread.start()
     }
 
     override fun initialize() {
@@ -68,6 +70,7 @@ class LocalRuntime : Runtime {
     override fun shutdown() {
         this.terminal.shutdown()
         this.runtimeCpuDetectionThread.interrupt()
+        this.runtimeCloudInformationThread.interrupt()
         this.runtimeQueue.interrupt()
         this.runtimeFactory.shutdown()
 

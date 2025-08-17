@@ -1,28 +1,38 @@
 package dev.httpmarco.polocloud.agent.information
 
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
-import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
 import dev.httpmarco.polocloud.common.os.cpuUsage
-import dev.httpmarco.polocloud.common.os.maxMemory
 import dev.httpmarco.polocloud.common.os.usedMemory
-import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider
 import dev.httpmarco.polocloud.shared.information.CloudInformation
 
-class CloudInformationStorageImpl : SharedCloudInformationProvider<CloudInformation> {
+private val cachedInformation =  mutableListOf<CloudStatistic>()
 
-    override fun get(): CloudInformation {
-        val runtime = Agent.runtime
-        val runtimeString = if(runtime is KubernetesRuntime) "Kubernetes" else (if(runtime is DockerRuntime) "Docker" else "Local")
-        return CloudInformation(
-            Agent.runtime.started(),
-            runtimeString,
-            System.getProperty("java.version"),
-            cpuUsage(),
-            usedMemory(),
-            maxMemory(),
-            Agent.eventService.registeredAmount()
-        )
+class CloudInformationStorageImpl : CloudInformationStorage {
+
+    override fun find(): CloudInformation {
+        return cachedInformation.last().toCloudInformation()
+    }
+
+    override fun find(from: Long, to: Long): List<CloudInformation> {
+        return cachedInformation
+            .filter { it.timestamp in from..to }
+            .map { it.toCloudInformation() }
+    }
+
+    override fun findAll(): List<CloudInformation> {
+        return cachedInformation.map { it.toCloudInformation() }
+    }
+
+    override fun addCloudInformation(cloudInformation: CloudInformation) {
+        cachedInformation.add(CloudStatistic.bindCloudInformation(cloudInformation))
+    }
+
+    override fun removeCloudInformation(cloudInformation: CloudInformation) {
+        cachedInformation.remove(CloudStatistic.bindCloudInformation(cloudInformation))
+    }
+
+    override fun saveCurrentCloudInformation() {
+        cachedInformation.add(CloudStatistic(cpuUsage(), usedMemory(), Agent.eventService.registeredAmount(), System.currentTimeMillis()))
     }
 
 }

@@ -6,13 +6,23 @@ option java_package = "dev.httpmarco.polocloud.v1.information";
 option java_multiple_files = true;
 
 service CloudInformationController {
-  rpc get(GetCloudInformationRequest) returns (GetCloudInformationResponse);
+  rpc find(CloudInformationFindRequest) returns (CloudInformationFindResponse);
+  rpc findAll(CloudInformationFindAllRequest) returns (CloudInformationFindAllResponse);
 }
 
-message GetCloudInformationRequest {}
+message CloudInformationFindRequest {
+  optional int64 from = 1;
+  optional int64 to = 2;
+}
 
-message GetCloudInformationResponse {
-  CloudInformationSnapshot information = 1;
+message CloudInformationFindResponse {
+  repeated CloudInformationSnapshot information = 1;
+}
+
+message CloudInformationFindAllRequest {}
+
+message CloudInformationFindAllResponse {
+  repeated CloudInformationSnapshot information = 1;
 }
 
 
@@ -24,4 +34,5 @@ message CloudInformationSnapshot {
   double usedMemory = 5;
   double maxMemory = 6;
   int32 subscribedEvents = 7;
+  int64 timestamp = 8;
 }

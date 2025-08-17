@@ -9,7 +9,8 @@ open class CloudInformation(
     val cpuUsage: Double,
     val usedMemory: Double,
     val maxMemory: Double,
-    val subscribedEvents: Int
+    val subscribedEvents: Int,
+    val timestamp: Long
 ) {
 
     companion object {
@@ -21,7 +22,8 @@ open class CloudInformation(
                 snapshot.cpuUsage,
                 snapshot.usedMemory,
                 snapshot.maxMemory,
-                snapshot.subscribedEvents
+                snapshot.subscribedEvents,
+                snapshot.timestamp
             )
         }
     }
@@ -35,6 +37,7 @@ open class CloudInformation(
             .setUsedMemory(usedMemory)
             .setMaxMemory(maxMemory)
             .setSubscribedEvents(subscribedEvents)
+            .setTimestamp(timestamp)
             .build()
     }
 
@@ -46,8 +49,9 @@ open class CloudInformation(
                 cpuUsage == other.cpuUsage &&
                 usedMemory == other.usedMemory &&
                 maxMemory == other.maxMemory &&
-                subscribedEvents == other.subscribedEvents
+                subscribedEvents == other.subscribedEvents &&
+                timestamp == other.timestamp
 
     override fun hashCode(): Int =
-        listOf(started, runtime, javaVersion, cpuUsage, usedMemory, maxMemory, subscribedEvents).hashCode()
+        listOf(started, runtime, javaVersion, cpuUsage, usedMemory, maxMemory, subscribedEvents, timestamp).hashCode()
 }
