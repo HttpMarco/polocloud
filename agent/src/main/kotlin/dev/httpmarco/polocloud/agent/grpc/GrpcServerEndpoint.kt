@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.player.PlayerGrpcService
 import dev.httpmarco.polocloud.agent.services.ServiceGrpcService
 import dev.httpmarco.polocloud.agent.information.CloudInformationGrpcService
+import dev.httpmarco.polocloud.agent.logging.LoggerGrpcService
 import io.grpc.Server
 import io.grpc.ServerBuilder
 
@@ -20,6 +21,7 @@ class GrpcServerEndpoint {
             .addService(ServiceGrpcService())
             .addService(PlayerGrpcService())
             .addService(CloudInformationGrpcService())
+            .addService(LoggerGrpcService())
             .build()
         this.server.start()
         i18n.info("agent.starting.grpc.successful", port)
