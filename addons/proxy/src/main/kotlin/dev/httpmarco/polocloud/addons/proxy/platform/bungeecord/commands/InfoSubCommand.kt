@@ -2,10 +2,10 @@ package dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.commands
 
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordCloudSubCommand
+import dev.httpmarco.polocloud.addons.proxy.utils.Format
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.chat.TextComponent
-import java.time.Duration
 
 class InfoSubCommand(
     val proxyAddon: ProxyAddon
@@ -29,7 +29,7 @@ class InfoSubCommand(
                     appendLine("")
                     appendLine(config.prefix() + "§b§lPolocloud Information")
                     appendLine(config.prefix() + "§bVersion: §7${polocloudVersion}")
-                    appendLine(config.prefix() + "§bUptime: §7${formatDuration(System.currentTimeMillis() - stats.started)}")
+                    appendLine(config.prefix() + "§bUptime: §7${Format.formatDuration(System.currentTimeMillis() - stats.started)}")
                     appendLine(config.prefix() + "§bRuntime: §7${stats.runtime}")
                     appendLine(config.prefix() + "§bJava Version: §7${stats.javaVersion}")
                     appendLine(config.prefix() + "§bCpu usage: §7${stats.cpuUsage}%")
@@ -40,30 +40,6 @@ class InfoSubCommand(
             )
         )
 
-
-    }
-
-    fun formatDuration(millis: Long): String {
-        var duration = Duration.ofMillis(millis)
-
-        val days = duration.toDays()
-        duration = duration.minusDays(days)
-
-        val hours = duration.toHours()
-        duration = duration.minusHours(hours)
-
-        val minutes = duration.toMinutes()
-        duration = duration.minusMinutes(minutes)
-
-        val seconds = duration.seconds
-        val sb = StringBuilder()
-
-        if (days > 0) sb.append(days).append("d ")
-        if (hours > 0 || days > 0) sb.append(hours).append("h ")
-        if (minutes > 0 || hours > 0 || days > 0) sb.append(minutes).append("m ")
-        if (seconds > 0 || minutes > 0 || hours > 0 || days > 0) sb.append(seconds).append("s ")
-
-        return sb.toString()
     }
 
 }

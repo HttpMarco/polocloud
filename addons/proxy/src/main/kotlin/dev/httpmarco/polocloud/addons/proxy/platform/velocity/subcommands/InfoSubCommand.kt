@@ -3,9 +3,9 @@ package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
 import com.velocitypowered.api.command.CommandSource
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
+import dev.httpmarco.polocloud.addons.proxy.utils.Format
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.kyori.adventure.text.minimessage.MiniMessage
-import java.time.Duration
 
 class InfoSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
 
@@ -31,7 +31,7 @@ class InfoSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
                     appendLine("")
                     appendLine(config.prefix() + "<white><st>   </st> PoloCloud Information <st>   </st> </white>")
                     appendLine(config.prefix() + "<gray>Version:</gray> <aqua>${polocloudVersion}</aqua>")
-                    appendLine(config.prefix() + "<gray>Uptime:</gray> <aqua>${formatDuration(System.currentTimeMillis() - stats.started)}</aqua>")
+                    appendLine(config.prefix() + "<gray>Uptime:</gray> <aqua>${Format.formatDuration(System.currentTimeMillis() - stats.started)}</aqua>")
                     appendLine(config.prefix() + "<gray>Runtime:</gray> <aqua>${stats.runtime}</aqua>")
                     appendLine(config.prefix() + "<gray>Java Version:</gray> <aqua>${stats.javaVersion}</aqua>")
                     appendLine(config.prefix() + "<gray>Cpu usage:</gray> <aqua>${stats.cpuUsage}%</aqua>")
@@ -43,26 +43,4 @@ class InfoSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
         )
     }
 
-    fun formatDuration(millis: Long): String {
-        var duration = Duration.ofMillis(millis)
-
-        val days = duration.toDays()
-        duration = duration.minusDays(days)
-
-        val hours = duration.toHours()
-        duration = duration.minusHours(hours)
-
-        val minutes = duration.toMinutes()
-        duration = duration.minusMinutes(minutes)
-
-        val seconds = duration.seconds
-        val sb = StringBuilder()
-
-        if (days > 0) sb.append(days).append("d ")
-        if (hours > 0 || days > 0) sb.append(hours).append("h ")
-        if (minutes > 0 || hours > 0 || days > 0) sb.append(minutes).append("m ")
-        if (seconds > 0 || minutes > 0 || hours > 0 || days > 0) sb.append(seconds).append("s ")
-
-        return sb.toString()
-    }
 }
