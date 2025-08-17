@@ -1,33 +1,35 @@
-package dev.httpmarco.polocloud.shared.stats
+package dev.httpmarco.polocloud.shared.information
 
-import dev.httpmarco.polocloud.v1.stats.StatsSnapshot
+import dev.httpmarco.polocloud.v1.information.CloudInformationSnapshot
 
-open class Stats(
+open class CloudInformation(
     val started: Long,
     val runtime: String,
     val javaVersion: String,
     val cpuUsage: Double,
     val usedMemory: Double,
     val maxMemory: Double,
-    val subscribedEvents: Int
+    val subscribedEvents: Int,
+    val timestamp: Long
 ) {
 
     companion object {
-        fun bindSnapshot(snapshot: StatsSnapshot): Stats {
-            return Stats(
+        fun bindSnapshot(snapshot: CloudInformationSnapshot): CloudInformation {
+            return CloudInformation(
                 snapshot.started,
                 snapshot.runtime,
                 snapshot.javaVersion,
                 snapshot.cpuUsage,
                 snapshot.usedMemory,
                 snapshot.maxMemory,
-                snapshot.subscribedEvents
+                snapshot.subscribedEvents,
+                snapshot.timestamp
             )
         }
     }
 
-    fun toSnapshot(): StatsSnapshot {
-        return StatsSnapshot.newBuilder()
+    fun toSnapshot(): CloudInformationSnapshot {
+        return CloudInformationSnapshot.newBuilder()
             .setStarted(started)
             .setRuntime(runtime)
             .setJavaVersion(javaVersion)
@@ -35,19 +37,21 @@ open class Stats(
             .setUsedMemory(usedMemory)
             .setMaxMemory(maxMemory)
             .setSubscribedEvents(subscribedEvents)
+            .setTimestamp(timestamp)
             .build()
     }
 
     override fun equals(other: Any?): Boolean =
-        other is Stats &&
+        other is CloudInformation &&
                 started == other.started &&
                 runtime == other.runtime &&
                 javaVersion == other.javaVersion &&
                 cpuUsage == other.cpuUsage &&
                 usedMemory == other.usedMemory &&
                 maxMemory == other.maxMemory &&
-                subscribedEvents == other.subscribedEvents
+                subscribedEvents == other.subscribedEvents &&
+                timestamp == other.timestamp
 
     override fun hashCode(): Int =
-        listOf(started, runtime, javaVersion, cpuUsage, usedMemory, maxMemory, subscribedEvents).hashCode()
+        listOf(started, runtime, javaVersion, cpuUsage, usedMemory, maxMemory, subscribedEvents, timestamp).hashCode()
 }

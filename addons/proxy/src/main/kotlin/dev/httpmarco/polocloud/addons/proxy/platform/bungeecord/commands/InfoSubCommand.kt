@@ -21,7 +21,7 @@ class InfoSubCommand(
             return
         }
 
-        val stats = Polocloud.instance().statsProvider().get()
+        val stats = Polocloud.instance().cloudInformationProvider().find()
 
         sender.sendMessage(
             TextComponent(
