@@ -50,8 +50,9 @@ message GroupUpdateRequest {
   int32 minimumOnline = 6;
   int32 maximumOnline = 7;
   double percentageToStartNewService = 8;
-  repeated string templates = 9;
-  map<string, string> properties = 10;
+  GroupInformationSnapshot information = 9;
+  repeated string templates = 10;
+  map<string, string> properties = 11;
 }
 
 message GroupUpdateResponse {
@@ -75,8 +76,13 @@ message GroupSnapshot {
   int32 minimumOnline = 6;
   int32 maximumOnline = 7;
   double percentageToStartNewService = 8;
-  repeated string templates = 9;
-  map<string, string> properties = 10;
+  GroupInformationSnapshot information = 9;
+  repeated string templates = 10;
+  map<string, string> properties = 11;
+}
+
+message GroupInformationSnapshot {
+  int64 createdAt = 1;
 }
 
 message PlatformSnapshot {

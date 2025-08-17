@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.groups
 
 import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.v1.groups.FindGroupRequest
 import dev.httpmarco.polocloud.v1.groups.FindGroupResponse
@@ -60,6 +61,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             request.maximumOnline,
             request.percentageToStartNewService,
             PlatformIndex(request.platform.name, request.platform.version),
+            GroupInformation(System.currentTimeMillis()),
             request.templatesList,
             properties
         )
@@ -99,6 +101,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             request.maximumOnline,
             request.percentageToStartNewService,
             PlatformIndex(request.platform.name, request.platform.version),
+            GroupInformation.bindSnapshot(request.information),
             request.templatesList,
             properties
         )
