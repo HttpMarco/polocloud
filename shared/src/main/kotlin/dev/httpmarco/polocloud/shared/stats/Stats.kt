@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.shared.stats
 
-import dev.httpmarco.polocloud.shared.polocloudShared
-import dev.httpmarco.polocloud.v1.groups.StatsSnapshot
+import dev.httpmarco.polocloud.v1.stats.StatsSnapshot
 
 open class Stats(
     val started: Long,
