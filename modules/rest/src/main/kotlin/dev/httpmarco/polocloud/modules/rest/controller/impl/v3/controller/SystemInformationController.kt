@@ -24,7 +24,7 @@ class SystemInformationController : Controller("/system") {
         )
     }
 
-    @Request(requestType = RequestType.GET, path = "/average", permission = "polocloud.system.information")
+    @Request(requestType = RequestType.GET, path = "/information/average", permission = "polocloud.system.information")
     fun average(context: Context) {
         val from = context.queryParam("from")?.toLongOrNull() ?: 0L
         val to = context.queryParam("to")?.toLongOrNull() ?: System.currentTimeMillis()
