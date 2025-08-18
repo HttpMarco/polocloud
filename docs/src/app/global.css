@@ -59,12 +59,12 @@ html {
         font-size: 1.5rem;
         line-height: 2rem;
     }
-    
+
     .text-responsive-lg {
         font-size: 1.25rem;
         line-height: 1.75rem;
     }
-    
+
     .text-responsive-base {
         font-size: 1rem;
         line-height: 1.5rem;
@@ -76,12 +76,12 @@ html {
         font-size: 2rem;
         line-height: 2.5rem;
     }
-    
+
     .text-responsive-lg {
         font-size: 1.5rem;
         line-height: 2rem;
     }
-    
+
     .text-responsive-base {
         font-size: 1.125rem;
         line-height: 1.75rem;
@@ -93,12 +93,12 @@ html {
         font-size: 2.5rem;
         line-height: 3rem;
     }
-    
+
     .text-responsive-lg {
         font-size: 1.875rem;
         line-height: 2.25rem;
     }
-    
+
     .text-responsive-base {
         font-size: 1.25rem;
         line-height: 1.875rem;
@@ -175,7 +175,7 @@ html {
     .nav-hidden-mobile {
         display: none;
     }
-    
+
     .nav-visible-mobile {
         display: block;
     }
@@ -185,7 +185,7 @@ html {
     .nav-hidden-mobile {
         display: block;
     }
-    
+
     .nav-visible-mobile {
         display: none;
     }
@@ -197,7 +197,7 @@ html {
         min-height: 44px;
         min-width: 44px;
     }
-    
+
     .touch-friendly-text {
         font-size: 16px;
     }
@@ -230,7 +230,7 @@ html {
     .responsive-table {
         font-size: 0.875rem;
     }
-    
+
     .responsive-table th,
     .responsive-table td {
         padding: 0.5rem;
@@ -257,7 +257,7 @@ html {
         transform: translateX(100%);
         transition: transform 0.3s ease-in-out;
     }
-    
+
     .sidebar-mobile.open {
         transform: translateX(0);
     }
@@ -277,12 +277,12 @@ html {
         padding-top: 2rem;
         padding-bottom: 2rem;
     }
-    
+
     .hero-mobile h1 {
         font-size: 2.5rem;
         line-height: 3rem;
     }
-    
+
     .hero-mobile p {
         font-size: 1rem;
         line-height: 1.5rem;
@@ -294,7 +294,7 @@ html {
         font-size: 3.5rem;
         line-height: 4rem;
     }
-    
+
     .hero-mobile p {
         font-size: 1.25rem;
         line-height: 1.75rem;
@@ -306,7 +306,7 @@ html {
         font-size: 4.5rem;
         line-height: 5rem;
     }
-    
+
     .hero-mobile p {
         font-size: 1.5rem;
         line-height: 2rem;
@@ -398,6 +398,7 @@ html {
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/shadcn.css';
 @import 'fumadocs-ui/css/preset.css';
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -811,7 +812,7 @@ body {
         padding-left: 1rem;
         padding-right: 1rem;
     }
-    
+
     .navbar-logo {
         width: auto;
         min-width: 120px;
@@ -823,7 +824,7 @@ body {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
     }
-    
+
     .navbar-logo {
         min-width: 100px;
     }
@@ -904,19 +905,19 @@ body {
         width: 100vw;
         max-width: 320px;
     }
-    
+
     .mobile-nav-item {
         margin: 2px 0;
         padding: 12px 16px;
         font-size: 16px; /* Touch-friendly Textgröße */
         min-height: 48px; /* Touch-friendly Höhe */
     }
-    
+
     .mobile-nav-header {
         padding: 16px;
         min-height: 60px;
     }
-    
+
     .mobile-nav-content {
         padding: 16px;
     }
@@ -929,7 +930,7 @@ body {
         min-height: 44px;
         padding: 12px;
     }
-    
+
     .mobile-nav-close {
         min-width: 44px;
         min-height: 44px;
@@ -1067,11 +1068,11 @@ body {
     max-width: calc(100vw - 32px);
     max-height: calc(100vh - 32px);
   }
-  
+
   .mobile-nav-popup .mobile-nav-content {
     padding: 16px;
   }
-  
+
   .mobile-nav-popup .mobile-nav-item {
     padding: 14px 16px;
     font-size: 16px;
@@ -1206,4 +1207,13 @@ body {
 .mobile-nav-fullscreen .nav-footer p {
   font-size: 0.875rem;
   color: hsl(var(--muted-foreground));
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
 }

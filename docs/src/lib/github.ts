@@ -402,7 +402,20 @@ import { Octokit } from '@octokit/rest';
 import matter from 'gray-matter';
 
 export const blogOctokit = new Octokit({
-  auth: GITHUB_TOKEN,
+  auth: GITHUB_TOKEN || undefined,
+});
+
+if (!GITHUB_TOKEN) {
+  console.warn('GITHUB_TOKEN is not set. GitHub operations will fail.');
+} else {
+  console.log('GITHUB_TOKEN is available, length:', GITHUB_TOKEN.length);
+}
+
+console.log('GitHub Config:', {
+  owner: process.env.GITHUB_REPO_OWNER || 'jakubbbdev',
+  repo: process.env.GITHUB_REPO_NAME || 'polocloud',
+  branch: process.env.GITHUB_BRANCH || 'improve-web',
+  token: GITHUB_TOKEN ? 'SET' : 'NOT SET'
 });
 
 export const GITHUB_REPO_CONFIG = {
@@ -429,11 +442,11 @@ export interface ChangelogMetadata {
   version: string;
   title: string;
   description: string;
-  changes: string[];
   type: 'major' | 'minor' | 'patch' | 'hotfix';
   releaseDate: string;
   author: string;
   slug: string;
+  content?: string;
 }
 
 export interface BlogMeta {
@@ -990,7 +1003,6 @@ export function generateChangelogMDXContent(metadata: ChangelogMetadata, content
 version: "${metadata.version}"
 title: "${metadata.title}"
 description: "${metadata.description}"
-changes: [${metadata.changes.map(change => `"${change}"`).join(', ')}]
 type: "${metadata.type}"
 releaseDate: "${metadata.releaseDate}"
 author: "${metadata.author}"
@@ -1036,7 +1048,6 @@ export async function getChangelogFromGitHub(): Promise<ChangelogMetadata[]> {
               version: 'Unknown',
               title: `${slug} (YAML Error)`,
               description: 'This changelog entry has invalid YAML frontmatter',
-              changes: ['This entry needs to be fixed...'],
               type: 'patch' as const,
               releaseDate: new Date().toISOString().split('T')[0],
               author: 'System'
@@ -1048,10 +1059,10 @@ export async function getChangelogFromGitHub(): Promise<ChangelogMetadata[]> {
             version: (frontmatter.version as string) || 'Unknown',
             title: (frontmatter.title as string) || page.title,
             description: (frontmatter.description as string) || '',
-            changes: (frontmatter.changes as string[]) || [],
             type: (frontmatter.type as 'major' | 'minor' | 'patch' | 'hotfix') || 'patch',
             releaseDate: (frontmatter.releaseDate as string) || '',
-            author: (frontmatter.author as string) || ''
+            author: (frontmatter.author as string) || '',
+            content: file.content || ''
           };
         } catch (error) {
           return null;
@@ -1098,7 +1109,7 @@ export async function addChangelogToGitHub(newChangelog: Omit<ChangelogMetadata,
     slug
   };
 
-  const mdxContent = generateChangelogMDXContent(changelogData, '');
+  const mdxContent = generateChangelogMDXContent(changelogData, newChangelog.content || '');
 
   const filePath = `${GITHUB_REPO_CONFIG.changelogPath}/${slug}.mdx`;
 
@@ -1125,7 +1136,7 @@ export async function updateChangelogOnGitHub(
     slug
   };
 
-  const mdxContent = generateChangelogMDXContent(changelogData, '');
+  const mdxContent = generateChangelogMDXContent(changelogData, updatedChangelog.content || '');
 
   const filePath = `${GITHUB_REPO_CONFIG.changelogPath}/${slug}.mdx`;
 
@@ -1187,5 +1198,215 @@ export async function deleteChangelogFromGitHub(changelogId: string, adminUser: 
   } catch (error) {
     console.error('Error deleting changelog entry:', error);
     throw error;
+  }
+}
+
+export async function getAllChangelogFiles(): Promise<ChangelogMetadata[]> {
+  try {
+    console.log('Getting changelog files from GitHub...');
+    console.log('Config:', {
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
+      path: GITHUB_REPO_CONFIG.changelogPath,
+      branch: GITHUB_REPO_CONFIG.branch
+    });
+
+    const changelogDir = GITHUB_REPO_CONFIG.changelogPath;
+
+    const response = await blogOctokit.rest.repos.getContent({
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
+      path: changelogDir,
+      ref: GITHUB_REPO_CONFIG.branch,
+    });
+
+    console.log('GitHub API response:', response.status, response.data);
+
+    if (!Array.isArray(response.data)) {
+      console.log('Response is not an array, trying alternative approach...');
+      return [];
+    }
+
+    const mdxFiles = response.data.filter(item => 
+      item.type === 'file' && item.name.endsWith('.mdx')
+    );
+
+    console.log('Found MDX files:', mdxFiles.map(f => f.name));
+
+    const changelogEntries = await Promise.all(
+      mdxFiles.map(async (file) => {
+        try {
+          const filePath = `${changelogDir}/${file.name}`;
+          console.log('Reading file:', filePath);
+          
+          const fileContent = await getFileFromGitHub(filePath);
+          
+          if (!fileContent) {
+            console.log('No content for file:', filePath);
+            return null;
+          }
+
+          let frontmatter: Record<string, unknown>;
+          let parsedContent: string = '';
+
+          try {
+            const parsed = matter(fileContent.content);
+            frontmatter = parsed.data;
+            parsedContent = parsed.content;
+            console.log('Parsed frontmatter for', file.name, ':', frontmatter);
+            console.log('Author from frontmatter:', frontmatter.author);
+            console.log('Version from frontmatter:', frontmatter.version);
+            console.log('Title from frontmatter:', frontmatter.title);
+          } catch (yamlError) {
+            console.error('YAML parsing error for', file.name, ':', yamlError);
+            return null;
+          }
+
+          const slug = file.name.replace('.mdx', '');
+          const author = (frontmatter.author as string) || 'Unknown Author';
+
+          console.log('Final author for', file.name, ':', author);
+
+          return {
+            slug,
+            version: (frontmatter.version as string) || 'Unknown',
+            title: (frontmatter.title as string) || slug,
+            description: (frontmatter.description as string) || '',
+            type: (frontmatter.type as 'major' | 'minor' | 'patch' | 'hotfix') || 'patch',
+            releaseDate: (frontmatter.releaseDate as string) || '',
+            author: author,
+            content: parsedContent || ''
+          };
+        } catch (error) {
+          console.error(`Error processing file ${file.name}:`, error);
+          return null;
+        }
+      })
+    );
+
+    const validEntries = changelogEntries.filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+      .sort((a, b) => {
+        const dateA = a.releaseDate ? new Date(a.releaseDate).getTime() : 0;
+        const dateB = b.releaseDate ? new Date(b.releaseDate).getTime() : 0;
+        return dateB - dateA;
+      });
+
+    console.log('Final valid entries:', validEntries.length);
+    return validEntries;
+  } catch (error) {
+    console.error('Error getting all changelog files:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
+    return [];
+  }
+}
+
+export async function getAllBlogFiles(): Promise<BlogPostMetadata[]> {
+  try {
+    console.log('Getting blog files from GitHub...');
+    console.log('Config:', {
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
+      path: GITHUB_REPO_CONFIG.blogPath,
+      branch: GITHUB_REPO_CONFIG.branch
+    });
+
+    const blogDir = GITHUB_REPO_CONFIG.blogPath;
+
+    const response = await blogOctokit.rest.repos.getContent({
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
+      path: blogDir,
+      ref: GITHUB_REPO_CONFIG.branch,
+    });
+
+    console.log('GitHub API response:', response.status, response.data);
+
+    if (!Array.isArray(response.data)) {
+      console.log('Response is not an array, trying alternative approach...');
+      return [];
+    }
+
+    const mdxFiles = response.data.filter(item => 
+      item.type === 'file' && item.name.endsWith('.mdx')
+    );
+
+    console.log('Found MDX files:', mdxFiles.map(f => f.name));
+
+    const blogEntries = await Promise.all(
+      mdxFiles.map(async (file) => {
+        try {
+          const filePath = `${blogDir}/${file.name}`;
+          console.log('Reading file:', filePath);
+          
+          const fileContent = await getFileFromGitHub(filePath);
+          
+          if (!fileContent) {
+            console.log('No content for file:', filePath);
+            return null;
+          }
+
+          let frontmatter: Record<string, unknown>;
+          let parsedContent: string = '';
+
+          try {
+            const parsed = matter(fileContent.content);
+            frontmatter = parsed.data;
+            parsedContent = parsed.content;
+            console.log('Parsed frontmatter for', file.name, ':', frontmatter);
+            console.log('Author from frontmatter:', frontmatter.author);
+            console.log('Title from frontmatter:', frontmatter.title);
+            console.log('Date from frontmatter:', frontmatter.date);
+          } catch (yamlError) {
+            console.error('YAML parsing error for', file.name, ':', yamlError);
+            return null;
+          }
+
+          const slug = file.name.replace('.mdx', '');
+          const author = (frontmatter.author as string) || 'Unknown Author';
+
+          console.log('Final author for', file.name, ':', author);
+
+          return {
+            slug,
+            title: (frontmatter.title as string) || slug,
+            description: (frontmatter.description as string) || '',
+            date: (frontmatter.date as string) || '',
+            author: author,
+            tags: (frontmatter.tags as string[]) || [],
+            pinned: (frontmatter.pinned as boolean) || false,
+            content: parsedContent || ''
+          };
+        } catch (error) {
+          console.error(`Error processing file ${file.name}:`, error);
+          return null;
+        }
+      })
+    );
+
+    const validEntries = blogEntries.filter((entry): entry is NonNullable<typeof entry> => entry !== null)
+      .sort((a, b) => {
+        const dateA = a.date ? new Date(a.date).getTime() : 0;
+        const dateB = b.date ? new Date(b.date).getTime() : 0;
+        return dateB - dateA;
+      });
+
+    console.log('Final valid blog entries:', validEntries.length);
+    return validEntries;
+  } catch (error) {
+    console.error('Error getting all blog files:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
+    return [];
   }
 }

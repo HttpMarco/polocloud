@@ -152,14 +152,21 @@ export function ChangelogTab() {
 
             <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{entry.description}</p>
 
-            <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
-              {entry.changes.map((change, index) => (
-                <div key={index} className="flex items-start gap-2">
-                  <span className="text-primary mt-1">•</span>
-                  <span className="text-sm sm:text-base">{change}</span>
+            {entry.content && (
+              <div className="mb-3 sm:mb-4">
+                <div className="bg-muted/50 rounded-lg p-3 border">
+                  <h5 className="text-sm font-medium mb-2">Content Preview:</h5>
+                  <div className="text-xs text-muted-foreground line-clamp-3">
+                    {entry.content
+                      .replace(/---[\s\S]*?---/, '')
+                      .replace(/[#*`]/g, '')
+                      .trim()
+                      .substring(0, 200)}
+                    {entry.content.length > 200 && '...'}
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
