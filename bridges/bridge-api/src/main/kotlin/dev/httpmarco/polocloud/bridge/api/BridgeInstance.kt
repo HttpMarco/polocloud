@@ -11,7 +11,7 @@ import dev.httpmarco.polocloud.v1.services.ServiceState
 
 abstract class BridgeInstance<T> {
 
-    abstract fun generateInfo(name: String, hostname: String, port: Int): T
+    abstract fun generateInfo(service: Service): T
 
     abstract fun registerService(identifier: T, fallback: Boolean = false)
 
@@ -32,14 +32,14 @@ abstract class BridgeInstance<T> {
             if(it.state !== ServiceState.ONLINE) {
                 return@forEach
             }
-            registerService(generateInfo(it.name(), it.hostname, it.port), isFallback(it))
+            registerService(generateInfo(it), isFallback(it))
         }
 
 
         polocloud.eventProvider().subscribe(ServiceOnlineEvent::class.java) { event ->
             val service = event.service
             if (service.type == GroupType.SERVER) {
-                registerService(generateInfo(service.name(), service.hostname, service.port), isFallback(service))
+                registerService(generateInfo(service), isFallback(service))
             }
         }
 
