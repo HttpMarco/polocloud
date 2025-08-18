@@ -46,5 +46,22 @@
     },
     "addedAt": "2025-08-18T12:13:59.397Z",
     "addedBy": "jakubbbdev"
+  },
+  {
+    "id": "1755519274052",
+    "name": "Folia",
+    "icon": "https://gwe126g1vbd52dc4.public.blob.vercel-storage.com/polocloud/storage/images/platforms/platform-folia-1755519272903.svg",
+    "versions": {
+      "1.7-1.12": "not-possible",
+      "1.12-1.16": "not-possible",
+      "1.18-1.19": "supported",
+      "1.20+": "supported"
+    },
+    "addons": {
+      "Severmobs": "supported",
+      "Signs": "supported"
+    },
+    "addedAt": "2025-08-18T12:14:34.052Z",
+    "addedBy": "jakubbbdev"
   }
 ]
