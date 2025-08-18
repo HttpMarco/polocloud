@@ -73,7 +73,7 @@ class GroupController : Controller("/group") {
             return
         }
 
-        val platform = polocloudShared.platformProvider().find(groupCreateModel.name)
+        val platform = polocloudShared.platformProvider().find(groupCreateModel.platform.name)
         if (platform == null) {
             context.status(404).json(message("Platform not found"))
             return
