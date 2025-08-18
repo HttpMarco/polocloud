@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerJoinEvent
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
+import dev.httpmarco.polocloud.shared.service.Service
 import dev.waterdog.waterdogpe.ProxyServer
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent
@@ -22,12 +23,8 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
         initialize()
     }
 
-    override fun generateInfo(
-        name: String,
-        hostname: String,
-        port: Int
-    ): BedrockServerInfo {
-        val serverInfo = BedrockServerInfo(name, InetSocketAddress(hostname, port), null)
+    override fun generateInfo(service: Service): BedrockServerInfo {
+        val serverInfo = BedrockServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null)
         ProxyServer.getInstance().registerServerInfo(serverInfo)
 
         return serverInfo
