@@ -4,6 +4,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
+import dev.httpmarco.polocloud.common.os.OS
 import java.lang.reflect.Type
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
 import dev.httpmarco.polocloud.v1.GroupType
@@ -46,6 +47,10 @@ class PlatformDeserializer : JsonDeserializer<Platform> {
             copyServerIcon = obj.get("copyServerIcon")?.asBoolean ?: true,
 
             setFileName = obj.get("setFileName")?.asBoolean ?: true,
+
+            osNameMapping = obj.get("osNameMapping")?.let {
+                context.deserialize(it, object : TypeToken<Map<OS, String>>() {}.type)
+            } ?: emptyMap()
         )
     }
 }
