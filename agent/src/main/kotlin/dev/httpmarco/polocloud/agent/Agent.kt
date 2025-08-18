@@ -23,6 +23,8 @@ import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
 import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider
 import dev.httpmarco.polocloud.agent.information.CloudInformationStorageImpl
+import dev.httpmarco.polocloud.agent.platform.PlatformStorageImpl
+import dev.httpmarco.polocloud.shared.platform.SharedPlatformProvider
 import dev.httpmarco.polocloud.updater.Updater
 
 // global terminal instance for the agent
@@ -44,6 +46,7 @@ object Agent : PolocloudShared() {
 
     val playerStorage = PlayerStorageImpl()
     val cloudInformationStorage = CloudInformationStorageImpl()
+    val platformStorage = PlatformStorageImpl()
 
     init {
         // display the default log information
@@ -132,4 +135,6 @@ object Agent : PolocloudShared() {
     override fun cloudInformationProvider(): SharedCloudInformationProvider<*> = this.cloudInformationStorage
 
     override fun logger(): Logger = logger
+
+    override fun platformProvider(): SharedPlatformProvider<*> = this.platformStorage
 }
