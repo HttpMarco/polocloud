@@ -26,9 +26,6 @@ const config = {
         ],
         unoptimized: true,
     },
-    experimental: {
-        appDir: true,
-    },
 };
 
 export default withMDX(config);

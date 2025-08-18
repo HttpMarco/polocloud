@@ -436,6 +436,7 @@ export interface BlogPostMetadata {
   tags: string[];
   pinned: boolean;
   slug: string;
+  content?: string;
 }
 
 export interface ChangelogMetadata {

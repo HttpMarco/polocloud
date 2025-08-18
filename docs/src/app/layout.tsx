@@ -7,6 +7,17 @@ const inter = Inter({
     subsets: ['latin'],
 });
 
+export const viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    themeColor: [
+        { media: '(prefers-color-scheme: light)', color: '#0078ff' },
+        { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' }
+    ],
+    colorScheme: 'light dark',
+};
+
 export const metadata = {
     title: 'PoloCloud | Simplest and easiest Cloud for Minecraft',
     description: 'Simplest and easiest Cloud for Minecraft',
@@ -14,9 +25,6 @@ export const metadata = {
     authors: [{ name: 'PoloCloud Team' }],
     creator: 'PoloCloud',
     publisher: 'PoloCloud',
-    viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
-    themeColor: '#0078ff',
-    colorScheme: 'light dark',
     openGraph: {
         title: 'PoloCloud | Simplest and easiest Cloud for Minecraft',
         url: 'https://polocloud.de/',
