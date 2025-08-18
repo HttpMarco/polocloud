@@ -2,9 +2,14 @@ package dev.httpmarco.polocloud.modules.rest.controller
 
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.AuthProvider
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AliveController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AuthController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.SystemInformationController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.group.GroupController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role.RoleController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.service.ServiceController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.user.UserController
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData
@@ -24,7 +29,11 @@ class ControllerProvider {
         registerControllers(
             AliveController(),
             UserController(),
-            AuthController()
+            AuthController(),
+            RoleController(),
+            GroupController(),
+            ServiceController(),
+            SystemInformationController()
         )
 
         this.controllers.forEach { handle(it) }
@@ -52,10 +61,21 @@ class ControllerProvider {
         }
     }
 
-    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?) {
+    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?, token: Token?) {
         try {
             if (ctx.result() == null) {
-                method.invoke(controller, ctx, user)
+                val params = mutableListOf<Any?>()
+
+                method.parameters.forEach { param ->
+                    when (param.type) {
+                        Context::class.java -> params.add(ctx)
+                        User::class.java -> params.add(user)
+                        Token::class.java -> params.add(token)
+                        else -> params.add(null)
+                    }
+                }
+
+                method.invoke(controller, *params.toTypedArray())
             }
         } catch (e: Exception) {
             ctx.status(500).result("Internal Server Error")

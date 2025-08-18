@@ -15,6 +15,7 @@ class KubernetesRuntime : Runtime {
     private val factory = KubernetesFactory()
     private val expender = KubernetesExpender()
     private val templates = KubernetesRuntimeTemplates()
+    private val started = System.currentTimeMillis()
 
     override fun runnable(): Boolean {
         return try {
@@ -37,8 +38,11 @@ class KubernetesRuntime : Runtime {
     override fun expender() = expender
 
     override fun templates() = templates
+
     override fun configHolder(): RuntimeConfigHolder {
         TODO("Not yet implemented")
     }
+
+    override fun started() = started
 
 }

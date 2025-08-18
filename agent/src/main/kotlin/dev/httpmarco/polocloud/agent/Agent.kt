@@ -22,6 +22,10 @@ import dev.httpmarco.polocloud.shared.logging.Logger
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
 import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
+import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider
+import dev.httpmarco.polocloud.agent.information.CloudInformationStorageImpl
+import dev.httpmarco.polocloud.agent.platform.PlatformStorageImpl
+import dev.httpmarco.polocloud.shared.platform.SharedPlatformProvider
 import dev.httpmarco.polocloud.updater.Updater
 
 // global terminal instance for the agent
@@ -42,6 +46,8 @@ object Agent : PolocloudShared() {
     private val onlineStateDetector = DetectorFactoryThread.bindDetector(OnlineStateDetector())
 
     val playerStorage = PlayerStorageImpl()
+    val cloudInformationStorage = CloudInformationStorageImpl()
+    val platformStorage = PlatformStorageImpl()
 
     init {
         polocloudShared = this
@@ -128,7 +134,11 @@ object Agent : PolocloudShared() {
 
     override fun playerProvider(): SharedPlayerProvider<*> = this.playerStorage
 
+    override fun cloudInformationProvider(): SharedCloudInformationProvider<*> = this.cloudInformationStorage
+
     override fun logger(): Logger = logger
+
+    override fun platformProvider(): SharedPlatformProvider<*> = this.platformStorage
 
     override val setShared: Boolean
         get() = true

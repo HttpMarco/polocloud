@@ -2,10 +2,7 @@ package dev.httpmarco.polocloud.modules.rest.auth.user.permission
 
 open class Permission {
 
-    private val permissions: MutableList<String> = mutableListOf()
-
-    val all: List<String>
-        get() = this.permissions.toList()
+    val permissions: MutableList<String> = mutableListOf()
 
     fun addPermission(permission: String) {
         if (permission.isNotBlank() && !this.permissions.contains(permission)) {

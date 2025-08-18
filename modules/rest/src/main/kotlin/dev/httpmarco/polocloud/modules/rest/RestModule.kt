@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.modules.rest
 
 import dev.httpmarco.polocloud.modules.rest.auth.JwtProvider
+import dev.httpmarco.polocloud.modules.rest.auth.role.RoleProvider
 import dev.httpmarco.polocloud.modules.rest.auth.user.UserProvider
 import dev.httpmarco.polocloud.modules.rest.config.RestConfiguration
 import dev.httpmarco.polocloud.modules.rest.config.ConfigProvider
@@ -37,6 +38,9 @@ class RestModule : PolocloudModule {
     lateinit var userProvider: UserProvider
         private set
 
+    lateinit var roleProvider: RoleProvider
+        private set
+
     init {
         if (Files.notExists(this.configPath)) {
             Files.createDirectories(this.configPath)
@@ -53,6 +57,8 @@ class RestModule : PolocloudModule {
         this.controllerProvider = ControllerProvider()
 
         this.userProvider = UserProvider()
+        this.roleProvider = RoleProvider()
+
         logger.info("Rest module started.")
     }
 

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.v1.proto;
+
+option java_package = "dev.httpmarco.polocloud.v1.platform";
+option java_multiple_files = true;
+
+import "polocloud/v1/proto/object_utils.proto";
+
+service PlatformController {
+  rpc find(PlatformFindRequest) returns (PlatformFindResponse);
+}
+
+message PlatformFindRequest {
+  optional string name = 1;
+  optional GroupType type = 2;
+}
+
+message PlatformFindResponse {
+  repeated PlatformSnapshot platforms = 1;
+}
+
+message PlatformSnapshot {
+  string name = 1;
+  GroupType type = 2;
+  repeated PlatformVersionSnapshot versions = 3;
+}
+
+message PlatformVersionSnapshot {
+  string version = 1;
+}

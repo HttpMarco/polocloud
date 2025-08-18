@@ -27,7 +27,7 @@ message FindGroupResponse {
 message GroupCreateRequest {
   string name = 1;
   GroupType type = 2;
-  PlatformSnapshot platform = 3;
+  GroupPlatformSnapshot platform = 3;
   int32 minimumMemory = 4;
   int32 maximumMemory = 5;
   int32 minimumOnline = 6;
@@ -44,14 +44,15 @@ message GroupCreateResponse {
 message GroupUpdateRequest {
   string name = 1;
   GroupType type = 2;
-  PlatformSnapshot platform = 3;
+  GroupPlatformSnapshot platform = 3;
   int32 minimumMemory = 4;
   int32 maximumMemory = 5;
   int32 minimumOnline = 6;
   int32 maximumOnline = 7;
   double percentageToStartNewService = 8;
-  repeated string templates = 9;
-  map<string, string> properties = 10;
+  GroupInformationSnapshot information = 9;
+  repeated string templates = 10;
+  map<string, string> properties = 11;
 }
 
 message GroupUpdateResponse {
@@ -69,17 +70,22 @@ message GroupDeleteResponse {
 message GroupSnapshot {
   string name = 1;
   GroupType type = 2;
-  PlatformSnapshot platform = 3;
+  GroupPlatformSnapshot platform = 3;
   int32 minimumMemory = 4;
   int32 maximumMemory = 5;
   int32 minimumOnline = 6;
   int32 maximumOnline = 7;
   double percentageToStartNewService = 8;
-  repeated string templates = 9;
-  map<string, string> properties = 10;
+  GroupInformationSnapshot information = 9;
+  repeated string templates = 10;
+  map<string, string> properties = 11;
 }
 
-message PlatformSnapshot {
+message GroupInformationSnapshot {
+  int64 createdAt = 1;
+}
+
+message GroupPlatformSnapshot {
   string name = 2;
   string version = 1;
 }
