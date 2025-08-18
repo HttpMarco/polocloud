@@ -2,7 +2,12 @@
   "pages": [
     {
       "title": "Changelog",
-      "pages": []
+      "pages": [
+        {
+          "title": "NEW RELEASE pre-5",
+          "url": "/changelog/new-release-pre-5"
+        }
+      ]
     }
   ]
 }
