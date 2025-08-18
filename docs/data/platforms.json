@@ -159,7 +159,9 @@
       "1.18-1.19": "supported",
       "1.20+": "supported"
     },
-    "addons": {},
+    "addons": {
+      "proxy": "supported"
+    },
     "addedAt": "2025-08-18T12:18:25.835Z",
     "addedBy": "jakubbbdev"
   }
