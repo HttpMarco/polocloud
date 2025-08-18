@@ -17,8 +17,11 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
+import kotlin.io.path.getPosixFilePermissions
 import kotlin.io.path.exists
 import kotlin.io.path.name
+import kotlin.io.path.notExists
+import kotlin.io.path.setPosixFilePermissions
 
 class Platform(
     val name: String,
@@ -76,7 +79,7 @@ class Platform(
             return
         }
 
-        // on_promise situation -> copy files to the service path
+        //on_promise situation -> copy files to the service path
         if (bridge.type == BridgeType.ON_PREMISE) {
             val targetBridge = servicePath.resolve(bridgePath + "/" + bridge.path.name)
             targetBridge.parent.createDirectories()
@@ -85,7 +88,13 @@ class Platform(
         }
 
         if (bridge.type == BridgeType.OFF_PREMISE) {
-            TODO()
+            val bridgeClass = Class.forName(bridge.bridgeClass)
+            bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java)
+                .newInstance(
+                    servicePath,
+                    environment.getStringParameter("service-name"),
+                    environment.getIntParameter("agent_port")
+                )
         }
     }
 
