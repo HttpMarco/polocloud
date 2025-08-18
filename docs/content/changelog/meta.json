@@ -2,7 +2,12 @@
   "pages": [
     {
       "title": "Changelog",
-      "pages": []
+      "pages": [
+        {
+          "title": "Release Test",
+          "url": "/changelog/release-test"
+        }
+      ]
     }
   ]
 }
