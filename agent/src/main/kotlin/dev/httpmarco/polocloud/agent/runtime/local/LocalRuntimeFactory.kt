@@ -53,11 +53,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val platform = service.group.platform()
         val version = service.group.platform.version
 
-        service.state = ServiceState.STARTING
-        Agent.eventService.call(ServiceStartingEvent(service))
-
-        service.path.createDirectories()
-
         val serverIcon = this.javaClass.classLoader.getResource("server-icon.png")!!
 
         val environment = PlatformParameters(
