@@ -12,5 +12,10 @@
       "version": "0.51.0"
     }
   ],
-  "bridge": "gate-bridge"
+  "bridge": "gate-bridge",
+  "osNameMapping": {
+    "WIN": "windows",
+    "LINUX": "linux",
+    "MACOS": "darwin"
+  }
 }
