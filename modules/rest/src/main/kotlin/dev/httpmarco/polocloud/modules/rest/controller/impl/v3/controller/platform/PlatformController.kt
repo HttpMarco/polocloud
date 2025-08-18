@@ -21,7 +21,13 @@ class PlatformController : Controller("/platform") {
                             addProperty("type", platform.type.name)
                             add(
                                 JsonArray().apply {
-                                    platform.versions
+                                    platform.versions.forEach { version ->
+                                        add(
+                                            JsonObject().apply {
+                                                addProperty("version", version.version)
+                                            }
+                                        )
+                                    }
                                 }
                             )
                         }
