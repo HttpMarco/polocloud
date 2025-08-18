@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,13 +22,18 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+const MDXEditor = dynamic(
+  () => import('@uiw/react-md-editor').then(mod => mod.default),
+  { ssr: false }
+);
+
 interface ChangelogFormData {
   version: string;
   title: string;
   description: string;
   type: 'major' | 'minor' | 'patch' | 'hotfix';
   releaseDate: string;
-  changes: string[];
+  content: string;
 }
 
 export default function CreateChangelogPage() {
@@ -41,13 +47,13 @@ export default function CreateChangelogPage() {
     description: '',
     type: 'patch',
     releaseDate: new Date().toISOString().split('T')[0],
-    changes: [''],
+    content: '# Changelog Content\n\nWrite your detailed changelog content here...\n\n## Changes\n\n- Add your changes here\n- Use markdown formatting\n- Include code examples if needed',
   });
 
   const steps = [
     { id: 1, title: 'Version Info', icon: GitBranch, description: 'Version number and type' },
     { id: 2, title: 'Details', icon: Settings, description: 'Title and description' },
-    { id: 3, title: 'Changes', icon: Edit3, description: 'List of changes' },
+    { id: 3, title: 'Content', icon: Edit3, description: 'Write detailed changelog content' },
     { id: 4, title: 'Review', icon: Check, description: 'Review and publish' },
   ];
 
@@ -70,7 +76,7 @@ export default function CreateChangelogPage() {
       case 2:
         return formData.title.trim().length > 0 && formData.description.trim().length > 0;
       case 3:
-        return formData.changes.some(change => change.trim().length > 0);
+        return formData.content.trim().length > 0;
       case 4:
         return true;
       default:
@@ -78,31 +84,8 @@ export default function CreateChangelogPage() {
     }
   };
 
-  const addChange = () => {
-    setFormData(prev => ({
-      ...prev,
-      changes: [...prev.changes, '']
-    }));
-  };
-
-  const removeChange = (index: number) => {
-    if (formData.changes.length > 1) {
-      setFormData(prev => ({
-        ...prev,
-        changes: prev.changes.filter((_, i) => i !== index)
-      }));
-    }
-  };
-
-  const updateChange = (index: number, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      changes: prev.changes.map((change, i) => i === index ? value : change)
-    }));
-  };
-
   const handleSubmit = async () => {
-    if (!formData.version.trim() || !formData.title.trim() || !formData.description.trim()) return;
+    if (!formData.version.trim() || !formData.title.trim() || !formData.description.trim() || !formData.content.trim()) return;
 
     setCreating(true);
 
@@ -119,7 +102,7 @@ export default function CreateChangelogPage() {
           description: formData.description.trim(),
           type: formData.type,
           releaseDate: formData.releaseDate,
-          changes: formData.changes.map(change => change.trim()).filter(change => change.length > 0),
+          content: formData.content.trim(),
         }),
       });
 
@@ -297,57 +280,27 @@ export default function CreateChangelogPage() {
               >
                 <Edit3 className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">List Changes</h3>
-              <p className="text-muted-foreground text-lg">What changes are included in this release?</p>
+              <h3 className="text-3xl font-bold mb-3">Create Content</h3>
+              <p className="text-muted-foreground text-lg">Write the detailed changelog content</p>
             </div>
 
-            <div className="max-w-2xl mx-auto space-y-4">
-              {formData.changes.map((change, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex items-center gap-3"
-                >
-                  <div className="flex-shrink-0 w-6 h-6 bg-primary/20 text-primary rounded-full flex items-center justify-center text-sm font-medium">
-                    {index + 1}
-                  </div>
-                  <Input
-                    value={change}
-                    onChange={(e) => updateChange(index, e.target.value)}
-                    placeholder={`Change ${index + 1}...`}
-                    className="flex-1 py-3"
-                  />
-                  {formData.changes.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeChange(index)}
-                      className="flex-shrink-0 w-10 h-10 p-0"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  )}
-                </motion.div>
-              ))}
-
-              <motion.button
-                type="button"
-                onClick={addChange}
-                className="w-full py-3 border-2 border-dashed border-border rounded-lg text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Plus className="w-5 h-5 mx-auto mb-2" />
-                Add Another Change
-              </motion.button>
+            <div className="max-w-5xl mx-auto">
+              <label className="block text-sm font-medium mb-3">Changelog Content *</label>
+              <div className="border rounded-lg overflow-hidden shadow-lg">
+                <MDXEditor
+                  value={formData.content}
+                  onChange={(val) => setFormData({ ...formData, content: val || '' })}
+                  height={500}
+                  data-color-mode="light"
+                />
+              </div>
             </div>
           </motion.div>
         );
 
       case 4:
+        const wordCount = formData.content.split(' ').filter(word => word.trim().length > 0).length;
+
         return (
           <motion.div
             key="step4"
@@ -391,18 +344,6 @@ export default function CreateChangelogPage() {
                   )}
                 </div>
 
-                <div className="space-y-3">
-                  <h5 className="font-semibold text-lg">Changes:</h5>
-                  <div className="space-y-2">
-                    {formData.changes.filter(change => change.trim().length > 0).map((change, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <span className="text-primary mt-1">•</span>
-                        <span>{change}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="text-sm text-muted-foreground border-t pt-4">
                   <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1">
@@ -411,7 +352,7 @@ export default function CreateChangelogPage() {
                     </span>
                     <span className="flex items-center gap-1">
                       <Tag className="w-4 h-4" />
-                      {formData.changes.filter(change => change.trim().length > 0).length} changes
+                      {wordCount} words
                     </span>
                   </div>
                 </div>

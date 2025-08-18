@@ -105,7 +105,7 @@ export default function CreateBlogPage() {
       });
 
       if (response.ok) {
-        router.push('/admin/blog');
+        router.push('/admin');
       } else {
         const errorData = await response.json();
         alert('Failed to create blog post: ' + errorData.error);
@@ -447,7 +447,7 @@ export default function CreateBlogPage() {
         <div className="flex justify-between">
           <Button
             variant="outline"
-            onClick={() => router.push('/admin/blog')}
+            onClick={() => router.push('/admin')}
             className="px-6"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

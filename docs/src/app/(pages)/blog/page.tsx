@@ -1,8 +1,5 @@
 import Link from 'next/link';
 import { Calendar, User, Tag, ArrowRight, Pin, MessageCircle, FileText } from 'lucide-react';
-import { readFileSync, readdirSync } from 'fs';
-import { join } from 'path';
-import matter from 'gray-matter';
 
 interface BlogPost {
   title: string;
@@ -14,34 +11,40 @@ interface BlogPost {
   pinned?: boolean;
 }
 
-function getBlogPosts(): BlogPost[] {
-  const blogDir = join(process.cwd(), 'content', 'blog');
-  const files = readdirSync(blogDir).filter(file => file.endsWith('.mdx') && file !== 'meta.json');
-  
-  const posts: BlogPost[] = [];
-  
-  for (const file of files) {
-    const filePath = join(blogDir, file);
-    const fileContent = readFileSync(filePath, 'utf8');
-    const { data } = matter(fileContent);
-    const slug = file.replace('.mdx', '');
+import { getAllBlogFiles } from '@/lib/github';
+
+async function getBlogPosts(): Promise<BlogPost[]> {
+  try {
+    console.log('Trying to fetch blogs directly from GitHub...');
+    const posts = await getAllBlogFiles();
+    console.log('Found blogs from GitHub:', posts.length);
     
-    posts.push({
-      title: data.title || 'Untitled',
-      description: data.description,
-      date: data.date,
-      author: data.author,
-      tags: data.tags || [],
-      slug,
-      pinned: data.pinned || false,
-    });
+    return posts.map((entry) => ({
+      title: entry.title,
+      description: entry.description,
+      date: entry.date,
+      author: entry.author,
+      tags: entry.tags || [],
+      slug: entry.slug,
+      pinned: entry.pinned || false,
+    }));
+  } catch (error) {
+    console.error('Error fetching blog posts from GitHub:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
   }
   
-  return posts;
+  console.log('No blogs found, returning empty array');
+  return [];
 }
 
-export default function BlogIndexPage() {
-  const blogPosts = getBlogPosts();
+export default async function BlogIndexPage() {
+  const blogPosts = await getBlogPosts();
 
   const pinnedPosts = blogPosts.filter(post => post.pinned);
   const unpinnedPosts = blogPosts.filter(post => !post.pinned);

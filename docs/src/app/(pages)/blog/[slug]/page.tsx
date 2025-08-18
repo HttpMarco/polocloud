@@ -1,11 +1,9 @@
 import { notFound } from 'next/navigation';
 import { PageLayout } from '@/components/layout/page-layout';
 import { Calendar, User, Tag, ArrowLeft, Github, ExternalLink } from 'lucide-react';
-import { readFileSync, readdirSync } from 'fs';
-import { join } from 'path';
-import matter from 'gray-matter';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
+import { getAllBlogFiles } from '@/lib/github';
 
 interface BlogPost {
   title: string;
@@ -16,34 +14,56 @@ interface BlogPost {
   content: string;
 }
 
-function getBlogSlugs(): string[] {
-  const blogDir = join(process.cwd(), 'content', 'blog');
-  const files = readdirSync(blogDir).filter(file => file.endsWith('.mdx') && file !== 'meta.json');
-  return files.map(file => file.replace('.mdx', ''));
+async function getBlogSlugs(): Promise<string[]> {
+  try {
+    const posts = await getAllBlogFiles();
+    return posts.map(post => post.slug);
+  } catch (error) {
+    console.error('Error getting blog slugs:', error);
+    return [];
+  }
 }
 
-function getBlogPost(slug: string): BlogPost | null {
+async function getBlogPost(slug: string): Promise<BlogPost | null> {
   try {
-    const blogDir = join(process.cwd(), 'content', 'blog');
-    const filePath = join(blogDir, `${slug}.mdx`);
-    const fileContent = readFileSync(filePath, 'utf8');
-    const { data, content } = matter(fileContent);
+    console.log('Getting blog post for slug:', slug);
+    const posts = await getAllBlogFiles();
+    console.log('All posts found:', posts.length);
+    
+    const post = posts.find(p => p.slug === slug);
+    console.log('Found post:', post ? {
+      title: post.title,
+      author: post.author,
+      description: post.description,
+      date: post.date,
+      tags: post.tags,
+      contentLength: post.content?.length || 0,
+      authorType: typeof post.author,
+      authorLength: post.author?.length || 0
+    } : 'NOT FOUND');
+    
+    if (!post) {
+      return null;
+    }
+    
+    console.log('Content length:', post.content?.length || 0);
     
     return {
-      title: data.title || 'Untitled',
-      description: data.description,
-      date: data.date,
-      author: data.author,
-      tags: data.tags || [],
-      content,
+      title: post.title,
+      description: post.description,
+      date: post.date,
+      author: post.author,
+      tags: post.tags,
+      content: post.content || '',
     };
   } catch (error) {
+    console.error('Error getting blog post:', error);
     return null;
   }
 }
 
 export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
+  const slugs = await getBlogSlugs();
   return slugs.map((slug) => ({
     slug,
   }));
@@ -51,7 +71,7 @@ export async function generateStaticParams() {
 
 export default async function BlogPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getBlogPost(slug);
   
   if (!post) {
     notFound();
