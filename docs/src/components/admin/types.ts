@@ -106,19 +106,19 @@ export type ChangelogEntry = {
   version: string;
   title: string;
   description: string;
-  changes: string[];
   type: 'major' | 'minor' | 'patch' | 'hotfix';
   releaseDate: string;
   author: string;
+  content: string;
 };
 
 export type NewChangelogEntry = {
   version: string;
   title: string;
   description: string;
-  changes: string[];
   type: 'major' | 'minor' | 'patch' | 'hotfix';
   releaseDate: string;
+  content: string;
 };
 
 export type EditChangelogEntry = {
@@ -126,9 +126,9 @@ export type EditChangelogEntry = {
   version: string;
   title: string;
   description: string;
-  changes: string[];
   type: 'major' | 'minor' | 'patch' | 'hotfix';
   releaseDate: string;
+  content: string;
 };
 
 export type ImageFile = {

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getFileFromGitHub, GITHUB_REPO_CONFIG, BlogMeta } from '@/lib/github';
-import matter from 'gray-matter';
+import { getAllBlogFiles } from '@/lib/github';
 
 interface BlogPost {
   slug: string;
@@ -28,72 +27,30 @@ export async function GET() {
       return response;
     }
 
-    const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.metaFile);
+    const posts = await getAllBlogFiles();
 
-    if (!metaFile) {
-      return NextResponse.json({ posts: [] });
-    }
+    const apiPosts: BlogPost[] = posts.map(post => ({
+      slug: post.slug,
+      title: post.title,
+      description: post.description,
+      date: post.date,
+      author: post.author,
+      tags: post.tags,
+      pinned: post.pinned,
+      contentPreview: post.content ? post.content.substring(0, 150) + (post.content.length > 150 ? '...' : '') : '',
+      wordCount: post.content ? post.content.split(/\s+/).filter(word => word.length > 0).length : 0,
+    }));
 
-    const meta: BlogMeta = JSON.parse(metaFile.content);
-    const blogSection = meta.pages.find(p => p.title === "Blog");
-
-    if (!blogSection) {
-      return NextResponse.json({ posts: [] });
-    }
-
-    const posts = await Promise.all(
-      blogSection.pages.map(async (page) => {
-        try {
-          const slug = page.url.replace('/blog/', '');
-          const filePath = `${GITHUB_REPO_CONFIG.blogPath}/${slug}.mdx`;
-
-          const file = await getFileFromGitHub(filePath);
-          if (!file) return null;
-
-          let frontmatter: Record<string, unknown>;
-          let content: string;
-
-          try {
-            const parsed = matter(file.content);
-            frontmatter = parsed.data;
-            content = parsed.content;
-          } catch (yamlError) {
-
-            return null;
-          }
-
-          const preview = content.substring(0, 150);
-          const wordCount = content.split(/\s+/).filter(word => word.length > 0).length;
-
-          return {
-            slug,
-            title: (frontmatter.title as string) || page.title,
-            description: (frontmatter.description as string) || '',
-            date: (frontmatter.date as string) || '',
-            author: (frontmatter.author as string) || '',
-            tags: (frontmatter.tags as string[]) || [],
-            pinned: (frontmatter.pinned as boolean) || false,
-            contentPreview: preview + (content.length > 150 ? '...' : ''),
-            wordCount,
-          };
-        } catch (error) {
-          return null;
-        }
-      })
-    );
-
-    const validPosts = posts.filter(post => post !== null)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    blogCache = validPosts;
+    blogCache = apiPosts;
     blogCacheTimestamp = now;
 
-    const response = NextResponse.json({ posts: validPosts });
+    const response = NextResponse.json({ posts: apiPosts });
     response.headers.set('Cache-Control', 'public, max-age=300');
     return response;
 
   } catch (error) {
-
+    console.error('Error fetching blog posts:', error);
+    
     if (blogCache) {
       return NextResponse.json({ posts: blogCache });
     }
