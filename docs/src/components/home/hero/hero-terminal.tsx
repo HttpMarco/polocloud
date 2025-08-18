@@ -93,23 +93,23 @@ export function HeroTerminal({
                     {showLogsPhase1 && terminalLinesPhase1.map((line, index) => (
                         <motion.div
                             key={`phase1-${index}`}
-                            className="flex items-start gap-2 mb-1"
+                            className="flex items-start mb-1"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                            <span className="text-gray-500 font-mono text-xs w-16 flex-shrink-0">
+                            <span className="text-gray-500 font-mono text-xs w-20 flex-shrink-0">
                                 {line.time}
                             </span>
-                            <span className="text-gray-400 font-mono text-xs w-8 flex-shrink-0">
+                            <span className="text-gray-400 font-mono text-xs mx-2">
                                 |
                             </span>
-                            <span className={`font-mono text-xs w-12 flex-shrink-0 ${
+                            <span className={`font-mono text-xs w-16 flex-shrink-0 ${
                                 line.level === 'WARN' ? 'text-yellow-400' : 'text-gray-300'
                             }`}>
-                                {line.level}:
+                                {line.level}
                             </span>
-                            <span className={`font-mono text-xs ${line.color}`}>
+                            <span className={`font-mono text-xs ml-2 ${line.color}`}>
                                 {renderMessage(line.message, line.highlight, line.highlightColor)}
                             </span>
                         </motion.div>
@@ -118,23 +118,23 @@ export function HeroTerminal({
                     {showLogsPhase2 && terminalLinesPhase2.map((line, index) => (
                         <motion.div
                             key={`phase2-${index}`}
-                            className="flex items-start gap-2 mb-1"
+                            className="flex items-start mb-1"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                            <span className="text-gray-500 font-mono text-xs w-16 flex-shrink-0">
+                            <span className="text-gray-500 font-mono text-xs w-20 flex-shrink-0">
                                 {line.time}
                             </span>
-                            <span className="text-gray-400 font-mono text-xs w-8 flex-shrink-0">
+                            <span className="text-gray-400 font-mono text-xs mx-2">
                                 |
                             </span>
-                            <span className={`font-mono text-xs w-12 flex-shrink-0 ${
+                            <span className={`font-mono text-xs w-16 flex-shrink-0 ${
                                 line.level === 'WARN' ? 'text-yellow-400' : 'text-white'
                             }`}>
-                                {line.level}:
+                                {line.level}
                             </span>
-                            <span className={`font-mono text-xs ${line.color}`}>
+                            <span className={`font-mono text-xs ml-2 ${line.color}`}>
                                 {renderMessage(line.message, line.highlight, line.highlightColor)}
                             </span>
                         </motion.div>
@@ -143,23 +143,23 @@ export function HeroTerminal({
                     {showLogsPhase3 && terminalLinesPhase3.map((line, index) => (
                         <motion.div
                             key={`phase3-${index}`}
-                            className="flex items-start gap-2 mb-1"
+                            className="flex items-start mb-1"
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                            <span className="text-gray-500 font-mono text-xs w-16 flex-shrink-0">
+                            <span className="text-gray-500 font-mono text-xs w-20 flex-shrink-0">
                                 {line.time}
                             </span>
-                            <span className="text-gray-400 font-mono text-xs w-8 flex-shrink-0">
+                            <span className="text-gray-400 font-mono text-xs mx-2">
                                 |
                             </span>
-                            <span className={`font-mono text-xs w-12 flex-shrink-0 ${
+                            <span className={`font-mono text-xs w-16 flex-shrink-0 ${
                                 line.level === 'WARN' ? 'text-yellow-400' : 'text-white'
                             }`}>
-                                {line.level}:
+                                {line.level}
                             </span>
-                            <span className={`font-mono text-xs ${line.color}`}>
+                            <span className={`font-mono text-xs ml-2 ${line.color}`}>
                                 {renderMessage(line.message, line.highlight, line.highlightColor)}
                             </span>
                         </motion.div>

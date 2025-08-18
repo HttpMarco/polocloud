@@ -754,10 +754,10 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative scroll-optimized">
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] pointer-events-none"></div>
       
-      <div className="container mx-auto py-6 sm:py-8 px-4 sm:px-6 relative z-10">
+      <div className="container mx-auto py-6 sm:py-8 px-4 sm:px-6 relative z-10 dashboard-container">
         <AdminHeader 
           auth={auth} 
           onLogout={handleLogout} 

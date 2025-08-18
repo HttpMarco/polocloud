@@ -61,15 +61,11 @@ export function HeroSection() {
     useEffect(() => {
         const fetchLatestVersion = async () => {
             try {
-                const response = await fetch('/api/github-stats');
+                const response = await fetch('/api/github-releases');
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.releases && data.releases > 0) {
-                        const releasesResponse = await fetch('https://api.github.com/repos/HttpMarco/polocloud/releases/latest');
-                        if (releasesResponse.ok) {
-                            const releaseData = await releasesResponse.json();
-                            setLatestVersion(`v${releaseData.tag_name}`);
-                        }
+                    if (data.latestVersion) {
+                        setLatestVersion(data.latestVersion);
                     }
                 }
             } catch (error) {

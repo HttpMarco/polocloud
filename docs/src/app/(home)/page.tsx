@@ -10,7 +10,7 @@ import CommunityFeedbackSection from '@/components/sections/feedback-section';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen scroll-optimized">
       <HeroSection />
       <AboutSection />
       <AddonsSection />

@@ -14,9 +14,51 @@
     font-family: 'Minecraft', 'Courier New', monospace;
 }
 
-/* Smooth Scrolling */
+/* Smooth Scrolling & Performance */
 html {
     scroll-behavior: smooth;
+    /* Prevent layout shifts during scroll */
+    overflow-x: hidden;
+}
+
+/* Optimize scroll performance */
+body {
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    /* Prevent scroll jank */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* Optimize animations and transitions */
+* {
+    /* Enable GPU acceleration for transforms */
+    transform: translate3d(0, 0, 0);
+    /* Prevent layout shifts */
+    box-sizing: border-box;
+}
+
+/* Smooth scroll for specific elements */
+.smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent layout shifts on images */
+img {
+    max-width: 100%;
+    height: auto;
+    /* Prevent layout shifts */
+    aspect-ratio: attr(width) / attr(height);
+}
+
+/* Optimize fixed/absolute positioned elements */
+.fixed, .absolute {
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 /* Custom scrollbar */
@@ -51,6 +93,10 @@ html {
     @apply px-4 sm:px-6 lg:px-8;
     max-width: 1280px;
     margin: 0 auto;
+    /* Prevent layout shifts */
+    min-height: 0;
+    /* Enable hardware acceleration */
+    transform: translateZ(0);
 }
 
 /* Responsive Typography */
@@ -1216,4 +1262,92 @@ body {
   body {
     @apply bg-background text-foreground;
     }
+}
+
+/* Dashboard Performance Optimizations */
+.dashboard-container {
+  /* Prevent layout shifts */
+  min-height: 100vh;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize sidebar performance */
+.admin-sidebar {
+  /* Prevent layout shifts */
+  width: var(--sidebar-width, 280px);
+  min-width: var(--sidebar-width, 280px);
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+  /* Smooth transitions */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Optimize card animations */
+.dashboard-card {
+  /* Prevent layout shifts */
+  min-height: 120px;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Smooth transitions */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Optimize chart performance */
+.chart-container {
+  /* Prevent layout shifts */
+  min-height: 300px;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Smooth animations */
+  transition: opacity 0.3s ease;
+}
+
+/* Optimize table performance */
+.dashboard-table {
+  /* Prevent layout shifts */
+  min-height: 200px;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+}
+
+/* Optimize form performance */
+.dashboard-form {
+  /* Prevent layout shifts */
+  min-height: 100px;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+}
+
+/* Scroll performance for long content */
+.scroll-optimized {
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  /* Prevent overscroll */
+  overscroll-behavior: contain;
+}
+
+/* Optimize grid layouts */
+.dashboard-grid {
+  /* Prevent layout shifts */
+  grid-template-rows: auto;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+}
+
+/* Optimize navigation performance */
+.nav-item {
+  /* Prevent layout shifts */
+  min-height: 44px;
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Smooth transitions */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }

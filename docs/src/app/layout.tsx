@@ -142,7 +142,7 @@ export default function Layout({children}: { children: ReactNode }) {
             <meta name="HandheldFriendly" content="true" />
             <meta name="format-detection" content="telephone=no" />
         </head>
-        <body className="flex flex-col min-h-screen">
+        <body className="flex flex-col min-h-screen scroll-optimized">
         <RootProvider>{children}</RootProvider>
         </body>
         </html>
