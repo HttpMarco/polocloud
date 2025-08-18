@@ -4,6 +4,10 @@
       "title": "Blog",
       "pages": [
         {
+          "title": "RELASE",
+          "url": "/blog/relase"
+        },
+        {
           "title": "Test",
           "url": "/blog/test"
         }
