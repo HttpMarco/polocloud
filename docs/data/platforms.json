@@ -114,5 +114,22 @@
     },
     "addedAt": "2025-08-18T12:16:26.630Z",
     "addedBy": "jakubbbdev"
+  },
+  {
+    "id": "1755519405774",
+    "name": "Leaf",
+    "icon": "https://gwe126g1vbd52dc4.public.blob.vercel-storage.com/polocloud/storage/images/platforms/platform-leaf-1755519404235.svg",
+    "versions": {
+      "1.7-1.12": "not-possible",
+      "1.12-1.16": "not-possible",
+      "1.18-1.19": "not-possible",
+      "1.20+": "supported"
+    },
+    "addons": {
+      "Severmobs": "supported",
+      "Signs": "supported"
+    },
+    "addedAt": "2025-08-18T12:16:45.774Z",
+    "addedBy": "jakubbbdev"
   }
 ]
