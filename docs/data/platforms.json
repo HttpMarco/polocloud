@@ -63,5 +63,22 @@
     },
     "addedAt": "2025-08-18T12:14:34.052Z",
     "addedBy": "jakubbbdev"
+  },
+  {
+    "id": "1755519306265",
+    "name": "Fabric",
+    "icon": "https://gwe126g1vbd52dc4.public.blob.vercel-storage.com/polocloud/storage/images/platforms/platform-fabric-1755519305394.png",
+    "versions": {
+      "1.7-1.12": "not-possible",
+      "1.12-1.16": "partial",
+      "1.18-1.19": "supported",
+      "1.20+": "supported"
+    },
+    "addons": {
+      "Severmobs": "supported",
+      "Signs": "supported"
+    },
+    "addedAt": "2025-08-18T12:15:06.265Z",
+    "addedBy": "jakubbbdev"
   }
 ]
