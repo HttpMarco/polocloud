@@ -6,7 +6,7 @@
     "versions": {
       "1.7-1.12": "supported",
       "1.12-1.16": "supported",
-      "1.18-1.19": "supported",
+      "1.18-1.19": "not-possible",
       "1.20+": "supported"
     },
     "addons": {},
