@@ -97,16 +97,19 @@ const RoadmapCard = ({ item, index }: { item: RoadmapItem; index: number }) => {
                               tag === 'new requirement' ? 'rgba(130, 247, 29, 0.15)' :
                               tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.15)' :
                               tag === 'bug' ? 'rgba(236, 161, 168, 0.15)' :
+                              tag === 'feature' ? 'rgba(40, 217, 43, 0.15)' :
                               'rgba(156, 163, 175, 0.15)',
                 color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
                        tag === 'new requirement' ? 'rgb(130, 247, 29)' :
                        tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
                        tag === 'bug' ? 'rgb(236, 161, 168)' :
+                       tag === 'feature' ? 'rgb(40, 217, 43)' :
                        'rgb(156, 163, 175)',
                 borderColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
                             tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                             tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                             tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
+                            tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
                             'rgba(156, 163, 175, 0.3)',
                 animationDelay: `${(index * 100) + (tagIndex * 50)}ms`
               }}
@@ -393,7 +396,7 @@ export function RoadmapContent() {
     })
   }));
 
-  const allTags = ['improvement', 'new requirement', 'prototype-5', 'bug'];
+  const allTags = ['improvement', 'new requirement', 'prototype-5', 'bug', 'feature'];
 
   return (
     <>
@@ -485,7 +488,7 @@ export function RoadmapContent() {
                   </button>
                 </div>
                 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                   <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
                     <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(234, 187, 44, 0.15)',
@@ -520,6 +523,15 @@ export function RoadmapContent() {
                       borderColor: 'rgba(236, 161, 168, 0.3)'
                     }}>bug</span>
                     <span className="text-xs text-muted-foreground text-center">Bug fixes & issues</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
+                      backgroundColor: 'rgba(40, 217, 43, 0.15)',
+                      color: 'rgb(40, 217, 43)',
+                      borderColor: 'rgba(40, 217, 43, 0.3)'
+                    }}>feature</span>
+                    <span className="text-xs text-muted-foreground text-center">New features & capabilities</span>
                   </div>
                 </div>
               </div>
@@ -571,16 +583,19 @@ export function RoadmapContent() {
                                           tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                                           tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                                           tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
+                                          tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
                                           'rgba(156, 163, 175, 0.3)',
                           color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
                                  tag === 'new requirement' ? 'rgb(130, 247, 29)' :
                                  tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
                                  tag === 'bug' ? 'rgb(236, 161, 168)' :
+                                 tag === 'feature' ? 'rgb(40, 217, 43)' :
                                  'rgb(156, 163, 175)',
                         borderColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
                                     tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                                     tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                                     tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
+                                    tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
                                     'rgba(156, 163, 175, 0.3)'
                         }}
                       >
@@ -623,6 +638,7 @@ export function RoadmapContent() {
                                tag === 'new requirement' ? 'rgb(130, 247, 29)' :
                                tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
                                tag === 'bug' ? 'rgb(236, 161, 168)' :
+                               tag === 'feature' ? 'rgb(40, 217, 43)' :
                                'rgb(156, 163, 175)'
                       }}
                     >
@@ -635,6 +651,7 @@ export function RoadmapContent() {
                                          tag === 'new requirement' ? 'rgb(130, 247, 29)' :
                                          tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
                                          tag === 'bug' ? 'rgb(236, 161, 168)' :
+                                         tag === 'feature' ? 'rgb(40, 217, 43)' :
                                          'rgb(156, 163, 175)'
                       }}
                     />
@@ -659,4 +676,4 @@ export function RoadmapContent() {
       )}
     </>
   );
-} 
+}

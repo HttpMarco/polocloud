@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { Octokit } from '@octokit/rest';
+import { GITHUB_REPO_CONFIG } from '@/lib/github';
 import { readFile } from 'fs/promises';
 import path from 'path';
-import {
-  addChangelogToGitHub,
-  GITHUB_REPO_CONFIG
-} from '@/lib/github';
 
 let adminUsers: string[] = [];
 
@@ -65,17 +63,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { version, title, description, changes, type, releaseDate } = await req.json();
+    const { version, title, description, type, releaseDate, content } = await req.json();
 
-    if (!version || !title || !description || !changes || !type || !releaseDate) {
+    if (!version || !title || !description || !type || !releaseDate || !content) {
       return NextResponse.json({
-        error: 'Version, title, description, changes, type, and releaseDate are required'
-      }, { status: 400 });
-    }
-
-    if (!Array.isArray(changes) || changes.length === 0) {
-      return NextResponse.json({
-        error: 'Changes must be a non-empty array'
+        error: 'Version, title, description, type, releaseDate, and content are required'
       }, { status: 400 });
     }
 
@@ -85,22 +77,54 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const changelogData = {
-      version: version.trim(),
-      title: title.trim(),
-      description: description.trim(),
-      changes: changes.map((change: string) => change.trim()).filter(Boolean),
-      type,
-      releaseDate: releaseDate.trim(),
-      author: userData?.username || 'Unknown'
-    };
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
 
-    const changelog = await addChangelogToGitHub(changelogData);
+    const mdxContent = `---
+version: "${version}"
+title: "${title}"
+description: "${description}"
+type: "${type}"
+releaseDate: "${releaseDate}"
+author: "${userData?.username || 'Unknown'}"
+---
+
+${content}`;
+
+    const githubToken = process.env.GITHUB_TOKEN;
+    if (!githubToken) {
+      return NextResponse.json({
+        error: 'GitHub token not configured'
+      }, { status: 500 });
+    }
+
+    const octokit = new Octokit({
+      auth: githubToken,
+    });
+
+    const response = await octokit.rest.repos.createOrUpdateFileContents({
+      owner: GITHUB_REPO_CONFIG.owner,
+      repo: GITHUB_REPO_CONFIG.repo,
+      path: `${GITHUB_REPO_CONFIG.changelogPath}/${slug}.mdx`,
+      message: `Add changelog: ${title}`,
+      content: Buffer.from(mdxContent).toString('base64'),
+      branch: GITHUB_REPO_CONFIG.branch,
+    });
+
+    const status = response.status;
+    if (status !== 200 && status !== 201) {
+      throw new Error(`GitHub API error: ${status}`);
+    }
 
     return NextResponse.json({
       success: true,
-      changelog,
-      message: 'Changelog entry created successfully'
+      slug,
+      message: 'Changelog entry created successfully on GitHub',
+      githubUrl: response.data.content?.html_url
     });
 
   } catch (error) {

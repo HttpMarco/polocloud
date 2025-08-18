@@ -1,47 +1,54 @@
 import { notFound } from 'next/navigation';
 import { PageLayout } from '@/components/layout/page-layout';
 import { Calendar, User, Tag, ArrowLeft, GitBranch, ExternalLink, Download } from 'lucide-react';
-import { readFileSync, readdirSync } from 'fs';
-import { join } from 'path';
-import matter from 'gray-matter';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
+import { getAllChangelogFiles } from '@/lib/github';
 
 interface ChangelogPost {
   title: string;
   description?: string;
   date?: string;
   version?: string;
-  type?: 'major' | 'minor' | 'patch';
+  type?: 'major' | 'minor' | 'patch' | 'hotfix';
   author?: string;
   tags?: string[];
+  changes?: string[];
   content: string;
 }
 
-function getChangelogSlugs(): string[] {
-  const changelogDir = join(process.cwd(), 'content', 'changelog');
-  const files = readdirSync(changelogDir).filter(file => file.endsWith('.mdx'));
-  return files.map(file => file.replace('.mdx', ''));
+async function getChangelogSlugs(): Promise<string[]> {
+  try {
+    const posts = await getAllChangelogFiles();
+    return posts.map(post => post.slug);
+  } catch (error) {
+    console.error('Error getting changelog slugs:', error);
+    return [];
+  }
 }
 
-function getChangelogPost(slug: string): ChangelogPost | null {
+async function getChangelogPost(slug: string): Promise<ChangelogPost | null> {
   try {
-    const changelogDir = join(process.cwd(), 'content', 'changelog');
-    const filePath = join(changelogDir, `${slug}.mdx`);
-    const fileContent = readFileSync(filePath, 'utf8');
-    const { data, content } = matter(fileContent);
+    const posts = await getAllChangelogFiles();
+    const post = posts.find(p => p.slug === slug);
+    
+    if (!post) {
+      return null;
+    }
+    
+    console.log('Content length:', post.content?.length || 0);
     
     return {
-      title: data.title || 'Untitled',
-      description: data.description,
-      date: data.date,
-      version: data.version,
-      type: data.type || 'patch',
-      author: data.author,
-      tags: data.tags || [],
-      content,
+      title: post.title,
+      description: post.description,
+      date: post.releaseDate,
+      version: post.version,
+      type: post.type,
+      author: post.author,
+      content: post.content || '',
     };
   } catch (error) {
+    console.error('Error getting changelog post:', error);
     return null;
   }
 }
@@ -54,6 +61,8 @@ function getTypeColor(type: string) {
       return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
     case 'patch':
       return 'bg-green-500/10 text-green-500 border-green-500/20';
+    case 'hotfix':
+      return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
     default:
       return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
   }
@@ -67,13 +76,15 @@ function getTypeIcon(type: string) {
       return '✨';
     case 'patch':
       return '🐛';
+    case 'hotfix':
+      return '🚨';
     default:
       return '📝';
   }
 }
 
 export async function generateStaticParams() {
-  const slugs = getChangelogSlugs();
+  const slugs = await getChangelogSlugs();
   return slugs.map((slug) => ({
     slug,
   }));
@@ -81,7 +92,7 @@ export async function generateStaticParams() {
 
 export default async function ChangelogPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getChangelogPost(slug);
+  const post = await getChangelogPost(slug);
   
   if (!post) {
     notFound();
@@ -149,20 +160,6 @@ export default async function ChangelogPage({ params }: { params: Promise<{ slug
               <p className="text-base sm:text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed max-w-3xl">
                 {post.description}
               </p>
-            )}
-            
-            {post.tags && (
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
-                {post.tags.map((tag: string) => (
-                  <span
-                    key={tag}
-                    className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
-                  >
-                    <Tag className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
             )}
           </div>
 

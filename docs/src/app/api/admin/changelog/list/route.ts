@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { readFile } from 'fs/promises';
 import path from 'path';
-import { getChangelogFromGitHub } from '@/lib/github';
+import { getAllChangelogFiles } from '@/lib/github';
 
 let adminUsers: string[] = [];
 
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const changelogData = await getChangelogFromGitHub();
+    const changelogData = await getAllChangelogFiles();
 
     const sortedChangelog = changelogData.sort((a, b) => {
       const dateA = new Date(a.releaseDate).getTime();

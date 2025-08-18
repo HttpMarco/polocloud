@@ -18,8 +18,6 @@ export default async function Page(props: {
 
   const MDXContent = page.data.body;
 
-  // Verwende das aktuelle Datum als lastModified für den Build-Prozess
-  // Die GitHub-API wird nur im Client aufgerufen, um Build-Fehler zu vermeiden
   const lastModified = new Date().toISOString();
 
   const editOnGithub = {

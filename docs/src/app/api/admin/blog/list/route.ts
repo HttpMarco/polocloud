@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { readFile } from 'fs/promises';
 import path from 'path';
-import { getFileFromGitHub, GITHUB_REPO_CONFIG, BlogMeta } from '@/lib/github';
-import matter from 'gray-matter';
+import { getAllBlogFiles } from '@/lib/github';
 
 let adminUsers: string[] = [];
 
@@ -68,75 +67,26 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const metaFile = await getFileFromGitHub(GITHUB_REPO_CONFIG.metaFile);
+    try {
+      const posts = await getAllBlogFiles();
 
-    if (!metaFile) {
+      const adminPosts = posts.map(post => ({
+        slug: post.slug,
+        title: post.title,
+        description: post.description,
+        date: post.date,
+        author: post.author,
+        tags: post.tags,
+        pinned: post.pinned,
+        contentPreview: post.content ? post.content.substring(0, 200) + (post.content.length > 200 ? '...' : '') : '',
+        wordCount: post.content ? post.content.split(/\s+/).length : 0,
+      }));
+
+      return NextResponse.json({ posts: adminPosts });
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
       return NextResponse.json({ posts: [] });
     }
-
-    const meta: BlogMeta = JSON.parse(metaFile.content);
-    const blogSection = meta.pages.find(p => p.title === "Blog");
-
-    if (!blogSection) {
-      return NextResponse.json({ posts: [] });
-    }
-
-    const posts = await Promise.all(
-      blogSection.pages.map(async (page) => {
-        try {
-          const slug = page.url.replace('/blog/', '');
-          const filePath = `${GITHUB_REPO_CONFIG.blogPath}/${slug}.mdx`;
-
-          const file = await getFileFromGitHub(filePath);
-          if (!file) return null;
-
-          let frontmatter: Record<string, unknown>;
-          let content: string;
-
-          try {
-            const parsed = matter(file.content);
-            frontmatter = parsed.data;
-            content = parsed.content;
-          } catch (yamlError) {
-
-            return {
-              slug,
-              title: `${slug} (YAML Error)`,
-              description: 'This post has invalid YAML frontmatter',
-              date: new Date().toISOString().split('T')[0],
-              author: 'System',
-              tags: ['error'],
-              pinned: false,
-              contentPreview: 'This post needs to be fixed...',
-              wordCount: 0,
-            };
-          }
-
-          return {
-            slug,
-            title: (frontmatter.title as string) || page.title,
-            description: (frontmatter.description as string) || '',
-            date: (frontmatter.date as string) || '',
-            author: (frontmatter.author as string) || '',
-            tags: (frontmatter.tags as string[]) || [],
-            pinned: (frontmatter.pinned as boolean) || false,
-            contentPreview: content.substring(0, 200) + (content.length > 200 ? '...' : ''),
-            wordCount: content.split(/\s+/).length,
-          };
-        } catch (error) {
-          return null;
-        }
-      })
-    );
-
-    const validPosts = posts.filter((post): post is NonNullable<typeof post> => post !== null)
-      .sort((a, b) => {
-        const dateA = a.date ? new Date(a.date as string).getTime() : 0;
-        const dateB = b.date ? new Date(b.date as string).getTime() : 0;
-        return dateB - dateA;
-      });
-
-    return NextResponse.json({ posts: validPosts });
 
   } catch (error) {
     return NextResponse.json({

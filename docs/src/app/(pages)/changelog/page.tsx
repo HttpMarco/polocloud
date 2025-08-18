@@ -1,51 +1,46 @@
-import { readdirSync, readFileSync } from 'fs';
-import { join } from 'path';
-import matter from 'gray-matter';
 import Link from 'next/link';
-import { Calendar, Tag, GitBranch, ArrowRight, MessageCircle } from 'lucide-react';
+import { Calendar, User, Tag, ArrowRight, MessageCircle, GitBranch } from 'lucide-react';
 
 interface ChangelogPost {
   title: string;
   description?: string;
   date?: string;
   version?: string;
-  type?: 'major' | 'minor' | 'patch';
+  type?: 'major' | 'minor' | 'patch' | 'hotfix';
   author?: string;
-  tags?: string[];
   slug: string;
 }
 
-function getChangelogPosts(): ChangelogPost[] {
-  try {
-    const changelogDir = join(process.cwd(), 'content', 'changelog');
-    const files = readdirSync(changelogDir).filter(file => file.endsWith('.mdx'));
-    
-    const posts = files.map(file => {
-      const filePath = join(changelogDir, file);
-      const fileContent = readFileSync(filePath, 'utf8');
-      const { data } = matter(fileContent);
-      const slug = file.replace('.mdx', '');
-      
-      return {
-        title: data.title || 'Untitled',
-        description: data.description,
-        date: data.date,
-        version: data.version,
-        type: data.type || 'patch',
-        author: data.author,
-        tags: data.tags || [],
-        slug,
-      };
-    });
+import { getAllChangelogFiles } from '@/lib/github';
 
-    return posts.sort((a, b) => {
-      if (!a.date || !b.date) return 0;
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    });
+async function getChangelogPosts(): Promise<ChangelogPost[]> {
+  try {
+    console.log('Trying to fetch changelogs directly from GitHub...');
+    const posts = await getAllChangelogFiles();
+    console.log('Found changelogs from GitHub:', posts.length);
+    
+    return posts.map((entry) => ({
+      title: entry.title,
+      description: entry.description,
+      date: entry.releaseDate,
+      version: entry.version,
+      type: entry.type,
+      author: entry.author,
+      slug: entry.slug,
+    }));
   } catch (error) {
-    console.error('Error reading changelog posts:', error);
-    return [];
+    console.error('Error fetching changelog posts from GitHub:', error);
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+    }
   }
+  
+  console.log('No changelogs found, returning empty array');
+  return [];
 }
 
 function getTypeColor(type: string) {
@@ -56,6 +51,8 @@ function getTypeColor(type: string) {
       return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
     case 'patch':
       return 'bg-green-500/10 text-green-500 border-green-500/20';
+    case 'hotfix':
+      return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
     default:
       return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
   }
@@ -69,13 +66,15 @@ function getTypeIcon(type: string) {
       return '✨';
     case 'patch':
       return '🐛';
+    case 'hotfix':
+      return '🚨';
     default:
       return '📝';
   }
 }
 
-export default function ChangelogsPage() {
-  const posts = getChangelogPosts();
+export default async function ChangelogsPage() {
+  const posts = await getChangelogPosts();
 
   return (
     <div className="relative min-h-screen">
@@ -116,20 +115,6 @@ export default function ChangelogsPage() {
                   <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium border ${getTypeColor(post.type || 'patch')}`}>
                     {post.type?.toUpperCase() || 'PATCH'}
                   </span>
-
-                  {post.tags && post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 justify-end">
-                      {post.tags.map((tag: string) => (
-                        <span
-                          key={tag}
-                          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium bg-muted/50 text-muted-foreground border border-border/50"
-                        >
-                          <Tag className="w-2.5 h-2.5" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4">
@@ -193,7 +178,7 @@ export default function ChangelogsPage() {
         </div>
 
         <div className="mt-12 sm:mt-16 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 rounded-xl p-4 sm:p-6 text-center">
-          <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8 text-primary mx-auto mb-2 sm:mb-3" />
+          <MessageCircle className="w-6 h-6 sm:w-8 sm:w-8 text-primary mx-auto mb-2 sm:mb-3" />
           <h3 className="text-lg sm:text-xl font-bold text-foreground dark:text-white mb-2">
             Join Our Community
           </h3>
@@ -207,7 +192,7 @@ export default function ChangelogsPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-3 sm:px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-xs sm:text-sm"
           >
-            <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+            <MessageCircle className="w-3 h-3 sm:w-4 sm:w-4" />
             <span className="hidden sm:inline">Join Discord Server</span>
             <span className="sm:hidden">Join Discord</span>
           </a>
