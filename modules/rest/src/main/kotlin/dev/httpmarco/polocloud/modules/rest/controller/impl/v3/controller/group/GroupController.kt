@@ -1,6 +1,9 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.group
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group.GroupCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
@@ -73,6 +76,26 @@ class GroupController : Controller("/group") {
             return
         }
 
+        if (polocloudShared.groupProvider().find(groupCreateModel.name) != null) {
+            context.status(409).json(message("Group with this name already exists"))
+            return
+        }
+
+        if (groupCreateModel.minMemory > groupCreateModel.maxMemory) {
+            context.status(400).json(message("Minimum memory cannot be greater than maximum memory"))
+            return
+        }
+
+        if (groupCreateModel.minOnlineService < 0 || groupCreateModel.maxOnlineService < 0) {
+            context.status(400).json(message("Minimum and maximum online services cannot be negative"))
+            return
+        }
+
+        if (groupCreateModel.minOnlineService > groupCreateModel.maxOnlineService) {
+            context.status(400).json(message("Minimum online services cannot be greater than maximum online services"))
+            return
+        }
+
         val platform = polocloudShared.platformProvider().find(groupCreateModel.platform.name)
         if (platform == null) {
             context.status(404).json(message("Platform not found"))
@@ -88,23 +111,60 @@ class GroupController : Controller("/group") {
         val platformIndex = PlatformIndex(platform.name, platformVersion.version)
         val groupInformation = GroupInformation(groupCreateModel.information.createdAt)
 
-        val group = Group(
+        val group = AbstractGroup(
             groupCreateModel.name,
             groupCreateModel.minMemory,
             groupCreateModel.maxMemory,
             groupCreateModel.minOnlineService,
             groupCreateModel.maxOnlineService,
-            platformIndex,
             groupCreateModel.percentageToStartNewService,
+            platformIndex,
             groupInformation,
             groupCreateModel.templates,
             groupCreateModel.properties
         )
 
-        (polocloudShared.groupProvider() as SharedGroupProvider<Group>).create(group)
+        (Agent.groupProvider() as SharedGroupProvider<Group>).create(group)
         context.status(201).json(
             JsonObject().apply {
                 addProperty("message", "Group created successfully")
+            }.toString()
+        )
+    }
+
+    @Request(requestType = RequestType.GET, path = "/", permission = "polocloud.group.list")
+    fun listGroups(context: Context) {
+        context.status(200).json(
+            JsonArray().apply {
+                polocloudShared.groupProvider().findAll().map { group ->
+                    add(
+                        JsonObject().apply {
+                            addProperty("name", group.name)
+                            addProperty("minMemory", group.minMemory)
+                            addProperty("maxMemory", group.maxMemory)
+                            addProperty("minOnlineService", group.minOnlineService)
+                            addProperty("maxOnlineService", group.maxOnlineService)
+                            addProperty("platform", JsonObject().apply {
+                                addProperty("name", group.platform.name)
+                                addProperty("version", group.platform.version)
+                            }.toString())
+                            addProperty("percentageToStartNewService", group.percentageToStartNewService)
+                            addProperty("information", JsonObject().apply {
+                                addProperty("createdAt", group.information.createdAt)
+                            }.toString())
+                            addProperty("templates", JsonArray().apply {
+                                group.templates.forEach { template ->
+                                    add(template)
+                                }
+                            }.toString())
+                            addProperty("properties", JsonObject().apply {
+                                group.properties.forEach { (key, value) ->
+                                    add(key, value)
+                                }
+                            }.toString())
+                        }
+                    )
+                }
             }.toString()
         )
     }
