@@ -3,36 +3,36 @@ import { getFileFromGitHub, createOrUpdateBlogFile } from '@/lib/github';
 
 async function loadAllowedAdminUsers(): Promise<string[]> {
   try {
-    console.log('🔍 Loading allowed admin users...');
+    console.log('Loading allowed admin users...');
     const adminFile = await getFileFromGitHub('docs/data/github-admin-users.json');
-    console.log('📁 Admin file found:', !!adminFile);
+    console.log('Admin file found:', !!adminFile);
     
     if (adminFile && adminFile.content) {
-      console.log('📄 Admin file content length:', adminFile.content.length);
+      console.log('Admin file content length:', adminFile.content.length);
       try {
         const users = JSON.parse(adminFile.content);
-        console.log('✅ Parsed users:', users);
+        console.log('Parsed users:', users);
         
         if (Array.isArray(users) && users.length > 0) {
           const usernames = users.map((user: { username: string }) => user.username);
           console.log('👥 Returning usernames from file:', usernames);
           return usernames;
         } else {
-          console.log('⚠️ Users array is empty or invalid, using fallback');
+          console.log('Users array is empty or invalid, using fallback');
         }
       } catch (parseError) {
-        console.error('❌ Error parsing admin users JSON:', parseError);
+        console.error('Error parsing admin users JSON:', parseError);
       }
     } else {
-      console.log('⚠️ No admin file or content, using fallback');
+      console.log('No admin file or content, using fallback');
     }
 
-    console.log('🔄 Using fallback: jakubbbdev');
-    return ['jakubbbdev'];
+    console.log('🔄 Using fallback: HttpMarco');
+    return ['HttpMarco'];
   } catch (error) {
-    console.error('❌ Error loading allowed admin users:', error);
-    console.log('🔄 Using fallback due to error: jakubbbdev');
-    return ['jakubbbdev'];
+    console.error('Error loading allowed admin users:', error);
+    console.log('🔄 Using fallback due to error: HttpMarco');
+    return ['HttpMarco'];
   }
 }
 
@@ -58,7 +58,7 @@ async function addUserToAdminList(username: string, userId: string): Promise<voi
         }
       }
     } catch {
-      console.log('⚠️ Could not load existing admin users, starting fresh');
+      console.log('Could not load existing admin users, starting fresh');
       currentUsers = [];
     }
 
@@ -74,7 +74,7 @@ async function addUserToAdminList(username: string, userId: string): Promise<voi
       role: 'ADMIN',
       addedBy: 'system',
       addedAt: new Date().toISOString(),
-      isFounder: username === 'jakubbbdev'
+      isFounder: username === 'HttpMarco'
     };
 
     currentUsers.push(newUser);
@@ -87,9 +87,9 @@ async function addUserToAdminList(username: string, userId: string): Promise<voi
       undefined
     );
 
-    console.log('✅ User successfully added to admin list:', username);
+    console.log('User successfully added to admin list:', username);
   } catch (error) {
-    console.error('❌ Error adding user to admin list:', error);
+    console.error('Error adding user to admin list:', error);
   }
 }
 
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
 
     const params = new URLSearchParams({
       client_id: githubClientId,
-      redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/github-admin`,
+      redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de'}/api/auth/github-admin`,
       scope: 'user:email',
       state: 'admin-login'
     });
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
     if (!tokenData.access_token) {
       console.error('Failed to get access token:', tokenData);
       console.error('Full token response:', JSON.stringify(tokenData, null, 2));
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
       return NextResponse.redirect(`${baseUrl}/admin?error=oauth_failed`);
     }
 
@@ -166,8 +166,8 @@ export async function GET(request: NextRequest) {
     console.log(`Allowed users:`, allowedUsers);
 
     if (!allowedUsers.includes(userData.login)) {
-      console.log('❌ User not authorized:', userData.login);
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+      console.log('User not authorized:', userData.login);
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
       return NextResponse.redirect(`${baseUrl}/admin?error=unauthorized`);
     }
 
@@ -182,7 +182,7 @@ export async function GET(request: NextRequest) {
       loginTime: new Date().toISOString()
     };
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
     const response = NextResponse.redirect(`${baseUrl}/admin?success=github_login`);
 
     response.cookies.set('github_admin_auth', JSON.stringify(adminSession), {
@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('GitHub admin OAuth error:', error);
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
     return NextResponse.redirect(`${baseUrl}/admin?error=oauth_error`);
   }
 }

@@ -17,7 +17,7 @@ export interface DiscordAuthResponse {
 
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET;
-const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'http://localhost:3000/api/auth/discord/callback';
+const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || 'http://polocloud.de/api/auth/discord/callback';
 
 export function getDiscordAuthUrl(): string {
   if (!DISCORD_CLIENT_ID) {

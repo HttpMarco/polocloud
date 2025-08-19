@@ -62,7 +62,7 @@ export function ImagesTab({
       }
 
       const result = await res.json();
-      console.log('✅ Upload successful:', result);
+      console.log('Upload successful:', result);
 
       setNewImage({ file: null, category: 'general' });
 
@@ -70,7 +70,7 @@ export function ImagesTab({
       
       alert('Image uploaded successfully!');
     } catch (error) {
-      console.error('❌ Error uploading image:', error);
+      console.error('Error uploading image:', error);
       alert(`Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setUploading(false);

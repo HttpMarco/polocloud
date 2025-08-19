@@ -21,10 +21,10 @@ export async function GET() {
     cachedPlatforms = platforms;
     lastFetch = now;
     
-    console.log('✅ Platforms data fetched successfully:', platforms.length, 'platforms');
+    console.log('Platforms data fetched successfully:', platforms.length, 'platforms');
     return NextResponse.json({ platforms });
   } catch (error) {
-    console.error('❌ Error fetching platforms:', error);
+    console.error('Error fetching platforms:', error);
     return NextResponse.json({ error: 'Failed to fetch platforms' }, { status: 500 });
   }
 }

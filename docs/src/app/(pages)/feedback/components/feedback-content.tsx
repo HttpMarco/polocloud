@@ -41,8 +41,8 @@ export function FeedbackContent() {
   };
 
   useEffect(() => {
-    console.log('🔍 FeedbackContent component mounted');
-    console.log('🔍 Initial state:', {
+    console.log('FeedbackContent component mounted');
+    console.log('Initial state:', {
       user,
       hasSubmittedFeedback,
       existingFeedback,
@@ -70,24 +70,24 @@ export function FeedbackContent() {
   }, []);
 
   useEffect(() => {
-    console.log('🔍 Starting auth and feedback check...');
+    console.log('Starting auth and feedback check...');
     
     const checkAuthAndFeedback = async () => {
       try {
-        console.log('🔍 Fetching /api/feedback...');
+        console.log('Fetching /api/feedback...');
         
         const authResponse = await fetch('/api/feedback', {
           credentials: 'include',
         });
-        console.log('🔍 Auth response status:', authResponse.status);
-        console.log('🔍 Auth response headers:', Object.fromEntries(authResponse.headers.entries()));
+        console.log('Auth response status:', authResponse.status);
+        console.log('Auth response headers:', Object.fromEntries(authResponse.headers.entries()));
         
         if (authResponse.ok) {
           const data = await authResponse.json();
-          console.log('🔍 Auth response data:', data);
+          console.log('Auth response data:', data);
           
           if (data.hasSubmitted) {
-            console.log('🔍 User has already submitted feedback');
+            console.log('User has already submitted feedback');
             setHasSubmittedFeedback(true);
             if (data.feedback) {
 
@@ -112,27 +112,27 @@ export function FeedbackContent() {
               });
             }
           } else {
-            console.log('🔍 User is authenticated but hasn\'t submitted feedback');
+            console.log('User is authenticated but hasn\'t submitted feedback');
 
             const userData = await getCurrentUser();
-            console.log('🔍 Current user data:', userData);
+            console.log('Current user data:', userData);
             if (userData) {
               setUser(userData);
             }
           }
         } else if (authResponse.status === 401) {
-          console.log('🔍 User not authenticated (401)');
+          console.log('User not authenticated (401)');
           setUser(null);
         } else {
-          console.log('🔍 Unexpected response status:', authResponse.status);
+          console.log('Unexpected response status:', authResponse.status);
           const errorText = await authResponse.text();
-          console.log('🔍 Error response:', errorText);
+          console.log('Error response:', errorText);
         }
       } catch (error) {
-        console.error('🔍 Error checking auth status:', error);
+        console.error('Error checking auth status:', error);
         setAuthError('Failed to check authentication status');
       } finally {
-        console.log('🔍 Setting isLoading to false');
+        console.log('Setting isLoading to false');
         setIsLoading(false);
       }
     };
@@ -143,23 +143,23 @@ export function FeedbackContent() {
 
   const getCurrentUser = async (): Promise<DiscordUser | null> => {
     try {
-      console.log('🔍 Fetching /api/auth/user...');
+      console.log('Fetching /api/auth/user...');
       const response = await fetch('/api/auth/user', {
         credentials: 'include',
       });
-      console.log('🔍 User API response status:', response.status);
+      console.log('User API response status:', response.status);
       
       if (response.ok) {
         const userData = await response.json();
-        console.log('🔍 User API response data:', userData);
+        console.log('User API response data:', userData);
         return userData;
       } else {
-        console.log('🔍 User API failed with status:', response.status);
+        console.log('User API failed with status:', response.status);
         const errorText = await response.text();
-        console.log('🔍 User API error:', errorText);
+        console.log('User API error:', errorText);
       }
     } catch (error) {
-      console.error('🔍 Error getting user data:', error);
+      console.error('Error getting user data:', error);
     }
     return null;
   };
@@ -169,10 +169,10 @@ export function FeedbackContent() {
     const success = urlParams.get('success');
     const error = urlParams.get('error');
 
-    console.log('🔍 URL params:', { success, error });
+    console.log('URL params:', { success, error });
 
     if (success === 'true') {
-      console.log('🔍 Success parameter detected, checking auth...');
+      console.log('Success parameter detected, checking auth...');
 
       const checkAuth = async () => {
         try {
@@ -202,31 +202,31 @@ export function FeedbackContent() {
             }
           }
         } catch (error) {
-          console.error('🔍 Error checking auth after login:', error);
+          console.error('Error checking auth after login:', error);
         }
       };
       checkAuth();
     } else if (error) {
-      console.error('🔍 Authentication error:', error);
+      console.error('Authentication error:', error);
       setAuthError('Authentication failed. Please try again.');
     }
   }, []);
 
   const handleDiscordLogin = () => {
-    console.log('🔍 Discord login clicked, redirecting to /api/auth/discord');
+    console.log('Discord login clicked, redirecting to /api/auth/discord');
     window.location.href = '/api/auth/discord';
   };
 
   const handleLogout = async () => {
     try {
-      console.log('🔍 Logout clicked');
+      console.log('Logout clicked');
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
       setHasSubmittedFeedback(false);
       setExistingFeedback(null);
       window.location.href = '/feedback';
     } catch (error) {
-      console.error('🔍 Logout error:', error);
+      console.error('Logout error:', error);
     }
   };
 
@@ -234,7 +234,7 @@ export function FeedbackContent() {
     e.preventDefault();
     if (selectedRating === 0 || description.length < 10) return;
 
-          console.log('🔍 Submitting feedback:', { rating: selectedRating, description });
+          console.log('Submitting feedback:', { rating: selectedRating, description });
 
     setIsSubmitting(true);
     try {
@@ -245,12 +245,12 @@ export function FeedbackContent() {
         credentials: 'include',
       });
 
-      console.log('🔍 Response status:', response.status);
-      console.log('🔍 Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('Response status:', response.status);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (response.ok) {
         const result = await response.json();
-        console.log('🔍 Feedback submission successful:', result);
+        console.log('Feedback submission successful:', result);
                         showToast('success', 'Feedback sent successfully! Thank you for your opinion.');
 
         setHasSubmittedFeedback(true);
@@ -266,11 +266,11 @@ export function FeedbackContent() {
         } catch (e) {
           errorData = { error: 'Network or server error' };
         }
-        console.error('🔍 Feedback submission failed:', errorData);
+        console.error('Feedback submission failed:', errorData);
         showToast('error', errorData.error || 'Unknown error while sending feedback');
       }
     } catch (error) {
-      console.error('🔍 Feedback submission error:', error);
+      console.error('Feedback submission error:', error);
       showToast('error', 'Fehler beim Senden des Feedbacks. Bitte versuchen Sie es erneut.');
     } finally {
       setIsSubmitting(false);
@@ -278,7 +278,7 @@ export function FeedbackContent() {
   };
 
   useEffect(() => {
-    console.log('🔍 State changed:', {
+    console.log('State changed:', {
       user,
       hasSubmittedFeedback,
       existingFeedback,
@@ -313,7 +313,7 @@ export function FeedbackContent() {
   };
 
 
-  console.log('🔍 Rendering with state:', {
+  console.log('Rendering with state:', {
     isLoading,
     hasSubmittedFeedback,
     existingFeedback,
@@ -322,7 +322,7 @@ export function FeedbackContent() {
   });
 
   if (isLoading) {
-    console.log('🔍 Rendering loading state');
+    console.log('Rendering loading state');
     return (
       <div className="relative">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
@@ -338,7 +338,7 @@ export function FeedbackContent() {
   }
 
   if (hasSubmittedFeedback && existingFeedback) {
-    console.log('🔍 Rendering existing feedback state');
+    console.log('Rendering existing feedback state');
 
     const isPending = existingFeedback.isPending;
 
@@ -477,7 +477,7 @@ export function FeedbackContent() {
   }
 
   if (!user) {
-    console.log('🔍 Rendering login prompt state');
+    console.log('Rendering login prompt state');
     return (
       <div className="relative">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
@@ -520,7 +520,7 @@ export function FeedbackContent() {
     );
   }
 
-  console.log('🔍 Rendering feedback form state');
+  console.log('Rendering feedback form state');
   return (
     <div className="relative">
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />

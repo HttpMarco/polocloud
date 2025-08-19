@@ -29,8 +29,8 @@ async function loadGitHubAdminUsers(): Promise<GitHubAdminUser[]> {
 
     return [
       {
-        username: 'jakubbbdev',
-        id: 'jakubbbdev',
+        username: 'HttpMarco',
+        id: 'HttpMarco',
         role: 'SUPER_ADMIN',
         addedBy: 'system',
         addedAt: new Date().toISOString(),
@@ -42,8 +42,8 @@ async function loadGitHubAdminUsers(): Promise<GitHubAdminUser[]> {
 
     return [
       {
-        username: 'jakubbbdev',
-        id: 'jakubbbdev',
+        username: 'HttpMarco',
+        id: 'HttpMarco',
         role: 'SUPER_ADMIN',
         addedBy: 'system',
         addedAt: new Date().toISOString(),
@@ -86,7 +86,7 @@ function getAuthenticatedUser(request: NextRequest): GitHubAdminUser | null {
       id: session.id,
       name: session.name,
       avatar: session.avatar,
-      role: session.username === 'jakubbbdev' ? 'SUPER_ADMIN' : 'ADMIN',
+      role: session.username === 'HttpMarco' ? 'SUPER_ADMIN' : 'ADMIN',
       addedBy: 'unknown',
       addedAt: session.loginTime || new Date().toISOString()
     };
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       users: enrichedUsers,
       currentUser: currentUser.username,
-      isSuperAdmin: currentUser.username === 'jakubbbdev'
+      isSuperAdmin: currentUser.username === 'HttpMarco'
     });
   } catch (error) {
     console.error('Error loading GitHub admin users:', error);
@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const currentUser = getAuthenticatedUser(request);
-    if (!currentUser || currentUser.username !== 'jakubbbdev') {
+    if (!currentUser || currentUser.username !== 'HttpMarco') {
       return NextResponse.json({ error: 'Only admin can add users' }, { status: 403 });
     }
 
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const currentUser = getAuthenticatedUser(request);
-    if (!currentUser || currentUser.username !== 'jakubbbdev') {
+    if (!currentUser || currentUser.username !== 'HttpMarco') {
       return NextResponse.json({ error: 'Only admin can remove users' }, { status: 403 });
     }
 
@@ -202,7 +202,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
     }
 
-    if (username === 'jakubbbdev') {
+    if (username === 'HttpMarco') {
       return NextResponse.json({ error: 'Cannot remove founder' }, { status: 403 });
     }
 

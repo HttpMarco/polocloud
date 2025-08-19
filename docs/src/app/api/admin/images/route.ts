@@ -6,26 +6,26 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
     
-    console.log('🔍 GET /api/admin/images - Category filter:', category);
+    console.log('GET /api/admin/images - Category filter:', category);
 
     const githubAdminAuth = req.cookies.get('github_admin_auth')?.value;
     const adminAuth = req.cookies.get('admin_auth')?.value;
     
     if (!githubAdminAuth && !adminAuth) {
-      console.log('❌ No admin authentication found');
+      console.log('No admin authentication found');
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
 
-    console.log('✅ Admin authentication verified');
+    console.log('Admin authentication verified');
 
     const { blobs } = await list();
     console.log('📦 Total blobs found:', blobs.length);
 
-    console.log('🔍 All blob pathnames:', blobs.map(b => b.pathname));
+    console.log('All blob pathnames:', blobs.map(b => b.pathname));
 
     const imageBlobs = blobs.filter(blob => {
       const isImage = blob.pathname.includes('polocloud/storage/images/');
-      console.log(`🔍 Blob ${blob.pathname}: isImage = ${isImage}`);
+      console.log(`Blob ${blob.pathname}: isImage = ${isImage}`);
       return isImage;
     });
     console.log('🖼️ Image blobs found:', imageBlobs.length);
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     const filteredBlobs = category && category !== 'all'
       ? imageBlobs.filter(blob => blob.pathname.includes(`/${category}/`))
       : imageBlobs;
-    console.log('🔍 Filtered blobs:', filteredBlobs.length);
+    console.log('Filtered blobs:', filteredBlobs.length);
 
     const images = filteredBlobs.map(blob => {
       const pathParts = blob.pathname.split('/');
@@ -64,12 +64,12 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    console.log('✅ Returning images:', images.length);
+    console.log('Returning images:', images.length);
     console.log('📋 Image details:', images.map(img => ({ name: img.name, category: img.category, url: img.url })));
 
     return NextResponse.json({ images });
   } catch (error) {
-    console.error('❌ Error fetching images:', error);
+    console.error('Error fetching images:', error);
     return NextResponse.json({ error: 'Failed to fetch images' }, { status: 500 });
   }
 }
@@ -82,17 +82,17 @@ export async function POST(req: NextRequest) {
     const adminAuth = req.cookies.get('admin_auth')?.value;
     
     if (!githubAdminAuth && !adminAuth) {
-      console.log('❌ No admin authentication found for upload');
+      console.log('No admin authentication found for upload');
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
 
-    console.log('✅ Admin authentication verified for upload');
+    console.log('Admin authentication verified for upload');
 
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const category = formData.get('category') as string || 'general';
 
-    console.log('📁 Upload details:', {
+    console.log('Upload details:', {
       fileName: file?.name,
       fileSize: file?.size,
       fileType: file?.type,
@@ -100,12 +100,12 @@ export async function POST(req: NextRequest) {
     });
 
     if (!file) {
-      console.log('❌ No file provided');
+      console.log('No file provided');
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
     const validCategories = ['general', 'partners', 'platforms', 'blog', 'changelog'];
     if (!validCategories.includes(category)) {
-      console.log('❌ Invalid category:', category);
+      console.log('Invalid category:', category);
       return NextResponse.json({ 
         error: 'Invalid category. Allowed categories: general, partners, platforms, blog, changelog' 
       }, { status: 400 });
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      console.log('❌ Invalid file type:', file.type);
+      console.log('Invalid file type:', file.type);
       return NextResponse.json({ 
         error: 'Invalid file type. Only PNG, JPG, SVG, and WebP are allowed.' 
       }, { status: 400 });
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
 
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      console.log('❌ File too large:', file.size, 'bytes');
+      console.log('File too large:', file.size, 'bytes');
       return NextResponse.json({ 
         error: 'File too large. Maximum size is 5MB.' 
       }, { status: 400 });
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
       addRandomSuffix: false
     });
 
-    console.log('✅ Image uploaded successfully to Vercel Blob:', blob.url);
+    console.log('Image uploaded successfully to Vercel Blob:', blob.url);
 
     const imageData = {
       id: blob.pathname,
@@ -163,7 +163,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error) {
-    console.error('❌ Error uploading image:', error);
+    console.error('Error uploading image:', error);
     return NextResponse.json({ 
       error: 'Failed to upload image' 
     }, { status: 500 });
@@ -187,7 +187,7 @@ export async function DELETE(req: NextRequest) {
 
     await del(blobId);
     
-    console.log('✅ Image deleted from Vercel Blob:', blobId);
+    console.log('Image deleted from Vercel Blob:', blobId);
 
     return NextResponse.json({
       success: true,

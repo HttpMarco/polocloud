@@ -100,7 +100,7 @@ export default function AdminPage() {
       return matchesQuery && matchesRating && matchesStatus;
     });
     
-    console.log('🔍 Filtered Feedbacks:', {
+    console.log('Filtered Feedbacks:', {
       total: feedbacks.length,
       filtered: filtered.length,
       query,
@@ -167,7 +167,7 @@ export default function AdminPage() {
       if (res.ok) {
         const data = await res.json();
         setAdminUsers(data.users || []);
-        setIsSuperAdmin(data.users?.some((user: AdminUser) => user.username === 'jakubbbdev') || false);
+        setIsSuperAdmin(data.users?.some((user: AdminUser) => user.username === 'HttpMarco') || false);
       }
     } catch (error) {
       console.error('Error fetching admin users:', error);
@@ -673,13 +673,13 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/images', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
-        console.log('✅ Images fetched:', data.images?.length || 0, 'images');
+        console.log('Images fetched:', data.images?.length || 0, 'images');
         setImages(data.images || []);
       } else {
-        console.error('❌ Failed to fetch images:', res.status, res.statusText);
+        console.error('Failed to fetch images:', res.status, res.statusText);
       }
     } catch (error) {
-      console.error('❌ Error fetching images:', error);
+      console.error('Error fetching images:', error);
     } finally {
       setLoadingImages(false);
     }

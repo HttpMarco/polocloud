@@ -14,14 +14,14 @@ export async function POST(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'jakubbbdev') {
+      if (adminAuthData.username !== 'HttpMarco') {
         return NextResponse.json({
-          error: `Only jakubbbdev can upload images. Your username: ${adminAuthData.username}`
+          error: `Only HttpMarco can upload images. Your username: ${adminAuthData.username}`
         }, { status: 403 });
       }
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'jakubbbdev' && adminData.username !== 'admin') {
+      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
         return NextResponse.json({
           error: `Only admin can upload images. Your username: ${adminData.username}`
         }, { status: 403 });
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
       addRandomSuffix: false
     });
 
-    console.log('✅ Image uploaded successfully to Vercel Blob:', blob.url);
+    console.log('Image uploaded successfully to Vercel Blob:', blob.url);
 
     return NextResponse.json({
       success: true,

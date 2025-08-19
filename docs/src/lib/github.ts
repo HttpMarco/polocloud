@@ -334,7 +334,7 @@ export function clearGitHubCache(): void {
     contributorsCache = null;
     contributorsCacheTimestamp = 0;
     
-    console.log('🗑️ All GitHub caches cleared');
+    console.log('All GitHub caches cleared');
 }
 
 export function clearSpecificCache(cacheType: 'stats' | 'contributors' | 'partners' | 'platforms'): void {
@@ -353,7 +353,7 @@ export function clearSpecificCache(cacheType: 'stats' | 'contributors' | 'partne
             console.log(`Cache type '${cacheType}' not implemented yet`);
     }
     
-    console.log(`🗑️ ${cacheType} cache cleared`);
+    console.log(`${cacheType} cache cleared`);
 }
 
 export function getCacheStatus(): {
@@ -412,16 +412,16 @@ if (!GITHUB_TOKEN) {
 }
 
 console.log('GitHub Config:', {
-  owner: process.env.GITHUB_REPO_OWNER || 'jakubbbdev',
+  owner: process.env.GITHUB_REPO_OWNER || 'HttpMarco',
   repo: process.env.GITHUB_REPO_NAME || 'polocloud',
-  branch: process.env.GITHUB_BRANCH || 'improve-web',
+  branch: process.env.GITHUB_BRANCH || 'master',
   token: GITHUB_TOKEN ? 'SET' : 'NOT SET'
 });
 
 export const GITHUB_REPO_CONFIG = {
-  owner: process.env.GITHUB_REPO_OWNER || 'jakubbbdev',
+  owner: process.env.GITHUB_REPO_OWNER || 'HttpMarco',
   repo: process.env.GITHUB_REPO_NAME || 'polocloud',
-  branch: process.env.GITHUB_BRANCH || 'improve-web',
+  branch: process.env.GITHUB_BRANCH || 'master',
   blogPath: 'docs/content/blog',
   changelogPath: 'docs/content/changelog',
   metaFile: 'docs/content/blog/meta.json',
@@ -716,21 +716,21 @@ export async function getUserFeedbackFromGitHub(userId: string): Promise<Feedbac
 
 export async function getPartnersFromGitHub() {
   try {
-    console.log('🔍 Fetching partners from GitHub...');
+    console.log('Fetching partners from GitHub...');
     const partnersFile = await getFileFromGitHub('docs/data/partners.json');
     
     if (partnersFile) {
       const partners = JSON.parse(partnersFile.content);
-      console.log('✅ Partners loaded from GitHub:', partners.length, 'partners');
+      console.log('Partners loaded from GitHub:', partners.length, 'partners');
 
       try {
         const fs = await import('fs/promises');
         const path = await import('path');
         const localPath = path.join(process.cwd(), 'data', 'partners.json');
         await fs.writeFile(localPath, partnersFile.content);
-        console.log('💾 Partners also saved locally as backup');
+        console.log('Partners also saved locally as backup');
       } catch (localError) {
-        console.warn('⚠️ Could not save partners locally:', localError);
+        console.warn('Could not save partners locally:', localError);
       }
       
       return partners;
@@ -738,7 +738,7 @@ export async function getPartnersFromGitHub() {
 
     return [];
   } catch (error) {
-    console.error('❌ Error fetching partners from GitHub:', error);
+    console.error('Error fetching partners from GitHub:', error);
 
     try {
       const fs = await import('fs/promises');
@@ -746,10 +746,10 @@ export async function getPartnersFromGitHub() {
       const localPath = path.join(process.cwd(), 'data', 'partners.json');
       const localContent = await fs.readFile(localPath, 'utf8');
       const localPartners = JSON.parse(localContent);
-      console.log('✅ Partners loaded from local file:', localPartners.length, 'partners');
+      console.log('Partners loaded from local file:', localPartners.length, 'partners');
       return localPartners;
     } catch {
-      console.log('📁 No local partners file found, returning empty array');
+      console.log('No local partners file found, returning empty array');
       return [];
     }
   }
@@ -777,7 +777,7 @@ export async function savePartnersToGitHub(partners: Array<{
       partnersFile?.sha
     );
 
-    console.log('✅ Partners saved to GitHub successfully');
+    console.log('Partners saved to GitHub successfully');
 
     try {
       const fs = await import('fs/promises');
@@ -786,11 +786,11 @@ export async function savePartnersToGitHub(partners: Array<{
       await fs.writeFile(localPath, content);
       console.log('💾 Partners also saved locally as backup');
     } catch (localError) {
-      console.warn('⚠️ Could not save partners locally:', localError);
+      console.warn('Could not save partners locally:', localError);
     }
     
   } catch (error) {
-    console.error('❌ Error saving partners to GitHub:', error);
+    console.error('Error saving partners to GitHub:', error);
 
     try {
       const fs = await import('fs/promises');
@@ -799,7 +799,7 @@ export async function savePartnersToGitHub(partners: Array<{
       await fs.writeFile(localPath, JSON.stringify(partners, null, 2));
       console.log('💾 Partners saved locally as fallback');
     } catch (localError) {
-      console.error('❌ Could not save partners locally either:', localError);
+      console.error('Could not save partners locally either:', localError);
     }
     
     throw error;
@@ -808,12 +808,12 @@ export async function savePartnersToGitHub(partners: Array<{
 
 export async function getPlatformsFromGitHub() {
   try {
-    console.log('🔍 Fetching platforms from GitHub...');
+    console.log('Fetching platforms from GitHub...');
     const platformsFile = await getFileFromGitHub('docs/data/platforms.json');
     
     if (platformsFile) {
       const platforms = JSON.parse(platformsFile.content);
-      console.log('✅ Platforms loaded from GitHub:', platforms.length, 'platforms');
+      console.log('Platforms loaded from GitHub:', platforms.length, 'platforms');
 
       try {
         const fs = await import('fs/promises');
@@ -822,7 +822,7 @@ export async function getPlatformsFromGitHub() {
         await fs.writeFile(localPath, platformsFile.content);
         console.log('💾 Platforms also saved locally as backup');
       } catch (localError) {
-        console.warn('⚠️ Could not save platforms locally:', localError);
+        console.warn('Could not save platforms locally:', localError);
       }
       
       return platforms;
@@ -830,7 +830,7 @@ export async function getPlatformsFromGitHub() {
 
     return [];
   } catch (error: unknown) {
-    console.error('❌ Error fetching platforms from GitHub:', error);
+    console.error('Error fetching platforms from GitHub:', error);
 
     try {
       const fs = await import('fs/promises');
@@ -838,10 +838,10 @@ export async function getPlatformsFromGitHub() {
       const localPath = path.join(process.cwd(), 'data', 'platforms.json');
       const localContent = await fs.readFile(localPath, 'utf8');
       const localPlatforms = JSON.parse(localContent);
-      console.log('✅ Platforms loaded from local file:', localPlatforms.length, 'platforms');
+      console.log('Platforms loaded from local file:', localPlatforms.length, 'platforms');
       return localPlatforms;
     } catch {
-      console.log('📁 No local platforms file found, creating empty file');
+      console.log('No local platforms file found, creating empty file');
       await savePlatformsToGitHub([]);
       return [];
     }
@@ -870,7 +870,7 @@ export async function savePlatformsToGitHub(platforms: Array<{
       platformsFile?.sha
     );
 
-    console.log('✅ Platforms saved to GitHub successfully');
+    console.log('Platforms saved to GitHub successfully');
 
     try {
       const fs = await import('fs/promises');
@@ -879,11 +879,11 @@ export async function savePlatformsToGitHub(platforms: Array<{
       await fs.writeFile(localPath, content);
       console.log('💾 Platforms also saved locally as backup');
     } catch (localError) {
-      console.warn('⚠️ Could not save platforms locally:', localError);
+      console.warn('Could not save platforms locally:', localError);
     }
     
   } catch (error) {
-    console.error('❌ Error saving platforms to GitHub:', error);
+    console.error('Error saving platforms to GitHub:', error);
 
     try {
       const fs = await import('fs/promises');
@@ -892,7 +892,7 @@ export async function savePlatformsToGitHub(platforms: Array<{
       await fs.writeFile(localPath, JSON.stringify(platforms, null, 2));
       console.log('💾 Platforms saved locally as fallback');
     } catch (localError) {
-      console.error('❌ Could not save platforms locally either:', localError);
+      console.error('Could not save platforms locally either:', localError);
     }
     
     throw error;
@@ -913,7 +913,7 @@ export function testCacheSystem(): void {
   console.log('⚙️ Cache Strategies:', CACHE_STRATEGIES);
   console.log('🕐 Refresh Offsets:', REFRESH_OFFSETS);
   
-  console.log('✅ Cache system test completed');
+  console.log('Cache system test completed');
 }
 
 export async function createOrUpdateChangelogFile(

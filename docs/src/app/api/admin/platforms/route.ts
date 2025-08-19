@@ -35,14 +35,14 @@ export async function POST(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'jakubbbdev') {
+      if (adminAuthData.username !== 'HttpMarco') {
         return NextResponse.json({
-          error: `Only jakubbbdev can manage platforms. Your username: ${adminAuthData.username}`
+          error: `Only HttpMarco can manage platforms. Your username: ${adminAuthData.username}`
         }, { status: 403 });
       }
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'jakubbbdev' && adminData.username !== 'admin') {
+      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
         return NextResponse.json({
           error: `Only admin can manage platforms. Your username: ${adminData.username}`
         }, { status: 403 });
@@ -80,14 +80,14 @@ export async function POST(req: NextRequest) {
         'Signs': 'not-supported'
       },
       addedAt: new Date().toISOString(),
-      addedBy: 'jakubbbdev'
+      addedBy: 'HttpMarco'
     };
 
     const updatedPlatforms = [...currentPlatforms, newPlatform];
 
     await savePlatformsToGitHub(updatedPlatforms, `Add new platform: ${newPlatform.name}`);
 
-    console.log('✅ Platform added successfully, cache will refresh automatically');
+    console.log('Platform added successfully, cache will refresh automatically');
 
     return NextResponse.json({
       success: true,
@@ -113,14 +113,14 @@ export async function DELETE(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'jakubbbdev') {
+      if (adminAuthData.username !== 'HttpMarco') {
         return NextResponse.json({
-          error: `Only jakubbbdev can manage platforms. Your username: ${adminAuthData.username}`
+          error: `Only HttpMarco can manage platforms. Your username: ${adminAuthData.username}`
         }, { status: 403 });
       }
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'jakubbbdev' && adminData.username !== 'admin') {
+      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
         return NextResponse.json({
           error: `Only admin can manage platforms. Your username: ${adminData.username}`
         }, { status: 403 });
@@ -160,14 +160,14 @@ export async function DELETE(req: NextRequest) {
         const { del } = await import('@vercel/blob');
         await del(blobId);
         
-        console.log('✅ Platform icon deleted from Vercel Blob:', blobId);
+        console.log('Platform icon deleted from Vercel Blob:', blobId);
       } catch (error) {
-        console.error('❌ Error deleting platform icon from Vercel Blob:', error);
-        console.error('❌ Error details:', error);
+        console.error('Error deleting platform icon from Vercel Blob:', error);
+        console.error('Error details:', error);
       }
     }
 
-    console.log('✅ Platform removed successfully, cache will refresh automatically');
+    console.log('Platform removed successfully, cache will refresh automatically');
 
     return NextResponse.json({
       success: true,
@@ -192,14 +192,14 @@ export async function PUT(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'jakubbbdev') {
+      if (adminAuthData.username !== 'HttpMarco') {
         return NextResponse.json({
-          error: `Only jakubbbdev can manage platforms. Your username: ${adminAuthData.username}`
+          error: `Only HttpMarco can manage platforms. Your username: ${adminAuthData.username}`
         }, { status: 403 });
       }
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'jakubbbdev' && adminData.username !== 'admin') {
+      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
         return NextResponse.json({
           error: `Only admin can manage platforms. Your username: ${adminData.username}`
         }, { status: 403 });
@@ -246,7 +246,7 @@ export async function PUT(req: NextRequest) {
     currentPlatforms[platformIndex] = updatedPlatform;
     await savePlatformsToGitHub(currentPlatforms, `Update platform: ${updatedPlatform.name}`);
 
-    console.log('✅ Platform updated successfully, cache will refresh automatically');
+    console.log('Platform updated successfully, cache will refresh automatically');
 
     return NextResponse.json({
       success: true,
