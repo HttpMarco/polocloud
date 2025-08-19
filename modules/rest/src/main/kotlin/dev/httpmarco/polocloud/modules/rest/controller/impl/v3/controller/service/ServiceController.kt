@@ -58,7 +58,6 @@ class ServiceController : Controller("/service") {
                 services.map { service ->
                     add(
                         JsonObject().apply {
-                            addProperty("id", service.id)
                             addProperty("name", service.name())
                             addProperty("state", service.state.name)
                             addProperty("type", service.type.name)
