@@ -30,7 +30,6 @@ abstract class PolocloudShared(setShared: Boolean) {
 
     init {
         if (setShared) {
-            println("test")
             polocloudShared = this
         }
     }
