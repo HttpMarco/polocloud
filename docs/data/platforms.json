@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "id": "1755621301551",
+    "name": "Spigot",
+    "icon": "https://f9ryutohjbyoopw5.public.blob.vercel-storage.com/polocloud/storage/images/platforms/platform-spigot-1755621300694.svg",
+    "versions": {
+      "1.7-1.12": "supported",
+      "1.12-1.16": "supported",
+      "1.18-1.19": "supported",
+      "1.20+": "supported"
+    },
+    "addons": {
+      "Severmobs": "supported",
+      "Signs": "supported"
+    },
+    "addedAt": "2025-08-19T16:35:01.551Z",
+    "addedBy": "jakubbbdev"
+  }
+]
