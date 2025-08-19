@@ -32,32 +32,18 @@ export async function POST(req: NextRequest) {
     console.log('- admin_auth:', adminAuth ? 'exists' : 'missing');
     console.log('- discord_user:', discordUser ? 'exists' : 'missing');
 
+    let userLogin: string | undefined;
+    let adminData: { username?: string } | undefined;
+
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-
-
-      const userLogin = adminAuthData.username;
-
-      if (userLogin === 'HttpMarco') {
-
-      } else {
-        return NextResponse.json({
-          error: `Only HttpMarco can manage partners. Your login: ${userLogin || 'unknown'}`
-        }, { status: 403 });
-      }
+      userLogin = adminAuthData.username;
+      // All GitHub admin users can manage partners
     }
     else if (adminAuth) {
-      const adminData = JSON.parse(adminAuth);
-
-      if (adminData.username === 'HttpMarco' || adminData.username === 'admin') {
-
-      } else {
-        return NextResponse.json({
-          error: `Only admin can manage partners. Your login: ${adminData.username}`
-        }, { status: 403 });
-      }
+      adminData = JSON.parse(adminAuth);
+      // All admin users can manage partners
     }
-
     else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
@@ -83,7 +69,7 @@ export async function POST(req: NextRequest) {
       website: website?.trim() || '',
       description: description?.trim() || '',
       addedAt: new Date().toISOString(),
-      addedBy: 'HttpMarco'
+      addedBy: userLogin || adminData?.username || 'Unknown'
     };
 
     const updatedPartners = [...currentPartners, newPartner];
@@ -116,18 +102,10 @@ export async function DELETE(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'HttpMarco') {
-        return NextResponse.json({
-          error: `Only HttpMarco can manage partners. Your username: ${adminAuthData.username}`
-        }, { status: 403 });
-      }
+      // All GitHub admin users can manage partners
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
-        return NextResponse.json({
-          error: `Only admin can manage partners. Your username: ${adminData.username}`
-        }, { status: 403 });
-      }
+      // All admin users can manage partners
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
@@ -195,18 +173,10 @@ export async function PUT(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'HttpMarco') {
-        return NextResponse.json({
-          error: `Only HttpMarco can manage partners. Your username: ${adminAuthData.username}`
-        }, { status: 403 });
-      }
+      // All GitHub admin users can manage partners
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
-        return NextResponse.json({
-          error: `Only admin can manage partners. Your username: ${adminData.username}`
-        }, { status: 403 });
-      }
+      // All admin users can manage partners
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }

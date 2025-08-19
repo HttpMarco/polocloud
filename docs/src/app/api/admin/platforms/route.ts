@@ -4,7 +4,6 @@ import { Platform } from '@/components/admin/types';
 
 export async function GET(req: NextRequest) {
   try {
-
     const adminAuth = req.cookies.get('admin_auth')?.value;
     const discordUser = req.cookies.get('discord_user')?.value;
     const githubAdminAuth = req.cookies.get('github_admin_auth')?.value;
@@ -23,7 +22,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-
     const githubAdminAuth = req.cookies.get('github_admin_auth')?.value;
     const adminAuth = req.cookies.get('admin_auth')?.value;
     const discordUser = req.cookies.get('discord_user')?.value;
@@ -32,21 +30,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    let userLogin: string | undefined;
+    let adminData: { username?: string } | undefined;
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'HttpMarco') {
-        return NextResponse.json({
-          error: `Only HttpMarco can manage platforms. Your username: ${adminAuthData.username}`
-        }, { status: 403 });
-      }
+      userLogin = adminAuthData.username;
+      // All GitHub admin users can manage platforms
     } else if (adminAuth) {
-      const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
-        return NextResponse.json({
-          error: `Only admin can manage platforms. Your username: ${adminData.username}`
-        }, { status: 403 });
-      }
+      adminData = JSON.parse(adminAuth);
+      // All admin users can manage platforms
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
@@ -80,7 +73,7 @@ export async function POST(req: NextRequest) {
         'Signs': 'not-supported'
       },
       addedAt: new Date().toISOString(),
-      addedBy: 'HttpMarco'
+      addedBy: userLogin || adminData?.username || 'Unknown'
     };
 
     const updatedPlatforms = [...currentPlatforms, newPlatform];
@@ -102,7 +95,6 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-
     const githubAdminAuth = req.cookies.get('github_admin_auth')?.value;
     const adminAuth = req.cookies.get('admin_auth')?.value;
     const discordUser = req.cookies.get('discord_user')?.value;
@@ -113,18 +105,10 @@ export async function DELETE(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'HttpMarco') {
-        return NextResponse.json({
-          error: `Only HttpMarco can manage platforms. Your username: ${adminAuthData.username}`
-        }, { status: 403 });
-      }
+      // All GitHub admin users can manage platforms
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
-        return NextResponse.json({
-          error: `Only admin can manage platforms. Your username: ${adminData.username}`
-        }, { status: 403 });
-      }
+      // All admin users can manage platforms
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
@@ -147,7 +131,6 @@ export async function DELETE(req: NextRequest) {
 
     if (platformToRemove.icon && platformToRemove.icon.includes('vercel-storage.com')) {
       try {
-
         const urlParts = platformToRemove.icon.split('/');
         const fileName = urlParts[urlParts.length - 1];
 
@@ -181,7 +164,6 @@ export async function DELETE(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-
     const githubAdminAuth = req.cookies.get('github_admin_auth')?.value;
     const adminAuth = req.cookies.get('admin_auth')?.value;
     const discordUser = req.cookies.get('discord_user')?.value;
@@ -192,18 +174,10 @@ export async function PUT(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'HttpMarco') {
-        return NextResponse.json({
-          error: `Only HttpMarco can manage platforms. Your username: ${adminAuthData.username}`
-        }, { status: 403 });
-      }
+      // All GitHub admin users can manage platforms
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
-        return NextResponse.json({
-          error: `Only admin can manage platforms. Your username: ${adminData.username}`
-        }, { status: 403 });
-      }
+      // All admin users can manage platforms
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }

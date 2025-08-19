@@ -122,7 +122,7 @@ export function GitHubStatsComponent() {
 
     if (loading) {
         return (
-            <div className="flex flex-wrap justify-center sm:justify-start gap-6 sm:gap-8 md:gap-12 mb-12 sm:mb-16">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8 md:gap-12 mb-12 sm:mb-16 justify-items-center">
                 {[1, 2, 3, 4, 5].map((i) => (
                     <div key={i} className="flex flex-col items-center justify-center text-center">
                         <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-muted/30 to-muted/50 rounded-full mb-2 sm:mb-4 animate-pulse relative overflow-hidden">
@@ -159,7 +159,7 @@ export function GitHubStatsComponent() {
 
     if (!stats) {
         return (
-            <div className="flex flex-wrap justify-center sm:justify-start gap-6 sm:gap-8 md:gap-12 mb-12 sm:mb-16">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8 md:gap-12 mb-12 sm:mb-16 justify-items-center">
                 <div className="flex flex-col items-center justify-center text-center">
                     <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primary/10 rounded-full border border-primary/20 mb-2 sm:mb-4 text-primary">
                         <Star className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -210,7 +210,7 @@ export function GitHubStatsComponent() {
     }
 
     return (
-        <div className="flex flex-wrap justify-center sm:justify-start gap-6 sm:gap-8 md:gap-12 mb-12 sm:mb-16">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8 md:gap-12 mb-12 sm:mb-16 justify-items-center">
             <StatCard icon={<Star className="w-6 h-6 sm:w-8 sm:h-8" />} value={stats.stars} label="Stars" />
             <StatCard icon={<GitFork className="w-6 h-6 sm:w-8 sm:h-8" />} value={stats.forks} label="Forks" />
             <StatCard icon={<Package className="w-6 h-6 sm:w-8 sm:h-8" />} value={stats.releases} label="Releases" />

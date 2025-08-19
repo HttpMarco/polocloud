@@ -14,18 +14,10 @@ export async function POST(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      if (adminAuthData.username !== 'HttpMarco') {
-        return NextResponse.json({
-          error: `Only HttpMarco can upload images. Your username: ${adminAuthData.username}`
-        }, { status: 403 });
-      }
+      // All GitHub admin users can upload images
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      if (adminData.username !== 'HttpMarco' && adminData.username !== 'admin') {
-        return NextResponse.json({
-          error: `Only admin can upload images. Your username: ${adminData.username}`
-        }, { status: 403 });
-      }
+      // All admin users can upload images
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
