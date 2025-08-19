@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
 
     const params = new URLSearchParams({
       client_id: githubClientId,
-      redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de'}/api/auth/github-admin`,
+      redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://polocloud.de'}/api/auth/github-admin`,
       scope: 'user:email',
       state: 'admin-login'
     });
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest) {
     if (!tokenData.access_token) {
       console.error('Failed to get access token:', tokenData);
       console.error('Full token response:', JSON.stringify(tokenData, null, 2));
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://polocloud.de';
       return NextResponse.redirect(`${baseUrl}/admin?error=oauth_failed`);
     }
 
@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
 
     if (!allowedUsers.includes(userData.login)) {
       console.log('User not authorized:', userData.login);
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://polocloud.de';
       return NextResponse.redirect(`${baseUrl}/admin?error=unauthorized`);
     }
 
@@ -182,7 +182,7 @@ export async function GET(request: NextRequest) {
       loginTime: new Date().toISOString()
     };
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://polocloud.de';
     const response = NextResponse.redirect(`${baseUrl}/admin?success=github_login`);
 
     response.cookies.set('github_admin_auth', JSON.stringify(adminSession), {
@@ -197,7 +197,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('GitHub admin OAuth error:', error);
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://polocloud.de';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://polocloud.de';
     return NextResponse.redirect(`${baseUrl}/admin?error=oauth_error`);
   }
 }
