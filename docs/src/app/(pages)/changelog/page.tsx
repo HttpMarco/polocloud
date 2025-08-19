@@ -187,7 +187,7 @@ export default async function ChangelogsPage() {
             Never miss an update again!
           </p>
           <a
-            href="https://discord.gg/polocloud"
+            href="https://discord.polocloud.de/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-3 sm:px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-xs sm:text-sm"
