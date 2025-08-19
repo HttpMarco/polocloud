@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { LucideIcon } from 'lucide-react';
 
 interface ButtonLinkProps {
   icon: React.ReactNode;

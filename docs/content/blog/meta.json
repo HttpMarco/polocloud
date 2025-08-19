@@ -2,12 +2,7 @@
   "pages": [
     {
       "title": "Blog",
-      "pages": [
-        {
-          "title": "Test Blog",
-          "url": "/blog/test"
-        }
-      ]
+      "pages": []
     }
   ]
 }
