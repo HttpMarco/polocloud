@@ -134,5 +134,22 @@
     },
     "addedAt": "2025-08-19T16:46:47.649Z",
     "addedBy": "jakubbbdev"
+  },
+  {
+    "id": "1755622039129",
+    "name": "Pumpkin",
+    "icon": "https://f9ryutohjbyoopw5.public.blob.vercel-storage.com/polocloud/storage/images/platforms/platform-pumpkin-1755622037812.svg",
+    "versions": {
+      "1.7-1.12": "not-possible",
+      "1.12-1.16": "not-possible",
+      "1.18-1.19": "not-possible",
+      "1.20+": "partial"
+    },
+    "addons": {
+      "Severmobs": "not-supported",
+      "Signs": "not-supported"
+    },
+    "addedAt": "2025-08-19T16:47:19.129Z",
+    "addedBy": "jakubbbdev"
   }
 ]
