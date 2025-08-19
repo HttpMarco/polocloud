@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.bridge.api
 
+import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.PolocloudShared
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
@@ -51,7 +52,7 @@ abstract class BridgeInstance<T> {
     }
 
     fun initialize() {
-        this.initialize(polocloudShared)
+        this.initialize(Polocloud.instance())
     }
 
     fun updatePolocloudPlayer(event: Event) {

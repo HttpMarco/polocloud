@@ -9,7 +9,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import java.nio.file.Path
 
 class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : BridgeInstance<Server>() {
-    private val polocloud: Polocloud = Polocloud(serviceName, agentPort)
+    private val polocloud: Polocloud = Polocloud(serviceName, agentPort, false)
     private val fallbackServices = ArrayList<Service>()
 
     init {

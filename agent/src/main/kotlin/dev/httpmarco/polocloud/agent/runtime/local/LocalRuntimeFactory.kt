@@ -60,7 +60,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
-        environment.addParameter("agent_port", Agent.config.port.toString())
         environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon.openStream()))
         environment.addParameter("agent_port", Agent.config.port)
         environment.addParameter("service-name", service.name())
