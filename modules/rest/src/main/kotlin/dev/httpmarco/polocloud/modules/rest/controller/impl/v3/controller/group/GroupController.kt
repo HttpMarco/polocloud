@@ -144,24 +144,24 @@ class GroupController : Controller("/group") {
                             addProperty("maxMemory", group.maxMemory)
                             addProperty("minOnlineService", group.minOnlineService)
                             addProperty("maxOnlineService", group.maxOnlineService)
-                            addProperty("platform", JsonObject().apply {
+                            add("platform", JsonObject().apply {
                                 addProperty("name", group.platform.name)
                                 addProperty("version", group.platform.version)
-                            }.toString())
+                            })
                             addProperty("percentageToStartNewService", group.percentageToStartNewService)
-                            addProperty("information", JsonObject().apply {
+                            add("information", JsonObject().apply {
                                 addProperty("createdAt", group.information.createdAt)
-                            }.toString())
-                            addProperty("templates", JsonArray().apply {
+                            })
+                            add("templates", JsonArray().apply {
                                 group.templates.forEach { template ->
                                     add(template)
                                 }
-                            }.toString())
-                            addProperty("properties", JsonObject().apply {
+                            })
+                            add("properties", JsonObject().apply {
                                 group.properties.forEach { (key, value) ->
                                     add(key, value)
                                 }
-                            }.toString())
+                            })
                         }
                     )
                 }
