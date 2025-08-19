@@ -91,6 +91,6 @@ class SystemInformationController : Controller("/system") {
             jsonArray.add(obj)
         }
 
-        context.status(200).json(jsonArray)
+        context.status(200).json(jsonArray.toString())
     }
 }
