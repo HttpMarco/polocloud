@@ -134,9 +134,16 @@ class GroupController : Controller("/group") {
 
     @Request(requestType = RequestType.GET, path = "s/list", permission = "polocloud.group.list")
     fun listGroups(context: Context) {
+        val services = polocloudShared.groupProvider().findAll()
+        if (services.isEmpty()) {
+            context.status(200).json(message("No groups found"))
+            return
+        }
+
+
         context.status(200).json(
             JsonArray().apply {
-                polocloudShared.groupProvider().findAll().map { group ->
+                services.map { group ->
                     add(
                         JsonObject().apply {
                             addProperty("name", group.name)
