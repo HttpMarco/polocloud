@@ -168,4 +168,47 @@ class GroupController : Controller("/group") {
             }.toString()
         )
     }
+
+    @Request(requestType = RequestType.GET, path = "/{name}", permission = "polocloud.group.get")
+    fun getGroup(context: Context) {
+        val name = context.pathParam("name")
+        if (name.isBlank()) {
+            context.status(400).json(message("Invalid group name"))
+            return
+        }
+
+        val group = polocloudShared.groupProvider().find(name)
+        if (group == null) {
+            context.status(404).json(message("Group not found"))
+            return
+        }
+
+        context.status(200).json(
+            JsonObject().apply {
+                addProperty("name", group.name)
+                addProperty("minMemory", group.minMemory)
+                addProperty("maxMemory", group.maxMemory)
+                addProperty("minOnlineService", group.minOnlineService)
+                addProperty("maxOnlineService", group.maxOnlineService)
+                add("platform", JsonObject().apply {
+                    addProperty("name", group.platform.name)
+                    addProperty("version", group.platform.version)
+                })
+                addProperty("percentageToStartNewService", group.percentageToStartNewService)
+                add("information", JsonObject().apply {
+                    addProperty("createdAt", group.information.createdAt)
+                })
+                add("templates", JsonArray().apply {
+                    group.templates.forEach { template ->
+                        add(template)
+                    }
+                })
+                add("properties", JsonObject().apply {
+                    group.properties.forEach { (key, value) ->
+                        add(key, value)
+                    }
+                })
+            }.toString()
+        )
+    }
 }
