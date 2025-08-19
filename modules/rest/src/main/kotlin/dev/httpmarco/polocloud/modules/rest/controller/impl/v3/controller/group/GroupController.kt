@@ -132,7 +132,7 @@ class GroupController : Controller("/group") {
         )
     }
 
-    @Request(requestType = RequestType.GET, path = "/", permission = "polocloud.group.list")
+    @Request(requestType = RequestType.GET, path = "s/list", permission = "polocloud.group.list")
     fun listGroups(context: Context) {
         context.status(200).json(
             JsonArray().apply {
