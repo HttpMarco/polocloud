@@ -9,13 +9,21 @@ import java.util.UUID
 class WebSocketAuthService {
 
     fun authenticate(socket: BaseWebSocket, context: WsConnectContext) {
-        val decodedToken = extractToken(context).flatMap { RestModule.instance.jwtProvider.provider().validateToken(it) }
+        val decodedToken = extractToken(context)
+
         if (decodedToken.isEmpty) {
             context.closeSession(3000, "Unauthorized")
             return
         }
 
-        val uuid = decodedToken.get().getClaim("uuid").asString()
+        val validateToken = RestModule.instance.jwtProvider.provider().validateToken(decodedToken.get())
+
+        if (validateToken.isEmpty) {
+            context.closeSession(3000, "Unauthorized")
+            return
+        }
+
+        val uuid = validateToken.get().getClaim("uuid").asString()
         val user = RestModule.instance.userProvider.userByUUID(UUID.fromString(uuid))
 
         if (user == null) {
@@ -29,11 +37,15 @@ class WebSocketAuthService {
         }
 
         when {
-            user.role!!.permissions.isEmpty() || user.role!!.hasPermission(socket.requiredPermission) -> context.closeSession(3003, "Forbidden")
+            user.role!!.permissions.isEmpty() || !user.role!!.hasPermission(socket.requiredPermission) -> context.closeSession(3003, "Forbidden")
             else -> socket.onConnect(context)
         }
     }
 
-    private fun extractToken(context: WsConnectContext): Optional<String> = Optional.ofNullable(context.cookie("token"))
+    private fun extractToken(context: WsConnectContext): Optional<String> {
+        val authHeader = context.header("Authorization") ?: return Optional.empty()
+        if (!authHeader.startsWith("Bearer ")) return Optional.empty()
+        return Optional.of(authHeader.removePrefix("Bearer ").trim())
+    }
 
 }
