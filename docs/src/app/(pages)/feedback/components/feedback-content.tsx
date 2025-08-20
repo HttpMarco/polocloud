@@ -17,7 +17,7 @@ interface FeedbackData {
   username: string;
   rating: number;
   description: string;
-  timestamp: string;
+  createdAt: string;
   isPending?: boolean;
   avatar?: string;
 }
@@ -394,13 +394,44 @@ export function FeedbackContent() {
                 <div className="text-left">
                   <h3 className="text-lg sm:text-xl font-bold text-foreground">{existingFeedback.username}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    Feedback submitted on {new Date(existingFeedback.timestamp).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                    Feedback submitted on {(() => {
+                      try {
+                        let date: Date;
+                        
+                        if (typeof existingFeedback.createdAt === 'string') {
+                          if (existingFeedback.createdAt.includes('T') || existingFeedback.createdAt.includes('Z')) {
+                            date = new Date(existingFeedback.createdAt);
+                          } else {
+                            const timestamp = parseInt(existingFeedback.createdAt);
+                            if (!isNaN(timestamp)) {
+                              date = new Date(timestamp * 1000);
+                            } else {
+                              date = new Date(existingFeedback.createdAt);
+                            }
+                          }
+                        } else if (typeof existingFeedback.createdAt === 'number') {
+                          date = new Date(existingFeedback.createdAt * 1000);
+                        } else {
+                          date = new Date(existingFeedback.createdAt);
+                        }
+                        
+                        if (isNaN(date.getTime())) {
+                          console.error('Invalid timestamp:', existingFeedback.createdAt);
+                          return 'Unknown date';
+                        }
+                        
+                        return date.toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        });
+                      } catch (error) {
+                        console.error('Error parsing timestamp:', error, 'Timestamp:', existingFeedback.createdAt);
+                        return 'Unknown date';
+                      }
+                    })()}
                   </p>
                 </div>
               </div>

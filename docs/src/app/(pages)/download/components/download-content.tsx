@@ -7,7 +7,8 @@ import {
   Github,
   ExternalLink,
   Calendar,
-  MessageCircle
+  MessageCircle,
+  AlertTriangle
 } from 'lucide-react';
 
 interface GitHubRelease {
@@ -299,6 +300,21 @@ export function DownloadContent() {
                     <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Previous Releases</h2>
                     <p className="text-sm sm:text-base text-muted-foreground">Previous versions of PoloCloud</p>
                   </div>
+
+                  <div className="max-w-2xl mx-auto mb-6">
+                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 sm:p-4 text-center">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                        <span className="text-sm font-medium text-amber-600 dark:text-amber-400">Older Version Warning</span>
+                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                      </div>
+                      <p className="text-xs text-amber-600/80 dark:text-amber-400/80">
+                        These are older versions and may contain security vulnerabilities or bugs. 
+                        We recommend using the latest release for production environments.
+                      </p>
+                    </div>
+                  </div>
+                  
                   <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                     {sortedReleases.slice(1).map((release) => {
                       return (
