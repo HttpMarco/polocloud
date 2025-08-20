@@ -67,7 +67,7 @@ export function HeroSection() {
     }, [showLogsPhase2]);
 
     const terminalLinesPhase1 = [
-        { time: "16:42:01", level: "INFO", message: "Starting PoloCloud 3.0.0-pre.5-SNAPSHOT Agent...", color: "text-blue-400" },
+        { time: "16:42:01", level: "INFO", message: "Starting PoloCloud 3.0.0-pre.6-SNAPSHOT Agent...", color: "text-blue-400" },
         { time: "16:42:01", level: "WARN", message: "You are using a snapshot version of polocloud. This version is not recommended for production use!", color: "text-yellow-400" },
         { time: "16:42:01", level: "INFO", message: "You are running the latest version of the agent.", color: "text-blue-400" }
     ];
@@ -263,7 +263,7 @@ export function HeroSection() {
                                         animate={{ opacity: 1 }}
                                         transition={{ duration: 0.3, delay: 1.5 }}
                                     >
-                                        <span className="text-blue-400 font-mono text-sm">polocloud@3.0.0-pre.5-SNAPSHOT</span>
+                                        <span className="text-blue-400 font-mono text-sm">polocloud@3.0.0-pre.6-SNAPSHOT</span>
                                         <span className="text-gray-400 font-mono text-sm">»</span>
                                         <motion.span
                                             className="text-gray-300 font-mono text-xs"
