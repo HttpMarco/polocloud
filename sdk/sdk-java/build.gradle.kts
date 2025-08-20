@@ -30,10 +30,16 @@ tasks.jar {
     enabled = false
 }
 
+artifacts {
+    archives(tasks.shadowJar)
+}
+
 extensions.configure<PublishingExtension> {
     publications {
         create<MavenPublication>("mavenJava") {
-            from(components["java"])
+            artifact(tasks.shadowJar.get()) {
+                classifier = null
+            }
 
             pom {
                 name.set(project.name)
