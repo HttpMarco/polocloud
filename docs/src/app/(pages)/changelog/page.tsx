@@ -146,11 +146,6 @@ export default async function ChangelogsPage() {
                           })}</span>
                         </div>
                       )}
-                      {post.author && (
-                        <div className="flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-full">
-                          <span>{post.author}</span>
-                        </div>
-                      )}
                     </div>
 
                     <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground dark:text-white mb-2 group-hover:text-primary transition-colors">

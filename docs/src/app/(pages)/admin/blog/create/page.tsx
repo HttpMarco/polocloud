@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { MDXEditor } from '@/components/ui/mdx-editor';
 import {
   ArrowLeft,
   ArrowRight,
@@ -16,14 +16,12 @@ import {
   Sparkles,
   Calendar,
   User,
-  Tags
+  Tag,
+  Plus,
+  X,
+  Save
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-const MDXEditor = dynamic(
-  () => import('@uiw/react-md-editor').then(mod => mod.default),
-  { ssr: false }
-);
 
 interface BlogFormData {
   title: string;
@@ -34,19 +32,89 @@ interface BlogFormData {
   content: string;
 }
 
+const STORAGE_KEY = 'blog-draft';
+
 export default function CreateBlogPage() {
   const router = useRouter();
   const [creating, setCreating] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
-  const [formData, setFormData] = useState<BlogFormData>({
-    title: '',
-    description: '',
-    author: '',
-    tags: '',
-    pinned: false,
-    content: '# Blog Post Title\n\nWrite your content here...',
-  });
+  // Lade gespeicherte Daten beim Start
+  const loadSavedData = (): BlogFormData => {
+    if (typeof window === 'undefined') {
+      return {
+        title: '',
+        description: '',
+        author: '',
+        tags: '',
+        pinned: false,
+        content: '# Blog Post Title\n\nWrite your content here...\n\n## Features\n\n- **Bold text** and *italic text*\n- `inline code` and code blocks\n- [Links](https://example.com)\n- > Beautiful quotes\n- Tables and lists\n\n:heart: :rocket: :sparkles:',
+      };
+    }
+
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Stelle sicher, dass alle Felder vorhanden sind
+        return {
+          title: parsed.title || '',
+          description: parsed.description || '',
+          author: parsed.author || '',
+          tags: parsed.tags || '',
+          pinned: parsed.pinned || false,
+          content: parsed.content || '# Blog Post Title\n\nWrite your content here...\n\n## Features\n\n- **Bold text** and *italic text*\n- `inline code` and code blocks\n- [Links](https://example.com)\n- > Beautiful quotes\n- Tables and lists\n\n:heart: :rocket: :sparkles:',
+        };
+      }
+    } catch (error) {
+      console.error('Error loading saved data:', error);
+    }
+
+    return {
+      title: '',
+      description: '',
+      author: '',
+      tags: '',
+      pinned: false,
+      content: '# Blog Post Title\n\nWrite your content here...\n\n## Features\n\n- **Bold text** and *italic text*\n- `inline code` and code blocks\n- [Links](https://example.com)\n- > Beautiful quotes\n- Tables and lists\n\n:heart: :rocket: :sparkles:',
+    };
+  };
+
+  const [formData, setFormData] = useState<BlogFormData>(loadSavedData);
+
+  // Auto-Save Funktion
+  const saveToStorage = (data: BlogFormData) => {
+    if (typeof window === 'undefined') return;
+
+    setAutoSaveStatus('saving');
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      setLastSaved(new Date());
+      setAutoSaveStatus('saved');
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+      setAutoSaveStatus('error');
+    }
+  };
+
+  // Speichere bei jeder Änderung
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      saveToStorage(formData);
+    }, 1000); // 1 Sekunde Verzögerung
+
+    return () => clearTimeout(timeoutId);
+  }, [formData]);
+
+  // Lade gespeicherten Schritt
+  useEffect(() => {
+    const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`);
+    if (savedStep) {
+      setCurrentStep(parseInt(savedStep));
+    }
+  }, []);
 
   const steps = [
     { id: 1, title: 'Basic Info', icon: FileText, description: 'Title and basic information' },
@@ -57,13 +125,39 @@ export default function CreateBlogPage() {
 
   const nextStep = () => {
     if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
+      const newStep = currentStep + 1;
+      setCurrentStep(newStep);
+      // Speichere aktuellen Schritt
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
+      }
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      const newStep = currentStep - 1;
+      setCurrentStep(newStep);
+      // Speichere aktuellen Schritt
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
+      }
+    }
+  };
+
+  // Manueller Save
+  const manualSave = () => {
+    saveToStorage(formData);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`${STORAGE_KEY}-step`, currentStep.toString());
+    }
+  };
+
+  // Lösche gespeicherte Daten nach erfolgreichem Submit
+  const clearSavedData = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(`${STORAGE_KEY}-step`);
     }
   };
 
@@ -105,6 +199,7 @@ export default function CreateBlogPage() {
       });
 
       if (response.ok) {
+        clearSavedData(); // Lösche gespeicherte Daten nach erfolgreichem Submit
         router.push('/admin');
       } else {
         const errorData = await response.json();
@@ -122,7 +217,7 @@ export default function CreateBlogPage() {
     const stepVariants = {
       initial: { opacity: 0, y: 20 },
       animate: { opacity: 1, y: 0 },
-      exit: { opacity: 0, y: -20 }
+      exit: { opacity: 0, y: -20 },
     };
 
     switch (currentStep) {
@@ -145,19 +240,22 @@ export default function CreateBlogPage() {
               >
                 <FileText className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Enter Blog Title</h3>
+              <h3 className="text-3xl font-bold mb-3">Blog Title</h3>
               <p className="text-muted-foreground text-lg">What should your new blog post be called?</p>
             </div>
 
-            <div className="max-w-md mx-auto">
-              <label className="block text-sm font-medium mb-3">Blog Title *</label>
-              <Input
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="e.g. PoloCloud 2.0 Release"
-                className="text-lg py-3 px-4"
-                autoFocus
-              />
+            <div className="max-w-2xl mx-auto space-y-6">
+              <div>
+                <label className="block text-sm font-medium mb-3">Blog Title *</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., PoloCloud 2.0 Release"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="text-lg"
+                  autoFocus
+                />
+              </div>
             </div>
           </motion.div>
         );
@@ -181,48 +279,47 @@ export default function CreateBlogPage() {
               >
                 <Settings className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Add Details</h3>
-              <p className="text-muted-foreground text-lg">Description and additional information</p>
+              <h3 className="text-3xl font-bold mb-3">Blog Details</h3>
+              <p className="text-muted-foreground text-lg">Provide description and additional information</p>
             </div>
 
-            <div className="max-w-lg mx-auto space-y-6">
+            <div className="max-w-2xl mx-auto space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Description *</label>
-                <Input
+                <label className="block text-sm font-medium mb-3">Description *</label>
+                <textarea
+                  placeholder="Brief description of the blog post..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Brief description of the blog post"
-                  className="py-3"
+                  className="w-full p-3 border rounded-lg resize-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg"
+                  rows={4}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Author</label>
+                  <label className="block text-sm font-medium mb-3">Author</label>
                   <Input
+                    type="text"
+                    placeholder="PoloCloud Team"
                     value={formData.author}
                     onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                    placeholder="PoloCloud Team"
-                    className="py-3"
+                    className="text-lg"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Tags</label>
+                  <label className="block text-sm font-medium mb-3">Tags</label>
                   <Input
+                    type="text"
+                    placeholder="tag1, tag2, tag3"
                     value={formData.tags}
                     onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                    placeholder="tag1, tag2, tag3"
-                    className="py-3"
+                    className="text-lg"
                   />
                 </div>
               </div>
 
-              <motion.div
-                className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
+              <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg">
                 <input
                   type="checkbox"
                   id="pinned"
@@ -233,7 +330,7 @@ export default function CreateBlogPage() {
                 <label htmlFor="pinned" className="text-sm font-medium cursor-pointer">
                   Pin this post (appears at the top of the list)
                 </label>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         );
@@ -263,22 +360,20 @@ export default function CreateBlogPage() {
 
             <div className="max-w-5xl mx-auto">
               <label className="block text-sm font-medium mb-3">Blog Content *</label>
-              <div className="border rounded-lg overflow-hidden shadow-lg">
-                <MDXEditor
-                  value={formData.content}
-                  onChange={(val) => setFormData({ ...formData, content: val || '' })}
-                  height={500}
-                  data-color-mode="light"
-                />
-              </div>
+              <MDXEditor
+                value={formData.content}
+                onChange={(val) => setFormData({ ...formData, content: val })}
+                height={500}
+                placeholder="Write your blog content here...\n\nUse markdown formatting:\n# Headings\n## Subheadings\n- Lists\n**Bold text**\n*Italic text*\n`code snippets`"
+              />
             </div>
           </motion.div>
         );
 
       case 4:
-        const wordCount = formData.content.split(' ').filter(word => word.trim().length > 0).length;
+        const wordCount = formData.content.split(/\s+/).filter(word => word.length > 0).length;
         const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-
+        
         return (
           <motion.div
             key="step4"
@@ -295,58 +390,72 @@ export default function CreateBlogPage() {
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring" }}
               >
-                <Sparkles className="w-20 h-20 mx-auto mb-6 text-primary" />
+                <Check className="w-20 h-20 mx-auto mb-6 text-green-500" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Ready to Publish</h3>
-              <p className="text-muted-foreground text-lg">Review your information and publish the blog post</p>
+              <h3 className="text-3xl font-bold mb-3">Review & Publish</h3>
+              <p className="text-muted-foreground text-lg">Review your blog post before publishing</p>
             </div>
 
-            <div className="max-w-2xl mx-auto">
-              <motion.div
-                className="bg-gradient-to-br from-muted/50 to-muted/20 rounded-xl p-8 space-y-6 border shadow-lg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <div>
-                  <h4 className="font-bold text-2xl mb-2">{formData.title}</h4>
-                  {formData.description && (
-                    <p className="text-muted-foreground text-lg">{formData.description}</p>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  <Badge variant="outline" className="px-3 py-1">
-                    <User className="w-3 h-3 mr-1" />
-                    {formData.author || 'PoloCloud Team'}
-                  </Badge>
-                  {formData.pinned && (
-                    <Badge variant="secondary" className="px-3 py-1">
-                      <Sparkles className="w-3 h-3 mr-1" />
-                      Pinned
-                    </Badge>
-                  )}
-                  {tagsArray.map((tag) => (
-                    <Badge key={tag} variant="outline" className="px-2 py-1">
-                      <Tags className="w-3 h-3 mr-1" />
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="text-sm text-muted-foreground border-t pt-4">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1">
-                      <FileText className="w-4 h-4" />
-                      {wordCount} words
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {new Date().toLocaleDateString()}
-                    </span>
+            <div className="max-w-4xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Summary */}
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold">Summary</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="font-medium">Title:</span>
+                      <span className="font-semibold">{formData.title}</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="font-medium">Author:</span>
+                      <Badge variant="outline">{formData.author || 'PoloCloud Team'}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="font-medium">Pinned:</span>
+                      <Badge variant={formData.pinned ? "secondary" : "outline"}>
+                        {formData.pinned ? "Yes" : "No"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="font-medium">Words:</span>
+                      <span>{wordCount}</span>
+                    </div>
+                    {tagsArray.length > 0 && (
+                      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <span className="font-medium">Tags:</span>
+                        <div className="flex gap-1">
+                          {tagsArray.map((tag) => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </motion.div>
+
+                <div className="space-y-4">
+                  <h4 className="text-xl font-semibold">Content Preview</h4>
+                  <div className="p-4 border rounded-lg bg-muted/20 max-h-64 overflow-y-auto">
+                    <h3 className="text-lg font-semibold mb-2">{formData.title}</h3>
+                    <p className="text-muted-foreground mb-3">{formData.description}</p>
+                    <div className="text-sm">
+                      {formData.content.length > 200 
+                        ? `${formData.content.substring(0, 200)}...`
+                        : formData.content
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                <h4 className="font-semibold text-primary mb-2">Ready to publish?</h4>
+                <p className="text-sm text-muted-foreground">
+                  This blog post will be published to GitHub and become visible to all users.
+                </p>
+              </div>
             </div>
           </motion.div>
         );
@@ -357,148 +466,137 @@ export default function CreateBlogPage() {
   };
 
   return (
-    <div className="relative min-h-screen">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] pointer-events-none" />
+      
+      <div className="relative z-10">
+        <div className="pt-6 px-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="outline"
+              onClick={() => router.back()}
+              className="inline-flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back</span>
+            </Button>
 
-      <div className="container mx-auto px-6 py-12 max-w-6xl relative z-10">
-
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="flex items-center justify-center w-10 h-10 bg-primary/10 text-primary rounded-full border border-primary/20">
-              <Edit3 className="w-5 h-5" />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={manualSave}
+                className="inline-flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save</span>
+              </Button>
+              
+              <div className="flex items-center gap-2 text-sm">
+                {autoSaveStatus === 'saving' && (
+                  <div className="flex items-center gap-2 text-yellow-600">
+                    <div className="w-3 h-3 border-2 border-yellow-600 border-t-transparent rounded-full animate-spin" />
+                    <span>Saving...</span>
+                  </div>
+                )}
+                {autoSaveStatus === 'saved' && lastSaved && (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <Check className="w-3 h-3" />
+                    <span>Saved {lastSaved.toLocaleTimeString()}</span>
+                  </div>
+                )}
+                {autoSaveStatus === 'error' && (
+                  <div className="flex items-center gap-2 text-red-600">
+                    <X className="w-3 h-3" />
+                    <span>Save failed</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent mb-6 leading-tight">
-            Create New Blog Post
-          </h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Follow the steps to create and publish a new blog post for PoloCloud
-          </p>
         </div>
 
-        <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-8 mb-8 shadow-lg">
-          <div className="relative mb-8">
-            <div className="absolute top-6 left-6 right-6 h-0.5 bg-border/40"></div>
-
-            <motion.div
-              className="absolute top-6 left-6 h-0.5 bg-primary"
-              initial={{ width: 0 }}
-              animate={{
-                width: ((currentStep - 1) / (steps.length - 1)) * 100 + '%'
-              }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-            />
-
-            <div className="flex items-center justify-between relative">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="mb-12">
+            <div className="flex items-center justify-center space-x-4">
               {steps.map((step, index) => (
-                <div key={step.id} className="flex flex-col items-center">
-                  <motion.div
-                    className={'w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10 ' +
-                      (currentStep >= step.id
-                        ? 'bg-primary border-primary text-primary-foreground shadow-lg'
-                        : currentStep === step.id
-                        ? 'bg-background border-primary text-primary shadow-lg'
-                        : 'bg-background border-border text-muted-foreground')}
-                    whileHover={{ scale: 1.1 }}
-                    animate={{
-                      scale: currentStep === step.id ? 1.1 : 1,
-                    }}
+                <div key={step.id} className="flex items-center">
+                  <div
+                    className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
+                      currentStep >= step.id
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border text-muted-foreground'
+                    }`}
                   >
                     {currentStep > step.id ? (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring", delay: 0.1 }}
-                      >
-                        <Check className="w-5 h-5" />
-                      </motion.div>
+                      <Check className="w-6 h-6" />
                     ) : (
-                      <step.icon className="w-5 h-5" />
+                      <step.icon className="w-6 h-6" />
                     )}
-                  </motion.div>
-
-                  <div className="text-center mt-3">
-                    <p className={'text-sm font-medium transition-colors ' +
-                      (currentStep >= step.id ? 'text-foreground' : 'text-muted-foreground')}>
-                      {step.title}
-                    </p>
                   </div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`w-16 h-0.5 transition-all duration-300 ${
+                        currentStep > step.id ? 'bg-primary' : 'bg-border'
+                      }`}
+                    />
+                  )}
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="text-center">
-            <p className="font-semibold text-lg">{steps[currentStep - 1]?.title}</p>
-            <p className="text-sm text-muted-foreground">{steps[currentStep - 1]?.description}</p>
-          </div>
-        </div>
-
-        <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-8 mb-8 shadow-lg">
-          <div className="min-h-[500px] flex items-center justify-center">
-            <div className="w-full">
-              <AnimatePresence mode="wait">
-                {renderStepContent()}
-              </AnimatePresence>
+            
+            <div className="text-center mt-4">
+              <h2 className="text-2xl font-bold">
+                {steps[currentStep - 1].title}
+              </h2>
+              <p className="text-muted-foreground">
+                {steps[currentStep - 1].description}
+              </p>
             </div>
           </div>
-        </div>
 
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={() => router.push('/admin')}
-            className="px-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Cancel
-          </Button>
+          <AnimatePresence mode="wait">
+            {renderStepContent()}
+          </AnimatePresence>
 
-          <div className="flex gap-4">
-            {currentStep > 1 && (
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                className="px-6"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-            )}
+          <div className="flex items-center justify-between mt-12">
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 1}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Previous</span>
+            </Button>
 
             {currentStep < steps.length ? (
               <Button
                 onClick={nextStep}
                 disabled={!canProceed()}
-                className="px-6"
+                className="flex items-center gap-2"
               >
-                Next
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <span>Next</span>
+                <ArrowRight className="w-4 h-4" />
               </Button>
             ) : (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <Button
+                onClick={handleSubmit}
+                disabled={creating}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
               >
-                <Button
-                  onClick={handleSubmit}
-                  disabled={creating || !canProceed()}
-                  variant="secondary"
-                  className="px-8"
-                >
-                  {creating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      Publish Blog Post
-                      <Sparkles className="w-4 h-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </motion.div>
+                {creating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Publishing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    <span>Publish Blog Post</span>
+                  </>
+                )}
+              </Button>
             )}
           </div>
         </div>
