@@ -10,7 +10,9 @@ import dev.httpmarco.polocloud.shared.platform.SharedPlatformProvider
 
 lateinit var polocloudShared: PolocloudShared
 
-abstract class PolocloudShared {
+// setShared is needed because without the flag its impossible
+// to use more than one SDK instance in one process (e.g. off premise bridge)
+abstract class PolocloudShared(setShared: Boolean) {
 
     abstract fun eventProvider(): SharedEventProvider
 
@@ -23,11 +25,6 @@ abstract class PolocloudShared {
     abstract fun cloudInformationProvider(): SharedCloudInformationProvider<*>
 
     abstract fun logger(): Logger
-
-    /**
-     * Specifies if lateinit variable <c>polocloudShared</c> should be set
-     */
-    abstract val setShared: Boolean
 
     abstract fun platformProvider(): SharedPlatformProvider<*>
 

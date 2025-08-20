@@ -33,7 +33,7 @@ import dev.httpmarco.polocloud.updater.Updater
 val logger = LoggerImpl()
 val i18n = I18nPolocloudAgent()
 
-object Agent : PolocloudShared() {
+object Agent : PolocloudShared(true) {
 
     val runtime: Runtime
     val eventService = EventService()
@@ -50,7 +50,6 @@ object Agent : PolocloudShared() {
     val platformStorage = PlatformStorageImpl()
 
     init {
-        polocloudShared = this
         // display the default log information
         i18n.info("agent.starting", polocloudVersion())
 
@@ -139,7 +138,4 @@ object Agent : PolocloudShared() {
     override fun logger(): Logger = logger
 
     override fun platformProvider(): SharedPlatformProvider<*> = this.platformStorage
-
-    override val setShared: Boolean
-        get() = true
 }

@@ -1,10 +1,10 @@
 package dev.httpmarco.polocloud.bridge.api
 
+import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.PolocloudShared
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
-import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
@@ -18,11 +18,6 @@ abstract class BridgeInstance<T> {
     abstract fun unregisterService(identifier: T)
 
     abstract fun findInfo(name: String): T?
-
-    init {
-        // it is bad, but if sdk ist present, we can use it
-        Class.forName("dev.httpmarco.polocloud.sdk.java.Polocloud")
-    }
 
     private lateinit var polocloud: PolocloudShared
 
@@ -51,7 +46,7 @@ abstract class BridgeInstance<T> {
     }
 
     fun initialize() {
-        this.initialize(polocloudShared)
+        this.initialize(Polocloud.instance())
     }
 
     fun updatePolocloudPlayer(event: Event) {
