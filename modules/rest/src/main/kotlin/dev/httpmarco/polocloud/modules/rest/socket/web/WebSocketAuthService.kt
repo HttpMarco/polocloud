@@ -43,9 +43,7 @@ class WebSocketAuthService {
     }
 
     private fun extractToken(context: WsConnectContext): Optional<String> {
-        val authHeader = context.header("Authorization") ?: return Optional.empty()
-        if (!authHeader.startsWith("Bearer ")) return Optional.empty()
-        return Optional.of(authHeader.removePrefix("Bearer ").trim())
+        return Optional.ofNullable(context.queryParam("token"))
     }
 
 }
