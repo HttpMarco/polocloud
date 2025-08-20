@@ -56,36 +56,38 @@ const fallbackData: RoadmapColumn[] = [
   }
 ];
 
-const getCategoryIcon = (category: string) => {
-  switch (category) {
-    case 'ui': return <Star className="w-4 h-4" />;
-    case 'platforms': return <Server className="w-4 h-4" />;
-    case 'bot': return <Code className="w-4 h-4" />;
-    case 'addons': return <Package className="w-4 h-4" />;
-    default: return <Code className="w-4 h-4" />;
-  }
-};
 
-const getCategoryColor = (category: string) => {
-  switch (category) {
-    case 'ui': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
-    case 'platforms': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
-    case 'bot': return 'bg-green-500/20 border-green-500/30 text-green-400';
-    case 'addons': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
-    default: return 'bg-gray-500/20 border-gray-500/30 text-gray-400';
-  }
-};
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'ui': return <Star className="w-4 h-4" />;
+      case 'platforms': return <Server className="w-4 h-4" />;
+      case 'bot': return <Code className="w-4 h-4" />;
+      case 'addons': return <Package className="w-4 h-4" />;
+      default: return <Code className="w-4 h-4" />;
+    }
+  };
+
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'ui': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
+      case 'platforms': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
+      case 'bot': return 'bg-green-500/20 border-green-500/30 text-green-400';
+      case 'addons': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
+      default: return 'bg-gray-500/20 border-gray-500/30 text-gray-400';
+    }
+  };
 
 const RoadmapCard = ({ item, index }: { item: RoadmapItem; index: number }) => {
   return (
     <div 
-      className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl p-4 mb-3 hover:bg-card/60 transition-all duration-500 hover:shadow-lg hover:border-border/60 hover:scale-105 group"
+      className="bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl p-3 sm:p-4 mb-3 hover:bg-card/60 transition-all duration-500 hover:shadow-lg hover:border-border/60 hover:scale-105 group"
       style={{
         animationDelay: `${index * 100}ms`
       }}
     >
       {item.tags && (
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
           {item.tags.map((tag, tagIndex) => (
             <span 
               key={tag} 
@@ -95,16 +97,19 @@ const RoadmapCard = ({ item, index }: { item: RoadmapItem; index: number }) => {
                               tag === 'new requirement' ? 'rgba(130, 247, 29, 0.15)' :
                               tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.15)' :
                               tag === 'bug' ? 'rgba(236, 161, 168, 0.15)' :
+                              tag === 'feature' ? 'rgba(40, 217, 43, 0.15)' :
                               'rgba(156, 163, 175, 0.15)',
                 color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
                        tag === 'new requirement' ? 'rgb(130, 247, 29)' :
                        tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
                        tag === 'bug' ? 'rgb(236, 161, 168)' :
+                       tag === 'feature' ? 'rgb(40, 217, 43)' :
                        'rgb(156, 163, 175)',
                 borderColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
                             tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                             tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                             tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
+                            tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
                             'rgba(156, 163, 175, 0.3)',
                 animationDelay: `${(index * 100) + (tagIndex * 50)}ms`
               }}
@@ -194,7 +199,7 @@ const RoadmapColumn = ({ column, columnIndex }: { column: RoadmapColumn; columnI
       }}
     >
       <div
-        className="mb-6 p-4 bg-card/50 backdrop-blur-sm border rounded-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:scale-105 relative"
+        className="mb-4 sm:mb-6 p-3 sm:p-4 bg-card/50 backdrop-blur-sm border rounded-xl shadow-lg transition-all duration-500 hover:shadow-xl hover:scale-105 relative"
         style={{
           borderColor: getBorderColor(column.id),
           boxShadow: `inset 0 0 30px ${getBorderColor(column.id)}25, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)`
@@ -209,15 +214,15 @@ const RoadmapColumn = ({ column, columnIndex }: { column: RoadmapColumn; columnI
 
         <div className="relative z-10">
           <h2 className="font-bold text-foreground dark:text-white text-sm uppercase tracking-wider mb-1">
-            {column.title}
-          </h2>
+              {column.title}
+            </h2>
           <div className="text-xs text-muted-foreground dark:text-white/60 font-medium">
             {column.items.length} items
           </div>
         </div>
       </div>
 
-      <div className="flex-1 space-y-3 max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent">
+      <div className="flex-1 space-y-3 max-h-[500px] sm:max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent">
         {column.items.map((item, index) => (
           <RoadmapCard key={item.id} item={item} index={index} />
         ))}
@@ -391,39 +396,40 @@ export function RoadmapContent() {
     })
   }));
 
-  const allTags = ['improvement', 'new requirement', 'prototype-5', 'bug'];
+  const allTags = ['improvement', 'new requirement', 'prototype-5', 'bug', 'feature'];
 
   return (
     <>
-      <section ref={contentRef} className="relative py-12 overflow-hidden">
+      <section ref={contentRef} className="relative py-8 sm:py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/5 to-muted/5" />
 
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-        <div className="relative container mx-auto px-6">
-          <div className={`mb-8 transition-all duration-1000 ease-out ${
+        <div className="relative container mx-auto px-4 sm:px-6">
+          <div className={`mb-6 sm:mb-8 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
             <div className="flex justify-between items-center">
               <Link 
                 href="/"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-card/50 hover:bg-card border border-border/50 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
               </Link>
             </div>
           </div>
 
-          <div className={`text-center mb-16 transition-all duration-1000 ease-out ${
+          <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ease-out ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            <h1 className={`text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent transition-all duration-1000 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
               Development Roadmap
             </h1>
-            <p className={`text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-400 ${
+            <p className={`text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4 sm:px-0 transition-all duration-1000 delay-400 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
               Track our progress and see what&apos;s coming next for PoloCloud
@@ -431,10 +437,10 @@ export function RoadmapContent() {
           </div>
 
           {isLoading && (
-            <div className={`text-center mb-12 transition-all duration-1000 delay-500 ${
+            <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 delay-500 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl">
+              <div className="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-card/40 backdrop-blur-sm border border-border/40 rounded-xl">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-foreground"></div>
                 <span className="text-sm font-medium">Loading roadmap data...</span>
               </div>
@@ -442,25 +448,25 @@ export function RoadmapContent() {
           )}
 
           {error && (
-            <div className={`text-center mb-12 transition-all duration-1000 delay-500 ${
+            <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 delay-500 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}>
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-xl">
+              <div className="inline-flex items-center gap-3 px-4 sm:px-6 py-3 bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-xl">
                 <span className="text-sm font-medium text-red-400">Error: {error}</span>
               </div>
             </div>
           )}
 
-          <div className={`mb-12 transition-all duration-1000 delay-500 ${
+          <div className={`mb-8 sm:mb-12 transition-all duration-1000 delay-500 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            <div className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-8 shadow-lg relative overflow-hidden">
+            <div className="bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl p-4 sm:p-8 shadow-lg relative overflow-hidden">
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-muted/20 via-background/50 to-muted/20"></div>
 
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h3 className="font-bold text-foreground dark:text-white text-xl mb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
+                  <div className="text-center sm:text-left">
+                    <h3 className="font-bold text-foreground dark:text-white text-lg sm:text-xl mb-2">
                       Categories
                     </h3>
                     <p className="text-sm text-muted-foreground">
@@ -469,10 +475,11 @@ export function RoadmapContent() {
                   </div>
                   <button
                     onClick={() => setIsFilterModalOpen(true)}
-                    className="inline-flex items-center gap-3 px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm"
+                    className="inline-flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 bg-primary/10 hover:bg-primary/20 border border-primary/30 hover:border-primary/50 rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm"
                   >
                     <Filter className="w-4 h-4" />
-                    <span>Filter Tags</span>
+                    <span className="hidden sm:inline">Filter Tags</span>
+                    <span className="sm:hidden">Filter</span>
                     {activeFilters.length > 0 && (
                       <span className="bg-primary text-primary-foreground text-xs rounded-full px-2 py-1 min-w-[24px] flex items-center justify-center font-bold">
                         {activeFilters.length}
@@ -481,9 +488,9 @@ export function RoadmapContent() {
                   </button>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(234, 187, 44, 0.15)',
                       color: 'rgb(234, 187, 44)',
                       borderColor: 'rgba(234, 187, 44, 0.3)'
@@ -491,8 +498,8 @@ export function RoadmapContent() {
                     <span className="text-xs text-muted-foreground text-center">Enhancements & improvements</span>
                   </div>
                   
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(130, 247, 29, 0.15)',
                       color: 'rgb(130, 247, 29)',
                       borderColor: 'rgba(130, 247, 29, 0.3)'
@@ -500,8 +507,8 @@ export function RoadmapContent() {
                     <span className="text-xs text-muted-foreground text-center">New features & requirements</span>
                   </div>
                   
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(136, 252, 202, 0.15)',
                       color: 'rgb(136, 252, 202)',
                       borderColor: 'rgba(136, 252, 202, 0.3)'
@@ -509,13 +516,22 @@ export function RoadmapContent() {
                     <span className="text-xs text-muted-foreground text-center">Prototype & experimental</span>
                   </div>
                   
-                  <div className="flex flex-col items-center p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-4 py-2 rounded-full text-sm font-medium border mb-2" style={{ 
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
                       backgroundColor: 'rgba(236, 161, 168, 0.15)',
                       color: 'rgb(236, 161, 168)',
                       borderColor: 'rgba(236, 161, 168, 0.3)'
                     }}>bug</span>
                     <span className="text-xs text-muted-foreground text-center">Bug fixes & issues</span>
+                  </div>
+                  
+                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
+                      backgroundColor: 'rgba(40, 217, 43, 0.15)',
+                      color: 'rgb(40, 217, 43)',
+                      borderColor: 'rgba(40, 217, 43, 0.3)'
+                    }}>feature</span>
+                    <span className="text-xs text-muted-foreground text-center">New features & capabilities</span>
                   </div>
                 </div>
               </div>
@@ -525,7 +541,7 @@ export function RoadmapContent() {
           <div className={`transition-all duration-1000 delay-600 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6 sm:gap-8">
               {filteredData.map((column, index) => (
                 <div
                   key={column.id}
@@ -543,116 +559,121 @@ export function RoadmapContent() {
 
       {isFilterModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card/95 backdrop-blur-sm border border-border/40 rounded-2xl p-6 shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-foreground">Filter by Tags</h3>
-              <button
-                onClick={() => setIsFilterModalOpen(false)}
+          <div className="bg-card/95 backdrop-blur-sm border border-border/40 rounded-2xl p-4 sm:p-6 shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-foreground">Filter by Tags</h3>
+                <button
+                  onClick={() => setIsFilterModalOpen(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors duration-200"
-              >
+                >
                 <X className="w-5 h-5" />
-              </button>
-            </div>
+                </button>
+              </div>
 
-            {activeFilters.length > 0 && (
+              {activeFilters.length > 0 && (
               <div className="mb-6 p-4 bg-muted/30 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-3">Active filters:</div>
-                <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2">
                   {activeFilters.map((tag) => (
                     <span
-                      key={tag}
+                        key={tag}
                       className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium border"
-                      style={{
+                        style={{
                         backgroundColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
                                           tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                                           tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                                           tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
+                                          tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
                                           'rgba(156, 163, 175, 0.3)',
-                        color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                               tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                               tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                               tag === 'bug' ? 'rgb(236, 161, 168)' :
-                               'rgb(156, 163, 175)',
+                          color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
+                                 tag === 'new requirement' ? 'rgb(130, 247, 29)' :
+                                 tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
+                                 tag === 'bug' ? 'rgb(236, 161, 168)' :
+                                 tag === 'feature' ? 'rgb(40, 217, 43)' :
+                                 'rgb(156, 163, 175)',
                         borderColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
                                     tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
                                     tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
                                     tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
+                                    tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
                                     'rgba(156, 163, 175, 0.3)'
-                      }}
-                    >
-                      {tag}
-                      <button
-                        onClick={() => toggleFilter(tag)}
-                        className="hover:bg-black/10 rounded-full p-0.5 transition-colors duration-200"
+                        }}
                       >
-                        <X className="w-3 h-3" />
-                      </button>
+                        {tag}
+                        <button
+                          onClick={() => toggleFilter(tag)}
+                        className="hover:bg-black/10 rounded-full p-0.5 transition-colors duration-200"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
                     </span>
-                  ))}
-                </div>
-                <button
-                  onClick={clearAllFilters}
+                    ))}
+                  </div>
+                  <button
+                    onClick={clearAllFilters}
                   className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 flex items-center gap-1"
-                >
-                  <X className="w-3 h-3" />
-                  Clear all filters
-                </button>
+                  >
+                    <X className="w-3 h-3" />
+                    Clear all filters
+                  </button>
               </div>
             )}
 
             <div className="space-y-3 mb-6">
               {allTags.map((tag) => (
                 <label
-                  key={tag}
+                    key={tag}
                   className="flex items-center gap-3 p-4 rounded-lg hover:bg-muted/30 transition-colors duration-200 cursor-pointer"
                 >
-                  <input
-                    type="checkbox"
-                    checked={activeFilters.includes(tag)}
-                    onChange={() => toggleFilter(tag)}
+                      <input
+                        type="checkbox"
+                        checked={activeFilters.includes(tag)}
+                        onChange={() => toggleFilter(tag)}
                     className="w-5 h-5 rounded border-border/50 text-blue-500 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2"
                   />
-                  <span
+                    <span
                     className="flex-1 text-sm font-medium"
-                    style={{
-                      color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                             tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                             tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                             tag === 'bug' ? 'rgb(236, 161, 168)' :
-                             'rgb(156, 163, 175)'
-                    }}
-                  >
-                    {tag}
-                  </span>
+                      style={{
+                        color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
+                               tag === 'new requirement' ? 'rgb(130, 247, 29)' :
+                               tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
+                               tag === 'bug' ? 'rgb(236, 161, 168)' :
+                               tag === 'feature' ? 'rgb(40, 217, 43)' :
+                               'rgb(156, 163, 175)'
+                      }}
+                    >
+                      {tag}
+                    </span>
                   <div
                     className="w-4 h-4 rounded-full"
-                    style={{
-                      backgroundColor: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                                     tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                                     tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                                     tag === 'bug' ? 'rgb(236, 161, 168)' :
-                                     'rgb(156, 163, 175)'
-                    }}
-                  />
+                      style={{
+                        backgroundColor: tag === 'improvement' ? 'rgb(234, 187, 44)' :
+                                         tag === 'new requirement' ? 'rgb(130, 247, 29)' :
+                                         tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
+                                         tag === 'bug' ? 'rgb(236, 161, 168)' :
+                                         tag === 'feature' ? 'rgb(40, 217, 43)' :
+                                         'rgb(156, 163, 175)'
+                      }}
+                    />
                 </label>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            <div className="pt-4 border-t border-border/30">
+              <div className="pt-4 border-t border-border/30">
               <div className="text-sm text-muted-foreground mb-4">
-                Showing {filteredData.reduce((total, column) => total + column.items.length, 0)} items
-                {activeFilters.length > 0 && ` (filtered by ${activeFilters.length} tag${activeFilters.length > 1 ? 's' : ''})`}
+                  Showing {filteredData.reduce((total, column) => total + column.items.length, 0)} items
+                  {activeFilters.length > 0 && ` (filtered by ${activeFilters.length} tag${activeFilters.length > 1 ? 's' : ''})`}
               </div>
               <button
-                onClick={() => setIsFilterModalOpen(false)}
+                  onClick={() => setIsFilterModalOpen(false)}
                 className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors duration-200"
-              >
-                Apply Filters
+                >
+                  Apply Filters
               </button>
             </div>
-          </div>
-        </div>
+              </div>
+            </div>
       )}
     </>
   );
-} 
+}

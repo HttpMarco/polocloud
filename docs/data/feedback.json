@@ -1,0 +1,26 @@
+[
+  {
+    "userId": "728686692638392370",
+    "username": "hobbysigma",
+    "rating": 5,
+    "description": "very good cloud",
+    "avatar": "https://cdn.discordapp.com/avatars/728686692638392370/6446f45953135c2512e42b97c009aafe.png",
+    "id": "1755620376307",
+    "createdAt": "2025-08-19T16:19:36.307Z",
+    "status": "APPROVED",
+    "approvedBy": "HttpMarco",
+    "approvedAt": "2025-08-19T16:28:01.700Z"
+  },
+  {
+    "userId": "473737542630637569",
+    "username": "teekqu",
+    "rating": 5,
+    "description": "Polocloud impresses with a simple and beginner-friendly operation! The cloud is kept simple and fulfills all promised tasks. For advanced server networks, there are many options for expanding the cloud and adapting it to the network. There are virtually no limits, and everything is open source, which underscores the transparency and security of the cloud. The extremely helpful support and the SDKs give the cloud that extra polish.",
+    "avatar": "https://cdn.discordapp.com/avatars/473737542630637569/c7e55d6611082fbe82507630803861fc.png",
+    "id": "1755620818486",
+    "createdAt": "2025-08-19T16:26:58.487Z",
+    "status": "APPROVED",
+    "approvedBy": "RECHERGG",
+    "approvedAt": "2025-08-19T16:27:38.715Z"
+  }
+]

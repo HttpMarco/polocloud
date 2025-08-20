@@ -19,14 +19,27 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 
+tasks.shadowJar {
+    archiveFileName = "sdk-java-3.0.0-pre.6-SNAPSHOT.jar"
+}
+
 tasks.jar {
     dependsOn(tasks.shadowJar)
+
+    // Jar selbst soll nichts erzeugen
+    enabled = false
+}
+
+artifacts {
+    archives(tasks.shadowJar)
 }
 
 extensions.configure<PublishingExtension> {
     publications {
         create<MavenPublication>("mavenJava") {
-            from(components["java"])
+            artifact(tasks.shadowJar.get()) {
+                classifier = null
+            }
 
             pom {
                 name.set(project.name)

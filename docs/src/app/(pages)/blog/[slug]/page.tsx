@@ -1,11 +1,9 @@
 import { notFound } from 'next/navigation';
 import { PageLayout } from '@/components/layout/page-layout';
 import { Calendar, User, Tag, ArrowLeft, Github, ExternalLink } from 'lucide-react';
-import { readFileSync, readdirSync } from 'fs';
-import { join } from 'path';
-import matter from 'gray-matter';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
+import { getAllBlogFiles } from '@/lib/github';
 
 interface BlogPost {
   title: string;
@@ -16,34 +14,56 @@ interface BlogPost {
   content: string;
 }
 
-function getBlogSlugs(): string[] {
-  const blogDir = join(process.cwd(), 'content', 'blog');
-  const files = readdirSync(blogDir).filter(file => file.endsWith('.mdx') && file !== 'meta.json');
-  return files.map(file => file.replace('.mdx', ''));
+async function getBlogSlugs(): Promise<string[]> {
+  try {
+    const posts = await getAllBlogFiles();
+    return posts.map(post => post.slug);
+  } catch (error) {
+    console.error('Error getting blog slugs:', error);
+    return [];
+  }
 }
 
-function getBlogPost(slug: string): BlogPost | null {
+async function getBlogPost(slug: string): Promise<BlogPost | null> {
   try {
-    const blogDir = join(process.cwd(), 'content', 'blog');
-    const filePath = join(blogDir, `${slug}.mdx`);
-    const fileContent = readFileSync(filePath, 'utf8');
-    const { data, content } = matter(fileContent);
+    console.log('Getting blog post for slug:', slug);
+    const posts = await getAllBlogFiles();
+    console.log('All posts found:', posts.length);
+    
+    const post = posts.find(p => p.slug === slug);
+    console.log('Found post:', post ? {
+      title: post.title,
+      author: post.author,
+      description: post.description,
+      date: post.date,
+      tags: post.tags,
+      contentLength: post.content?.length || 0,
+      authorType: typeof post.author,
+      authorLength: post.author?.length || 0
+    } : 'NOT FOUND');
+    
+    if (!post) {
+      return null;
+    }
+    
+    console.log('Content length:', post.content?.length || 0);
     
     return {
-      title: data.title || 'Untitled',
-      description: data.description,
-      date: data.date,
-      author: data.author,
-      tags: data.tags || [],
-      content,
+      title: post.title,
+      description: post.description,
+      date: post.date,
+      author: post.author,
+      tags: post.tags,
+      content: post.content || '',
     };
   } catch (error) {
+    console.error('Error getting blog post:', error);
     return null;
   }
 }
 
 export async function generateStaticParams() {
-  const slugs = getBlogSlugs();
+  const slugs = await getBlogSlugs();
   return slugs.map((slug) => ({
     slug,
   }));
@@ -51,7 +71,7 @@ export async function generateStaticParams() {
 
 export default async function BlogPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getBlogPost(slug);
   
   if (!post) {
     notFound();
@@ -62,55 +82,61 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
       <div className="relative min-h-screen">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
         
-        <div className="container mx-auto px-6 py-12 max-w-4xl relative z-10">
-          <div className="mb-8">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl relative z-10">
+          <div className="mb-6 sm:mb-8">
             <Link
               href="/blog"
               className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-              Back to Blog
+              <span className="hidden sm:inline">Back to Blog</span>
+              <span className="sm:hidden">Back</span>
             </Link>
           </div>
 
-          <div className="mb-12">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
+          <div className="mb-8 sm:mb-12">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
               {post.date && (
-                <div className="flex items-center gap-2 bg-muted/50 px-3 py-1 rounded-full">
-                  <Calendar className="w-4 h-4" />
-                  <span>{new Date(post.date).toLocaleDateString('de-DE', {
+                <div className="flex items-center gap-2 bg-muted/50 px-2 sm:px-3 py-1 rounded-full">
+                  <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">{new Date(post.date).toLocaleDateString('de-DE', {
                     year: 'numeric',
                     month: 'long',
+                    day: 'numeric'
+                  })}</span>
+                  <span className="sm:hidden">{new Date(post.date).toLocaleDateString('de-DE', {
+                    year: 'numeric',
+                    month: 'short',
                     day: 'numeric'
                   })}</span>
                 </div>
               )}
               {post.author && (
-                <div className="flex items-center gap-2 bg-muted/50 px-3 py-1 rounded-full">
-                  <User className="w-4 h-4" />
+                <div className="flex items-center gap-2 bg-muted/50 px-2 sm:px-3 py-1 rounded-full">
+                  <User className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>{post.author}</span>
                 </div>
               )}
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-black text-foreground dark:text-white mb-6 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground dark:text-white mb-4 sm:mb-6 leading-tight">
               {post.title}
             </h1>
             
             {post.description && (
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-3xl">
+              <p className="text-base sm:text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed max-w-3xl">
                 {post.description}
               </p>
             )}
             
             {post.tags && (
-              <div className="flex flex-wrap gap-2 mb-8">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
                 {post.tags.map((tag: string) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+                    className="inline-flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
                   >
-                    <Tag className="w-3 h-3" />
+                    <Tag className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     {tag}
                   </span>
                 ))}
@@ -118,7 +144,7 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
             )}
           </div>
 
-          <article className="prose prose-lg dark:prose-invert max-w-none bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-8 mb-12">
+          <article className="prose prose-sm sm:prose-lg dark:prose-invert max-w-none bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-4 sm:p-8 mb-8 sm:mb-12">
             <MDXRemote 
               source={post.content}
               components={{
@@ -129,52 +155,52 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
                   return <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline decoration-primary/30 hover:decoration-primary transition-all duration-200 inline-flex items-center gap-1" {...props}>{children}<ExternalLink className="w-3 h-3" /></a>;
                 },
                 h1: ({ children, ...props }) => (
-                  <h1 className="text-3xl md:text-4xl font-black text-foreground dark:text-white mb-6 mt-8 first:mt-0" {...props}>{children}</h1>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground dark:text-white mb-4 sm:mb-6 mt-6 sm:mt-8 first:mt-0" {...props}>{children}</h1>
                 ),
                 h2: ({ children, ...props }) => (
-                  <h2 className="text-2xl md:text-3xl font-bold text-foreground dark:text-white mb-4 mt-8" {...props}>{children}</h2>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground dark:text-white mb-3 sm:mb-4 mt-6 sm:mt-8" {...props}>{children}</h2>
                 ),
                 h3: ({ children, ...props }) => (
-                  <h3 className="text-xl md:text-2xl font-bold text-foreground dark:text-white mb-3 mt-6" {...props}>{children}</h3>
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground dark:text-white mb-2 sm:mb-3 mt-4 sm:mt-6" {...props}>{children}</h3>
                 ),
                 p: ({ children, ...props }) => (
-                  <p className="text-muted-foreground leading-relaxed mb-4" {...props}>{children}</p>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-3 sm:mb-4" {...props}>{children}</p>
                 ),
                 strong: ({ children, ...props }) => (
                   <strong className="font-bold text-foreground dark:text-white" {...props}>{children}</strong>
                 ),
                 code: ({ children, ...props }) => (
-                  <code className="bg-muted text-foreground px-2 py-1 rounded text-sm font-mono" {...props}>{children}</code>
+                  <code className="bg-muted text-foreground px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-mono" {...props}>{children}</code>
                 ),
                 pre: ({ children, ...props }) => (
-                  <pre className="bg-muted border border-border/50 rounded-lg p-4 overflow-x-auto mb-4" {...props}>{children}</pre>
+                  <pre className="bg-muted border border-border/50 rounded-lg p-3 sm:p-4 overflow-x-auto mb-3 sm:mb-4 text-xs sm:text-sm" {...props}>{children}</pre>
                 ),
                 ul: ({ children, ...props }) => (
-                  <ul className="mb-4 pl-6 space-y-2" {...props}>{children}</ul>
+                  <ul className="mb-3 sm:mb-4 pl-4 sm:pl-6 space-y-1.5 sm:space-y-2" {...props}>{children}</ul>
                 ),
                 ol: ({ children, ...props }) => (
-                  <ol className="mb-4 pl-6 space-y-2" {...props}>{children}</ol>
+                  <ol className="mb-3 sm:mb-4 pl-4 sm:pl-6 space-y-1.5 sm:space-y-2" {...props}>{children}</ol>
                 ),
                 li: ({ children, ...props }) => (
-                  <li className="text-muted-foreground" {...props}>{children}</li>
+                  <li className="text-sm sm:text-base text-muted-foreground" {...props}>{children}</li>
                 ),
                 blockquote: ({ children, ...props }) => (
-                  <blockquote className="border-l-4 border-primary/30 pl-4 italic text-muted-foreground my-6" {...props}>{children}</blockquote>
+                  <blockquote className="border-l-4 border-primary/30 pl-3 sm:pl-4 italic text-sm sm:text-base text-muted-foreground my-4 sm:my-6" {...props}>{children}</blockquote>
                 ),
               }}
             />
           </article>
 
-          <div className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-6">
+          <div className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-4 sm:p-6">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <User className="w-4 h-4" />
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                  <User className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>Written by <strong className="text-foreground">{post.author || 'PoloCloud Team'}</strong></span>
                 </div>
                 {post.date && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4" />
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span>Published on <strong className="text-foreground">{new Date(post.date).toLocaleDateString('de-DE')}</strong></span>
                   </div>
                 )}
@@ -184,10 +210,11 @@ export default async function BlogPage({ params }: { params: Promise<{ slug: str
                   href="https://github.com/HttpMarco/polocloud"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors bg-muted/50 px-3 py-2 rounded-lg hover:bg-muted"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors bg-muted/50 px-2 sm:px-3 py-2 rounded-lg hover:bg-muted text-xs sm:text-sm"
                 >
-                  <Github className="w-4 h-4" />
-                  View on GitHub
+                  <Github className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">View on GitHub</span>
+                  <span className="sm:hidden">GitHub</span>
                 </a>
               </div>
             </div>

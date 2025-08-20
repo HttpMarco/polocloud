@@ -2,99 +2,19 @@ import { Check, X, AlertTriangle, Minus } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-interface CompatibilityData {
-    platform: string;
-    '1.7-1.12': 'supported' | 'not-supported' | 'partial' | 'not-possible';
-    '1.12-1.16': 'supported' | 'not-supported' | 'partial' | 'not-possible';
-    '1.18-1.19': 'supported' | 'not-supported' | 'partial' | 'not-possible';
-    '1.20+': 'supported' | 'not-supported' | 'partial' | 'not-possible';
-    'Severmobs': 'supported' | 'not-supported' | 'partial' | 'not-possible';
-    'Signs': 'supported' | 'not-supported' | 'partial' | 'not-possible';
+interface Platform {
+    id: string;
+    name: string;
+    icon: string;
+    versions: {
+        [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+    };
+    addons: {
+        [key: string]: 'supported' | 'not-supported' | 'partial' | 'not-possible';
+    };
+    addedAt: string;
+    addedBy: string;
 }
-
-const compatibilityData: CompatibilityData[] = [
-    {
-        platform: 'Vanilla',
-        '1.7-1.12': 'supported',
-        '1.12-1.16': 'supported',
-        '1.18-1.19': 'supported',
-        '1.20+': 'supported',
-        'Severmobs': 'not-possible',
-        'Signs': 'not-possible',
-    },
-    {
-        platform: 'Fabric',
-        '1.7-1.12': 'not-possible',
-        '1.12-1.16': 'partial',
-        '1.18-1.19': 'supported',
-        '1.20+': 'supported',
-        'Severmobs': 'supported',
-        'Signs': 'supported',
-    },
-    {
-        platform: 'Spigot',
-        '1.7-1.12': 'supported',
-        '1.12-1.16': 'supported',
-        '1.18-1.19': 'supported',
-        '1.20+': 'supported',
-        'Severmobs': 'supported',
-        'Signs': 'supported',
-    },
-    {
-        platform: 'Paper',
-        '1.7-1.12': 'supported',
-        '1.12-1.16': 'supported',
-        '1.18-1.19': 'supported',
-        '1.20+': 'supported',
-        'Severmobs': 'supported',
-        'Signs': 'supported',
-    },
-    {
-        platform: 'Folia',
-        '1.7-1.12': 'not-possible',
-        '1.12-1.16': 'not-possible',
-        '1.18-1.19': 'supported',
-        '1.20+': 'supported',
-        'Severmobs': 'supported',
-        'Signs': 'supported',
-    },
-    {
-        platform: 'Purpur',
-        '1.7-1.12': 'not-possible',
-        '1.12-1.16': 'partial',
-        '1.18-1.19': 'supported',
-        '1.20+': 'supported',
-        'Severmobs': 'supported',
-        'Signs': 'supported',
-    },
-    {
-        platform: 'Limbo',
-        '1.7-1.12': 'not-possible',
-        '1.12-1.16': 'not-possible',
-        '1.18-1.19': 'supported',
-        '1.20+': 'supported',
-        'Severmobs': 'not-possible',
-        'Signs': 'not-possible',
-    },
-    {
-        platform: 'Leaf',
-        '1.7-1.12': 'not-possible',
-        '1.12-1.16': 'not-possible',
-        '1.18-1.19': 'not-possible',
-        '1.20+': 'supported',
-        'Severmobs': 'supported',
-        'Signs': 'supported',
-    },
-    {
-        platform: 'Pumpkin',
-        '1.7-1.12': 'not-possible',
-        '1.12-1.16': 'not-possible',
-        '1.18-1.19': 'not-possible',
-        '1.20+': 'partial',
-        'Severmobs': 'not-supported',
-        'Signs': 'not-supported',
-    },
-];
 
 const StatusIcon = ({ status }: { status: 'supported' | 'not-supported' | 'partial' | 'not-possible' }) => {
     switch (status) {
@@ -109,38 +29,21 @@ const StatusIcon = ({ status }: { status: 'supported' | 'not-supported' | 'parti
     }
 };
 
-const PlatformIcon = ({ platform }: { platform: string }) => {
-    const getIconPath = (platformName: string) => {
-        const iconMap: { [key: string]: string } = {
-            'Fabric': '/fabric.png',
-            'Spigot': '/spigot.svg',
-            'Paper': '/paper.svg',
-            'Purpur': '/purpur.svg',
-            'Limbo': '/limbo.jpg',
-            'Leaf': '/leaf.svg',
-            'Pumpkin': '/pumkin.svg',
-            'Folia': '/folia.svg',
-            'Vanilla': '/vanilla.svg',
-        };
-        return iconMap[platformName] || null;
-    };
-
-    const iconPath = getIconPath(platform);
-
-    if (!iconPath) {
+const PlatformIcon = ({ platform }: { platform: Platform }) => {
+    if (!platform.icon) {
         return null;
     }
 
     return (
         <div className="w-5 h-5 mr-2 flex-shrink-0">
             <Image
-                src={iconPath}
-                alt={`${platform} icon`}
+                src={platform.icon}
+                alt={`${platform.name} icon`}
                 width={20}
                 height={20}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain rounded"
                 onError={(e) => {
-                    console.warn(`Failed to load icon for ${platform}:`, iconPath);
+                    console.warn(`Failed to load icon for ${platform.name}:`, platform.icon);
                     e.currentTarget.style.display = 'none';
                 }}
             />
@@ -149,10 +52,31 @@ const PlatformIcon = ({ platform }: { platform: string }) => {
 };
 
 export function CompatibilityTable() {
-    const platforms = ['Vanilla', 'Fabric', 'Spigot', 'Paper', 'Folia', 'Purpur', 'Limbo', 'Leaf', 'Pumpkin'];
-    const versionColumns = ['1.7-1.12', '1.12-1.16', '1.18-1.19', '1.20+'];
-    const addonColumns = ['Severmobs', 'Signs'];
+    const [platforms, setPlatforms] = useState<Platform[]>([]);
+    const [loading, setLoading] = useState(true);
     const [isVisible, setIsVisible] = useState(false);
+
+    const versionColumns = ['1.7-1.12', '1.12-1.16', '1.18-1.19', '1.20+'];
+
+    useEffect(() => {
+        const fetchPlatforms = async () => {
+            try {
+                const response = await fetch('/api/public/platforms');
+                if (response.ok) {
+                    const data = await response.json();
+                    setPlatforms(data.platforms || []);
+                } else {
+                    console.error('Failed to fetch platforms');
+                }
+            } catch (error) {
+                console.error('Error fetching platforms:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPlatforms();
+    }, []);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -161,6 +85,36 @@ export function CompatibilityTable() {
 
         return () => clearTimeout(timer);
     }, []);
+
+    if (loading) {
+        return (
+            <div className="w-full max-w-7xl mx-auto p-6">
+                <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden dark:shadow-[0_0_50px_rgba(0,120,255,0.15)] shadow-[0_0_50px_rgba(0,120,255,0.1)] ring-1 ring-white/20 dark:ring-white/10">
+                    <div className="p-8 text-center text-muted-foreground">
+                        Loading platform compatibility data...
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (platforms.length === 0) {
+        return (
+            <div className="w-full max-w-7xl mx-auto p-6">
+                <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden dark:shadow-[0_0_50px_rgba(0,120,255,0.15)] shadow-[0_0_50px_rgba(0,120,255,0.1)] ring-1 ring-white/20 dark:ring-white/10">
+                    <div className="p-8 text-center text-muted-foreground">
+                        No platform compatibility data available.
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const allAddons = new Set<string>();
+    platforms.forEach(platform => {
+        Object.keys(platform.addons).forEach(addon => allAddons.add(addon));
+    });
+    const addonColumns = Array.from(allAddons);
 
     return (
         <div className={`w-full max-w-7xl mx-auto p-6 transition-all duration-1000 ease-out ${
@@ -177,12 +131,12 @@ export function CompatibilityTable() {
                                 Platform
                             </th>
                             {platforms.map((platform, index) => (
-                                <th key={platform} className={`px-4 py-5 text-center font-semibold text-foreground border-l border-white/10 dark:border-white/5 dark:text-white/90 bg-white/5 dark:bg-white/5 transition-all duration-500 delay-${300 + index * 50}`}>
+                                <th key={platform.id} className={`px-4 py-5 text-center font-semibold text-foreground border-l border-white/10 dark:border-white/5 dark:text-white/90 bg-white/5 dark:bg-white/5 transition-all duration-500 delay-${300 + index * 50}`}>
                                     <div className={`flex items-center justify-center gap-2 transition-all duration-500 delay-${400 + index * 50} ${
                                         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                                     }`}>
                                         <PlatformIcon platform={platform} />
-                                        <span>{platform}</span>
+                                        <span>{platform.name}</span>
                                     </div>
                                 </th>
                             ))}
@@ -197,7 +151,7 @@ export function CompatibilityTable() {
                                 Version support
                             </td>
                             {platforms.map((platform) => (
-                                <td key={platform} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5 bg-white/10 dark:bg-white/10">
+                                <td key={platform.id} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5 bg-white/10 dark:bg-white/10">
                                 </td>
                             ))}
                         </tr>
@@ -210,11 +164,11 @@ export function CompatibilityTable() {
                                     {version}
                                 </td>
                                 {platforms.map((platform) => {
-                                    const data = compatibilityData.find(d => d.platform === platform);
+                                    const status = platform.versions[version] || 'not-supported';
                                     return (
-                                        <td key={platform} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5">
+                                        <td key={platform.id} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5">
                                             <div className="flex justify-center">
-                                                <StatusIcon status={data?.[version as keyof CompatibilityData] as 'supported' | 'not-supported' | 'partial' | 'not-possible'} />
+                                                <StatusIcon status={status} />
                                             </div>
                                         </td>
                                     );
@@ -222,37 +176,41 @@ export function CompatibilityTable() {
                             </tr>
                         ))}
 
-                        <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-900 ${
-                            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                        }`}>
-                            <td className="px-6 py-4 text-left font-bold text-foreground bg-white/10 dark:bg-white/10 dark:text-white/80">
-                                Addons
-                            </td>
-                            {platforms.map((platform) => (
-                                <td key={platform} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5 bg-white/10 dark:bg-white/10">
-                                </td>
-                            ))}
-                        </tr>
-
-                        {addonColumns.map((addon, index) => (
-                            <tr key={addon} className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-${1000 + index * 100} ${
-                                index % 2 === 0 ? 'bg-transparent' : 'bg-white/5 dark:bg-white/5'
-                            } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                                <td className="px-6 py-4 text-left font-medium text-muted-foreground pl-8 dark:text-white/70">
-                                    {addon}
-                                </td>
-                                {platforms.map((platform) => {
-                                    const data = compatibilityData.find(d => d.platform === platform);
-                                    return (
-                                        <td key={platform} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5">
-                                            <div className="flex justify-center">
-                                                <StatusIcon status={data?.[addon as keyof CompatibilityData] as 'supported' | 'not-supported' | 'partial' | 'not-possible'} />
-                                            </div>
+                        {addonColumns.length > 0 && (
+                            <>
+                                <tr className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-900 ${
+                                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                                }`}>
+                                    <td className="px-6 py-4 text-left font-bold text-foreground bg-white/10 dark:bg-white/10 dark:text-white/80">
+                                        Addons
+                                    </td>
+                                    {platforms.map((platform) => (
+                                        <td key={platform.id} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5 bg-white/10 dark:bg-white/10">
                                         </td>
-                                    );
-                                })}
-                            </tr>
-                        ))}
+                                    ))}
+                                </tr>
+
+                                {addonColumns.map((addon, index) => (
+                                    <tr key={addon} className={`border-b border-white/10 dark:border-white/5 transition-all duration-500 delay-${1000 + index * 100} ${
+                                        index % 2 === 0 ? 'bg-transparent' : 'bg-white/5 dark:bg-white/5'
+                                    } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                                        <td className="px-6 py-4 text-left font-medium text-muted-foreground pl-8 dark:text-white/70">
+                                            {addon}
+                                        </td>
+                                        {platforms.map((platform) => {
+                                            const status = platform.addons[addon] || 'not-supported';
+                                            return (
+                                                <td key={platform.id} className="px-4 py-4 text-center border-l border-white/10 dark:border-white/5">
+                                                    <div className="flex justify-center">
+                                                        <StatusIcon status={status} />
+                                                    </div>
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))}
+                            </>
+                        )}
                         </tbody>
                     </table>
                 </div>

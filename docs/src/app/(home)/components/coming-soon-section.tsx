@@ -1,12 +1,12 @@
 'use client';
-import { Clock, Sparkles, ArrowRight, Puzzle, Users, BarChart3, Code, ExternalLink, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
+import { Puzzle, Users, BarChart3, MessageCircle, ExternalLink } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 export function ComingSoonSection() {
   const [isVisible, setIsVisible] = useState(false);
   const [isBuilding, setIsBuilding] = useState(false);
+
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export function ComingSoonSection() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-16">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <div 
               key={feature.title}
               className="bg-card/30 backdrop-blur-sm border border-border/50 rounded-xl p-6 hover:bg-card/40 hover:border-border/70 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group relative overflow-hidden"
@@ -111,7 +111,7 @@ export function ComingSoonSection() {
             Be the first to know when these features are available. Join our community for early access and exclusive updates.
             </p>
             <a
-              href="https://discord.gg/polocloud"
+              href="https://discord.com/invite/mQ39S2EWNV"
               target="_blank"
               rel="noopener noreferrer"
             className="inline-flex items-center gap-3 px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-white rounded-xl font-semibold text-lg transition-all duration-300 shadow-[0_0_20px_rgba(0,200,255,0.15)] hover:shadow-[0_0_30px_rgba(0,200,255,0.25)] hover:scale-105 group"
