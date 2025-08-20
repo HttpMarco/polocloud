@@ -1,16 +1,17 @@
 package dev.httpmarco.polocloud.bridge.api
 
+import dev.httpmarco.polocloud.sdk.java.Polocloud
+import dev.httpmarco.polocloud.shared.PolocloudShared
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
-import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
 abstract class BridgeInstance<T> {
 
-    abstract fun generateInfo(name: String, hostname: String, port: Int): T
+    abstract fun generateInfo(service: Service): T
 
     abstract fun registerService(identifier: T, fallback: Boolean = false)
 
@@ -18,36 +19,38 @@ abstract class BridgeInstance<T> {
 
     abstract fun findInfo(name: String): T?
 
-    init {
-        // it is bad, but if sdk ist present, we can use it
-        Class.forName("dev.httpmarco.polocloud.sdk.java.Polocloud")
-    }
+    private lateinit var polocloud: PolocloudShared
 
-    fun initialize() {
-        polocloudShared.serviceProvider().findByType(GroupType.SERVER).forEach {
+    fun initialize(polocloud: PolocloudShared) {
+        this.polocloud = polocloud
+        polocloud.serviceProvider().findByType(GroupType.SERVER).forEach {
             if(it.state !== ServiceState.ONLINE) {
                 return@forEach
             }
-            registerService(generateInfo(it.name(), it.hostname, it.port), isFallback(it))
+            registerService(generateInfo(it), isFallback(it))
         }
 
 
-        polocloudShared.eventProvider().subscribe(ServiceOnlineEvent::class.java) { event ->
-           val service = event.service
+        polocloud.eventProvider().subscribe(ServiceOnlineEvent::class.java) { event ->
+            val service = event.service
             if (service.type == GroupType.SERVER) {
-                registerService(generateInfo(service.name(), service.hostname, service.port), isFallback(service))
+                registerService(generateInfo(service), isFallback(service))
             }
         }
 
-        polocloudShared.eventProvider().subscribe(ServiceShutdownEvent::class.java) { event ->
+        polocloud.eventProvider().subscribe(ServiceShutdownEvent::class.java) { event ->
             findInfo(event.service.name())?.let { info ->
                 unregisterService(info)
             }!!
         }
     }
 
+    fun initialize() {
+        this.initialize(Polocloud.instance())
+    }
+
     fun updatePolocloudPlayer(event: Event) {
-        polocloudShared.eventProvider().call(event)
+        polocloud.eventProvider().call(event)
     }
 
     private fun isFallback(service: Service): Boolean {

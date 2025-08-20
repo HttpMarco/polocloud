@@ -7,7 +7,7 @@ nexus-publish = "2.0.0"
 
 # libraries
 gson = "2.13.1"
-oshi="6.8.2"
+oshi="6.8.3"
 
 # configuration
 configurate = "4.2.0"
@@ -18,19 +18,30 @@ tomlj = "1.1.1"
 grpc = "1.74.0"
 
 # terminal
-jline = "3.30.4"
+jline = "3.30.5"
 
 slf4j = "2.0.17"
 log4j = "2.25.1"
 
 # runtime
-docker = "3.5.3"
+docker = "3.6.0"
 k8s = "7.3.1"
+
+# rest
+javalin = "6.7.0"
+
+jwt = "4.5.0"
+javalin-jwt = "0.7.0"
+
+argon2 = "2.12"
 
 # platforms
 velocity = "3.4.0-SNAPSHOT"
+waterdog = "2.0.4-SNAPSHOT"
 bungeecord = "1.21-R0.4-SNAPSHOT"
 spigot = "1.21.5-R0.1-SNAPSHOT"
+fabric = "0.16.14"
+fabric-language-kotlin = "1.13.4+kotlin.2.2.0"
 
 npc-bukkit = "3.0.0-beta13"
 
@@ -72,10 +83,20 @@ docker = { group = "com.github.docker-java", name = "docker-java", version.ref =
 docker-http = { group = "com.github.docker-java", name = "docker-java-transport-httpclient5", version.ref = "docker" }
 k8s = { group = "io.fabric8", name = "kubernetes-client", version.ref = "k8s" }
 
+# rest
+javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
+javalin-jwt = { group = "com.github.kmehrunes", name = "javalin-jwt", version.ref = "javalin-jwt" }
+argon2 = { group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2" }
+
 # platforms
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+waterdog = { group = "dev.waterdog.waterdogpe", name = "waterdog", version.ref = "waterdog"}
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
+
+fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
+fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
 
 npc-bukkit = { group = "io.github.juliarn", name = "npc-lib-bukkit", version.ref = "npc-bukkit" }
 
@@ -96,3 +117,5 @@ proto = ["grpc-protobuf", "grpc-stub", "grpc-services"]
 terminal = ["slf4j", "log4j-api", "log4j-core", "log4j-slf4j2-impl"]
 runtime = ["docker", "docker-http", "k8s"]
 jline = ["jline", "jline-console-ui"]
+fabric = ["fabric", "fabric-language-kotlin"]
+jwt = [ "java-jwt", "javalin-jwt" ]

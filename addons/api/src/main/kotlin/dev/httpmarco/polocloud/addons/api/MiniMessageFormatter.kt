@@ -37,4 +37,19 @@ object MiniMessageFormatter : MessageFormatter {
     override fun formatTablistFooter(): String
         =   "\n<gray>Version: <aqua>%polocloud_version%</aqua>\n" +
             "<dark_gray>» <gray>Powered by <gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>«\n"
+
+    override fun formatMotdLineOne(): String =
+        "<gradient:#00fdee:#118bd1><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>github.polocloud.de</gray>"
+
+    override fun formatMotdLineTwo(): String =
+        "<bold><gray>Version</gray> <dark_gray>»</dark_gray> <white>%version%</bold>"
+
+    override fun formatMaintenanceMotdLineOne(): String =
+        "<gradient:#b30000:#ff4d4d><bold>PoloCloud</bold></gradient> <dark_gray>» <gray>github.polocloud.de</gray>"
+
+    override fun formatMaintenanceMotdLineTwo(): String =
+        "<bold><gray>Maintenance - Please try again later</bold>"
+
+    override fun formatMaintenancePingMessage(): String =
+        "§c§lMaintenance"
 }

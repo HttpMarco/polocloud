@@ -20,10 +20,12 @@ class LocalRuntime : Runtime {
     private val runtimeExpender = LocalRuntimeExpender()
     private val templates = LocalRuntimeTemplates()
     private val configHolder = LocalRuntimeConfigHolder()
+    private val started = System.currentTimeMillis()
 
     lateinit var terminal: JLine3Terminal
 
     private val runtimeCpuDetectionThread = LocalCpuDetectionThread()
+    private val runtimeCloudInformationThread = LocalCloudInformationThread()
 
     override fun boot() {
         terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage, terminal))
@@ -32,6 +34,7 @@ class LocalRuntime : Runtime {
 
         this.runtimeQueue.start()
         this.runtimeCpuDetectionThread.start()
+        this.runtimeCloudInformationThread.start()
     }
 
     override fun initialize() {
@@ -62,10 +65,14 @@ class LocalRuntime : Runtime {
 
     override fun configHolder() = configHolder
 
+    override fun started() = started
+
     override fun shutdown() {
         this.terminal.shutdown()
         this.runtimeCpuDetectionThread.interrupt()
+        this.runtimeCloudInformationThread.interrupt()
         this.runtimeQueue.interrupt()
+        this.runtimeFactory.shutdown()
 
         i18n.info("agent.shutdown.temp-files.cleanup")
         LOCAL_FACTORY_PATH.toFile().deleteRecursively()

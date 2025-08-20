@@ -4,6 +4,7 @@
   "language": "GO",
   "url": "https://github.com/minekube/gate/releases/download/v%version%/gate_%version%_%os%_%arch%%suffix%",
   "copyServerIcon": false,
+  "shutdownCommand": "",
   "tasks": [
     "GATE_SETUP"
   ],
@@ -11,5 +12,11 @@
     {
       "version": "0.51.0"
     }
-  ]
+  ],
+  "bridge": "gate-bridge",
+  "osNameMapping": {
+    "WIN": "windows",
+    "LINUX": "linux",
+    "MACOS": "darwin"
+  }
 }

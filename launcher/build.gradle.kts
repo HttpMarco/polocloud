@@ -1,5 +1,3 @@
-import groovy.json.JsonOutput
-import java.io.File
 import java.security.MessageDigest
 
 plugins {
@@ -29,7 +27,10 @@ tasks.jar {
         includeLibs("updater"),
 
         includeLibs(":bridges:bridge-velocity", "shadowJar"),
-        includeLibs(":bridges:bridge-bungeecord", "shadowJar")
+        includeLibs(":bridges:bridge-bungeecord", "shadowJar"),
+        includeLibs(":bridges:bridge-gate", "shadowJar"),
+        includeLibs(":bridges:bridge-waterdog", "shadowJar"),
+        includeLibs(":bridges:bridge-fabric", "mergeFabricVersions")
     )
 
     manifest {

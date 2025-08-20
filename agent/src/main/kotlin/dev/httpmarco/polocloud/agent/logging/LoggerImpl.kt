@@ -5,47 +5,47 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.shutdownProcess
+import dev.httpmarco.polocloud.shared.logging.Logger
 import java.time.LocalTime
 
-class Logger {
+class LoggerImpl : Logger {
 
     private val logBuffer = mutableListOf<String>()
     private var bufferingLogs = false
     private var debugMode = false
 
-    fun info(message: String) {
+    override fun info(message: String) {
         log("INFO", "&f", message)
     }
 
-    fun warn(message: String) {
+    override fun warn(message: String) {
         log("WARN", "&e", message)
     }
 
-    fun error(message: String) {
+    override fun error(message: String) {
         log("ERROR", "&c", message)
     }
 
     fun throwable(throwable: Throwable) {
         // Handle other exceptions that may occur during reading
         logger.error("An error occurred thread: ${throwable.message}")
-        println(throwable.stackTrace.size)
         // for a better debugging experience, we print the stack trace
         throwable.stackTrace.forEach {
             logger.error("  at ${it.className}.${it.methodName}(${it.fileName}:${it.lineNumber})")
         }
     }
 
-    fun debug(message: String) {
+    override fun debug(message: String) {
         if (!debugMode) return
         log("DEBUG", "&f", message)
     }
 
-    fun enableSetupLogBuffering() {
+    fun enableLogBuffering() {
         this.bufferingLogs = true
         this.logBuffer.clear()
     }
 
-    fun flushSetupLogs() {
+    fun flushLogs() {
         this.bufferingLogs = false
         this.logBuffer.forEach { outputLog(it) }
         this.logBuffer.clear()

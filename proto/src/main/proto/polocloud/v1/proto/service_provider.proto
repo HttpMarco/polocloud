@@ -67,7 +67,13 @@ message ServiceSnapshot {
   double memory_usage = 11;
   double cpu_usage = 12;
   ServiceState state = 13;
-  map<string, string> properties = 14;
+  string motd = 14;
+  ServiceInformationSnapshot information = 15;
+  map<string, string> properties = 16;
+}
+
+message ServiceInformationSnapshot {
+  int64 createdAt = 1;
 }
 
 enum ServiceState {

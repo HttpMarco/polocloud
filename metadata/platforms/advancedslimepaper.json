@@ -1,0 +1,96 @@
+{
+  "name": "AdvancedSlimePaper",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://api.infernalsuite.com/v1/projects/asp/%version_hash%/download/%hash%",
+  "arguments": [
+    "-nogui"
+  ],
+  "flags": [
+    "-XX:+UseG1GC",
+    "-XX:+ParallelRefProcEnabled",
+    "-XX:MaxGCPauseMillis=200",
+    "-XX:+UnlockExperimentalVMOptions",
+    "-XX:+DisableExplicitGC",
+    "-XX:+AlwaysPreTouch",
+    "-XX:G1NewSizePercent=30",
+    "-XX:G1MaxNewSizePercent=40",
+    "-XX:G1HeapRegionSize=8M",
+    "-XX:G1ReservePercent=20",
+    "-XX:G1HeapWastePercent=5",
+    "-XX:G1MixedGCCountTarget=4",
+    "-XX:InitiatingHeapOccupancyPercent=15",
+    "-XX:G1MixedGCLiveThresholdPercent=90",
+    "-XX:G1RSetUpdatingPauseTimePercent=5",
+    "-XX:SurvivorRatio=32",
+    "-XX:MaxTenuringThreshold=1",
+    "-XX:+PerfDisableSharedMem",
+    "-Dusing.aikars.flags=https://mcflags.emc.gs",
+    "-Daikars.new.flags=true"
+  ],
+  "tasks": [
+    "EULA_TASK",
+    "SPIGOT_SERVER_PROPERTIES",
+    "PAPER_PROXY_SUPPORT_TASK"
+  ],
+  "preTasks": [
+    "LOAD_PAPER_DEPENDENCIES_TASK"
+  ],
+  "versions": [
+    {
+      "version": "1.21.8",
+      "version_hash": "37643eca-3386-480f-8f99-794ddf7cbb5f",
+      "hash": "dc663eba-8f8d-4ff0-87ef-0e760acc9e5e"
+    },
+    {
+      "version": "1.21.7",
+      "version_hash": "f515d5ba-1c09-497d-9425-bab20ef59ced",
+      "hash": "e273f7b7-8389-4c39-af6b-54f8cecb55fc"
+    },
+    {
+      "version": "1.21.6",
+      "version_hash": "a3b03219-ee99-4f12-b639-9ee70d9eb25d",
+      "hash": "957c4226-dfff-412a-8372-2f6a485ffb5f"
+    },
+    {
+      "version": "1.21.5",
+      "version_hash": "abbb2df9-f87c-4902-9130-27deba00b99b",
+      "hash": "b8b4889b-7824-41db-91b8-118b8390daef"
+    },
+    {
+      "version": "1.21.4",
+      "version_hash": "85f6df14-62c4-46e7-8a5d-8786eb67cd18",
+      "hash": "645b79cf-3c4c-4ca8-936e-7c3f6f127164"
+    },
+    {
+      "version": "1.21.3",
+      "version_hash": "aafff323-ac50-4925-8111-249d535ec40f",
+      "hash": "5e67f29a-8351-4c58-b9a1-2e88724ec907"
+    },
+    {
+      "version": "1.21.1",
+      "version_hash": "a59fe211-6853-4bf5-b2ee-9190ebffdf9a",
+      "hash": "cef9fa3e-5780-4ef2-a200-3e68acf8241a"
+    },
+    {
+      "version": "1.21",
+      "version_hash": "cd989537-ab16-49f1-87c7-eeba465bca07",
+      "hash": "2ec59103-123c-476a-b33a-bb0f810860d4"
+    },
+    {
+      "version": "1.20.6",
+      "version_hash": "bb18b20a-72f4-494c-9d00-6bb315451b77",
+      "hash": "6da8fa81-fe75-445a-addc-bf75928c54ce"
+    },
+    {
+      "version": "1.20.4",
+      "version_hash": "23e41d2e-8291-4079-86de-d7660020fd79",
+      "hash": "149ebf17-1578-426a-8bb6-2138111ade91"
+    },
+    {
+      "version": "1.20.2",
+      "version_hash": "2620300b-b923-453f-9bd1-b4fb1f813647",
+      "hash": "9321a146-f0cc-439a-b4b6-bf56e7045a32"
+    }
+  ]
+}

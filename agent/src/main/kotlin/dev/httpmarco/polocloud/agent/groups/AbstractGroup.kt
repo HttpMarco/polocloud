@@ -9,6 +9,10 @@ import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import java.nio.file.Path
 import kotlin.io.path.Path
+import dev.httpmarco.polocloud.agent.utils.IndexDetector
+import dev.httpmarco.polocloud.agent.runtime.local.LocalService
+import dev.httpmarco.polocloud.shared.groups.GroupInformation
+import dev.httpmarco.polocloud.v1.GroupType
 
 open class AbstractGroup(
     name: String,
@@ -18,6 +22,7 @@ open class AbstractGroup(
     maxOnlineServices: Int,
     percentageToStartNewService: Double,
     platform: PlatformIndex,
+    information: GroupInformation,
     templates: List<String>,
     properties: Map<String, JsonPrimitive>
 ) :
@@ -29,13 +34,14 @@ open class AbstractGroup(
         maxOnlineServices,
         platform,
         percentageToStartNewService,
+        information,
         templates,
         properties
     ) {
 
     fun update() {
         // update the group
-        Agent.runtime.groupStorage().update(this)
+        Agent.runtime.groupStorage().updateGroup(this)
     }
 
     fun serviceCount(): Int {
@@ -76,6 +82,30 @@ open class AbstractGroup(
 
     fun updateMaxOnlineServices(maxOnlineServices: Int) {
         this.maxOnlineService = maxOnlineServices
+    }
+
+    fun startServices(amount: Int): List<AbstractService> {
+        val startedServices = mutableListOf<AbstractService>()
+        
+        repeat(amount) {
+            val index = IndexDetector.findIndex(this)
+            val service = when (this.platform().type) {
+                GroupType.PROXY -> LocalService(this, index, "0.0.0.0")
+                else -> LocalService(this, index)
+            }
+
+            Agent.runtime.serviceStorage().deployAbstractService(service)
+            Agent.runtime.factory().bootApplication(service)
+            startedServices.add(service)
+        }
+        
+        return startedServices
+    }
+
+    fun canStartServices(amount: Int): Boolean {
+        val currentServices = this.serviceCount()
+        val maxServices = this.maxOnlineService
+        return maxServices == -1 || currentServices + amount <= maxServices
     }
 
     override fun equals(other: Any?): Boolean {

@@ -1,0 +1,4 @@
+name: Pololcoud-Waterdog-Bridge
+main:  dev.httpmarco.polocloud.bridges.waterdog.WaterdogBridge
+version: ${version}
+author: Polocloud

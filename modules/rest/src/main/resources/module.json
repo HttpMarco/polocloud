@@ -1,0 +1,7 @@
+{
+  "id":  "rest-module",
+  "name": "Rest Module",
+  "description": "This module provides a REST API.",
+  "author": "RECHERGG",
+  "main": "dev.httpmarco.polocloud.modules.rest.RestModule"
+}

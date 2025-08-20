@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.bridge.api.BridgeInstance
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerJoinEvent
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
+import dev.httpmarco.polocloud.shared.service.Service
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.config.ServerInfo
@@ -26,14 +27,16 @@ class BungeecordBridgeInstance : BridgeInstance<ServerInfo>(), Listener {
 
     override fun unregisterService(identifier: ServerInfo) {
         ProxyServer.getInstance().servers.remove(identifier.name)
+        registeredFallbacks.remove(identifier)
     }
 
     override fun findInfo(name: String): ServerInfo? {
         return ProxyServer.getInstance().getServerInfo(name)
     }
 
-    override fun generateInfo(name: String, hostname: String, port: Int): ServerInfo {
-        return ProxyServer.getInstance().constructServerInfo(name, InetSocketAddress(hostname, port), null, false)
+    override fun generateInfo(service: Service): ServerInfo {
+        return ProxyServer.getInstance()
+            .constructServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null, false)
     }
 
     override fun registerService(identifier: ServerInfo, fallback: Boolean) {

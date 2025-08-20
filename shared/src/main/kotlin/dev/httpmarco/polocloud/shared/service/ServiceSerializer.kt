@@ -27,12 +27,14 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         data.addProperty("state", src.state.name)
         data.addProperty("type", src.type.name)
         data.addProperty("templates", src.templates.joinToString(","))
+        data.addProperty("information", src.information.toString())
         data.addProperty("minMemory", src.minMemory)
         data.addProperty("maxMemory", src.maxMemory)
         data.addProperty("maxPlayerCount", src.maxPlayerCount)
         data.addProperty("playerCount", src.playerCount)
         data.addProperty("memoryUsage", src.memoryUsage)
         data.addProperty("cpuUsage", src.cpuUsage)
+        data.addProperty("motd", src.motd)
 
         data.add("properties", context.serialize(src.properties.map { it.key to it.value }.toMap()))
 
@@ -53,12 +55,14 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         val type = GroupType.valueOf(data.get("type").asString)
         val state = ServiceState.valueOf(data.get("state").asString)
         val templates = data.get("templates").asString.split(",").filter { it.isNotEmpty() }
+        val information = ServiceInformation.bindString(data.get("information").asString)
         val minMemory = data.get("minMemory").asInt
         val maxMemory = data.get("maxMemory").asInt
         val maxPlayerCount = data.get("maxPlayerCount").asInt
         val playerCount = data.get("playerCount").asInt
         val memoryUsage = data.get("memoryUsage").asDouble
         val cpuUsage = data.get("cpuUsage").asDouble
+        val motd = data.get("motd").asString
 
         val propertiesType = object : TypeToken<Map<String, String>>() {}.type
         val properties = context.deserialize<Map<String, String>>(data.get("properties"), propertiesType)
@@ -72,12 +76,14 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
             hostname,
             port,
             templates,
+            information,
             minMemory,
             maxMemory,
             playerCount,
             maxPlayerCount,
             memoryUsage,
-            cpuUsage
+            cpuUsage,
+            motd
         )
     }
 }

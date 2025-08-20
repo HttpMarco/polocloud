@@ -20,11 +20,14 @@ import io.grpc.stub.StreamObserver
 class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
 
     override fun find(request: ServiceFindRequest, responseObserver: StreamObserver<ServiceFindResponse>) {
-        val serviceStorage = Agent.runtime.serviceStorage();
+        val serviceStorage = Agent.runtime.serviceStorage()
         val builder = ServiceFindResponse.newBuilder()
 
         if (request.hasName()) {
-            builder.addServices(serviceStorage.find(request.name)?.toSnapshot())
+            val service = serviceStorage.find(request.name)
+            if(service != null) {
+                builder.addServices(service.toSnapshot())
+            }
         } else if(request.hasGroupName()) {
             serviceStorage.findByGroup(request.groupName).forEach {
                 builder.addServices(it.toSnapshot())
@@ -82,10 +85,10 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
         }
 
         if(request.hasMinimumMemory()) {
-            service.minMemory = request.minimumMemory
+            service.updateMinMemory(request.minimumMemory)
         }
         if(request.hasMaximumMemory()) {
-            service.maxMemory = request.maximumMemory
+            service.updateMaxMemory(request.maximumMemory)
         }
 
         service.templates += request.templatesList

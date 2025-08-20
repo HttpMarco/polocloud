@@ -14,17 +14,22 @@ open class Service(
     val hostname: String,
     val port: Int,
     var templates: List<String>,
+    val information: ServiceInformation,
     minMemory: Int,
     maxMemory: Int,
     playerCount: Int,
     maxPlayerCount: Int,
     memoryUsage: Double,
-    cpuUsage: Double
+    cpuUsage: Double,
+    motd: String
 ) {
 
+
     var minMemory: Int = minMemory
+        protected set
 
     var maxMemory: Int = maxMemory
+        protected set
 
     var maxPlayerCount: Int = maxPlayerCount
         protected set
@@ -36,6 +41,9 @@ open class Service(
         protected set
 
     var cpuUsage: Double = cpuUsage
+        protected set
+
+    var motd: String = motd
         protected set
 
     fun name(): String {
@@ -53,12 +61,14 @@ open class Service(
                 hostname = snapshot.hostname,
                 port = snapshot.port,
                 templates = snapshot.templatesList,
+                information = ServiceInformation.bindSnapshot(snapshot.information),
                 minMemory = snapshot.minimumMemory,
                 maxMemory = snapshot.maximumMemory,
                 maxPlayerCount = snapshot.maxPlayerCount,
                 playerCount = snapshot.playerCount,
                 memoryUsage = snapshot.memoryUsage,
-                cpuUsage = snapshot.cpuUsage
+                cpuUsage = snapshot.cpuUsage,
+                motd = snapshot.motd
             )
         }
     }
@@ -72,11 +82,13 @@ open class Service(
             .putAllProperties(properties)
             .setHostname(hostname)
             .addAllTemplates(templates)
+            .setInformation(information.toSnapshot())
             .setMinimumMemory(minMemory)
             .setMaximumMemory(maxMemory)
             .setMaxPlayerCount(maxPlayerCount)
             .setPlayerCount(playerCount)
             .setPort(port)
+            .setMotd(motd)
             .build()
     }
 

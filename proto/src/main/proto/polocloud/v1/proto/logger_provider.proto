@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.v1.proto;
+
+option java_package = "dev.httpmarco.polocloud.v1.logger";
+option java_multiple_files = true;
+
+service LoggerController {
+  rpc info(LoggerRequest) returns (LoggerResponse);
+  rpc warn(LoggerRequest) returns (LoggerResponse);
+  rpc error(LoggerRequest) returns (LoggerResponse);
+  rpc debug(LoggerRequest) returns (LoggerResponse);
+}
+
+message LoggerRequest {
+  string message = 1;
+}
+
+message LoggerResponse {
+  bool success = 1;
+}

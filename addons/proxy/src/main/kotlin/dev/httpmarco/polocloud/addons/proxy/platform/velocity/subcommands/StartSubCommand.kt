@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands
 
 import com.velocitypowered.api.command.CommandSource
-import dev.httpmarco.polocloud.addons.proxy.CloudSubCommand
+import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfig
 import dev.httpmarco.polocloud.sdk.java.Polocloud
@@ -9,7 +9,7 @@ import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
+class StartSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
 
@@ -44,7 +44,8 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
             if(e.status.code == Status.NOT_FOUND.code) {
                 source.sendMessage(
                     miniMessage.deserialize(
-                        config.prefix() + "<red>Group <aqua>$groupName</aqua> does not exist!</red>"
+                        config.prefix() + config.messages("group_not_found")
+                            .replace("%group%", groupName)
                     )
                 )
             }
@@ -52,10 +53,6 @@ class StartSubCommand(val proxyAddon: ProxyAddon): CloudSubCommand {
     }
 
     private fun usage(config: ProxyConfig): String {
-        return buildString {
-            appendLine("")
-            appendLine(config.prefix() + "<gray>Usage: <aqua>/polocloud start <groupName></aqua>")
-            appendLine(config.prefix() + "<gray>Example: <aqua>/polocloud start lobby</aqua>")
-        }
+        return config.prefix() + config.messages("usage_start")
     }
 }

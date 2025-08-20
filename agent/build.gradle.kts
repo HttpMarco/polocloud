@@ -1,6 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.2.0"
-    kotlin("plugin.serialization") version "2.2.0"
+    kotlin("jvm") version "2.2.10"
 }
 
 dependencies {
@@ -28,7 +27,7 @@ dependencies {
 tasks.jar {
     archiveFileName.set("polocloud-agent-$version.jar")
     manifest {
-        attributes("Main-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt");
+        attributes("Main-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt")
         attributes("Premain-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt")
     }
 }

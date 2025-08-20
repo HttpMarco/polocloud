@@ -42,9 +42,16 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
         this.groupPath(abstractGroup).deleteIfExists()
     }
 
-    override fun update(group: AbstractGroup) {
+    override fun updateGroup(group: AbstractGroup) {
         // overwrite the existing group file with the new data
         Files.writeString(groupPath(group), PRETTY_GSON.toJson(group))
+        // update the cached group
+        val index = this.cachedAbstractGroups.indexOfFirst { it.name == group.name }
+        if (index != -1) {
+            this.cachedAbstractGroups[index] = group
+            return
+        }
+        i18n.warn("agent.local-runtime.group-storage.update-group.not-found", group.name)
     }
 
     override fun reload() {
@@ -68,4 +75,32 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
     }
 
     override fun findAsync(name: String) = CompletableFuture.completedFuture<AbstractGroup?>(find(name))
+
+    override fun create(group: AbstractGroup): AbstractGroup? {
+        if (this.find(group.name) != null) {
+            return null // group already exists
+        }
+        this.publish(group)
+        return group
+    }
+
+    override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        return CompletableFuture.completedFuture(create(group))
+    }
+
+    override fun update(group: AbstractGroup): AbstractGroup? {
+        val existingGroup = this.find(group.name) ?: return null
+        this.updateGroup(group)
+        return group
+    }
+
+    override fun updateAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        return CompletableFuture.completedFuture(update(group))
+    }
+
+    override fun delete(name: String): AbstractGroup? {
+        val group = this.find(name) ?: return null
+        this.destroy(group)
+        return group
+    }
 }

@@ -15,9 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public final class EventProvider extends SharedEventProvider {
 
     private final EventProviderGrpc.EventProviderStub eventStub;
+    private final Polocloud polocloud;
 
-    public EventProvider(ManagedChannel channel) {
+    public EventProvider(ManagedChannel channel, Polocloud polocloud) {
         this.eventStub = EventProviderGrpc.newStub(channel);
+        this.polocloud = polocloud;
     }
 
     @Override
@@ -54,7 +56,7 @@ public final class EventProvider extends SharedEventProvider {
     public <T extends Event> void subscribe(@NotNull Class<T> eventType, @NotNull Function1<? super T, ?> result) {
         EventProviderOuterClass.EventSubscribeRequest request =
                 EventProviderOuterClass.EventSubscribeRequest.newBuilder()
-                        .setServiceName(Polocloud.instance().selfServiceName())
+                        .setServiceName(polocloud.selfServiceName())
                         .setEventName(eventType.getSimpleName())
                         .build();
 

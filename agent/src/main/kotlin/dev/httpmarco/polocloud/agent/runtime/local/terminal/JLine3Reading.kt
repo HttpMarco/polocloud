@@ -34,7 +34,7 @@ class JLine3Reading(
                     continue
                 }
 
-                if (screenService.isRecoding()) {
+                if (screenService.isRecording()) {
                     if (line == "exit") {
                         screenService.stopCurrentRecording()
                         continue

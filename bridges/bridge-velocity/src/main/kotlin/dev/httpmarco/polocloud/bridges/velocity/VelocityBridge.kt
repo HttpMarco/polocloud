@@ -14,6 +14,7 @@ import dev.httpmarco.polocloud.bridge.api.BridgeInstance
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerJoinEvent
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
+import dev.httpmarco.polocloud.shared.service.Service
 import org.bstats.velocity.Metrics
 import org.slf4j.Logger
 import java.net.InetSocketAddress
@@ -62,6 +63,10 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
         val serviceName = player.currentServer
             .flatMap { Optional.ofNullable(it.serverInfo.name) }
             .orElse(null)
+        if(serviceName == null) {
+            // Player was not connected to any service
+            return
+        }
 
         updatePolocloudPlayer(PlayerLeaveEvent(PolocloudPlayer(player.username, player.uniqueId, serviceName)))
     }
@@ -69,14 +74,18 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
     @Subscribe
     fun onKick(event: KickedFromServerEvent) {
         if (event.player.isActive) {
+            if(event.server.serverInfo == null) {
+                // Player was not connected to any service
+                return
+            }
             event.result =
                 KickedFromServerEvent.RedirectPlayer.create(registeredFallbacks.filter { it.serverInfo.name != event.server.serverInfo.name }
                     .minByOrNull { it.playersConnected.size })
         }
     }
 
-    override fun generateInfo(name: String, hostname: String, port: Int): ServerInfo {
-        return ServerInfo(name, InetSocketAddress(hostname, port))
+    override fun generateInfo(service: Service): ServerInfo {
+        return ServerInfo(service.name(), InetSocketAddress(service.hostname, service.port))
     }
 
     override fun registerService(identifier: ServerInfo, fallback: Boolean) {
