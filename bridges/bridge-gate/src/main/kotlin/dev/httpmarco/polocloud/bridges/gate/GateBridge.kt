@@ -4,15 +4,24 @@ import dev.httpmarco.polocloud.bridge.api.BridgeInstance
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.events.definitions.ServiceChangePlayerCountEvent
 import dev.httpmarco.polocloud.shared.service.Service
-import org.spongepowered.configurate.CommentedConfigurationNode
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader
+import org.yaml.snakeyaml.DumperOptions
+import org.yaml.snakeyaml.Yaml
+import java.io.FileReader
+import java.io.FileWriter
 import java.nio.file.Path
 
 class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : BridgeInstance<Server>() {
     private val polocloud: Polocloud = Polocloud(serviceName, agentPort, false)
     private val fallbackServices = ArrayList<Service>()
+    private val yaml: Yaml
 
     init {
+        // SnakeYAML konfigurieren
+        val options = DumperOptions()
+        options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+        options.isPrettyFlow = true
+        yaml = Yaml(options)
+
         initialize(polocloud)
         subscribePlayerCount()
     }
@@ -24,13 +33,28 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
                 fallbackServices.remove(oldService)
                 fallbackServices.add(event.service)
 
-
-                val loader = YamlConfigurationLoader.builder().path(servicePath.resolve("config.yml")).build()
-                val config = loader.load()
+                val configFile = servicePath.resolve("config.yml").toFile()
+                val config = loadYamlConfig(configFile)
                 updateFallback(config)
-                loader.save(config)
+                saveYamlConfig(configFile, config)
             }
         })
+    }
+
+    private fun loadYamlConfig(configFile: java.io.File): MutableMap<String, Any> {
+        return if (configFile.exists()) {
+            FileReader(configFile).use { reader ->
+                yaml.load(reader) as? MutableMap<String, Any> ?: mutableMapOf()
+            }
+        } else {
+            mutableMapOf()
+        }
+    }
+
+    private fun saveYamlConfig(configFile: java.io.File, config: MutableMap<String, Any>) {
+        FileWriter(configFile).use { writer ->
+            yaml.dump(config, writer)
+        }
     }
 
     private fun sortServices() {
@@ -46,51 +70,55 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
             fallbackServices.add(identifier.service)
         }
 
-        val loader = YamlConfigurationLoader.builder().path(servicePath.resolve("config.yml")).build()
-        val config = loader.load()
+        val configFile = servicePath.resolve("config.yml").toFile()
+        val config = loadYamlConfig(configFile)
 
-        val serversNode = config.node("config", "servers")
+        // Sicherstellen, dass die config-Struktur existiert
+        val configSection = config.getOrPut("config") { mutableMapOf<String, Any>() } as MutableMap<String, Any>
+        val serversSection =
+            configSection.getOrPut<String, Any>("servers") { mutableMapOf<String, Any>() } as MutableMap<String, Any>
 
         val serverAddress = "${identifier.hostname}:${identifier.port}"
-        serversNode.node(identifier.name).set(serverAddress)
+        serversSection[identifier.name] = serverAddress
 
         if (fallback) {
             updateFallback(config)
         }
 
-        loader.save(config)
+        saveYamlConfig(configFile, config)
     }
 
     override fun unregisterService(identifier: Server) {
         val service = fallbackServices.first { it.name() == identifier.name }
         fallbackServices.remove(service)
 
-        val loader = YamlConfigurationLoader.builder().path(servicePath.resolve("config.yml")).build()
-        val config = loader.load()
+        val configFile = servicePath.resolve("config.yml").toFile()
+        val config = loadYamlConfig(configFile)
 
-        val serversNode = config.node("config", "servers")
-        serversNode.removeChild(identifier.name)
+        val configSection = config["config"] as? MutableMap<String, Any>
+        val serversSection = configSection?.get("servers") as? MutableMap<String, Any>
+        serversSection?.remove(identifier.name)
 
         updateFallback(config)
-
-        loader.save(config)
+        saveYamlConfig(configFile, config)
     }
 
-    private fun updateFallback(config: CommentedConfigurationNode) {
+    private fun updateFallback(config: MutableMap<String, Any>) {
         sortServices()
 
-        val tryNode = config.node("config", "try")
+        val configSection = config.getOrPut("config") { mutableMapOf<String, Any>() } as MutableMap<String, Any>
         val orderedList = fallbackServices.map { it.name() }
-
-        tryNode.setList(String::class.java, orderedList)
+        configSection["try"] = orderedList
     }
 
     override fun findInfo(name: String): Server? {
         return try {
-            val loader = YamlConfigurationLoader.builder().path(servicePath.resolve("config.yml")).build()
-            val config = loader.load()
+            val configFile = servicePath.resolve("config.yml").toFile()
+            val config = loadYamlConfig(configFile)
 
-            val serverAddress = config.node("config", "servers", name).string
+            val configSection = config["config"] as? Map<String, Any>
+            val serversSection = configSection?.get("servers") as? Map<String, Any>
+            val serverAddress = serversSection?.get(name) as? String
 
             if (serverAddress != null) {
                 val parts = serverAddress.split(":")
