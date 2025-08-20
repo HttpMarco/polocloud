@@ -36,10 +36,8 @@ export async function POST(req: NextRequest) {
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
       userLogin = adminAuthData.username;
-      // All GitHub admin users can manage platforms
     } else if (adminAuth) {
       adminData = JSON.parse(adminAuth);
-      // All admin users can manage platforms
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
@@ -105,10 +103,8 @@ export async function DELETE(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      // All GitHub admin users can manage platforms
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      // All admin users can manage platforms
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
@@ -174,10 +170,8 @@ export async function PUT(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      // All GitHub admin users can manage platforms
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      // All admin users can manage platforms
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }

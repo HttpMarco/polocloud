@@ -257,16 +257,45 @@ function getStatusFromFieldValues(fieldValues: GitHubFieldValue[]): string {
 function extractTags(labels: GitHubLabel[]): string[] {
     const tags: string[] = [];
 
+    console.log('GitHub Labels received:', labels);
+
     labels.forEach(label => {
         const labelName = label.name.toLowerCase();
+        const originalLabelName = label.name;
 
-        if (labelName.includes('improvement')) tags.push('improvement');
-        if (labelName.includes('bug')) tags.push('bug');
-        if (labelName.includes('new') || labelName.includes('requirement')) tags.push('new requirement');
-        if (labelName.includes('prototype-5')) tags.push('prototype-5');
+        console.log(`Processing label: "${originalLabelName}" (lowercase: "${labelName}")`);
+
+        tags.push(originalLabelName);
+        
+        if (labelName.includes('improvement') && !tags.includes('improvement')) {
+            console.log(`Adding normalized tag: "improvement" for label "${originalLabelName}"`);
+            tags.push('improvement');
+        }
+        if (labelName.includes('bug') && !tags.includes('bug')) {
+            console.log(`Adding normalized tag: "bug" for label "${originalLabelName}"`);
+            tags.push('bug');
+        }
+        if (labelName.includes('feature') && !tags.includes('feature')) {
+            console.log(`Adding normalized tag: "feature" for label "${originalLabelName}"`);
+            tags.push('feature');
+        }
+        if (labelName.includes('prototype-6') && !tags.includes('prototype-6')) {
+            console.log(`Adding normalized tag: "prototype-6" for label "${originalLabelName}"`);
+            tags.push('prototype-6');
+        }
+        if (labelName.includes('prototype-5') && !tags.includes('prototype-5')) {
+            console.log(`Adding normalized tag: "prototype-5" for label "${originalLabelName}"`);
+            tags.push('prototype-5');
+        }
+        if ((labelName.includes('new') || labelName.includes('requirement')) && !tags.includes('new requirement')) {
+            console.log(`Adding normalized tag: "new requirement" for label "${originalLabelName}"`);
+            tags.push('new requirement');
+        }
     });
 
-    return tags;
+    console.log('Final tags extracted:', tags);
+
+    return Array.from(new Set(tags));
 }
 
 function extractAssignees(assignees: Array<{ login: string; avatarUrl?: string }> | undefined): Array<{ login: string; avatarUrl?: string }> | undefined {

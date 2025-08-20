@@ -14,10 +14,8 @@ export async function POST(req: NextRequest) {
 
     if (githubAdminAuth) {
       const adminAuthData = JSON.parse(githubAdminAuth);
-      // All GitHub admin users can upload images
     } else if (adminAuth) {
       const adminData = JSON.parse(adminAuth);
-      // All admin users can upload images
     } else {
       return NextResponse.json({ error: 'Admin authentication required' }, { status: 401 });
     }
