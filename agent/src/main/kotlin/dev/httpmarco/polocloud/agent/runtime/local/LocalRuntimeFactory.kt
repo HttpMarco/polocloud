@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.agent.utils.JavaUtils
@@ -150,10 +151,11 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         if (service.process != null) {
             try {
-                if (shutdownCleanUp && service.executeCommand(service.group.platform().shutdownCommand)) {
+                val shutdownCommand = service.group.platform().shutdownCommand
+                if (shutdownCommand.isNotEmpty() && shutdownCleanUp && service.executeCommand(shutdownCommand)) {
                     if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
                         service.process!!.exitValue()
-                        service.state == ServiceState.STOPPED
+                        service.state = ServiceState.STOPPED
                     }
                 }
             } catch (_: Exception) {
@@ -161,9 +163,19 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
             }
 
             if (service.state != ServiceState.STOPPED) {
+
+                service.process!!.toHandle().children().forEach { child ->
+                    try {
+                        child.destroy()
+                    } catch (_: Exception) {
+                        // ignore exceptions, we just want to stop the process}
+                    }
+                }
+
                 service.process!!.toHandle().destroyForcibly()
+                service.process!!.waitFor()
                 service.process = null
-                service.state == ServiceState.STOPPED
+                service.state = ServiceState.STOPPED
             }
         }
 

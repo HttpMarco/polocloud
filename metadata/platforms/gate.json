@@ -4,6 +4,7 @@
   "language": "GO",
   "url": "https://github.com/minekube/gate/releases/download/v%version%/gate_%version%_%os%_%arch%%suffix%",
   "copyServerIcon": false,
+  "shutdownCommand": "",
   "tasks": [
     "GATE_SETUP"
   ],
