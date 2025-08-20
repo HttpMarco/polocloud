@@ -121,7 +121,7 @@ class Platform(
 
         preTasks().forEach { it.runTask(cachePath.parent, environment) }
 
-        if (language.nativeExecutable && listOf(OS.LINUX, OS.MACOS).contains(currentOS)) {
+        if (language.nativeExecutable && downloadFile.exists() && listOf(OS.LINUX, OS.MACOS).contains(currentOS)) {
             val perms = downloadFile.toPath().getPosixFilePermissions().toMutableSet()
             if (!perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
                 perms.add(PosixFilePermission.OWNER_EXECUTE)
