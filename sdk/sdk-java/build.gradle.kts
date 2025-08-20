@@ -19,8 +19,15 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 
+tasks.shadowJar {
+    archiveFileName = "sdk-java-3.0.0-pre.6-SNAPSHOT.jar"
+}
+
 tasks.jar {
     dependsOn(tasks.shadowJar)
+
+    // Jar selbst soll nichts erzeugen
+    enabled = false
 }
 
 extensions.configure<PublishingExtension> {
