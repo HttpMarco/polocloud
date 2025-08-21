@@ -637,10 +637,17 @@ export default function AdminPage() {
   const fetchChangelog = async () => {
     setLoadingChangelog(true);
     try {
-      const res = await fetch('/api/admin/changelog/list', { credentials: 'include' });
+      console.log('🔄 Fetching changelog from /api/public/changelog...');
+      const res = await fetch('/api/public/changelog', { credentials: 'include' });
+      console.log('Changelog API response status:', res.status);
+      
       if (res.ok) {
         const data = await res.json();
+        console.log('Changelog API response data:', data);
+        console.log('Changelog count:', data.changelog?.length || 0);
         setChangelog(data.changelog || []);
+      } else {
+        console.error('Changelog API error:', res.status, res.statusText);
       }
     } catch (error) {
       console.error('Error fetching changelog:', error);
@@ -653,7 +660,7 @@ export default function AdminPage() {
   const fetchBlogPosts = async () => {
     setLoadingBlog(true);
     try {
-      const res = await fetch('/api/admin/blog/list', { credentials: 'include' });
+      const res = await fetch('/api/public/blog', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setBlogPosts(data.posts || []);
