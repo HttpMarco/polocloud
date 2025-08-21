@@ -46,7 +46,7 @@ public final class Polocloud extends PolocloudShared {
     }
 
     Polocloud() {
-        this(null, Integer.parseInt(System.getenv("agent_port")), true);
+        this(null, System.getenv().containsKey("agent_port") ? Integer.parseInt(System.getenv("agent_port")) : 8932, true); // use default port for standalone
         instance = this;
     }
 
