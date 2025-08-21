@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.waterdog.waterdogpe.ProxyServer
+import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent
 import dev.waterdog.waterdogpe.event.defaults.ServerConnectedEvent
@@ -24,10 +25,7 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
     }
 
     override fun generateInfo(service: Service): BedrockServerInfo {
-        val serverInfo = BedrockServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null)
-        ProxyServer.getInstance().registerServerInfo(serverInfo)
-
-        return serverInfo
+        return BedrockServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null)
     }
 
     override fun registerService(
@@ -54,25 +52,34 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
         val eventManager = ProxyServer.getInstance().eventManager
 
         eventManager.subscribe(PlayerLoginEvent::class.java) { event ->
-            if (registeredFallbacks.isEmpty()) {
+            val player = event.player
+            val fallback = findFallback()
+
+            if (fallback == null) {
                 event.cancelReason = "No fallback servers are registered."
                 event.isCancelled = true
+                ProxyServer.getInstance().logger.warning("[LoginEvent] Kein Fallback verfügbar für ${player.name}")
+            } else {
+                ProxyServer.getInstance().logger.info("[LoginEvent] Spieler darf einloggen, Fallback vorhanden")
+                // NICHT redirectServer hier aufrufen!
             }
         }
 
-        eventManager.subscribe(ServerConnectedEvent::class.java) { event ->
-            val polocloudPlayer = Polocloud.instance().playerProvider().findByName(event.player.name)
-            if (polocloudPlayer == null) {
+        eventManager.subscribe(InitialServerConnectedEvent::class.java) { event ->
+            val player = event.player
+
+            // Spieler hat noch keinen Server? Dann Fallback setzen
+            if (player.connectingServer == null) {
                 val fallback = findFallback()
                 if (fallback != null) {
-                    event.player.connect(fallback)
+                    player.redirectServer(fallback)
+                    ProxyServer.getInstance().logger.info("[InitialServerConnected] Spieler ${player.name} wird zu Fallback geleitet: ${fallback.serverName}")
                 } else {
-                    event.player.disconnect("No fallback servers available.")
+                    player.disconnect("No fallback servers available.")
                 }
             }
 
-            val player = event.player
-            val cloudPlayer = PolocloudPlayer(player.name, player.uniqueId, event.targetServer.serverName)
+            val cloudPlayer = PolocloudPlayer(player.name, player.uniqueId, event.serverInfo.serverName)
             updatePolocloudPlayer(PlayerJoinEvent(cloudPlayer))
         }
 
