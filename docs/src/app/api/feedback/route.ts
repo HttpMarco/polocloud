@@ -4,6 +4,7 @@ import {
   getUserFeedbackFromGitHub,
   type FeedbackData
 } from '@/lib/github';
+import { sendDiscordWebhook, createFeedbackNotificationEmbed } from '@/lib/discord';
 
 export async function POST(request: NextRequest) {
   try {
@@ -65,6 +66,21 @@ export async function POST(request: NextRequest) {
       description: description.trim(),
       avatar: avatarUrl || '',
     });
+
+    const webhookUrl = process.env.DISCORD_FEEDBACK_WEBHOOK;
+    const embed = createFeedbackNotificationEmbed(
+      userData.username,
+      rating,
+      description.trim(),
+      userId,
+      avatarUrl || undefined
+    );
+
+    if (webhookUrl) {
+      sendDiscordWebhook(webhookUrl, { embeds: [embed] }).catch(error => {
+        console.error('Failed to send Discord webhook:', error);
+      });
+    }
 
     return NextResponse.json({
       success: true,

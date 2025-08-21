@@ -41,7 +41,6 @@ export default function CreateChangelogPage() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
-  // Lade gespeicherte Daten beim Start
   const loadSavedData = (): ChangelogFormData => {
     if (typeof window === 'undefined') {
       return {
@@ -58,7 +57,6 @@ export default function CreateChangelogPage() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Stelle sicher, dass alle Felder vorhanden sind
         return {
           version: parsed.version || '',
           title: parsed.title || '',
@@ -84,7 +82,6 @@ export default function CreateChangelogPage() {
 
   const [formData, setFormData] = useState<ChangelogFormData>(loadSavedData);
 
-  // Auto-Save Funktion
   const saveToStorage = (data: ChangelogFormData) => {
     if (typeof window === 'undefined') return;
 
@@ -99,16 +96,14 @@ export default function CreateChangelogPage() {
     }
   };
 
-  // Speichere bei jeder Änderung
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       saveToStorage(formData);
-    }, 1000); // 1 Sekunde Verzögerung
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
   }, [formData]);
 
-  // Lade gespeicherten Schritt
   useEffect(() => {
     const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`);
     if (savedStep) {
@@ -127,7 +122,6 @@ export default function CreateChangelogPage() {
     if (currentStep < steps.length) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
-      // Speichere aktuellen Schritt
       if (typeof window !== 'undefined') {
         localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
       }
@@ -138,14 +132,12 @@ export default function CreateChangelogPage() {
     if (currentStep > 1) {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
-      // Speichere aktuellen Schritt
       if (typeof window !== 'undefined') {
         localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
       }
     }
   };
 
-  // Manueller Save
   const manualSave = () => {
     saveToStorage(formData);
     if (typeof window !== 'undefined') {
@@ -153,7 +145,6 @@ export default function CreateChangelogPage() {
     }
   };
 
-  // Lösche gespeicherte Daten nach erfolgreichem Submit
   const clearSavedData = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEY);
@@ -189,7 +180,7 @@ export default function CreateChangelogPage() {
 
       if (response.ok) {
         const result = await response.json();
-        clearSavedData(); // Lösche gespeicherte Daten nach erfolgreichem Submit
+        clearSavedData();
         router.push('/admin/changelog');
       } else {
         const error = await response.json();

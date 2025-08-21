@@ -41,7 +41,6 @@ export default function CreateBlogPage() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
 
-  // Lade gespeicherte Daten beim Start
   const loadSavedData = (): BlogFormData => {
     if (typeof window === 'undefined') {
       return {
@@ -58,7 +57,6 @@ export default function CreateBlogPage() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Stelle sicher, dass alle Felder vorhanden sind
         return {
           title: parsed.title || '',
           description: parsed.description || '',
@@ -84,7 +82,6 @@ export default function CreateBlogPage() {
 
   const [formData, setFormData] = useState<BlogFormData>(loadSavedData);
 
-  // Auto-Save Funktion
   const saveToStorage = (data: BlogFormData) => {
     if (typeof window === 'undefined') return;
 
@@ -99,16 +96,14 @@ export default function CreateBlogPage() {
     }
   };
 
-  // Speichere bei jeder Änderung
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       saveToStorage(formData);
-    }, 1000); // 1 Sekunde Verzögerung
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
   }, [formData]);
 
-  // Lade gespeicherten Schritt
   useEffect(() => {
     const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`);
     if (savedStep) {
@@ -127,7 +122,6 @@ export default function CreateBlogPage() {
     if (currentStep < steps.length) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
-      // Speichere aktuellen Schritt
       if (typeof window !== 'undefined') {
         localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
       }
@@ -138,14 +132,12 @@ export default function CreateBlogPage() {
     if (currentStep > 1) {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
-      // Speichere aktuellen Schritt
       if (typeof window !== 'undefined') {
         localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
       }
     }
   };
 
-  // Manueller Save
   const manualSave = () => {
     saveToStorage(formData);
     if (typeof window !== 'undefined') {
@@ -153,7 +145,6 @@ export default function CreateBlogPage() {
     }
   };
 
-  // Lösche gespeicherte Daten nach erfolgreichem Submit
   const clearSavedData = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEY);
@@ -199,7 +190,7 @@ export default function CreateBlogPage() {
       });
 
       if (response.ok) {
-        clearSavedData(); // Lösche gespeicherte Daten nach erfolgreichem Submit
+        clearSavedData();
         router.push('/admin');
       } else {
         const errorData = await response.json();
