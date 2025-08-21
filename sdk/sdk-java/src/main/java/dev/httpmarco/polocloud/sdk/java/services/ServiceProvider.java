@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.sdk.java.services;
 
 import dev.httpmarco.polocloud.common.future.FutureConverterKt;
+import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.shared.groups.Group;
 import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration;
@@ -73,8 +74,12 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     @NotNull
     @Override
     public ServiceSnapshot bootInstanceWithConfiguration(@NotNull String name, @NotNull SharedBootConfiguration configuration) {
-        int minMemory = configuration.minMemory() != null ? configuration.minMemory() : 0;
-        int maxMemory = configuration.maxMemory() != null ? configuration.maxMemory() : 0;
+        Group group = Polocloud.instance().groupProvider().find(name);
+        if(group == null) {
+            throw new IllegalStateException("Group not found");
+        }
+        int minMemory = configuration.minMemory() != null ? configuration.minMemory() : group.getMinMemory();
+        int maxMemory = configuration.maxMemory() != null ? configuration.maxMemory() : group.getMaxMemory();
         if (minMemory <= 0 || maxMemory <= 0) {
             throw new IllegalArgumentException("Minimum and maximum memory must be greater than 0.");
         }
