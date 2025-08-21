@@ -52,7 +52,6 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>(), IJoinHandler
         val eventManager = ProxyServer.getInstance().eventManager
 
         eventManager.subscribe(PlayerLoginEvent::class.java) { event ->
-            val player = event.player
             val fallback = findFallback()
 
             if (fallback == null) {
