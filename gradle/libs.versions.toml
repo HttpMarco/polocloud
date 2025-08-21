@@ -15,7 +15,7 @@ yaml = "2.4"
 tomlj = "1.1.1"
 
 # networking
-grpc = "1.74.0"
+grpc = "1.75.0"
 
 # terminal
 jline = "3.30.5"
