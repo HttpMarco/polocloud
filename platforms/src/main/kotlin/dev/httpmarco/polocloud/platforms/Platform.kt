@@ -93,40 +93,48 @@ class Platform(
         }
     }
 
+    @OptIn(ExperimentalPathApi::class)
     fun cachePrepare(version: String, environment: PlatformParameters) {
         // This method should build the cache for a platform version, such as downloading files,
         // loading dependencies or compile the platform
         val cachePath = cachePath(version)
         cachePath.parent.createDirectories()
-        val version = this.version(version) ?: throw PlatformVersionInvalidException()
 
-        var replacedUrl = url.replace("%version%", version.version)
-            .replace("%suffix%", language.suffix())
-            .replace("%arch%", currentCPUArchitecture)
-            .replace("%os%", osDownloadName())
+        try {
 
-        version.additionalProperties.forEach { (key, value) ->
-            replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
-        }
+            val version = this.version(version) ?: throw PlatformVersionInvalidException()
 
-        val downloadFile = if (setFileName) cachePath.toFile() else cachePath.parent.resolve("download").toFile()
+            var replacedUrl = url.replace("%version%", version.version)
+                .replace("%suffix%", language.suffix())
+                .replace("%arch%", currentCPUArchitecture)
+                .replace("%os%", osDownloadName())
 
-        URI(
-            replacedUrl
-        ).toURL().openStream().use { input ->
-            downloadFile.outputStream().use { output ->
-                input.copyTo(output)
+            version.additionalProperties.forEach { (key, value) ->
+                replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
             }
-        }
 
-        preTasks().forEach { it.runTask(cachePath.parent, environment) }
+            val downloadFile = if (setFileName) cachePath.toFile() else cachePath.parent.resolve("download").toFile()
 
-        if (language.nativeExecutable && downloadFile.exists() && listOf(OS.LINUX, OS.MACOS).contains(currentOS)) {
-            val perms = downloadFile.toPath().getPosixFilePermissions().toMutableSet()
-            if (!perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
-                perms.add(PosixFilePermission.OWNER_EXECUTE)
-                downloadFile.toPath().setPosixFilePermissions(perms)
+            URI(
+                replacedUrl
+            ).toURL().openStream().use { input ->
+                downloadFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
             }
+
+            preTasks().forEach { it.runTask(cachePath.parent, environment) }
+
+            if (language.nativeExecutable && downloadFile.exists() && listOf(OS.LINUX, OS.MACOS).contains(currentOS)) {
+                val perms = downloadFile.toPath().getPosixFilePermissions().toMutableSet()
+                if (!perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
+                    perms.add(PosixFilePermission.OWNER_EXECUTE)
+                    downloadFile.toPath().setPosixFilePermissions(perms)
+                }
+            }
+        } catch (e: Exception) {
+            cachePath.parent.deleteRecursively()
+            throw e
         }
     }
 
