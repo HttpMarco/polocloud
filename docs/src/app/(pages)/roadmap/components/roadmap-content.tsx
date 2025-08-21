@@ -56,27 +56,87 @@ const fallbackData: RoadmapColumn[] = [
   }
 ];
 
+const getTagStyle = (tag: string) => {
+  const tagLower = tag.toLowerCase();
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'ui': return <Star className="w-4 h-4" />;
-      case 'platforms': return <Server className="w-4 h-4" />;
-      case 'bot': return <Code className="w-4 h-4" />;
-      case 'addons': return <Package className="w-4 h-4" />;
-      default: return <Code className="w-4 h-4" />;
-    }
+  if (tagLower.includes('improvement') || tagLower.includes('improvment')) {
+    return {
+      backgroundColor: 'rgba(234, 187, 44, 0.15)',
+      color: 'rgb(234, 187, 44)',
+      borderColor: 'rgba(234, 187, 44, 0.3)'
+    };
+  }
+  if (tagLower.includes('bug')) {
+    return {
+      backgroundColor: 'rgba(236, 161, 168, 0.15)',
+      color: 'rgb(236, 161, 168)',
+      borderColor: 'rgba(236, 161, 168, 0.3)'
+    };
+  }
+  if (tagLower.includes('feature')) {
+    return {
+      backgroundColor: 'rgba(40, 217, 43, 0.15)',
+      color: 'rgb(40, 217, 43)',
+      borderColor: 'rgba(40, 217, 43, 0.3)'
+    };
+  }
+  if (tagLower.includes('prototype-6')) {
+    return {
+      backgroundColor: 'rgba(147, 51, 234, 0.15)',
+      color: 'rgb(147, 51, 234)',
+      borderColor: 'rgba(147, 51, 234, 0.3)'
+    };
+  }
+  if (tagLower.includes('prototype-5')) {
+    return {
+      backgroundColor: 'rgba(136, 252, 202, 0.15)',
+      color: 'rgb(136, 252, 202)',
+      borderColor: 'rgba(136, 252, 202, 0.3)'
+    };
+  }
+  if (tagLower.includes('new') || tagLower.includes('requirement')) {
+    return {
+      backgroundColor: 'rgba(130, 247, 29, 0.15)',
+      color: 'rgb(130, 247, 29)',
+      borderColor: 'rgba(130, 247, 29, 0.3)'
+    };
+  }
+
+  const hash = tag.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  const hue = Math.abs(hash) % 360;
+  const saturation = 70;
+  const lightness = 60;
+  
+  return {
+    backgroundColor: `hsla(${hue}, ${saturation}%, ${lightness}%, 0.15)`,
+    color: `hsl(${hue}, ${saturation}%, ${lightness}%)`,
+    borderColor: `hsla(${hue}, ${saturation}%, ${lightness}%, 0.3)`
   };
+};
 
+const getCategoryIcon = (category: string) => {
+  switch (category) {
+    case 'ui': return <Star className="w-4 h-4" />;
+    case 'platforms': return <Server className="w-4 h-4" />;
+    case 'bot': return <Code className="w-4 h-4" />;
+    case 'addons': return <Package className="w-4 h-4" />;
+    default: return <Code className="w-4 h-4" />;
+  }
+};
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'ui': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
-      case 'platforms': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
-      case 'bot': return 'bg-green-500/20 border-green-500/30 text-green-400';
-      case 'addons': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
-      default: return 'bg-gray-500/20 border-gray-500/30 text-gray-400';
-    }
-  };
+const getCategoryColor = (category: string) => {
+  switch (category) {
+    case 'ui': return 'bg-blue-500/20 border-blue-500/30 text-blue-400';
+    case 'platforms': return 'bg-purple-500/20 border-purple-500/30 text-purple-400';
+    case 'bot': return 'bg-green-500/20 border-green-500/30 text-green-400';
+    case 'addons': return 'bg-orange-500/20 border-orange-500/30 text-orange-400';
+    default: return 'bg-gray-500/20 border-gray-500/30 text-gray-400';
+  }
+};
 
 const RoadmapCard = ({ item, index }: { item: RoadmapItem; index: number }) => {
   return (
@@ -88,35 +148,21 @@ const RoadmapCard = ({ item, index }: { item: RoadmapItem; index: number }) => {
     >
       {item.tags && (
         <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
-          {item.tags.map((tag, tagIndex) => (
-            <span 
-              key={tag} 
-              className="px-2 py-0.5 rounded-full text-xs font-medium border transition-all duration-300 hover:scale-110 hover:shadow-md"
-              style={{
-                backgroundColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.15)' :
-                              tag === 'new requirement' ? 'rgba(130, 247, 29, 0.15)' :
-                              tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.15)' :
-                              tag === 'bug' ? 'rgba(236, 161, 168, 0.15)' :
-                              tag === 'feature' ? 'rgba(40, 217, 43, 0.15)' :
-                              'rgba(156, 163, 175, 0.15)',
-                color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                       tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                       tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                       tag === 'bug' ? 'rgb(236, 161, 168)' :
-                       tag === 'feature' ? 'rgb(40, 217, 43)' :
-                       'rgb(156, 163, 175)',
-                borderColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
-                            tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
-                            tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
-                            tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
-                            tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
-                            'rgba(156, 163, 175, 0.3)',
-                animationDelay: `${(index * 100) + (tagIndex * 50)}ms`
-              }}
-            >
-              {tag}
-            </span>
-          ))}
+          {item.tags.map((tag, tagIndex) => {
+            const tagStyle = getTagStyle(tag);
+            return (
+              <span 
+                key={tag} 
+                className="px-2 py-0.5 rounded-full text-xs font-medium border transition-all duration-300 hover:scale-110 hover:shadow-md"
+                style={{
+                  ...tagStyle,
+                  animationDelay: `${(index * 100) + (tagIndex * 50)}ms`
+                }}
+              >
+                {tag}
+              </span>
+            );
+          })}
         </div>
       )}
       <h3 className="font-bold text-foreground dark:text-white mb-2 text-sm leading-tight group-hover:text-primary transition-colors duration-300">
@@ -238,6 +284,7 @@ export function RoadmapContent() {
   const [error, setError] = useState<string | null>(null);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [allTags, setAllTags] = useState<string[]>([]);
   const contentRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -351,7 +398,7 @@ export function RoadmapContent() {
       setIsLoading(true);
       setError(null);
       
-        const response = await fetch('/api/github-projects');
+        const response = await fetch('/api/github-projects?refresh=true');
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -364,6 +411,25 @@ export function RoadmapContent() {
       }
       
       setRoadmapData(data);
+
+      const tags = new Set<string>();
+      data.forEach((column: RoadmapColumn) => {
+        column.items.forEach((item: RoadmapItem) => {
+          if (item.tags) {
+            item.tags.forEach(tag => tags.add(tag));
+          }
+        });
+      });
+      
+      const sortedTags = Array.from(tags).sort();
+      setAllTags(sortedTags);
+
+      console.log('Found tags:', sortedTags);
+      sortedTags.forEach(tag => {
+        const style = getTagStyle(tag);
+        console.log(`Tag: "${tag}" -> Style:`, style);
+      });
+      console.log('Roadmap data:', data);
     } catch (err) {
       console.error('Failed to fetch roadmap data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load roadmap data');
@@ -395,8 +461,6 @@ export function RoadmapContent() {
       return item.tags?.some(tag => activeFilters.includes(tag));
     })
   }));
-
-  const allTags = ['improvement', 'new requirement', 'prototype-5', 'bug', 'feature'];
 
   return (
     <>
@@ -489,50 +553,36 @@ export function RoadmapContent() {
                 </div>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
-                      backgroundColor: 'rgba(234, 187, 44, 0.15)',
-                      color: 'rgb(234, 187, 44)',
-                      borderColor: 'rgba(234, 187, 44, 0.3)'
-                    }}>improvement</span>
-                    <span className="text-xs text-muted-foreground text-center">Enhancements & improvements</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
-                      backgroundColor: 'rgba(130, 247, 29, 0.15)',
-                      color: 'rgb(130, 247, 29)',
-                      borderColor: 'rgba(130, 247, 29, 0.3)'
-                    }}>new requirement</span>
-                    <span className="text-xs text-muted-foreground text-center">New features & requirements</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
-                      backgroundColor: 'rgba(136, 252, 202, 0.15)',
-                      color: 'rgb(136, 252, 202)',
-                      borderColor: 'rgba(136, 252, 202, 0.3)'
-                    }}>prototype-5</span>
-                    <span className="text-xs text-muted-foreground text-center">Prototype & experimental</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
-                      backgroundColor: 'rgba(236, 161, 168, 0.15)',
-                      color: 'rgb(236, 161, 168)',
-                      borderColor: 'rgba(236, 161, 168, 0.3)'
-                    }}>bug</span>
-                    <span className="text-xs text-muted-foreground text-center">Bug fixes & issues</span>
-                  </div>
-                  
-                  <div className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
-                    <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={{ 
-                      backgroundColor: 'rgba(40, 217, 43, 0.15)',
-                      color: 'rgb(40, 217, 43)',
-                      borderColor: 'rgba(40, 217, 43, 0.3)'
-                    }}>feature</span>
-                    <span className="text-xs text-muted-foreground text-center">New features & capabilities</span>
-                  </div>
+                  {allTags.slice(0, 5).map((tag, index) => {
+                    const tagStyle = getTagStyle(tag);
+                    const tagLower = tag.toLowerCase();
+                    let description = 'Custom tag';
+
+                    if (tagLower.includes('improvement') || tagLower.includes('improvment')) {
+                      description = 'Enhancements & improvements';
+                    } else if (tagLower.includes('new') || tagLower.includes('requirement')) {
+                      description = 'New features & requirements';
+                    } else if (tagLower.includes('prototype-6')) {
+                      description = 'Current prototype';
+                    } else if (tagLower.includes('prototype-5')) {
+                      description = 'Previous prototype';
+                    } else if (tagLower.includes('bug')) {
+                      description = 'Bug fixes & issues';
+                    } else if (tagLower.includes('feature')) {
+                      description = 'New features & capabilities';
+                    }
+                    
+                    return (
+                      <div key={tag} className="flex flex-col items-center p-3 sm:p-4 rounded-xl bg-card/40 border border-border/40 hover:border-border/60 transition-all duration-300 hover:scale-105 group">
+                        <span className="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border mb-2" style={tagStyle}>
+                          {tag}
+                        </span>
+                        <span className="text-xs text-muted-foreground text-center">
+                          {description}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -574,30 +624,13 @@ export function RoadmapContent() {
               <div className="mb-6 p-4 bg-muted/30 rounded-lg">
                 <div className="text-sm text-muted-foreground mb-3">Active filters:</div>
                   <div className="flex flex-wrap gap-2">
-                  {activeFilters.map((tag) => (
-                    <span
+                  {activeFilters.map((tag) => {
+                    const tagStyle = getTagStyle(tag);
+                    return (
+                      <span
                         key={tag}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium border"
-                        style={{
-                        backgroundColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
-                                          tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
-                                          tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
-                                          tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
-                                          tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
-                                          'rgba(156, 163, 175, 0.3)',
-                          color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                                 tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                                 tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                                 tag === 'bug' ? 'rgb(236, 161, 168)' :
-                                 tag === 'feature' ? 'rgb(40, 217, 43)' :
-                                 'rgb(156, 163, 175)',
-                        borderColor: tag === 'improvement' ? 'rgba(234, 187, 44, 0.3)' :
-                                    tag === 'new requirement' ? 'rgba(130, 247, 29, 0.3)' :
-                                    tag === 'prototype-5' ? 'rgba(136, 252, 202, 0.3)' :
-                                    tag === 'bug' ? 'rgba(236, 161, 168, 0.3)' :
-                                    tag === 'feature' ? 'rgba(40, 217, 43, 0.3)' :
-                                    'rgba(156, 163, 175, 0.3)'
-                        }}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium border"
+                        style={tagStyle}
                       >
                         {tag}
                         <button
@@ -606,8 +639,9 @@ export function RoadmapContent() {
                         >
                           <X className="w-3 h-3" />
                         </button>
-                    </span>
-                    ))}
+                      </span>
+                    );
+                  })}
                   </div>
                   <button
                     onClick={clearAllFilters}
@@ -620,43 +654,32 @@ export function RoadmapContent() {
             )}
 
             <div className="space-y-3 mb-6">
-              {allTags.map((tag) => (
-                <label
+              {allTags.map((tag) => {
+                const tagStyle = getTagStyle(tag);
+                return (
+                  <label
                     key={tag}
-                  className="flex items-center gap-3 p-4 rounded-lg hover:bg-muted/30 transition-colors duration-200 cursor-pointer"
-                >
-                      <input
-                        type="checkbox"
-                        checked={activeFilters.includes(tag)}
-                        onChange={() => toggleFilter(tag)}
-                    className="w-5 h-5 rounded border-border/50 text-blue-500 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2"
-                  />
+                    className="flex items-center gap-3 p-4 rounded-lg hover:bg-muted/30 transition-colors duration-200 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={activeFilters.includes(tag)}
+                      onChange={() => toggleFilter(tag)}
+                      className="w-5 h-5 rounded border-border/50 text-blue-500 focus:ring-blue-500 focus:ring-2 focus:ring-offset-2"
+                    />
                     <span
-                    className="flex-1 text-sm font-medium"
-                      style={{
-                        color: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                               tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                               tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                               tag === 'bug' ? 'rgb(236, 161, 168)' :
-                               tag === 'feature' ? 'rgb(40, 217, 43)' :
-                               'rgb(156, 163, 175)'
-                      }}
+                      className="flex-1 text-sm font-medium"
+                      style={{ color: tagStyle.color }}
                     >
                       {tag}
                     </span>
-                  <div
-                    className="w-4 h-4 rounded-full"
-                      style={{
-                        backgroundColor: tag === 'improvement' ? 'rgb(234, 187, 44)' :
-                                         tag === 'new requirement' ? 'rgb(130, 247, 29)' :
-                                         tag === 'prototype-5' ? 'rgb(136, 252, 202)' :
-                                         tag === 'bug' ? 'rgb(236, 161, 168)' :
-                                         tag === 'feature' ? 'rgb(40, 217, 43)' :
-                                         'rgb(156, 163, 175)'
-                      }}
+                    <div
+                      className="w-4 h-4 rounded-full"
+                      style={{ backgroundColor: tagStyle.color }}
                     />
-                </label>
-                ))}
+                  </label>
+                );
+              })}
               </div>
 
               <div className="pt-4 border-t border-border/30">

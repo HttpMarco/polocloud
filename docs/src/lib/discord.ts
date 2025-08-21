@@ -95,3 +95,113 @@ export async function revokeToken(token: string): Promise<void> {
     }),
   });
 }
+
+interface DiscordEmbed {
+  title?: string;
+  description?: string;
+  color?: number;
+  fields?: Array<{
+    name: string;
+    value: string;
+    inline?: boolean;
+  }>;
+  timestamp?: string;
+  footer?: {
+    text: string;
+    icon_url?: string;
+  };
+  author?: {
+    name: string;
+    icon_url?: string;
+  };
+}
+
+interface DiscordWebhookPayload {
+  embeds: DiscordEmbed[];
+  username?: string;
+  avatar_url?: string;
+}
+
+export async function sendDiscordWebhook(
+  webhookUrl: string,
+  payload: DiscordWebhookPayload
+): Promise<boolean> {
+  try {
+    console.log('Sending Discord webhook to:', webhookUrl);
+    
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Discord webhook failed:', response.status, response.statusText, errorText);
+      return false;
+    }
+
+    console.log('Discord webhook sent successfully');
+    return true;
+  } catch (error) {
+    console.error('Error sending Discord webhook:', error);
+    return false;
+  }
+}
+
+export function createFeedbackNotificationEmbed(
+  username: string,
+  rating: number,
+  description: string,
+  userId: string,
+  avatarUrl?: string
+): DiscordEmbed {
+  const stars = '⭐'.repeat(rating);
+  const statusEmoji = '⏳';
+  
+  return {
+    title: `${statusEmoji} New Feedback Submitted`,
+    description: `A new feedback has been submitted and is waiting for approval.`,
+    color: 0x0099ff, // Blue color for pending status
+    fields: [
+      {
+        name: '👤 User',
+        value: `\`${username}\``,
+        inline: true,
+      },
+      {
+        name: '⭐ Rating',
+        value: stars,
+        inline: true,
+      },
+      {
+        name: '🆔 User ID',
+        value: `\`${userId}\``,
+        inline: true,
+      },
+      {
+        name: '📄 Description',
+        value: description.length > 1024 
+          ? description.substring(0, 1021) + '...' 
+          : description,
+        inline: false,
+      },
+      {
+        name: '📋 Status',
+        value: '**Pending Approval**',
+        inline: false,
+      },
+    ],
+    timestamp: new Date().toISOString(),
+    footer: {
+      text: 'PoloCloud Feedback System • Click to review',
+      icon_url: 'https://github.com/HttpMarco/polocloud/blob/development/.img/img.png?raw=true',
+    },
+    author: {
+      name: 'PoloCloud Feedback System',
+      icon_url: 'https://github.com/HttpMarco/polocloud/blob/development/.img/img.png?raw=true',
+    },
+  };
+}

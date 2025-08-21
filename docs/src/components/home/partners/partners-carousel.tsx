@@ -92,7 +92,7 @@ export function PartnersCarousel() {
                                     transition={{ delay: 0.1 }}
                                 >
                                     <div
-                                        className="w-32 h-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-3 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                                        className="w-32 h-24 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-3 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
                                         onClick={() => {
                                             if (partners[0].website) {
                                                 window.open(partners[0].website, '_blank', 'noopener,noreferrer');
@@ -112,6 +112,11 @@ export function PartnersCarousel() {
                                     <span className="text-sm font-semibold text-foreground dark:text-white/80 text-center">
                                         {partners[0].name}
                                     </span>
+                                    {partners[0].description && (
+                                        <span className="text-xs text-muted-foreground text-center max-w-32 mt-1 leading-tight">
+                                            {partners[0].description}
+                                        </span>
+                                    )}
                                     {partners[0].website && (
                                         <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
                                     )}
@@ -125,7 +130,7 @@ export function PartnersCarousel() {
                                         className="flex-shrink-0 flex flex-col items-center"
                                     >
                                         <div
-                                            className="w-28 h-18 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-2 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                                            className="w-28 h-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-2 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
                                             onClick={() => {
                                                 if (partner.website) {
                                                     window.open(partner.website, '_blank', 'noopener,noreferrer');
@@ -145,6 +150,11 @@ export function PartnersCarousel() {
                                         <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
                                             {partner.name}
                                         </span>
+                                        {partner.description && (
+                                            <span className="text-xs text-muted-foreground text-center max-w-28 mt-1 leading-tight">
+                                                {partner.description}
+                                            </span>
+                                        )}
                                         {partner.website && (
                                             <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
                                         )}
@@ -176,6 +186,11 @@ export function PartnersCarousel() {
                                         <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
                                             {partner.name}
                                         </span>
+                                        {partner.description && (
+                                            <span className="text-xs text-muted-foreground text-center max-w-28 mt-1 leading-tight">
+                                                {partner.description}
+                                            </span>
+                                        )}
                                         {partner.website && (
                                             <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
                                         )}

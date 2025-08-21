@@ -1,32 +1,62 @@
-import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
-import type { DocsLayoutProps } from 'fumadocs-ui/layouts/notebook';
-import type { ReactNode } from 'react';
-import { source } from '@/lib/source';
+import { ReactNode } from 'react';
 import { Logo } from '@/components/layout/header/logo';
 import { Footer } from '../(home)/components/footer';
 
-const docsOptions: DocsLayoutProps = {
-  tree: source.pageTree,
-  tabMode: 'sidebar',
-  nav: {
-    title: <Logo />,
-    mode: "top",
-    transparentMode: "top",
-  },
-  sidebar: {
-    collapsible: false,
-  },
-  links: [],
-};
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ slug?: string[] }>;
+}) {
+  try {
+    const resolvedParams = await params;
 
-export default function Layout({ children }: { children: ReactNode }) {
-  return (
-    <div className="relative min-h-screen">
-      <div className="absolute left-[280px] right-0 inset-y-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] pointer-events-none" />
-      <div className="relative">
-        <DocsLayout {...docsOptions}>{children}</DocsLayout>
+    if (!resolvedParams.slug || resolvedParams.slug.length === 0) {
+      return <>{children}</>;
+    }
+
+    return (
+      <div className="relative min-h-screen">
+        <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+          <div className="container flex h-16 max-w-screen-2xl items-center px-4">
+            <div className="flex items-center">
+              <Logo />
+              <span className="ml-4 text-lg font-semibold">Documentation</span>
+            </div>
+          </div>
+        </header>
+
+        <div className="flex min-h-[calc(100vh-4rem)]">
+          <div className="w-64 border-r border-border/40 bg-muted/20 p-4">
+            <div className="text-sm text-muted-foreground">
+              Navigation coming soon...
+            </div>
+          </div>
+
+          <div className="flex-1 p-6">
+            {children}
+          </div>
+        </div>
+
         <Footer />
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('Error in docs layout:', error);
+    // Fallback layout if anything fails
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Documentation Error</h1>
+            <p className="text-muted-foreground">
+              There was an error loading the documentation. Please try again later.
+            </p>
+          </div>
+          {children}
+        </div>
+      </div>
+    );
+  }
 }

@@ -19,9 +19,10 @@ import {
   Tag,
   Plus,
   X,
-  Save
+  Save,
+  Loader2
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 interface ChangelogFormData {
   version: string;
@@ -32,14 +33,19 @@ interface ChangelogFormData {
   content: string;
 }
 
-const STORAGE_KEY = 'changelog-draft';
+const STORAGE_KEY = 'changelog-edit-draft';
 
-export default function CreateChangelogPage() {
+export default function EditChangelogPage() {
   const router = useRouter();
-  const [creating, setCreating] = useState(false);
+  const params = useParams();
+  const slug = params.slug as string;
+  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+  const [originalData, setOriginalData] = useState<ChangelogFormData | null>(null);
 
   const loadSavedData = (): ChangelogFormData => {
     if (typeof window === 'undefined') {
@@ -54,7 +60,7 @@ export default function CreateChangelogPage() {
     }
 
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(`${STORAGE_KEY}-${slug}`);
       if (saved) {
         const parsed = JSON.parse(saved);
         return {
@@ -82,12 +88,43 @@ export default function CreateChangelogPage() {
 
   const [formData, setFormData] = useState<ChangelogFormData>(loadSavedData);
 
+  useEffect(() => {
+    const fetchChangelog = async () => {
+      try {
+        const response = await fetch(`/api/admin/changelog/${slug}`);
+        if (response.ok) {
+          const data = await response.json();
+          const formattedData: ChangelogFormData = {
+            version: data.version || '',
+            title: data.title || '',
+            description: data.description || '',
+            type: data.type || 'patch',
+            releaseDate: data.releaseDate || new Date().toISOString().split('T')[0],
+            content: data.content || '',
+          };
+          setFormData(formattedData);
+          setOriginalData(formattedData);
+        } else {
+          console.error('Failed to fetch changelog');
+        }
+      } catch (error) {
+        console.error('Error fetching changelog:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchChangelog();
+    }
+  }, [slug]);
+
   const saveToStorage = (data: ChangelogFormData) => {
     if (typeof window === 'undefined') return;
 
     setAutoSaveStatus('saving');
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(`${STORAGE_KEY}-${slug}`, JSON.stringify(data));
       setLastSaved(new Date());
       setAutoSaveStatus('saved');
     } catch (error) {
@@ -97,25 +134,27 @@ export default function CreateChangelogPage() {
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      saveToStorage(formData);
-    }, 1000);
+    if (!loading && originalData) {
+      const timeoutId = setTimeout(() => {
+        saveToStorage(formData);
+      }, 1000);
 
-    return () => clearTimeout(timeoutId);
-  }, [formData]);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [formData, loading, originalData]);
 
   useEffect(() => {
-    const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`);
+    const savedStep = localStorage.getItem(`${STORAGE_KEY}-${slug}-step`);
     if (savedStep) {
       setCurrentStep(parseInt(savedStep));
     }
-  }, []);
+  }, [slug]);
 
   const steps = [
     { id: 1, title: 'Version Info', icon: GitBranch, description: 'Version number and type' },
     { id: 2, title: 'Details', icon: Settings, description: 'Title and description' },
     { id: 3, title: 'Content', icon: Edit3, description: 'Write detailed changelog content' },
-    { id: 4, title: 'Review', icon: Check, description: 'Review and publish' },
+    { id: 4, title: 'Review', icon: Check, description: 'Review and update' },
   ];
 
   const nextStep = () => {
@@ -123,7 +162,7 @@ export default function CreateChangelogPage() {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
       if (typeof window !== 'undefined') {
-        localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
+        localStorage.setItem(`${STORAGE_KEY}-${slug}-step`, newStep.toString());
       }
     }
   };
@@ -133,7 +172,7 @@ export default function CreateChangelogPage() {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
       if (typeof window !== 'undefined') {
-        localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
+        localStorage.setItem(`${STORAGE_KEY}-${slug}-step`, newStep.toString());
       }
     }
   };
@@ -141,14 +180,14 @@ export default function CreateChangelogPage() {
   const manualSave = () => {
     saveToStorage(formData);
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`${STORAGE_KEY}-step`, currentStep.toString());
+      localStorage.setItem(`${STORAGE_KEY}-${slug}-step`, currentStep.toString());
     }
   };
 
   const clearSavedData = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(`${STORAGE_KEY}-step`);
+      localStorage.removeItem(`${STORAGE_KEY}-${slug}`);
+      localStorage.removeItem(`${STORAGE_KEY}-${slug}-step`);
     }
   };
 
@@ -168,30 +207,45 @@ export default function CreateChangelogPage() {
   };
 
   const handleSubmit = async () => {
-    setCreating(true);
+    setSaving(true);
     try {
-      const response = await fetch('/api/admin/changelog/create', {
-        method: 'POST',
+      const response = await fetch('/api/admin/changelog/update', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          slug,
+          ...formData,
+        }),
       });
 
       if (response.ok) {
-        const result = await response.json();
         clearSavedData();
         router.push('/admin/changelog');
       } else {
         const error = await response.json();
-        console.error('Error creating changelog:', error);
+        console.error('Error updating changelog:', error);
+        alert('Failed to update changelog: ' + error.error);
       }
     } catch (error) {
-      console.error('Error creating changelog:', error);
+      console.error('Error updating changelog:', error);
+      alert('Failed to update changelog');
     } finally {
-      setCreating(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Loading changelog...</p>
+        </div>
+      </div>
+    );
+  }
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -236,7 +290,7 @@ export default function CreateChangelogPage() {
                 <GitBranch className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
               <h3 className="text-3xl font-bold mb-3">Version Information</h3>
-              <p className="text-muted-foreground text-lg">Set the version number and release type</p>
+              <p className="text-muted-foreground text-lg">Update the version number and release type</p>
             </div>
 
             <div className="max-w-2xl mx-auto space-y-6">
@@ -312,7 +366,7 @@ export default function CreateChangelogPage() {
                 <Settings className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
               <h3 className="text-3xl font-bold mb-3">Changelog Details</h3>
-              <p className="text-muted-foreground text-lg">Provide title and description</p>
+              <p className="text-muted-foreground text-lg">Update title and description</p>
             </div>
 
             <div className="max-w-2xl mx-auto space-y-6">
@@ -360,8 +414,8 @@ export default function CreateChangelogPage() {
               >
                 <Edit3 className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Create Content</h3>
-              <p className="text-muted-foreground text-lg">Write the detailed changelog content</p>
+              <h3 className="text-3xl font-bold mb-3">Update Content</h3>
+              <p className="text-muted-foreground text-lg">Edit the detailed changelog content</p>
             </div>
 
             <div className="max-w-5xl mx-auto">
@@ -396,8 +450,8 @@ export default function CreateChangelogPage() {
               >
                 <Check className="w-20 h-20 mx-auto mb-6 text-green-500" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Review & Publish</h3>
-              <p className="text-muted-foreground text-lg">Review your changelog before publishing</p>
+              <h3 className="text-3xl font-bold mb-3">Review & Update</h3>
+              <p className="text-muted-foreground text-lg">Review your changes before updating</p>
             </div>
 
             <div className="max-w-4xl mx-auto">
@@ -442,9 +496,9 @@ export default function CreateChangelogPage() {
               </div>
 
               <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                <h4 className="font-semibold text-primary mb-2">Ready to publish?</h4>
+                <h4 className="font-semibold text-primary mb-2">Ready to update?</h4>
                 <p className="text-sm text-muted-foreground">
-                  This changelog will be published to GitHub and become visible to all users.
+                  This changelog will be updated on GitHub and become visible to all users.
                 </p>
               </div>
             </div>
@@ -573,18 +627,18 @@ export default function CreateChangelogPage() {
             ) : (
               <Button
                 onClick={handleSubmit}
-                disabled={creating}
+                disabled={saving}
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
               >
-                {creating ? (
+                {saving ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Publishing...</span>
+                    <span>Updating...</span>
                   </>
                 ) : (
                   <>
                     <Check className="w-4 h-4" />
-                    <span>Publish Changelog</span>
+                    <span>Update Changelog</span>
                   </>
                 )}
               </Button>

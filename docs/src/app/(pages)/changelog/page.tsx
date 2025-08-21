@@ -146,11 +146,6 @@ export default async function ChangelogsPage() {
                           })}</span>
                         </div>
                       )}
-                      {post.author && (
-                        <div className="flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-full">
-                          <span>{post.author}</span>
-                        </div>
-                      )}
                     </div>
 
                     <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground dark:text-white mb-2 group-hover:text-primary transition-colors">
@@ -187,7 +182,7 @@ export default async function ChangelogsPage() {
             Never miss an update again!
           </p>
           <a
-            href="https://discord.gg/polocloud"
+            href="https://discord.polocloud.de/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-3 sm:px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-xs sm:text-sm"
