@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.bridges.waterdog
 
 import dev.httpmarco.polocloud.bridge.api.BridgeInstance
-import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerJoinEvent
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
@@ -10,7 +9,6 @@ import dev.waterdog.waterdogpe.ProxyServer
 import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent
-import dev.waterdog.waterdogpe.event.defaults.ServerConnectedEvent
 import dev.waterdog.waterdogpe.network.connection.handler.IJoinHandler
 import dev.waterdog.waterdogpe.network.serverinfo.BedrockServerInfo
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo
@@ -60,10 +58,6 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>(), IJoinHandler
             if (fallback == null) {
                 event.cancelReason = "No fallback servers are registered."
                 event.isCancelled = true
-                ProxyServer.getInstance().logger.warning("[LoginEvent] Kein Fallback verfügbar für ${player.name}")
-            } else {
-                ProxyServer.getInstance().logger.info("[LoginEvent] Spieler darf einloggen, Fallback vorhanden")
-                // NICHT redirectServer hier aufrufen!
             }
         }
 
