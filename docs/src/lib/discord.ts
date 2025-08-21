@@ -164,7 +164,7 @@ export function createFeedbackNotificationEmbed(
   return {
     title: `${statusEmoji} New Feedback Submitted`,
     description: `A new feedback has been submitted and is waiting for approval.`,
-    color: 0x0099ff, // Blue color for pending status
+    color: 0x0099ff,
     fields: [
       {
         name: '👤 User',
