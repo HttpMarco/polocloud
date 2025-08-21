@@ -42,8 +42,20 @@ class WebSocketAuthService {
         }
     }
 
+
     private fun extractToken(context: WsConnectContext): Optional<String> {
+        val cookieHeader = context.header("Cookie")
+        if (cookieHeader != null) {
+            val tokenCookie = cookieHeader.split(";")
+                .find { it.trim().startsWith("token=") }
+                ?.split("=")
+                ?.get(1)
+
+            if (tokenCookie != null) {
+                return Optional.of(tokenCookie)
+            }
+        }
+
         return Optional.ofNullable(context.queryParam("token"))
     }
-
 }
