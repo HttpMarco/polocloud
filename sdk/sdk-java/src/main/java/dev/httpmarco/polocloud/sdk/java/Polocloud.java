@@ -40,6 +40,8 @@ public final class Polocloud extends PolocloudShared {
 
     public static Polocloud instance() {
         if (instance == null) {
+            new PolocloudJavaSdkClasspath();
+
             new Polocloud();
         }
         return instance;
