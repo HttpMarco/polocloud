@@ -11,11 +11,13 @@ import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent
 import dev.waterdog.waterdogpe.event.defaults.ServerConnectedEvent
+import dev.waterdog.waterdogpe.network.connection.handler.IJoinHandler
 import dev.waterdog.waterdogpe.network.serverinfo.BedrockServerInfo
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo
+import dev.waterdog.waterdogpe.player.ProxiedPlayer
 import java.net.InetSocketAddress
 
-class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
+class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>(), IJoinHandler {
 
     val registeredFallbacks = ArrayList<BedrockServerInfo>()
 
@@ -67,18 +69,6 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
 
         eventManager.subscribe(InitialServerConnectedEvent::class.java) { event ->
             val player = event.player
-
-            // Spieler hat noch keinen Server? Dann Fallback setzen
-            if (player.connectingServer == null) {
-                val fallback = findFallback()
-                if (fallback != null) {
-                    player.redirectServer(fallback)
-                    ProxyServer.getInstance().logger.info("[InitialServerConnected] Spieler ${player.name} wird zu Fallback geleitet: ${fallback.serverName}")
-                } else {
-                    player.disconnect("No fallback servers available.")
-                }
-            }
-
             val cloudPlayer = PolocloudPlayer(player.name, player.uniqueId, event.serverInfo.serverName)
             updatePolocloudPlayer(PlayerJoinEvent(cloudPlayer))
         }
@@ -93,5 +83,9 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
 
     fun findFallback(): ServerInfo? {
         return registeredFallbacks.minByOrNull { it.players.size }
+    }
+
+    override fun determineServer(p0: ProxiedPlayer?): ServerInfo {
+        return findFallback()!!
     }
 }
