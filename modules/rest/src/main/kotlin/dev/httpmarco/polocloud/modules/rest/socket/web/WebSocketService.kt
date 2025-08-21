@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.modules.rest.socket.web
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.socket.BaseWebSocket
 import dev.httpmarco.polocloud.modules.rest.socket.web.impl.v3.AliveWebSocket
+import dev.httpmarco.polocloud.modules.rest.socket.web.impl.v3.PolocloudLogWebSocket
 
 class WebSocketService {
 
@@ -15,7 +16,8 @@ class WebSocketService {
 
     init {
         register(
-            AliveWebSocket()
+            AliveWebSocket(),
+            PolocloudLogWebSocket()
         )
 
         this.sockets.forEach { socket ->

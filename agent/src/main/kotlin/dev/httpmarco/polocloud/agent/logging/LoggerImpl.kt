@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.LoggingColor
 import dev.httpmarco.polocloud.agent.shutdownProcess
+import dev.httpmarco.polocloud.shared.events.definitions.PolocloudLogEvent
 import dev.httpmarco.polocloud.shared.logging.Logger
 import java.time.LocalTime
 
@@ -64,6 +65,8 @@ class LoggerImpl : Logger {
     }
 
     private fun outputLog(message: String) {
+        Agent.eventProvider().call(PolocloudLogEvent(message))
+
         if (Agent.runtime is LocalRuntime && !shutdownProcess()) {
             Agent.runtime.terminal.display(message)
             return
