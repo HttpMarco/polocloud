@@ -5,7 +5,7 @@ plugins {
 dependencies {
     api(projects.proto)
     compileOnly(libs.gson)
-    compileOnly(projects.proto)
+    implementation(projects.proto)
 }
 
 kotlin {

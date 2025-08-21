@@ -15,7 +15,8 @@ repositories {
 
 dependencies {
     compileOnly(libs.velocity)
-    compileOnly(libs.bstats.velocity)
+
+    implementation(libs.bstats.velocity)
     implementation(projects.sdk.sdkJava)
     implementation(projects.bridges.bridgeApi)
 }

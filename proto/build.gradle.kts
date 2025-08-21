@@ -7,9 +7,9 @@ plugins {
 }
 
 dependencies {
-    compileOnly(libs.bundles.proto)
+    implementation(libs.bundles.proto)
     api(libs.bundles.proto)
-    compileOnly("javax.annotation:javax.annotation-api:1.3.2")
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
 tasks.withType<JavaCompile>().configureEach {

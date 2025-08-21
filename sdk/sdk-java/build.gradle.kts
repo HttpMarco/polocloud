@@ -5,11 +5,12 @@ plugins {
 
 dependencies {
     api(projects.shared)
-    compileOnly(projects.common)
+    implementation(projects.common)
+
     compileOnly(libs.gson)
-    compileOnly(libs.bundles.proto)
-    compileOnly(libs.grpc.netty)
-    compileOnly(projects.proto)
+    implementation(libs.bundles.proto)
+    implementation(libs.grpc.netty)
+    api(projects.proto)
 }
 
 tasks.withType<JavaCompile>().configureEach {
