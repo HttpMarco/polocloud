@@ -4,8 +4,16 @@ import { getAllChangelogFiles } from '@/lib/github';
 export async function GET() {
   try {
     console.log('Fetching changelogs from GitHub...');
+    console.log('Environment variables:', {
+      GITHUB_REPO_OWNER: process.env.GITHUB_REPO_OWNER,
+      GITHUB_REPO_NAME: process.env.GITHUB_REPO_NAME,
+      GITHUB_BRANCH: process.env.GITHUB_BRANCH,
+      GITHUB_TOKEN: process.env.GITHUB_TOKEN ? 'SET' : 'NOT SET'
+    });
+    
     const changelogData = await getAllChangelogFiles();
     console.log('Changelog data:', changelogData);
+    console.log('Changelog data length:', changelogData?.length || 0);
 
     if (!changelogData || !Array.isArray(changelogData)) {
       console.log('No changelog data or invalid format, returning empty array');

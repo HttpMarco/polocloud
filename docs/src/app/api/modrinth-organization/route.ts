@@ -3,7 +3,12 @@ import { getCachedModrinthOrganization, clearModrinthCache } from '@/lib/modrint
 
 export async function GET(request: NextRequest) {
     try {
+        console.log('🔄 Modrinth API: Fetching organization data...');
         const organization = await getCachedModrinthOrganization();
+        
+        console.log('✅ Modrinth API: Data fetched successfully');
+        console.log('📊 Projects count:', organization.projects?.length || 0);
+        console.log('📊 Organization:', organization.name);
 
         const response = NextResponse.json(organization);
         response.headers.set('Access-Control-Allow-Origin', '*');
@@ -13,7 +18,13 @@ export async function GET(request: NextRequest) {
 
         return response;
     } catch (error) {
-        console.error('API Error fetching Modrinth organization:', error);
+        console.error('❌ Modrinth API Error:', error);
+        console.error('Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : 'No stack trace',
+            name: error instanceof Error ? error.name : 'Unknown error type'
+        });
+        
         const fallbackData = {
             id: 'polocloud',
             name: 'Polocloud',
@@ -76,6 +87,7 @@ export async function GET(request: NextRequest) {
             updated: '2024-01-01T00:00:00Z'
         };
 
+        console.log('🔄 Modrinth API: Returning fallback data');
         const response = NextResponse.json(fallbackData);
         response.headers.set('Cache-Control', 'public, s-maxage=60');
         return response;
