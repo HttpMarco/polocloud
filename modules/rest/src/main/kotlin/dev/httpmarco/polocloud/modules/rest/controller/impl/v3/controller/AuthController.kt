@@ -54,7 +54,17 @@ class AuthController : Controller("/auth") {
 
     @Request(requestType = RequestType.GET, path = "/token")
     fun checkToken(context: Context) {
-        // if the user gets through the auth, the token is valid
-        context.status(200).json(message("Token is valid"))
+        val token = context.cookie("token")
+
+        if (token != null) {
+            context.status(200).json(mapOf(
+                "token" to token,
+                "message" to "Token is valid"
+            ))
+        } else {
+            context.status(401).json(mapOf(
+                "message" to "No token found"
+            ))
+        }
     }
 }
