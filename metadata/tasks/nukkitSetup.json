@@ -30,6 +30,16 @@
         "key": "motd",
         "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
       }
+    },
+    {
+      "name": "Disable Xbox Auth",
+      "description": "Disables Xbox Auth, because we have waterdog",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "xbox-auth",
+        "value": "off"
+      }
     }
   ]
 }
