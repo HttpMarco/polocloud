@@ -1,0 +1,42 @@
+{
+  "name": "pandaspigot",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://downloads.hpfxd.com/v2/projects/pandaspigot/versions/%version%/builds/%buildId%/downloads/paperclip",
+  "flags": [
+    "-XX:+UseG1GC",
+    "-XX:+ParallelRefProcEnabled",
+    "-XX:MaxGCPauseMillis=200",
+    "-XX:+UnlockExperimentalVMOptions",
+    "-XX:+DisableExplicitGC",
+    "-XX:+AlwaysPreTouch",
+    "-XX:G1NewSizePercent=30",
+    "-XX:G1MaxNewSizePercent=40",
+    "-XX:G1HeapRegionSize=8M",
+    "-XX:G1ReservePercent=20",
+    "-XX:G1HeapWastePercent=5",
+    "-XX:G1MixedGCCountTarget=4",
+    "-XX:InitiatingHeapOccupancyPercent=15",
+    "-XX:G1MixedGCLiveThresholdPercent=90",
+    "-XX:G1RSetUpdatingPauseTimePercent=5",
+    "-XX:SurvivorRatio=32",
+    "-XX:MaxTenuringThreshold=1",
+    "-XX:+PerfDisableSharedMem",
+    "-Dusing.aikars.flags=https://mcflags.emc.gs",
+    "-Daikars.new.flags=true"
+  ],
+  "tasks": [
+    "EULA_TASK",
+    "SPIGOT_SERVER_PROPERTIES",
+    "PAPER_PROXY_SUPPORT_TASK"
+  ],
+  "preTasks": [
+    "LOAD_PAPER_DEPENDENCIES_TASK"
+  ],
+  "versions": [
+    {
+      "version": "1.8.8",
+      "buildId": "latest"
+    }
+  ]
+}
