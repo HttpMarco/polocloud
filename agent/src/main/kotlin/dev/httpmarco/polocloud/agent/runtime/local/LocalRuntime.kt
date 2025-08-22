@@ -78,4 +78,12 @@ class LocalRuntime : Runtime {
         LOCAL_FACTORY_PATH.toFile().deleteRecursively()
         i18n.info("agent.shutdown.temp-files.cleanup.successful")
     }
+
+    override fun sendCommand(command: String) {
+        val tokens = command.split(" ").filter { it.isNotBlank() }
+        val commandName = tokens.firstOrNull() ?: return
+        val args = tokens.drop(1).toTypedArray()
+
+        this.terminal.commandService.call(commandName, args)
+    }
 }

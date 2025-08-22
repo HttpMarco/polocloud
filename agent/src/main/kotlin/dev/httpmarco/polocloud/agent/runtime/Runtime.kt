@@ -108,4 +108,11 @@ interface Runtime {
         // This method can be overridden by specific runtime implementations
         // to perform any necessary shutdown operations.
     }
+
+    /**
+     * Sends a command to the runtime.
+     * This method can be overridden by specific runtime implementations
+     * to send commands to the runtime.
+     */
+    fun sendCommand(command: String)
 }
