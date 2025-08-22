@@ -44,7 +44,6 @@ export default async function Layout({
     );
   } catch (error) {
     console.error('Error in docs layout:', error);
-    // Fallback layout if anything fails
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto py-8">

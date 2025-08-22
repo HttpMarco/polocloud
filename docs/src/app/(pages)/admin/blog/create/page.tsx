@@ -389,7 +389,6 @@ export default function CreateBlogPage() {
 
             <div className="max-w-4xl mx-auto">
               <div className="grid md:grid-cols-2 gap-8">
-                {/* Summary */}
                 <div className="space-y-4">
                   <h4 className="text-xl font-semibold">Summary</h4>
                   <div className="space-y-3">
