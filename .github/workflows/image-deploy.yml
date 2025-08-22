@@ -20,7 +20,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Launcher with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew build
 
       - name: Login to GHCR
         env:
