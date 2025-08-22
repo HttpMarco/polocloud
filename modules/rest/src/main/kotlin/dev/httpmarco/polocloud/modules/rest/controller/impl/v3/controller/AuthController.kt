@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller
 
+import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
@@ -56,15 +57,14 @@ class AuthController : Controller("/auth") {
     fun checkToken(context: Context) {
         val token = context.cookie("token")
 
-        if (token != null) {
-            context.status(200).json(mapOf(
-                "token" to token,
-                "message" to "Token is valid"
-            ))
-        } else {
-            context.status(401).json(mapOf(
-                "message" to "No token found"
-            ))
+        if (token == null) {
+            context.status(401).json(message("No token found"))
+            return
         }
+
+        context.status(200).json(JsonObject().apply {
+            addProperty("token", token)
+            addProperty("message", "Token is valid")
+        }.toString())
     }
 }
