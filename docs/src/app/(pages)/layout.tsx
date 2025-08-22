@@ -8,6 +8,7 @@ import { BlogButton } from '@/components/layout/header/blog-button';
 import { FeedbackButton } from '@/components/layout/header/feedback-button';
 import { DashboardButton } from '@/components/layout/header/dashboard-button';
 import { LogoWithLink } from '@/components/layout/header/logo';
+import { Footer } from '../(home)/components/footer';
 import { MobileNav } from '@/components/layout/header/mobile-nav';
 
 function CustomNavbar() {
@@ -49,6 +50,7 @@ export default function PagesLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-background">
       <CustomNavbar />
       <main className="flex-1">{children}</main>
+      <Footer />
     </div>
   );
 } 
