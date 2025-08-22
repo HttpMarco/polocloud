@@ -11,7 +11,7 @@ class KubernetesRuntime : Runtime {
 
     private val kubernetesClient = KubernetesClientBuilder().build()
     private val groupStorage = KubernetesRuntimeGroupStorage(kubernetesClient)
-    private val configHolder = KubernetesRuntimeConfigHolder()
+    private val configHolder = KubernetesRuntimeConfigHolder(kubernetesClient)
     private val serviceStorage = KubernetesRuntimeServiceStorage()
     private val factory = KubernetesFactory()
     private val expender = KubernetesExpender()
