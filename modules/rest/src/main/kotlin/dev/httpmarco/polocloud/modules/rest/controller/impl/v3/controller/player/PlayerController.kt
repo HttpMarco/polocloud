@@ -12,14 +12,14 @@ class PlayerController : Controller("/player") {
 
     @Request(requestType = RequestType.GET, path = "/{playerName}", permission = "polocloud.player.get")
     fun getPlayer(context: Context) {
-        val playerName = context.queryParam("playerName")
+        val playerName = context.pathParam("playerName")
 
         if (playerName.isNullOrEmpty()) {
             context.status(400).result("Player name cannot be null or empty")
             return
         }
 
-        val player = polocloudShared.playerProvider().findByName("playerName")
+        val player = polocloudShared.playerProvider().findByName(playerName)
         if (player == null) {
             context.status(404).result("Player not found")
             return
@@ -36,26 +36,55 @@ class PlayerController : Controller("/player") {
 
     @Request(requestType = RequestType.GET, path = "s/list", permission = "polocloud.players.list")
     fun listPlayers(context: Context) {
-        val players = polocloudShared.playerProvider().findAll()//TODO pagination
+        val page = context.queryParam("page")?.toIntOrNull() ?: 1
+        val size = context.queryParam("size")?.toIntOrNull() ?: 20
 
-        if (players.isEmpty()) {
-            context.status(404).result("No players found")
+        // Validierung
+        if (page < 1 || size < 1 || size > 100) {
+            context.status(400).result("Invalid pagination parameters. Page must be >= 1, size must be 1-100")
             return
         }
 
+        val allPlayers = polocloudShared.playerProvider().findAll()
+
+        if (allPlayers.isEmpty()) {
+            context.status(200).json(
+                JsonObject().apply {
+                    addProperty("page", page)
+                    addProperty("size", size)
+                    addProperty("total", 0)
+                    addProperty("totalPages", 0)
+                    add("data", JsonArray())
+                }.toString()
+            )
+            return
+        }
+
+        val total = allPlayers.size
+        val totalPages = (total + size - 1) / size
+        val startIndex = (page - 1) * size
+        val endIndex = minOf(startIndex + size, total)
+
+        val paginatedPlayers = allPlayers.subList(startIndex, endIndex)
+
         context.status(200).json(
-            JsonArray().apply {
-                players.forEach { player -> //TODO pagination
-                    add(
-                        JsonObject().apply {
-                            addProperty("name", player.name)
-                            addProperty("uuid", player.uniqueId.toString())
-                            addProperty("currentServiceName", player.currentServiceName)
-                        }
-                    )
-                }
+            JsonObject().apply {
+                addProperty("page", page)
+                addProperty("size", size)
+                addProperty("total", total)
+                addProperty("totalPages", totalPages)
+                add("data", JsonArray().apply {
+                    paginatedPlayers.forEach { player ->
+                        add(
+                            JsonObject().apply {
+                                addProperty("name", player.name)
+                                addProperty("uuid", player.uniqueId.toString())
+                                addProperty("currentServiceName", player.currentServiceName)
+                            }
+                        )
+                    }
+                })
             }.toString()
         )
     }
-
 }
