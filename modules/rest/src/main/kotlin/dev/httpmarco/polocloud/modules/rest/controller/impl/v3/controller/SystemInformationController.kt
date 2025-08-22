@@ -10,6 +10,15 @@ import io.javalin.http.Context
 
 class SystemInformationController : Controller("/system") {
 
+    @Request(requestType = RequestType.GET, path = "/version", permission = "polocloud.system.version")
+    fun version(context: Context) {
+        context.status(200).json(
+            JsonObject().apply {
+                addProperty("version", System.getenv("polocloud-version") ?: "unknown")
+            }.toString()
+        )
+    }
+
     @Request(requestType = RequestType.GET, path = "/information", permission = "polocloud.system.information")
     fun information(context: Context) {
         val information = polocloudShared.cloudInformationProvider().find()

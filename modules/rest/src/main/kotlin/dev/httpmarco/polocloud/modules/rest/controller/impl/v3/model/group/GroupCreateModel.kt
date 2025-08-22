@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group
 
 import com.google.gson.JsonPrimitive
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.GroupInformationModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.platform.PlatformModel
 
 data class GroupCreateModel(
