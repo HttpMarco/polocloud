@@ -12,7 +12,7 @@ jobs:
 
       - name: Login to GHCR
         env:
-          DOCKER_USERNAME: rechergg
+          DOCKER_USERNAME: httpmarco
           DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: echo $DOCKER_PASSWORD | docker login ghcr.io --username $DOCKER_USERNAME --password-stdin
 
