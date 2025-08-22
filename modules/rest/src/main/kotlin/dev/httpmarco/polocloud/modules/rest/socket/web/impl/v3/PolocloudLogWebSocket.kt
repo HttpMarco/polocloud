@@ -7,12 +7,9 @@ import dev.httpmarco.polocloud.shared.events.definitions.PolocloudLogEvent
 import io.javalin.http.Context
 import io.javalin.websocket.WsCloseContext
 import io.javalin.websocket.WsConnectContext
-import io.javalin.websocket.WsContext
 import io.javalin.websocket.WsMessageContext
 
 class PolocloudLogWebSocket : BaseWebSocket("/logs", "polocloud.ws.logs"), SocketSender {
-
-    private val clients = mutableSetOf<WsContext>()
 
     override fun onConnect(context: WsConnectContext) {
         this.clients += context
