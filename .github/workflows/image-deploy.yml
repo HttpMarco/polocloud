@@ -31,7 +31,7 @@ jobs:
       - name: Build & Tag
         env:
           COMMIT: ${{ github.sha }}
-        run: docker build -f docker/Dockerfile --build-arg GIT_HASH=$COMMIT -t ghcr.io/httpmarco/polocloud/polocloud:latest -t ghcr.io/httpmarco/polocloud/polocloud:$COMMIT ./docker
+        run: docker build -f docker/Dockerfile --build-arg GIT_HASH=$COMMIT -t ghcr.io/httpmarco/polocloud/polocloud:latest -t ghcr.io/httpmarco/polocloud/polocloud:$COMMIT .
 
       - name: Push Image to GHCR (latest)
         run: docker push ghcr.io/httpmarco/polocloud/polocloud:latest
