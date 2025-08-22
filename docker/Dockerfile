@@ -2,6 +2,6 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /cloud
 
-COPY ../agent/build/libs/polocloud-agent.jar /cloud/cloud-agent.jar
+COPY ../launcher/build/libs/polocloud-launcher.jar /cloud/cloud-launcher.jar
 
-ENTRYPOINT ["java", "-jar", "/cloud/cloud-agent.jar"]
+ENTRYPOINT ["java", "-jar", "/cloud/cloud-launcher.jar"]

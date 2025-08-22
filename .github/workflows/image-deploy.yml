@@ -1,0 +1,28 @@
+name: Build Image with Docker
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login to GHCR
+        env:
+          DOCKER_USERNAME: rechergg
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: echo $DOCKER_PASSWORD | docker login ghcr.io --username $DOCKER_USERNAME --password-stdin
+
+      - name: Build & Tag
+        env:
+          COMMIT: ${{ github.sha }}
+        run: docker build --build-arg GIT_HASH=$COMMIT -t ghcr.io/HttpMarco/polocloud/polocloud:latest -t ghcr.io/HttpMarco/polocloud/polocloud:$COMMIT ./
+
+      - name: Push Image to GHCR (latest)
+        run: docker push ghcr.io/HttpMarco/polocloud/polocloud:latest
+
+      - name: Push Image to GHCR (commit)
+        run: docker push ghcr.io/HttpMarco/polocloud/polocloud:${{ github.sha }}
