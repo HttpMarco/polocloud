@@ -28,11 +28,11 @@ message GroupCreateRequest {
   string name = 1;
   GroupType type = 2;
   GroupPlatformSnapshot platform = 3;
-  int32 minimumMemory = 4;
-  int32 maximumMemory = 5;
-  int32 minimumOnline = 6;
-  int32 maximumOnline = 7;
-  double percentageToStartNewService = 8;
+  int32 minimum_memory = 4;
+  int32 maximum_memory = 5;
+  int32 minimum_online = 6;
+  int32 maximum_online = 7;
+  double percentage_to_start_new_service = 8;
   repeated string templates = 9;
   map<string, string> properties = 10;
 }
@@ -45,11 +45,11 @@ message GroupUpdateRequest {
   string name = 1;
   GroupType type = 2;
   GroupPlatformSnapshot platform = 3;
-  int32 minimumMemory = 4;
-  int32 maximumMemory = 5;
-  int32 minimumOnline = 6;
-  int32 maximumOnline = 7;
-  double percentageToStartNewService = 8;
+  int32 minimum_memory = 4;
+  int32 maximum_memory = 5;
+  int32 minimum_online = 6;
+  int32 maximum_online = 7;
+  double percentage_to_start_new_service = 8;
   GroupInformationSnapshot information = 9;
   repeated string templates = 10;
   map<string, string> properties = 11;
@@ -71,18 +71,18 @@ message GroupSnapshot {
   string name = 1;
   GroupType type = 2;
   GroupPlatformSnapshot platform = 3;
-  int32 minimumMemory = 4;
-  int32 maximumMemory = 5;
-  int32 minimumOnline = 6;
-  int32 maximumOnline = 7;
-  double percentageToStartNewService = 8;
+  int32 minimum_memory = 4;
+  int32 maximum_memory = 5;
+  int32 minimum_online = 6;
+  int32 maximum_online = 7;
+  double percentage_to_start_new_service = 8;
   GroupInformationSnapshot information = 9;
   repeated string templates = 10;
   map<string, string> properties = 11;
 }
 
 message GroupInformationSnapshot {
-  int64 createdAt = 1;
+  int64 created_at = 1;
 }
 
 message GroupPlatformSnapshot {

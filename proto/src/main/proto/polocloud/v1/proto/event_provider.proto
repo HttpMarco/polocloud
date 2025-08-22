@@ -11,13 +11,13 @@ service EventProvider {
 }
 
 message EventSubscribeRequest {
-  string eventName = 1;
-  string serviceName = 2;
+  string event_name = 1;
+  string service_name = 2;
 }
 
 message EventContext {
-  string eventName = 1;
-  string eventData = 2;
+  string event_name = 1;
+  string event_data = 2;
 }
 
 message CallEventResponse {
