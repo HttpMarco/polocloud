@@ -17,12 +17,12 @@ export default function NotFound() {
                 </div>
 
                 <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6 leading-tight">
-                    This page doesn't exist{' '}
+                    This page doesn&apos;t exist{' '}
                     <span className="text-muted-foreground">(anymore)</span>
                 </h1>
 
                 <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
-                    The page you're looking for was moved, deleted, never created or you mistyped the URL.
+                    The page you&apos;re looking for was moved, deleted, never created or you mistyped the URL.
                     Check the homepage or dive into the documentation to continue exploring PoloCloud.
                 </p>
 
