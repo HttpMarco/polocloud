@@ -11,6 +11,7 @@ import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.group.
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.platform.PlatformController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role.RoleController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.service.ServiceController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.terminal.TerminalController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.user.UserController
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData
@@ -35,7 +36,8 @@ class ControllerProvider {
             GroupController(),
             ServiceController(),
             PlatformController(),
-            SystemInformationController()
+            SystemInformationController(),
+            TerminalController()
         )
 
         this.controllers.forEach { handle(it) }

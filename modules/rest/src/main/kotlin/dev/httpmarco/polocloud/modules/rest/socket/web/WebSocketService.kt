@@ -34,4 +34,9 @@ class WebSocketService {
         sockets += webSockets
     }
 
+    fun shutdown() {
+        this.sockets.forEach { socket ->
+            socket.shutdown()
+        }
+    }
 }
