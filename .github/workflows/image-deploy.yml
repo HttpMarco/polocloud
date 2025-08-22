@@ -10,6 +10,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build Launcher with Gradle
+        run: ./gradlew clean build
+
       - name: Login to GHCR
         env:
           DOCKER_USERNAME: httpmarco
@@ -20,7 +29,6 @@ jobs:
         env:
           COMMIT: ${{ github.sha }}
         run: docker build -f docker/Dockerfile --build-arg GIT_HASH=$COMMIT -t ghcr.io/httpmarco/polocloud/polocloud:latest -t ghcr.io/httpmarco/polocloud/polocloud:$COMMIT ./docker
-
 
       - name: Push Image to GHCR (latest)
         run: docker push ghcr.io/httpmarco/polocloud/polocloud:latest
