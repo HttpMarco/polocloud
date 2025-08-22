@@ -24,6 +24,6 @@ class TerminalController : Controller("/terminal") {
         }
 
         Agent.runtime.sendCommand(terminalCommandModel.command)
-        context.status(200).json(message("Command executed successfully"))
+        context.status(200).json(message("Trying to execute command"))
     }
 }
