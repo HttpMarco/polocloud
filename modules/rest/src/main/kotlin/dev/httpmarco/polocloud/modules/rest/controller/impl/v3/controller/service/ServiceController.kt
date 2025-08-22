@@ -2,7 +2,10 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.servi
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.service.ServiceCommandModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.polocloudShared
@@ -90,5 +93,31 @@ class ServiceController : Controller("/service") {
                 }
             }.toString()
         )
+    }
+
+    @Request(requestType = RequestType.POST, path = "/{serviceName}/command")
+    fun command(context: Context) {
+        val serviceCommandModel = try {
+            context.bodyAsClass(ServiceCommandModel::class.java)
+        } catch (e: Exception) {
+            context.status(400).json(message("Invalid body"))
+            return
+        }
+
+        if (serviceCommandModel.command.isBlank()) {
+            context.status(400).json(message("Invalid body: command cannot be empty"))
+            return
+        }
+
+        val serviceName = context.pathParam("serviceName")
+        var service = polocloudShared.serviceProvider().find(serviceName)
+
+        if (service == null) {
+            context.status(404).json(message("Service not found"))
+            return
+        }
+
+        Agent.runtime.expender().executeCommand(service as AbstractService, serviceCommandModel.command)
+        context.status(200).json(message("Trying to execute command on service"))
     }
 }
