@@ -218,4 +218,26 @@ class GroupController : Controller("/group") {
             }.toString()
         )
     }
+
+    @Request(requestType = RequestType.DELETE, path = "/{name}")
+    fun deleteGroup(context: Context) {
+        val name = context.pathParam("name")
+        if (name.isBlank()) {
+            context.status(400).json(message("Invalid group name"))
+            return
+        }
+
+        var group = polocloudShared.groupProvider().find(name)
+        if (group == null) {
+            context.status(404).json(message("Group not found"))
+            return
+        }
+
+        group = group as AbstractGroup
+
+        Agent.runtime.groupStorage().destroy(group)
+        group.shutdownAll()
+
+        context.status(204).json(message("Group deleted successfully"))
+    }
 }
