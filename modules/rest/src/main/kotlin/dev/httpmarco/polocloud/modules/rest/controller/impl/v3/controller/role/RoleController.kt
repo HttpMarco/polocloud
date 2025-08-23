@@ -96,6 +96,16 @@ class RoleController : Controller("/role") {
 
         role.label = roleEditModel.label
         role.hexColor = roleEditModel.hexColor
+
+        val currentPermissions = role.permissions.toMutableSet()
+        val newPermissions = roleEditModel.permissions.toSet()
+
+        val toRemove = currentPermissions - newPermissions
+        role.permissions.removeAll(toRemove)
+
+        val toAdd = newPermissions - currentPermissions
+        role.permissions.addAll(toAdd)
+
         RestModule.instance.roleProvider.editRole(role)
 
         context.status(200).json(
@@ -104,6 +114,11 @@ class RoleController : Controller("/role") {
                 addProperty("label", role.label)
                 addProperty("hexColor", role.hexColor)
                 addProperty("default", role.default)
+                add("permissions", JsonArray().apply {
+                    role.permissions.forEach { permission ->
+                        add(permission)
+                    }
+                })
             }.toString()
         )
     }
