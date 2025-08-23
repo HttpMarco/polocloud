@@ -85,6 +85,7 @@ k8s = { group = "io.fabric8", name = "kubernetes-client", version.ref = "k8s" }
 
 # rest
 javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+javalin-ssl = { group = "io.javalin.community.ssl", name = "ssl-plugin", version.ref = "javalin" }
 java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
 javalin-jwt = { group = "com.github.kmehrunes", name = "javalin-jwt", version.ref = "javalin-jwt" }
 argon2 = { group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2" }

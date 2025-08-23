@@ -1,6 +1,9 @@
 package dev.httpmarco.polocloud.modules.rest
 
 import io.javalin.Javalin
+import io.javalin.community.ssl.SslPlugin
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class HttpServer {
 
@@ -12,6 +15,26 @@ class HttpServer {
             cfg.jetty.defaultHost = config.hostname
             cfg.jetty.defaultPort = config.port
             cfg.showJavalinBanner = false
+
+            if (config.sslEnabled) {
+                require(config.certPath != null && config.keyPath != null) {
+                    logger.info("SSL is enabled, but Cert or Key Path is null")
+                }
+
+                val certFile = Paths.get(config.certPath)
+                val keyFile = Paths.get(config.keyPath)
+
+                require(Files.exists(certFile) && Files.exists(keyFile)) {
+                    logger.info("Missing Cert or Key file for ssl")
+                }
+
+                val sslPlugin = SslPlugin { sslCfg ->
+                    sslCfg.pemFromPath(certFile.toString(), keyFile.toString())
+                    sslCfg.http2 = true
+                }
+
+                cfg.registerPlugin(sslPlugin)
+            }
 
             cfg.jetty.modifyServer { server ->
                 server.stopTimeout = 5000
