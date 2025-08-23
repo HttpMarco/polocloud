@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.modules.rest.RestModule
+import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.role.RoleCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.role.RoleEditModel
@@ -13,7 +14,7 @@ import io.javalin.http.Context
 class RoleController : Controller("/role") {
 
     @Request(requestType = RequestType.POST, path = "/", permission = "polocloud.role.create")
-    fun createRole(context: Context) {
+    fun createRole(context: Context, user: User) {
         val roleCreateModel = try {
             context.bodyAsClass(RoleCreateModel::class.java)
         } catch (e: Exception) {
@@ -23,6 +24,11 @@ class RoleController : Controller("/role") {
 
         if (roleCreateModel.label.isBlank() || roleCreateModel.hexColor.isBlank()) {
             context.status(400).json(message("Invalid body: missing fields"))
+            return
+        }
+
+        if ("*" in roleCreateModel.permissions && user.role?.permissions?.contains("*") == false) {
+            context.status(403).json(message("You cannot assign * permission"))
             return
         }
 
@@ -69,7 +75,7 @@ class RoleController : Controller("/role") {
     }
 
     @Request(requestType = RequestType.PATCH, path = "/{id}", permission = "polocloud.role.edit")
-    fun editRole(context: Context) {
+    fun editRole(context: Context, user: User) {
         val id = context.pathParam("id").toIntOrNull()
         if (id == null) {
             context.status(400).json(message("Invalid role ID"))
@@ -91,6 +97,11 @@ class RoleController : Controller("/role") {
         val role = RestModule.instance.roleProvider.roleById(id)
         if (role == null) {
             context.status(404).json(message("Role not found"))
+            return
+        }
+
+        if ("*" in roleEditModel.permissions && user.role?.permissions?.contains("*") == false) {
+            context.status(403).json(message("You cannot assign * permission"))
             return
         }
 
