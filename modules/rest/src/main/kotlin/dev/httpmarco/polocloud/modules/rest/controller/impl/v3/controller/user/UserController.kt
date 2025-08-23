@@ -59,6 +59,11 @@ class UserController : Controller("/user") {
             return
         }
 
+        if (RestModule.instance.userProvider.users().isNotEmpty()) {
+            context.status(400).json(message("A user already exists"))
+            return
+        }
+
         val hashedPassword = EncryptionUtil.encrypt(userSelfCreateModel.password)
         val role = RestModule.instance.roleProvider.roleById(userSelfCreateModel.roleId)
         val user = User(UUID.randomUUID(), userSelfCreateModel.username, role, hashedPassword, true, System.currentTimeMillis())
