@@ -132,6 +132,11 @@ class UserController : Controller("/user") {
             return
         }
 
+        if (role.permissions.contains("*") && user.role?.permissions?.contains("*") == false) {
+            context.status(403).json(message("You cannot assign the admin role"))
+            return
+        }
+
         user.role = role
 
         RestModule.instance.userProvider.edit(user)
