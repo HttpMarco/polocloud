@@ -14,6 +14,6 @@ spec:
     spec:
       serviceAccountName: agent
       containers:
-        - name: agent
+        - name: polocloud-agent
           image: ghcr.io/httpmarco/polocloud:latest
           imagePullPolicy: IfNotPresent
