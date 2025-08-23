@@ -120,4 +120,20 @@ class ServiceController : Controller("/service") {
         Agent.runtime.expender().executeCommand(service as AbstractService, serviceCommandModel.command)
         context.status(200).json(message("Trying to execute command on service"))
     }
+
+    @Request(requestType = RequestType.PATCH, path = "/{serviceName}/restart")
+    fun restart(context: Context) {
+        val serviceName = context.pathParam("serviceName")
+        val service = polocloudShared.serviceProvider().find(serviceName)
+
+        if (service == null) {
+            context.status(404).json(message("Service not found"))
+            return
+        }
+
+        service.shutdown()
+        context.status(202).json(message("Service is restarting"))
+    }
+
+
 }
