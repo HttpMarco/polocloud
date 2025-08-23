@@ -12,7 +12,6 @@ spec:
       labels:
         app: polocloud-agent
     spec:
-      serviceAccountName: agent
       containers:
         - name: polocloud-agent
           image: ghcr.io/httpmarco/polocloud:development
