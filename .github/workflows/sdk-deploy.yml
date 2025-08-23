@@ -23,4 +23,4 @@ jobs:
         env:
           ossrhUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ossrhPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-        run: ./gradlew publish
+        run: ./gradlew :sdk:sdk-java:publish
