@@ -85,7 +85,7 @@ class UserController : Controller("/user") {
         context.status(201).cookie(cookie).json(message("User created"))
     }
 
-    @Request(requestType = RequestType.PATCH, path = "/self/edit")
+    @Request(requestType = RequestType.PATCH, path = "/self/edit", permission = "polocloud.user.self.edit")
     fun selfEdit(context: Context, user: User) {
         val userSelfEditModel = try {
             context.bodyAsClass(UserSelfEditModel::class.java)
@@ -94,15 +94,12 @@ class UserController : Controller("/user") {
             return
         }
 
-        if (userSelfEditModel.username.isBlank() || userSelfEditModel.password.isBlank()) {
+        if (userSelfEditModel.username.isBlank()) {
             context.status(400).json(message("Invalid body: missing fields"))
             return
         }
 
-        val hashedPassword = EncryptionUtil.encrypt(userSelfEditModel.password)
-
         user.username = userSelfEditModel.username
-        user.passwordHash = hashedPassword
 
         RestModule.instance.userProvider.edit(user)
         context.status(201).json(message("User updated"))
@@ -141,7 +138,7 @@ class UserController : Controller("/user") {
         context.status(201).json(message("User updated"))
     }
 
-    @Request(requestType = RequestType.PATCH, path = "/self/change-password")
+    @Request(requestType = RequestType.PATCH, path = "/self/change-password", "")
     fun changePassword(context: Context, user: User) {
         val userPasswordChangeModel = try {
             context.bodyAsClass(UserPasswordChangeModel::class.java)
