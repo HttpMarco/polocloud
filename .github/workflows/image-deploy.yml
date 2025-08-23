@@ -5,6 +5,11 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,7 +34,7 @@ jobs:
         run: echo $DOCKER_PASSWORD | docker login ghcr.io --username $DOCKER_USERNAME --password-stdin
 
       - name: Build & Tag
-        run: docker build -f docker/Dockerfile -t ghcr.io/httpmarco/polocloud:latest
+        run: docker build -f docker/Dockerfile -t ghcr.io/httpmarco/polocloud:latest .
 
       - name: Push Image to GHCR (latest)
         run: docker push ghcr.io/httpmarco/polocloud:latest
