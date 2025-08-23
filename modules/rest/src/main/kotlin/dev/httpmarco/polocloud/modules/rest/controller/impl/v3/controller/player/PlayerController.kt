@@ -14,7 +14,7 @@ class PlayerController : Controller("/player") {
     fun getPlayer(context: Context) {
         val playerName = context.pathParam("playerName")
 
-        if (playerName.isNullOrEmpty()) {
+        if (playerName.isEmpty()) {
             context.status(400).result("Player name cannot be null or empty")
             return
         }
