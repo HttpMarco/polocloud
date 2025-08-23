@@ -110,7 +110,7 @@ class ServiceController : Controller("/service") {
         }
 
         val serviceName = context.pathParam("serviceName")
-        var service = polocloudShared.serviceProvider().find(serviceName)
+        val service = polocloudShared.serviceProvider().find(serviceName)
 
         if (service == null) {
             context.status(404).json(message("Service not found"))
