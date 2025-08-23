@@ -25,6 +25,7 @@ class PolocloudLogWebSocket : BaseWebSocket("/logs", "polocloud.ws.logs"), Socke
 
     override fun onClose(context: WsCloseContext) {
         this.clients -= context
+        //TODO remove subscriptions
     }
 
     override fun onMessage(context: WsMessageContext) {
