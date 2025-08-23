@@ -95,7 +95,7 @@ class ServiceController : Controller("/service") {
         )
     }
 
-    @Request(requestType = RequestType.POST, path = "/{serviceName}/command")
+    @Request(requestType = RequestType.POST, path = "/{serviceName}/command", permission = "polocloud.service.execute")
     fun command(context: Context) {
         val serviceCommandModel = try {
             context.bodyAsClass(ServiceCommandModel::class.java)
@@ -121,7 +121,7 @@ class ServiceController : Controller("/service") {
         context.status(200).json(message("Trying to execute command on service"))
     }
 
-    @Request(requestType = RequestType.PATCH, path = "/{serviceName}/restart")
+    @Request(requestType = RequestType.PATCH, path = "/{serviceName}/restart", permission = "polocloud.service.restart")
     fun restart(context: Context) {
         val serviceName = context.pathParam("serviceName")
         val service = polocloudShared.serviceProvider().find(serviceName)
@@ -134,6 +134,5 @@ class ServiceController : Controller("/service") {
         service.shutdown()
         context.status(202).json(message("Service is restarting"))
     }
-
 
 }
