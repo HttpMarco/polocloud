@@ -19,20 +19,20 @@ class HttpServer {
             }
 
             cfg.requestLogger.http { ctx, executionTimeMs ->
-                logger.info("[HTTP] ${ctx.method()} ${ctx.path()} -> ${ctx.status()} (${executionTimeMs} ms)")
+                logger.debug("[HTTP] ${ctx.method()} ${ctx.path()} -> ${ctx.status()} (${executionTimeMs} ms)")
             }
 
             cfg.requestLogger.ws { wsConfig ->
                 wsConfig.onConnect { ws ->
-                    logger.info("[WS] Connected: ${ws.session.remoteAddress}")
+                    logger.debug("[WS] Connected: ${ws.session.remoteAddress}")
                 }
 
                 wsConfig.onClose { ws ->
-                    logger.info("[WS] Closed: ${ws.session.remoteAddress} (status=${ws.status()}, reason=${ws.reason()})")
+                    logger.debug("[WS] Closed: ${ws.session.remoteAddress} (status=${ws.status()}, reason=${ws.reason()})")
                 }
 
                 wsConfig.onError { ws ->
-                    logger.error("[WS] Error: ${ws.session.remoteAddress} ${ws.error()}")
+                    logger.debug("[WS] Error: ${ws.session.remoteAddress} ${ws.error()}")
                 }
             }
         }.apply {
