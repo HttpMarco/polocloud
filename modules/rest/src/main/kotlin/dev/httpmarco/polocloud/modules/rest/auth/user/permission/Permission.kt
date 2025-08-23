@@ -10,6 +10,12 @@ open class Permission {
         }
     }
 
+    fun addPermissions(vararg permissions: String) {
+        for (permission in permissions) {
+            addPermission(permission)
+        }
+    }
+
     fun removePermission(permission: String) {
         this.permissions.remove(permission)
     }

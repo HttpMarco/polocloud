@@ -220,7 +220,7 @@ class GroupController : Controller("/group") {
         )
     }
 
-    @Request(requestType = RequestType.DELETE, path = "/{name}")
+    @Request(requestType = RequestType.DELETE, path = "/{name}", permission = "polocloud.group.delete")
     fun deleteGroup(context: Context) {
         val name = context.pathParam("name")
         if (name.isBlank()) {

@@ -59,6 +59,11 @@ class UserController : Controller("/user") {
             return
         }
 
+        if (RestModule.instance.userProvider.users().isNotEmpty()) {
+            context.status(400).json(message("A user already exists"))
+            return
+        }
+
         val hashedPassword = EncryptionUtil.encrypt(userSelfCreateModel.password)
         val role = RestModule.instance.roleProvider.roleById(userSelfCreateModel.roleId)
         val user = User(UUID.randomUUID(), userSelfCreateModel.username, role, hashedPassword, true, System.currentTimeMillis())
@@ -80,7 +85,7 @@ class UserController : Controller("/user") {
         context.status(201).cookie(cookie).json(message("User created"))
     }
 
-    @Request(requestType = RequestType.PATCH, path = "/self/edit")
+    @Request(requestType = RequestType.PATCH, path = "/self/edit", permission = "polocloud.user.self.edit")
     fun selfEdit(context: Context, user: User) {
         val userSelfEditModel = try {
             context.bodyAsClass(UserSelfEditModel::class.java)
@@ -89,15 +94,12 @@ class UserController : Controller("/user") {
             return
         }
 
-        if (userSelfEditModel.username.isBlank() || userSelfEditModel.password.isBlank()) {
+        if (userSelfEditModel.username.isBlank()) {
             context.status(400).json(message("Invalid body: missing fields"))
             return
         }
 
-        val hashedPassword = EncryptionUtil.encrypt(userSelfEditModel.password)
-
         user.username = userSelfEditModel.username
-        user.passwordHash = hashedPassword
 
         RestModule.instance.userProvider.edit(user)
         context.status(201).json(message("User updated"))
@@ -130,13 +132,18 @@ class UserController : Controller("/user") {
             return
         }
 
+        if (role.permissions.contains("*") && user.role?.permissions?.contains("*") == false) {
+            context.status(403).json(message("You cannot assign the admin role"))
+            return
+        }
+
         user.role = role
 
         RestModule.instance.userProvider.edit(user)
         context.status(201).json(message("User updated"))
     }
 
-    @Request(requestType = RequestType.PATCH, path = "/self/change-password")
+    @Request(requestType = RequestType.PATCH, path = "/self/change-password", "polocloud.user.self.change-password")
     fun changePassword(context: Context, user: User) {
         val userPasswordChangeModel = try {
             context.bodyAsClass(UserPasswordChangeModel::class.java)
@@ -233,7 +240,7 @@ class UserController : Controller("/user") {
         )
     }
 
-    @Request(requestType = RequestType.GET, path = "/tokens")
+    @Request(requestType = RequestType.GET, path = "/tokens", permission = "polocloud.user.self.tokens")
     fun tokens(context: Context, user: User) {
         context.status(200).json(
             JsonArray().apply {
@@ -249,7 +256,7 @@ class UserController : Controller("/user") {
         )
     }
 
-    @Request(requestType = RequestType.DELETE, path = "/token/{token}")
+    @Request(requestType = RequestType.DELETE, path = "/token/{token}", permission = "polocloud.user.self.token.delete")
     fun deleteToken(context: Context, user: User, token: Token) {
         val tokenValue = context.pathParam("token")
         val deletionToken = user.tokens.firstOrNull { it.value == tokenValue }
@@ -267,7 +274,7 @@ class UserController : Controller("/user") {
         context.status(204).json(message("Token deleted"))
     }
 
-    @Request(requestType = RequestType.DELETE, path = "/tokens")
+    @Request(requestType = RequestType.DELETE, path = "/tokens", permission = "polocloud.user.self.token.delete")
     fun deleteAllTokens(context: Context, user: User) {
         context.removeCookie("token")
         RestModule.instance.userProvider.deleteAllTokens(user)

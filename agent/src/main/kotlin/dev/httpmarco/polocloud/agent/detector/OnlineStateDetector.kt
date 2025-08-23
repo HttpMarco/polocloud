@@ -29,7 +29,7 @@ class OnlineStateDetector : Detector {
             val port = service.port
 
             if (service.isBedrockLike()) {
-                val result = pingBedrock(host, 19132)
+                val result = pingBedrock(host, port)
                 if (result != null) {
                     val (motd, online, max) = result
                     service.updateMotd(motd ?: "Unknown")

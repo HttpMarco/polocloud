@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.modules.rest.RestModule
+import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.role.RoleCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.role.RoleEditModel
@@ -13,7 +14,7 @@ import io.javalin.http.Context
 class RoleController : Controller("/role") {
 
     @Request(requestType = RequestType.POST, path = "/", permission = "polocloud.role.create")
-    fun createRole(context: Context) {
+    fun createRole(context: Context, user: User) {
         val roleCreateModel = try {
             context.bodyAsClass(RoleCreateModel::class.java)
         } catch (e: Exception) {
@@ -21,8 +22,13 @@ class RoleController : Controller("/role") {
             return
         }
 
-        if (roleCreateModel.label.isBlank() || roleCreateModel.hexColor.isBlank() || roleCreateModel.permissions.isEmpty()) {
+        if (roleCreateModel.label.isBlank() || roleCreateModel.hexColor.isBlank()) {
             context.status(400).json(message("Invalid body: missing fields"))
+            return
+        }
+
+        if ("*" in roleCreateModel.permissions && user.role?.permissions?.contains("*") == false) {
+            context.status(403).json(message("You cannot assign * permission"))
             return
         }
 
@@ -69,7 +75,7 @@ class RoleController : Controller("/role") {
     }
 
     @Request(requestType = RequestType.PATCH, path = "/{id}", permission = "polocloud.role.edit")
-    fun editRole(context: Context) {
+    fun editRole(context: Context, user: User) {
         val id = context.pathParam("id").toIntOrNull()
         if (id == null) {
             context.status(400).json(message("Invalid role ID"))
@@ -94,8 +100,23 @@ class RoleController : Controller("/role") {
             return
         }
 
+        if ("*" in roleEditModel.permissions && user.role?.permissions?.contains("*") == false) {
+            context.status(403).json(message("You cannot assign * permission"))
+            return
+        }
+
         role.label = roleEditModel.label
         role.hexColor = roleEditModel.hexColor
+
+        val currentPermissions = role.permissions.toMutableSet()
+        val newPermissions = roleEditModel.permissions.toSet()
+
+        val toRemove = currentPermissions - newPermissions
+        role.permissions.removeAll(toRemove)
+
+        val toAdd = newPermissions - currentPermissions
+        role.permissions.addAll(toAdd)
+
         RestModule.instance.roleProvider.editRole(role)
 
         context.status(200).json(
@@ -104,6 +125,11 @@ class RoleController : Controller("/role") {
                 addProperty("label", role.label)
                 addProperty("hexColor", role.hexColor)
                 addProperty("default", role.default)
+                add("permissions", JsonArray().apply {
+                    role.permissions.forEach { permission ->
+                        add(permission)
+                    }
+                })
             }.toString()
         )
     }

@@ -43,6 +43,8 @@ class SystemInformationController : Controller("/system") {
         val to = context.queryParam("to")?.toLongOrNull() ?: System.currentTimeMillis()
         val avg = polocloudShared.cloudInformationProvider().findAverage(from, to)
 
+        //TODO with services
+
         context.status(200).json(
             JsonObject().apply {
                 addProperty("avgCpu", avg.avgCpu)

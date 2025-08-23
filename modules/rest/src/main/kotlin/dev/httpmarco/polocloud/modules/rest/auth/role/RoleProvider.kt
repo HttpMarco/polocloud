@@ -76,7 +76,34 @@ class RoleProvider {
 
         if (currentRoles.none { it.id == 0 }) {
             currentRoles.add(Role(0,"User", "#00FF00", true).apply {
-                addPermission("polocloud.terminal.view")
+                addPermissions(
+                    //viewing permissions
+                    "polocloud.system.version",
+                    "polocloud.system.information",
+                    "polocloud.user.list",
+                    "polocloud.user.get",
+                    "polocloud.service.count",
+                    "polocloud.service.list",
+                    "polocloud.role.list",
+                    "polocloud.role.get",
+                    "polocloud.player.get",
+                    "polocloud.players.list",
+                    "polocloud.platform.list",
+                    "polocloud.group.count",
+                    "polocloud.group.list",
+                    "polocloud.group.get",
+
+                    //websocket
+                    "polocloud.ws.alive",
+                    "polocloud.ws.logs",
+                    "polocloud.service.screen",
+
+                    // user self permissions
+                    "polocloud.user.self.edit",
+                    "polocloud.user.self.change-password",
+                    "polocloud.user.self.tokens",
+                    "polocloud.user.self.token.delete"
+                )
             })
         }
 

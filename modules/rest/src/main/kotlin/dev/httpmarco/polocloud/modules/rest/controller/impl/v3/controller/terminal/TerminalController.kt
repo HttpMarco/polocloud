@@ -9,7 +9,7 @@ import io.javalin.http.Context
 
 class TerminalController : Controller("/terminal") {
 
-    @Request(requestType = RequestType.POST, path = "/command")
+    @Request(requestType = RequestType.POST, path = "/command", permission = "polocloud.terminal.command")
     fun command(context: Context) {
         val terminalCommandModel = try {
             context.bodyAsClass(TerminalCommandModel::class.java)
