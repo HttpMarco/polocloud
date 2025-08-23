@@ -138,7 +138,7 @@ class UserController : Controller("/user") {
         context.status(201).json(message("User updated"))
     }
 
-    @Request(requestType = RequestType.PATCH, path = "/self/change-password", "")
+    @Request(requestType = RequestType.PATCH, path = "/self/change-password", "polocloud.user.self.change-password")
     fun changePassword(context: Context, user: User) {
         val userPasswordChangeModel = try {
             context.bodyAsClass(UserPasswordChangeModel::class.java)
@@ -235,7 +235,7 @@ class UserController : Controller("/user") {
         )
     }
 
-    @Request(requestType = RequestType.GET, path = "/tokens")
+    @Request(requestType = RequestType.GET, path = "/tokens", permission = "polocloud.user.self.tokens")
     fun tokens(context: Context, user: User) {
         context.status(200).json(
             JsonArray().apply {
@@ -251,7 +251,7 @@ class UserController : Controller("/user") {
         )
     }
 
-    @Request(requestType = RequestType.DELETE, path = "/token/{token}")
+    @Request(requestType = RequestType.DELETE, path = "/token/{token}", permission = "polocloud.user.self.token.delete")
     fun deleteToken(context: Context, user: User, token: Token) {
         val tokenValue = context.pathParam("token")
         val deletionToken = user.tokens.firstOrNull { it.value == tokenValue }
@@ -269,7 +269,7 @@ class UserController : Controller("/user") {
         context.status(204).json(message("Token deleted"))
     }
 
-    @Request(requestType = RequestType.DELETE, path = "/tokens")
+    @Request(requestType = RequestType.DELETE, path = "/tokens", permission = "polocloud.user.self.token.delete")
     fun deleteAllTokens(context: Context, user: User) {
         context.removeCookie("token")
         RestModule.instance.userProvider.deleteAllTokens(user)
