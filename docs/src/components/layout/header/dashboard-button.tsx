@@ -7,7 +7,7 @@ export function DashboardButton() {
   return (
     <Link
       href="/dashboard"
-      className="flex items-center justify-center w-10 h-10 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-all duration-300 hover:scale-105 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/50 shadow-md hover:shadow-lg border border-emerald-200 hover:border-emerald-300 dark:border-emerald-800 dark:hover:border-emerald-700 group relative overflow-hidden"
+      className="flex items-center justify-center w-10 h-10 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-all duration-300 hover:scale-105 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/50 shadow-md hover:shadow-lg border border-emerald-200 hover:border-emerald-300 dark:border-emerald-800 dark:hover:border-emerald-700 group relative overflow-hidden flex-shrink-0"
       title="Dashboard"
     >
       <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />

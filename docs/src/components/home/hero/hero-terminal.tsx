@@ -52,7 +52,7 @@ export function HeroTerminal({
 
     return (
         <motion.div
-            className="order-1 lg:order-2"
+            className="order-1 lg:order-2 ml-6"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
@@ -98,18 +98,18 @@ export function HeroTerminal({
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                            <span className="text-gray-500 font-mono text-xs w-20 flex-shrink-0">
+                            <span className="text-gray-500 font-mono text-xs w-16 flex-shrink-0">
                                 {line.time}
                             </span>
-                            <span className="text-gray-400 font-mono text-xs mx-2">
+                            <span className="text-gray-400 font-mono text-xs mx-1">
                                 |
                             </span>
-                            <span className={`font-mono text-xs w-16 flex-shrink-0 ${
+                            <span className={`font-mono text-xs w-12 flex-shrink-0 mx-1 ${
                                 line.level === 'WARN' ? 'text-yellow-400' : 'text-gray-300'
                             }`}>
                                 {line.level}
                             </span>
-                            <span className={`font-mono text-xs ml-2 ${line.color}`}>
+                            <span className={`font-mono text-xs mx-1 ${line.color}`}>
                                 {renderMessage(line.message, line.highlight, line.highlightColor)}
                             </span>
                         </motion.div>
@@ -123,18 +123,18 @@ export function HeroTerminal({
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                            <span className="text-gray-500 font-mono text-xs w-20 flex-shrink-0">
+                            <span className="text-gray-500 font-mono text-xs w-16 flex-shrink-0">
                                 {line.time}
                             </span>
-                            <span className="text-gray-400 font-mono text-xs mx-2">
+                            <span className="text-gray-400 font-mono text-xs mx-1">
                                 |
                             </span>
-                            <span className={`font-mono text-xs w-16 flex-shrink-0 ${
+                            <span className={`font-mono text-xs w-12 flex-shrink-0 mx-1 ${
                                 line.level === 'WARN' ? 'text-yellow-400' : 'text-white'
                             }`}>
                                 {line.level}
                             </span>
-                            <span className={`font-mono text-xs ml-2 ${line.color}`}>
+                            <span className={`font-mono text-xs mx-1 ${line.color}`}>
                                 {renderMessage(line.message, line.highlight, line.highlightColor)}
                             </span>
                         </motion.div>
@@ -148,18 +148,18 @@ export function HeroTerminal({
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
                         >
-                            <span className="text-gray-500 font-mono text-xs w-20 flex-shrink-0">
+                            <span className="text-gray-500 font-mono text-xs w-16 flex-shrink-0">
                                 {line.time}
                             </span>
-                            <span className="text-gray-400 font-mono text-xs mx-2">
+                            <span className="text-gray-400 font-mono text-xs mx-1">
                                 |
                             </span>
-                            <span className={`font-mono text-xs w-16 flex-shrink-0 ${
+                            <span className={`font-mono text-xs w-12 flex-shrink-0 mx-1 ${
                                 line.level === 'WARN' ? 'text-yellow-400' : 'text-white'
                             }`}>
                                 {line.level}
                             </span>
-                            <span className={`font-mono text-xs ml-2 ${line.color}`}>
+                            <span className={`font-mono text-xs mx-1 ${line.color}`}>
                                 {renderMessage(line.message, line.highlight, line.highlightColor)}
                             </span>
                         </motion.div>

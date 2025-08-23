@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Calendar, User, GitBranch } from 'lucide-react';
+import { Plus, Calendar, User, GitBranch } from 'lucide-react';
 import { ChangelogEntry } from './types';
 import { useRouter } from 'next/navigation';
 
@@ -20,7 +20,7 @@ export function ChangelogTab() {
   const fetchChangelog = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/changelog/list');
+      const response = await fetch('/api/public/changelog');
       if (response.ok) {
         const data = await response.json();
         setChangelog(data.changelog || []);
@@ -60,25 +60,8 @@ export function ChangelogTab() {
   };
 
   const handleDelete = async (slug: string) => {
-    if (!confirm('Are you sure you want to delete this changelog entry?')) return;
-
-    try {
-      const response = await fetch('/api/admin/changelog/delete', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug })
-      });
-
-      if (response.ok) {
-        await fetchChangelog();
-      } else {
-        const error = await response.json();
-        alert(`Error: ${error.error}`);
-      }
-    } catch (error) {
-      console.error('Error deleting changelog entry:', error);
-      alert('Failed to delete changelog entry');
-    }
+    console.log('Delete functionality not implemented for changelog entries');
+    alert('Delete functionality is not yet implemented');
   };
 
 
@@ -140,13 +123,6 @@ export function ChangelogTab() {
               </div>
               
               <div className="flex gap-2">
-
-                <button
-                  onClick={() => handleDelete(entry.slug)}
-                  className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                </button>
               </div>
             </div>
 

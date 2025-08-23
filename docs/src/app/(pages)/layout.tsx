@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { DownloadButton } from '@/components/layout/header/download-button';
 import { SponsorsButton } from '@/components/layout/header/sponsors-button';
 import { HomeDropdown } from '@/components/layout/header/home-dropdown';
@@ -31,9 +30,11 @@ function CustomNavbar() {
         </div>
 
         <div className="hidden lg:flex items-center space-x-2 w-32 justify-end">
-          <DownloadButton />
-          <SponsorsButton />
-          <DashboardButton />
+          <div className="flex items-center space-x-2">
+            <DownloadButton />
+            <SponsorsButton />
+            <DashboardButton />
+          </div>
         </div>
 
         <div className="lg:hidden flex-1 flex justify-end">
@@ -44,7 +45,7 @@ function CustomNavbar() {
   );
 }
 
-export default function PagesLayout({ children }: { children: ReactNode }) {
+export default function PagesLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       <CustomNavbar />

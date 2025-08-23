@@ -10,7 +10,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  FileText,
+  GitBranch,
   Settings,
   Edit3,
   Sparkles,
@@ -19,51 +19,57 @@ import {
   Tag,
   Plus,
   X,
-  Save
+  Save,
+  Loader2
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
-interface BlogFormData {
+interface ChangelogFormData {
+  version: string;
   title: string;
   description: string;
-  author: string;
-  tags: string;
-  pinned: boolean;
+  type: 'major' | 'minor' | 'patch' | 'hotfix';
+  releaseDate: string;
   content: string;
 }
 
-const STORAGE_KEY = 'blog-draft';
+const STORAGE_KEY = 'changelog-edit-draft';
 
-export default function CreateBlogPage() {
+export default function EditChangelogPage() {
   const router = useRouter();
-  const [creating, setCreating] = useState(false);
+  const params = useParams();
+  const slug = params.slug as string;
+  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+  const [originalData, setOriginalData] = useState<ChangelogFormData | null>(null);
 
-  const loadSavedData = (): BlogFormData => {
+  const loadSavedData = (): ChangelogFormData => {
     if (typeof window === 'undefined') {
       return {
+        version: '',
         title: '',
         description: '',
-        author: '',
-        tags: '',
-        pinned: false,
-        content: '# Blog Post Title\n\nWrite your content here...\n\n## Features\n\n- **Bold text** and *italic text*\n- `inline code` and code blocks\n- [Links](https://example.com)\n- > Beautiful quotes\n- Tables and lists\n\n:heart: :rocket: :sparkles:',
+        type: 'patch',
+        releaseDate: new Date().toISOString().split('T')[0],
+        content: '# Changelog Content\n\nWrite your detailed changelog content here...\n\n## Changes\n\n- Add your changes here\n- Use markdown formatting\n- Include code examples if needed',
       };
     }
 
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(`${STORAGE_KEY}-${slug}`);
       if (saved) {
         const parsed = JSON.parse(saved);
         return {
+          version: parsed.version || '',
           title: parsed.title || '',
           description: parsed.description || '',
-          author: parsed.author || '',
-          tags: parsed.tags || '',
-          pinned: parsed.pinned || false,
-          content: parsed.content || '# Blog Post Title\n\nWrite your content here...\n\n## Features\n\n- **Bold text** and *italic text*\n- `inline code` and code blocks\n- [Links](https://example.com)\n- > Beautiful quotes\n- Tables and lists\n\n:heart: :rocket: :sparkles:',
+          type: parsed.type || 'patch',
+          releaseDate: parsed.releaseDate || new Date().toISOString().split('T')[0],
+          content: parsed.content || '# Changelog Content\n\nWrite your detailed changelog content here...\n\n## Changes\n\n- Add your changes here\n- Use markdown formatting\n- Include code examples if needed',
         };
       }
     } catch (error) {
@@ -71,23 +77,54 @@ export default function CreateBlogPage() {
     }
 
     return {
+      version: '',
       title: '',
       description: '',
-      author: '',
-      tags: '',
-      pinned: false,
-      content: '# Blog Post Title\n\nWrite your content here...\n\n## Features\n\n- **Bold text** and *italic text*\n- `inline code` and code blocks\n- [Links](https://example.com)\n- > Beautiful quotes\n- Tables and lists\n\n:heart: :rocket: :sparkles:',
+      type: 'patch',
+      releaseDate: new Date().toISOString().split('T')[0],
+      content: '# Changelog Content\n\nWrite your detailed changelog content here...\n\n## Changes\n\n- Add your changes here\n- Use markdown formatting\n- Include code examples if needed',
     };
   };
 
-  const [formData, setFormData] = useState<BlogFormData>(loadSavedData);
+  const [formData, setFormData] = useState<ChangelogFormData>(loadSavedData);
 
-  const saveToStorage = (data: BlogFormData) => {
+  useEffect(() => {
+    const fetchChangelog = async () => {
+      try {
+        const response = await fetch(`/api/admin/changelog/${slug}`);
+        if (response.ok) {
+          const data = await response.json();
+          const formattedData: ChangelogFormData = {
+            version: data.version || '',
+            title: data.title || '',
+            description: data.description || '',
+            type: data.type || 'patch',
+            releaseDate: data.releaseDate || new Date().toISOString().split('T')[0],
+            content: data.content || '',
+          };
+          setFormData(formattedData);
+          setOriginalData(formattedData);
+        } else {
+          console.error('Failed to fetch changelog');
+        }
+      } catch (error) {
+        console.error('Error fetching changelog:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchChangelog();
+    }
+  }, [slug]);
+
+  const saveToStorage = (data: ChangelogFormData) => {
     if (typeof window === 'undefined') return;
 
     setAutoSaveStatus('saving');
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(`${STORAGE_KEY}-${slug}`, JSON.stringify(data));
       setLastSaved(new Date());
       setAutoSaveStatus('saved');
     } catch (error) {
@@ -97,25 +134,27 @@ export default function CreateBlogPage() {
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      saveToStorage(formData);
-    }, 1000);
+    if (!loading && originalData) {
+      const timeoutId = setTimeout(() => {
+        saveToStorage(formData);
+      }, 1000);
 
-    return () => clearTimeout(timeoutId);
-  }, [formData]);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [formData, loading, originalData]);
 
   useEffect(() => {
-    const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`);
+    const savedStep = localStorage.getItem(`${STORAGE_KEY}-${slug}-step`);
     if (savedStep) {
       setCurrentStep(parseInt(savedStep));
     }
-  }, []);
+  }, [slug]);
 
   const steps = [
-    { id: 1, title: 'Basic Info', icon: FileText, description: 'Title and basic information' },
-    { id: 2, title: 'Details', icon: Settings, description: 'Description and metadata' },
-    { id: 3, title: 'Content', icon: Edit3, description: 'Write your blog content' },
-    { id: 4, title: 'Review', icon: Check, description: 'Review and publish' },
+    { id: 1, title: 'Version Info', icon: GitBranch, description: 'Version number and type' },
+    { id: 2, title: 'Details', icon: Settings, description: 'Title and description' },
+    { id: 3, title: 'Content', icon: Edit3, description: 'Write detailed changelog content' },
+    { id: 4, title: 'Review', icon: Check, description: 'Review and update' },
   ];
 
   const nextStep = () => {
@@ -123,7 +162,7 @@ export default function CreateBlogPage() {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
       if (typeof window !== 'undefined') {
-        localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
+        localStorage.setItem(`${STORAGE_KEY}-${slug}-step`, newStep.toString());
       }
     }
   };
@@ -133,7 +172,7 @@ export default function CreateBlogPage() {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
       if (typeof window !== 'undefined') {
-        localStorage.setItem(`${STORAGE_KEY}-step`, newStep.toString());
+        localStorage.setItem(`${STORAGE_KEY}-${slug}-step`, newStep.toString());
       }
     }
   };
@@ -141,23 +180,23 @@ export default function CreateBlogPage() {
   const manualSave = () => {
     saveToStorage(formData);
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`${STORAGE_KEY}-step`, currentStep.toString());
+      localStorage.setItem(`${STORAGE_KEY}-${slug}-step`, currentStep.toString());
     }
   };
 
   const clearSavedData = () => {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(`${STORAGE_KEY}-step`);
+      localStorage.removeItem(`${STORAGE_KEY}-${slug}`);
+      localStorage.removeItem(`${STORAGE_KEY}-${slug}-step`);
     }
   };
 
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return formData.title.trim().length > 0;
+        return formData.version.trim().length > 0;
       case 2:
-        return formData.description.trim().length > 0;
+        return formData.title.trim().length > 0 && formData.description.trim().length > 0;
       case 3:
         return formData.content.trim().length > 0;
       case 4:
@@ -168,39 +207,58 @@ export default function CreateBlogPage() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.title.trim() || !formData.content.trim()) return;
-
-    setCreating(true);
-
+    setSaving(true);
     try {
-      const response = await fetch('/api/admin/blog/create', {
-        method: 'POST',
+      const response = await fetch('/api/admin/changelog/update', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          author: formData.author.trim() || 'PoloCloud Team',
-          tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0),
-          pinned: formData.pinned,
-          content: formData.content.trim(),
+          slug,
+          ...formData,
         }),
       });
 
       if (response.ok) {
         clearSavedData();
-        router.push('/admin');
+        router.push('/admin/changelog');
       } else {
-        const errorData = await response.json();
-        alert('Failed to create blog post: ' + errorData.error);
+        const error = await response.json();
+        console.error('Error updating changelog:', error);
+        alert('Failed to update changelog: ' + error.error);
       }
     } catch (error) {
-      console.error('Error creating blog post:', error);
-      alert('Failed to create blog post');
+      console.error('Error updating changelog:', error);
+      alert('Failed to update changelog');
     } finally {
-      setCreating(false);
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Loading changelog...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'major':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      case 'minor':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'patch':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'hotfix':
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
     }
   };
 
@@ -229,22 +287,59 @@ export default function CreateBlogPage() {
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: "spring" }}
               >
-                <FileText className="w-20 h-20 mx-auto mb-6 text-primary" />
+                <GitBranch className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Blog Title</h3>
-              <p className="text-muted-foreground text-lg">What should your new blog post be called?</p>
+              <h3 className="text-3xl font-bold mb-3">Version Information</h3>
+              <p className="text-muted-foreground text-lg">Update the version number and release type</p>
             </div>
 
             <div className="max-w-2xl mx-auto space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-3">Blog Title *</label>
+                <label className="block text-sm font-medium mb-3">Version Number *</label>
                 <Input
                   type="text"
-                  placeholder="e.g., PoloCloud 2.0 Release"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="e.g., 1.0.0, 2.1.3, 3.0.0-beta.1"
+                  value={formData.version}
+                  onChange={(e) => setFormData({ ...formData, version: e.target.value })}
                   className="text-lg"
-                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-3">Release Type *</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {(['major', 'minor', 'patch', 'hotfix'] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, type })}
+                      className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                        formData.type === type
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-2xl font-bold capitalize mb-1">{type}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {type === 'major' && 'Breaking changes'}
+                          {type === 'minor' && 'New features'}
+                          {type === 'patch' && 'Bug fixes'}
+                          {type === 'hotfix' && 'Critical fixes'}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-3">Release Date *</label>
+                <Input
+                  type="date"
+                  value={formData.releaseDate}
+                  onChange={(e) => setFormData({ ...formData, releaseDate: e.target.value })}
+                  className="text-lg"
                 />
               </div>
             </div>
@@ -270,57 +365,31 @@ export default function CreateBlogPage() {
               >
                 <Settings className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Blog Details</h3>
-              <p className="text-muted-foreground text-lg">Provide description and additional information</p>
+              <h3 className="text-3xl font-bold mb-3">Changelog Details</h3>
+              <p className="text-muted-foreground text-lg">Update title and description</p>
             </div>
 
             <div className="max-w-2xl mx-auto space-y-6">
               <div>
+                <label className="block text-sm font-medium mb-3">Title *</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., New Features, Bugfixes & Improvements"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="text-lg"
+                />
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium mb-3">Description *</label>
                 <textarea
-                  placeholder="Brief description of the blog post..."
+                  placeholder="Brief description of this release..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full p-3 border rounded-lg resize-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg"
                   rows={4}
                 />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-3">Author</label>
-                  <Input
-                    type="text"
-                    placeholder="PoloCloud Team"
-                    value={formData.author}
-                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                    className="text-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-3">Tags</label>
-                  <Input
-                    type="text"
-                    placeholder="tag1, tag2, tag3"
-                    value={formData.tags}
-                    onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                    className="text-lg"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg">
-                <input
-                  type="checkbox"
-                  id="pinned"
-                  checked={formData.pinned}
-                  onChange={(e) => setFormData({ ...formData, pinned: e.target.checked })}
-                  className="rounded border-border w-5 h-5"
-                />
-                <label htmlFor="pinned" className="text-sm font-medium cursor-pointer">
-                  Pin this post (appears at the top of the list)
-                </label>
               </div>
             </div>
           </motion.div>
@@ -345,26 +414,24 @@ export default function CreateBlogPage() {
               >
                 <Edit3 className="w-20 h-20 mx-auto mb-6 text-primary" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Create Content</h3>
-              <p className="text-muted-foreground text-lg">Write the content of your blog post</p>
+              <h3 className="text-3xl font-bold mb-3">Update Content</h3>
+              <p className="text-muted-foreground text-lg">Edit the detailed changelog content</p>
             </div>
 
             <div className="max-w-5xl mx-auto">
-              <label className="block text-sm font-medium mb-3">Blog Content *</label>
+              <label className="block text-sm font-medium mb-3">Changelog Content *</label>
               <MDXEditor
                 value={formData.content}
                 onChange={(val) => setFormData({ ...formData, content: val })}
                 height={500}
-                placeholder="Write your blog content here...\n\nUse markdown formatting:\n# Headings\n## Subheadings\n- Lists\n**Bold text**\n*Italic text*\n`code snippets`"
+                placeholder="Write your changelog content here...\n\nUse markdown formatting:\n# Headings\n## Subheadings\n- Lists\n**Bold text**\n*Italic text*\n`code snippets`"
               />
             </div>
           </motion.div>
         );
 
       case 4:
-        const wordCount = formData.content.split(/\s+/).filter(word => word.length > 0).length;
-        const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-        
+        const wordCount = formData.content.split(' ').filter(word => word.length > 0).length;
         return (
           <motion.div
             key="step4"
@@ -383,8 +450,8 @@ export default function CreateBlogPage() {
               >
                 <Check className="w-20 h-20 mx-auto mb-6 text-green-500" />
               </motion.div>
-              <h3 className="text-3xl font-bold mb-3">Review & Publish</h3>
-              <p className="text-muted-foreground text-lg">Review your blog post before publishing</p>
+              <h3 className="text-3xl font-bold mb-3">Review & Update</h3>
+              <p className="text-muted-foreground text-lg">Review your changes before updating</p>
             </div>
 
             <div className="max-w-4xl mx-auto">
@@ -393,35 +460,23 @@ export default function CreateBlogPage() {
                   <h4 className="text-xl font-semibold">Summary</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                      <span className="font-medium">Title:</span>
-                      <span className="font-semibold">{formData.title}</span>
+                      <span className="font-medium">Version:</span>
+                      <Badge variant="outline">{formData.version}</Badge>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                      <span className="font-medium">Author:</span>
-                      <Badge variant="outline">{formData.author || 'PoloCloud Team'}</Badge>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                      <span className="font-medium">Pinned:</span>
-                      <Badge variant={formData.pinned ? "secondary" : "outline"}>
-                        {formData.pinned ? "Yes" : "No"}
+                      <span className="font-medium">Type:</span>
+                      <Badge className={getTypeColor(formData.type)}>
+                        {formData.type}
                       </Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <span className="font-medium">Date:</span>
+                      <span>{new Date(formData.releaseDate).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                       <span className="font-medium">Words:</span>
                       <span>{wordCount}</span>
                     </div>
-                    {tagsArray.length > 0 && (
-                      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                        <span className="font-medium">Tags:</span>
-                        <div className="flex gap-1">
-                          {tagsArray.map((tag) => (
-                            <Badge key={tag} variant="outline" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -441,9 +496,9 @@ export default function CreateBlogPage() {
               </div>
 
               <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                <h4 className="font-semibold text-primary mb-2">Ready to publish?</h4>
+                <h4 className="font-semibold text-primary mb-2">Ready to update?</h4>
                 <p className="text-sm text-muted-foreground">
-                  This blog post will be published to GitHub and become visible to all users.
+                  This changelog will be updated on GitHub and become visible to all users.
                 </p>
               </div>
             </div>
@@ -572,18 +627,18 @@ export default function CreateBlogPage() {
             ) : (
               <Button
                 onClick={handleSubmit}
-                disabled={creating}
+                disabled={saving}
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
               >
-                {creating ? (
+                {saving ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Publishing...</span>
+                    <span>Updating...</span>
                   </>
                 ) : (
                   <>
                     <Check className="w-4 h-4" />
-                    <span>Publish Blog Post</span>
+                    <span>Update Changelog</span>
                   </>
                 )}
               </Button>
