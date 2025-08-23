@@ -4,6 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.socket.BaseWebSocket
 import dev.httpmarco.polocloud.modules.rest.socket.SocketSender
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceLogEvent
 import io.javalin.http.Context
 import io.javalin.websocket.WsCloseContext
 import io.javalin.websocket.WsConnectContext
@@ -25,11 +26,18 @@ class ServiceScreenWebSocket : BaseWebSocket("/service/{serviceName}/screen", "p
             context.send(it)
         }
 
+        Agent.eventProvider().subscribe(ServiceLogEvent::class.java, { event ->
+            if (event.service == service && context.session.isOpen) {
+                context.send(event.line)
+            }
+        })
+
         context.enableAutomaticPings()
     }
 
     override fun onClose(context: WsCloseContext) {
         this.clients -= context
+        //TODO remove subscriptions
     }
 
     override fun onMessage(context: WsMessageContext) {
