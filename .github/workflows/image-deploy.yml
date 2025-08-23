@@ -1,7 +1,10 @@
-name: Build Image with Docker
+name: Image and sdk deploy
 
 on:
   push:
+    branches:
+      - master
+      - development
 
 jobs:
   build:
@@ -48,3 +51,9 @@ jobs:
 
       - name: Push Image to GHCR (latest)
         run: docker push ghcr.io/httpmarco/polocloud:latest
+
+      - name: Publish java sdk to Sonatype
+        env:
+          ossrhUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ossrhPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        run: ./gradlew :sdk:sdk-java:publish
