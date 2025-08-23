@@ -11,7 +11,8 @@ class PortDetector {
 
     companion object {
         fun nextPort(abstractGroup: AbstractGroup): Int {
-            var port = if (abstractGroup.platform().type == GroupType.PROXY) 25565 else 30000
+            var port = abstractGroup.platform().defaultStartPort
+                ?: if (abstractGroup.platform().type == GroupType.PROXY) 25565 else 30000
 
             val startPortProperty = abstractGroup.properties["startPort"]
             if (startPortProperty != null) {

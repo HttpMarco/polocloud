@@ -34,6 +34,8 @@ class Platform(
     val versions: List<PlatformVersion>,
     // if bridge present, the bridge that should be used for this platform
     val bridge: Bridge? = null,
+    //The first port used for port selection unless startPort is set in group
+    val defaultStartPort: Int?,
     // if the path is empty, the platform will not copy the bridge
     private val bridgePath: String? = null,
     // the tasks that should be run after the platform is prepared
