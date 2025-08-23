@@ -1,0 +1,3 @@
+```
+kubectl -f   -n polocloud
+```
