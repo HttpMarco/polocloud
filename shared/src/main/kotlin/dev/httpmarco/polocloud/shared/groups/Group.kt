@@ -11,7 +11,7 @@ open class Group(
     minOnlineService: Int,
     maxOnlineService: Int,
     val platform: PlatformIndex,
-    val percentageToStartNewService: Double,
+    percentageToStartNewService: Double,
     val information: GroupInformation,
     val templates: List<String>,
     var properties: Map<String, JsonPrimitive>
@@ -27,6 +27,9 @@ open class Group(
         protected set
 
     var maxOnlineService: Int = maxOnlineService
+        protected set
+
+    var percentageToStartNewService: Double = percentageToStartNewService
         protected set
 
     companion object {

@@ -84,6 +84,10 @@ open class AbstractGroup(
         this.maxOnlineService = maxOnlineServices
     }
 
+    fun updatePercentageToStartNewService(percentageToStartNewService: Double) {
+        this.percentageToStartNewService = percentageToStartNewService
+    }
+
     fun startServices(amount: Int): List<AbstractService> {
         val startedServices = mutableListOf<AbstractService>()
         

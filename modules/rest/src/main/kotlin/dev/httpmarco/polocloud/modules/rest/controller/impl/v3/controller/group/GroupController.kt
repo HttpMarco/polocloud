@@ -6,6 +6,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group.GroupCreateModel
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group.GroupEditModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.groups.Group
@@ -229,7 +230,7 @@ class GroupController : Controller("/group") {
 
         var group = polocloudShared.groupProvider().find(name)
         if (group == null) {
-            context.status(404).json(message("Group not found"))
+            context.status(400).json(message("Group not found"))
             return
         }
 
@@ -239,5 +240,61 @@ class GroupController : Controller("/group") {
         group.shutdownAll()
 
         context.status(204).json(message("Group deleted successfully"))
+    }
+
+    @Request(requestType = RequestType.PATCH, path = "/{name}", permission = "polocloud.group.edit")
+    fun editGroup(context: Context) {
+        val name = context.pathParam("name")
+        var group = polocloudShared.groupProvider().find(name)
+
+        if (group == null) {
+            context.status(400).json(message("Group cloud not be found"))
+            return
+        }
+
+        group = group as AbstractGroup
+
+        val groupEditModel = try {
+            context.bodyAsClass(GroupEditModel::class.java)
+        } catch (e: Exception) {
+            context.status(400).json(message("Invalid body"))
+            return
+        }
+
+        if (groupEditModel.minMemory < 0 ||
+            groupEditModel.maxMemory < 0 ||
+            groupEditModel.percentageToStartNewService < 0.0 ||
+            groupEditModel.percentageToStartNewService > 100.0) {
+            context.status(400).json(message("Invalid group data"))
+            return
+        }
+
+        if (groupEditModel.minMemory > groupEditModel.maxMemory) {
+            context.status(400).json(message("Minimum memory cannot be greater than maximum memory"))
+            return
+        }
+
+        if (groupEditModel.minOnlineService < 0 || groupEditModel.maxOnlineService < 0) {
+            context.status(400).json(message("Minimum and maximum online services cannot be negative"))
+            return
+        }
+
+        if (groupEditModel.minOnlineService > groupEditModel.maxOnlineService) {
+            context.status(400).json(message("Minimum online services cannot be greater than maximum online services"))
+            return
+        }
+
+        group.updateMinMemory(groupEditModel.minMemory)
+        group.updateMaxMemory(groupEditModel.maxMemory)
+        group.updateMinOnlineServices(groupEditModel.minOnlineService)
+        group.updateMaxOnlineServices(groupEditModel.maxOnlineService)
+        group.updatePercentageToStartNewService(groupEditModel.percentageToStartNewService)
+
+        group.update()
+        context.status(201).json(
+            JsonObject().apply {
+                addProperty("message", "Group edited successfully")
+            }.toString()
+        )
     }
 }
