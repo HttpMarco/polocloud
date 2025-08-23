@@ -21,7 +21,7 @@ class RoleController : Controller("/role") {
             return
         }
 
-        if (roleCreateModel.label.isBlank() || roleCreateModel.hexColor.isBlank() || roleCreateModel.permissions.isEmpty()) {
+        if (roleCreateModel.label.isBlank() || roleCreateModel.hexColor.isBlank()) {
             context.status(400).json(message("Invalid body: missing fields"))
             return
         }
