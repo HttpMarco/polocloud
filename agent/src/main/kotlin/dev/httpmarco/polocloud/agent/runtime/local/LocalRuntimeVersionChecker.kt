@@ -34,7 +34,6 @@ private fun getJavaVersion(): String {
     return try {
         val process = ProcessBuilder("java", "--version").start()
         val output = process.inputStream.bufferedReader().use { it.readText() }
-        // Extrahiert Version aus: "openjdk 21.0.8 2025-07-15"
         val versionRegex = Regex("""openjdk\s+(\d+\.\d+\.\d+)""")
         versionRegex.find(output)?.groupValues?.get(1) ?: ""
     } catch (_: Exception) {
@@ -61,7 +60,6 @@ private fun compareVersions(current: String, required: String, operator: String?
     val currentParts = current.split(".").map { it.toIntOrNull() ?: 0 }
     val requiredParts = required.split(".").map { it.toIntOrNull() ?: 0 }
 
-    // Gleiche Länge für Vergleich
     val minLength = minOf(currentParts.size, requiredParts.size)
     val currentNormalized = currentParts.take(minLength)
     val requiredNormalized = requiredParts.take(minLength)
