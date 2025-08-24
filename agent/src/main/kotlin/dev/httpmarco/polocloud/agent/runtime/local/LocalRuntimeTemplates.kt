@@ -62,7 +62,19 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
 
     override fun delete(name: String) {
         val sourcePath = TEMPLATE_PATH.resolve(name)
-        Files.deleteIfExists(sourcePath)
+        if (!Files.exists(sourcePath)) return
+
+        Files.walkFileTree(sourcePath, object : SimpleFileVisitor<Path>() {
+            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                Files.delete(file)
+                return FileVisitResult.CONTINUE
+            }
+
+            override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+                Files.delete(dir)
+                return FileVisitResult.CONTINUE
+            }
+        })
     }
 
     override fun update(oldName: String, newName: String) {
