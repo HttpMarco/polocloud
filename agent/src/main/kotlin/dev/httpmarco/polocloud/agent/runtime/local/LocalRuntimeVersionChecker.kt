@@ -63,12 +63,10 @@ private fun compareVersions(current: String, required: String, operator: String?
 
     // Gleiche Länge für Vergleich
     val minLength = minOf(currentParts.size, requiredParts.size)
-    println("Length: $minLength")
     val currentNormalized = currentParts.take(minLength)
     val requiredNormalized = requiredParts.take(minLength)
 
     val comparison = compareVersionParts(currentNormalized, requiredNormalized)
-    println("$comparison $currentNormalized $requiredNormalized")
 
     return when (operator) {
         ">=" -> comparison >= 0
