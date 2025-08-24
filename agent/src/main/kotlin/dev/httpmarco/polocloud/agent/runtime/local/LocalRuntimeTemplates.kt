@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 import java.io.IOException
 import java.nio.file.FileVisitResult
@@ -38,6 +39,53 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
 
     override fun saveTemplate(template: String, service: LocalService) {
        copyDirectory(service.path, TEMPLATE_PATH.resolve(template))
+    }
+
+    override fun templates(service: LocalService): List<Template> {
+        val templates = mutableListOf<Template>()
+        Files.list(TEMPLATE_PATH).forEach { dir ->
+            if (Files.isDirectory(dir)) {
+                templates.add(Template(dir.fileName.toString(), folderSize(dir).toDouble() / (1024 * 1024)))
+            }
+        }
+
+        return templates
+    }
+
+    override fun create(name: String) {
+        val sourcePath = TEMPLATE_PATH.resolve(name)
+        if (!Files.exists(sourcePath)) {
+            sourcePath.createDirectories()
+            // no template found, create empty directory
+        }
+    }
+
+    override fun delete(name: String) {
+        val sourcePath = TEMPLATE_PATH.resolve(name)
+        Files.deleteIfExists(sourcePath)
+    }
+
+    override fun update(oldName: String, newName: String) {
+        val sourcePath = TEMPLATE_PATH.resolve(oldName)
+        val targetPath = TEMPLATE_PATH.resolve(newName)
+
+        if (!Files.exists(sourcePath)) return
+        if (Files.exists(targetPath)) {
+            logger.warn("Template $newName already exists")
+            return
+        }
+
+        try {
+            Files.move(sourcePath, targetPath)
+        } catch (e: IOException) {
+            logger.warn("Cannot rename template $oldName to $newName: ${e.message}")
+        }
+    }
+
+    private fun folderSize(path: Path): Long {
+        var size = 0L
+        Files.walk(path).forEach { if (Files.isRegularFile(it)) size += Files.size(it) }
+        return size
     }
 
     fun copyDirectory(sourcePath: Path, targetPath: Path) {

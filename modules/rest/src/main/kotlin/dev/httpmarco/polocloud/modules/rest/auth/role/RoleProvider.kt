@@ -92,6 +92,7 @@ class RoleProvider {
                     "polocloud.group.count",
                     "polocloud.group.list",
                     "polocloud.group.get",
+                    "polocloud.templates.list",
 
                     //websocket
                     "polocloud.ws.alive",

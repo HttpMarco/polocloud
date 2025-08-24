@@ -12,6 +12,7 @@ import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.platfo
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.player.PlayerController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role.RoleController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.service.ServiceController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.template.TemplateController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.terminal.TerminalController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.user.UserController
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
@@ -34,10 +35,11 @@ class ControllerProvider {
             UserController(),
             AuthController(),
             RoleController(),
+            PlatformController(),
+            TemplateController(),
             GroupController(),
             ServiceController(),
             PlayerController(),
-            PlatformController(),
             SystemInformationController(),
             TerminalController()
         )
