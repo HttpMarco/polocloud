@@ -67,7 +67,7 @@ message CloudInformationFindAverageResponse {
 }
 
 message CloudInformationCleanUpRequest {
-  int64 maxAgeMillis = 1;
+  int64 max_age_millis = 1;
 }
 
 message CloudInformationCleanUpResponse {}
@@ -76,16 +76,16 @@ message CloudInformationCleanUpResponse {}
 message CloudInformationSnapshot {
   int64 started = 1;
   string runtime = 2;
-  string javaVersion = 3;
-  double cpuUsage = 4;
-  double usedMemory = 5;
-  double maxMemory = 6;
-  int32 subscribedEvents = 7;
+  string java_version = 3;
+  double cpu_usage = 4;
+  double used_memory = 5;
+  double max_memory = 6;
+  int32 subscribed_events = 7;
   int64 timestamp = 8;
 }
 
 message AggregateCloudInformationSnapshot {
   int64 timestamp = 1;
-  double avgCpu = 2;
-  double avgRam = 3;
+  double avg_cpu = 2;
+  double avg_ram = 3;
 }

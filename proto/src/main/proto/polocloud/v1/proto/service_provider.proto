@@ -73,7 +73,7 @@ message ServiceSnapshot {
 }
 
 message ServiceInformationSnapshot {
-  int64 createdAt = 1;
+  int64 created_at = 1;
 }
 
 enum ServiceState {

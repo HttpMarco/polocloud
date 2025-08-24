@@ -6,6 +6,7 @@
   "bridge": "bungeecord-bridge",
   "bridgePath": "plugins",
   "shutdownCommand": "end",
+  "defaultStartPort": 25565,
   "tasks": [
     "BUNGEECORD_SETUP_TASK"
   ],

@@ -50,7 +50,9 @@ class PlatformDeserializer : JsonDeserializer<Platform> {
 
             osNameMapping = obj.get("osNameMapping")?.let {
                 context.deserialize(it, object : TypeToken<Map<OS, String>>() {}.type)
-            } ?: emptyMap()
+            } ?: emptyMap(),
+
+            defaultStartPort = obj.get("defaultStartPort")?.asInt
         )
     }
 }

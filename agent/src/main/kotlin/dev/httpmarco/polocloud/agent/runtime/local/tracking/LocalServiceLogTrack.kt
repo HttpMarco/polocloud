@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local.tracking
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalService
+import dev.httpmarco.polocloud.shared.events.definitions.ServiceLogEvent
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -25,6 +26,8 @@ class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
 
                     val runtime = Agent.runtime
                     if (runtime !is LocalRuntime) return@forEach
+
+                    Agent.eventProvider().call(ServiceLogEvent(this.service, line))
 
                     val screenService = runtime.terminal.screenService
                     if (!screenService.isServiceRecoding(service)) {

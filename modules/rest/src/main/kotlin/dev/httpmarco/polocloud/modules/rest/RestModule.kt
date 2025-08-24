@@ -68,6 +68,7 @@ class RestModule : PolocloudModule {
     }
 
     override fun onDisable() {
+        this.webSocketService.shutdown()
         this.httpServer.stop()
         logger.info("Rest module stopped.")
     }

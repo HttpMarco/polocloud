@@ -44,4 +44,8 @@ class DockerRuntime : Runtime {
 
     override fun started() = started
 
+    override fun sendCommand(command: String) {
+        TODO("Not yet implemented")
+    }
+
 }

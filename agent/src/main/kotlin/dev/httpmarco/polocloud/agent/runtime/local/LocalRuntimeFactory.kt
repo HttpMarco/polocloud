@@ -2,14 +2,13 @@ package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.agent.utils.JavaUtils
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
-import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformParameters
@@ -53,11 +52,30 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         val platform = service.group.platform()
         val version = service.group.platform.version
+        val versionObject = platform.version(version)
+
+        val (correctRuntime, currentRuntime) = checkRuntimeVersion(service)
+        if (!correctRuntime) {
+            if (currentRuntime == null) {
+                i18n.warn(
+                    "agent.local-runtime.factory.boot.missing-runtime",
+                    service.group.platform().language,
+                    versionObject?.requiredRuntimeVersion
+                )
+            } else {
+                i18n.warn(
+                    "agent.local-runtime.factory.boot.wrong-runtime",
+                    currentRuntime,
+                    service.group.platform().language,
+                    versionObject?.requiredRuntimeVersion
+                )
+            }
+        }
 
         val serverIcon = this.javaClass.classLoader.getResource("server-icon.png")!!
 
         val environment = PlatformParameters(
-            platform.version(version)
+            versionObject
         )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)

@@ -3,6 +3,8 @@ package dev.httpmarco.polocloud.modules.rest.socket.web
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.socket.BaseWebSocket
 import dev.httpmarco.polocloud.modules.rest.socket.web.impl.v3.AliveWebSocket
+import dev.httpmarco.polocloud.modules.rest.socket.web.impl.v3.PolocloudLogWebSocket
+import dev.httpmarco.polocloud.modules.rest.socket.web.impl.v3.service.ServiceScreenWebSocket
 
 class WebSocketService {
 
@@ -15,7 +17,9 @@ class WebSocketService {
 
     init {
         register(
-            AliveWebSocket()
+            AliveWebSocket(),
+            PolocloudLogWebSocket(),
+            ServiceScreenWebSocket()
         )
 
         this.sockets.forEach { socket ->
@@ -32,4 +36,9 @@ class WebSocketService {
         sockets += webSockets
     }
 
+    fun shutdown() {
+        this.sockets.forEach { socket ->
+            socket.shutdown()
+        }
+    }
 }

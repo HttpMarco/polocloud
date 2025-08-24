@@ -4,12 +4,9 @@ import dev.httpmarco.polocloud.modules.rest.socket.BaseWebSocket
 import io.javalin.http.Context
 import io.javalin.websocket.WsCloseContext
 import io.javalin.websocket.WsConnectContext
-import io.javalin.websocket.WsContext
 import io.javalin.websocket.WsMessageContext
 
 class AliveWebSocket : BaseWebSocket("/alive", "polocloud.ws.alive") {
-
-    private val clients = mutableSetOf<WsContext>()
 
     override fun onConnect(context: WsConnectContext) {
         this.clients += context
