@@ -47,7 +47,6 @@ tasks.register<Exec>("dockerBuild") {
     )
 }
 
-
 tasks.shadowJar {
     archiveFileName.set("polocloud-agent-$version-all.jar")
 }
