@@ -76,7 +76,12 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
         }
 
         try {
-            Files.move(sourcePath, targetPath)
+            Files.move(
+                sourcePath,
+                targetPath,
+                StandardCopyOption.ATOMIC_MOVE
+            )
+            logger.info("Renamed template $oldName to $newName")
         } catch (e: IOException) {
             logger.warn("Cannot rename template $oldName to $newName: ${e.message}")
         }
