@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.events
 
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfigAccessor
 import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordPlatform
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.ServerPing
@@ -15,7 +16,7 @@ class BungeecordMotdUpdater (
     private val config: ProxyConfigAccessor
 ) : Listener {
 
-    private val polocloudVersion: String = System.getenv("polocloud-version") ?: "unknown"
+    private val polocloudVersion: String = polocloudVersion()
 
     @EventHandler
     fun onProxyPing(event: ProxyPingEvent) {
