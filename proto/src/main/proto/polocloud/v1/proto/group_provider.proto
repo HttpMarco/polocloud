@@ -6,6 +6,7 @@ option java_package = "dev.httpmarco.polocloud.v1.groups";
 option java_multiple_files = true;
 
 import "polocloud/v1/proto/object_utils.proto";
+import "polocloud/v1/proto/template_provider.proto";
 import "google/protobuf/struct.proto";
 
 service GroupController {
@@ -33,7 +34,7 @@ message GroupCreateRequest {
   int32 minimum_online = 6;
   int32 maximum_online = 7;
   double percentage_to_start_new_service = 8;
-  repeated string templates = 9;
+  repeated TemplateSnapshot templates = 9;
   map<string, string> properties = 10;
 }
 
@@ -51,7 +52,7 @@ message GroupUpdateRequest {
   int32 maximum_online = 7;
   double percentage_to_start_new_service = 8;
   GroupInformationSnapshot information = 9;
-  repeated string templates = 10;
+  repeated TemplateSnapshot templates = 10;
   map<string, string> properties = 11;
 }
 
@@ -77,7 +78,7 @@ message GroupSnapshot {
   int32 maximum_online = 7;
   double percentage_to_start_new_service = 8;
   GroupInformationSnapshot information = 9;
-  repeated string templates = 10;
+  repeated TemplateSnapshot templates = 10;
   map<string, string> properties = 11;
 }
 

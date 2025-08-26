@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.shared.groups
 
 import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.groups.GroupSnapshot
 
 open class Group(
@@ -13,7 +14,7 @@ open class Group(
     val platform: PlatformIndex,
     percentageToStartNewService: Double,
     val information: GroupInformation,
-    val templates: List<String>,
+    val templates: List<Template>,
     var properties: Map<String, JsonPrimitive>
 ) {
 
@@ -43,7 +44,7 @@ open class Group(
                 PlatformIndex(snapshot.platform.name, snapshot.platform.version),
                 snapshot.percentageToStartNewService,
                 GroupInformation.bindSnapshot(snapshot.information),
-                snapshot.templatesList,
+                Template.bindSnapshot(snapshot.templatesList),
                 snapshot.propertiesMap.map { it.key to JsonPrimitive(it.value) }.toMap()
             )
         }
@@ -59,7 +60,7 @@ open class Group(
             .setPlatform(platform.toSnapshot())
             .setPercentageToStartNewService(percentageToStartNewService)
             .setInformation(information.toSnapshot())
-            .addAllTemplates(templates)
+            .addAllTemplates(templates.map { it.toSnapshot() })
             .putAllProperties(properties.map { it.key to it.value.toString() }.toMap())
             .build()
     }
