@@ -20,7 +20,7 @@ class TemplateController : Controller("/template") {
 
         val templates = mutableSetOf<Template>()
         services.forEach { service ->
-            templates += Agent.runtime.templates().templates(service as AbstractService)
+            templates += Agent.runtime.templateStorage().templates(service as AbstractService)
         }
 
         val sortedTemplates = templates.toList().sortedBy { it.name }
@@ -53,21 +53,34 @@ class TemplateController : Controller("/template") {
             return
         }
 
-        Agent.runtime.templates().create(createTemplateModel.name)
+        val template = Agent.runtime.templateStorage().find(createTemplateModel.name)
+
+        if (template != null) {
+            context.status(400).json(message("Template already exists"))
+            return
+        }
+
+        Agent.runtime.templateStorage().create(Template(createTemplateModel.name, 0.0))
         context.status(202).json(message("Creating template"))
     }
 
     @Request(requestType = RequestType.DELETE, path = "/{templateName}", permission = "polocloud.templates.delete")
     fun deleteTemplate(context: Context) {
-        val template = context.pathParam("templateName")
+        val templateName = context.pathParam("templateName")
+        val template = Agent.runtime.templateStorage().find(templateName)
 
-        Agent.runtime.templates().delete(template)
+        if (template == null) {
+            context.status(400).json(message("Template could not be found"))
+            return
+        }
+
+        Agent.runtime.templateStorage().delete(template)
         context.status(202).json(message("Deleted template"))
     }
 
     @Request(requestType = RequestType.PATCH, path = "/{templateName}", permission = "polocloud.templates.edit")
     fun editTemplate(context: Context) {
-        val template = context.pathParam("templateName")
+        val templateName = context.pathParam("templateName")
 
         val editTemplateModel = try {
             context.bodyAsClass(EditTemplateModel::class.java)
@@ -81,8 +94,13 @@ class TemplateController : Controller("/template") {
             return
         }
 
+        val template = Agent.runtime.templateStorage().find(templateName)
+        if (template == null) {
+            context.status(400).json(message("Template could not be found"))
+            return
+        }
 
-        Agent.runtime.templates().update(template, editTemplateModel.name)
+        Agent.runtime.templateStorage().update(template, editTemplateModel.name)
         context.status(202).json(message("Template edited"))
     }
 }
