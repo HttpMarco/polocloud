@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.sdk.java.platform.PlatformProvider;
 import dev.httpmarco.polocloud.sdk.java.player.PlayerProvider;
 import dev.httpmarco.polocloud.sdk.java.services.ServiceProvider;
 import dev.httpmarco.polocloud.sdk.java.information.CloudInformationProvider;
+import dev.httpmarco.polocloud.sdk.java.template.TemplateProvider;
 import dev.httpmarco.polocloud.shared.PolocloudShared;
 import dev.httpmarco.polocloud.shared.events.SharedEventProvider;
 import dev.httpmarco.polocloud.shared.groups.Group;
@@ -20,6 +21,8 @@ import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
 import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider;
 import dev.httpmarco.polocloud.shared.information.CloudInformation;
+import dev.httpmarco.polocloud.shared.template.SharedTemplateProvider;
+import dev.httpmarco.polocloud.shared.template.Template;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +38,7 @@ public final class Polocloud extends PolocloudShared {
     private final SharedCloudInformationProvider<CloudInformation> cloudInformationProvider;
     private final Logger logger;
     private final SharedPlatformProvider<Platform> platformProvider;
+    private final SharedTemplateProvider<Template> templateProvider;
 
     private final String serviceName;
 
@@ -66,6 +70,7 @@ public final class Polocloud extends PolocloudShared {
         this.cloudInformationProvider = new CloudInformationProvider(channel);
         this.logger = new LoggerProvider(channel);
         this.platformProvider = new PlatformProvider(channel);
+        this.templateProvider = new TemplateProvider(channel);
     }
 
     public String selfServiceName() {
@@ -110,5 +115,10 @@ public final class Polocloud extends PolocloudShared {
     @NotNull
     public SharedPlatformProvider<?> platformProvider() {
         return this.platformProvider;
+    }
+
+    @Override
+    public @NotNull SharedTemplateProvider<?> templateProvider() {
+        return this.templateProvider;
     }
 }

@@ -1,7 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.logger
-import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
+import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplateStorage
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 import java.io.IOException
@@ -11,24 +11,51 @@ import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.StandardCopyOption
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.concurrent.CompletableFuture
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 
-class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
+class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<Template, LocalService> {
 
     private val TEMPLATE_PATH = Path("local/templates")
+    private val cachedTemplates = mutableListOf<Template>()
 
     init {
         GroupType.entries.forEach {
-            TEMPLATE_PATH.resolve("EVERY_$it").createDirectories()
+            TEMPLATE_PATH.resolve("EVERY_${it.name}").createDirectories()
         }
         // default template directory for all groups
         TEMPLATE_PATH.resolve("EVERY").createDirectories()
+
+        refreshTemplateCache()
+    }
+
+    private fun refreshTemplateCache() {
+        this.cachedTemplates.clear()
+
+        Files.list(TEMPLATE_PATH).forEach { dir ->
+            if (Files.isDirectory(dir)) {
+                val name = dir.fileName.toString()
+                this.cachedTemplates.add(Template(name, folderSize(dir)))
+            }
+        }
+
+        GroupType.entries.forEach { type ->
+            val groupPath = TEMPLATE_PATH.resolve("EVERY_${type.name}")
+            if (Files.exists(groupPath)) {
+                Files.list(groupPath).forEach { dir ->
+                    if (Files.isDirectory(dir)) {
+                        val name = dir.fileName.toString()
+                        this.cachedTemplates.add(Template(name, folderSize(dir)))
+                    }
+                }
+            }
+        }
     }
 
     override fun bindTemplate(service: LocalService) {
         service.templates.forEach {
-            val sourcePath = TEMPLATE_PATH.resolve(it)
+            val sourcePath = templatePath(it)
             if (!Files.exists(sourcePath)) {
                 sourcePath.createDirectories()
                 // no template found, create empty directory
@@ -37,34 +64,29 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
         }
     }
 
-    override fun saveTemplate(template: String, service: LocalService) {
-       copyDirectory(service.path, TEMPLATE_PATH.resolve(template))
+    override fun saveTemplate(template: Template, service: LocalService) {
+        copyDirectory(service.path, templatePath(template))
     }
 
     override fun templates(service: LocalService): List<Template> {
-        val templates = mutableListOf<Template>()
-        Files.list(TEMPLATE_PATH).forEach { dir ->
-            if (Files.isDirectory(dir)) {
-                templates.add(Template(dir.fileName.toString(), folderSize(dir).toDouble() / (1024 * 1024)))
-            }
-        }
-
-        return templates
+        return this.cachedTemplates.toList()
     }
 
-    override fun create(name: String) {
-        val sourcePath = TEMPLATE_PATH.resolve(name)
+    override fun create(template: Template) {
+        val sourcePath = templatePath(template)
         if (!Files.exists(sourcePath)) {
             sourcePath.createDirectories()
-            // no template found, create empty directory
+            this.cachedTemplates.add(template)
         }
     }
 
-    override fun delete(name: String) {
-        val sourcePath = TEMPLATE_PATH.resolve(name)
-        if (!Files.exists(sourcePath)) return
+    override fun delete(template: Template) {
+        val path = templatePath(template)
+        if (!Files.exists(path)) {
+            return
+        }
 
-        Files.walkFileTree(sourcePath, object : SimpleFileVisitor<Path>() {
+        Files.walkFileTree(path, object : SimpleFileVisitor<Path>() {
             override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
                 Files.delete(file)
                 return FileVisitResult.CONTINUE
@@ -75,10 +97,12 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
                 return FileVisitResult.CONTINUE
             }
         })
+
+        this.cachedTemplates.removeIf { it.name == template.name }
     }
 
-    override fun update(oldName: String, newName: String) {
-        val sourcePath = TEMPLATE_PATH.resolve(oldName)
+    override fun update(template: Template, newName: String) {
+        val sourcePath = templatePath(template)
         val targetPath = TEMPLATE_PATH.resolve(newName)
 
         if (!Files.exists(sourcePath)) return
@@ -93,16 +117,18 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
                 targetPath,
                 StandardCopyOption.ATOMIC_MOVE
             )
-            logger.info("Renamed template $oldName to $newName")
+            logger.info("Renamed template ${template.name} to $newName")
+            this.cachedTemplates.removeIf { it.name == template.name }
+            this.cachedTemplates.add(Template(newName, folderSize(targetPath)))
         } catch (e: IOException) {
-            logger.warn("Cannot rename template $oldName to $newName: ${e.message}")
+            logger.warn("Cannot rename template ${template.name} to $newName: ${e.message}")
         }
     }
 
-    private fun folderSize(path: Path): Long {
+    private fun folderSize(path: Path): Double {
         var size = 0L
         Files.walk(path).forEach { if (Files.isRegularFile(it)) size += Files.size(it) }
-        return size
+        return size.toDouble() / (1024 * 1024)
     }
 
     fun copyDirectory(sourcePath: Path, targetPath: Path) {
@@ -128,5 +154,21 @@ class LocalRuntimeTemplates : RuntimeTemplates<LocalService> {
                 return FileVisitResult.CONTINUE
             }
         })
+    }
+
+    override fun findAll(): List<Template> {
+        return this.cachedTemplates
+    }
+
+    override fun findAllAsync(): CompletableFuture<List<Template>> = CompletableFuture.completedFuture(findAll())
+
+    override fun find(name: String): Template? {
+        return this.cachedTemplates.find { it.name == name }
+    }
+
+    override fun findAsync(name: String): CompletableFuture<Template?> = CompletableFuture.completedFuture(find(name))
+
+    private fun templatePath(template: Template): Path {
+        return TEMPLATE_PATH.resolve(template.name)
     }
 }
