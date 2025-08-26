@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
@@ -14,7 +15,7 @@ class SystemInformationController : Controller("/system") {
     fun version(context: Context) {
         context.status(200).json(
             JsonObject().apply {
-                addProperty("version", System.getenv("polocloud-version") ?: "unknown")
+                addProperty("version", polocloudVersion())
             }.toString()
         )
     }
