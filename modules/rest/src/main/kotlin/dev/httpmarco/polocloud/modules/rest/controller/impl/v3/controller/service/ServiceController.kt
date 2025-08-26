@@ -73,7 +73,10 @@ class ServiceController : Controller("/service") {
                             })
                             add("templates", JsonArray().apply {
                                 service.templates.forEach { template ->
-                                    add(template)
+                                    add(JsonObject().apply {
+                                        addProperty("name", template.name)
+                                        addProperty("size", template.size)
+                                    })
                                 }
                             })
                             add("properties", JsonObject().apply {
