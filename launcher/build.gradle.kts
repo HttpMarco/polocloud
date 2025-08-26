@@ -36,7 +36,7 @@ tasks.jar {
     manifest {
         attributes(
             "Main-Class" to "dev.httpmarco.polocloud.launcher.PolocloudLauncher",
-            "polocloud-version" to version
+            "POLOCLOUD_VERSION" to version
         )
     }
     archiveFileName.set("polocloud-launcher.jar")

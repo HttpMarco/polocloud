@@ -1,5 +1,6 @@
 dependencies {
     compileOnly(projects.agent)
+    compileOnly(projects.common)
     compileOnly(projects.shared)
 
     implementation(libs.gson)
