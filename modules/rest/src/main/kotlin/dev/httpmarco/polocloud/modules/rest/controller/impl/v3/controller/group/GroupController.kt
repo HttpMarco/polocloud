@@ -162,7 +162,10 @@ class GroupController : Controller("/group") {
                             })
                             add("templates", JsonArray().apply {
                                 group.templates.forEach { template ->
-                                    add(template)
+                                    add(JsonObject().apply {
+                                        addProperty("name", template.name)
+                                        addProperty("size", template.size)
+                                    })
                                 }
                             })
                             add("properties", JsonObject().apply {
@@ -208,7 +211,10 @@ class GroupController : Controller("/group") {
                 })
                 add("templates", JsonArray().apply {
                     group.templates.forEach { template ->
-                        add(template)
+                        add(JsonObject().apply {
+                            addProperty("name", template.name)
+                            addProperty("size", template.size)
+                        })
                     }
                 })
                 add("properties", JsonObject().apply {

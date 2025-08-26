@@ -4,6 +4,7 @@ import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.groups.FindGroupRequest
 import dev.httpmarco.polocloud.v1.groups.FindGroupResponse
 import dev.httpmarco.polocloud.v1.groups.GroupControllerGrpc
@@ -62,7 +63,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             request.percentageToStartNewService,
             PlatformIndex(request.platform.name, request.platform.version),
             GroupInformation(System.currentTimeMillis()),
-            request.templatesList,
+            Template.bindSnapshot(request.templatesList),
             properties
         )
 
@@ -102,7 +103,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             request.percentageToStartNewService,
             PlatformIndex(request.platform.name, request.platform.version),
             GroupInformation.bindSnapshot(request.information),
-            request.templatesList,
+            Template.bindSnapshot(request.templatesList),
             properties
         )
 

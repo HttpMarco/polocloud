@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group
 
 import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.platform.PlatformModel
+import dev.httpmarco.polocloud.shared.template.Template
 
 data class GroupCreateModel(
     val name: String = "",
@@ -12,6 +13,6 @@ data class GroupCreateModel(
     val platform: PlatformModel = PlatformModel(),
     val percentageToStartNewService: Double = 0.0,
     val information: GroupInformationModel = GroupInformationModel(),
-    val templates: List<String> = emptyList(),
+    val templates: List<Template> = emptyList(),
     val properties: Map<String, JsonPrimitive> = emptyMap()
 )

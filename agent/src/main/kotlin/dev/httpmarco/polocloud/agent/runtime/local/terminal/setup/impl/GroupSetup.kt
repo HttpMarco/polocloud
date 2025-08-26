@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
 import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 
 class GroupSetup : Setup<AbstractGroup>("Group setup") {
@@ -73,7 +74,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             platform,
             GroupInformation(System.currentTimeMillis()),
             listOf(
-                "EVERY", "EVERY_" + originalPlatform.type.name, name
+                Template("EVERY", 0.0), Template("EVERY_" + originalPlatform.type.name, 0.0), Template(name, 0.0)
             ),
             properties
         )
