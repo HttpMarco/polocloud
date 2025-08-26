@@ -10,8 +10,6 @@ class ListSubCommand(
     val proxyAddon: ProxyAddon
 ) : BungeecordCloudSubCommand {
 
-    private val polocloudVersion = System.getenv("polocloud-version")?: "unknown"
-
     override fun execute(sender: CommandSender, args: List<String?>) {
         val config = this.proxyAddon.config
 

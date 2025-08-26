@@ -18,7 +18,7 @@ class LocalRuntime : Runtime {
     private val runtimeFactory = LocalRuntimeFactory(this)
     private val runtimeQueue = LocalRuntimeQueue()
     private val runtimeExpender = LocalRuntimeExpender()
-    private val templates = LocalRuntimeTemplates()
+    private val templates = LocalRuntimeTemplateStorage()
     private val configHolder = LocalRuntimeConfigHolder()
     private val started = System.currentTimeMillis()
 
@@ -61,7 +61,7 @@ class LocalRuntime : Runtime {
 
     override fun expender() = runtimeExpender
 
-    override fun templates() = templates
+    override fun templateStorage() = templates
 
     override fun configHolder() = configHolder
 

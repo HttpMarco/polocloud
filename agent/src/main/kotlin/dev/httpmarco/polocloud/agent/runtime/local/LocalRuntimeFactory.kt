@@ -121,7 +121,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         service.path.createDirectories()
 
         // copy all templates to the service path
-        Agent.runtime.templates().bindTemplate(service)
+        Agent.runtime.templateStorage().bindTemplate(service)
 
         // copy the platform files to the service path and setup service
         platform.prepare(service.path, service.group.platform.version, environment)
