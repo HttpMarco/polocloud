@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.shared.service
 
 import dev.httpmarco.polocloud.shared.polocloudShared
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
@@ -13,7 +14,7 @@ open class Service(
     var properties: Map<String, String>,
     val hostname: String,
     val port: Int,
-    var templates: List<String>,
+    var templates: List<Template>,
     val information: ServiceInformation,
     minMemory: Int,
     maxMemory: Int,
@@ -60,7 +61,7 @@ open class Service(
                 properties = snapshot.propertiesMap,
                 hostname = snapshot.hostname,
                 port = snapshot.port,
-                templates = snapshot.templatesList,
+                templates = Template.bindSnapshot(snapshot.templatesList),
                 information = ServiceInformation.bindSnapshot(snapshot.information),
                 minMemory = snapshot.minimumMemory,
                 maxMemory = snapshot.maximumMemory,
@@ -81,7 +82,7 @@ open class Service(
             .setServerType(type)
             .putAllProperties(properties)
             .setHostname(hostname)
-            .addAllTemplates(templates)
+            .addAllTemplates(templates.map { it.toSnapshot() })
             .setInformation(information.toSnapshot())
             .setMinimumMemory(minMemory)
             .setMaximumMemory(maxMemory)
