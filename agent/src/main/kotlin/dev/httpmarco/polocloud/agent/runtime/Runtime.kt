@@ -86,7 +86,7 @@ interface Runtime {
      * Returns the templates for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun templates(): RuntimeTemplates<AbstractService>
+    fun templateStorage(): RuntimeTemplateStorage<*, AbstractService>
 
     /**
      * Returns the holder for the runtime configuration.
