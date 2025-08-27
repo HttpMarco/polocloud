@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.v1.templates.TemplateSnapshot
 
 open class Template(
     val name: String,
-    val size: Double
+    private val size: String = "unknown"
 ) {
 
     companion object {
@@ -20,8 +20,11 @@ open class Template(
     fun toSnapshot(): TemplateSnapshot {
         return TemplateSnapshot.newBuilder()
             .setName(name)
-            .setSize(size)
+            .setSize(size())
             .build()
     }
 
+    open fun size(): String {
+        return size
+    }
 }

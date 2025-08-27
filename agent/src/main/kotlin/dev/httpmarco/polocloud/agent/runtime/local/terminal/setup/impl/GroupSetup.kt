@@ -63,6 +63,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
         }
 
 
+        // TODO USE EVERY TEMPLATE IF EXISTS
         val group = AbstractGroup(
             name,
             minMemory,
@@ -73,7 +74,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             platform,
             System.currentTimeMillis(),
             listOf(
-                Template("EVERY", 0.0), Template("EVERY_" + originalPlatform.type.name, 0.0), Template(name, 0.0)
+                Template("EVERY"), Template("EVERY_" + originalPlatform.type.name), Template(name)
             ),
             properties
         )

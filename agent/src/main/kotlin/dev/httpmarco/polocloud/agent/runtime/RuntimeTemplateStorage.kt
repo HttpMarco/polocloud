@@ -6,15 +6,18 @@ import dev.httpmarco.polocloud.shared.template.Template
 
 interface RuntimeTemplateStorage<T : Template, out S : AbstractService> : SharedTemplateProvider<T> {
 
+    fun availableTemplates() : List<Template>
+
     fun bindTemplate(service: @UnsafeVariance S)
 
     fun saveTemplate(template: Template, service: @UnsafeVariance S)
 
     fun templates(service: @UnsafeVariance S): List<Template>
 
-    fun create(template: Template)
+    fun create(template: T)
 
     fun delete(template: Template)
 
     fun update(template: Template, newName: String)
+
 }

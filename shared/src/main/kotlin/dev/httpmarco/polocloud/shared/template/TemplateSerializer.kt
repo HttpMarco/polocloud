@@ -3,7 +3,6 @@ package dev.httpmarco.polocloud.shared.template
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
@@ -25,6 +24,6 @@ class TemplateSerializer : JsonSerializer<Template>, JsonDeserializer<Template> 
         typeOfT: Type?,
         context: JsonDeserializationContext?
     ): Template {
-        return Template(json.asJsonPrimitive.asString, -1.0)
+        return Template(json.asJsonPrimitive.asString)
     }
 }

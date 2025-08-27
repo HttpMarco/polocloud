@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.GroupCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.PlatformCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.ServiceCommand
+import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.TemplateCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.OnboardingSetup
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
@@ -31,6 +32,7 @@ class LocalRuntime : Runtime {
         terminal.commandService.registerCommand(GroupCommand(runtimeGroupStorage, terminal))
         terminal.commandService.registerCommand(ServiceCommand(runtimeServiceStorage, terminal))
         terminal.commandService.registerCommand(PlatformCommand())
+        terminal.commandService.registerCommand(TemplateCommand())
 
         this.runtimeQueue.start()
         this.runtimeCpuDetectionThread.start()

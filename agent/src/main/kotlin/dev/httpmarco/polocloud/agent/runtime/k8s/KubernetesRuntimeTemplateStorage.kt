@@ -21,6 +21,10 @@ class KubernetesRuntimeTemplateStorage : RuntimeTemplateStorage<Template, Kubern
         TODO("Not yet implemented")
     }
 
+    override fun availableTemplates(): List<Template> {
+        TODO("Not yet implemented")
+    }
+
     override fun bindTemplate(service: KubernetesService) {
         TODO("Not yet implemented")
     }

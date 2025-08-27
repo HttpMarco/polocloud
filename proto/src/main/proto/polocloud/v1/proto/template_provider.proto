@@ -19,5 +19,5 @@ message TemplateFindResponse {
 
 message TemplateSnapshot {
     string name = 1;
-    double size = 2;
+    string size = 2;
 }
