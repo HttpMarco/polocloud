@@ -2,18 +2,13 @@ package dev.httpmarco.polocloud.agent.groups
 
 import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.groups.FindGroupRequest
 import dev.httpmarco.polocloud.v1.groups.FindGroupResponse
 import dev.httpmarco.polocloud.v1.groups.GroupControllerGrpc
-import dev.httpmarco.polocloud.v1.groups.GroupCreateRequest
-import dev.httpmarco.polocloud.v1.groups.GroupCreateResponse
 import dev.httpmarco.polocloud.v1.groups.GroupDeleteRequest
-import dev.httpmarco.polocloud.v1.groups.GroupDeleteResponse
-import dev.httpmarco.polocloud.v1.groups.GroupUpdateRequest
-import dev.httpmarco.polocloud.v1.groups.GroupUpdateResponse
+import dev.httpmarco.polocloud.v1.groups.GroupSnapshot
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
@@ -40,9 +35,8 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
 
     }
 
-    override fun create(request: GroupCreateRequest, responseObserver: StreamObserver<GroupCreateResponse>) {
+    override fun create(request: GroupSnapshot, responseObserver: StreamObserver<GroupSnapshot>) {
         val groupStorage = Agent.runtime.groupStorage()
-        val builder = GroupCreateResponse.newBuilder()
 
         if (groupStorage.find(request.name) != null) {
             responseObserver.onError(StatusRuntimeException(Status.ALREADY_EXISTS))
@@ -62,21 +56,19 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             request.maximumOnline,
             request.percentageToStartNewService,
             PlatformIndex(request.platform.name, request.platform.version),
-            GroupInformation(System.currentTimeMillis()),
+            System.currentTimeMillis(),
             Template.bindSnapshot(request.templatesList),
             properties
         )
 
         Agent.runtime.groupStorage().publish(group)
-        builder.setGroup(group.toSnapshot())
-        responseObserver.onNext(builder.build())
+        responseObserver.onNext(group.toSnapshot())
         responseObserver.onCompleted()
 
     }
 
-    override fun update(request: GroupUpdateRequest, responseObserver: StreamObserver<GroupUpdateResponse>) {
+    override fun update(request: GroupSnapshot, responseObserver: StreamObserver<GroupSnapshot>) {
         val groupStorage = Agent.runtime.groupStorage()
-        val builder = GroupUpdateResponse.newBuilder()
 
         if (groupStorage.find(request.name) == null) {
             responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
@@ -102,20 +94,18 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             request.maximumOnline,
             request.percentageToStartNewService,
             PlatformIndex(request.platform.name, request.platform.version),
-            GroupInformation.bindSnapshot(request.information),
+            request.createdAt,
             Template.bindSnapshot(request.templatesList),
             properties
         )
 
         Agent.runtime.groupStorage().updateGroup(group)
-        builder.setGroup(group.toSnapshot())
-        responseObserver.onNext(builder.build())
+        responseObserver.onNext(group.toSnapshot())
         responseObserver.onCompleted()
     }
 
-    override fun delete(request: GroupDeleteRequest, responseObserver: StreamObserver<GroupDeleteResponse>) {
+    override fun delete(request: GroupDeleteRequest, responseObserver: StreamObserver<GroupSnapshot>) {
         val groupStorage = Agent.runtime.groupStorage()
-        val builder = GroupDeleteResponse.newBuilder()
 
         val group = groupStorage.find(request.name)
         if (group == null) {
@@ -125,9 +115,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
 
         Agent.runtime.serviceStorage().findByGroup(group).forEach { it.shutdown() }
         Agent.runtime.groupStorage().delete(group.name)
-        builder.setGroup(group.toSnapshot())
-        responseObserver.onNext(builder.build())
+        responseObserver.onNext(group.toSnapshot())
         responseObserver.onCompleted()
     }
-
 }

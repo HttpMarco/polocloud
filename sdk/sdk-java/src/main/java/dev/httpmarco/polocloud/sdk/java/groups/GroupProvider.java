@@ -47,84 +47,28 @@ public class GroupProvider implements SharedGroupProvider<Group> {
     @Override
     @Nullable
     public Group create(@NotNull Group group) {
-        var snapshot = group.toSnapshot();
-        return Group.Companion.bindSnapshot(blockingStub.create(
-                GroupCreateRequest.newBuilder()
-                        .setName(snapshot.getName())
-                        .setType(snapshot.getType())
-                        .setPlatform(snapshot.getPlatform())
-                        .setMinimumMemory(snapshot.getMinimumMemory())
-                        .setMaximumMemory(snapshot.getMaximumMemory())
-                        .setMinimumOnline(snapshot.getMinimumOnline())
-                        .setMaximumOnline(snapshot.getMaximumOnline())
-                        .setPercentageToStartNewService(snapshot.getPercentageToStartNewService())
-                        .addAllTemplates(snapshot.getTemplatesList())
-                        .putAllProperties(snapshot.getPropertiesMap())
-                        .build()
-        ).getGroup());
+        return Group.Companion.bindSnapshot(blockingStub.create(group.toSnapshot()));
     }
 
     @Override
     @NotNull
     public CompletableFuture<Group> createAsync(@NotNull Group group) {
-        var snapshot = group.toSnapshot();
-        return FutureConverterKt.completableFromGuava(futureStub.create(
-                GroupCreateRequest.newBuilder()
-                        .setName(snapshot.getName())
-                        .setType(snapshot.getType())
-                        .setPlatform(snapshot.getPlatform())
-                        .setMinimumMemory(snapshot.getMinimumMemory())
-                        .setMaximumMemory(snapshot.getMaximumMemory())
-                        .setMinimumOnline(snapshot.getMinimumOnline())
-                        .setMaximumOnline(snapshot.getMaximumOnline())
-                        .setPercentageToStartNewService(snapshot.getPercentageToStartNewService())
-                        .addAllTemplates(snapshot.getTemplatesList())
-                        .putAllProperties(snapshot.getPropertiesMap())
-                        .build()
-        ), groupSnapshot -> Group.Companion.bindSnapshot(groupSnapshot.getGroup()));
+        return FutureConverterKt.completableFromGuava(futureStub.create(group.toSnapshot()), Group.Companion::bindSnapshot);
     }
 
     @Override
     public Group update(@NotNull Group group) {
-        var snapshot = group.toSnapshot();
-        return Group.Companion.bindSnapshot(blockingStub.update(
-                GroupUpdateRequest.newBuilder()
-                        .setName(snapshot.getName())
-                        .setType(snapshot.getType())
-                        .setPlatform(snapshot.getPlatform())
-                        .setMinimumMemory(snapshot.getMinimumMemory())
-                        .setMaximumMemory(snapshot.getMaximumMemory())
-                        .setMinimumOnline(snapshot.getMinimumOnline())
-                        .setMaximumOnline(snapshot.getMaximumOnline())
-                        .setPercentageToStartNewService(snapshot.getPercentageToStartNewService())
-                        .addAllTemplates(snapshot.getTemplatesList())
-                        .putAllProperties(snapshot.getPropertiesMap())
-                        .build()
-        ).getGroup());
+        return Group.Companion.bindSnapshot(blockingStub.update(group.toSnapshot()));
     }
 
     @Override
     public CompletableFuture<Group> updateAsync(@NotNull Group group) {
-        var snapshot = group.toSnapshot();
-        return FutureConverterKt.completableFromGuava(futureStub.update(
-                GroupUpdateRequest.newBuilder()
-                        .setName(snapshot.getName())
-                        .setType(snapshot.getType())
-                        .setPlatform(snapshot.getPlatform())
-                        .setMinimumMemory(snapshot.getMinimumMemory())
-                        .setMaximumMemory(snapshot.getMaximumMemory())
-                        .setMinimumOnline(snapshot.getMinimumOnline())
-                        .setMaximumOnline(snapshot.getMaximumOnline())
-                        .setPercentageToStartNewService(snapshot.getPercentageToStartNewService())
-                        .addAllTemplates(snapshot.getTemplatesList())
-                        .putAllProperties(snapshot.getPropertiesMap())
-                        .build()
-        ), groupSnapshot -> Group.Companion.bindSnapshot(groupSnapshot.getGroup()));
+        return FutureConverterKt.completableFromGuava(futureStub.update(group.toSnapshot()), Group.Companion::bindSnapshot);
     }
 
     @Override
     @Nullable
     public Group delete(@NotNull String name) {
-        return Group.Companion.bindSnapshot(blockingStub.delete(GroupDeleteRequest.newBuilder().setName(name).build()).getGroup());
+        return Group.Companion.bindSnapshot(blockingStub.delete(GroupDeleteRequest.newBuilder().setName(name).build()));
     }
 }

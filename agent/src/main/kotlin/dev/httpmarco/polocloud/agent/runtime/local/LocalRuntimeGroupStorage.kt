@@ -1,10 +1,12 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
+import com.google.gson.GsonBuilder
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
 import dev.httpmarco.polocloud.common.json.GSON
-import dev.httpmarco.polocloud.common.json.PRETTY_GSON
+import dev.httpmarco.polocloud.shared.template.Template
+import dev.httpmarco.polocloud.shared.template.TemplateSerializer
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.CompletableFuture
@@ -17,6 +19,7 @@ private val STORAGE_PATH = Path("local/groups")
 
 class LocalRuntimeGroupStorage : RuntimeGroupStorage {
 
+    private val STORAGE_GSON = GsonBuilder().setPrettyPrinting().registerTypeHierarchyAdapter(Template::class.java, TemplateSerializer()).create()
     private lateinit var cachedAbstractGroups: ArrayList<AbstractGroup>
 
     init {
@@ -33,7 +36,7 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
     }
 
     override fun publish(abstractGroup: AbstractGroup) {
-        Files.writeString(groupPath(abstractGroup), PRETTY_GSON.toJson(abstractGroup))
+        Files.writeString(groupPath(abstractGroup), STORAGE_GSON.toJson(abstractGroup))
         this.cachedAbstractGroups.add(abstractGroup)
     }
 
@@ -44,7 +47,7 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
 
     override fun updateGroup(group: AbstractGroup) {
         // overwrite the existing group file with the new data
-        Files.writeString(groupPath(group), PRETTY_GSON.toJson(group))
+        Files.writeString(groupPath(group), STORAGE_GSON.toJson(group))
         // update the cached group
         val index = this.cachedAbstractGroups.indexOfFirst { it.name == group.name }
         if (index != -1) {

@@ -13,7 +13,7 @@ open class Group(
     maxOnlineService: Int,
     val platform: PlatformIndex,
     percentageToStartNewService: Double,
-    val information: GroupInformation,
+    val createdAt: Long,
     val templates: List<Template>,
     var properties: Map<String, JsonPrimitive>
 ) {
@@ -43,7 +43,7 @@ open class Group(
                 snapshot.maximumOnline,
                 PlatformIndex(snapshot.platform.name, snapshot.platform.version),
                 snapshot.percentageToStartNewService,
-                GroupInformation.bindSnapshot(snapshot.information),
+                snapshot.createdAt,
                 Template.bindSnapshot(snapshot.templatesList),
                 snapshot.propertiesMap.map { it.key to JsonPrimitive(it.value) }.toMap()
             )
@@ -59,10 +59,9 @@ open class Group(
             .setMaximumOnline(maxOnlineService)
             .setPlatform(platform.toSnapshot())
             .setPercentageToStartNewService(percentageToStartNewService)
-            .setInformation(information.toSnapshot())
+            .setCreatedAt(createdAt)
             .addAllTemplates(templates.map { it.toSnapshot() })
             .putAllProperties(properties.map { it.key to it.value.toString() }.toMap())
             .build()
     }
-
 }

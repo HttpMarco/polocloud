@@ -10,7 +10,6 @@ import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group.Group
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.groups.Group
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.polocloudShared

@@ -11,61 +11,9 @@ import "google/protobuf/struct.proto";
 
 service GroupController {
   rpc find(FindGroupRequest) returns (FindGroupResponse);
-  rpc create(GroupCreateRequest) returns (GroupCreateResponse);
-  rpc update(GroupUpdateRequest) returns (GroupUpdateResponse);
-  rpc delete(GroupDeleteRequest) returns (GroupDeleteResponse);
-}
-
-message FindGroupRequest {
-  string name = 1;
-  GroupType type = 2;
-}
-
-message FindGroupResponse {
-  repeated GroupSnapshot groups = 1;
-}
-
-message GroupCreateRequest {
-  string name = 1;
-  GroupType type = 2;
-  GroupPlatformSnapshot platform = 3;
-  int32 minimum_memory = 4;
-  int32 maximum_memory = 5;
-  int32 minimum_online = 6;
-  int32 maximum_online = 7;
-  double percentage_to_start_new_service = 8;
-  repeated TemplateSnapshot templates = 9;
-  map<string, string> properties = 10;
-}
-
-message GroupCreateResponse {
-  GroupSnapshot group = 1;
-}
-
-message GroupUpdateRequest {
-  string name = 1;
-  GroupType type = 2;
-  GroupPlatformSnapshot platform = 3;
-  int32 minimum_memory = 4;
-  int32 maximum_memory = 5;
-  int32 minimum_online = 6;
-  int32 maximum_online = 7;
-  double percentage_to_start_new_service = 8;
-  GroupInformationSnapshot information = 9;
-  repeated TemplateSnapshot templates = 10;
-  map<string, string> properties = 11;
-}
-
-message GroupUpdateResponse {
-  GroupSnapshot group = 1;
-}
-
-message GroupDeleteRequest {
-  string name = 1;
-}
-
-message GroupDeleteResponse {
-  GroupSnapshot group = 1;
+  rpc create(GroupSnapshot) returns (GroupSnapshot);
+  rpc update(GroupSnapshot) returns (GroupSnapshot);
+  rpc delete(GroupDeleteRequest) returns (GroupSnapshot);
 }
 
 message GroupSnapshot {
@@ -77,9 +25,22 @@ message GroupSnapshot {
   int32 minimum_online = 6;
   int32 maximum_online = 7;
   double percentage_to_start_new_service = 8;
-  GroupInformationSnapshot information = 9;
+  int64 createdAt = 9;
   repeated TemplateSnapshot templates = 10;
   map<string, string> properties = 11;
+}
+
+message FindGroupRequest {
+  string name = 1;
+  GroupType type = 2;
+}
+
+message FindGroupResponse {
+  repeated GroupSnapshot groups = 1;
+}
+
+message GroupDeleteRequest {
+  string name = 1;
 }
 
 message GroupInformationSnapshot {

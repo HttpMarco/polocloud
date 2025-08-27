@@ -7,7 +7,6 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputConte
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
@@ -56,11 +55,11 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
         val properties = HashMap<String, JsonPrimitive>()
 
         if (fallback) {
-            properties.put("fallback", JsonPrimitive(true))
+            properties["fallback"] = JsonPrimitive(true)
         }
 
         if (static) {
-            properties.put("static", JsonPrimitive(true))
+            properties["static"] = JsonPrimitive(true)
         }
 
 
@@ -72,7 +71,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             maxOnlineServices,
             percentageToStartNewService.toDouble(),
             platform,
-            GroupInformation(System.currentTimeMillis()),
+            System.currentTimeMillis(),
             listOf(
                 Template("EVERY", 0.0), Template("EVERY_" + originalPlatform.type.name, 0.0), Template(name, 0.0)
             ),
