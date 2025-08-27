@@ -19,7 +19,11 @@ private val STORAGE_PATH = Path("local/groups")
 
 class LocalRuntimeGroupStorage : RuntimeGroupStorage {
 
-    private val STORAGE_GSON = GsonBuilder().setPrettyPrinting().registerTypeHierarchyAdapter(Template::class.java, TemplateSerializer()).create()
+    private val STORAGE_GSON = GsonBuilder().setPrettyPrinting()
+        .registerTypeHierarchyAdapter(Template::class.java, TemplateSerializer())
+        .registerTypeAdapter(Template::class.java, TemplateSerializer())
+        .create()
+
     private lateinit var cachedAbstractGroups: ArrayList<AbstractGroup>
 
     init {
@@ -31,7 +35,7 @@ class LocalRuntimeGroupStorage : RuntimeGroupStorage {
 
         // load all groups from the storage path
         cachedAbstractGroups = ArrayList(STORAGE_PATH.listDirectoryEntries("*.json").stream().map {
-            return@map GSON.fromJson(Files.readString(it), AbstractGroup::class.java)
+            return@map STORAGE_GSON.fromJson(Files.readString(it), AbstractGroup::class.java)
         }.toList())
     }
 

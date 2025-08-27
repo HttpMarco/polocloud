@@ -25,10 +25,6 @@ class TemplateSerializer : JsonSerializer<Template>, JsonDeserializer<Template> 
         typeOfT: Type?,
         context: JsonDeserializationContext?
     ): Template {
-        return Template(
-            json.asJsonPrimitive.asString
-            ,
-            -1.0
-        )
+        return Template(json.asJsonPrimitive.asString, -1.0)
     }
 }

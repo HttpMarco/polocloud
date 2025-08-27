@@ -13,7 +13,11 @@ import java.io.FileWriter
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
 import kotlin.io.path.exists
+import kotlin.io.path.notExists
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
 class PlatformFilePropertyUpdateAction(
     private val key: String,
@@ -77,14 +81,20 @@ class PlatformFilePropertyUpdateAction(
     }
 
     private fun handleToml(file: Path, value: Any?) {
-        val fileText = if (file.exists()) file.toFile().readText() else ""
-        val toml = Toml.parse(fileText)
-        val existingMap = toml.toMap().toMutableMap()
+        val content = if (file.exists()) file.readText().lines().toMutableList() else mutableListOf()
+        val lineIndex = content.indexOfFirst { it.trim().startsWith("$key =") }
 
-        existingMap.withNestedValue(key.split("."), value)
+        if (lineIndex >= 0) {
+            content[lineIndex] = "$key = \"$value\""
+        } else {
+            content.add("$key = \"$value\"")
+        }
 
-        val newTomlContent = buildToml(existingMap)
-        file.toFile().writeText(newTomlContent)
+        if(file.notExists()) {
+            file.createFile();
+        }
+
+        file.writeText(content.joinToString("\n"))
     }
 
     private fun parseValue(input: String): Any = when {
@@ -94,18 +104,6 @@ class PlatformFilePropertyUpdateAction(
         else -> input
     }
 
-    private fun buildToml(map: Map<String, Any?>, prefix: String = ""): String {
-        val builder = StringBuilder()
-        for ((key, value) in map) {
-            val fullKey = if (prefix.isNotEmpty()) "$prefix.$key" else key
-            when (value) {
-                is Map<*, *> -> builder.append(buildToml(value as Map<String, Any?>, fullKey))
-                is String -> builder.append("$fullKey = \"${value.replace("\"", "\\\"")}\"\n")
-                else -> builder.append("$fullKey = $value\n")
-            }
-        }
-        return builder.toString()
-    }
 
     private fun MutableMap<String, Any?>.withNestedValue(keys: List<String>, value: Any?): MutableMap<String, Any?> {
         if (keys.isEmpty()) return this
