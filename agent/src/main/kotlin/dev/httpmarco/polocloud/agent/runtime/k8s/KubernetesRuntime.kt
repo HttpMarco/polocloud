@@ -6,7 +6,7 @@ import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-class KubernetesRuntime : Runtime {
+class KubernetesRuntime : Runtime() {
 
     private val kubernetesClient = KubernetesClientBuilder().build()
     private val groupStorage = KubernetesRuntimeGroupStorage(kubernetesClient)
@@ -15,7 +15,6 @@ class KubernetesRuntime : Runtime {
     private val factory = KubernetesFactory()
     private val expender = KubernetesExpender()
     private val templates = KubernetesRuntimeTemplateStorage()
-    private val started = System.currentTimeMillis()
 
     override fun runnable(): Boolean {
         return try {
@@ -40,8 +39,6 @@ class KubernetesRuntime : Runtime {
     override fun templateStorage() = templates
 
     override fun configHolder() = configHolder
-
-    override fun started() = started
 
     override fun sendCommand(command: String) {
         TODO("Not yet implemented")

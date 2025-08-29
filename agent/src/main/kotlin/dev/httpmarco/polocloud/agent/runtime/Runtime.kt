@@ -6,7 +6,9 @@ import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.services.AbstractService
 
-interface Runtime {
+abstract class Runtime {
+
+    private val started = System.currentTimeMillis()
 
     companion object {
         /**
@@ -36,7 +38,7 @@ interface Runtime {
      * ...
      * 4. shutdown - called to shut down the runtime
      */
-    fun initialize() {
+    open fun initialize() {
         // Default implementation does nothing.
         // This method can be overridden by specific runtime implementations
         // to perform any necessary initialization.
@@ -46,7 +48,7 @@ interface Runtime {
         Agent.boot()
     }
 
-    fun boot() {
+    open fun boot() {
         // Default implementation does nothing.
         // This method can be overridden by specific runtime implementations
         // to perform any necessary bootstrapping or initialization.
@@ -56,63 +58,60 @@ interface Runtime {
      * Check if the runtime is runnable.
      * This method should be overridden by the specific runtime implementations
      */
-    fun runnable(): Boolean
+    abstract fun runnable(): Boolean
 
     /**
      * Returns the current storage for the runtime.
      * Only for all service related operations.
      */
-    fun serviceStorage(): RuntimeServiceStorage<*>
+    abstract fun serviceStorage(): RuntimeServiceStorage<*>
 
     /**
      * Returns the current group storage for the runtime.
      * Only for all group related operations.
      */
-    fun groupStorage(): RuntimeGroupStorage
+    abstract fun groupStorage(): RuntimeGroupStorage
 
     /**
      * Returns the current factory for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun factory(): RuntimeFactory<AbstractService>
+    abstract fun factory(): RuntimeFactory<AbstractService>
 
     /**
      * Returns the expender for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun expender(): RuntimeExpender<AbstractService>
+    abstract fun expender(): RuntimeExpender<AbstractService>
 
     /**
      * Returns the templates for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun templateStorage(): RuntimeTemplateStorage<*, AbstractService>
+    abstract fun templateStorage(): RuntimeTemplateStorage<*, AbstractService>
 
     /**
      * Returns the holder for the runtime configuration.
      */
-    fun configHolder(): RuntimeConfigHolder
-
-    /*
-    Returns the start time of the cloud
-     */
-    fun started(): Long
+    abstract fun configHolder(): RuntimeConfigHolder
 
     /**
      * Shuts down the runtime.
      * This method can be overridden by specific runtime implementations
      * to perform any necessary shutdown operations.
      */
-    fun shutdown() {
+    open fun shutdown() {
         // Default implementation does nothing.
         // This method can be overridden by specific runtime implementations
         // to perform any necessary shutdown operations.
     }
+
+    fun started(): Long = started
 
     /**
      * Sends a command to the runtime.
      * This method can be overridden by specific runtime implementations
      * to send commands to the runtime.
      */
-    fun sendCommand(command: String)
+    abstract fun sendCommand(command: String)
 }

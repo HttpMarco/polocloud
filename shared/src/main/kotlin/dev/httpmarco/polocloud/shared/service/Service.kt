@@ -18,11 +18,11 @@ open class Service(
     val information: ServiceInformation,
     minMemory: Int,
     maxMemory: Int,
-    playerCount: Int,
-    maxPlayerCount: Int,
-    memoryUsage: Double,
-    cpuUsage: Double,
-    motd: String
+    playerCount: Int = -1,
+    maxPlayerCount: Int = -1,
+    memoryUsage: Double = -1.0,
+    cpuUsage: Double = -1.0,
+    motd: String = ""
 ) {
 
 

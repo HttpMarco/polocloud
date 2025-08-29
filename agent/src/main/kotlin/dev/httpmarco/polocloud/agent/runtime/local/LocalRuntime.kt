@@ -12,7 +12,7 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.Onboardin
 import kotlin.io.path.Path
 import kotlin.io.path.notExists
 
-class LocalRuntime : Runtime {
+class LocalRuntime : Runtime() {
 
     private val runtimeGroupStorage = LocalRuntimeGroupStorage()
     private val runtimeServiceStorage = LocalRuntimeServiceStorage()
@@ -66,8 +66,6 @@ class LocalRuntime : Runtime {
     override fun templateStorage() = templates
 
     override fun configHolder() = configHolder
-
-    override fun started() = started
 
     override fun shutdown() {
         this.terminal.shutdown()

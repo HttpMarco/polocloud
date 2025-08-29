@@ -21,12 +21,7 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         group.templates,
         ServiceInformation(System.currentTimeMillis()),
         group.minMemory,
-        group.maxMemory,
-        -1,
-        -1,
-        -1.0,
-        -1.0,
-        ""
+        group.maxMemory
     ) {
 
     init {
