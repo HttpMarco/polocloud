@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.templ
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplateStorage
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.template.CreateTemplateModel
@@ -31,7 +32,7 @@ class TemplateController : Controller("/template") {
                     add(
                         JsonObject().apply {
                             addProperty("name", template.name)
-                            addProperty("size", template.size)
+                            addProperty("size", template.size())
                         }
                     )
                 }
@@ -53,14 +54,16 @@ class TemplateController : Controller("/template") {
             return
         }
 
-        val template = Agent.runtime.templateStorage().find(createTemplateModel.name)
+        val searchedTemplate = Agent.runtime.templateStorage().find(createTemplateModel.name)
 
-        if (template != null) {
+        if (searchedTemplate != null) {
             context.status(400).json(message("Template already exists"))
             return
         }
 
-        Agent.runtime.templateStorage().create(Template(createTemplateModel.name, 0.0))
+        val template = Template(createTemplateModel.name)
+
+        (Agent.runtime.templateStorage() as RuntimeTemplateStorage<Template, *>).create(template)
         context.status(202).json(message("Creating template"))
     }
 

@@ -3,7 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local.tracking
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalService
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceLogEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceLogEvent
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader

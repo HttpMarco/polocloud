@@ -1,4 +1,4 @@
-package dev.httpmarco.polocloud.shared.events.definitions
+package dev.httpmarco.polocloud.shared.events.definitions.service
 
 import dev.httpmarco.polocloud.shared.events.Event
 import dev.httpmarco.polocloud.shared.service.Service
