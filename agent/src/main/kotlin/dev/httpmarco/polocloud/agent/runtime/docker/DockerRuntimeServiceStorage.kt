@@ -10,11 +10,11 @@ import java.util.concurrent.CompletableFuture
 class DockerRuntimeServiceStorage : RuntimeServiceStorage<DockerService> {
 
     override fun findAll(): List<DockerService> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun findAllAsync(): CompletableFuture<List<DockerService>> {
-        TODO("Not yet implemented")
+        return CompletableFuture.completedFuture(findAll())
     }
 
     override fun find(name: String): DockerService? {

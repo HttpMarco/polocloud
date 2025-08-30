@@ -19,8 +19,6 @@ class DockerFactory(val client: DockerClient) : RuntimeFactory<DockerService> {
         val hostConfig = containerCmd.hostConfig!!
         hostConfig.withNetworkMode("polocloud-net")
 
-
-
         if (service.group.platform().type == GroupType.PROXY) {
             hostConfig.withPortBindings(Ports(ExposedPort.tcp(service.port), Ports.Binding.bindPort(service.port)))
         }

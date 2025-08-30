@@ -3,9 +3,14 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
 import java.util.concurrent.CompletableFuture
+import kotlin.io.path.createDirectories
 
 
 class DockerRuntimeGroupStorage : RuntimeGroupStorage {
+
+    init {
+        DOCKER_GROUP_PATH.createDirectories()
+    }
 
     override fun updateGroup(group: AbstractGroup) {
         TODO("Not yet implemented")
@@ -24,14 +29,14 @@ class DockerRuntimeGroupStorage : RuntimeGroupStorage {
     }
 
     override fun findAll(): List<AbstractGroup> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun findAllAsync(): CompletableFuture<List<AbstractGroup>> {
-        TODO("Not yet implemented")
+        return CompletableFuture.completedFuture(findAll())
     }
 
-    override fun find(name: String): AbstractGroup? {
+    override fun find(name: String): AbstractGroup {
         TODO("Not yet implemented")
     }
 

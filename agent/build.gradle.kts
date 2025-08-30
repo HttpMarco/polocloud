@@ -35,9 +35,9 @@ tasks.jar {
 
 tasks.register<Exec>("dockerBuild") {
     dependsOn(tasks.shadowJar)
-
     val imageName = "polocloud:development"
 
+    // Docker build
     commandLine(
         "docker", "build",
         "--build-arg", "POLOCLOUD_VERSION=$version",
