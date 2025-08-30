@@ -27,7 +27,7 @@ class RoleController : Controller("/role") {
             return
         }
 
-        if ("*" in roleCreateModel.permissions && user.role?.permissions?.contains("*") == false) {
+        if ("*" in roleCreateModel.permissions && user.role?.permissions?.contains("*") == true) {
             context.status(403).json(message("You cannot assign * permission"))
             return
         }
@@ -100,7 +100,7 @@ class RoleController : Controller("/role") {
             return
         }
 
-        if ("*" in roleEditModel.permissions && user.role?.permissions?.contains("*") == false) {
+        if ("*" in roleEditModel.permissions && user.role?.permissions?.contains("*") == true) {
             context.status(403).json(message("You cannot assign * permission"))
             return
         }

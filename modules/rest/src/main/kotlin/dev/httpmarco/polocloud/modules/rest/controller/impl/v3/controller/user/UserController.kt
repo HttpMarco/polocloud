@@ -132,7 +132,7 @@ class UserController : Controller("/user") {
             return
         }
 
-        if (role.permissions.contains("*") && user.role?.permissions?.contains("*") == false) {
+        if (role.permissions.contains("*") && user.role?.permissions?.contains("*") == true) {
             context.status(403).json(message("You cannot assign the admin role"))
             return
         }
