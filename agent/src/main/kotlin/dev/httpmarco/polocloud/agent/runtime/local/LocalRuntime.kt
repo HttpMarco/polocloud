@@ -21,7 +21,6 @@ class LocalRuntime : Runtime() {
     private val runtimeExpender = LocalRuntimeExpender()
     private val templates = LocalRuntimeTemplateStorage()
     private val configHolder = LocalRuntimeConfigHolder()
-    private val started = System.currentTimeMillis()
 
     lateinit var terminal: JLine3Terminal
 
@@ -49,10 +48,6 @@ class LocalRuntime : Runtime() {
             return
         }
         Agent.boot()
-    }
-
-    override fun runnable(): Boolean {
-        return true // LocalRuntime is always runnable
     }
 
     override fun serviceStorage() = runtimeServiceStorage

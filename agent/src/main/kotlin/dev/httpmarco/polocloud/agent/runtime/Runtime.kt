@@ -2,8 +2,11 @@ package dev.httpmarco.polocloud.agent.runtime
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
+import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntimeLoader
 import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
+import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntimeLoader
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
+import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntimeLoader
 import dev.httpmarco.polocloud.agent.services.AbstractService
 
 abstract class Runtime {
@@ -22,11 +25,11 @@ abstract class Runtime {
          */
         fun create(): Runtime {
             val runtime = listOf(
-                KubernetesRuntime(),
-                DockerRuntime(),
-                LocalRuntime() // Fallback if others are not runnable
-            ).firstOrNull { it.runnable() } ?: LocalRuntime()
-            return runtime
+                KubernetesRuntimeLoader(),
+                DockerRuntimeLoader(),
+                LocalRuntimeLoader() // Fallback if others are not runnable
+            ).firstOrNull { it.runnable() } ?: LocalRuntimeLoader()
+            return runtime.instance()
         }
     }
 
@@ -53,12 +56,6 @@ abstract class Runtime {
         // This method can be overridden by specific runtime implementations
         // to perform any necessary bootstrapping or initialization.
     }
-
-    /**
-     * Check if the runtime is runnable.
-     * This method should be overridden by the specific runtime implementations
-     */
-    abstract fun runnable(): Boolean
 
     /**
      * Returns the current storage for the runtime.

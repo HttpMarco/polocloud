@@ -22,15 +22,6 @@ class DockerRuntime : Runtime() {
     private val templateStorage = DockerTemplateStorage(dockerClient)
     private val dockerConfigHolder = DockerConfigHolder()
 
-    override fun runnable(): Boolean {
-        return try {
-            return Files.exists(Paths.get("/.dockerenv")) || Files.exists(Paths.get("/run/.containerenv"))
-        } catch (e: Exception) {
-            i18n.debug("agent.runtime.docker.connection.failed", e.javaClass.simpleName, e.message)
-            false
-        }
-    }
-
     fun createLocalDockerClient(): DockerClient {
         val config = DefaultDockerClientConfig.createDefaultConfigBuilder()
             .withDockerHost("unix:///var/run/docker.sock")

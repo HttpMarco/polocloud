@@ -1,32 +1,16 @@
 package dev.httpmarco.polocloud.agent.runtime.k8s
 
-import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
-import io.fabric8.kubernetes.client.KubernetesClientBuilder
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
+import io.fabric8.kubernetes.client.KubernetesClient
 
-class KubernetesRuntime : Runtime() {
+class KubernetesRuntime(client: KubernetesClient) : Runtime() {
 
-    private val kubernetesClient = KubernetesClientBuilder().build()
-    private val groupStorage = KubernetesRuntimeGroupStorage(kubernetesClient)
-    private val configHolder = KubernetesRuntimeConfigHolder(kubernetesClient)
+    private val groupStorage = KubernetesRuntimeGroupStorage(client)
+    private val configHolder = KubernetesRuntimeConfigHolder(client)
     private val serviceStorage = KubernetesRuntimeServiceStorage()
     private val factory = KubernetesFactory()
     private val expender = KubernetesExpender()
     private val templates = KubernetesRuntimeTemplateStorage()
-
-    override fun runnable(): Boolean {
-        return try {
-            val future = CompletableFuture.supplyAsync {
-                kubernetesClient.kubernetesVersion != null
-            }
-            future.get(1, TimeUnit.SECONDS)
-        } catch (e: Exception) {
-            i18n.debug("agent.runtime.k8s.connection.failed", e.javaClass.simpleName, e.message)
-            false
-        }
-    }
 
     override fun serviceStorage() = serviceStorage
 
@@ -43,5 +27,4 @@ class KubernetesRuntime : Runtime() {
     override fun sendCommand(command: String) {
         TODO("Not yet implemented")
     }
-
 }
