@@ -4,7 +4,7 @@ import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.common.json.GSON
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.io.ByteArrayOutputStream
@@ -175,7 +175,7 @@ class OnlineStateDetector : Detector {
     private fun callOnline(service: Service) {
         if (service.state == ServiceState.STARTING) {
             service.state = ServiceState.ONLINE
-            Agent.eventService.call(ServiceOnlineEvent(service))
+            Agent.eventService.call(ServiceChangeStateEvent(service))
             i18n.info("agent.detector.service.online", service.name())
         }
     }

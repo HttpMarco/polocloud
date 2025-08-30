@@ -7,10 +7,9 @@ import com.velocitypowered.api.proxy.ProxyServer
 import dev.httpmarco.polocloud.addons.api.MiniMessageFormatter
 import dev.httpmarco.polocloud.addons.notify.NotifyAddon
 import dev.httpmarco.polocloud.sdk.java.Polocloud
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.service.Service
+import dev.httpmarco.polocloud.v1.services.ServiceState
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.slf4j.Logger
 import java.io.File
@@ -26,20 +25,22 @@ class VelocityPlatform @Inject constructor(
     @Subscribe
     fun onProxyInitialization(event: ProxyInitializeEvent) {
         this.notifyAddon = NotifyAddon(File("plugins/polocloud"), true)
-        val config = notifyAddon.config
 
-        Polocloud.instance().eventProvider().subscribe(ServiceStartingEvent::class.java) {
-            this.announceNotification("service_starting", it.service, "polocloud.addons.notify.receive.starting")
+        Polocloud.instance().eventProvider().subscribe(ServiceChangeStateEvent::class.java) {event ->
+            val service = event.service
+
+            if (service.state == ServiceState.STARTING) {
+                this.announceNotification("service_starting", service, "polocloud.addons.notify.receive.starting")
+            }
+
+            if (service.state == ServiceState.ONLINE) {
+                this.announceNotification("service_online", service, "polocloud.addons.notify.receive.online")
+            }
+
+            if (service.state == ServiceState.STOPPED) {
+                this.announceNotification("service_shutdown", service, "polocloud.addons.notify.receive.shutdown")
+            }
         }
-
-        Polocloud.instance().eventProvider().subscribe(ServiceOnlineEvent::class.java) {
-            this.announceNotification("service_online", it.service, "polocloud.addons.notify.receive.online")
-        }
-
-        Polocloud.instance().eventProvider().subscribe(ServiceShutdownEvent::class.java) {
-            this.announceNotification("service_shutdown", it.service, "polocloud.addons.notify.receive.shutdown")
-        }
-
     }
 
     private fun announceNotification(messageKey: String, service: Service, permission: String) {

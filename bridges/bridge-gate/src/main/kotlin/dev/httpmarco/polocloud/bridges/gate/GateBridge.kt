@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.bridges.gate
 
 import dev.httpmarco.polocloud.bridge.api.BridgeInstance
 import dev.httpmarco.polocloud.sdk.java.Polocloud
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceChangePlayerCountEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangePlayerCountEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml

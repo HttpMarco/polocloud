@@ -12,9 +12,7 @@ import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformParameters
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStoppingEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import org.yaml.snakeyaml.util.Tuple
@@ -116,7 +114,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         i18n.info("agent.local-runtime.factory.boot.up", service.name())
 
         service.state = ServiceState.STARTING
-        Agent.eventService.call(ServiceStartingEvent(service))
+        Agent.eventService.call(ServiceChangeStateEvent(service))
 
         service.path.createDirectories()
 
@@ -156,7 +154,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         service.state = ServiceState.STOPPING
         val eventService = Agent.eventService
-        eventService.call(ServiceStoppingEvent(service))
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
@@ -165,7 +162,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         // the service went down, so we don't need to send any events anymore
         eventService.dropServiceSubscriptions(service)
         // then we call the shutdown event -> for all other services
-        eventService.call(ServiceShutdownEvent(service))
+        eventService.call(ServiceChangeStateEvent(service))
 
         if (service.process != null) {
             try {
@@ -212,6 +209,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         }
 
         service.state = ServiceState.STOPPED
+        Agent.eventProvider().call(ServiceChangeStateEvent(service))
         Agent.runtime.serviceStorage().dropAbstractService(service)
         i18n.info(
             "agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful",

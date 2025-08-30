@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.socket.BaseWebSocket
 import dev.httpmarco.polocloud.modules.rest.socket.SocketSender
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceLogEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceLogEvent
 import io.javalin.http.Context
 import io.javalin.websocket.WsCloseContext
 import io.javalin.websocket.WsConnectContext
