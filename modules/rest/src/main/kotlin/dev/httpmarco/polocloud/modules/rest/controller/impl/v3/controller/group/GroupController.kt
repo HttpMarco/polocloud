@@ -39,8 +39,8 @@ class GroupController : Controller("/group") {
             return
         }
 
-        val current = groups.count { it.information.createdAt in from..to }
-        val previous = groups.count { it.information.createdAt < from }
+        val current = groups.count { it.createdAt in from..to }
+        val previous = groups.count { it.createdAt < from }
 
         val percentage = when {
             previous > 0 -> (current * 100.0 / previous)
@@ -109,7 +109,6 @@ class GroupController : Controller("/group") {
         }
 
         val platformIndex = PlatformIndex(platform.name, platformVersion.version)
-        val groupInformation = GroupInformation(groupCreateModel.information.createdAt)
 
         val group = AbstractGroup(
             groupCreateModel.name,
@@ -119,7 +118,7 @@ class GroupController : Controller("/group") {
             groupCreateModel.maxOnlineService,
             groupCreateModel.percentageToStartNewService,
             platformIndex,
-            groupInformation,
+            groupCreateModel.information.createdAt,
             groupCreateModel.templates,
             groupCreateModel.properties
         )
@@ -157,13 +156,13 @@ class GroupController : Controller("/group") {
                             })
                             addProperty("percentageToStartNewService", group.percentageToStartNewService)
                             add("information", JsonObject().apply {
-                                addProperty("createdAt", group.information.createdAt)
+                                addProperty("createdAt", group.createdAt)
                             })
                             add("templates", JsonArray().apply {
                                 group.templates.forEach { template ->
                                     add(JsonObject().apply {
                                         addProperty("name", template.name)
-                                        addProperty("size", template.size)
+                                        addProperty("size", template.size())
                                     })
                                 }
                             })
@@ -206,13 +205,13 @@ class GroupController : Controller("/group") {
                 })
                 addProperty("percentageToStartNewService", group.percentageToStartNewService)
                 add("information", JsonObject().apply {
-                    addProperty("createdAt", group.information.createdAt)
+                    addProperty("createdAt", group.createdAt)
                 })
                 add("templates", JsonArray().apply {
                     group.templates.forEach { template ->
                         add(JsonObject().apply {
                             addProperty("name", template.name)
-                            addProperty("size", template.size)
+                            addProperty("size", template.size())
                         })
                     }
                 })
