@@ -73,11 +73,17 @@ class ServiceCommand(private val serviceStorage: RuntimeServiceStorage<*>, termi
         var templateName = TextArgument("template")
         syntax(execution = {
             val service = it.arg(serviceArgument)
-            val template = it.arg(templateName)
+            val templateName = it.arg(templateName)
+            val template = Agent.runtime.templateStorage().find(templateName)
 
-            i18n.info("agent.terminal.command.service.export.start", service.name(), template)
-            Agent.runtime.templates().saveTemplate(template, service)
-            i18n.info("agent.terminal.command.service.export.end", template)
+            if (template == null) {
+                i18n.info("agent.terminal.command.service.export.template.not-found", templateName)
+                return@syntax
+            }
+
+            i18n.info("agent.terminal.command.service.export.start", service.name(), template.name)
+            Agent.runtime.templateStorage().saveTemplate(template, service)
+            i18n.info("agent.terminal.command.service.export.end", template.name)
         }, serviceArgument, KeywordArgument("copy"), templateName)
 
         val commandArg = StringArrayArgument("command")

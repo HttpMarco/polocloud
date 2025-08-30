@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
@@ -10,14 +11,27 @@ import io.javalin.http.Context
 
 class SystemInformationController : Controller("/system") {
 
+    @Request(requestType = RequestType.GET, path = "/version", permission = "polocloud.system.version")
+    fun version(context: Context) {
+        context.status(200).json(
+            JsonObject().apply {
+                addProperty("version", polocloudVersion())
+            }.toString()
+        )
+    }
+
     @Request(requestType = RequestType.GET, path = "/information", permission = "polocloud.system.information")
     fun information(context: Context) {
         val information = polocloudShared.cloudInformationProvider().find()
+        val services = polocloudShared.serviceProvider().findAll()
+
+        val totalCpuUsage = services.sumOf { it.cpuUsage } + information.cpuUsage
+        val totalMemoryUsage = services.sumOf { it.memoryUsage } + information.usedMemory
 
         context.status(200).json(
             JsonObject().apply {
-                addProperty("memoryUsage", information.usedMemory)
-                addProperty("cpuUsage", information.cpuUsage)
+                addProperty("memoryUsage", totalMemoryUsage)
+                addProperty("cpuUsage", totalCpuUsage)
                 addProperty("runtime", information.runtime)
                 addProperty("uptime", System.currentTimeMillis() - information.started)
             }.toString()
@@ -29,6 +43,8 @@ class SystemInformationController : Controller("/system") {
         val from = context.queryParam("from")?.toLongOrNull() ?: 0L
         val to = context.queryParam("to")?.toLongOrNull() ?: System.currentTimeMillis()
         val avg = polocloudShared.cloudInformationProvider().findAverage(from, to)
+
+        //TODO with services
 
         context.status(200).json(
             JsonObject().apply {

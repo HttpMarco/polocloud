@@ -1,12 +1,10 @@
 package dev.httpmarco.polocloud.addons.notify.platform.bungeecord
 
-import dev.httpmarco.polocloud.addons.api.MiniMessageFormatter
 import dev.httpmarco.polocloud.addons.notify.NotifyAddon
 import dev.httpmarco.polocloud.sdk.java.Polocloud
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.service.Service
+import dev.httpmarco.polocloud.v1.services.ServiceState
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.plugin.Plugin
@@ -19,16 +17,20 @@ class BungeecordPlatform: Plugin() {
     override fun onEnable() {
         notifyAddon = NotifyAddon(File("plugins/polocloud"), false)
 
-        Polocloud.instance().eventProvider().subscribe(ServiceStartingEvent::class.java) {
-            this.announceNotification("service_starting", it.service, "polocloud.addons.notify.receive.starting")
-        }
+        Polocloud.instance().eventProvider().subscribe(ServiceChangeStateEvent::class.java) {event ->
+            val service = event.service
 
-        Polocloud.instance().eventProvider().subscribe(ServiceOnlineEvent::class.java) {
-            this.announceNotification("service_online", it.service, "polocloud.addons.notify.receive.online")
-        }
+            if (service.state == ServiceState.STARTING) {
+                this.announceNotification("service_starting", service, "polocloud.addons.notify.receive.starting")
+            }
 
-        Polocloud.instance().eventProvider().subscribe(ServiceShutdownEvent::class.java) {
-            this.announceNotification("service_shutdown", it.service, "polocloud.addons.notify.receive.shutdown")
+            if (service.state == ServiceState.ONLINE) {
+                this.announceNotification("service_online", service, "polocloud.addons.notify.receive.online")
+            }
+
+            if (service.state == ServiceState.STOPPED) {
+                this.announceNotification("service_shutdown", service, "polocloud.addons.notify.receive.shutdown")
+            }
         }
     }
 

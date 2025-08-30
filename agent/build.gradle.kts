@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.2.10"
+    id("com.gradleup.shadow") version "9.0.0"
 }
 
 dependencies {
@@ -7,8 +8,8 @@ dependencies {
 
     implementation(libs.bundles.proto)
     implementation(libs.grpc.netty)
-    compileOnly(projects.proto)
-    compileOnly(projects.shared)
+    implementation(projects.proto)
+    implementation(projects.shared)
 
     implementation(libs.bundles.terminal)
     implementation(libs.bundles.runtime)
@@ -18,10 +19,10 @@ dependencies {
     implementation(libs.oshi)
 
     implementation(libs.bundles.confirationPool)
-    compileOnly(projects.platforms)
-    compileOnly(projects.common)
-    compileOnly(projects.updater)
-    compileOnly(projects.bridges.bridgeApi)
+    implementation(projects.platforms)
+    implementation(projects.common)
+    implementation(projects.updater)
+    implementation(projects.bridges.bridgeApi)
 }
 
 tasks.jar {
@@ -30,6 +31,24 @@ tasks.jar {
         attributes("Main-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt")
         attributes("Premain-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt")
     }
+}
+
+tasks.register<Exec>("dockerBuild") {
+    dependsOn(tasks.shadowJar)
+
+    val imageName = "polocloud:development"
+
+    commandLine(
+        "docker", "build",
+        "--build-arg", "POLOCLOUD_VERSION=$version",
+        "-t", imageName,
+        "-f", "../docker/Dockerfile",
+        "."
+    )
+}
+
+tasks.shadowJar {
+    archiveFileName.set("polocloud-agent-$version-all.jar")
 }
 
 tasks.test {

@@ -1,30 +1,34 @@
 package dev.httpmarco.polocloud.signs.abstraction
 
 import dev.httpmarco.polocloud.sdk.java.Polocloud
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceChangePlayerCountEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangePlayerCountEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
+import dev.httpmarco.polocloud.v1.services.ServiceState
 
 class ConnectorCloudEvents(connectors: Connectors<*>) {
 
     init {
-        Polocloud.instance().eventProvider().subscribe(ServiceOnlineEvent::class.java) {
-            if (it.service.name() != Polocloud.instance().selfServiceName()) {
-                val originalConnector = connectors.findAttachConnector(it.service)
-                if (originalConnector == null) {
-                    var connector = connectors.findEmptyConnector(it.service.groupName)
+        Polocloud.instance().eventProvider().subscribe(ServiceChangeStateEvent::class.java) { event ->
+            val service = event.service
 
-                    connector?.bindWith(it.service)
+            if (service.state == ServiceState.ONLINE) {
+                if (service.name() != Polocloud.instance().selfServiceName()) {
+                    val originalConnector = connectors.findAttachConnector(service)
+                    if (originalConnector == null) {
+                        var connector = connectors.findEmptyConnector(service.groupName)
+
+                        connector?.bindWith(service)
+                    }
                 }
             }
-        }
 
-        Polocloud.instance().eventProvider().subscribe(ServiceShutdownEvent::class.java) {
-            val connector = connectors.findAttachConnector(it.service)
+            if (service.state == ServiceState.STOPPING) {
+                val connector = connectors.findAttachConnector(service)
 
-            if (connector != null) {
-                connector.unbind()
-                // todo filter a service from the list of connectors
+                if (connector != null) {
+                    connector.unbind()
+                    // todo filter a service from the list of connectors
+                }
             }
         }
 

@@ -6,6 +6,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfigAccessor
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityPlatform
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.kyori.adventure.text.minimessage.MiniMessage
 
@@ -15,7 +16,7 @@ class VelocityMotdUpdater (
     private val config: ProxyConfigAccessor
 ) {
 
-    private val polocloudVersion: String = System.getenv("polocloud-version") ?: "unknown"
+    private val polocloudVersion: String = polocloudVersion()
 
     @Subscribe
     fun onProxyPing(event: ProxyPingEvent) {

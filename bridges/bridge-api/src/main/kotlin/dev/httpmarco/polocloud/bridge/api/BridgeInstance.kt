@@ -3,8 +3,7 @@ package dev.httpmarco.polocloud.bridge.api
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.PolocloudShared
 import dev.httpmarco.polocloud.shared.events.Event
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceOnlineEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
@@ -31,17 +30,20 @@ abstract class BridgeInstance<T> {
         }
 
 
-        polocloud.eventProvider().subscribe(ServiceOnlineEvent::class.java) { event ->
+        polocloud.eventProvider().subscribe(ServiceChangeStateEvent::class.java) { event ->
             val service = event.service
-            if (service.type == GroupType.SERVER) {
-                registerService(generateInfo(service), isFallback(service))
-            }
-        }
 
-        polocloud.eventProvider().subscribe(ServiceShutdownEvent::class.java) { event ->
-            findInfo(event.service.name())?.let { info ->
-                unregisterService(info)
-            }!!
+            if (service.state == ServiceState.ONLINE) {
+                if (service.type == GroupType.SERVER) {
+                    registerService(generateInfo(service), isFallback(service))
+                }
+            }
+
+            if (service.state == ServiceState.STOPPING) {
+                findInfo(event.service.name())?.let { info ->
+                    unregisterService(info)
+                }!!
+            }
         }
     }
 

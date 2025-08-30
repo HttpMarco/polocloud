@@ -7,6 +7,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.reflect.TypeToken
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.lang.reflect.Type
@@ -26,7 +27,7 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         data.addProperty("port", src.port)
         data.addProperty("state", src.state.name)
         data.addProperty("type", src.type.name)
-        data.addProperty("templates", src.templates.joinToString(","))
+        data.add("templates", context.serialize(src.templates))
         data.addProperty("information", src.information.toString())
         data.addProperty("minMemory", src.minMemory)
         data.addProperty("maxMemory", src.maxMemory)
@@ -54,7 +55,8 @@ class ServiceSerializer : JsonSerializer<Service>, JsonDeserializer<Service> {
         val port = data.get("port").asInt
         val type = GroupType.valueOf(data.get("type").asString)
         val state = ServiceState.valueOf(data.get("state").asString)
-        val templates = data.get("templates").asString.split(",").filter { it.isNotEmpty() }
+        val templatesType = object : TypeToken<List<Template>>() {}.type
+        val templates = context.deserialize<List<Template>>(data.get("templates"), templatesType)
         val information = ServiceInformation.bindString(data.get("information").asString)
         val minMemory = data.get("minMemory").asInt
         val maxMemory = data.get("maxMemory").asInt

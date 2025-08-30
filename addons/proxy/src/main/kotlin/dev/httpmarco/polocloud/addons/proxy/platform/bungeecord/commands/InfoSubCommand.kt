@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.commands
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.utils.Format
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.md_5.bungee.api.CommandSender
 import net.md_5.bungee.api.chat.TextComponent
@@ -11,7 +12,7 @@ class InfoSubCommand(
     val proxyAddon: ProxyAddon
 ) : BungeecordCloudSubCommand {
 
-    private val polocloudVersion = System.getenv("polocloud-version")?: "unknown"
+    private val polocloudVersion = polocloudVersion()
 
     override fun execute(sender: CommandSender, args: List<String?>) {
         val config = this.proxyAddon.config

@@ -9,8 +9,11 @@ import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AuthCo
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.SystemInformationController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.group.GroupController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.platform.PlatformController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.player.PlayerController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role.RoleController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.service.ServiceController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.template.TemplateController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.terminal.TerminalController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.user.UserController
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData
@@ -32,10 +35,13 @@ class ControllerProvider {
             UserController(),
             AuthController(),
             RoleController(),
+            PlatformController(),
+            TemplateController(),
             GroupController(),
             ServiceController(),
-            PlatformController(),
-            SystemInformationController()
+            PlayerController(),
+            SystemInformationController(),
+            TerminalController()
         )
 
         this.controllers.forEach { handle(it) }

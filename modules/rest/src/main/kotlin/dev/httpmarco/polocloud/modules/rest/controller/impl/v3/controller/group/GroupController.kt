@@ -6,10 +6,10 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group.GroupCreateModel
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group.GroupEditModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.groups.Group
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.polocloudShared
@@ -39,8 +39,8 @@ class GroupController : Controller("/group") {
             return
         }
 
-        val current = groups.count { it.information.createdAt in from..to }
-        val previous = groups.count { it.information.createdAt < from }
+        val current = groups.count { it.createdAt in from..to }
+        val previous = groups.count { it.createdAt < from }
 
         val percentage = when {
             previous > 0 -> (current * 100.0 / previous)
@@ -109,7 +109,6 @@ class GroupController : Controller("/group") {
         }
 
         val platformIndex = PlatformIndex(platform.name, platformVersion.version)
-        val groupInformation = GroupInformation(groupCreateModel.information.createdAt)
 
         val group = AbstractGroup(
             groupCreateModel.name,
@@ -119,7 +118,7 @@ class GroupController : Controller("/group") {
             groupCreateModel.maxOnlineService,
             groupCreateModel.percentageToStartNewService,
             platformIndex,
-            groupInformation,
+            groupCreateModel.information.createdAt,
             groupCreateModel.templates,
             groupCreateModel.properties
         )
@@ -157,11 +156,14 @@ class GroupController : Controller("/group") {
                             })
                             addProperty("percentageToStartNewService", group.percentageToStartNewService)
                             add("information", JsonObject().apply {
-                                addProperty("createdAt", group.information.createdAt)
+                                addProperty("createdAt", group.createdAt)
                             })
                             add("templates", JsonArray().apply {
                                 group.templates.forEach { template ->
-                                    add(template)
+                                    add(JsonObject().apply {
+                                        addProperty("name", template.name)
+                                        addProperty("size", template.size())
+                                    })
                                 }
                             })
                             add("properties", JsonObject().apply {
@@ -203,11 +205,14 @@ class GroupController : Controller("/group") {
                 })
                 addProperty("percentageToStartNewService", group.percentageToStartNewService)
                 add("information", JsonObject().apply {
-                    addProperty("createdAt", group.information.createdAt)
+                    addProperty("createdAt", group.createdAt)
                 })
                 add("templates", JsonArray().apply {
                     group.templates.forEach { template ->
-                        add(template)
+                        add(JsonObject().apply {
+                            addProperty("name", template.name)
+                            addProperty("size", template.size())
+                        })
                     }
                 })
                 add("properties", JsonObject().apply {
@@ -215,6 +220,84 @@ class GroupController : Controller("/group") {
                         add(key, value)
                     }
                 })
+            }.toString()
+        )
+    }
+
+    @Request(requestType = RequestType.DELETE, path = "/{name}", permission = "polocloud.group.delete")
+    fun deleteGroup(context: Context) {
+        val name = context.pathParam("name")
+        if (name.isBlank()) {
+            context.status(400).json(message("Invalid group name"))
+            return
+        }
+
+        var group = polocloudShared.groupProvider().find(name)
+        if (group == null) {
+            context.status(400).json(message("Group not found"))
+            return
+        }
+
+        group = group as AbstractGroup
+
+        Agent.runtime.groupStorage().destroy(group)
+        group.shutdownAll()
+
+        context.status(204).json(message("Group deleted successfully"))
+    }
+
+    @Request(requestType = RequestType.PATCH, path = "/{name}", permission = "polocloud.group.edit")
+    fun editGroup(context: Context) {
+        val name = context.pathParam("name")
+        var group = polocloudShared.groupProvider().find(name)
+
+        if (group == null) {
+            context.status(400).json(message("Group cloud not be found"))
+            return
+        }
+
+        group = group as AbstractGroup
+
+        val groupEditModel = try {
+            context.bodyAsClass(GroupEditModel::class.java)
+        } catch (e: Exception) {
+            context.status(400).json(message("Invalid body"))
+            return
+        }
+
+        if (groupEditModel.minMemory < 0 ||
+            groupEditModel.maxMemory < 0 ||
+            groupEditModel.percentageToStartNewService < 0.0 ||
+            groupEditModel.percentageToStartNewService > 100.0) {
+            context.status(400).json(message("Invalid group data"))
+            return
+        }
+
+        if (groupEditModel.minMemory > groupEditModel.maxMemory) {
+            context.status(400).json(message("Minimum memory cannot be greater than maximum memory"))
+            return
+        }
+
+        if (groupEditModel.minOnlineService < 0 || groupEditModel.maxOnlineService < 0) {
+            context.status(400).json(message("Minimum and maximum online services cannot be negative"))
+            return
+        }
+
+        if (groupEditModel.minOnlineService > groupEditModel.maxOnlineService) {
+            context.status(400).json(message("Minimum online services cannot be greater than maximum online services"))
+            return
+        }
+
+        group.updateMinMemory(groupEditModel.minMemory)
+        group.updateMaxMemory(groupEditModel.maxMemory)
+        group.updateMinOnlineServices(groupEditModel.minOnlineService)
+        group.updateMaxOnlineServices(groupEditModel.maxOnlineService)
+        group.updatePercentageToStartNewService(groupEditModel.percentageToStartNewService)
+
+        group.update()
+        context.status(201).json(
+            JsonObject().apply {
+                addProperty("message", "Group edited successfully")
             }.toString()
         )
     }

@@ -47,7 +47,7 @@ object Updater {
             else -> ProcessBuilder("java", "-jar", jarName, "--version=$version")
         }
 
-        processBuilder.environment()["polocloud-version"] = polocloudVersion()
+        processBuilder.environment()["POLOCLOUD_VERSION"] = polocloudVersion()
         processBuilder.directory(File("local/libs"))
         processBuilder.inheritIO()
 

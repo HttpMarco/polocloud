@@ -9,7 +9,7 @@ public final class PolocloudParameters {
      * General class for all parameters
      * For type-safe use
      */
-    public static String VERSION_ENV_ID = "polocloud-version";
+    public static String VERSION_ENV_ID = "POLOCLOUD_VERSION";
     public static Path LIB_DIRECTORY = Path.of("local/libs");
     public static Path DEPENDENCY_DIRECTORY = Path.of("local/dependencies");
     public static String[] REQUIRED_LIBS = {"proto", "agent", "common", "platforms", "updater", "bridge-velocity", "bridge-bungeecord", "bridge-fabric", "bridge-gate", "bridge-waterdog"};

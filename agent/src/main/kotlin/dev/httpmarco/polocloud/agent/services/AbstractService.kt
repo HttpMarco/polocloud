@@ -3,7 +3,8 @@ package dev.httpmarco.polocloud.agent.services
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.utils.PortDetector
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceChangePlayerCountEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangePlayerCountEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.shared.service.ServiceInformation
 import dev.httpmarco.polocloud.v1.services.ServiceState
@@ -21,16 +22,12 @@ abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: Stri
         group.templates,
         ServiceInformation(System.currentTimeMillis()),
         group.minMemory,
-        group.maxMemory,
-        -1,
-        -1,
-        -1.0,
-        -1.0,
-        ""
+        group.maxMemory
     ) {
 
     init {
         properties += group.properties.map { it.key to it.value.toString() }.toMap()
+        Agent.eventProvider().call(ServiceChangeStateEvent(this))
     }
 
     fun isStatic(): Boolean {

@@ -7,8 +7,8 @@
       "filename": "config/configuration.toml",
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
-        "key": "java_edition_port",
-        "value": "%port%"
+        "key": "java_edition_address",
+        "value": "0.0.0.0:%port%"
       }
     },
     {

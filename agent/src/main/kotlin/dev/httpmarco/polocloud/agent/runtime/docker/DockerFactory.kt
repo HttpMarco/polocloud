@@ -1,14 +1,36 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
+import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.api.model.ExposedPort
+import com.github.dockerjava.api.model.Ports
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
+import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 
-class DockerFactory : RuntimeFactory<DockerService> {
+class DockerFactory(val client: DockerClient) : RuntimeFactory<DockerService> {
+
     override fun bootApplication(service: DockerService) {
-        TODO("Not yet implemented")
+        val containerCmd = client.createContainerCmd("polocloud/TODO:latest")
+            .withName(service.name())
+            .withExposedPorts(ExposedPort.tcp(service.port))
+            // todo use platform args
+            .withCmd("java", "-jar", "server.jar")
+
+        val hostConfig = containerCmd.hostConfig!!
+        hostConfig.withNetworkMode("polocloud-net")
+
+
+
+        if (service.group.platform().type == GroupType.PROXY) {
+            hostConfig.withPortBindings(Ports(ExposedPort.tcp(service.port), Ports.Binding.bindPort(service.port)))
+        }
+
+        service.containerId = containerCmd.exec().id
     }
 
     override fun shutdownApplication(service: DockerService, shutdownCleanUp: Boolean): ServiceSnapshot {
-        TODO("Not yet implemented")
+        client.stopContainerCmd(service.containerId).exec()
+        client.removeContainerCmd(service.containerId).withForce(true).exec()
+        return service.toSnapshot()
     }
 }

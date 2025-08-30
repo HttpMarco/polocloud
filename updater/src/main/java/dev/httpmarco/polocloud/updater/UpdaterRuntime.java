@@ -7,7 +7,7 @@ import java.nio.channels.Channels;
 
 public class UpdaterRuntime {
 
-    private static final String DEFAULT_VERSION = System.getenv("polocloud-version");
+    private static final String DEFAULT_VERSION = System.getenv("POLOCLOUD_VERSION");
     private static final String LAUNCHER_JAR = "polocloud-launcher.jar";
 
     public static void main(String[] args) {

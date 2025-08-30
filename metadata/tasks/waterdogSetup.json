@@ -1,0 +1,15 @@
+{
+  "name": "WATERDOG_SETUP_TASK",
+  "steps": [
+    {
+      "name": "Setup waterdog",
+      "description": "Set hostname and port for waterdog",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "listener.host",
+        "value": "%hostname%:%port%"
+      }
+    }
+  ]
+}

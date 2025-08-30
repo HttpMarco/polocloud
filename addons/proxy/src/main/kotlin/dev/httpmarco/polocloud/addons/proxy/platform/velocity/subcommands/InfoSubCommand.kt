@@ -4,13 +4,14 @@ import com.velocitypowered.api.command.CommandSource
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.addons.proxy.utils.Format
+import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class InfoSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
-    private val polocloudVersion = System.getenv("polocloud-version")?: "unknown"
+    private val polocloudVersion = polocloudVersion()
 
     override fun execute(
         source: CommandSource,

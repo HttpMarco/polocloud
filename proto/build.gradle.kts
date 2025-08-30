@@ -9,7 +9,8 @@ plugins {
 dependencies {
     implementation(libs.bundles.proto)
     api(libs.bundles.proto)
-    implementation("javax.annotation:javax.annotation-api:1.3.2")
+
+    implementation("com.google.protobuf:protobuf-java:4.32.0")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -21,11 +22,11 @@ tasks.withType<JavaCompile>().configureEach {
 protobuf {
     protobuf {
         protoc {
-            artifact = "com.google.protobuf:protoc:3.25.8"
+            artifact = "com.google.protobuf:protoc:4.32.0"
         }
         plugins {
             id("grpc") {
-                artifact = "io.grpc:protoc-gen-grpc-java:1.73.0"
+                artifact = "io.grpc:protoc-gen-grpc-java:1.75.0"
             }
         }
         generateProtoTasks {

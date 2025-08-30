@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package dev.httpmarco.polocloud.v1.proto;
+
+option java_package = "dev.httpmarco.polocloud.v1.templates";
+option java_multiple_files = true;
+
+service TemplateController {
+    rpc find(TemplateFindRequest) returns (TemplateFindResponse);
+}
+
+message TemplateFindRequest {
+    optional string name = 1;
+}
+
+message TemplateFindResponse {
+    repeated TemplateSnapshot template = 1;
+}
+
+message TemplateSnapshot {
+    string name = 1;
+    string size = 2;
+}

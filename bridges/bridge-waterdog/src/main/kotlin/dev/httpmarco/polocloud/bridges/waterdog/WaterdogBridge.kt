@@ -12,5 +12,6 @@ class WaterdogBridge : Plugin() {
 
         val bridgeInstance = WaterdogBridgeInstance()
         ProxyServer.getInstance().reconnectHandler = WaterdogReconnectHandler(bridgeInstance)
+        ProxyServer.getInstance().joinHandler = bridgeInstance
     }
 }

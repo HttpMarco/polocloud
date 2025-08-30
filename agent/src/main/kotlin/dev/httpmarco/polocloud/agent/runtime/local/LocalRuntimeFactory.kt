@@ -2,20 +2,17 @@ package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.agent.utils.JavaUtils
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
-import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformLanguage
 import dev.httpmarco.polocloud.platforms.PlatformParameters
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStoppingEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import org.yaml.snakeyaml.util.Tuple
@@ -53,11 +50,30 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         val platform = service.group.platform()
         val version = service.group.platform.version
+        val versionObject = platform.version(version)
+
+        val (correctRuntime, currentRuntime) = checkRuntimeVersion(service)
+        if (!correctRuntime) {
+            if (currentRuntime == null) {
+                i18n.warn(
+                    "agent.local-runtime.factory.boot.missing-runtime",
+                    service.group.platform().language,
+                    versionObject?.requiredRuntimeVersion
+                )
+            } else {
+                i18n.warn(
+                    "agent.local-runtime.factory.boot.wrong-runtime",
+                    currentRuntime,
+                    service.group.platform().language,
+                    versionObject?.requiredRuntimeVersion
+                )
+            }
+        }
 
         val serverIcon = this.javaClass.classLoader.getResource("server-icon.png")!!
 
         val environment = PlatformParameters(
-            platform.version(version)
+            versionObject
         )
         environment.addParameter("hostname", service.hostname)
         environment.addParameter("port", service.port)
@@ -98,12 +114,12 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         i18n.info("agent.local-runtime.factory.boot.up", service.name())
 
         service.state = ServiceState.STARTING
-        Agent.eventService.call(ServiceStartingEvent(service))
+        Agent.eventService.call(ServiceChangeStateEvent(service))
 
         service.path.createDirectories()
 
         // copy all templates to the service path
-        Agent.runtime.templates().bindTemplate(service)
+        Agent.runtime.templateStorage().bindTemplate(service)
 
         // copy the platform files to the service path and setup service
         platform.prepare(service.path, service.group.platform.version, environment)
@@ -138,7 +154,6 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         service.state = ServiceState.STOPPING
         val eventService = Agent.eventService
-        eventService.call(ServiceStoppingEvent(service))
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
@@ -147,7 +162,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         // the service went down, so we don't need to send any events anymore
         eventService.dropServiceSubscriptions(service)
         // then we call the shutdown event -> for all other services
-        eventService.call(ServiceShutdownEvent(service))
+        eventService.call(ServiceChangeStateEvent(service))
 
         if (service.process != null) {
             try {
@@ -194,6 +209,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         }
 
         service.state = ServiceState.STOPPED
+        Agent.eventProvider().call(ServiceChangeStateEvent(service))
         Agent.runtime.serviceStorage().dropAbstractService(service)
         i18n.info(
             "agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful",

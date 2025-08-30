@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.services
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import dev.httpmarco.polocloud.agent.utils.IndexDetector
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceBootRequest
 import dev.httpmarco.polocloud.v1.services.ServiceBootResponse
@@ -91,12 +92,15 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
             service.updateMaxMemory(request.maximumMemory)
         }
 
-        service.templates += request.templatesList
+        val updatedTemplates = service.templates.toMutableList()
+        updatedTemplates += Template.bindSnapshot(request.templatesList)
+
         request.excludedTemplatesList.forEach { template ->
-            if (service.templates.contains(template)) {
-                service.templates -= template
-            }
+            updatedTemplates.removeIf { it.name == template.name }
         }
+
+        service.templates = updatedTemplates
+
         service.properties += request.propertiesMap
 
         Agent.runtime.serviceStorage().deployAbstractService(service)

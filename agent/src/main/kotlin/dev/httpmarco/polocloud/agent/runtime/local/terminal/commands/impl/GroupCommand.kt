@@ -12,9 +12,6 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.IntAr
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.KeywordArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.TextArgument
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl.GroupSetup
-import dev.httpmarco.polocloud.agent.utils.IndexDetector
-import dev.httpmarco.polocloud.agent.runtime.local.LocalService
-import dev.httpmarco.polocloud.v1.GroupType
 
 class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val terminal: JLine3Terminal) :
     Command("group", "Manage all group actions") {
@@ -48,6 +45,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val te
             i18n.info("agent.terminal.command.group.info.line.4", group.maxOnlineService)
             i18n.info("agent.terminal.command.group.info.line.5", group.serviceCount())
             i18n.info("agent.terminal.command.group.info.line.6", group.platform.name, group.platform.version)
+            i18n.info("agent.terminal.command.group.info.templates", group.templates.stream().map { it.name }.toList().joinToString(separator = "&8, &f"))
             i18n.info("agent.terminal.command.group.info.line.7")
 
             group.properties.forEach { (key, value) ->

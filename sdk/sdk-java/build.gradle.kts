@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(projects.shared)
-    implementation(projects.common)
+    api(projects.common)
 
     compileOnly(libs.gson)
     implementation(libs.bundles.proto)
