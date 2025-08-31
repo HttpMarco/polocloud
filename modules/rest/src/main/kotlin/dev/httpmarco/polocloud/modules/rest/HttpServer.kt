@@ -37,7 +37,7 @@ class HttpServer {
                     sslCfg.redirect = true
 
                     sslCfg.http2 = false
-                    sslCfg.sniHostCheck = true
+                    sslCfg.sniHostCheck = false
                 }
 
                 cfg.registerPlugin(sslPlugin)
