@@ -17,8 +17,8 @@ class HttpServer {
             cfg.showJavalinBanner = false
 
             if (config.sslEnabled) {
-                require(config.certPath != null && config.keyPath != null) {
-                    logger.info("SSL is enabled, but Cert or Key Path is null")
+                require(config.certPath.isNotBlank() && config.keyPath.isNotBlank()) {
+                    logger.info("SSL is enabled, but Cert or Key Path is empty")
                 }
 
                 val certFile = Paths.get(config.certPath)
@@ -30,7 +30,14 @@ class HttpServer {
 
                 val sslPlugin = SslPlugin { sslCfg ->
                     sslCfg.pemFromPath(certFile.toString(), keyFile.toString())
-                    sslCfg.http2 = true
+
+                    sslCfg.insecurePort = config.port
+                    sslCfg.securePort = config.securePort
+
+                    sslCfg.redirect = true
+
+                    sslCfg.http2 = false
+                    sslCfg.sniHostCheck = true
                 }
 
                 cfg.registerPlugin(sslPlugin)
@@ -62,7 +69,7 @@ class HttpServer {
             ExceptionHandler.register(this)
         }.start()
 
-        logger.info("HTTP server started on port ${app.port()}")
+        logger.info("Server started on ${if (config.sslEnabled) "HTTPS port ${config.securePort} (redirect from HTTP ${config.port})" else "HTTP port ${config.port}"}")
     }
 
     fun stop() {
