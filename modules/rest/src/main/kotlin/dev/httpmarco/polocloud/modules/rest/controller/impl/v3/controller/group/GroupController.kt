@@ -13,6 +13,7 @@ import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.polocloudShared
+import dev.httpmarco.polocloud.shared.template.Template
 import io.javalin.http.Context
 
 class GroupController : Controller("/group") {
@@ -109,6 +110,7 @@ class GroupController : Controller("/group") {
         }
 
         val platformIndex = PlatformIndex(platform.name, platformVersion.version)
+        val templates = groupCreateModel.templates.map { Template(it) }
 
         val group = AbstractGroup(
             groupCreateModel.name,
@@ -118,8 +120,8 @@ class GroupController : Controller("/group") {
             groupCreateModel.maxOnlineService,
             groupCreateModel.percentageToStartNewService,
             platformIndex,
-            groupCreateModel.information.createdAt,
-            groupCreateModel.templates,
+            groupCreateModel.createdAt,
+            templates,
             groupCreateModel.properties
         )
 

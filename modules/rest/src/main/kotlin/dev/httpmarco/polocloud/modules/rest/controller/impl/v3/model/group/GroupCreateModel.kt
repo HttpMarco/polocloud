@@ -12,7 +12,7 @@ data class GroupCreateModel(
     val maxOnlineService: Int = 0,
     val platform: PlatformModel = PlatformModel(),
     val percentageToStartNewService: Double = 0.0,
-    val information: GroupInformationModel = GroupInformationModel(),
-    val templates: List<Template> = emptyList(),
+    val createdAt: Long = 0L,
+    val templates: List<String> = emptyList(),
     val properties: Map<String, JsonPrimitive> = emptyMap()
 )
