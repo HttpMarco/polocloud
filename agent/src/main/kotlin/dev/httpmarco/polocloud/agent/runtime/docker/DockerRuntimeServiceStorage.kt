@@ -1,5 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
+import com.github.dockerjava.api.DockerClient
+import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
@@ -7,9 +9,15 @@ import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import java.util.concurrent.CompletableFuture
 
-class DockerRuntimeServiceStorage : RuntimeServiceStorage<DockerService> {
+class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStorage<DockerService> {
 
     override fun findAll(): List<DockerService> {
+        val containers = client.listContainersCmd().withShowAll(true).exec().stream().filter {
+            val env = client.inspectContainerCmd(it.id).exec().config.env
+
+            return@filter env?.contains("POLOCLOUD_GROUP") ?: false
+        }
+
         return listOf()
     }
 

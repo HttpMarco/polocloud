@@ -15,12 +15,12 @@ import java.nio.file.Paths
 
 class DockerRuntime : Runtime() {
 
-    private val dockerClient = createLocalDockerClient()
-    private val serviceStorage = DockerRuntimeServiceStorage()
+    private val client = createLocalDockerClient()
+    private val serviceStorage = DockerRuntimeServiceStorage(client)
     private val groupStorage = DockerRuntimeGroupStorage()
-    private val expender = DockerExpender(dockerClient)
-    private val runtimeFactory = DockerFactory(dockerClient)
-    private val templateStorage = DockerTemplateStorage(dockerClient)
+    private val expender = DockerExpender(client)
+    private val runtimeFactory = DockerFactory(client)
+    private val templateStorage = DockerTemplateStorage(client)
     private val dockerConfigHolder = DockerConfigHolder()
     private val runtimeQueue = AbstractThreadedRuntimeQueue()
 
