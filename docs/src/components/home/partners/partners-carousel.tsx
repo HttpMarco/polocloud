@@ -122,12 +122,16 @@ export function PartnersCarousel() {
                                     )}
                                 </motion.div>
                             </div>
-                        ) : (
-                            <div className="flex space-x-6 animate-scroll">
+                        ) : partners.length <= 3 ? (
+                            <div className="flex justify-center items-center gap-6">
                                 {partners.map((partner, index) => (
-                                    <div
-                                        key={`first-${partner.id}`}
-                                        className="flex-shrink-0 flex flex-col items-center"
+                                    <motion.div
+                                        key={partner.id}
+                                        className="flex flex-col items-center"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: index * 0.1 }}
                                     >
                                         <div
                                             className="w-28 h-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-2 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
@@ -158,44 +162,85 @@ export function PartnersCarousel() {
                                         {partner.website && (
                                             <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
                                         )}
-                                    </div>
+                                    </motion.div>
                                 ))}
-                                {partners.map((partner, index) => (
-                                    <div
-                                        key={`second-${partner.id}`}
-                                        className="flex-shrink-0 flex flex-col items-center"
-                                    >
+                            </div>
+                        ) : (
+                            <div className="relative">
+                                <div className="flex animate-scroll">
+                                    {partners.map((partner, index) => (
                                         <div
-                                            className="w-28 h-18 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-2 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
-                                            onClick={() => {
-                                                if (partner.website) {
-                                                    window.open(partner.website, '_blank', 'noopener,noreferrer');
-                                                }
-                                            }}
+                                            key={`first-${partner.id}`}
+                                            className="flex-shrink-0 flex flex-col items-center mx-3"
                                         >
-                                            <img
-                                                src={partner.logo}
-                                                alt={partner.name}
-                                                className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300"
-                                                onError={(e) => {
-                                                    console.warn(`Failed to load logo for ${partner.name}:`, partner.logo);
-                                                    e.currentTarget.style.display = 'none';
+                                            <div
+                                                className="w-28 h-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-2 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                                                onClick={() => {
+                                                    if (partner.website) {
+                                                        window.open(partner.website, '_blank', 'noopener,noreferrer');
+                                                    }
                                                 }}
-                                            />
-                                        </div>
-                                        <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
-                                            {partner.name}
-                                        </span>
-                                        {partner.description && (
-                                            <span className="text-xs text-muted-foreground text-center max-w-28 mt-1 leading-tight">
-                                                {partner.description}
+                                            >
+                                                <img
+                                                    src={partner.logo}
+                                                    alt={partner.name}
+                                                    className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        console.warn(`Failed to load logo for ${partner.name}:`, partner.logo);
+                                                        e.currentTarget.style.display = 'none';
+                                                    }}
+                                                />
+                                            </div>
+                                            <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
+                                                {partner.name}
                                             </span>
-                                        )}
-                                        {partner.website && (
-                                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
-                                        )}
-                                    </div>
-                                ))}
+                                            {partner.description && (
+                                                <span className="text-xs text-muted-foreground text-center max-w-28 mt-1 leading-tight">
+                                                    {partner.description}
+                                                </span>
+                                            )}
+                                            {partner.website && (
+                                                <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
+                                            )}
+                                        </div>
+                                    ))}
+                                    {partners.map((partner, index) => (
+                                        <div
+                                            key={`second-${partner.id}`}
+                                            className="flex-shrink-0 flex flex-col items-center mx-3"
+                                        >
+                                            <div
+                                                className="w-28 h-20 bg-gradient-to-br from-background/50 to-background/30 backdrop-blur-sm border border-border/30 rounded-lg flex items-center justify-center mb-2 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                                                onClick={() => {
+                                                    if (partner.website) {
+                                                        window.open(partner.website, '_blank', 'noopener,noreferrer');
+                                                    }
+                                                }}
+                                            >
+                                                <img
+                                                    src={partner.logo}
+                                                    alt={partner.name}
+                                                    className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        console.warn(`Failed to load logo for ${partner.name}:`, partner.logo);
+                                                        e.currentTarget.style.display = 'none';
+                                                    }}
+                                                />
+                                            </div>
+                                            <span className="text-xs font-semibold text-foreground dark:text-white/80 text-center">
+                                                {partner.name}
+                                            </span>
+                                            {partner.description && (
+                                                <span className="text-xs text-muted-foreground text-center max-w-28 mt-1 leading-tight">
+                                                    {partner.description}
+                                                </span>
+                                            )}
+                                            {partner.website && (
+                                                <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1" />
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
