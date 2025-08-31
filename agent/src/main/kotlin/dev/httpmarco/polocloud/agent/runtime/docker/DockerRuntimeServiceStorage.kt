@@ -17,7 +17,7 @@ class DockerRuntimeServiceStorage : RuntimeServiceStorage<DockerService> {
         return CompletableFuture.completedFuture(findAll())
     }
 
-    override fun find(name: String): DockerService? {
+    override fun find(name: String): DockerService {
         TODO("Not yet implemented")
     }
 

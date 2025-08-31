@@ -1,15 +1,15 @@
-package dev.httpmarco.polocloud.agent.runtime.local
+package dev.httpmarco.polocloud.agent.runtime.abstract
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import dev.httpmarco.polocloud.agent.shutdownProcess
 import dev.httpmarco.polocloud.agent.utils.IndexDetector
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
-class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
-
+open class AbstractThreadedRuntimeQueue : Thread("polocloud-local-runtime-queue") {
 
     override fun run() {
         try {
@@ -46,8 +46,10 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
     private fun requiredServersThatStart(group: AbstractGroup): Int {
         var minimumValue = (group.minOnlineService - group.serviceCount()).coerceAtLeast(0)
 
-        val averageMaxPlayers = group.services().stream().filter { it.maxPlayerCount != -1 }.mapToInt { it.maxPlayerCount }.average()
-        val averageOnlinePlayers = group.services().stream().filter { it.playerCount != -1 }.mapToInt { it.playerCount }.average()
+        val averageMaxPlayers =
+            group.services().stream().filter { it.maxPlayerCount != -1 }.mapToInt { it.maxPlayerCount }.average()
+        val averageOnlinePlayers =
+            group.services().stream().filter { it.playerCount != -1 }.mapToInt { it.playerCount }.average()
 
         if (minimumValue <= 0 && averageMaxPlayers.isPresent && averageOnlinePlayers.isPresent && group.services()
                 .none { it.state != ServiceState.ONLINE }
@@ -56,7 +58,6 @@ class LocalRuntimeQueue : Thread("polocloud-local-runtime-queue") {
                 minimumValue += 1
             }
         }
-
         return minimumValue
     }
 }

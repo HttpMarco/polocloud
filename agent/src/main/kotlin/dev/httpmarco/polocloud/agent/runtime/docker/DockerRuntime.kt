@@ -7,6 +7,7 @@ import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.RuntimeConfigHolder
 import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplateStorage
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractThreadedRuntimeQueue
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -21,6 +22,7 @@ class DockerRuntime : Runtime() {
     private val runtimeFactory = DockerFactory(dockerClient)
     private val templateStorage = DockerTemplateStorage(dockerClient)
     private val dockerConfigHolder = DockerConfigHolder()
+    private val runtimeQueue = AbstractThreadedRuntimeQueue()
 
     fun createLocalDockerClient(): DockerClient {
         val config = DefaultDockerClientConfig.createDefaultConfigBuilder()
@@ -28,6 +30,10 @@ class DockerRuntime : Runtime() {
             .build()
 
         return DockerClientBuilder.getInstance(config).build()
+    }
+
+    override fun boot() {
+        runtimeQueue.start()
     }
 
     override fun serviceStorage() = serviceStorage

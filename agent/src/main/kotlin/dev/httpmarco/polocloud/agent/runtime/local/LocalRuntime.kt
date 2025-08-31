@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractThreadedRuntimeQueue
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.GroupCommand
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.PlatformCommand
@@ -17,7 +18,7 @@ class LocalRuntime : Runtime() {
     private val runtimeGroupStorage = LocalRuntimeGroupStorage()
     private val runtimeServiceStorage = LocalRuntimeServiceStorage()
     private val runtimeFactory = LocalRuntimeFactory(this)
-    private val runtimeQueue = LocalRuntimeQueue()
+    private val runtimeQueue = AbstractThreadedRuntimeQueue()
     private val runtimeExpender = LocalRuntimeExpender()
     private val templates = LocalRuntimeTemplateStorage()
     private val configHolder = LocalRuntimeConfigHolder()
