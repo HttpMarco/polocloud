@@ -27,7 +27,7 @@ class MemoryArgument(
             suggestions.add(last.toString())
         }
 
-        return suggestions.distinct() as MutableList<String>
+        return suggestions.distinct().toMutableList()
     }
 
     companion object {
