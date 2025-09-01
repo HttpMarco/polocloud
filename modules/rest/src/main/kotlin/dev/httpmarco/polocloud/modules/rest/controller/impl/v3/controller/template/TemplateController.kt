@@ -3,7 +3,8 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.templ
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplateStorage
+import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntimeTemplateStorage
+import dev.httpmarco.polocloud.agent.runtime.local.LocalTemplate
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.template.CreateTemplateModel
@@ -55,15 +56,26 @@ class TemplateController : Controller("/template") {
         }
 
         val searchedTemplate = Agent.runtime.templateStorage().find(createTemplateModel.name)
-
         if (searchedTemplate != null) {
             context.status(400).json(message("Template already exists"))
             return
         }
 
-        val template = Template(createTemplateModel.name)
+        val runtimeTemplateStorage = Agent.runtime.templateStorage()
+        when (runtimeTemplateStorage) {
+            is LocalRuntimeTemplateStorage -> {
+                val template = LocalTemplate(createTemplateModel.name)
+                runtimeTemplateStorage.create(template)
+            }
 
-        (Agent.runtime.templateStorage() as RuntimeTemplateStorage<Template, *>).create(template)
+            // TODO DOCKER AND K8S IMPLEMENTATION
+
+            else -> {
+                context.status(500).json(message("Unsupported template runtime"))
+                return
+            }
+        }
+
         context.status(202).json(message("Creating template"))
     }
 
@@ -77,7 +89,18 @@ class TemplateController : Controller("/template") {
             return
         }
 
-        Agent.runtime.templateStorage().delete(template)
+        val runtimeTemplateStorage = Agent.runtime.templateStorage()
+        when (runtimeTemplateStorage) {
+            is LocalRuntimeTemplateStorage -> runtimeTemplateStorage.delete(template as LocalTemplate)
+
+            // TODO DOCKER AND K8S IMPLEMENTATION
+
+            else -> {
+                context.status(500).json(message("Unsupported template runtime"))
+                return
+            }
+        }
+
         context.status(202).json(message("Deleted template"))
     }
 
@@ -103,7 +126,17 @@ class TemplateController : Controller("/template") {
             return
         }
 
-        Agent.runtime.templateStorage().update(template, editTemplateModel.name)
+        val runtimeTemplateStorage = Agent.runtime.templateStorage()
+
+        when (runtimeTemplateStorage) {
+            is LocalRuntimeTemplateStorage -> runtimeTemplateStorage.update(template as LocalTemplate, editTemplateModel.name)
+
+            else -> {
+                context.status(500).json(message("Unsupported template runtime"))
+                return
+            }
+        }
+
         context.status(202).json(message("Template edited"))
     }
 }

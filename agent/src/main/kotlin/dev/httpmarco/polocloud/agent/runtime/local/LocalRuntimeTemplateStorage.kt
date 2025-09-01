@@ -12,7 +12,6 @@ import java.nio.file.SimpleFileVisitor
 import java.nio.file.StandardCopyOption
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.CompletableFuture
-import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 
 class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalService> {
@@ -81,7 +80,7 @@ class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalS
         }
     }
 
-    override fun delete(template: Template) {
+    override fun delete(template: LocalTemplate) {
         val path = templatePath(template)
         if (!Files.exists(path)) {
             return
@@ -102,7 +101,7 @@ class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalS
         this.cachedTemplates.removeIf { it.name == template.name }
     }
 
-    override fun update(template: Template, newName: String) {
+    override fun update(template: LocalTemplate, newName: String) {
         val sourcePath = templatePath(template)
         val targetPath = LOCAL_TEMPLATE_PATH.resolve(newName)
 
