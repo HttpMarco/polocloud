@@ -117,7 +117,7 @@ class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalS
                 targetPath,
                 StandardCopyOption.ATOMIC_MOVE
             )
-            logger.info("Renamed template ${template.name} to $newName")
+
             this.cachedTemplates.removeIf { it.name == template.name }
             this.cachedTemplates.add(LocalTemplate(newName))
         } catch (e: IOException) {
