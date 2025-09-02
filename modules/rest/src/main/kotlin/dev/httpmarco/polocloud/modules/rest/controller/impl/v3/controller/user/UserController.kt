@@ -5,7 +5,9 @@ import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.EncryptionUtil
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
+import dev.httpmarco.polocloud.modules.rest.auth.user.toJson
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.toJson
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserSelfCreateModel
@@ -23,54 +25,38 @@ class UserController : Controller("/user") {
 
     @Request(requestType = RequestType.POST, path = "/", permission = "polocloud.user.create")
     fun createUser(context: Context) {
-        val userCreateModel = try {
-            context.bodyAsClass(UserCreateModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
+        val model = context.parseBodyOrBadRequest<UserCreateModel>() ?: return
+        if (!context.validate(model.username.isNotBlank(), "Username is required")) return
+
+        val role = context.validateRole(model.roleId) ?: return
+        val password = RestModule.instance.userProvider.create(model.username, role)
+
+        val data = JsonObject().apply {
+            addProperty("password", password)
         }
 
-        if (userCreateModel.username.isBlank()) {
-            context.status(400).json(message("Invalid body: missing fields"))
-            return
-        }
-
-        val role = RestModule.instance.roleProvider.roleById(userCreateModel.roleId)
-        if (role == null) {
-            context.status(400).json(message("Invalid role ID"))
-            return
-        }
-
-        val password = RestModule.instance.userProvider.create(userCreateModel.username, role)
-        context.status(201).json(JsonObject().apply { addProperty("password", password) }.toString())
+        context.defaultResponse(201, "User created successfully", data)
     }
 
     @Request(requestType = RequestType.POST, path = "/self")
     fun createSelfUser(context: Context) {
-        val userSelfCreateModel = try {
-            context.bodyAsClass(UserSelfCreateModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
-
-        if (userSelfCreateModel.username.isBlank() || userSelfCreateModel.password.isBlank()) {
-            context.status(400).json(message("Invalid body: missing fields"))
-            return
-        }
+        val model = context.parseBodyOrBadRequest<UserSelfCreateModel>() ?: return
+        if (!context.validate(model.username.isNotBlank(), "Username is required")) return
+        if (!context.validate(model.password.isNotBlank(), "Password is required")) return
 
         if (RestModule.instance.userProvider.users().isNotEmpty()) {
-            context.status(400).json(message("A user already exists"))
+            context.defaultResponse(400, "A user already exists")
             return
         }
 
-        val hashedPassword = EncryptionUtil.encrypt(userSelfCreateModel.password)
-        val role = RestModule.instance.roleProvider.roleById(userSelfCreateModel.roleId)
-        val user = User(UUID.randomUUID(), userSelfCreateModel.username, role, hashedPassword, true, System.currentTimeMillis())
+        val role = context.validateRole(model.roleId) ?: return
+
+        val hashedPassword = EncryptionUtil.encrypt(model.password)
+        val user = User(UUID.randomUUID(), model.username, role, hashedPassword, true, System.currentTimeMillis())
 
         val token = RestModule.instance.userProvider.createSelf(user, context.ip(), context.userAgent())
         if (token == null) {
-            context.status(400).json(message("User already exists"))
+            context.defaultResponse(400, "User already exists")
             return
         }
 
@@ -82,178 +68,97 @@ class UserController : Controller("/user") {
             secure = true,
         )
 
-        context.status(201).cookie(cookie).json(message("User created"))
+        context.cookie(cookie).defaultResponse(201,"User created successfully")
     }
 
     @Request(requestType = RequestType.PATCH, path = "/self/edit", permission = "polocloud.user.self.edit")
     fun selfEdit(context: Context, user: User) {
-        val userSelfEditModel = try {
-            context.bodyAsClass(UserSelfEditModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
+        val model = context.parseBodyOrBadRequest<UserSelfEditModel>() ?: return
+        if (!context.validate(model.username.isNotBlank(), "Username is required")) return
 
-        if (userSelfEditModel.username.isBlank()) {
-            context.status(400).json(message("Invalid body: missing fields"))
-            return
-        }
-
-        user.username = userSelfEditModel.username
+        user.username = model.username
 
         RestModule.instance.userProvider.edit(user)
-        context.status(201).json(message("User updated"))
+        context.defaultResponse(201,"User updated")
     }
 
     @Request(requestType = RequestType.PATCH, path = "/edit", permission = "polocloud.user.edit")
     fun edit(context: Context) {
-        val userEditModel = try {
-            context.bodyAsClass(UserEditModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
+        val model = context.parseBodyOrBadRequest<UserEditModel>() ?: return
+        if (!context.validate(model.uuid.isNotBlank(), "UUID is required")) return
 
-        if (userEditModel.uuid.isEmpty()) {
-            context.status(400).json(message("Invalid body: missing fields"))
-            return
-        }
-
-        val userUUID = UUID.fromString(userEditModel.uuid)
+        val userUUID = UUID.fromString(model.uuid)
         val user = RestModule.instance.userProvider.userByUUID(userUUID)
         if (user == null) {
-            context.status(404).json(message("User not found"))
+            context.defaultResponse(404, "User not found")
             return
         }
 
-        val role = RestModule.instance.roleProvider.roleById(userEditModel.roleId)
-        if (role == null) {
-            context.status(400).json(message("Invalid role ID"))
-            return
-        }
-
+        val role = context.validateRole(model.roleId) ?: return
         if (role.permissions.contains("*") && user.role?.permissions?.contains("*") == true) {
-            context.status(403).json(message("You cannot assign the admin role"))
+            context.defaultResponse(403,"You cannot assign the admin role")
             return
         }
 
         user.role = role
 
         RestModule.instance.userProvider.edit(user)
-        context.status(201).json(message("User updated"))
+        context.defaultResponse(201, "User updated")
     }
 
     @Request(requestType = RequestType.PATCH, path = "/self/change-password", "polocloud.user.self.change-password")
     fun changePassword(context: Context, user: User) {
-        val userPasswordChangeModel = try {
-            context.bodyAsClass(UserPasswordChangeModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
+        val model = context.parseBodyOrBadRequest<UserPasswordChangeModel>() ?: return
+        if (!context.validate(model.password.isNotBlank(), "Password is required")) return
 
-        if (userPasswordChangeModel.password.isBlank()) {
-            context.status(400).json(message("New password cannot be empty"))
-            return
-        }
-
-        user.passwordHash = EncryptionUtil.encrypt(userPasswordChangeModel.password)
+        user.passwordHash = EncryptionUtil.encrypt(model.password)
         user.hasChangedPassword = true
 
         RestModule.instance.userProvider.edit(user)
-        context.status(200).json(message("Password changed successfully"))
+        context.defaultResponse(200, "Password changed successfully")
     }
 
     @Request(requestType = RequestType.DELETE, path = "/{uuid}", permission = "polocloud.user.delete")
     fun delete(context: Context) {
-        val uuidString = context.pathParam("uuid")
-        val userUUID = try {
-            UUID.fromString(uuidString)
-        } catch (e: IllegalArgumentException) {
-            context.status(400).json(message("Invalid UUID format"))
-            return
-        }
+        val userUUID = context.parseUUID("uuid") ?: return
 
         RestModule.instance.userProvider.delete(userUUID)
-        context.status(204).json(message("User deleted"))
+        context.defaultResponse(204)
     }
 
     @Request(requestType = RequestType.DELETE, path = "/self")
     fun deleteSelf(context: Context, user: User) {
         RestModule.instance.userProvider.delete(user.uuid)
         context.removeCookie("token")
-        context.status(204).json(message("User deleted"))
+        context.defaultResponse(204)
     }
 
     @Request(requestType = RequestType.GET, path = "s/", permission = "polocloud.user.list")
     fun list(context: Context) {
-        context.status(200).json(
-            JsonArray().apply {
-                RestModule.instance.userProvider.users().forEach { user ->
-                    add(JsonObject().apply {
-                        addProperty("uuid", user.uuid.toString())
-                        addProperty("username", user.username)
-                        addProperty("createdAt", user.createdAt)
-                        addProperty("role", user.role?.id ?: 0)
-                    })
-                }
-            }.toString()
-        )
+        context.defaultResponse(200, data = JsonArray().apply { RestModule.instance.userProvider.users().forEach { add(it.toJson()) } })
     }
 
     @Request(requestType = RequestType.GET, path = "/{uuid}", permission = "polocloud.user.get")
     fun getUser(context: Context) {
-        val uuidString = context.pathParam("uuid")
-        val userUUID = try {
-            UUID.fromString(uuidString)
-        } catch (e: IllegalArgumentException) {
-            context.status(400).json(message("Invalid UUID format"))
-            return
-        }
+        val userUUID = context.parseUUID("uuid") ?: return
 
         val user = RestModule.instance.userProvider.userByUUID(userUUID)
         if (user == null) {
-            context.status(404).json(message("User not found"))
+            context.defaultResponse(404, "User not found")
             return
         }
 
-        context.status(200).json(
-            JsonObject().apply {
-                addProperty("uuid", user.uuid.toString())
-                addProperty("username", user.username)
-                addProperty("createdAt", user.createdAt)
-                addProperty("role", user.role?.id ?: 0)
-            }.toString()
-        )
+        context.defaultResponse(200, data = user.toJson())
     }
 
     @Request(requestType = RequestType.GET, path = "/self")
     fun self(context: Context, user: User) {
-        context.status(200).json(
-            JsonObject().apply {
-                addProperty("uuid", user.uuid.toString())
-                addProperty("username", user.username)
-                addProperty("hasChangedPassword", user.hasChangedPassword)
-                addProperty("createdAt", user.createdAt)
-                addProperty("role", user.role?.id ?: 0)
-            }.toString()
-        )
+        context.defaultResponse(200, data = user.toJson())
     }
 
     @Request(requestType = RequestType.GET, path = "/tokens", permission = "polocloud.user.self.tokens")
     fun tokens(context: Context, user: User) {
-        context.status(200).json(
-            JsonArray().apply {
-                user.tokens.forEach { token ->
-                    add(JsonObject().apply {
-                        addProperty("ip", token.data.ip)
-                        addProperty("userUUID", token.data.userUUID.toString())
-                        addProperty("userAgent", token.data.userAgent)
-                        addProperty("lastActivity", token.data.lastActivity)
-                    })
-                }
-            }.toString()
-        )
+        context.defaultResponse(200, data = JsonArray().apply { user.tokens.forEach { token -> add(token.toJson()) } })
     }
 
     @Request(requestType = RequestType.DELETE, path = "/token/{token}", permission = "polocloud.user.self.token.delete")
@@ -262,7 +167,7 @@ class UserController : Controller("/user") {
         val deletionToken = user.tokens.firstOrNull { it.value == tokenValue }
 
         if (deletionToken == null) {
-            context.status(404).json(message("Token not found"))
+            context.defaultResponse(404, "Token not found")
             return
         }
 
@@ -271,13 +176,13 @@ class UserController : Controller("/user") {
         }
 
         RestModule.instance.userProvider.deleteToken(user, deletionToken)
-        context.status(204).json(message("Token deleted"))
+        context.defaultResponse(204, "Token deleted")
     }
 
     @Request(requestType = RequestType.DELETE, path = "/tokens", permission = "polocloud.user.self.token.delete")
     fun deleteAllTokens(context: Context, user: User) {
         context.removeCookie("token")
         RestModule.instance.userProvider.deleteAllTokens(user)
-        context.status(204).json(message("All tokens deleted"))
+        context.defaultResponse(204, "All tokens deleted")
     }
 }
