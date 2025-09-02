@@ -11,7 +11,7 @@ import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.Platform
-import dev.httpmarco.polocloud.platforms.PlatformLanguage
+import dev.httpmarco.polocloud.common.language.Language
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
@@ -232,7 +232,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         val commands = ArrayList<String>()
 
         when (platform.language) {
-            PlatformLanguage.JAVA -> {
+            Language.JAVA -> {
 
                 val javaPath = abstractService.group.properties["javaPath"]?.takeIf {
                     it.isString && JavaUtils().isValidJavaPath(it.asString)
@@ -252,7 +252,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
                 commands.addAll(platform.arguments)
             }
 
-            PlatformLanguage.GO, PlatformLanguage.RUST -> {
+            Language.GO, Language.RUST -> {
                 commands.addAll(currentOS.executableCurrentDirectoryCommand(abstractService.group.applicationPlatformFile().name))
             }
         }

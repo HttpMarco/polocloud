@@ -4,6 +4,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
+import dev.httpmarco.polocloud.common.language.Language
 import dev.httpmarco.polocloud.common.os.OS
 import java.lang.reflect.Type
 import dev.httpmarco.polocloud.platforms.bridge.Bridge
@@ -16,7 +17,7 @@ class PlatformDeserializer : JsonDeserializer<Platform> {
         return Platform(
             name = obj["name"].asString,
             url = obj["url"].asString,
-            language = context.deserialize(obj["language"], PlatformLanguage::class.java),
+            language = context.deserialize(obj["language"], Language::class.java),
             shutdownCommand = obj.get("shutdownCommand")?.asString ?: "stop",
             type = context.deserialize(obj["type"], GroupType::class.java),
 

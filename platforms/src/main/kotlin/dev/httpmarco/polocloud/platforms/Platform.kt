@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.platforms
 
 import dev.httpmarco.polocloud.common.filesystem.copyDirectoryContent
+import dev.httpmarco.polocloud.common.language.Language
 import dev.httpmarco.polocloud.common.os.OS
 import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
 import dev.httpmarco.polocloud.common.os.currentOS
@@ -21,7 +22,7 @@ import kotlin.io.path.*
 class Platform(
     val name: String,
     val url: String,
-    val language: PlatformLanguage,
+    val language: Language,
     // default is "stop"
     val shutdownCommand: String = "stop",
     // the type of platform, proxy, server, or service

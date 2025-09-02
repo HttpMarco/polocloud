@@ -1,13 +1,13 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
-import dev.httpmarco.polocloud.platforms.PlatformLanguage
+import dev.httpmarco.polocloud.common.version.runtimeVersion
 
 fun checkRuntimeVersion(service: LocalService): Pair<Boolean, String?> {
     val requiredVersionValue = service.group.platform()
         .version(service.group.platform.version)
         ?.requiredRuntimeVersion ?: return true to null
 
-    val currentVersion = getRuntimeVersion(service.group.platform().language)
+    val currentVersion = runtimeVersion(service.group.platform().language)
     if (currentVersion.isEmpty()) return false to null
 
     val operatorRegex = Regex("""^(>=|<=|>|<|==)\s*(.+)""")
@@ -20,36 +20,6 @@ fun checkRuntimeVersion(service: LocalService): Pair<Boolean, String?> {
     }
 
     return compareVersions(currentVersion, requiredVersion, operator) to currentVersion
-}
-
-private fun getRuntimeVersion(language: PlatformLanguage): String {
-    return when (language) {
-        PlatformLanguage.JAVA -> getJavaVersion()
-        PlatformLanguage.GO -> return "" // bleibt bei true
-        PlatformLanguage.RUST -> getRustVersion()
-    }
-}
-
-private fun getJavaVersion(): String {
-    return try {
-        val process = ProcessBuilder("java", "--version").start()
-        val output = process.inputStream.bufferedReader().use { it.readText() }
-        val versionRegex = Regex("""openjdk\s+(\d+\.\d+\.\d+)""")
-        versionRegex.find(output)?.groupValues?.get(1) ?: ""
-    } catch (_: Exception) {
-        ""
-    }
-}
-
-private fun getRustVersion(): String {
-    return try {
-        val process = ProcessBuilder("rustc", "--version").start()
-        val output = process.inputStream.bufferedReader().use { it.readText() }
-        val versionRegex = Regex("""rustc\s+(\d+\.\d+\.\d+)""")
-        versionRegex.find(output)?.groupValues?.get(1) ?: ""
-    } catch (_: Exception) {
-        ""
-    }
 }
 
 private fun compareVersions(current: String, required: String, operator: String?): Boolean {
