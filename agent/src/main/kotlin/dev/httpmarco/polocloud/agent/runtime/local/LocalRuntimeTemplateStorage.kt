@@ -24,6 +24,7 @@ class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalS
         }
         // default template directory for all groups
         LOCAL_TEMPLATE_PATH.resolve("EVERY").createDirectories()
+        LOCAL_TEMPLATE_PATH.resolve("EVERY_FALLBACK").createDirectories()
 
         refreshTemplateCache()
     }

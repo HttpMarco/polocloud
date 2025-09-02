@@ -52,16 +52,23 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
         val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else false
         val static = if (result.contains(staticArgument)) result.arg(staticArgument) else false
 
+        val templates = mutableListOf(
+            Template("EVERY"),
+            Template("EVERY_" + originalPlatform.type.name)
+        )
+
         val properties = HashMap<String, JsonPrimitive>()
 
         if (fallback) {
             properties["fallback"] = JsonPrimitive(true)
+            templates.add(Template("EVERY_FALLBACK"))
         }
 
         if (static) {
             properties["static"] = JsonPrimitive(true)
         }
 
+        templates.add(Template(name))
 
         // TODO USE EVERY TEMPLATE IF EXISTS
         val group = AbstractGroup(
@@ -73,9 +80,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             percentageToStartNewService.toDouble(),
             platform,
             System.currentTimeMillis(),
-            listOf(
-                Template("EVERY"), Template("EVERY_" + originalPlatform.type.name), Template(name)
-            ),
+            templates,
             properties
         )
 
