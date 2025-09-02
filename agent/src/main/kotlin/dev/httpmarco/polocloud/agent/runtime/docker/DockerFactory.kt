@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.model.ExposedPort
 import com.github.dockerjava.api.model.Ports
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
@@ -10,6 +11,10 @@ import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 class DockerFactory(val client: DockerClient) : RuntimeFactory<DockerService> {
 
     override fun bootApplication(service: DockerService) {
+
+        // build image here from template
+
+
         val containerCmd = client.createContainerCmd("polocloud/TODO:latest")
             .withName(service.name())
             .withExposedPorts(ExposedPort.tcp(service.port))
@@ -30,5 +35,9 @@ class DockerFactory(val client: DockerClient) : RuntimeFactory<DockerService> {
         client.stopContainerCmd(service.containerId).exec()
         client.removeContainerCmd(service.containerId).withForce(true).exec()
         return service.toSnapshot()
+    }
+
+    override fun generateInstance(group: AbstractGroup): DockerService {
+        return DockerService(group)
     }
 }

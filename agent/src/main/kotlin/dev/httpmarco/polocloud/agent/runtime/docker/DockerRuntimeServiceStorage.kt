@@ -3,35 +3,34 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 import com.github.dockerjava.api.DockerClient
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
+import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import dev.httpmarco.polocloud.agent.services.AbstractService
+import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
 
 class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStorage<DockerService> {
 
-    override fun findAll(): List<DockerService> {
-        val containers = client.listContainersCmd().withShowAll(true).exec().stream().filter {
-            val env = client.inspectContainerCmd(it.id).exec().config.env
+    private val services = CopyOnWriteArrayList<DockerService>()
 
-            return@filter env?.contains("POLOCLOUD_GROUP") ?: false
-        }
+    override fun findAll(): List<DockerService> = this.services
 
-        return listOf()
+
+    override fun findAllAsync() = CompletableFuture.completedFuture(findAll())
+
+    override fun find(name: String): DockerService? {
+        return this.services.stream()
+            .filter { it.name() == name }
+            .findFirst()
+            .orElse(null)
     }
 
-    override fun findAllAsync(): CompletableFuture<List<DockerService>> {
-        return CompletableFuture.completedFuture(findAll())
-    }
+    override fun findAsync(name: String): CompletableFuture<DockerService?> =
+        CompletableFuture.completedFuture<DockerService?>(find(name))
 
-    override fun find(name: String): DockerService {
-        TODO("Not yet implemented")
-    }
-
-    override fun findAsync(name: String): CompletableFuture<DockerService?> {
-        TODO("Not yet implemented")
-    }
 
     override fun findByType(type: GroupType): List<DockerService> {
         TODO("Not yet implemented")
@@ -41,11 +40,13 @@ class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStor
         TODO("Not yet implemented")
     }
 
-    override fun findByGroup(group: dev.httpmarco.polocloud.shared.groups.Group): List<DockerService> {
-        TODO("Not yet implemented")
+    override fun findByGroup(group: Group): List<DockerService> {
+        return this.services.stream()
+            .filter { it.group == group }
+            .toList()
     }
 
-    override fun findByGroupAsync(group: dev.httpmarco.polocloud.shared.groups.Group): CompletableFuture<List<DockerService>> {
+    override fun findByGroupAsync(group: Group): CompletableFuture<List<DockerService>> {
         TODO("Not yet implemented")
     }
 
@@ -64,23 +65,19 @@ class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStor
         TODO("Not yet implemented")
     }
 
-    override fun bootInstance(name: String): ServiceSnapshot {
-        TODO("Not yet implemented")
-    }
-
     override fun shutdownService(name: String): ServiceSnapshot {
-        TODO("Not yet implemented")
+        return Agent.runtime.factory().shutdownApplication(find(name) ?: throw IllegalArgumentException("Service not found: $name"))
     }
 
     override fun deployService(service: DockerService) {
-        TODO("Not yet implemented")
+        this.services.add(service)
     }
 
     override fun dropService(service: DockerService) {
-        TODO("Not yet implemented")
+        this.services.remove(service)
     }
 
     override fun implementedService(abstractService: AbstractService): DockerService {
-        TODO("Not yet implemented")
+        return abstractService as? DockerService ?: throw IllegalArgumentException("AbstractService must be of type LocalService")
     }
 }

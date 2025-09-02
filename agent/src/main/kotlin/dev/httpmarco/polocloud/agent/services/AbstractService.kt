@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.services
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
+import dev.httpmarco.polocloud.agent.utils.IndexDetector
 import dev.httpmarco.polocloud.agent.utils.PortDetector
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangePlayerCountEvent
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
@@ -9,15 +10,15 @@ import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.shared.service.ServiceInformation
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
-abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: String = "127.0.0.1") :
+abstract class AbstractService(val group: AbstractGroup) :
 
     Service(
         group.name,
-        id,
+        IndexDetector.findIndex(group),
         ServiceState.PREPARING,
         group.platform().type,
         hashMapOf(),
-        hostname,
+        if (group.isProxy()) "0.0.0.0" else "127.0.0.1",
         PortDetector.nextPort(group),
         group.templates,
         ServiceInformation(System.currentTimeMillis()),

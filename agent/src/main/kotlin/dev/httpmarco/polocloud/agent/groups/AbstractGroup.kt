@@ -90,14 +90,10 @@ open class AbstractGroup(
 
     fun startServices(amount: Int): List<AbstractService> {
         val startedServices = mutableListOf<AbstractService>()
-        
-        repeat(amount) {
-            val index = IndexDetector.findIndex(this)
-            val service = when (this.platform().type) {
-                GroupType.PROXY -> LocalService(this, index, "0.0.0.0")
-                else -> LocalService(this, index)
-            }
 
+        // todo duplicated code
+        repeat(amount) {
+            val service = Agent.runtime.factory().generateInstance(this)
             Agent.runtime.serviceStorage().deployAbstractService(service)
             Agent.runtime.factory().bootApplication(service)
             startedServices.add(service)
@@ -122,5 +118,9 @@ open class AbstractGroup(
 
     override fun hashCode(): Int {
         return javaClass.hashCode()
+    }
+
+    fun isProxy(): Boolean {
+        return platform().type == GroupType.PROXY
     }
 }

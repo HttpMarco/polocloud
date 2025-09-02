@@ -54,11 +54,8 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
             return
         }
 
-        val index = IndexDetector.findIndex(group)
-        val service = when (group.platform().type) {
-            GroupType.PROXY -> LocalService(group, index, "0.0.0.0")
-            else -> LocalService(group, index)
-        }
+        // todo duplicated code
+        val service = Agent.runtime.factory().generateInstance(group)
 
         Agent.runtime.serviceStorage().deployAbstractService(service)
         Agent.runtime.factory().bootApplication(service)
@@ -79,11 +76,7 @@ class ServiceGrpcService : ServiceControllerGrpc.ServiceControllerImplBase() {
             return
         }
 
-        val index = IndexDetector.findIndex(group)
-        val service = when (group.platform().type) {
-            GroupType.PROXY -> LocalService(group, index, "0.0.0.0")
-            else -> LocalService(group, index)
-        }
+        val service = Agent.runtime.factory().generateInstance(group)
 
         if(request.hasMinimumMemory()) {
             service.updateMinMemory(request.minimumMemory)

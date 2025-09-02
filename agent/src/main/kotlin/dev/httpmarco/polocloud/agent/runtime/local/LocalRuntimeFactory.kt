@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.agent.services.AbstractService
@@ -104,7 +105,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         }
 
         while (Agent.runtime.serviceStorage().findAll()
-                .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
+             .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
             ||
             cpuUsage() > Agent.config.maxCPUPercentageToStart
         ) {
@@ -217,6 +218,10 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         )
 
         return service.toSnapshot()
+    }
+
+    override fun generateInstance(group: AbstractGroup): LocalService {
+        return LocalService(group)
     }
 
     fun shutdown() {
