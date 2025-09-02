@@ -16,8 +16,8 @@ interface RuntimeTemplateStorage<T : Template, out S : AbstractService> : Shared
 
     fun create(template: T)
 
-    fun delete(template: Template)
+    fun delete(template: T)
 
-    fun update(template: Template, newName: String)
+    fun update(template: T, newName: String)
 
 }

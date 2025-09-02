@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
+import dev.httpmarco.polocloud.shared.player.toJson
 import dev.httpmarco.polocloud.shared.polocloudShared
 import io.javalin.http.Context
 
@@ -13,33 +14,27 @@ class PlayerController : Controller("/player") {
     @Request(requestType = RequestType.GET, path = "/{playerName}", permission = "polocloud.player.get")
     fun getPlayer(context: Context) {
         val playerName = context.pathParam("playerName")
-
         if (playerName.isEmpty()) {
-            context.status(400).result("Player name cannot be null or empty")
+            context.defaultResponse(400,"Player name cannot be null or empty")
             return
         }
 
         val player = polocloudShared.playerProvider().findByName(playerName)
         if (player == null) {
-            context.status(404).result("Player not found")
+            context.defaultResponse(404,"Player not found")
             return
         }
 
-        context.status(200).json(
-            JsonObject().apply {
-                addProperty("name", player.name)
-                addProperty("uuid", player.uniqueId.toString())
-                addProperty("currentServiceName", player.currentServiceName)
-            }.toString()
-        )
+        context.defaultResponse(200, data = player.toJson())
     }
+
+    //TODO implement players right
 
     @Request(requestType = RequestType.GET, path = "s/list", permission = "polocloud.players.list")
     fun listPlayers(context: Context) {
         val page = context.queryParam("page")?.toIntOrNull() ?: 1
         val size = context.queryParam("size")?.toIntOrNull() ?: 20
 
-        // Validierung
         if (page < 1 || size < 1 || size > 100) {
             context.status(400).result("Invalid pagination parameters. Page must be >= 1, size must be 1-100")
             return

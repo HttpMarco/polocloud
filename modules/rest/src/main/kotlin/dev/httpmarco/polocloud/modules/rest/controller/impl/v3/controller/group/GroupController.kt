@@ -11,6 +11,7 @@ import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
+import dev.httpmarco.polocloud.shared.groups.toJson
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.template.Template
@@ -27,16 +28,16 @@ class GroupController : Controller("/group") {
         val totalCount = groups.count()
 
         if (from == 0L || to == 0L) {
-            context.status(200).json(
-                JsonObject().apply {
-                    addProperty("groupCount", totalCount)
-                }.toString()
-            )
+            val data = JsonObject().apply {
+                addProperty("groupCount", totalCount)
+            }
+
+            context.defaultResponse(200, data = data)
             return
         }
 
         if (from < 0 || to < 0 || from > to) {
-            context.status(400).json(message("Invalid range"))
+            context.defaultResponse(400,"Invalid range")
             return
         }
 
@@ -49,194 +50,111 @@ class GroupController : Controller("/group") {
             else         -> 0.0
         }
 
-        context.status(200).json(
-            JsonObject().apply {
-                addProperty("groupCount", current)
-                addProperty("percentage", percentage)
-            }.toString()
-        )
+        val data = JsonObject().apply {
+            addProperty("groupCount", current)
+            addProperty("percentage", percentage)
+        }
+
+        context.defaultResponse(200, data = data)
     }
 
     @Request(requestType = RequestType.POST, path = "/create", permission = "polocloud.group.create")
     fun createGroup(context: Context) {
-        val groupCreateModel = try {
-            context.bodyAsClass(GroupCreateModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
+        val model = context.parseBodyOrBadRequest<GroupCreateModel>() ?: return
+        if (!context.validate(model.name.isNotBlank(), "Group name is required")) return
+        if (!context.validate(model.minMemory >= 0, "Group minMemory must be >= 0")) return
+        if (!context.validate(model.maxMemory >= 0, "Group maxMemory must be >= 0")) return
+        if (!context.validate(model.platform.name.isNotBlank(), "Group platform name is required")) return
+        if (!context.validate(model.platform.version.isNotBlank(), "Group platform version is required")) return
+        if (!context.validate(model.percentageToStartNewService in 0.0..100.0, "Group percentage must be between 0 and 100")) return
+
+        if (polocloudShared.groupProvider().find(model.name) != null) {
+            context.defaultResponse(409,"Group with this name already exists")
             return
         }
 
-        if (groupCreateModel.name.isBlank() ||
-            groupCreateModel.minMemory < 0 ||
-            groupCreateModel.maxMemory < 0 ||
-            groupCreateModel.platform.name.isBlank() ||
-            groupCreateModel.platform.version.isBlank() ||
-            groupCreateModel.percentageToStartNewService < 0.0 ||
-            groupCreateModel.percentageToStartNewService > 100.0) {
-            context.status(400).json(message("Invalid group data"))
-            return
-        }
+        if (!context.validate(model.minMemory <= model.maxMemory, "Minimum memory cannot be greater than maximum memory")) return
+        if (!context.validate(model.minOnlineService >= 0, "Minimum online services cannot be negative")) return
+        if (!context.validate(model.maxOnlineService >= 0, "Maximum online services cannot be negative")) return
+        if (!context.validate(model.minOnlineService <= model.maxOnlineService, "Minimum online services cannot be greater than maximum online services")) return
 
-        if (polocloudShared.groupProvider().find(groupCreateModel.name) != null) {
-            context.status(409).json(message("Group with this name already exists"))
-            return
-        }
-
-        if (groupCreateModel.minMemory > groupCreateModel.maxMemory) {
-            context.status(400).json(message("Minimum memory cannot be greater than maximum memory"))
-            return
-        }
-
-        if (groupCreateModel.minOnlineService < 0 || groupCreateModel.maxOnlineService < 0) {
-            context.status(400).json(message("Minimum and maximum online services cannot be negative"))
-            return
-        }
-
-        if (groupCreateModel.minOnlineService > groupCreateModel.maxOnlineService) {
-            context.status(400).json(message("Minimum online services cannot be greater than maximum online services"))
-            return
-        }
-
-        val platform = polocloudShared.platformProvider().find(groupCreateModel.platform.name)
+        val platform = polocloudShared.platformProvider().find(model.platform.name)
         if (platform == null) {
-            context.status(404).json(message("Platform not found"))
+            context.defaultResponse(404, "Platform not found")
             return
         }
 
-        val platformVersion = platform.versions.find { it.version == groupCreateModel.platform.version }
+        val platformVersion = platform.versions.find { it.version == model.platform.version }
         if (platformVersion == null) {
-            context.status(404).json(message("Platform version not found"))
+            context.defaultResponse(404, "Platform version not found")
             return
         }
 
         val platformIndex = PlatformIndex(platform.name, platformVersion.version)
-        val templates = groupCreateModel.templates.map { Template(it) }
+        val templates = model.templates.map { Template(it) }
 
         val group = AbstractGroup(
-            groupCreateModel.name,
-            groupCreateModel.minMemory,
-            groupCreateModel.maxMemory,
-            groupCreateModel.minOnlineService,
-            groupCreateModel.maxOnlineService,
-            groupCreateModel.percentageToStartNewService,
+            model.name,
+            model.minMemory,
+            model.maxMemory,
+            model.minOnlineService,
+            model.maxOnlineService,
+            model.percentageToStartNewService,
             platformIndex,
-            groupCreateModel.createdAt,
+            model.createdAt,
             templates,
-            groupCreateModel.properties
+            model.properties
         )
 
         (Agent.groupProvider() as SharedGroupProvider<Group>).create(group)
-        context.status(201).json(
-            JsonObject().apply {
-                addProperty("message", "Group created successfully")
-            }.toString()
-        )
+        context.defaultResponse(201,"Group created successfully")
     }
 
     @Request(requestType = RequestType.GET, path = "s/list", permission = "polocloud.group.list")
     fun listGroups(context: Context) {
-        val services = polocloudShared.groupProvider().findAll()
-        if (services.isEmpty()) {
-            context.status(200).json(message("No groups found"))
+        val groups = polocloudShared.groupProvider().findAll()
+        if (groups.isEmpty()) {
+            context.defaultResponse(400, "No groups found")
             return
         }
 
+        val data = JsonArray().apply {
+            groups.map { group ->
+                add(group.toJson())
+            }
+        }
 
-        context.status(200).json(
-            JsonArray().apply {
-                services.map { group ->
-                    add(
-                        JsonObject().apply {
-                            addProperty("name", group.name)
-                            addProperty("minMemory", group.minMemory)
-                            addProperty("maxMemory", group.maxMemory)
-                            addProperty("minOnlineService", group.minOnlineService)
-                            addProperty("maxOnlineService", group.maxOnlineService)
-                            add("platform", JsonObject().apply {
-                                addProperty("name", group.platform.name)
-                                addProperty("version", group.platform.version)
-                            })
-                            addProperty("percentageToStartNewService", group.percentageToStartNewService)
-                            add("information", JsonObject().apply {
-                                addProperty("createdAt", group.createdAt)
-                            })
-                            add("templates", JsonArray().apply {
-                                group.templates.forEach { template ->
-                                    add(JsonObject().apply {
-                                        addProperty("name", template.name)
-                                        addProperty("size", template.size())
-                                    })
-                                }
-                            })
-                            add("properties", JsonObject().apply {
-                                group.properties.forEach { (key, value) ->
-                                    add(key, value)
-                                }
-                            })
-                        }
-                    )
-                }
-            }.toString()
-        )
+        context.defaultResponse(200, data = data)
     }
 
     @Request(requestType = RequestType.GET, path = "/{name}", permission = "polocloud.group.get")
     fun getGroup(context: Context) {
         val name = context.pathParam("name")
         if (name.isBlank()) {
-            context.status(400).json(message("Invalid group name"))
+            context.defaultResponse(400, "Invalid group name")
             return
         }
 
         val group = polocloudShared.groupProvider().find(name)
         if (group == null) {
-            context.status(404).json(message("Group not found"))
+            context.defaultResponse(404, "Group not found")
             return
         }
 
-        context.status(200).json(
-            JsonObject().apply {
-                addProperty("name", group.name)
-                addProperty("minMemory", group.minMemory)
-                addProperty("maxMemory", group.maxMemory)
-                addProperty("minOnlineService", group.minOnlineService)
-                addProperty("maxOnlineService", group.maxOnlineService)
-                add("platform", JsonObject().apply {
-                    addProperty("name", group.platform.name)
-                    addProperty("version", group.platform.version)
-                })
-                addProperty("percentageToStartNewService", group.percentageToStartNewService)
-                add("information", JsonObject().apply {
-                    addProperty("createdAt", group.createdAt)
-                })
-                add("templates", JsonArray().apply {
-                    group.templates.forEach { template ->
-                        add(JsonObject().apply {
-                            addProperty("name", template.name)
-                            addProperty("size", template.size())
-                        })
-                    }
-                })
-                add("properties", JsonObject().apply {
-                    group.properties.forEach { (key, value) ->
-                        add(key, value)
-                    }
-                })
-            }.toString()
-        )
+        context.defaultResponse(200, data = group.toJson())
     }
 
     @Request(requestType = RequestType.DELETE, path = "/{name}", permission = "polocloud.group.delete")
     fun deleteGroup(context: Context) {
         val name = context.pathParam("name")
         if (name.isBlank()) {
-            context.status(400).json(message("Invalid group name"))
+            context.defaultResponse(400,"Invalid group name")
             return
         }
 
         var group = polocloudShared.groupProvider().find(name)
         if (group == null) {
-            context.status(400).json(message("Group not found"))
+            context.defaultResponse(400,"Group not found")
             return
         }
 
@@ -245,7 +163,7 @@ class GroupController : Controller("/group") {
         Agent.runtime.groupStorage().destroy(group)
         group.shutdownAll()
 
-        context.status(204).json(message("Group deleted successfully"))
+        context.defaultResponse(204)
     }
 
     @Request(requestType = RequestType.PATCH, path = "/{name}", permission = "polocloud.group.edit")
@@ -254,53 +172,36 @@ class GroupController : Controller("/group") {
         var group = polocloudShared.groupProvider().find(name)
 
         if (group == null) {
-            context.status(400).json(message("Group cloud not be found"))
+            context.defaultResponse(400,"Group cloud not be found")
             return
         }
 
         group = group as AbstractGroup
+        val model = context.parseBodyOrBadRequest<GroupEditModel>() ?: return
+        if (!context.validate(model.minMemory >= 0, "Group minMemory must be >= 0")) return
+        if (!context.validate(model.maxMemory >= 0, "Group maxMemory must be >= 0")) return
 
-        val groupEditModel = try {
-            context.bodyAsClass(GroupEditModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
+        if (!context.validate(model.percentageToStartNewService in 0.0..100.0,
+                "Group percentage to start new service must be between 0 and 100")) return
 
-        if (groupEditModel.minMemory < 0 ||
-            groupEditModel.maxMemory < 0 ||
-            groupEditModel.percentageToStartNewService < 0.0 ||
-            groupEditModel.percentageToStartNewService > 100.0) {
-            context.status(400).json(message("Invalid group data"))
-            return
-        }
+        if (!context.validate(
+                model.minMemory <= model.maxMemory,
+                "Group minimum memory cannot be greater than maximum memory")) return
 
-        if (groupEditModel.minMemory > groupEditModel.maxMemory) {
-            context.status(400).json(message("Minimum memory cannot be greater than maximum memory"))
-            return
-        }
+        if (!context.validate(model.minOnlineService >= 0, "Group minimum online services cannot be negative")) return
+        if (!context.validate(model.maxOnlineService >= 0, "Group maximum online services cannot be negative")) return
 
-        if (groupEditModel.minOnlineService < 0 || groupEditModel.maxOnlineService < 0) {
-            context.status(400).json(message("Minimum and maximum online services cannot be negative"))
-            return
-        }
+        if (!context.validate(
+                model.minOnlineService <= model.maxOnlineService,
+                "Minimum online services cannot be greater than maximum online services")) return
 
-        if (groupEditModel.minOnlineService > groupEditModel.maxOnlineService) {
-            context.status(400).json(message("Minimum online services cannot be greater than maximum online services"))
-            return
-        }
-
-        group.updateMinMemory(groupEditModel.minMemory)
-        group.updateMaxMemory(groupEditModel.maxMemory)
-        group.updateMinOnlineServices(groupEditModel.minOnlineService)
-        group.updateMaxOnlineServices(groupEditModel.maxOnlineService)
-        group.updatePercentageToStartNewService(groupEditModel.percentageToStartNewService)
+        group.updateMinMemory(model.minMemory)
+        group.updateMaxMemory(model.maxMemory)
+        group.updateMinOnlineServices(model.minOnlineService)
+        group.updateMaxOnlineServices(model.maxOnlineService)
+        group.updatePercentageToStartNewService(model.percentageToStartNewService)
 
         group.update()
-        context.status(201).json(
-            JsonObject().apply {
-                addProperty("message", "Group edited successfully")
-            }.toString()
-        )
+        context.defaultResponse(201,"Group edited successfully")
     }
 }

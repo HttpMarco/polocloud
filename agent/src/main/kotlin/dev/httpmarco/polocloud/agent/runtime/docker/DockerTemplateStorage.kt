@@ -42,11 +42,11 @@ class DockerTemplateStorage(val client: DockerClient) : RuntimeTemplateStorage<D
         TODO("Not yet implemented")
     }
 
-    override fun delete(template: Template) {
+    override fun delete(template: DockerImage) {
         TODO("Not yet implemented")
     }
 
-    override fun update(template: Template, newName: String) {
+    override fun update(template: DockerImage, newName: String) {
         TODO("Not yet implemented")
     }
 

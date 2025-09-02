@@ -3,11 +3,13 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.templ
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplateStorage
+import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntimeTemplateStorage
+import dev.httpmarco.polocloud.agent.runtime.local.LocalTemplate
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.template.CreateTemplateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.template.EditTemplateModel
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.template.Template
@@ -24,47 +26,45 @@ class TemplateController : Controller("/template") {
             templates += Agent.runtime.templateStorage().templates(service as AbstractService)
         }
 
-        val sortedTemplates = templates.toList().sortedBy { it.name }
+        val data = JsonArray().apply {
+            templates.forEach { template ->
+                add(JsonObject().apply {
+                        addProperty("name", template.name)
+                        addProperty("size", template.size())
+                })
+            }
+        }
 
-        context.status(200).json(
-            JsonArray().apply {
-                templates.forEach { template ->
-                    add(
-                        JsonObject().apply {
-                            addProperty("name", template.name)
-                            addProperty("size", template.size())
-                        }
-                    )
-                }
-            }.toString()
-        )
+        context.defaultResponse(200, data = data)
     }
 
     @Request(requestType = RequestType.POST, path = "/", permission = "polocloud.templates.create")
     fun createTemplate(context: Context) {
-        val createTemplateModel = try {
-            context.bodyAsClass(CreateTemplateModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
+        val model = context.parseBodyOrBadRequest<CreateTemplateModel>() ?: return
+        if (!context.validate(model.name.isNotBlank(), "Template name is required")) return
 
-        if (createTemplateModel.name.isBlank()) {
-            context.status(400).json(message("Invalid body: name cannot be empty"))
-            return
-        }
-
-        val searchedTemplate = Agent.runtime.templateStorage().find(createTemplateModel.name)
-
+        val searchedTemplate = Agent.runtime.templateStorage().find(model.name)
         if (searchedTemplate != null) {
-            context.status(400).json(message("Template already exists"))
+            context.defaultResponse(400, "Template already exists")
             return
         }
 
-        val template = Template(createTemplateModel.name)
+        val runtimeTemplateStorage = Agent.runtime.templateStorage()
+        when (runtimeTemplateStorage) {
+            is LocalRuntimeTemplateStorage -> {
+                val template = LocalTemplate(model.name)
+                runtimeTemplateStorage.create(template)
+            }
 
-        (Agent.runtime.templateStorage() as RuntimeTemplateStorage<Template, *>).create(template)
-        context.status(202).json(message("Creating template"))
+            // TODO DOCKER AND K8S IMPLEMENTATION
+
+            else -> {
+                context.defaultResponse(500, "Unsupported template runtime")
+                return
+            }
+        }
+
+        context.defaultResponse(202, "Creating template")
     }
 
     @Request(requestType = RequestType.DELETE, path = "/{templateName}", permission = "polocloud.templates.delete")
@@ -73,37 +73,49 @@ class TemplateController : Controller("/template") {
         val template = Agent.runtime.templateStorage().find(templateName)
 
         if (template == null) {
-            context.status(400).json(message("Template could not be found"))
+            context.defaultResponse(400, "Template could not be found")
             return
         }
 
-        Agent.runtime.templateStorage().delete(template)
-        context.status(202).json(message("Deleted template"))
+        val runtimeTemplateStorage = Agent.runtime.templateStorage()
+        when (runtimeTemplateStorage) {
+            is LocalRuntimeTemplateStorage -> runtimeTemplateStorage.delete(template as LocalTemplate)
+
+            // TODO DOCKER AND K8S IMPLEMENTATION
+
+            else -> {
+                context.defaultResponse(500,"Unsupported template runtime")
+                return
+            }
+        }
+
+        context.defaultResponse(204)
     }
 
     @Request(requestType = RequestType.PATCH, path = "/{templateName}", permission = "polocloud.templates.edit")
     fun editTemplate(context: Context) {
         val templateName = context.pathParam("templateName")
+        val model = context.parseBodyOrBadRequest<EditTemplateModel>() ?: return
 
-        val editTemplateModel = try {
-            context.bodyAsClass(EditTemplateModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
-
-        if (editTemplateModel.name.isBlank()) {
-            context.status(400).json(message("Invalid body: name cannot be empty"))
-            return
-        }
+        if (!context.validate(model.name.isNotBlank(), "Template name is required")) return
 
         val template = Agent.runtime.templateStorage().find(templateName)
         if (template == null) {
-            context.status(400).json(message("Template could not be found"))
+            context.defaultResponse(400,"Template could not be found")
             return
         }
 
-        Agent.runtime.templateStorage().update(template, editTemplateModel.name)
-        context.status(202).json(message("Template edited"))
+        val runtimeTemplateStorage = Agent.runtime.templateStorage()
+
+        when (runtimeTemplateStorage) {
+            is LocalRuntimeTemplateStorage -> runtimeTemplateStorage.update(template as LocalTemplate, model.name)
+
+            else -> {
+                context.status(500).json(message("Unsupported template runtime"))
+                return
+            }
+        }
+
+        context.defaultResponse(202, "Template edited")
     }
 }
