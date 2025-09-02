@@ -58,7 +58,7 @@ class AuthProvider(
     }
 
     private fun isAlive(context: Context): Boolean {
-        return context.path().trimEnd('/') == "$API_PATH/alive"
+        return context.path().trimEnd('/') == "$API_PATH/health"
                 && context.method() == HandlerType.GET
     }
 
