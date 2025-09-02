@@ -4,7 +4,7 @@ import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.AuthProvider
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AliveController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.HealthController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AuthController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.SystemInformationController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.group.GroupController
@@ -31,7 +31,7 @@ class ControllerProvider {
 
     init {
         registerControllers(
-            AliveController(),
+            HealthController(),
             UserController(),
             AuthController(),
             RoleController(),

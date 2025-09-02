@@ -5,10 +5,12 @@ import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import io.javalin.http.Context
 
-class AliveController : Controller("/alive") {
+class HealthController : Controller("/health") {
 
     @Request(requestType = RequestType.GET, path = "/")
-    fun alive(context: Context) {
-        context.status(200).json(message("OK"))
+    fun health(context: Context) {
+        context.defaultResponse(200, "Healthy")
     }
+
+    //TODO implement health system
 }
