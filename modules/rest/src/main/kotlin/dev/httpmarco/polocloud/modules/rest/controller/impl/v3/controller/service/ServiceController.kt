@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.service.Ser
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.polocloudShared
+import dev.httpmarco.polocloud.shared.service.toJson
 import io.javalin.http.Context
 
 class ServiceController : Controller("/service") {
@@ -22,16 +23,16 @@ class ServiceController : Controller("/service") {
         val totalCount = services.count()
 
         if (from == 0L || to == 0L) {
-            context.status(200).json(
-                JsonObject().apply {
-                    addProperty("serviceCount", totalCount)
-                }.toString()
-            )
+            val data = JsonObject().apply {
+                addProperty("serviceCount", totalCount)
+            }
+
+            context.defaultResponse(200, data = data)
             return
         }
 
         if (from < 0 || to < 0 || from > to) {
-            context.status(400).json(message("Invalid range"))
+            context.defaultResponse(400, "Invalid range")
             return
         }
 
@@ -44,84 +45,35 @@ class ServiceController : Controller("/service") {
             else         -> 0.0
         }
 
-        context.status(200).json(
-            JsonObject().apply {
-                addProperty("serviceCount", current)
-                addProperty("percentage", percentage)
-            }.toString()
-        )
+        val data = JsonObject().apply {
+            addProperty("serviceCount", current)
+            addProperty("percentage", percentage)
+        }
+
+        context.defaultResponse(200, data = data)
     }
 
     @Request(requestType = RequestType.GET, path = "s/list", permission = "polocloud.service.list")
     fun listService(context: Context) {
         val services = polocloudShared.serviceProvider().findAll()
-
-        context.status(200).json(
-            JsonArray().apply {
-                services.map { service ->
-                    add(
-                        JsonObject().apply {
-                            addProperty("name", service.name())
-                            addProperty("state", service.state.name)
-                            addProperty("type", service.type.name)
-                            addProperty("groupName", service.groupName)
-                            addProperty("hostname", service.hostname)
-                            addProperty("port", service.port)
-                            addProperty("templates", service.state.name)
-                            add("information", JsonObject().apply {
-                                addProperty("createdAt", service.information.createdAt)
-                            })
-                            add("templates", JsonArray().apply {
-                                service.templates.forEach { template ->
-                                    add(JsonObject().apply {
-                                        addProperty("name", template.name)
-                                        addProperty("size", template.size())
-                                    })
-                                }
-                            })
-                            add("properties", JsonObject().apply {
-                                service.properties.forEach { (key, value) ->
-                                    addProperty(key, value)
-                                }
-                            })
-                            addProperty("minMemory", service.minMemory)
-                            addProperty("maxMemory", service.maxMemory)
-                            addProperty("playerCount", service.playerCount)
-                            addProperty("maxPlayerCount", service.maxPlayerCount)
-                            addProperty("memoryUsage", service.memoryUsage)
-                            addProperty("cpuUsage", service.cpuUsage)
-                            addProperty("motd", service.motd)
-                        }
-                    )
-                }
-            }.toString()
-        )
+        context.defaultResponse(200, data = JsonArray().apply { services.map { service -> add(service.toJson()) } })
     }
 
     @Request(requestType = RequestType.POST, path = "/{serviceName}/command", permission = "polocloud.service.execute")
     fun command(context: Context) {
-        val serviceCommandModel = try {
-            context.bodyAsClass(ServiceCommandModel::class.java)
-        } catch (e: Exception) {
-            context.status(400).json(message("Invalid body"))
-            return
-        }
-
-        if (serviceCommandModel.command.isBlank()) {
-            context.status(400).json(message("Invalid body: command cannot be empty"))
-            return
-        }
+        val model = context.parseBodyOrBadRequest<ServiceCommandModel>() ?: return
+        if (!context.validate(model.command.isNotBlank(), "Command is required")) return
 
         val serviceName = context.pathParam("serviceName")
         val service = polocloudShared.serviceProvider().find(serviceName)
 
         if (service == null) {
-            context.status(404).json(message("Service not found"))
+            context.defaultResponse(404,"Service not found")
             return
         }
 
-        Agent.runtime.expender().executeCommand(service as AbstractService, serviceCommandModel.command)
-        context.status(200).json(message("Trying to execute command on service"))
+        Agent.runtime.expender().executeCommand(service as AbstractService, model.command)
+        context.defaultResponse(200,"Trying to execute command on service")
     }
 
     @Request(requestType = RequestType.PATCH, path = "/{serviceName}/restart", permission = "polocloud.service.restart")
@@ -130,12 +82,12 @@ class ServiceController : Controller("/service") {
         val service = polocloudShared.serviceProvider().find(serviceName)
 
         if (service == null) {
-            context.status(404).json(message("Service not found"))
+            context.defaultResponse(404,"Service not found")
             return
         }
 
         service.shutdown()
-        context.status(202).json(message("Service is restarting"))
+        context.defaultResponse(202, "Service is restarting")
     }
 
 }
