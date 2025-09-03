@@ -2,6 +2,17 @@
   "name": "BUNGEECORD_SETUP_TASK",
   "steps": [
     {
+      "name": "Update motd",
+      "description": "Setup the motd",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "listeners.0.motd",
+        "fileMode": "IF_NOT_EXISTS",
+        "value": "&b&lPolocloud &8- &7Simple and lightweight &8- &f%version%\n&8» &7GitHub&8: &f&ngithub.polocloud.de"
+      }
+    },
+    {
       "name": "Change port for BungeeCord",
       "description": "Setup the hostname and port for the BungeeCord proxy by writing to the file.",
       "filename": "config.yml",
@@ -9,16 +20,6 @@
         "type": "PlatformFilePropertyUpdateAction",
         "key": "listeners.0.host",
         "value": "%hostname%:%port%"
-      }
-    },
-    {
-      "name": "Update motd",
-      "description": "Setup the motd",
-      "filename": "config.yml",
-      "action": {
-        "type": "PlatformFilePropertyUpdateAction",
-        "key": "listeners.0.motd",
-        "value": "&b&lPolocloud &8- &7Simple and lightweight &8- &f%version%\n&8» &7GitHub&8: &f&ngithub.polocloud.de"
       }
     }
   ]
