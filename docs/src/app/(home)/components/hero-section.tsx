@@ -18,7 +18,7 @@ export function HeroSection() {
     const [showLogsPhase3, setShowLogsPhase3] = useState(false);
     const [typedText, setTypedText] = useState('');
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [latestVersion, setLatestVersion] = useState('v3.0.0-pre.4-SNAPSHOT');
+    const [latestVersion, setLatestVersion] = useState('v3.0.0-pre.5-SNAPSHOT');
 
     const commandText = "java -jar polocloud-launcher.jar";
 
