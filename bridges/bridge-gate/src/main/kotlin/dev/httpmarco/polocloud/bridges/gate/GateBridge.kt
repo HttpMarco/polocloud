@@ -95,8 +95,8 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
         val configFile = servicePath.resolve("config.yml").toFile()
         val config = loadYamlConfig(configFile)
 
-        val configSection = config["config"] as? MutableMap<String, Any>
-        val serversSection = configSection?.get("servers") as? MutableMap<String, Any>
+        val configSection = config["config"] as? MutableMap<*, *>
+        val serversSection = configSection?.get("servers") as? MutableMap<*, *>
         serversSection?.remove(identifier.name)
 
         updateFallback(config)
@@ -116,8 +116,8 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
             val configFile = servicePath.resolve("config.yml").toFile()
             val config = loadYamlConfig(configFile)
 
-            val configSection = config["config"] as? Map<String, Any>
-            val serversSection = configSection?.get("servers") as? Map<String, Any>
+            val configSection = config["config"] as? Map<*, *>
+            val serversSection = configSection?.get("servers") as? Map<*, *>
             val serverAddress = serversSection?.get(name) as? String
 
             if (serverAddress != null) {
