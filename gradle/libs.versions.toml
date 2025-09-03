@@ -11,7 +11,7 @@ oshi="6.8.3"
 
 # configuration
 configurate = "4.2.0"
-yaml = "2.4"
+yaml = "2.5"
 tomlj = "1.1.1"
 
 # networking
