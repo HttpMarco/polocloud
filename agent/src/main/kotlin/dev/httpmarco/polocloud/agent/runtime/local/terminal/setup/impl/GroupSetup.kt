@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl
 import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
@@ -83,6 +84,14 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             templates,
             properties
         )
+
+        if (group.isProxy() && Agent.runtime.serviceStorage().findAll().stream().anyMatch { it.type == GroupType.SERVER }) {
+            i18n.warn("agent.local-runtime.setup.group.warnProxyCantWork")
+        }
+
+        if (group.isProxy() && Agent.runtime.groupStorage().findAll().any({ it.isProxy() && it.platform() != group.platform() })) {
+            i18n.warn("agent.local-runtime.setup.group.warnMultipleProxies")
+        }
 
         Agent.runtime.groupStorage().publish(group)
         return group
