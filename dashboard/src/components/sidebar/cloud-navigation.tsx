@@ -55,7 +55,7 @@ export function CloudNavigation() {
   const [isGroupsLoading, setIsGroupsLoading] = useState(sidebarDataLoading);
   const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
 
-  const { isConnected: wsConnected } = useWebSocketSystem({
+  useWebSocketSystem({
     path: '/services/update',
     autoConnect: true,
     onMessage: (message) => {
@@ -65,6 +65,7 @@ export function CloudNavigation() {
           try {
             updateData = JSON.parse(message.data);
           } catch (parseError) {
+            console.error(parseError);
             return;
           }
         } else if (message.data && typeof message.data === 'object') {
