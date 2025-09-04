@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+interface WebSocketMessage {
+  type: 'message' | 'disconnect';
+  data?: string;
+  code?: number;
+  timestamp: number;
+}
+
 const wsConnections = new Map<string, WebSocket>();
-const messageQueues = new Map<string, any[]>();
+const messageQueues = new Map<string, WebSocketMessage[]>();
 
 export async function POST(request: NextRequest) {
   try {
@@ -94,7 +102,7 @@ export async function POST(request: NextRequest) {
           }
         };
 
-        ws.onerror = (error) => {
+        ws.onerror = () => {
           clearTimeout(timeout);
           
           wsConnections.delete(connectionKey);

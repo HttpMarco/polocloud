@@ -29,6 +29,11 @@ export async function GET(request: NextRequest) {
     }
     
     const data = await response.json();
+
+    if (data.status === 200 && Array.isArray(data.data)) {
+      return NextResponse.json(data.data);
+    }
+
     return NextResponse.json(data.data || data);
     
   } catch {

@@ -9,8 +9,27 @@ import { Lock, Monitor, Laptop, Smartphone, Tablet, Globe, Eye, EyeOff, Trash2 }
 import { toast } from "sonner";
 import { API_ENDPOINTS } from "@/lib/api";
 
+interface TokenData {
+  ip: string;
+  userUUID: string;
+  userAgent: string;
+  lastActivity: number;
+  device: string;
+  browser: string;
+  location: string;
+  isCurrent: boolean;
+  formattedLastActivity: string;
+}
+
+interface RawTokenData {
+  ip: string;
+  userAgent: string;
+  userUUID: string;
+  lastActivity: number;
+}
+
 export function SecurityTab() {
-  const [tokens, setTokens] = useState<any[]>([]);
+  const [tokens, setTokens] = useState<TokenData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [revealedIPs, setRevealedIPs] = useState<Set<string>>(new Set());
 
@@ -20,22 +39,6 @@ export function SecurityTab() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-
-  useEffect(() => {
-    fetchTokens();
-  }, []);
-
-  const toggleIPVisibility = (ip: string) => {
-    setRevealedIPs(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(ip)) {
-        newSet.delete(ip);
-      } else {
-        newSet.add(ip);
-      }
-      return newSet;
-    });
-  };
 
   const fetchTokens = useCallback(async () => {
     setIsLoading(true);
@@ -64,10 +67,14 @@ export function SecurityTab() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [parseTokensData]);
 
-  const parseTokensData = useCallback(async (rawTokens: any[]): Promise<any[]> => {
-    const parsedTokens: any[] = [];
+  useEffect(() => {
+    fetchTokens();
+  }, [fetchTokens]);
+
+  const parseTokensData = useCallback(async (rawTokens: RawTokenData[]): Promise<TokenData[]> => {
+    const parsedTokens: TokenData[] = [];
 
     for (const token of rawTokens) {
       try {
