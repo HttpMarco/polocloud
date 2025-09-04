@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Trash2, Loader2 } from 'lucide-react';
 import { API_ENDPOINTS } from '@/lib/api';
+import { toast } from 'sonner';
 
 interface Role {
     id: string;
@@ -25,7 +26,7 @@ export function RoleDeleteButton({ role, onRoleDeleted }: RoleDeleteButtonProps)
 
     const handleDelete = async () => {
         if (role.default) {
-            alert('Default roles cannot be deleted!');
+            toast.error('Default roles cannot be deleted!');
             return;
         }
         

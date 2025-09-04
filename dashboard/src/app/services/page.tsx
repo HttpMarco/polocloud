@@ -13,6 +13,7 @@ import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
 import { ServiceHeader } from '@/components/services/service-header';
 import { ServiceEmptyState } from '@/components/services/service-empty-state';
+import { toast } from 'sonner';
 
 export default function ServicesPage() {
     const [services, setServices] = useState<Service[]>([]);
@@ -130,10 +131,10 @@ export default function ServicesPage() {
 
             } else {
                 const errorData = await response.json();
-                alert(errorData.error || 'Failed to restart service');
+                toast.error(errorData.error || 'Failed to restart service');
             }
         } catch {
-            alert('Failed to restart service');
+            toast.error('Failed to restart service');
         } finally {
             setRestartingServices(prev => prev.filter(name => name !== serviceName));
         }
