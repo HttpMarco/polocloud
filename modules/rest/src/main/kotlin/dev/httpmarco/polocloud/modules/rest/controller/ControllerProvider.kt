@@ -66,13 +66,13 @@ class ControllerProvider {
             }
     }
 
-    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?, token: Token?) {
+    fun processRequest(method: Method, controller: Controller, context: Context, user: User?, token: Token?) {
         try {
-            if (ctx.result() != null) return
+            if (context.result() != null) return
 
             val args = method.parameters.map { param ->
                 when (param.type) {
-                    Context::class.java -> ctx
+                    Context::class.java -> context
                     User::class.java -> user
                     Token::class.java -> token
                     else -> null
@@ -81,7 +81,7 @@ class ControllerProvider {
 
             method.invoke(controller, *args)
         } catch (e: Exception) {
-            ctx.status(500).result("Internal Server Error")
+            context.defaultResponse(500,"Internal Server Error")
             e.printStackTrace()
         }
     }
