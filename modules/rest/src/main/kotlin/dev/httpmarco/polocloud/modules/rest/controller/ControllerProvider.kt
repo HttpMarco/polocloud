@@ -60,8 +60,8 @@ class ControllerProvider {
                 val type = HandlerType.valueOf(annotation.requestType.name)
                 val fullPath = basePath + annotation.path
 
-                RestModule.instance.httpServer.app.addHttpHandler(type, fullPath) { ctx ->
-                    AuthProvider(RequestMethodData(method, controller, annotation.permission)).handle(ctx)
+                RestModule.instance.httpServer.app.addHttpHandler(type, fullPath) { context ->
+                    AuthProvider(RequestMethodData(method, controller, annotation.permission)).handle(context)
                 }
             }
     }
