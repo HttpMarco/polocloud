@@ -49,11 +49,6 @@ class VelocityHubCommand(
     override fun execute(invocation: SimpleCommand.Invocation) {
         val source = invocation.source()
 
-        if (!source.hasPermission("polocloud.addons.hub.command")) {
-            source.sendMessage(mm.deserialize(config.prefix() + config.messages("no_permission")))
-            return
-        }
-
         if (source !is Player) {
             source.sendMessage(mm.deserialize(config.prefix() + config.messages("only_players")))
             return

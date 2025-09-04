@@ -2,6 +2,17 @@
   "name": "VELOCITY_SETUP_TASK",
   "steps": [
     {
+      "name": "Velocity motd",
+      "description": "Set the MOTD in Velocity, if the file does not exists",
+      "filename": "velocity.toml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "motd",
+        "fileMode": "IF_NOT_EXISTS",
+        "value": "&b&lPolocloud &8- &7Simple and lightweight &8- &f%version% &8» &7GitHub&8: &f&ngithub.polocloud.de"
+      }
+    },
+    {
       "name": "Setup velocity",
       "description": "Set player forwarding in Velocity.",
       "filename": "velocity.toml",
@@ -19,16 +30,6 @@
         "type": "PlatformFilePropertyUpdateAction",
         "key": "bind",
         "value": "%hostname%:%port%"
-      }
-    },
-    {
-      "name": "Velocity motd",
-      "description": "Set the MOTD in Velocity.",
-      "filename": "velocity.toml",
-      "action": {
-        "type": "PlatformFilePropertyUpdateAction",
-        "key": "motd",
-        "value": "<bold><aqua>Polocloud </aqua></bold><dark_gray>- </dark_gray><gray>Simple and lightweight </gray><dark_gray>- </dark_gray><white>3.0.0-pre.6-SNAPSHOT\n</white><dark_gray>» </dark_gray><gray>GitHub</gray><dark_gray>: </dark_gray><underlined><white>github.polocloud.de"
       }
     }
   ]

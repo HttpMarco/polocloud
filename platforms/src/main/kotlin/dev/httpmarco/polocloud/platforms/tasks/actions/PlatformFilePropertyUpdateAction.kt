@@ -2,7 +2,7 @@ package dev.httpmarco.polocloud.platforms.tasks.actions
 
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.platforms.tasks.PlatformTaskStep
-import org.tomlj.Toml
+import dev.httpmarco.polocloud.platforms.tasks.TaskFileMode
 import org.tomlj.TomlTable
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import org.yaml.snakeyaml.Yaml
@@ -21,10 +21,20 @@ import kotlin.io.path.writeText
 
 class PlatformFilePropertyUpdateAction(
     private val key: String,
-    private val value: String
+    private val value: String,
+    private val fileMode : TaskFileMode = TaskFileMode.EVERY
 ) : PlatformAction() {
 
     override fun run(file: Path, step: PlatformTaskStep, environment: PlatformParameters) {
+
+        if(fileMode == TaskFileMode.IF_EXISTS && file.notExists()) {
+            return
+        }
+
+        if(fileMode == TaskFileMode.IF_NOT_EXISTS && file.exists()) {
+            return
+        }
+
         file.parent.createDirectories()
         val translatedValue = environment.modifyValueWithEnvironment(value)
         val parsedValue = parseValue(translatedValue)

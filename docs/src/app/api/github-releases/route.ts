@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     console.error('Error fetching GitHub releases:', error);
     return NextResponse.json({ 
       error: 'Failed to fetch latest release',
-      fallbackVersion: 'v3.0.0-pre.4-SNAPSHOT'
+      fallbackVersion: 'v3.0.0-pre.5-SNAPSHOT'
     }, { status: 500 });
   }
 }

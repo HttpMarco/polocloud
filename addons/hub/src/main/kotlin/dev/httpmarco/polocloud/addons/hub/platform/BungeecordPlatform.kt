@@ -26,11 +26,6 @@ class BungeecordPlatform: Plugin() {
 
 class BungeecordHubCommand(private val config: HubConfig) : Command("hub", null, *config.aliases().toTypedArray()) {
     override fun execute(sender: CommandSender, args: Array<String>) {
-        if (!sender.hasPermission("polocloud.addons.hub.command")) {
-            sender.sendMessage(TextComponent(config.prefix() + config.messages("no_permission")))
-            return
-        }
-
         if(sender !is ProxiedPlayer) {
             sender.sendMessage(TextComponent(config.prefix() +  config.messages("only_players")))
             return
