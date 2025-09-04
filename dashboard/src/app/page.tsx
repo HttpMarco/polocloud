@@ -153,18 +153,21 @@ export default function DashboardPage() {
         const fetchGroupCount = async () => {
             try {
                 setIsLoadingGroups(true);
-                
-                const now = Date.now();
 
+                const listResponse = await fetch(API_ENDPOINTS.GROUPS.LIST);
+                if (listResponse.ok) {
+                    const groups = await listResponse.json();
+                    const totalCount = Array.isArray(groups) ? groups.length : 0;
+                    setGroupCount(totalCount);
+                }
+
+                const now = Date.now();
                 const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
                 
-                const response = await fetch(`${API_ENDPOINTS.GROUPS.COUNT_WITH_RANGE(sevenDaysAgo, now)}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    const lastWeekCount = data.groupCount || 0;
-                    const percentage = data.percentage || 0;
-                    
-                    setGroupCount(lastWeekCount);
+                const trendResponse = await fetch(`${API_ENDPOINTS.GROUPS.COUNT_WITH_RANGE(sevenDaysAgo, now)}`);
+                if (trendResponse.ok) {
+                    const trendData = await trendResponse.json();
+                    const percentage = trendData.data?.percentage || 0;
                     
                     if (percentage > 0) {
                         setGroupTrend(`+${Math.round(percentage)}%`);
@@ -176,6 +179,9 @@ export default function DashboardPage() {
                         setGroupTrend('+0%');
                         setGroupTrendDirection('stable');
                     }
+                } else {
+                    setGroupTrend('+0%');
+                    setGroupTrendDirection('stable');
                 }
             } catch {
                 setGroupTrend('+0%');
@@ -188,18 +194,22 @@ export default function DashboardPage() {
         const fetchServiceCount = async () => {
             try {
                 setIsLoadingServices(true);
-                
-                const now = Date.now();
 
+                const countResponse = await fetch(API_ENDPOINTS.SERVICES.COUNT);
+                if (countResponse.ok) {
+                    const countData = await countResponse.json();
+                    const runningCount = countData.serviceCount || 0;
+                    setServiceCount(runningCount);
+                }
+
+                const now = Date.now();
                 const oneDayAgo = now - (24 * 60 * 60 * 1000);
                 
-                const response = await fetch(`${API_ENDPOINTS.SERVICES.COUNT_WITH_RANGE(oneDayAgo, now)}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    const lastDayCount = data.serviceCount || 0;
-                    const percentage = data.percentage || 0;
-                    
-                    setServiceCount(lastDayCount);
+                const trendResponse = await fetch(`${API_ENDPOINTS.SERVICES.COUNT_WITH_RANGE(oneDayAgo, now)}`);
+                if (trendResponse.ok) {
+                    const trendData = await trendResponse.json();
+                    const rawPercentage = trendData.percentage || 0;
+                    const percentage = rawPercentage === 0 ? 0 : rawPercentage;
                     
                     if (percentage > 0) {
                         setServiceTrend(`+${Math.round(percentage)}%`);
@@ -211,6 +221,9 @@ export default function DashboardPage() {
                         setServiceTrend('+0%');
                         setServiceTrendDirection('stable');
                     }
+                } else {
+                    setServiceTrend('+0%');
+                    setServiceTrendDirection('stable');
                 }
             } catch  {
                 setServiceTrend('+0%');

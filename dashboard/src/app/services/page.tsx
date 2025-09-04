@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Service } from '@/types/services';
@@ -24,7 +24,7 @@ export default function ServicesPage() {
     const [selectedType, setSelectedType] = useState<string>('all');
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
-    const { isConnected: wsConnected } = useWebSocketSystem({
+    useWebSocketSystem({
         path: '/services/update',
         autoConnect: true,
         onMessage: (message) => {

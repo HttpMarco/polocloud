@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { Group } from '@/types/groups';
 import { Service } from '@/types/services';
@@ -32,6 +32,33 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
   const [isClient, setIsClient] = useState(false);
 
+  const loadSidebarData = useCallback(async () => {
+    try {
+      const [groupsResponse, servicesResponse] = await Promise.all([
+        fetch('/api/groups/list'),
+        fetch('/api/services/list')
+      ]);
+
+      const groups = groupsResponse.ok ? await groupsResponse.json() : [];
+      const services = servicesResponse.ok ? await servicesResponse.json() : [];
+
+      const newData = {
+        groups: Array.isArray(groups) ? groups : [],
+        services: Array.isArray(services) ? services : [],
+        isLoading: false
+      };
+
+      setSidebarData(newData);
+
+      if (isClient) {
+        localStorage.setItem('sidebarGroups', JSON.stringify(newData.groups));
+        localStorage.setItem('sidebarServices', JSON.stringify(newData.services));
+      }
+    } catch {
+      setSidebarData(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [isClient]);
+
   useEffect(() => {
     setIsClient(true);
 
@@ -46,57 +73,25 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
           isLoading: false
         });
       } else {
-
         loadSidebarData();
       }
     } catch {
       loadSidebarData();
     }
-  }, []);
+  }, [loadSidebarData]);
 
   useEffect(() => {
     if (!shouldHideSidebar && isClient) {
       const backendIp = localStorage.getItem('backendIp');
       if (backendIp) {
-
         const hasBackendIpCookie = document.cookie.includes('backend_ip=');
         if (!hasBackendIpCookie) {
           document.cookie = `backend_ip=${backendIp}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=lax`;
-
         }
+        loadSidebarData();
       }
     }
-  }, [shouldHideSidebar, isClient]);
-
-  const loadSidebarData = async () => {
-    if (!shouldHideSidebar) {
-      try {
-
-        const [groupsResponse, servicesResponse] = await Promise.all([
-          fetch('/api/groups/list'),
-          fetch('/api/services/list')
-        ]);
-
-        const groups = groupsResponse.ok ? await groupsResponse.json() : [];
-        const services = servicesResponse.ok ? await servicesResponse.json() : [];
-
-        const newData = {
-          groups: Array.isArray(groups) ? groups : [],
-          services: Array.isArray(services) ? services : [],
-          isLoading: false
-        };
-
-        setSidebarData(newData);
-
-        if (isClient) {
-          localStorage.setItem('sidebarGroups', JSON.stringify(newData.groups));
-          localStorage.setItem('sidebarServices', JSON.stringify(newData.services));
-        }
-      } catch {
-        setSidebarData(prev => ({ ...prev, isLoading: false }));
-      }
-    }
-  };
+  }, [shouldHideSidebar, isClient, loadSidebarData]);
 
 
 
