@@ -1,5 +1,6 @@
 import './globals.css';
 import { LayoutWrapper } from '@/components/layout-wrapper';
+import { Toaster } from 'sonner';
 
 export default function RootLayout({
   children,
@@ -28,6 +29,12 @@ export default function RootLayout({
         <LayoutWrapper>
           {children}
         </LayoutWrapper>
+        <Toaster 
+          position="top-right"
+          expand={true}
+          richColors={true}
+          closeButton={true}
+        />
       </body>
     </html>
   );

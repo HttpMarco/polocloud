@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import { API_ENDPOINTS } from '@/lib/api';
 import GlobalNavbar from '@/components/global-navbar';
 import { Group } from '@/types/groups';
+import { toast } from 'sonner';
 
 interface Service {
     name: string;
@@ -98,10 +99,10 @@ export default function GroupOverviewPage() {
                 router.push('/groups');
             } else {
                 const errorData = await response.json();
-                alert(errorData.error || 'Failed to delete group');
+                toast.error(errorData.error || 'Failed to delete group');
             }
         } catch {
-            alert('Failed to delete group');
+            toast.error('Failed to delete group');
         } finally {
             setIsDeleting(false);
             setDeleteModalOpen(false);

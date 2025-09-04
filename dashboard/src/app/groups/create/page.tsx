@@ -8,6 +8,7 @@ import GlobalNavbar from '@/components/global-navbar';
 
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { GroupPreview, GroupDetailsStep, PlatformSelectionStep, VersionSelectionStep, MemoryConfigurationStep, TemplateSelectionStep, AdvancedSettingsStep, GroupCreatedAnimation, Platform, GroupCreateData } from '@/features/group-creation';
+import { toast } from 'sonner';
 
 export default function CreateGroupPage() {
   const router = useRouter();
@@ -248,7 +249,7 @@ export default function CreateGroupPage() {
       
     } catch (error) {
 
-      alert(`Failed to create group: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(`Failed to create group: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

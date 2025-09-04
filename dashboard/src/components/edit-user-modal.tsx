@@ -192,11 +192,11 @@ export function EditUserModal({ user, onUserEdited }: EditUserModalProps) {
                 >
                   <AlertTriangle className="w-4 h-4 text-amber-600" />
                   <p className="text-amber-700 text-sm">
-                    <strong>Warnung:</strong> Du versuchst dir selbst eine niedrigere Rolle zu geben. 
-                    Das könnte deine Zugriffsrechte einschränken!
+                    <strong>Warning:</strong> You are trying to assign yourself a lower role. 
+                    This could restrict your access rights!
                   </p>
                   <p className="text-amber-600 text-xs mt-1">
-                    Deine aktuelle Rolle: {currentUser?.role}, Gewählte Rolle: {selectedRoleId}
+                    Your current role: {currentUser?.role}, Selected role: {selectedRoleId}
                   </p>
                 </motion.div>
               )}
@@ -204,8 +204,8 @@ export function EditUserModal({ user, onUserEdited }: EditUserModalProps) {
               {}
               {currentUser && currentUser.username === user.username && (
                 <div className="text-xs text-muted-foreground bg-muted/20 p-2 rounded">
-                  <p>Debug: Deine Rolle: {currentUser.role}, User Rolle: {user.role}, Gewählt: {selectedRoleId}</p>
-                  <p>Selbst-Demotion: {isSelfDemotion ? 'JA' : 'NEIN'}</p>
+                  <p>Debug: Your role: {currentUser.role}, User role: {user.role}, Selected: {selectedRoleId}</p>
+                  <p>Self-demotion: {isSelfDemotion ? 'YES' : 'NO'}</p>
                 </div>
               )}
             </div>
