@@ -9,5 +9,6 @@ import { useEffect, useRef } from "react";
         return;
       }
       return callback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [callback, ...dependencies]);
   }

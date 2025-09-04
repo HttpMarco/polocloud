@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { WebSocketSystem, WebSocketMessage, ConnectionStatus, ConnectionInfo, createWebSocketSystem } from '@/lib/websocket-system';
 import { processTerminalLog } from '@/lib/ansi-utils';
 
-let globalHookInstanceCount = 0;
+
 
 interface UseWebSocketSystemProps {
   backendIp?: string;
@@ -82,7 +82,7 @@ export function useWebSocketSystem({
 
   useEffect(() => {
     const initializeWebSocket = async () => {
-      globalHookInstanceCount++;
+
 
       if (wsSystemRef.current) {
         wsSystemRef.current.disconnect();
@@ -105,7 +105,7 @@ export function useWebSocketSystem({
       if (autoConnect) {
         setTimeout(() => {
           if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
-            wsSystemRef.current.connect().catch(error => {
+            wsSystemRef.current.connect().catch(() => {
             });
           } else {}
         }, 100);
@@ -133,7 +133,8 @@ export function useWebSocketSystem({
     const timeout = setTimeout(updateInfo, 100);
     
     return () => clearTimeout(timeout);
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoConnect, backendIp, handleConnect, handleDisconnect, handleError, handleMessage, handleStatusChange, path, token]);
 
   const connect = useCallback(async () => {
     if (!wsSystemRef.current) {
@@ -171,6 +172,7 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
   const [logs, setLogs] = useState<string[]>([]);
   const lastMessageRef = useRef<string>('');
   const lastMessageTimeRef = useRef<number>(0);
+  const processedMessagesRef = useRef<Set<string>>(new Set());
   
   const { connectionInfo, isConnected, connect, disconnect } = useWebSocketSystem({
     backendIp,
@@ -178,21 +180,30 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     token,
     autoConnect,
     onMessage: (message) => {
-
       if ((message.type === 'log' || message.type === 'message') && typeof message.data === 'string') {
-        const now = Date.now();
         const messageData = message.data;
-        
-        if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 300) {
+        const now = Date.now();
+
+        const messageKey = `${messageData}_${Math.floor(now / 1000)}`;
+
+        if (processedMessagesRef.current.has(messageKey)) {
           return;
         }
-        
+
+        if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 2000) {
+          return;
+        }
+
+        processedMessagesRef.current.add(messageKey);
         lastMessageRef.current = messageData;
         lastMessageTimeRef.current = now;
+
+        if (processedMessagesRef.current.size > 50) {
+          processedMessagesRef.current.clear();
+        }
         
         const cleanedMessage = processTerminalLog(messageData, { removeColors: true });
         setLogs(prev => [...prev, cleanedMessage]);
-      } else {
       }
     }
   });
@@ -230,7 +241,7 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     } catch {
       setLogs(prev => [...prev, `Error: Failed to send command`]);
     }
-  }, []);
+  }, [backendIp]);
 
   const clearLogs = useCallback(() => {
     setLogs([]);

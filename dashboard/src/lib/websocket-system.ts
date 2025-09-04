@@ -1,6 +1,6 @@
 export interface WebSocketMessage {
   type: 'log' | 'command' | 'status' | 'error' | 'heartbeat';
-  data: any;
+  data: string | object | number | boolean | null;
   timestamp?: number;
   service?: string;
 }
@@ -42,6 +42,7 @@ export class WebSocketSystem {
   private reconnectTimeout: NodeJS.Timeout | null = null;
 
   private heartbeatInterval: NodeJS.Timeout | null = null;
+  private lastHeartbeat: number = 0;
 
   private lastMessageKey = '';
   private lastMessageTime = 0;
@@ -294,7 +295,7 @@ export class WebSocketSystem {
         if (response.ok) {
           const data = await response.json();
           if (data.messages && data.messages.length > 0) {
-            data.messages.forEach((message: any) => {
+            data.messages.forEach((message: WebSocketMessage) => {
               this.handleMessage(message);
             });
           }
@@ -302,7 +303,7 @@ export class WebSocketSystem {
           throw new Error(`Polling failed: ${response.status}`);
         }
         
-      } catch {
+      } catch (error) {
         this.handleError(error as Error);
       }
     }, 2000);
@@ -456,7 +457,7 @@ export class WebSocketSystem {
     return isHttpsBackend ? 'wss' : 'ws';
   }
 
-  private handleMessage(data: any): void {
+  private handleMessage(data: string | WebSocketMessage): void {
     try {
       
       let message: WebSocketMessage;
@@ -486,26 +487,6 @@ export class WebSocketSystem {
       }
 
       if (message.type === 'log' || message.type === 'message') {
-        
-        let cleanDataForComparison = '';
-        if (typeof message.data === 'string') {
-          cleanDataForComparison = message.data
-            .replace(/\x1b\[[0-9;]*[mGKHf]|\x1b\[[\d;]*[mGKHfABCDsuJK]|\[\d+m|\[m/g, '')
-            .replace(/^\d{2}:\d{2}:\d{2} \| /, '')
-            .substring(0, 100);
-        } else if (message.data) {
-          cleanDataForComparison = JSON.stringify(message.data).substring(0, 100);
-        }
-        
-        const messageKey = `${message.type}:${cleanDataForComparison}`;
-        const now = Date.now();
-        
-        if (this.lastMessageKey === messageKey && now - this.lastMessageTime < 500) {
-          return;
-        }
-        
-        this.lastMessageKey = messageKey;
-        this.lastMessageTime = now;
 
         this.config.onMessage?.(message);
         return;
