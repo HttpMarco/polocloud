@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
@@ -34,11 +34,7 @@ export default function PlayersPage() {
     const [totalPlayers, setTotalPlayers] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
-    useEffect(() => {
-        loadPlayers();
-    }, [currentPage]);
-
-    const loadPlayers = async () => {
+    const loadPlayers = useCallback(async () => {
         try {
             setIsLoading(true);
             setError(null);
@@ -59,7 +55,11 @@ export default function PlayersPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [currentPage, pageSize]);
+
+    useEffect(() => {
+        loadPlayers();
+    }, [loadPlayers]);
 
     const filteredPlayers = useMemo(() => {
         return players.filter(player => 

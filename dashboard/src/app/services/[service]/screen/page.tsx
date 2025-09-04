@@ -143,6 +143,8 @@ export default function ServiceScreenPage() {
                           .replace(/The service ([a-zA-Z0-9_-]+) is/g, 'The service <span class="text-blue-400">$1</span> is')
                           .replace(/The service ([a-zA-Z0-9_-]+) has been/g, 'The service <span class="text-blue-400">$1</span> has been')
                           .replace(/ - ([a-zA-Z0-9_-]+) \(state=/g, ' - <span class="text-blue-400">$1</span> (state=')
+                          .replace(/polocloud@([a-zA-Z0-9.-]+) » /g, '<span class="text-blue-400">polocloud</span><span class="text-gray-400">@</span><span class="text-white">$1</span> <span class="text-gray-400">»</span> ')
+                          .replace(/The group ([a-zA-Z0-9_-]+) has been/g, 'The group <span class="text-blue-400">$1</span> has been')
                           .replace(/\b([A-Z_]+[A-Z_]*[A-Z])\b/g, '<span class="text-blue-400">$1</span>')
                       }}
                     />
@@ -192,16 +194,6 @@ export default function ServiceScreenPage() {
         </Card>
       </div>
 
-      {process.env.NODE_ENV === 'development' && (
-        <div className="px-6 pb-6">
-          <Card className="p-4">
-            <h3 className="font-semibold mb-2 text-sm">Debug Info</h3>
-            <pre className="text-xs text-muted-foreground overflow-auto bg-muted p-2 rounded">
-              {JSON.stringify({ serviceName, connectionInfo }, null, 2)}
-            </pre>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

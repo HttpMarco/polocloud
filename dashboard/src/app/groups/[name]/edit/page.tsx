@@ -184,22 +184,25 @@ export default function GroupEditPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 ultra-smooth-scroll">
             <GlobalNavbar />
-
-            <div className="h-2"></div>
-
-            <div className="px-6 py-6">
-                <div className="mb-8">
+            
+            <div className="flex flex-col max-w-none w-full mx-auto p-8">
+                <motion.div
+                    className="text-center mb-12 group-header"
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                >
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
+                        className="flex items-center justify-center gap-4 mb-6"
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="flex items-center gap-4 mb-4"
+                        transition={{ duration: 0.8, delay: 0.1 }}
                     >
                         <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => router.push(`/groups/${groupName}`)}
-                            className="hover:bg-background/50"
+                            className="hover:bg-background/50 text-muted-foreground hover:text-foreground"
                         >
                             <ArrowLeft className="w-4 h-4 mr-2" />
                             Back to Group
@@ -207,150 +210,153 @@ export default function GroupEditPage() {
                     </motion.div>
 
                     <motion.h1
-                        className="text-4xl font-bold text-foreground mb-3"
-                        initial={{ opacity: 0, y: -20 }}
+                        className="text-5xl font-bold bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent mb-4"
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
                     >
                         Edit Group: {group.name}
                     </motion.h1>
                     <motion.p
-                        className="text-lg text-muted-foreground"
-                        initial={{ opacity: 0, y: -10 }}
+                        className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8"
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
                     >
                         Modify group configuration settings
                     </motion.p>
-                </div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="flex items-center gap-3 mb-8"
-                >
-                    <Button
-                        variant="outline"
-                        onClick={handleCancel}
-                        className="border-border/50 text-foreground hover:bg-background/50"
+                    <motion.div 
+                        className="flex gap-4 justify-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.6 }}
                     >
-                        <X className="w-4 h-4 mr-2" />
-                        Cancel
-                    </Button>
-                    <Button
-                        onClick={handleSave}
-                        disabled={!hasChanges || isSaving}
-                        className="bg-[oklch(0.7554_0.1534_231.639)] text-white hover:opacity-90 disabled:opacity-50"
-                    >
-                        <Save className="w-4 h-4 mr-2" />
-                        {isSaving ? 'Saving...' : 'Save Changes'}
-                    </Button>
+                        <Button
+                            variant="outline"
+                            onClick={handleCancel}
+                            className="h-11 px-6 text-sm border-border/50 text-foreground hover:bg-background/50"
+                        >
+                            <X className="w-4 h-4 mr-2" />
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSave}
+                            disabled={!hasChanges || isSaving}
+                            className="h-11 px-6 text-sm font-medium hover:opacity-90 transition-all duration-200 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)] disabled:opacity-50"
+                            style={{ backgroundColor: 'oklch(75.54% .1534 231.639)' }}
+                        >
+                            <Save className="w-4 h-4 mr-2" />
+                            {isSaving ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                    </motion.div>
                 </motion.div>
-            </div>
 
-            <div className="px-6 pb-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-8">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.1 }}
+                            transition={{ duration: 0.8, delay: 0.8 }}
                         >
-                            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-xl">
-                                        <HardDrive className="w-5 h-5 text-[oklch(0.7554_0.1534_231.639)]" />
+                            <Card className="bg-gradient-to-br from-card/90 via-card/70 to-card/90 border border-[oklch(75.54% 0.1534 231.639,0.3)] shadow-2xl backdrop-blur-sm rounded-xl">
+                                <CardHeader className="pb-4">
+                                    <CardTitle className="flex items-center gap-3 text-foreground text-xl">
+                                        <div className="p-2 bg-[oklch(75.54%_0.1534_231.639,0.1)] rounded-lg">
+                                            <HardDrive className="w-5 h-5 text-[oklch(75.54% 0.1534 231.639)]" />
+                                        </div>
                                         Memory Configuration
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="minMemory">Minimum Memory (MB)</Label>
+                                <CardContent className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-3">
+                                            <Label htmlFor="minMemory" className="text-sm font-medium text-foreground">Minimum Memory (MB)</Label>
                                             <Input
                                                 id="minMemory"
                                                 type="number"
                                                 value={formData.minMemory}
                                                 onChange={(e) => handleInputChange('minMemory', e.target.value)}
                                                 placeholder="512"
-                                                className="border-border/50 bg-background/50"
+                                                className="border-border/50 bg-background/50 focus:border-[oklch(75.54%_0.1534_231.639,0.5)] focus:ring-[oklch(75.54%_0.1534_231.639,0.2)]"
                                             />
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <Label htmlFor="maxMemory">Maximum Memory (MB)</Label>
+                                        <div className="space-y-3">
+                                            <Label htmlFor="maxMemory" className="text-sm font-medium text-foreground">Maximum Memory (MB)</Label>
                                             <Input
                                                 id="maxMemory"
                                                 type="number"
                                                 value={formData.maxMemory}
                                                 onChange={(e) => handleInputChange('maxMemory', e.target.value)}
                                                 placeholder="2048"
-                                                className="border-border/50 bg-background/50"
+                                                className="border-border/50 bg-background/50 focus:border-[oklch(75.54%_0.1534_231.639,0.5)] focus:ring-[oklch(75.54%_0.1534_231.639,0.2)]"
                                             />
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
                         </motion.div>
-
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
+                            transition={{ duration: 0.8, delay: 1.0 }}
                         >
-                            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-xl">
-                                        <Activity className="w-5 h-5 text-[oklch(0.7554_0.1534_231.639)]" />
+                            <Card className="bg-gradient-to-br from-card/90 via-card/70 to-card/90 border border-[oklch(75.54% 0.1534 231.639,0.3)] shadow-2xl backdrop-blur-sm rounded-xl">
+                                <CardHeader className="pb-4">
+                                    <CardTitle className="flex items-center gap-3 text-foreground text-xl">
+                                        <div className="p-2 bg-[oklch(75.54%_0.1534_231.639,0.1)] rounded-lg">
+                                            <Activity className="w-5 h-5 text-[oklch(75.54% 0.1534 231.639)]" />
+                                        </div>
                                         Service Limits
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="minOnlineService">Minimum Services Online</Label>
+                                <CardContent className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-3">
+                                            <Label htmlFor="minOnlineService" className="text-sm font-medium text-foreground">Minimum Services Online</Label>
                                             <Input
                                                 id="minOnlineService"
                                                 type="number"
                                                 value={formData.minOnlineService}
                                                 onChange={(e) => handleInputChange('minOnlineService', e.target.value)}
                                                 placeholder="1"
-                                                className="border-border/50 bg-background/50"
+                                                className="border-border/50 bg-background/50 focus:border-[oklch(75.54%_0.1534_231.639,0.5)] focus:ring-[oklch(75.54%_0.1534_231.639,0.2)]"
                                             />
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <Label htmlFor="maxOnlineService">Maximum Services Online</Label>
+                                        <div className="space-y-3">
+                                            <Label htmlFor="maxOnlineService" className="text-sm font-medium text-foreground">Maximum Services Online</Label>
                                             <Input
                                                 id="maxOnlineService"
                                                 type="number"
                                                 value={formData.maxOnlineService}
                                                 onChange={(e) => handleInputChange('maxOnlineService', e.target.value)}
                                                 placeholder="5"
-                                                className="border-border/50 bg-background/50"
+                                                className="border-border/50 bg-background/50 focus:border-[oklch(75.54%_0.1534_231.639,0.5)] focus:ring-[oklch(75.54%_0.1534_231.639,0.2)]"
                                             />
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
                         </motion.div>
-
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
+                            transition={{ duration: 0.8, delay: 1.2 }}
                         >
-                            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2 text-xl">
-                                        <Server className="w-5 h-5 text-[oklch(0.7554_0.1534_231.639)]" />
+                            <Card className="bg-gradient-to-br from-card/90 via-card/70 to-card/90 border border-[oklch(75.54% 0.1534 231.639,0.3)] shadow-2xl backdrop-blur-sm rounded-xl">
+                                <CardHeader className="pb-4">
+                                    <CardTitle className="flex items-center gap-3 text-foreground text-xl">
+                                        <div className="p-2 bg-[oklch(75.54%_0.1534_231.639,0.1)] rounded-lg">
+                                            <Server className="w-5 h-5 text-[oklch(75.54% 0.1534 231.639)]" />
+                                        </div>
                                         Service Threshold
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="percentageToStartNewService">New Service Threshold (%)</Label>
+                                <CardContent className="space-y-6">
+                                    <div className="space-y-3">
+                                        <Label htmlFor="percentageToStartNewService" className="text-sm font-medium text-foreground">New Service Threshold (%)</Label>
                                         <Input
                                             id="percentageToStartNewService"
                                             type="number"
@@ -360,9 +366,9 @@ export default function GroupEditPage() {
                                             min="0"
                                             max="100"
                                             step="0.1"
-                                            className="border-border/50 bg-background/50"
+                                            className="border-border/50 bg-background/50 focus:border-[oklch(75.54%_0.1534_231.639,0.5)] focus:ring-[oklch(75.54%_0.1534_231.639,0.2)]"
                                         />
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-sm text-muted-foreground">
                                             Percentage of memory usage to trigger starting a new service
                                         </p>
                                     </div>
@@ -370,54 +376,58 @@ export default function GroupEditPage() {
                             </Card>
                         </motion.div>
                     </div>
-
                     <div className="space-y-6">
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
+                            transition={{ duration: 0.8, delay: 1.4 }}
                         >
-                            <Card className="border-border/50 bg-card/50 backdrop-blur-sm sticky top-6">
-                                <CardHeader>
-                                    <CardTitle className="text-lg">Group Preview</CardTitle>
+                            <Card className="bg-gradient-to-br from-card/90 via-card/70 to-card/90 border border-[oklch(75.54% 0.1534 231.639,0.3)] shadow-2xl backdrop-blur-sm rounded-xl sticky top-6">
+                                <CardHeader className="pb-4">
+                                    <CardTitle className="flex items-center gap-3 text-foreground text-xl">
+                                        <div className="p-2 bg-[oklch(75.54%_0.1534_231.639,0.1)] rounded-lg">
+                                            <Server className="w-5 h-5 text-[oklch(75.54% 0.1534 231.639)]" />
+                                        </div>
+                                        Group Preview
+                                    </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Name:</span>
-                                            <span className="text-sm font-medium text-foreground">{group.name}</span>
+                                <CardContent className="space-y-6">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between py-2 border-b border-border/20">
+                                            <span className="text-sm font-medium text-muted-foreground">Name:</span>
+                                            <span className="text-sm font-semibold text-foreground">{group.name}</span>
                                         </div>
 
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Platform:</span>
-                                            <span className="text-sm font-medium text-foreground">
+                                        <div className="flex items-center justify-between py-2 border-b border-border/20">
+                                            <span className="text-sm font-medium text-muted-foreground">Platform:</span>
+                                            <span className="text-sm font-semibold text-foreground">
                                                 {typeof group.platform === 'string'
                                                     ? group.platform
                                                     : `${group.platform.name} ${group.platform.version}`}
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Memory:</span>
-                                            <span className="text-sm font-medium text-foreground">
+                                        <div className="flex items-center justify-between py-2 border-b border-border/20">
+                                            <span className="text-sm font-medium text-muted-foreground">Memory:</span>
+                                            <span className="text-sm font-semibold text-foreground">
                                                 {formData.minMemory && formData.maxMemory
                                                     ? `${formData.minMemory}MB - ${formData.maxMemory}MB`
                                                     : 'Not set'}
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Services:</span>
-                                            <span className="text-sm font-medium text-foreground">
+                                        <div className="flex items-center justify-between py-2 border-b border-border/20">
+                                            <span className="text-sm font-medium text-muted-foreground">Services:</span>
+                                            <span className="text-sm font-semibold text-foreground">
                                                 {formData.minOnlineService && formData.maxOnlineService
                                                     ? `${formData.minOnlineService} - ${formData.maxOnlineService}`
                                                     : 'Not set'}
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Threshold:</span>
-                                            <span className="text-sm font-medium text-foreground">
+                                        <div className="flex items-center justify-between py-2">
+                                            <span className="text-sm font-medium text-muted-foreground">Threshold:</span>
+                                            <span className="text-sm font-semibold text-foreground">
                                                 {formData.percentageToStartNewService
                                                     ? `${formData.percentageToStartNewService}%`
                                                     : 'Not set'}
@@ -427,8 +437,9 @@ export default function GroupEditPage() {
 
                                     {hasChanges && (
                                         <div className="pt-4 border-t border-border/30">
-                                            <div className="text-xs text-amber-500 font-medium">
-                                                ⚠️ You have unsaved changes
+                                            <div className="flex items-center gap-2 text-sm text-amber-500 font-medium bg-amber-500/10 px-3 py-2 rounded-lg">
+                                                <AlertCircle className="w-4 h-4" />
+                                                You have unsaved changes
                                             </div>
                                         </div>
                                     )}
@@ -438,7 +449,6 @@ export default function GroupEditPage() {
                     </div>
                 </div>
             </div>
-
             <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
                 <DialogContent className="bg-background/95 border border-border/50 backdrop-blur-sm max-w-md">
                     <motion.div

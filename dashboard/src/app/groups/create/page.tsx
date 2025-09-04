@@ -52,30 +52,17 @@ export default function CreateGroupPage() {
         const data = await response.json();
 
         if (Array.isArray(data)) {
-          
-          const processedPlatforms: Platform[] = [];
-          
-          for (let i = 0; i < data.length; i++) {
-            const item = data[i];
-            
-            if (typeof item === 'object' && item !== null && !Array.isArray(item) && 'name' in item && 'type' in item) {
-              const platform = item as { name: string; type: string };
-              
-              let versions: Array<{ version: string }> = [];
-              if (i > 0 && Array.isArray(data[i - 1])) {
-                versions = data[i - 1];
-              }
-              
-              processedPlatforms.push({
+          const processedPlatforms: Platform[] = data.map((item: unknown) => {
+            if (typeof item === 'object' && item !== null && 'name' in item && 'type' in item) {
+              const platform = item as { name: string; type: string; versions?: unknown[] };
+              return {
                 name: platform.name,
                 type: platform.type,
-                versions: versions
-              });
-
-            } else if (Array.isArray(item)) {
-            } else {
+                versions: Array.isArray(platform.versions) ? platform.versions : []
+              };
             }
-          }
+            return null;
+          }).filter(Boolean) as Platform[];
 
           setPlatforms(processedPlatforms);
         } else {
@@ -85,10 +72,9 @@ export default function CreateGroupPage() {
         const errorData = await response.json();
         setError(errorData.error || 'Failed to load platforms');
       }
-            } catch {
-
-          setError('Failed to load platforms');
-        } finally {
+    } catch {
+      setError('Failed to load platforms');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -127,7 +113,7 @@ export default function CreateGroupPage() {
     setFormData(prev => {
       const selectedPlatform = platforms.find(p => p.name === platformName);
 
-      let newTemplates = ['EVERY'];
+      const newTemplates = ['EVERY'];
       
       if (prev.name.trim()) {
         newTemplates.push(prev.name.trim());
