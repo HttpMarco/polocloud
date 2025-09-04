@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.role.toJson
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
+import dev.httpmarco.polocloud.modules.rest.controller.defaultResponse
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.role.RoleCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.role.RoleEditModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request

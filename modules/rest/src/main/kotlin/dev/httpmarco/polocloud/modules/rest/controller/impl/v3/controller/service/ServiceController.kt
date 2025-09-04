@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
+import dev.httpmarco.polocloud.modules.rest.controller.defaultResponse
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.service.ServiceCommandModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType

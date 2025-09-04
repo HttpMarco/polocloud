@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.termi
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
+import dev.httpmarco.polocloud.modules.rest.controller.defaultResponse
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.terminal.TerminalCommandModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType

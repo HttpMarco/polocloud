@@ -7,9 +7,9 @@ import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntimeTemplateStorage
 import dev.httpmarco.polocloud.agent.runtime.local.LocalTemplate
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
+import dev.httpmarco.polocloud.modules.rest.controller.defaultResponse
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.template.CreateTemplateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.template.EditTemplateModel
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestType
 import dev.httpmarco.polocloud.shared.template.Template

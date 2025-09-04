@@ -9,6 +9,7 @@ import dev.httpmarco.polocloud.modules.rest.auth.user.toJson
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.toJson
 import dev.httpmarco.polocloud.modules.rest.controller.Controller
+import dev.httpmarco.polocloud.modules.rest.controller.defaultResponse
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserSelfCreateModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.user.UserEditModel
