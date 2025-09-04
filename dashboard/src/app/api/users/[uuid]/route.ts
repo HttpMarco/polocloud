@@ -13,7 +13,7 @@ export async function DELETE(
 
     const backendIp = request.cookies.get('backend_ip')?.value
     if (!backendIp) {
-      return NextResponse.json({ message: 'Backend IP nicht gefunden' }, { status: 400 })
+      return NextResponse.json({ message: 'Backend IP not found' }, { status: 400 })
     }
 
     const response = await fetch(buildBackendUrl(backendIp, `/polocloud/api/v3/user/${params.uuid}`), {
@@ -24,14 +24,14 @@ export async function DELETE(
     })
 
     if (response.status === 204) {
-      return NextResponse.json({ message: 'User erfolgreich gelöscht' });
+      return NextResponse.json({ message: 'User successfully deleted' });
     } else if (response.ok) {
       const result = await response.json();
-      return NextResponse.json({ message: result.message || 'User erfolgreich gelöscht' });
+      return NextResponse.json({ message: result.message || 'User successfully deleted' });
     } else {
       const errorData = await response.json().catch(() => ({}));
       return NextResponse.json({ 
-        error: errorData.message || 'Fehler beim Löschen des Users im Backend' 
+        error: errorData.message || 'Error deleting user in backend' 
       }, { status: response.status });
     }
   } catch {
@@ -51,14 +51,14 @@ export async function PATCH(
 
     const backendIp = request.cookies.get('backend_ip')?.value
     if (!backendIp) {
-      return NextResponse.json({ message: 'Backend IP nicht gefunden' }, { status: 400 })
+      return NextResponse.json({ message: 'Backend IP not found' }, { status: 400 })
     }
 
     const body = await request.json()
     const { roleId } = body
 
     if (roleId === undefined) {
-      return NextResponse.json({ message: 'Role ID ist erforderlich' }, { status: 400 })
+      return NextResponse.json({ message: 'Role ID is required' }, { status: 400 })
     }
 
     const response = await fetch(buildBackendUrl(backendIp, '/polocloud/api/v3/user/edit'), {
@@ -76,7 +76,7 @@ export async function PATCH(
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       return NextResponse.json({ 
-        error: errorData.message || 'Fehler beim Bearbeiten des Users im Backend' 
+        error: errorData.message || 'Error editing user in backend' 
       }, { status: response.status });
     }
 
@@ -84,7 +84,7 @@ export async function PATCH(
     
     return NextResponse.json({ 
       success: true,
-      message: result.message || 'User erfolgreich bearbeitet'
+      message: result.message || 'User successfully edited'
     });
   } catch {
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })

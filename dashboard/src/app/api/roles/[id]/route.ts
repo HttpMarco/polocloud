@@ -13,7 +13,7 @@ export async function DELETE(
 
     const backendIp = request.cookies.get('backend_ip')?.value
     if (!backendIp) {
-      return NextResponse.json({ message: 'Backend IP nicht gefunden' }, { status: 400 })
+      return NextResponse.json({ message: 'Backend IP not found' }, { status: 400 })
     }
 
     const response = await fetch(buildBackendUrl(backendIp, `/polocloud/api/v3/role/${params.id}`), {
@@ -24,14 +24,14 @@ export async function DELETE(
     })
 
     if (response.status === 204) {
-      return NextResponse.json({ message: 'Rolle erfolgreich gelöscht' });
+      return NextResponse.json({ message: 'Role successfully deleted' });
     } else if (response.ok) {
       const result = await response.json();
-      return NextResponse.json({ message: result.message || 'Rolle erfolgreich gelöscht' });
+      return NextResponse.json({ message: result.message || 'Role successfully deleted' });
     } else {
       const errorData = await response.json().catch(() => ({}));
       return NextResponse.json({ 
-        error: errorData.message || 'Fehler beim Löschen der Rolle im Backend' 
+        error: errorData.message || 'Error deleting role in backend' 
       }, { status: response.status });
     }
   } catch {

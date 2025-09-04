@@ -74,12 +74,12 @@ export async function POST(request: NextRequest) {
       return nextResponse;
     } else {
       const errorData = await response.json().catch(() => ({}));
-      let errorMessage = errorData.message || 'Login fehlgeschlagen';
+      let errorMessage = errorData.message || 'Login failed';
       
       if (response.status === 401) {
-        errorMessage = 'Ungültige Anmeldedaten';
+        errorMessage = 'Invalid credentials';
       } else if (response.status === 400) {
-        errorMessage = 'Ungültige Eingabedaten';
+        errorMessage = 'Invalid input data';
       }
       
       return NextResponse.json(

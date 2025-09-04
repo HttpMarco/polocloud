@@ -9,14 +9,14 @@ export async function GET(request: NextRequest) {
 
     if (!token) {
       return NextResponse.json(
-        { error: 'Kein Token gefunden' },
+        { error: 'No token found' },
         { status: 500 }
       );
     }
 
     if (!backendIp) {
       return NextResponse.json(
-        { error: 'Keine Backend-IP gefunden' },
+        { error: 'No backend IP found' },
         { status: 500 }
       );
     }
@@ -41,13 +41,13 @@ export async function GET(request: NextRequest) {
     } else {
       const errorData = await response.json().catch(() => ({}));
       return NextResponse.json(
-        { error: errorData.message || 'Token ist ungültig' },
+        { error: errorData.message || 'Token is invalid' },
         { status: 401 }
       );
     }
   } catch {
     return NextResponse.json(
-      { error: 'Interner Server-Fehler' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
