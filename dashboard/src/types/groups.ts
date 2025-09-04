@@ -20,9 +20,9 @@ export interface Group {
   maxOnlineService: number;
   platform: PlatformModel;
   percentageToStartNewService: number;
-  information: GroupInformationModel;
-  templates: TemplateModel[];
-  properties: Record<string, unknown>;
+  createdAt?: number;
+  templates?: TemplateModel[];
+  groupProperties?: Record<string, unknown>;
 }
 
 

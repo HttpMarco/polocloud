@@ -13,7 +13,7 @@ import { useTerminalWebSocket } from '@/hooks/useWebSocketSystem';
 export default function NewTerminalPage() {
   const [command, setCommand] = useState('');
   const [backendIp, setBackendIp] = useState<string>('');
-  const [_, setToken] = useState<string>('');
+  const [, setToken] = useState<string>('');
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -203,16 +203,6 @@ export default function NewTerminalPage() {
         </Card>
       </div>
 
-      {process.env.NODE_ENV === 'development' && (
-        <div className="px-6 pb-6">
-          <Card className="p-4">
-            <h3 className="font-semibold mb-2 text-sm">Debug Info</h3>
-            <pre className="text-xs text-muted-foreground overflow-auto bg-muted p-2 rounded">
-              {JSON.stringify(connectionInfo, null, 2)}
-            </pre>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }
