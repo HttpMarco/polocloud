@@ -42,49 +42,44 @@ class ControllerProvider {
             PlayerController(),
             SystemInformationController(),
             TerminalController()
-        )
-
-        this.controllers.forEach { handle(it) }
+        ).forEach(::registerControllerRoutes)
     }
 
-    private fun registerControllers(vararg controller: Controller) {
-        this.controllers.addAll(controller)
+    private fun registerControllers(vararg controllerInstances: Controller): List<Controller> {
+        controllers.addAll(controllerInstances)
+        return controllerInstances.toList()
     }
 
-    private fun handle(controller: Controller) {
-       val basePath = API_PATH + controller.path
+    private fun registerControllerRoutes(controller: Controller) {
+        val basePath = API_PATH + controller.path
+
         controller::class.java.methods
             .filter { it.isAnnotationPresent(Request::class.java) }
-            .forEach { registerRoute(it, controller, basePath) }
-    }
+            .forEach { method ->
+                val annotation = method.getAnnotation(Request::class.java)
+                val type = HandlerType.valueOf(annotation.requestType.name)
+                val fullPath = basePath + annotation.path
 
-    private fun registerRoute(method: Method, controller: Controller, basePath: String) {
-        val annotation = method.getAnnotation(Request::class.java)
-        val type = HandlerType.valueOf(annotation.requestType.name)
-        val path = basePath + annotation.path
-        val permission = annotation.permission
-
-        RestModule.instance.httpServer.app.addHttpHandler(type, path) { ctx ->
-            AuthProvider(RequestMethodData(method, controller, permission)).handle(ctx)
-        }
+                RestModule.instance.httpServer.app.addHttpHandler(type, fullPath) { ctx ->
+                    AuthProvider(RequestMethodData(method, controller, annotation.permission)).handle(ctx)
+                }
+            }
     }
 
     fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?, token: Token?) {
         try {
-            if (ctx.result() == null) {
-                val params = mutableListOf<Any?>()
+            if (ctx.result() != null) return
 
-                method.parameters.forEach { param ->
-                    when (param.type) {
-                        Context::class.java -> params.add(ctx)
-                        User::class.java -> params.add(user)
-                        Token::class.java -> params.add(token)
-                        else -> params.add(null)
-                    }
+            val args = method.parameters.map { param ->
+                when (param.type) {
+                    Context::class.java -> ctx
+                    User::class.java -> user
+                    Token::class.java -> token
+                    else -> null
                 }
+            }.toTypedArray()
 
-                method.invoke(controller, *params.toTypedArray())
-            }
+            method.invoke(controller, *args)
         } catch (e: Exception) {
             ctx.status(500).result("Internal Server Error")
             e.printStackTrace()
