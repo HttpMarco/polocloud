@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { WebSocketSystem, WebSocketMessage, ConnectionStatus, ConnectionInfo, createWebSocketSystem } from '@/lib/websocket-system';
 import { processTerminalLog } from '@/lib/ansi-utils';
 
@@ -39,6 +39,9 @@ export function useWebSocketSystem({
 }: UseWebSocketSystemProps): UseWebSocketSystemReturn {
   
   const wsSystemRef = useRef<WebSocketSystem | null>(null);
+  
+  // ✅ Memoize path to avoid dependency issues
+  const memoizedPath = useMemo(() => path, [path]);
   const [connectionInfo, setConnectionInfo] = useState<ConnectionInfo>({
     status: 'disconnected',
     method: 'websocket',
@@ -63,7 +66,7 @@ export function useWebSocketSystem({
     
     if (typeof message.data === 'string') {
       const now = Date.now();
-      const messageKey = `${message.data}_${path}`;
+      const messageKey = `${message.data}_${memoizedPath}`;
       
       const lastSeen = globalMessageCache.get(messageKey);
       if (lastSeen && now - lastSeen < GLOBAL_DUPLICATE_THRESHOLD) {
@@ -83,7 +86,7 @@ export function useWebSocketSystem({
     }
     
     onMessageRef.current?.(message);
-  }, [path]);
+  }, [memoizedPath]);
 
   const handleConnect = useCallback(() => {
     console.log('✅ WebSocket connected!');
@@ -154,7 +157,7 @@ export function useWebSocketSystem({
         wsSystemRef.current = null;
       }
     };
-  }, [autoConnect, backendIp, handleConnect, handleDisconnect, handleError, handleMessage, handleStatusChange, path, token]);
+  }, []);
 
   useEffect(() => {
     const updateInfo = () => {
@@ -270,23 +273,6 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     setLogs([]);
   }, []);
 
-  // ✅ DEBUG: Debug-Funktionen für die Konsole
-  const debugInfo = useCallback(() => {
-    if (wsSystemRef.current) {
-      console.log('🔍 WebSocket Debug Info:');
-      console.log('📋 Config:', { backendIp, path, token, autoConnect });
-      console.log('🔗 Connection Info:', wsSystemRef.current.getConnectionInfo());
-      console.log('🐛 Full Debug Info:', wsSystemRef.current.getFullDebugInfo());
-    } else {
-      console.log('❌ WebSocket System not initialized');
-    }
-  }, [backendIp, path, token, autoConnect]);
-
-  // ✅ DEBUG: Globale Debug-Funktion verfügbar machen
-  if (typeof window !== 'undefined') {
-    (window as any).debugWebSocket = debugInfo;
-  }
-
   return {
     logs,
     connectionInfo,
@@ -294,7 +280,6 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     connect,
     disconnect,
     sendCommand,
-    clearLogs,
-    debugInfo
+    clearLogs
   };
 }
