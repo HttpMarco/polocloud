@@ -12,6 +12,7 @@ export function useServiceWebSocket(serviceName: string, backendIp?: string, tok
     path: `/service/${serviceName}/screen`,
     token,
     autoConnect,
+    serviceName, // ✅ Service-Name für Proxy
     onMessage: (message) => {
       if (typeof message.data === 'string') {
         const now = Date.now();

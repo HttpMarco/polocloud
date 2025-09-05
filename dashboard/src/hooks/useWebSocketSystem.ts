@@ -10,6 +10,7 @@ interface UseWebSocketSystemProps {
   path: string;
   token?: string;
   autoConnect?: boolean;
+  serviceName?: string; // ✅ Service-Name für Proxy
   onMessage?: (message: WebSocketMessage) => void;
   onConnect?: () => void;
   onDisconnect?: () => void;
@@ -32,6 +33,7 @@ export function useWebSocketSystem({
   path,
   token,
   autoConnect = true,
+  serviceName,
   onMessage,
   onConnect,
   onDisconnect,
@@ -119,11 +121,11 @@ export function useWebSocketSystem({
         backendIp.startsWith('10.')
       );
 
-      if (isHttpsFrontend && !isLocalBackend) {
-        // ✅ Production: Server-Sent Events über Proxy
-        const proxyUrl = `/api/websocket-proxy?path=${encodeURIComponent(path)}`;
-        
-        const eventSource = new EventSource(proxyUrl);
+              if (isHttpsFrontend && !isLocalBackend) {
+          // ✅ Production: Server-Sent Events über Proxy
+          const proxyUrl = `/api/websocket-proxy?path=${encodeURIComponent(path)}${serviceName ? `&service=${encodeURIComponent(serviceName)}` : ''}`;
+          
+          const eventSource = new EventSource(proxyUrl);
         
         eventSource.onmessage = (event) => {
           try {
@@ -183,7 +185,7 @@ export function useWebSocketSystem({
         wsSystemRef.current = null;
       }
     };
-  }, [backendIp, path, token, autoConnect, handleMessage, handleConnect, handleDisconnect, handleError, handleStatusChange, connectionInfo.status]);
+  }, [backendIp, path, token, autoConnect, serviceName, handleMessage, handleConnect, handleDisconnect, handleError, handleStatusChange, connectionInfo.status]);
 
   useEffect(() => {
     const updateInfo = () => {
@@ -241,12 +243,11 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     token,
     autoConnect,
     onMessage: (message) => {
-    
-      if (message.type === 'log' && typeof message.data === 'string') {
-        
+      // ✅ VERBESSERT: Gleiche Message-Filterung wie Service-WebSocket
+      if (typeof message.data === 'string') {
         const now = Date.now();
         const messageData = message.data;
-        
+
         if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 500) {
           return;
         }

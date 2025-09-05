@@ -12,9 +12,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No authentication token found' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const path = searchParams.get('path') || '/logs';
-    const service = searchParams.get('service');
+         const { searchParams } = new URL(request.url);
+     const path = searchParams.get('path') || '/logs';
+     const service = searchParams.get('service');
+     
+     // ✅ VERBESSERT: Service-spezifischer Pfad für Service-Screen
+     const finalPath = service ? `/service/${service}/screen` : path;
 
     const decodedBackendIp = decodeURIComponent(backendIp);
     
@@ -42,10 +45,10 @@ export async function GET(request: NextRequest) {
                 'Content-Type': 'application/json',
                 'Cookie': `token=${token}`
               },
-              body: JSON.stringify({
-                path: path,
-                service: service || null
-              })
+                             body: JSON.stringify({
+                 path: finalPath,
+                 service: service || null
+               })
             });
 
             if (response.ok) {
