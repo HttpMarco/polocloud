@@ -125,11 +125,20 @@ export function useWebSocketSystem({
           // ✅ Production: Server-Sent Events über Proxy
           const proxyUrl = `/api/websocket-proxy?path=${encodeURIComponent(path)}${serviceName ? `&service=${encodeURIComponent(serviceName)}` : ''}`;
           
+          console.log('Terminal WebSocket Proxy Debug:', {
+            isHttpsFrontend,
+            isLocalBackend,
+            path,
+            serviceName,
+            proxyUrl
+          });
+          
           const eventSource = new EventSource(proxyUrl);
         
         eventSource.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
+            console.log('Terminal WebSocket SSE Message:', data);
             handleMessage(data);
           } catch (error) {
             console.error('Failed to parse SSE message:', error);
@@ -239,9 +248,10 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
   
   const { connectionInfo, isConnected, connect, disconnect } = useWebSocketSystem({
     backendIp,
-    path: '/logs',
+    path: '/logs', // ✅ Terminal-Logs Pfad
     token,
     autoConnect,
+    serviceName: 'terminal', // ✅ Terminal-Identifier für Proxy
     onMessage: (message) => {
       // ✅ VERBESSERT: Gleiche Message-Filterung wie Service-WebSocket
       if (typeof message.data === 'string') {

@@ -16,84 +16,113 @@ export async function GET(request: NextRequest) {
      const path = searchParams.get('path') || '/logs';
      const service = searchParams.get('service');
      
+     const decodedBackendIp = decodeURIComponent(backendIp);
+     
      // ✅ VERBESSERT: Service-spezifischer Pfad für Service-Screen
      const finalPath = service ? `/service/${service}/screen` : path;
-
-    const decodedBackendIp = decodeURIComponent(backendIp);
+     
+     console.log('WebSocket Proxy Debug:', {
+       path,
+       service,
+       finalPath,
+       backendIp: decodedBackendIp
+     });
     
-    // ✅ HTTP-Polling statt WebSocket für Production
-    const isHttpsBackend = decodedBackendIp.includes('https') || 
-                          decodedBackendIp.includes(':443');
-    
-    const protocol = isHttpsBackend ? 'https' : 'http';
-    const backendUrl = `${protocol}://${decodedBackendIp}/polocloud/api/v3/websocket/stream`;
+         // ✅ VERBESSERT: Echter WebSocket-Endpoint für /logs
+     const isHttpsBackend = decodedBackendIp.includes('https') || 
+                           decodedBackendIp.includes(':443');
+     
+     const wsProtocol = isHttpsBackend ? 'wss' : 'ws';
+     const backendWsUrl = `${wsProtocol}://${decodedBackendIp}/polocloud/api/v3${finalPath}`;
 
-    // ✅ Server-Sent Events für Frontend
-    const encoder = new TextEncoder();
-    
-    const stream = new ReadableStream({
-      start(controller) {
-        let isActive = true;
-        
-        const pollBackend = async () => {
-          if (!isActive) return;
-          
-          try {
-            const response = await fetch(backendUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Cookie': `token=${token}`
-              },
-                             body: JSON.stringify({
-                 path: finalPath,
-                 service: service || null
-               })
-            });
+         // ✅ VERBESSERT: Echte WebSocket-Verbindung zum Backend
+     const encoder = new TextEncoder();
+     
+     const stream = new ReadableStream({
+       start(controller) {
+         let isActive = true;
+         let ws: WebSocket | null = null;
+         
+         try {
+           // ✅ WebSocket-Verbindung zum Backend herstellen
+           ws = new WebSocket(backendWsUrl);
+           
+           ws.onopen = () => {
+             console.log('WebSocket connected to backend:', backendWsUrl);
+             
+             const sseData = `data: ${JSON.stringify({
+               type: 'connected',
+               message: 'Connected to backend'
+             })}\n\n`;
+             
+             controller.enqueue(encoder.encode(sseData));
+           };
+           
+           ws.onmessage = (event) => {
+             if (!isActive) return;
+             
+             const message = event.data;
+             console.log('WebSocket message from backend:', message);
+             
+             const sseData = `data: ${JSON.stringify({
+               type: 'message',
+               data: message,
+               service: service || null
+             })}\n\n`;
+             
+             controller.enqueue(encoder.encode(sseData));
+           };
+           
+           ws.onclose = (event) => {
+             console.log('WebSocket closed:', event.code, event.reason);
+             
+             const sseData = `data: ${JSON.stringify({
+               type: 'disconnect',
+               code: event.code,
+               reason: event.reason
+             })}\n\n`;
+             
+             controller.enqueue(encoder.encode(sseData));
+             controller.close();
+           };
+           
+           ws.onerror = (error) => {
+             console.error('WebSocket error:', error);
+             
+             const sseData = `data: ${JSON.stringify({
+               type: 'error',
+               error: 'WebSocket connection failed'
+             })}\n\n`;
+             
+             controller.enqueue(encoder.encode(sseData));
+             controller.close();
+           };
+           
+         } catch (error) {
+           console.error('Failed to create WebSocket:', error);
+           
+           const sseData = `data: ${JSON.stringify({
+             type: 'error',
+             error: 'Failed to create WebSocket connection'
+           })}\n\n`;
+           
+           controller.enqueue(encoder.encode(sseData));
+           controller.close();
+         }
 
-            if (response.ok) {
-              const data = await response.json();
-              
-              if (data.messages && Array.isArray(data.messages)) {
-                data.messages.forEach((message: { data?: string; [key: string]: unknown }) => {
-                  const sseData = `data: ${JSON.stringify({
-                    type: 'message',
-                    data: message.data || message,
-                    service: service || null
-                  })}\n\n`;
-                  
-                  controller.enqueue(encoder.encode(sseData));
-                });
-              }
-            }
-          } catch {
-            const sseData = `data: ${JSON.stringify({
-              type: 'error',
-              error: 'Connection failed'
-            })}\n\n`;
-            
-            controller.enqueue(encoder.encode(sseData));
-          }
-          
-          // Poll alle 2 Sekunden
-          if (isActive) {
-            setTimeout(pollBackend, 2000);
-          }
-        };
-
-        // Start polling
-        pollBackend();
-
-        // Cleanup function
-        return () => {
-          isActive = false;
-        };
-      },
-      
-      cancel() {
-        // Cleanup
-      }
-    });
+         // Cleanup function
+         return () => {
+           isActive = false;
+           if (ws) {
+             ws.close();
+           }
+         };
+       },
+       
+       cancel() {
+         // Cleanup
+       }
+     });
 
     return new Response(stream, {
       headers: {
