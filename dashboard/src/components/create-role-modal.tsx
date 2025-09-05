@@ -57,6 +57,16 @@ const availablePermissions = [
   { id: "polocloud.template.create", label: "Create Templates", category: "Admin" },
   { id: "polocloud.template.edit", label: "Edit Templates", category: "Admin" },
   { id: "polocloud.template.delete", label: "Delete Templates", category: "Admin" },
+  { id: "polocloud.templates.create", label: "Create Templates", category: "Admin" },
+  { id: "polocloud.templates.edit", label: "Edit Templates", category: "Admin" },
+  { id: "polocloud.templates.delete", label: "Delete Templates", category: "Admin" },
+  { id: "polocloud.terminal.command", label: "Terminal Commands", category: "Terminal" },
+  { id: "polocloud.service.restart", label: "Restart Services", category: "Services" },
+  { id: "polocloud.service.start", label: "Start Services", category: "Services" },
+  { id: "polocloud.service.stop", label: "Stop Services", category: "Services" },
+  { id: "polocloud.group.restart", label: "Restart Groups", category: "Groups" },
+  { id: "polocloud.group.start", label: "Start Groups", category: "Groups" },
+  { id: "polocloud.group.stop", label: "Stop Groups", category: "Groups" },
 ]
 
 export function CreateRoleModal({ onRoleAdded, isOpen: externalIsOpen, onOpenChange }: CreateRoleModalProps) {

@@ -43,39 +43,145 @@ const loadUserData = async (): Promise<UserData> => {
   if (userDataCache) return userDataCache;
   
   try {
-
     const adminUsername = localStorage.getItem('adminUsername');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    
-    if (adminUsername && isLoggedIn === 'true') {
 
+
+    if (adminUsername && isLoggedIn === 'true') {
       try {
         const userResponse = await fetch(API_ENDPOINTS.AUTH.ME);
         if (userResponse.ok) {
           const responseData = await userResponse.json();
 
           if (responseData.authenticated && responseData.user) {
-            const username = responseData.user.username || adminUsername;
-            const userUUID = responseData.user.uuid || 'admin-' + Date.now();
+            let userData = responseData.user;
+            if (userData.role === null || userData.role === undefined) {
+
+              try {
+
+                let backendIp = localStorage.getItem('backend_ip');
+                let token = localStorage.getItem('token');
+
+                if (!backendIp || !token) {
+                  const cookies = document.cookie.split(';');
+                  for (const cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'backend_ip') backendIp = value;
+                    if (name === 'token') token = value;
+                  }
+                }
+
+                
+                if (backendIp && token) {
+                  const directUserResponse = await fetch(`http://${backendIp}/polocloud/api/v3/user/${userData.uuid}`, {
+                    headers: {
+                      'Cookie': `token=${token}`
+                    }
+                  });
+                  
+                  if (directUserResponse.ok) {
+                    const directUserData = await directUserResponse.json();
+
+                    if (directUserData.data) {
+                      userData = directUserData.data;
+                    }
+                  } else {
+                    console.log('Direct backend user endpoint failed:', directUserResponse.status, directUserResponse.statusText);
+                  }
+                } else {
+
+                  if (adminUsername === 'admin') {
+                    userData.role = -1;
+
+                  } else {
+                    userData.role = 0;
+
+                  }
+                }
+              } catch (directError) {
+                console.log('Error fetching direct backend user data:', directError);
+                if (adminUsername === 'admin') {
+                  userData.role = -1;
+
+                } else {
+                  userData.role = 0;
+
+                }
+              }
+            }
+
+            const username = userData.username || adminUsername;
+            const userUUID = userData.uuid || 'admin-' + Date.now();
 
             let role = null;
-            if (responseData.user.role !== undefined && responseData.user.role !== null) {
+            if (userData.role !== undefined && userData.role !== null) {
               try {
-                const roleResponse = await fetch(API_ENDPOINTS.ROLE.GET(responseData.user.role));
+
+                const roleResponse = await fetch(API_ENDPOINTS.ROLE.GET(userData.role));
                 if (roleResponse.ok) {
                   const roleData = await roleResponse.json();
-                  role = roleData;
+
+                  role = {
+                    id: roleData.id || userData.role,
+                    label: roleData.label || roleData.name || 'Unknown',
+                    hexColor: roleData.hexColor || roleData.color || '#6b7280'
+                  };
+                } else {
+                  role = {
+                    id: userData.role,
+                    label: userData.role === 1 ? 'Team' : userData.role === 0 ? 'User' : `Role ${userData.role}`,
+                    hexColor: userData.role === 1 ? '#3b82f6' : userData.role === 0 ? '#6b7280' : '#8b5cf6'
+                  };
                 }
-              } catch {}
+              } catch (roleError) {
+                console.log('Error loading specific role:', roleError);
+                role = {
+                  id: userData.role,
+                  label: userData.role === 1 ? 'Team' : userData.role === 0 ? 'User' : `Role ${userData.role}`,
+                  hexColor: userData.role === 1 ? '#3b82f6' : userData.role === 0 ? '#6b7280' : '#8b5cf6'
+                };
+                console.log('Using fallback role after error:', role);
+              }
+            } else {
+              role = {
+                id: -1,
+                label: 'Admin',
+                hexColor: '#dc2626'
+              };
             }
 
-            if (role) {
               userDataCache = { username, userUUID, role };
+            return userDataCache;
+          } else {
+            const role = {
+              id: -1,
+              label: 'Admin',
+              hexColor: '#dc2626'
+            };
+            
+            userDataCache = { 
+              username: adminUsername, 
+              userUUID: 'admin-' + Date.now(),
+              role 
+            };
               return userDataCache;
             }
-          }
+        } else {
+          const role = {
+            id: -1,
+            label: 'Admin',
+            hexColor: '#dc2626'
+          };
+          
+          userDataCache = { 
+            username: adminUsername, 
+            userUUID: 'admin-' + Date.now(),
+            role 
+          };
+          return userDataCache;
         }
-      } catch  {}
+      } catch (error) {
+        console.log('Error loading user data:', error);
       const role = {
         id: -1,
         label: 'Admin',
@@ -88,12 +194,14 @@ const loadUserData = async (): Promise<UserData> => {
         role 
       };
       return userDataCache;
+      }
     }
 
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
     
-  } catch {
+  } catch (error) {
+    console.log('Error in loadUserData:', error);
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
   }
@@ -211,15 +319,19 @@ export function AppSidebar() {
   const router = useRouter();
 
   useEffect(() => {
-
-    const loadDataImmediately = () => {
+    const loadDataAsync = async () => {
       try {
+        resetUserDataCache();
+        const data = await loadUserData();
+        setUserData(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.log('Error loading user data:', error);
         const adminUsername = localStorage.getItem('adminUsername');
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         
         if (adminUsername && isLoggedIn === 'true') {
-
-          const immediateData = {
+          setUserData({
             username: adminUsername,
             userUUID: 'admin-' + Date.now(),
             role: {
@@ -227,29 +339,15 @@ export function AppSidebar() {
               label: 'Admin',
               hexColor: '#dc2626'
             }
-          };
-          setUserData(immediateData);
-          setIsLoading(false);
+          });
         } else {
           setUserData({ username: 'Guest', userUUID: '', role: null });
-          setIsLoading(false);
         }
-      } catch {
-        setUserData({ username: 'Guest', userUUID: '', role: null });
         setIsLoading(false);
       }
     };
 
-    loadDataImmediately();
-
-    const loadDataAsync = async () => {
-      try {
-        const data = await loadUserData();
-        setUserData(data);
-      } catch {}
-    };
-
-    setTimeout(loadDataAsync, 100);
+    loadDataAsync();
 
     const interval = setInterval(async () => {
       try {
@@ -257,8 +355,12 @@ export function AppSidebar() {
         if (!response.ok) {
           resetUserDataCache();
 
+          const data = await loadUserData();
+          setUserData(data);
         }
-      } catch  {}
+      } catch (error) {
+        console.log('Error in interval check:', error);
+      }
     }, 5 * 60 * 1000);
 
     const handleUserLogin = () => {

@@ -1,9 +1,9 @@
 "use client"
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ChevronDown, Check } from 'lucide-react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Edit2, Loader2, AlertTriangle } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -32,6 +32,8 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
   const [selectedRoleId, setSelectedRoleId] = useState<string>(user.role.toString())
   const [error, setError] = useState('')
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const fetchRoles = useCallback(async () => {
     try {
@@ -62,9 +64,35 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
     }
   }, [isOpen, fetchRoles, fetchCurrentUser])
 
+  useEffect(() => {
+    setSelectedRoleId(user.role.toString())
+  }, [user.role])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isDropdownOpen])
+
+
   const isSelfDemotion = currentUser && 
     currentUser.username === user.username && 
     parseInt(selectedRoleId) > currentUser.role
+
+  const handleRoleSelect = (roleId: string) => {
+    setSelectedRoleId(roleId)
+    setIsDropdownOpen(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -167,34 +195,69 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
               <Label htmlFor="role" className="text-sm font-medium">
                 Role
               </Label>
-              <Select value={selectedRoleId} onValueChange={setSelectedRoleId} disabled={isLoading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {roles.map((role) => (
-                    <SelectItem key={role.id} value={role.id}>
-                      <div className="flex items-center space-x-2">
-                        <div 
-                          className="w-3 h-3 rounded-full border border-border"
-                          style={{ backgroundColor: role.hexColor }}
-                        />
-                        <span>{role.label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
               
-              {selectedRole && (
-                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                  <div 
-                    className="w-4 h-4 rounded-full border border-border"
-                    style={{ backgroundColor: selectedRole.hexColor }}
-                  />
-                  <span>Current selection: {selectedRole.label}</span>
-                </div>
-              )}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  disabled={isLoading}
+                  className="w-full h-11 px-4 py-2 text-left border-2 border-border/50 hover:border-blue-500/50 focus:border-blue-500 rounded-md bg-background transition-all duration-200 flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <div className="flex items-center space-x-3">
+                    {selectedRole && (
+                      <div 
+                        className="w-4 h-4 rounded-full border-2 border-border shadow-sm"
+                        style={{ backgroundColor: selectedRole.hexColor }}
+                      />
+                    )}
+                    <span className="font-medium">
+                      {selectedRole ? selectedRole.label : (roles.length > 0 ? 'Select a role' : 'Loading roles...')}
+                    </span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-y-auto"
+                  >
+                    {roles.map((role) => {
+                      const isCurrentRole = role.id === user.role.toString()
+                      const isSelected = selectedRoleId === role.id
+                      
+                      return (
+                        <button
+                          key={role.id}
+                          type="button"
+                          onClick={() => !isCurrentRole && handleRoleSelect(role.id)}
+                          disabled={isCurrentRole}
+                          className={`w-full px-4 py-3 text-left transition-colors duration-150 flex items-center space-x-3 ${
+                            isCurrentRole 
+                              ? 'opacity-50 cursor-not-allowed bg-muted/20' 
+                              : 'hover:bg-muted/50'
+                          }`}
+                        >
+                          <div 
+                            className="w-4 h-4 rounded-full border-2 border-border shadow-sm"
+                            style={{ backgroundColor: role.hexColor }}
+                          />
+                          <span className="font-medium flex-1">{role.label}</span>
+                          {isCurrentRole && (
+                            <span className="text-xs text-muted-foreground">(Current)</span>
+                          )}
+                          {isSelected && !isCurrentRole && (
+                            <Check className="w-4 h-4 text-blue-500" />
+                          )}
+                        </button>
+                      )
+                    })}
+                  </motion.div>
+                )}
+              </div>
+              
 
               {}
               {isSelfDemotion && (
@@ -224,19 +287,24 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-3">
             <Button 
               type="button" 
               variant="outline" 
               onClick={() => setIsOpen(false)} 
               disabled={isLoading}
+              className="px-6"
             >
               Cancel
             </Button>
             <Button 
               type="submit" 
               disabled={selectedRoleId === user.role.toString() || isLoading || (isSelfDemotion || false)} 
-              className="bg-blue-600 hover:bg-blue-700"
+              className="px-6 font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+              style={{ 
+                backgroundColor: 'oklch(75.54% .1534 231.639)',
+                borderColor: 'oklch(75.54% .1534 231.639)'
+              }}
             >
               {isLoading ? (
                 <>
