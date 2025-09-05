@@ -16,9 +16,10 @@ interface User {
 interface UserDeleteButtonProps {
     user: User;
     onUserDeleted: (uuid: string) => void;
+    disabled?: boolean;
 }
 
-export function UserDeleteButton({ user, onUserDeleted }: UserDeleteButtonProps) {
+export function UserDeleteButton({ user, onUserDeleted, disabled = false }: UserDeleteButtonProps) {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDelete = async () => {
@@ -42,13 +43,20 @@ export function UserDeleteButton({ user, onUserDeleted }: UserDeleteButtonProps)
     };
 
     return (
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <motion.div 
+            whileHover={{ scale: (disabled || isDeleting) ? 1 : 1.05 }} 
+            whileTap={{ scale: (disabled || isDeleting) ? 1 : 0.95 }}
+        >
             <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={handleDelete} 
-                disabled={isDeleting} 
-                className="h-10 w-10 text-red-600 hover:text-red-700 hover:bg-red-50"
+                disabled={disabled || isDeleting} 
+                className={`h-10 w-10 ${
+                    disabled 
+                        ? 'opacity-40 cursor-not-allowed text-muted-foreground' 
+                        : 'text-red-600 hover:text-red-700 hover:bg-red-50'
+                }`}
             >
                 {isDeleting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

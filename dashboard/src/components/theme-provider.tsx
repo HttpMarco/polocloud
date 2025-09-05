@@ -9,7 +9,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     if (!isInitialized.current) {
       const savedTheme = localStorage.getItem('theme') || 'dark';
-      document.documentElement.classList.remove('dark', 'darker', 'ocean', 'purple', 'forest', 'sunset', 'light');
+      const allThemes = ['dark', 'darker', 'ocean', 'purple', 'forest', 'sunset', 'neon', 'rose', 'coffee', 'mountain', 'cosmic', 'light'];
+      document.documentElement.classList.remove(...allThemes);
       document.documentElement.classList.add(savedTheme);
       isInitialized.current = true;
     }
