@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { wsConnections, messageQueues, cleanupConnection } from '../connect/route';
+import { wsConnections, messageQueues } from '../connect/route';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +17,17 @@ export async function POST(request: NextRequest) {
 
     const connectionKey = `${finalBackendIp}${path}`;
 
-    cleanupConnection(connectionKey);
+    // ✅ VERBESSERT: Manuelles Cleanup
+    const ws = wsConnections.get(connectionKey);
+    if (ws) {
+      try {
+        ws.close();
+      } catch {
+        // WebSocket bereits geschlossen
+      }
+    }
+    wsConnections.delete(connectionKey);
+    messageQueues.delete(connectionKey);
 
     return NextResponse.json({
       success: true,
