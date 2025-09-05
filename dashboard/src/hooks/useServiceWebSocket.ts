@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { useWebSocketSystem } from './useWebSocketSystem';
 import { processTerminalLog } from '@/lib/ansi-utils';
-import { logError } from '@/lib/error-handling';
 
 export function useServiceWebSocket(serviceName: string, backendIp?: string, token?: string, autoConnect: boolean = true) {
   const [logs, setLogs] = useState<string[]>([]);
@@ -50,11 +49,7 @@ export function useServiceWebSocket(serviceName: string, backendIp?: string, tok
         const error = await response.json().catch(() => ({ error: 'Failed to send command' }));
         setLogs(prev => [...prev, `Error: ${error.error || 'Command failed'}`]);
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'ServiceWebSocket', 
-        action: 'sendCommand' 
-      });
+    } catch {
       setLogs(prev => [...prev, `Error: Failed to send command`]);
     }
   }, [serviceName]);

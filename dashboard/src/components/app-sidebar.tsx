@@ -13,7 +13,6 @@ import {
   Lock
 } from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/api";
-import { logError } from '@/lib/error-handling';
 import { SidebarHeaderComponent } from "@/components/sidebar/sidebar-header";
 import { CloudNavigation } from "@/components/sidebar/cloud-navigation";
 import { TeamNavigation } from "@/components/sidebar/team-navigation";
@@ -87,7 +86,7 @@ const loadUserData = async (): Promise<UserData> => {
                       userData = directUserData.data;
                     }
                   } else {
-
+                    console.log('Direct backend user endpoint failed:', directUserResponse.status, directUserResponse.statusText);
                   }
                 } else {
 
@@ -99,15 +98,14 @@ const loadUserData = async (): Promise<UserData> => {
 
                   }
                 }
-              } catch (error) {
-                logError(error, { 
-                  component: 'AppSidebar', 
-                  action: 'fetchDirectBackendUserData' 
-                });
+              } catch (directError) {
+                console.log('Error fetching direct backend user data:', directError);
                 if (adminUsername === 'admin') {
                   userData.role = -1;
+
                 } else {
                   userData.role = 0;
+
                 }
               }
             }
@@ -135,16 +133,14 @@ const loadUserData = async (): Promise<UserData> => {
                     hexColor: userData.role === 1 ? '#3b82f6' : userData.role === 0 ? '#6b7280' : '#8b5cf6'
                   };
                 }
-              } catch (error) {
-                logError(error, { 
-                  component: 'AppSidebar', 
-                  action: 'loadSpecificRole' 
-                });
+              } catch (roleError) {
+                console.log('Error loading specific role:', roleError);
                 role = {
                   id: userData.role,
                   label: userData.role === 1 ? 'Team' : userData.role === 0 ? 'User' : `Role ${userData.role}`,
                   hexColor: userData.role === 1 ? '#3b82f6' : userData.role === 0 ? '#6b7280' : '#8b5cf6'
                 };
+                console.log('Using fallback role after error:', role);
               }
             } else {
               role = {
@@ -185,15 +181,12 @@ const loadUserData = async (): Promise<UserData> => {
           return userDataCache;
         }
       } catch (error) {
-        logError(error, { 
-          component: 'AppSidebar', 
-          action: 'loadUserData' 
-        });
-        const role = {
-          id: -1,
-          label: 'Admin',
-          hexColor: '#dc2626'
-        };
+        console.log('Error loading user data:', error);
+      const role = {
+        id: -1,
+        label: 'Admin',
+        hexColor: '#dc2626'
+      };
       
       userDataCache = { 
         username: adminUsername, 
@@ -208,10 +201,7 @@ const loadUserData = async (): Promise<UserData> => {
     return userDataCache;
     
   } catch (error) {
-    logError(error, { 
-      component: 'AppSidebar', 
-      action: 'loadUserDataFallback' 
-    });
+    console.log('Error in loadUserData:', error);
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
   }
@@ -336,10 +326,7 @@ export function AppSidebar() {
         setUserData(data);
         setIsLoading(false);
       } catch (error) {
-        logError(error, { 
-          component: 'AppSidebar', 
-          action: 'loadUserDataInEffect' 
-        });
+        console.log('Error loading user data:', error);
         const adminUsername = localStorage.getItem('adminUsername');
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         
@@ -372,10 +359,7 @@ export function AppSidebar() {
           setUserData(data);
         }
       } catch (error) {
-        logError(error, { 
-          component: 'AppSidebar', 
-          action: 'intervalCheck' 
-        });
+        console.log('Error in interval check:', error);
       }
     }, 5 * 60 * 1000);
 
@@ -408,12 +392,7 @@ export function AppSidebar() {
       } else {
 
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'AppSidebar', 
-        action: 'handleLogout' 
-      });
-    }
+    } catch  {}
   };
 
   const handleLogout = async () => {
@@ -424,12 +403,7 @@ export function AppSidebar() {
         setUserData({ username: 'Guest', userUUID: '', role: null });
         router.push('/login');
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'AppSidebar', 
-        action: 'handleLogout' 
-      });
-    }
+    } catch {}
   };
 
   const handleChangePassword = async () => {

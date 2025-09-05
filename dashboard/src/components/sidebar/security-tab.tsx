@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from "react";
-import { logError } from '@/lib/error-handling';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -72,11 +71,7 @@ export function SecurityTab() {
         };
 
         parsedTokens.push(parsedToken);
-      } catch (error) {
-        logError(error, { 
-          component: 'SecurityTab', 
-          action: 'parseToken' 
-        });
+      } catch {
         parsedTokens.push({
           value: token.value || '',
           ip: token.ip || 'Unknown',
@@ -117,11 +112,7 @@ export function SecurityTab() {
       } else {
         setTokens([]);
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'SecurityTab', 
-        action: 'fetchTokens' 
-      });
+    } catch {
       setTokens([]);
     } finally {
       setIsLoading(false);
@@ -195,11 +186,7 @@ export function SecurityTab() {
       } else {
         return 'Unknown Location';
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'SecurityTab', 
-        action: 'getLocationFromIP' 
-      });
+    } catch {
       return 'Unknown Location';
     }
   };
@@ -235,10 +222,7 @@ export function SecurityTab() {
 
       await fetchTokens();
     } catch (error) {
-        logError(error, { 
-            component: 'SecurityTab', 
-            action: 'deleteToken' 
-        });
+        console.warn('Sidebar error in security-tab:', error);
       }};
 
   const handleChangePassword = () => {
@@ -286,11 +270,7 @@ export function SecurityTab() {
       } else {
         toast.error(`Failed to change password: ${result.message}`);
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'SecurityTab', 
-        action: 'changePassword' 
-      });
+    } catch {
       toast.error('Failed to change password. Please try again.');
     } finally {
       setIsChangingPassword(false);

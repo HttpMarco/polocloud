@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react';
-import { logError } from '@/lib/error-handling';
 
 interface UserData {
   username: string;
@@ -45,12 +44,7 @@ const loadUserData = async (): Promise<UserData> => {
                   const roleData = await roleResponse.json();
                   role = roleData;
                 }
-              } catch (error) {
-                logError(error, { 
-                  component: 'UsePermissions', 
-                  action: 'loadRoleData' 
-                });
-              }
+              } catch {}
             }
 
             if (role) {
@@ -59,12 +53,7 @@ const loadUserData = async (): Promise<UserData> => {
             }
           }
         }
-      } catch (error) {
-        logError(error, { 
-          component: 'UsePermissions', 
-          action: 'loadUserData' 
-        });
-      }
+      } catch {}
 
       if (adminUsername === 'admin') {
         const role = {
@@ -86,11 +75,7 @@ const loadUserData = async (): Promise<UserData> => {
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
     
-  } catch (error) {
-    logError(error, { 
-      component: 'UsePermissions', 
-      action: 'loadUserData' 
-    });
+  } catch {
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
   }
@@ -104,11 +89,7 @@ export function usePermissions() {
     try {
       const data = await loadUserData();
       setUserData(data);
-    } catch (error) {
-      logError(error, { 
-        component: 'UsePermissions', 
-        action: 'loadData' 
-      });
+    } catch {
       setUserData({ username: 'Guest', userUUID: '', role: null });
     } finally {
       setIsLoading(false);
@@ -125,11 +106,7 @@ export function usePermissions() {
           resetUserDataCache();
           loadData();
         }
-      } catch (error) {
-        logError(error, { 
-          component: 'UsePermissions', 
-          action: 'intervalCheck' 
-        });
+      } catch {
         loadData();
       }
     }, 5 * 60 * 1000);

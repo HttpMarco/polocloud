@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { logError } from '@/lib/error-handling';
 import { usePathname } from 'next/navigation';
 import { Group } from '@/types/groups';
 import { Service } from '@/types/services';
@@ -120,10 +119,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('sidebarServices', JSON.stringify(newData.services));
       }
     } catch (error) {
-        logError(error, { 
-            component: 'SidebarDataProvider', 
-            action: 'updateData' 
-        });
+        console.warn('Sidebar error in sidebar-data-provider:', error);
       }};
 
   if (shouldHideSidebar) {

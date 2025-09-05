@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { logError } from '@/lib/error-handling'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -44,10 +43,7 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
         setRoles(data)
       }
     } catch (error) {
-        logError(error, { 
-            component: 'EditUserModal', 
-            action: 'loadRoles' 
-        });
+        console.error('Error in edit-user-modal:', error);
       }}, [])
 
   const fetchCurrentUser = useCallback(async () => {
@@ -60,10 +56,7 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
         }
       }
     } catch (error) {
-        logError(error, { 
-            component: 'EditUserModal', 
-            action: 'loadRoles' 
-        });
+        console.error('Error in edit-user-modal:', error);
       }}, [])
 
   useEffect(() => {

@@ -1,5 +1,3 @@
-import { logError } from './error-handling';
-
 export interface WebSocketMessage {
   type: 'log' | 'command' | 'status' | 'error' | 'heartbeat';
   data: string | object | number | boolean | null;
@@ -74,12 +72,7 @@ export class WebSocketSystem {
               token = data.token;
             } else {}
           } else {}
-        } catch (error) {
-          logError(error, { 
-            component: 'WebSocketSystem', 
-            action: 'connectionAttempt' 
-          });
-        }
+        } catch {}
       }
     }
 
@@ -88,8 +81,6 @@ export class WebSocketSystem {
       return null;
     }
 
-    // Don't automatically convert to HTTPS here - let the connection methods handle it
-    // This allows us to test HTTPS support first before forcing it
     return { backendIp, token };
   }
 
@@ -109,39 +100,16 @@ export class WebSocketSystem {
 
     this.updateStatus('connecting');
     
-    // Check if we should skip direct WebSocket due to protocol mismatch
-    const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
-    const isBackendHttp = credentials.backendIp.startsWith('http://') || 
-                         (!credentials.backendIp.startsWith('https://') && !credentials.backendIp.includes('localhost') && !credentials.backendIp.includes('127.0.0.1'));
-    
-    if (isFrontendHttps && isBackendHttp) {
-      // Skip direct WebSocket and use proxy methods directly
+    try {
+      await this.tryDirectWebSocket();
+    } catch {
       try {
         await this.tryProxyWebSocket();
-      } catch (error) {
-        logError(error, { 
-          component: 'WebSocketSystem', 
-          action: 'tryProxyWebSocket' 
-        });
-        this.startPolling();
-      }
-    } else {
-      // Try direct WebSocket first
-      try {
-        await this.tryDirectWebSocket();
-      } catch (error) {
-        logError(error, { 
-          component: 'WebSocketSystem', 
-          action: 'tryDirectWebSocket' 
-        });
+      } catch {
         try {
-          await this.tryProxyWebSocket();
-        } catch (error) {
-          logError(error, { 
-            component: 'WebSocketSystem', 
-            action: 'tryProxyWebSocket' 
-          });
-                  this.startPolling();
+          await this.tryServerSentEvents();
+        } catch {
+          this.startPolling();
         }
       }
     }
@@ -158,17 +126,7 @@ export class WebSocketSystem {
 
         const { backendIp, token } = credentials;
         const protocol = this.determineWebSocketProtocol(backendIp);
-        
-        // Ensure proper URL construction for WebSocket
-        let wsUrl: string;
-        if (backendIp.startsWith('http://') || backendIp.startsWith('https://')) {
-          // Backend IP already includes protocol
-          const baseUrl = backendIp.replace(/^https?:\/\//, '');
-          wsUrl = `${protocol}://${baseUrl}/polocloud/api/v3${this.config.path}?token=${token}`;
-        } else {
-          // Backend IP is just IP:port
-          wsUrl = `${protocol}://${backendIp}/polocloud/api/v3${this.config.path}?token=${token}`;
-        }
+        const wsUrl = `${protocol}://${backendIp}/polocloud/api/v3${this.config.path}?token=${token}`;
 
         this.ws = new WebSocket(wsUrl);
         this.protocol = protocol;
@@ -223,6 +181,52 @@ export class WebSocketSystem {
         }
 
         const { backendIp } = credentials;
+
+        const response = await fetch('/api/websocket/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            backendIp: backendIp,
+            path: this.config.path
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Proxy connection failed: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          this.method = 'websocket';
+          this.protocol = 'https';
+          this.updateStatus('connected');
+          this.reconnectAttempts = 0;
+          
+          await this.startSSEListener();
+          this.config.onConnect?.();
+          resolve();
+        } else {
+          throw new Error(result.error || 'Proxy connection failed');
+        }
+        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  private async tryServerSentEvents(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const credentials = await this.getBackendIpAndToken();
+        if (!credentials) {
+          reject(new Error('BackendIP or Token not available'));
+          return;
+        }
+
+        const { backendIp } = credentials;
+        
         const sseUrl = `/api/websocket/stream?backendIp=${encodeURIComponent(backendIp)}&path=${encodeURIComponent(this.config.path)}`;
         
         this.eventSource = new EventSource(sseUrl);
@@ -246,19 +250,15 @@ export class WebSocketSystem {
           try {
             const data = JSON.parse(event.data);
             this.handleMessage(data);
-          } catch (error) {
-            logError(error, { 
-              component: 'WebSocketSystem', 
-              action: 'handleWebSocketMessage' 
-            });
-          }
+          } catch {}
         };
         
-        this.eventSource.onerror = () => {
+        this.eventSource.onerror = (error) => {
           clearTimeout(timeout);
-          this.eventSource?.close();
-          this.eventSource = null;
-          reject(new Error('SSE connection error'));
+          this.handleError(new Error('SSE error'));
+          this.handleDisconnect();
+          this.scheduleReconnect();
+          reject(error);
         };
         
       } catch (error) {
@@ -266,7 +266,6 @@ export class WebSocketSystem {
       }
     });
   }
-
 
   private startPolling(): void {
     this.method = 'polling';
@@ -311,6 +310,31 @@ export class WebSocketSystem {
   }
 
 
+  private async startSSEListener(): Promise<void> {
+    const credentials = await this.getBackendIpAndToken();
+    if (!credentials) {
+      return;
+    }
+
+    const { backendIp } = credentials;
+    const sseUrl = `/api/websocket/stream?backendIp=${encodeURIComponent(backendIp)}&path=${encodeURIComponent(this.config.path)}`;
+    
+    this.eventSource = new EventSource(sseUrl);
+    
+    this.eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        this.handleMessage(data);
+      } catch {
+      }
+    };
+    
+    this.eventSource.onerror = () => {
+      this.eventSource?.close();
+      this.eventSource = null;
+      this.scheduleReconnect();
+    };
+  }
 
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
@@ -345,17 +369,7 @@ export class WebSocketSystem {
     const delay = Math.min(this.reconnectDelay + (this.reconnectAttempts * 2000), 15000);
     
     this.reconnectTimeout = setTimeout(() => {
-      this.connect().catch((error) => {
-        logError(error, { 
-          component: 'WebSocketSystem', 
-          action: 'reconnect' 
-        });
-        // If it's a protocol mismatch error, don't try to reconnect
-        if (error.message.includes('HTTPS frontend with HTTP backend')) {
-          this.updateStatus('error');
-          this.config.onError?.(new Error('Protocol mismatch: HTTPS frontend cannot connect to HTTP backend'));
-          return;
-        }
+      this.connect().catch(() => {
       });
     }, delay);
   }
@@ -428,15 +442,6 @@ export class WebSocketSystem {
   }
 
   private determineWebSocketProtocol(backendIp: string): 'ws' | 'wss' {
-    // Check if frontend is running on HTTPS
-    const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
-    
-    // If frontend is HTTPS, we MUST use WSS for security reasons
-    if (isFrontendHttps) {
-      return 'wss';
-    }
-    
-    // For HTTP frontend, check backend configuration
     const isLocalBackend = backendIp.includes('localhost') ||
                           backendIp.includes('127.0.0.1') || 
                           backendIp.startsWith('192.168.') ||
@@ -452,7 +457,6 @@ export class WebSocketSystem {
     return isHttpsBackend ? 'wss' : 'ws';
   }
 
-
   private handleMessage(data: string | WebSocketMessage): void {
     try {
       
@@ -461,11 +465,7 @@ export class WebSocketSystem {
       if (typeof data === 'string') {
         try {
           message = JSON.parse(data);
-        } catch (error) {
-          logError(error, { 
-            component: 'WebSocketSystem', 
-            action: 'parseMessage' 
-          });
+        } catch {
           message = {
             type: 'log',
             data: data,
@@ -481,12 +481,12 @@ export class WebSocketSystem {
         return;
       }
 
-      if ((message as unknown as { type: string }).type === 'connected' || (message as unknown as { type: string }).type === 'disconnected') {
+      if (message.type === 'connected' || message.type === 'disconnected') {
         this.config.onMessage?.(message);
         return;
       }
 
-      if (message.type === 'log' || (message as unknown as { type: string }).type === 'message') {
+      if (message.type === 'log' || message.type === 'message') {
 
         this.config.onMessage?.(message);
         return;
@@ -494,12 +494,7 @@ export class WebSocketSystem {
 
       this.config.onMessage?.(message);
       
-    } catch (error) {
-      logError(error, { 
-        component: 'WebSocketSystem', 
-        action: 'handleMessage' 
-      });
-    }
+    } catch {}
   }
 
   private handleDisconnect(): void {

@@ -35,9 +35,7 @@ export async function GET(request: NextRequest) {
           });
         }
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn(`Endpoint ${endpoint} failed:`, error);
-        }
+        console.log(`Endpoint ${endpoint} error:`, error);
       }
     }
 
@@ -47,9 +45,7 @@ export async function GET(request: NextRequest) {
     }, { status: 401 });
 
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Health check error:', error);
-    }
+    console.error('Health check error:', error);
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Connection test failed'

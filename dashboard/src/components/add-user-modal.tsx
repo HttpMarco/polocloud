@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { logError } from '@/lib/error-handling'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -116,11 +115,8 @@ export function AddUserModal({ onUserAdded }: AddUserModalProps) {
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         } catch (error) {
-            logError(error, { 
-                component: 'AddUserModal', 
-                action: 'copyPassword' 
-            });
-        }}
+        console.error('Error in add-user-modal:', error);
+      }}
 
     return (
         <Dialog open={isOpen} onOpenChange={canCreateUser ? setIsOpen : undefined}>

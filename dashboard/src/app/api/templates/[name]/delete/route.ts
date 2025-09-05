@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function DELETE(
@@ -38,11 +37,7 @@ export async function DELETE(
         error: errorData.message || 'Failed to delete template' 
       }, { status: response.status });
     }
-  } catch (error) {
-    logError(error, { 
-      component: 'TemplatesDelete', 
-      action: 'deleteTemplate' 
-    });
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -167,7 +167,7 @@ export function GroupCard({ group, index, onClick }: GroupCardProps) {
                             <span className="text-sm font-medium text-muted-foreground">Properties</span>
                         </div>
                         
-                        {(group as unknown as { properties?: { staticService?: boolean } }).properties?.staticService && (
+                        {group.properties?.staticService && (
                             <Badge 
                                 variant="outline" 
                                 className="text-xs px-2 py-1 border-green-500/50 text-green-500 bg-green-500/10"
@@ -176,7 +176,7 @@ export function GroupCard({ group, index, onClick }: GroupCardProps) {
                             </Badge>
                         )}
                         
-                        {(group as unknown as { properties?: { fallback?: boolean } }).properties?.fallback && (
+                        {group.properties?.fallback && (
                             <Badge 
                                 variant="outline" 
                                 className="text-xs px-2 py-1 border-blue-500/50 text-blue-500 bg-blue-500/10"

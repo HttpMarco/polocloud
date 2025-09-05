@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { logError } from '@/lib/error-handling'
 
 import { columns } from './columns'
 
@@ -41,12 +40,7 @@ export default function RolesPage() {
         setRoles(data)
       } else {
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'RolesPage', 
-        action: 'loadRoles' 
-      });
-    }
+    } catch {}
   }
 
   useEffect(() => {

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { buildBackendUrl } from '@/lib/api/utils'
-import { logError } from '@/lib/error-handling'
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,11 +34,7 @@ export async function GET(request: NextRequest) {
       }, { status: response.status });
     }
 
-  } catch (error) {
-    logError(error, { 
-      component: 'RolesAPI', 
-      action: 'getRoles' 
-    });
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch roles' }, { status: 500 })
   }
 }
@@ -87,11 +82,7 @@ export async function POST(request: NextRequest) {
       message: 'Rolle erfolgreich erstellt', 
       role: result.data || result
     });
-  } catch (error) {
-    logError(error, { 
-      component: 'RolesAPI', 
-      action: 'createRole' 
-    });
+  } catch {
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }

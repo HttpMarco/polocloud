@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function GET(request: NextRequest) {
@@ -41,11 +40,7 @@ export async function GET(request: NextRequest) {
         error: errorData.message || 'Failed to fetch system average' 
       }, { status: response.status });
     }
-  } catch (error) {
-    logError(error, { 
-      component: 'SystemAverage', 
-      action: 'getSystemAverage' 
-    });
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

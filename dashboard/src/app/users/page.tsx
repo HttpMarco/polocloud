@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { logError } from '@/lib/error-handling'
 
 import { columns } from './columns'
 import { API_ENDPOINTS } from '@/lib/api'
@@ -31,12 +30,7 @@ export default function UsersPage() {
           const data = await response.json()
           setUsers(data)
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'UsersPage', 
-        action: 'loadUsers' 
-      });
-    }
+    } catch {}
   }
 
   useEffect(() => {

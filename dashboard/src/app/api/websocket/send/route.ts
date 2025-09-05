@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { logError } from '@/lib/error-handling';
-import { wsConnections } from '@/lib/websocket-connections';
+import { wsConnections } from '../connect/route';
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,22 +38,15 @@ export async function POST(request: NextRequest) {
         message: 'Message sent successfully'
       });
       
-    } catch (error) {
-      logError(error, { 
-        component: 'WebSocketSend', 
-        action: 'sendMessage' 
-      });
+    } catch {
+      
       return NextResponse.json({
         success: false,
         error: 'Failed to send message'
       }, { status: 500 });
     }
 
-  } catch (error) {
-    logError(error, { 
-      component: 'WebSocketSend', 
-      action: 'mainHandler' 
-    });
+  } catch {
     return NextResponse.json({
       success: false,
       error: 'Internal server error'

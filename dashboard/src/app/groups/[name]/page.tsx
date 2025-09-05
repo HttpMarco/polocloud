@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { logError } from '@/lib/error-handling';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -57,11 +56,7 @@ export default function GroupOverviewPage() {
             } else {
                 setError('Failed to load group');
             }
-        } catch (error) {
-            logError(error, { 
-                component: 'GroupPage', 
-                action: 'loadGroup' 
-            });
+        } catch {
             setError('Failed to load group');
         } finally {
             setIsLoading(false);
@@ -81,11 +76,8 @@ export default function GroupOverviewPage() {
                 setGroupServices(servicesForGroup);
             }
         } catch (error) {
-            logError(error, { 
-                component: 'GroupPage', 
-                action: 'loadGroupServices' 
-            });
-        }}, [groupName]);
+        console.warn('Error in page:', error);
+      }}, [groupName]);
 
     useEffect(() => {
         if (groupName) {
@@ -114,11 +106,7 @@ export default function GroupOverviewPage() {
                 const errorData = await response.json();
                 toast.error(errorData.error || 'Failed to delete group');
             }
-        } catch (error) {
-            logError(error, { 
-                component: 'GroupPage', 
-                action: 'deleteGroup' 
-            });
+        } catch {
             toast.error('Failed to delete group');
         } finally {
             setIsDeleting(false);

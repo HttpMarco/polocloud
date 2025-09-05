@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { WebSocketSystem, WebSocketMessage, ConnectionStatus, ConnectionInfo, createWebSocketSystem } from '@/lib/websocket-system';
 import { processTerminalLog } from '@/lib/ansi-utils';
-import { logError } from '@/lib/error-handling';
 
 const globalMessageCache = new Map<string, number>();
 const GLOBAL_DUPLICATE_THRESHOLD = 1000;
@@ -125,11 +124,8 @@ export function useWebSocketSystem({
       if (autoConnect) {
         setTimeout(() => {
           if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
-            wsSystemRef.current.connect().catch((error) => {
-                logError(error, { 
-                    component: 'WebSocketSystem', 
-                    action: 'reconnect' 
-                });
+            wsSystemRef.current.connect().catch(() => {
+      
             });
           }
         }, 100);
@@ -251,11 +247,7 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
         const error = await response.json().catch(() => ({ error: 'Failed to send command' }));
         setLogs(prev => [...prev, `Error: ${error.error || 'Command failed'}`]);
       }
-    } catch (error) {
-      logError(error, { 
-        component: 'WebSocketSystem', 
-        action: 'sendCommand' 
-      });
+    } catch {
       setLogs(prev => [...prev, `Error: Failed to send command`]);
     }
   }, []);

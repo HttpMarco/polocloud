@@ -3,12 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-interface StepIndicatorProps {
-    currentStep: number;
-    steps: { label: string; description: string; }[];
-}
-
-export function StepIndicator({ currentStep, steps }: StepIndicatorProps) {
+export function StepIndicator() {
     return (
         <motion.div
             className="text-center mb-16"
@@ -30,15 +25,6 @@ export function StepIndicator({ currentStep, steps }: StepIndicatorProps) {
                     className="size-16 object-contain"
                 />
             </motion.div>
-            
-            <div className="mt-8">
-                <h2 className="text-2xl font-bold text-foreground mb-2">
-                    {steps[currentStep]?.label || 'Setup'}
-                </h2>
-                <p className="text-muted-foreground">
-                    {steps[currentStep]?.description || 'Configure your PoloCloud instance'}
-                </p>
-            </div>
         </motion.div>
     );
 }

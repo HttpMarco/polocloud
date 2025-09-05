@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { logError } from '@/lib/error-handling';
-import { cleanupConnection } from '@/lib/websocket-connections';
+import { wsConnections, messageQueues, cleanupConnection } from '../connect/route';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,11 +24,7 @@ export async function POST(request: NextRequest) {
       message: 'Disconnected successfully'
     });
 
-  } catch (error) {
-    logError(error, { 
-      component: 'WebSocketDisconnect', 
-      action: 'disconnectWebSocket' 
-    });
+  } catch {
     return NextResponse.json({
       success: false,
       error: 'Internal server error'

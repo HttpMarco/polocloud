@@ -60,7 +60,7 @@ export default function OnboardingPage() {
             case 1:
                 return <AdminAccountStep data={onboardingData} setData={setOnboardingData} onNext={handleNext} />;
             case 2:
-                return <OverviewStep data={onboardingData} />;
+                return <OverviewStep data={onboardingData} onNext={handleNext} />;
             default:
                 return null;
         }
