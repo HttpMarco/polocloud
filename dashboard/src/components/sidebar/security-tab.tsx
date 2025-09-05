@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { API_ENDPOINTS } from "@/lib/api";
 
 interface TokenData {
+  value: string;
   ip: string;
   userUUID: string;
   userAgent: string;
@@ -22,6 +23,7 @@ interface TokenData {
 }
 
 interface RawTokenData {
+  value: string;
   ip: string;
   userAgent: string;
   userUUID: string;
@@ -32,6 +34,7 @@ export function SecurityTab() {
   const [tokens, setTokens] = useState<TokenData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [revealedIPs, setRevealedIPs] = useState<Set<string>>(new Set());
+  
 
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -39,6 +42,53 @@ export function SecurityTab() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const parseTokensData = useCallback(async (rawTokens: RawTokenData[]): Promise<TokenData[]> => {
+    const parsedTokens: TokenData[] = [];
+
+    for (const token of rawTokens) {
+      try {
+        if (!token.ip || !token.userAgent || !token.userUUID) {
+          continue;
+        }
+
+        const { device, browser } = parseUserAgent(token.userAgent);
+        const location = await getLocationFromIP(token.ip);
+        const isCurrent = false;
+        const lastActivity = formatLastActivity(token.lastActivity);
+
+        const parsedToken = {
+          value: token.value || '',
+          ip: token.ip,
+          userUUID: token.userUUID,
+          userAgent: token.userAgent,
+          lastActivity: token.lastActivity,
+          device,
+          browser,
+          location,
+          isCurrent,
+          formattedLastActivity: lastActivity
+        };
+
+        parsedTokens.push(parsedToken);
+      } catch {
+        parsedTokens.push({
+          value: token.value || '',
+          ip: token.ip || 'Unknown',
+          userUUID: token.userUUID || 'Unknown',
+          userAgent: token.userAgent || 'Unknown',
+          lastActivity: token.lastActivity || 0,
+          device: 'Unknown',
+          browser: 'Unknown',
+          location: 'Unknown',
+          isCurrent: false,
+          formattedLastActivity: 'Unknown'
+        });
+      }
+    }
+
+    return parsedTokens;
+  }, []);
 
   const fetchTokens = useCallback(async () => {
     setIsLoading(true);
@@ -73,50 +123,17 @@ export function SecurityTab() {
     fetchTokens();
   }, [fetchTokens]);
 
-  const parseTokensData = useCallback(async (rawTokens: RawTokenData[]): Promise<TokenData[]> => {
-    const parsedTokens: TokenData[] = [];
-
-    for (const token of rawTokens) {
-      try {
-        if (!token.ip || !token.userAgent || !token.userUUID) {
-          continue;
-        }
-
-        const { device, browser } = parseUserAgent(token.userAgent);
-        const location = await getLocationFromIP(token.ip);
-        const isCurrent = false;
-        const lastActivity = formatLastActivity(token.lastActivity);
-
-        const parsedToken = {
-          ip: token.ip,
-          userUUID: token.userUUID,
-          userAgent: token.userAgent,
-          lastActivity: token.lastActivity,
-          device,
-          browser,
-          location,
-          isCurrent,
-          formattedLastActivity: lastActivity
-        };
-
-        parsedTokens.push(parsedToken);
-      } catch {
-        parsedTokens.push({
-          ip: token.ip || 'Unknown',
-          userUUID: token.userUUID || 'Unknown',
-          userAgent: token.userAgent || 'Unknown',
-          lastActivity: token.lastActivity || 0,
-          device: 'Unknown',
-          browser: 'Unknown',
-          location: 'Unknown',
-          isCurrent: false,
-          formattedLastActivity: 'Unknown'
-        });
+  const toggleIPVisibility = (ip: string) => {
+    setRevealedIPs(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(ip)) {
+        newSet.delete(ip);
+      } else {
+        newSet.add(ip);
       }
-    }
-
-    return parsedTokens;
-  }, []);
+      return newSet;
+    });
+  };
 
   const parseUserAgent = (userAgent: string): { device: string; browser: string } => {
     const ua = userAgent.toLowerCase();
@@ -382,7 +399,7 @@ export function SecurityTab() {
                     <div className="col-span-2">
                       <span className="text-muted-foreground">IP Address:</span>
                       <div
-                        className="font-mono text-xs cursor-pointer hover:text-foreground transition-colors mt-1"
+                        className="font-mono text-xs cursor-pointer hover:text-foreground transition-colors mt-1 flex items-center gap-2"
                         onClick={() => toggleIPVisibility(token.ip)}
                         title="Click to reveal/hide IP"
                       >
@@ -390,11 +407,16 @@ export function SecurityTab() {
                           className={`transition-all duration-200 ${
                             revealedIPs.has(token.ip)
                               ? 'blur-none'
-                              : 'blur-sm'
+                              : 'blur-sm select-none'
                           }`}
                         >
                           {token.ip}
                         </span>
+                        {revealedIPs.has(token.ip) ? (
+                          <EyeOff className="w-3 h-3 text-muted-foreground" />
+                        ) : (
+                          <Eye className="w-3 h-3 text-muted-foreground" />
+                        )}
                       </div>
                     </div>
                     <div className="col-span-2">

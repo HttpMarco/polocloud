@@ -17,6 +17,7 @@ import {
     RefreshCcw
 } from 'lucide-react';
 import { Service } from '@/types/services';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface ServiceCardProps {
     service: Service;
@@ -48,6 +49,10 @@ const formatMemory = (current: number, max: number): string => {
 
 export function ServiceCard({ service, index, restartingServices, onRestart }: ServiceCardProps) {
     const isRestarting = restartingServices.includes(service.name);
+
+    const { hasPermission } = usePermissions();
+    const canAccessTerminal = hasPermission('polocloud.service.screen');
+    const canRestartService = hasPermission('polocloud.service.restart');
 
     return (
         <motion.div
@@ -184,10 +189,14 @@ export function ServiceCard({ service, index, restartingServices, onRestart }: S
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="flex-1 border-border/50 text-foreground transition-all duration-200"
-                                title="Open Console"
-                                disabled={service.state === 'OFFLINE'}
-                                onClick={() => window.location.href = `/services/${service.name}/screen`}
+                                className={`flex-1 transition-all duration-200 ${
+                                    !canAccessTerminal 
+                                        ? 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30' 
+                                        : 'border-border/50 text-foreground'
+                                }`}
+                                title={!canAccessTerminal ? "No permission to access terminal" : "Open Console"}
+                                disabled={service.state === 'OFFLINE' || !canAccessTerminal}
+                                onClick={() => canAccessTerminal && (window.location.href = `/services/${service.name}/screen`)}
                             >
                                 <Terminal className="w-4 h-4 mr-2" />
                                 Terminal
@@ -196,14 +205,19 @@ export function ServiceCard({ service, index, restartingServices, onRestart }: S
                             <Button
                                 variant="outline"
                                 size="sm"
-                                className="flex-1 border-border/50 text-foreground transition-all duration-200"
-                                title="Restart Service"
+                                className={`flex-1 transition-all duration-200 ${
+                                    !canRestartService 
+                                        ? 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30' 
+                                        : 'border-border/50 text-foreground'
+                                }`}
+                                title={!canRestartService ? "No permission to restart service" : "Restart Service"}
                                 disabled={
                                     service.state === 'STARTING' ||
                                     service.state === 'OFFLINE' ||
-                                    isRestarting
+                                    isRestarting ||
+                                    !canRestartService
                                 }
-                                onClick={() => onRestart(service.name)}
+                                onClick={() => canRestartService && onRestart(service.name)}
                             >
                                 {isRestarting ? (
                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

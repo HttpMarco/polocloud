@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { Search, Plus } from 'lucide-react';
 import { CreateRoleModal } from '@/components/create-role-modal';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface RoleFiltersProps {
     searchTerm: string;
@@ -19,6 +20,9 @@ export function RoleFilters({
     onRoleCreated
 }: RoleFiltersProps) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    const { hasPermission } = usePermissions();
+    const canCreateRole = hasPermission('polocloud.role.create');
 
     const handleCreateClick = () => {
         setIsCreateModalOpen(true);
@@ -47,8 +51,15 @@ export function RoleFilters({
             <div className="flex gap-3">
                 <Button
                     onClick={handleCreateClick}
-                    className="h-9 px-4 text-sm font-medium hover:opacity-90 transition-all duration-200 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]"
-                    style={{ backgroundColor: 'oklch(75.54% .1534 231.639)' }}
+                    disabled={!canCreateRole}
+                    className={`h-9 px-4 text-sm font-medium transition-all duration-200 ${
+                        canCreateRole 
+                            ? 'hover:opacity-90 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]' 
+                            : 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30'
+                    }`}
+                    style={{ 
+                        backgroundColor: canCreateRole ? 'oklch(75.54% .1534 231.639)' : undefined
+                    }}
                 >
                     <Plus className="w-4 h-4 mr-2" />
                     Create Role
