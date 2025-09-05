@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { WebSocketSystem, WebSocketMessage, ConnectionStatus, ConnectionInfo, createWebSocketSystem } from '@/lib/websocket-system';
 import { processTerminalLog } from '@/lib/ansi-utils';
 
@@ -39,9 +39,6 @@ export function useWebSocketSystem({
 }: UseWebSocketSystemProps): UseWebSocketSystemReturn {
   
   const wsSystemRef = useRef<WebSocketSystem | null>(null);
-  
-  // ✅ Memoize path to avoid dependency issues
-  const memoizedPath = useMemo(() => path, [path]);
   const [connectionInfo, setConnectionInfo] = useState<ConnectionInfo>({
     status: 'disconnected',
     method: 'websocket',
@@ -62,15 +59,12 @@ export function useWebSocketSystem({
   });
 
   const handleMessage = useCallback((message: WebSocketMessage) => {
-    console.log('📨 Message received:', message);
-    
     if (typeof message.data === 'string') {
       const now = Date.now();
-      const messageKey = `${message.data}_${memoizedPath}`;
+      const messageKey = `${message.data}_${path}`;
       
       const lastSeen = globalMessageCache.get(messageKey);
       if (lastSeen && now - lastSeen < GLOBAL_DUPLICATE_THRESHOLD) {
-        console.log('🔄 Duplicate message ignored');
         return;
       }
       
@@ -86,25 +80,21 @@ export function useWebSocketSystem({
     }
     
     onMessageRef.current?.(message);
-  }, [memoizedPath]);
+  }, [path]);
 
   const handleConnect = useCallback(() => {
-    console.log('✅ WebSocket connected!');
     onConnectRef.current?.();
   }, []);
 
   const handleDisconnect = useCallback(() => {
-    console.log('❌ WebSocket disconnected!');
     onDisconnectRef.current?.();
   }, []);
 
   const handleError = useCallback((error: Error) => {
-    console.error('❌ WebSocket error:', error);
     onErrorRef.current?.(error);
   }, []);
 
   const handleStatusChange = useCallback((status: ConnectionStatus) => {
-    console.log('🔄 Status changed:', status);
     setConnectionInfo(prev => {
       const newInfo = { ...prev, status };
       return newInfo;
@@ -113,9 +103,6 @@ export function useWebSocketSystem({
 
   useEffect(() => {
     const initializeWebSocket = async () => {
-      console.log('🚀 Initializing WebSocket System...');
-      console.log('📋 Config:', { backendIp, path, token, autoConnect });
-      
       if (wsSystemRef.current) {
         wsSystemRef.current.disconnect();
         wsSystemRef.current = null;
@@ -134,15 +121,11 @@ export function useWebSocketSystem({
         onStatusChange: handleStatusChange
       });
 
-      console.log('✅ WebSocket System created');
-
       if (autoConnect) {
-        console.log('🔄 Auto-connecting in 100ms...');
         setTimeout(() => {
           if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
-            console.log('🔗 Starting connection...');
-            wsSystemRef.current.connect().catch((error) => {
-              console.error('❌ Connection failed:', error);
+            wsSystemRef.current.connect().catch(() => {
+      
             });
           }
         }, 100);
@@ -267,7 +250,7 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     } catch {
       setLogs(prev => [...prev, `Error: Failed to send command`]);
     }
-  }, [backendIp]);
+  }, []);
 
   const clearLogs = useCallback(() => {
     setLogs([]);
