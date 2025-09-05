@@ -198,9 +198,8 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     token,
     autoConnect,
     onMessage: (message) => {
-    
-      if (message.type === 'log' && typeof message.data === 'string') {
-        
+      // ✅ BEHOBEN: Alle String-Nachrichten verarbeiten (wie Screen-Seite)
+      if (typeof message.data === 'string') {
         const now = Date.now();
         const messageData = message.data;
         
