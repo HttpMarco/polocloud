@@ -27,8 +27,12 @@ export default function NewTerminalPage() {
       .find(row => row.startsWith('token='))
       ?.split('=')[1];
 
-    if (storedBackendIp) setBackendIp(decodeURIComponent(storedBackendIp));
-    if (storedToken) setToken(storedToken);
+    if (storedBackendIp) {
+      setBackendIp(decodeURIComponent(storedBackendIp));
+    }
+    if (storedToken) {
+      setToken(storedToken);
+    }
   }, []);
 
   const {
