@@ -107,12 +107,19 @@ export class WebSocketSystem {
     
     if (isHttpsFrontend) {
       // ✅ HTTPS Frontend: Direkt zu Proxy, da Mixed Content Problem
+      console.log('🔒 HTTPS Frontend detected, using proxy connection...');
       try {
         await this.tryProxyWebSocket();
-      } catch {
+        console.log('✅ Proxy WebSocket connection successful');
+      } catch (error) {
+        console.warn('❌ Proxy WebSocket failed:', error);
         try {
+          console.log('🔄 Trying Server-Sent Events...');
           await this.tryServerSentEvents();
-        } catch {
+          console.log('✅ SSE connection successful');
+        } catch (sseError) {
+          console.warn('❌ SSE failed:', sseError);
+          console.log('🔄 Starting polling fallback...');
           this.startPolling();
         }
       }
@@ -210,6 +217,7 @@ export class WebSocketSystem {
         }
 
         const { backendIp } = credentials;
+        console.log(`🔗 Connecting to backend via proxy: ${backendIp}${this.config.path}`);
 
         const response = await fetch('/api/websocket/connect', {
           method: 'POST',
@@ -220,11 +228,16 @@ export class WebSocketSystem {
           })
         });
         
+        console.log(`📡 Proxy response status: ${response.status}`);
+        
         if (!response.ok) {
-          throw new Error(`Proxy connection failed: ${response.status}`);
+          const errorText = await response.text();
+          console.error('❌ Proxy connection failed:', errorText);
+          throw new Error(`Proxy connection failed: ${response.status} - ${errorText}`);
         }
         
         const result = await response.json();
+        console.log('📦 Proxy response:', result);
         
         if (result.success) {
           this.method = 'websocket';
@@ -232,6 +245,7 @@ export class WebSocketSystem {
           this.updateStatus('connected');
           this.reconnectAttempts = 0;
           
+          console.log('🔄 Starting SSE listener...');
           await this.startSSEListener();
           this.config.onConnect?.();
           resolve();
@@ -240,6 +254,7 @@ export class WebSocketSystem {
         }
         
       } catch (error) {
+        console.error('❌ Proxy WebSocket error:', error);
         reject(error);
       }
     });
@@ -342,23 +357,32 @@ export class WebSocketSystem {
   private async startSSEListener(): Promise<void> {
     const credentials = await this.getBackendIpAndToken();
     if (!credentials) {
+      console.error('❌ No credentials for SSE listener');
       return;
     }
 
     const { backendIp } = credentials;
     const sseUrl = `/api/websocket/stream?backendIp=${encodeURIComponent(backendIp)}&path=${encodeURIComponent(this.config.path)}`;
     
+    console.log(`📡 Starting SSE listener: ${sseUrl}`);
     this.eventSource = new EventSource(sseUrl);
+    
+    this.eventSource.onopen = () => {
+      console.log('✅ SSE connection opened');
+    };
     
     this.eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        console.log('📨 SSE message received:', data);
         this.handleMessage(data);
-      } catch {
+      } catch (error) {
+        console.warn('❌ Failed to parse SSE message:', error);
       }
     };
     
-    this.eventSource.onerror = () => {
+    this.eventSource.onerror = (error) => {
+      console.error('❌ SSE error:', error);
       this.eventSource?.close();
       this.eventSource = null;
       this.scheduleReconnect();
@@ -475,21 +499,45 @@ export class WebSocketSystem {
     return `Frontend: ${isHttpsFrontend ? 'HTTPS' : 'HTTP'} | Method: ${this.method} | Protocol: ${this.protocol}`;
   }
 
+  // ✅ DEBUG: Vollständige Debug-Informationen
+  public getFullDebugInfo(): object {
+    const isHttpsFrontend = typeof window !== 'undefined' && 
+                           (window.location.protocol === 'https:' || 
+                            window.location.hostname.includes('vercel.app'));
+    
+    return {
+      frontend: {
+        protocol: window?.location?.protocol || 'unknown',
+        hostname: window?.location?.hostname || 'unknown',
+        isHttps: isHttpsFrontend
+      },
+      connection: {
+        status: this.status,
+        method: this.method,
+        protocol: this.protocol,
+        reconnectAttempts: this.reconnectAttempts
+      },
+      websocket: {
+        readyState: this.ws?.readyState,
+        url: this.ws?.url
+      },
+      eventSource: {
+        readyState: this.eventSource?.readyState,
+        url: this.eventSource?.url
+      }
+    };
+  }
+
   public isConnected(): boolean {
     return this.status === 'connected';
   }
 
   private determineWebSocketProtocol(backendIp: string): 'ws' | 'wss' {
-    // ✅ VERBESSERT: Mixed Content Problem beheben
-    
-    // Wenn Frontend auf HTTPS läuft (Vercel), dann IMMER wss verwenden
-    // oder über Proxy gehen (was bereits implementiert ist)
     const isHttpsFrontend = typeof window !== 'undefined' && 
                            (window.location.protocol === 'https:' || 
                             window.location.hostname.includes('vercel.app'));
     
     if (isHttpsFrontend) {
-      // ✅ HTTPS Frontend: Nur wss oder Proxy verwenden
       const isHttpsBackend = backendIp.includes('https://') || 
                             backendIp.includes(':443') ||
                             backendIp.startsWith('https://');
@@ -497,13 +545,12 @@ export class WebSocketSystem {
       if (isHttpsBackend) {
         return 'wss';
       } else {
-        // ❌ HTTP Backend mit HTTPS Frontend = Mixed Content Block
-        // Das wird automatisch zum Proxy-Fallback führen
+        // ✅ DEBUG: Bessere Fehlermeldung für Mixed Content
+        console.warn('Mixed Content detected: HTTPS Frontend cannot connect to HTTP Backend directly. Using proxy instead.');
         throw new Error('Mixed Content: HTTPS Frontend cannot connect to HTTP Backend directly');
       }
     }
     
-    // ✅ HTTP Frontend: Normale Logik
     const isLocalBackend = backendIp.includes('localhost') ||
                           backendIp.includes('127.0.0.1') || 
                           backendIp.startsWith('192.168.') ||
