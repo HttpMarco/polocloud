@@ -88,6 +88,14 @@ export class WebSocketSystem {
       return null;
     }
 
+    const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    
+    if (isFrontendHttps && !backendIp.startsWith('https://') && !backendIp.startsWith('http://')) {
+      backendIp = `https://${backendIp}`;
+    } else if (isFrontendHttps && backendIp.startsWith('http://')) {
+      backendIp = backendIp.replace('http://', 'https://');
+    }
+
     return { backendIp, token };
   }
 
@@ -145,7 +153,17 @@ export class WebSocketSystem {
 
         const { backendIp, token } = credentials;
         const protocol = this.determineWebSocketProtocol(backendIp);
-        const wsUrl = `${protocol}://${backendIp}/polocloud/api/v3${this.config.path}?token=${token}`;
+        
+        // Ensure proper URL construction for WebSocket
+        let wsUrl: string;
+        if (backendIp.startsWith('http://') || backendIp.startsWith('https://')) {
+          // Backend IP already includes protocol
+          const baseUrl = backendIp.replace(/^https?:\/\//, '');
+          wsUrl = `${protocol}://${baseUrl}/polocloud/api/v3${this.config.path}?token=${token}`;
+        } else {
+          // Backend IP is just IP:port
+          wsUrl = `${protocol}://${backendIp}/polocloud/api/v3${this.config.path}?token=${token}`;
+        }
 
         this.ws = new WebSocket(wsUrl);
         this.protocol = protocol;
@@ -474,6 +492,15 @@ export class WebSocketSystem {
   }
 
   private determineWebSocketProtocol(backendIp: string): 'ws' | 'wss' {
+    // Check if frontend is running on HTTPS
+    const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    
+    // If frontend is HTTPS, we MUST use WSS for security reasons
+    if (isFrontendHttps) {
+      return 'wss';
+    }
+    
+    // For HTTP frontend, check backend configuration
     const isLocalBackend = backendIp.includes('localhost') ||
                           backendIp.includes('127.0.0.1') || 
                           backendIp.startsWith('192.168.') ||
