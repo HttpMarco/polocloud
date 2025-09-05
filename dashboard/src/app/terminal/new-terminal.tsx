@@ -37,7 +37,7 @@ export default function NewTerminalPage() {
     isConnected,
     sendCommand,
     clearLogs
-  } = useTerminalWebSocket(undefined, undefined, true);
+  } = useTerminalWebSocket(backendIp, undefined, true);
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });

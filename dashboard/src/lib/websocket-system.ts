@@ -274,6 +274,9 @@ export class WebSocketSystem {
     this.reconnectAttempts = 0;
     this.config.onConnect?.();
     
+    // Stelle sicher, dass die Backend-Verbindung hergestellt wird
+    this.ensureBackendConnection();
+    
     this.pollingInterval = setInterval(async () => {
       try {
         const credentials = await this.getBackendIpAndToken();
@@ -334,6 +337,33 @@ export class WebSocketSystem {
       this.eventSource = null;
       this.scheduleReconnect();
     };
+  }
+
+  private async ensureBackendConnection(): Promise<void> {
+    try {
+      const credentials = await this.getBackendIpAndToken();
+      if (!credentials) {
+        return;
+      }
+
+      const { backendIp } = credentials;
+      
+      // Stelle sicher, dass die Backend-Verbindung über die API hergestellt wird
+      const response = await fetch('/api/websocket/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          backendIp: backendIp,
+          path: this.config.path
+        })
+      });
+
+      if (!response.ok) {
+        console.warn('Failed to establish backend connection for polling');
+      }
+    } catch (error) {
+      console.warn('Error ensuring backend connection:', error);
+    }
   }
 
   private startHeartbeat(): void {
