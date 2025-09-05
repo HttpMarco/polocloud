@@ -123,15 +123,7 @@ export class WebSocketSystem {
           component: 'WebSocketSystem', 
           action: 'tryProxyWebSocket' 
         });
-        try {
-          await this.tryServerSentEvents();
-        } catch (error) {
-          logError(error, { 
-            component: 'WebSocketSystem', 
-            action: 'tryServerSentEvents' 
-          });
-          this.startPolling();
-        }
+        this.startPolling();
       }
     } else {
       // Try direct WebSocket first
@@ -149,15 +141,7 @@ export class WebSocketSystem {
             component: 'WebSocketSystem', 
             action: 'tryProxyWebSocket' 
           });
-          try {
-            await this.tryServerSentEvents();
-          } catch (error) {
-            logError(error, { 
-              component: 'WebSocketSystem', 
-              action: 'tryServerSentEvents' 
-            });
-            this.startPolling();
-          }
+                  this.startPolling();
         }
       }
     }
@@ -239,52 +223,6 @@ export class WebSocketSystem {
         }
 
         const { backendIp } = credentials;
-
-        const response = await fetch('/api/websocket/connect', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            backendIp: backendIp,
-            path: this.config.path
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Proxy connection failed: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-          this.method = 'websocket';
-          this.protocol = 'https';
-          this.updateStatus('connected');
-          this.reconnectAttempts = 0;
-          
-          await this.startSSEListener();
-          this.config.onConnect?.();
-          resolve();
-        } else {
-          throw new Error(result.error || 'Proxy connection failed');
-        }
-        
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
-  private async tryServerSentEvents(): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const credentials = await this.getBackendIpAndToken();
-        if (!credentials) {
-          reject(new Error('BackendIP or Token not available'));
-          return;
-        }
-
-        const { backendIp } = credentials;
-        
         const sseUrl = `/api/websocket/stream?backendIp=${encodeURIComponent(backendIp)}&path=${encodeURIComponent(this.config.path)}`;
         
         this.eventSource = new EventSource(sseUrl);
@@ -309,19 +247,18 @@ export class WebSocketSystem {
             const data = JSON.parse(event.data);
             this.handleMessage(data);
           } catch (error) {
-          logError(error, { 
-            component: 'WebSocketSystem', 
-            action: 'connectionAttempt' 
-          });
-        }
+            logError(error, { 
+              component: 'WebSocketSystem', 
+              action: 'handleWebSocketMessage' 
+            });
+          }
         };
         
-        this.eventSource.onerror = (error) => {
+        this.eventSource.onerror = () => {
           clearTimeout(timeout);
-          this.handleError(new Error('SSE error'));
-          this.handleDisconnect();
-          this.scheduleReconnect();
-          reject(error);
+          this.eventSource?.close();
+          this.eventSource = null;
+          reject(new Error('SSE connection error'));
         };
         
       } catch (error) {
@@ -329,6 +266,7 @@ export class WebSocketSystem {
       }
     });
   }
+
 
   private startPolling(): void {
     this.method = 'polling';
@@ -373,35 +311,6 @@ export class WebSocketSystem {
   }
 
 
-  private async startSSEListener(): Promise<void> {
-    const credentials = await this.getBackendIpAndToken();
-    if (!credentials) {
-      return;
-    }
-
-    const { backendIp } = credentials;
-    const sseUrl = `/api/websocket/stream?backendIp=${encodeURIComponent(backendIp)}&path=${encodeURIComponent(this.config.path)}`;
-    
-    this.eventSource = new EventSource(sseUrl);
-    
-    this.eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        this.handleMessage(data);
-      } catch (error) {
-        logError(error, { 
-          component: 'WebSocketSystem', 
-          action: 'handleWebSocketMessage' 
-        });
-      }
-    };
-    
-    this.eventSource.onerror = () => {
-      this.eventSource?.close();
-      this.eventSource = null;
-      this.scheduleReconnect();
-    };
-  }
 
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
