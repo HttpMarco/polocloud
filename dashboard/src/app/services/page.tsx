@@ -39,7 +39,7 @@ export default function ServicesPage() {
                     }
                 } else if (message.data && typeof message.data === 'object') {
                     updateData = message.data;
-                } else if (message && message.serviceName) {
+                } else if (message && typeof message === 'object' && 'serviceName' in message) {
                     updateData = message;
                 } else {
                     return;

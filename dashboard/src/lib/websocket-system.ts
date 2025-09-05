@@ -517,12 +517,12 @@ export class WebSocketSystem {
         return;
       }
 
-      if (message.type === 'connected' || message.type === 'disconnected') {
+      if ((message as unknown as { type: string }).type === 'connected' || (message as unknown as { type: string }).type === 'disconnected') {
         this.config.onMessage?.(message);
         return;
       }
 
-      if (message.type === 'log' || message.type === 'message') {
+      if (message.type === 'log' || (message as unknown as { type: string }).type === 'message') {
 
         this.config.onMessage?.(message);
         return;

@@ -15,10 +15,9 @@ interface OnboardingData {
 
 interface OverviewStepProps {
     data: OnboardingData;
-    onNext?: () => void;
 }
 
-export function OverviewStep({ data, onNext }: OverviewStepProps) {
+export function OverviewStep({ data }: OverviewStepProps) {
     const [isCreating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
