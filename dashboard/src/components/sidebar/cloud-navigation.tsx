@@ -3,16 +3,13 @@
 import { useState, useEffect } from "react";
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, Loader2, RotateCcw } from "lucide-react";
+import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { getPlatformIcon } from "@/lib/platform-icons";
 import { useSidebarData } from "@/components/sidebar-data-provider";
 import { useWebSocketSystem } from "@/hooks/useWebSocketSystem";
 import { Group } from "@/types/groups";
 import { Service } from "@/types/services";
-import { API_ENDPOINTS } from "@/lib/api";
-import { toast } from "sonner";
 
 const cloudItems = [
   {
@@ -57,7 +54,6 @@ export function CloudNavigation() {
   const [services, setServices] = useState<Service[]>(initialServices);
   const [isGroupsLoading, setIsGroupsLoading] = useState(sidebarDataLoading);
   const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
-  const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
   useWebSocketSystem({
     path: '/services/update',
@@ -121,31 +117,6 @@ export function CloudNavigation() {
     }
   }
 
-  const handleRestartService = async (serviceName: string, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    if (restartingServices.includes(serviceName)) return;
-
-    setRestartingServices(prev => [...prev, serviceName]);
-
-    try {
-      const response = await fetch(API_ENDPOINTS.SERVICES.RESTART(serviceName), {
-        method: 'PATCH'
-      });
-
-      if (response.ok) {
-        toast.success(`Service ${serviceName} restarted successfully`);
-      } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || 'Failed to restart service');
-      }
-    } catch {
-      toast.error('Failed to restart service');
-    } finally {
-      setRestartingServices(prev => prev.filter(name => name !== serviceName));
-    }
-  };
 
   return (
     <SidebarGroup>
@@ -250,33 +221,18 @@ export function CloudNavigation() {
                         </div>
                       ) : (
                         typedServices.map((service, index) => (
-                          <div 
+                          <a 
                             key={index} 
-                            className="group flex items-center justify-between px-3 py-2 rounded-md hover:bg-sidebar-accent transition-colors"
+                            href={`/services/${service.name}/screen`}
+                            className="block px-3 py-2 rounded-md transition-colors hover:bg-sidebar-accent"
                           >
-                            <a 
-                              href={`/services/${service.name}/screen`}
-                              className="flex items-center space-x-3 flex-1 min-w-0"
-                            >
+                            <div className="flex items-center space-x-3">
                               {getServiceStatusIcon(service.state)}
                               <span className="text-sm text-sidebar-foreground/80 truncate">
                                 {service.name}
                               </span>
-                            </a>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 hover:bg-sidebar-accent-foreground/10"
-                              onClick={(e) => handleRestartService(service.name, e)}
-                              disabled={restartingServices.includes(service.name)}
-                            >
-                              {restartingServices.includes(service.name) ? (
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                              ) : (
-                                <RotateCcw className="w-3 h-3" />
-                              )}
-                            </Button>
-                          </div>
+                            </div>
+                          </a>
                         ))
                       )}
                     </div>
