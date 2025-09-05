@@ -28,22 +28,11 @@ class RestModule : PolocloudModule {
     }
 
     lateinit var httpServer: HttpServer
-        private set
-
     lateinit var jwtProvider: JwtProvider
-        private set
-
     lateinit var controllerProvider: ControllerProvider
-        private set
-
     lateinit var webSocketService: WebSocketService
-        private set
-
     lateinit var userProvider: UserProvider
-        private set
-
     lateinit var roleProvider: RoleProvider
-        private set
 
     init {
         if (Files.notExists(this.configPath)) {
