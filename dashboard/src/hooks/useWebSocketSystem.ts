@@ -125,31 +125,37 @@ export function useWebSocketSystem({
           // ✅ Production: Server-Sent Events über Proxy
           const proxyUrl = `/api/websocket-proxy?path=${encodeURIComponent(path)}${serviceName ? `&service=${encodeURIComponent(serviceName)}` : ''}`;
           
-          console.log('Terminal WebSocket Proxy Debug:', {
+          console.log(`${serviceName || 'WebSocket'} Proxy Debug:`, {
             isHttpsFrontend,
             isLocalBackend,
             path,
             serviceName,
-            proxyUrl
+            proxyUrl,
+            backendIp,
+            windowLocation: typeof window !== 'undefined' ? window.location.href : 'undefined'
           });
           
           const eventSource = new EventSource(proxyUrl);
+          
+          console.log(`${serviceName || 'WebSocket'} EventSource created:`, proxyUrl);
         
         eventSource.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            console.log('Terminal WebSocket SSE Message:', data);
+            console.log(`${serviceName || 'WebSocket'} SSE Message:`, data);
             handleMessage(data);
           } catch (error) {
             console.error('Failed to parse SSE message:', error);
           }
         };
 
-        eventSource.onerror = () => {
+        eventSource.onerror = (error) => {
+          console.error(`${serviceName || 'WebSocket'} EventSource error:`, error);
           handleStatusChange('disconnected');
         };
 
         eventSource.onopen = () => {
+          console.log(`${serviceName || 'WebSocket'} EventSource connected`);
           handleStatusChange('connected');
         };
 
@@ -163,6 +169,14 @@ export function useWebSocketSystem({
 
       } else {
         // ✅ Development: Direkte WebSocket-Verbindung
+        console.log(`${serviceName || 'WebSocket'} Development Mode:`, {
+          backendIp,
+          path,
+          serviceName,
+          isHttpsFrontend,
+          isLocalBackend
+        });
+        
         wsSystemRef.current = createWebSocketSystem({
           backendIp,
           path,
