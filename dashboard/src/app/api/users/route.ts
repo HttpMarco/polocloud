@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { buildBackendUrl } from '@/lib/api/utils'
+import { logError } from '@/lib/error-handling'
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +29,11 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json(data.data || data);
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'UsersAPI', 
+      action: 'getUsers' 
+    });
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }
@@ -75,7 +80,11 @@ export async function POST(request: NextRequest) {
       username: username
     });
 
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'UsersAPI', 
+      action: 'getUsers' 
+    });
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }

@@ -1,3 +1,5 @@
+import { logError } from './error-handling';
+
 export interface WebSocketMessage {
   type: 'log' | 'command' | 'status' | 'error' | 'heartbeat';
   data: string | object | number | boolean | null;
@@ -72,7 +74,12 @@ export class WebSocketSystem {
               token = data.token;
             } else {}
           } else {}
-        } catch {}
+        } catch (error) {
+          logError(error, { 
+            component: 'WebSocketSystem', 
+            action: 'connectionAttempt' 
+          });
+        }
       }
     }
 
@@ -102,13 +109,25 @@ export class WebSocketSystem {
     
     try {
       await this.tryDirectWebSocket();
-    } catch {
+    } catch (error) {
+      logError(error, { 
+        component: 'WebSocketSystem', 
+        action: 'tryDirectWebSocket' 
+      });
       try {
         await this.tryProxyWebSocket();
-      } catch {
+      } catch (error) {
+        logError(error, { 
+          component: 'WebSocketSystem', 
+          action: 'tryProxyWebSocket' 
+        });
         try {
           await this.tryServerSentEvents();
-        } catch {
+        } catch (error) {
+          logError(error, { 
+            component: 'WebSocketSystem', 
+            action: 'tryServerSentEvents' 
+          });
           this.startPolling();
         }
       }
@@ -250,7 +269,12 @@ export class WebSocketSystem {
           try {
             const data = JSON.parse(event.data);
             this.handleMessage(data);
-          } catch {}
+          } catch (error) {
+          logError(error, { 
+            component: 'WebSocketSystem', 
+            action: 'connectionAttempt' 
+          });
+        }
         };
         
         this.eventSource.onerror = (error) => {
@@ -325,7 +349,11 @@ export class WebSocketSystem {
       try {
         const data = JSON.parse(event.data);
         this.handleMessage(data);
-      } catch {
+      } catch (error) {
+        logError(error, { 
+          component: 'WebSocketSystem', 
+          action: 'handleWebSocketMessage' 
+        });
       }
     };
     
@@ -369,7 +397,11 @@ export class WebSocketSystem {
     const delay = Math.min(this.reconnectDelay + (this.reconnectAttempts * 2000), 15000);
     
     this.reconnectTimeout = setTimeout(() => {
-      this.connect().catch(() => {
+      this.connect().catch((error) => {
+        logError(error, { 
+          component: 'WebSocketSystem', 
+          action: 'reconnect' 
+        });
       });
     }, delay);
   }
@@ -465,7 +497,11 @@ export class WebSocketSystem {
       if (typeof data === 'string') {
         try {
           message = JSON.parse(data);
-        } catch {
+        } catch (error) {
+          logError(error, { 
+            component: 'WebSocketSystem', 
+            action: 'parseMessage' 
+          });
           message = {
             type: 'log',
             data: data,
@@ -494,7 +530,12 @@ export class WebSocketSystem {
 
       this.config.onMessage?.(message);
       
-    } catch {}
+    } catch (error) {
+      logError(error, { 
+        component: 'WebSocketSystem', 
+        action: 'handleMessage' 
+      });
+    }
   }
 
   private handleDisconnect(): void {

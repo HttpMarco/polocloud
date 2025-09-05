@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 
-import { messageQueues } from '../connect/route';
+import { messageQueues } from '@/lib/websocket-connections';
 
 const sseClients = new Map<string, ReadableStreamDefaultController>();
 
@@ -49,7 +50,10 @@ export async function GET(request: NextRequest) {
               )
             );
           } catch (error) {
-        console.warn('API error in route:', error);
+        logError(error, { 
+          component: 'WebSocketStream', 
+          action: 'handleSSE' 
+        });
       }});
       }
 
@@ -58,7 +62,10 @@ export async function GET(request: NextRequest) {
         try {
           controller.close();
         } catch (error) {
-        console.warn('API error in route:', error);
+        logError(error, { 
+          component: 'WebSocketStream', 
+          action: 'handleSSE' 
+        });
       }});
     }
   });

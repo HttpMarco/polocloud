@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 interface GroupCreateRequest {
@@ -81,8 +82,11 @@ export async function POST(request: NextRequest) {
       message: result.message || 'Group created successfully'
     }, { status: 201 });
     
-  } catch {
-
+  } catch (error) {
+    logError(error, { 
+      component: 'GroupsCreate', 
+      action: 'createGroup' 
+    });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

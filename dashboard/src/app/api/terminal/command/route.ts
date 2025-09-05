@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function POST(request: NextRequest) {
@@ -44,7 +45,11 @@ export async function POST(request: NextRequest) {
         error: errorData.message || 'Failed to execute command' 
       }, { status: response.status });
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'TerminalCommand', 
+      action: 'executeCommand' 
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

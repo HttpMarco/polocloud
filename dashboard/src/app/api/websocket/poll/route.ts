@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { messageQueues } from '../connect/route';
+import { logError } from '@/lib/error-handling';
+import { messageQueues } from '@/lib/websocket-connections';
 
 const clientPollingState = new Map<string, {
   lastPolledIndex: number;
@@ -56,7 +57,11 @@ export async function POST(request: NextRequest) {
       totalMessages: queue.length
     });
 
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'WebSocketPoll', 
+      action: 'pollMessages' 
+    });
     return NextResponse.json({
       success: false,
       error: 'Internal server error'

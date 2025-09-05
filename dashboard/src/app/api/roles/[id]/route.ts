@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { buildBackendUrl } from '@/lib/api/utils'
+import { logError } from '@/lib/error-handling'
 
 export async function DELETE(
   request: NextRequest,
@@ -34,7 +35,11 @@ export async function DELETE(
         error: errorData.message || 'Error deleting role in backend' 
       }, { status: response.status });
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'RolesDelete', 
+      action: 'deleteRole' 
+    });
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }

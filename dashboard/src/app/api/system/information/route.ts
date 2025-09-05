@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function GET(request: NextRequest) {
@@ -32,7 +33,11 @@ export async function GET(request: NextRequest) {
     const data = await backendResponse.json();
     return NextResponse.json(data.data || data);
 
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'SystemInformation', 
+      action: 'getSystemInfo' 
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

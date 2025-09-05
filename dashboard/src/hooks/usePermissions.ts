@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react';
+import { logError } from '@/lib/error-handling';
 
 interface UserData {
   username: string;
@@ -44,7 +45,12 @@ const loadUserData = async (): Promise<UserData> => {
                   const roleData = await roleResponse.json();
                   role = roleData;
                 }
-              } catch {}
+              } catch (error) {
+                logError(error, { 
+                  component: 'UsePermissions', 
+                  action: 'loadRoleData' 
+                });
+              }
             }
 
             if (role) {
@@ -53,7 +59,12 @@ const loadUserData = async (): Promise<UserData> => {
             }
           }
         }
-      } catch {}
+      } catch (error) {
+        logError(error, { 
+          component: 'UsePermissions', 
+          action: 'loadUserData' 
+        });
+      }
 
       if (adminUsername === 'admin') {
         const role = {
@@ -75,7 +86,11 @@ const loadUserData = async (): Promise<UserData> => {
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
     
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'UsePermissions', 
+      action: 'loadUserData' 
+    });
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
   }
@@ -89,7 +104,11 @@ export function usePermissions() {
     try {
       const data = await loadUserData();
       setUserData(data);
-    } catch {
+    } catch (error) {
+      logError(error, { 
+        component: 'UsePermissions', 
+        action: 'loadData' 
+      });
       setUserData({ username: 'Guest', userUUID: '', role: null });
     } finally {
       setIsLoading(false);
@@ -106,7 +125,11 @@ export function usePermissions() {
           resetUserDataCache();
           loadData();
         }
-      } catch {
+      } catch (error) {
+        logError(error, { 
+          component: 'UsePermissions', 
+          action: 'intervalCheck' 
+        });
         loadData();
       }
     }, 5 * 60 * 1000);

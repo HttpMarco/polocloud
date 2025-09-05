@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 
 
 export async function POST(request: NextRequest) {
@@ -87,7 +88,11 @@ export async function POST(request: NextRequest) {
         { status: response.status }
       );
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'AuthLogin', 
+      action: 'loginUser' 
+    });
     return NextResponse.json(
       { error: 'Interner Server-Fehler' },
       { status: 500 }

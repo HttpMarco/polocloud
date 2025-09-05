@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { WebSocketSystem, WebSocketMessage, ConnectionStatus, ConnectionInfo, createWebSocketSystem } from '@/lib/websocket-system';
 import { processTerminalLog } from '@/lib/ansi-utils';
+import { logError } from '@/lib/error-handling';
 
 const globalMessageCache = new Map<string, number>();
 const GLOBAL_DUPLICATE_THRESHOLD = 1000;
@@ -69,7 +70,7 @@ export function useWebSocketSystem({
       }
       
       globalMessageCache.set(messageKey, now);
-
+      
       if (now % 10000 < 100) {
         globalMessageCache.forEach((timestamp, key) => {
           if (now - timestamp > GLOBAL_DUPLICATE_THRESHOLD * 2) {
@@ -124,7 +125,11 @@ export function useWebSocketSystem({
       if (autoConnect) {
         setTimeout(() => {
           if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
-            wsSystemRef.current.connect().catch(() => {
+            wsSystemRef.current.connect().catch((error) => {
+                logError(error, { 
+                    component: 'WebSocketSystem', 
+                    action: 'reconnect' 
+                });
             });
           }
         }, 100);
@@ -197,11 +202,12 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     token,
     autoConnect,
     onMessage: (message) => {
+    
       if (message.type === 'log' && typeof message.data === 'string') {
         
         const now = Date.now();
         const messageData = message.data;
-
+        
         if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 500) {
           return;
         }
@@ -245,7 +251,11 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
         const error = await response.json().catch(() => ({ error: 'Failed to send command' }));
         setLogs(prev => [...prev, `Error: ${error.error || 'Command failed'}`]);
       }
-    } catch {
+    } catch (error) {
+      logError(error, { 
+        component: 'WebSocketSystem', 
+        action: 'sendCommand' 
+      });
       setLogs(prev => [...prev, `Error: Failed to send command`]);
     }
   }, []);

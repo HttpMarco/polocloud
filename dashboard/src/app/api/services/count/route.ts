@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function GET(request: NextRequest) {
@@ -13,9 +14,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No authentication token found' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const from = searchParams.get('from');
-    const to = searchParams.get('to');
 
     const listUrl = buildBackendUrl(backendIp, '/polocloud/api/v3/services/list');
     const listResponse = await fetch(listUrl, {
@@ -42,7 +40,11 @@ export async function GET(request: NextRequest) {
       const errorData = await listResponse.json();
       return NextResponse.json({ error: errorData.message || 'Failed to fetch service count' }, { status: listResponse.status });
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'ServicesCount', 
+      action: 'getServiceCount' 
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

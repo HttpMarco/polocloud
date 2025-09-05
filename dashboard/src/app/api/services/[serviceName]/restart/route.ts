@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function PATCH(
@@ -39,7 +40,11 @@ export async function PATCH(
         error: errorData.message || 'Failed to restart service' 
       }, { status: response.status });
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'ServiceRestart', 
+      action: 'restartService' 
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

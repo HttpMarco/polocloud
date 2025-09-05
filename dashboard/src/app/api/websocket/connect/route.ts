@@ -1,26 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
+import { wsConnections, messageQueues, cleanupConnection } from '@/lib/websocket-connections';
 
-interface WebSocketMessage {
-  type: 'message' | 'disconnect';
-  data?: string;
-  code?: number;
-  timestamp: number;
-}
-
-const wsConnections = new Map<string, WebSocket>();
-const messageQueues = new Map<string, WebSocketMessage[]>();
-
-const cleanupConnection = (connectionKey: string) => {
-  const ws = wsConnections.get(connectionKey);
-  if (ws) {
-    try {
-      ws.close();
-    } catch {
-    }
-  }
-  wsConnections.delete(connectionKey);
-  messageQueues.delete(connectionKey);
-};
 
 let cleanupInterval: NodeJS.Timeout | null = null;
 
@@ -153,14 +134,22 @@ export async function POST(request: NextRequest) {
         };
       });
 
-    } catch {
+    } catch (error) {
+      logError(error, { 
+        component: 'WebSocketConnect', 
+        action: 'createWebSocketConnection' 
+      });
       return NextResponse.json({
         success: false,
         error: 'Failed to create WebSocket connection'
       }, { status: 500 });
     }
 
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'WebSocketConnect', 
+      action: 'mainHandler' 
+    });
     return NextResponse.json({
       success: false,
       error: 'Internal server error'
@@ -182,5 +171,3 @@ function determineBackendProtocol(backendIp: string): 'ws' | 'wss' {
 
   return 'ws';
 }
-
-export { wsConnections, messageQueues, cleanupConnection };

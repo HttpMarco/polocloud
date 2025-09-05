@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function POST(request: NextRequest) {
@@ -43,7 +44,11 @@ export async function POST(request: NextRequest) {
         error: errorData.message || 'Failed to create template' 
       }, { status: response.status });
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'TemplatesCreate', 
+      action: 'createTemplate' 
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils';
 
 export async function GET(request: NextRequest) {
@@ -29,7 +30,11 @@ export async function GET(request: NextRequest) {
       const errorData = await response.json();
       return NextResponse.json({ error: errorData.message || 'Failed to fetch groups' }, { status: response.status });
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'GroupsList', 
+      action: 'getGroups' 
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logError } from '@/lib/error-handling';
 import { buildBackendUrl } from '@/lib/api/utils'
 
 export async function GET(request: NextRequest) {
@@ -42,7 +43,11 @@ export async function GET(request: NextRequest) {
       });
     }
 
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'AuthMe', 
+      action: 'getUserData' 
+    });
     return NextResponse.json({ 
       authenticated: false, 
       user: null,

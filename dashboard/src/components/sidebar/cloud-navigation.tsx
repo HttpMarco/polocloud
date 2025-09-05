@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
+import { logError } from '@/lib/error-handling';
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, Loader2 } from "lucide-react";
@@ -64,8 +65,7 @@ export function CloudNavigation() {
         if (typeof message.data === 'string') {
           try {
             updateData = JSON.parse(message.data);
-          } catch (parseError) {
-            console.error(parseError);
+          } catch {
             return;
           }
         } else if (message.data && typeof message.data === 'object') {
@@ -82,7 +82,10 @@ export function CloudNavigation() {
           ));
         }
       } catch (error) {
-        console.warn('Sidebar error in cloud-navigation:', error);
+        logError(error, { 
+            component: 'CloudNavigation', 
+            action: 'handleWebSocketMessage' 
+        });
       }}
   });
 

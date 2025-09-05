@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { buildBackendUrl } from '@/lib/api/utils'
+import { logError } from '@/lib/error-handling'
 
 export async function DELETE(
   request: NextRequest,
@@ -34,7 +35,11 @@ export async function DELETE(
         error: errorData.message || 'Error deleting user in backend' 
       }, { status: response.status });
     }
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'UsersDelete', 
+      action: 'deleteUser' 
+    });
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }
@@ -86,7 +91,11 @@ export async function PATCH(
       success: true,
       message: result.message || 'User successfully edited'
     });
-  } catch {
+  } catch (error) {
+    logError(error, { 
+      component: 'UsersDelete', 
+      action: 'deleteUser' 
+    });
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }
