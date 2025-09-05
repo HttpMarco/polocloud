@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
         CREATE: '/api/users',
         EDIT: (uuid: string) => `/api/users/${uuid}`,
         DELETE: (uuid: string) => `/api/users/${uuid}`,
+        SELF: '/api/user/self',
         CHANGE_PASSWORD: '/api/user/change-password',
         TOKENS: '/api/user/tokens',
         TOKEN_DELETE: (tokenValue: string) => `/api/user/token/${tokenValue}`,
