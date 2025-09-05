@@ -109,13 +109,13 @@ export class WebSocketSystem {
 
     this.updateStatus('connecting');
     
-    try {
-      await this.tryDirectWebSocket();
-    } catch (error) {
-      logError(error, { 
-        component: 'WebSocketSystem', 
-        action: 'tryDirectWebSocket' 
-      });
+    // Check if we should skip direct WebSocket due to protocol mismatch
+    const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    const isBackendHttp = credentials.backendIp.startsWith('http://') || 
+                         (!credentials.backendIp.startsWith('https://') && !credentials.backendIp.includes('localhost') && !credentials.backendIp.includes('127.0.0.1'));
+    
+    if (isFrontendHttps && isBackendHttp) {
+      // Skip direct WebSocket and use proxy methods directly
       try {
         await this.tryProxyWebSocket();
       } catch (error) {
@@ -133,6 +133,33 @@ export class WebSocketSystem {
           this.startPolling();
         }
       }
+    } else {
+      // Try direct WebSocket first
+      try {
+        await this.tryDirectWebSocket();
+      } catch (error) {
+        logError(error, { 
+          component: 'WebSocketSystem', 
+          action: 'tryDirectWebSocket' 
+        });
+        try {
+          await this.tryProxyWebSocket();
+        } catch (error) {
+          logError(error, { 
+            component: 'WebSocketSystem', 
+            action: 'tryProxyWebSocket' 
+          });
+          try {
+            await this.tryServerSentEvents();
+          } catch (error) {
+            logError(error, { 
+              component: 'WebSocketSystem', 
+              action: 'tryServerSentEvents' 
+            });
+            this.startPolling();
+          }
+        }
+      }
     }
   }
 
@@ -146,20 +173,6 @@ export class WebSocketSystem {
         }
 
         const { backendIp, token } = credentials;
-        const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
-        
-        // If frontend is HTTPS, check if backend is HTTP
-        if (isFrontendHttps) {
-          const isBackendHttp = backendIp.startsWith('http://') || 
-                               (!backendIp.startsWith('https://') && !backendIp.includes('localhost') && !backendIp.includes('127.0.0.1'));
-          
-          if (isBackendHttp) {
-            // Frontend is HTTPS but backend is HTTP, skip direct WebSocket and use proxy
-            reject(new Error('HTTPS frontend with HTTP backend, using proxy instead'));
-            return;
-          }
-        }
-        
         const protocol = this.determineWebSocketProtocol(backendIp);
         
         // Ensure proper URL construction for WebSocket
@@ -428,6 +441,12 @@ export class WebSocketSystem {
           component: 'WebSocketSystem', 
           action: 'reconnect' 
         });
+        // If it's a protocol mismatch error, don't try to reconnect
+        if (error.message.includes('HTTPS frontend with HTTP backend')) {
+          this.updateStatus('error');
+          this.config.onError?.(new Error('Protocol mismatch: HTTPS frontend cannot connect to HTTP backend'));
+          return;
+        }
       });
     }, delay);
   }
