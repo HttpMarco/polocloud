@@ -9,12 +9,16 @@ import { Terminal, Send, Trash2, WifiOff, Loader2, Activity } from 'lucide-react
 import { motion } from 'framer-motion';
 import GlobalNavbar from '@/components/global-navbar';
 import { useTerminalWebSocket } from '@/hooks/useWebSocketSystem';
+import { usePermissions } from '@/hooks/usePermissions';
 
 export default function NewTerminalPage() {
   const [command, setCommand] = useState('');
   const [backendIp, setBackendIp] = useState<string>('');
   const [, setToken] = useState<string>('');
   const logsEndRef = useRef<HTMLDivElement>(null);
+
+  const { hasPermission } = usePermissions();
+  const canSendCommands = hasPermission('polocloud.terminal.command');
 
   useEffect(() => {
     const storedBackendIp = localStorage.getItem('backendIp');
@@ -40,7 +44,7 @@ export default function NewTerminalPage() {
   }, [logs]);
 
   const handleSendCommand = () => {
-    if (!command.trim() || !isConnected) return;
+    if (!command.trim() || !isConnected || !canSendCommands) return;
     
     sendCommand(command);
     setCommand('');
@@ -177,17 +181,29 @@ export default function NewTerminalPage() {
                 value={command}
                 onChange={(e) => setCommand(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={isConnected ? "Enter command..." : "Not connected"}
-                disabled={!isConnected}
-                className="font-mono bg-transparent border-none text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
+                placeholder={
+                  !canSendCommands 
+                    ? "No permission to send commands" 
+                    : isConnected 
+                      ? "Enter command..." 
+                      : "Not connected"
+                }
+                disabled={!isConnected || !canSendCommands}
+                className={`font-mono bg-transparent border-none text-white focus-visible:ring-0 focus-visible:ring-offset-0 px-0 ${
+                  !canSendCommands ? 'placeholder-red-500' : 'placeholder-gray-500'
+                }`}
               />
 
               <Button 
                 onClick={handleSendCommand}
-                disabled={!command.trim() || !isConnected}
+                disabled={!command.trim() || !isConnected || !canSendCommands}
                 size="sm"
                 variant="ghost"
-                className="text-gray-400 hover:text-white"
+                className={`${
+                  !canSendCommands 
+                    ? 'text-red-500 cursor-not-allowed' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -197,6 +213,13 @@ export default function NewTerminalPage() {
               <div className="text-sm text-red-400 mt-2 flex items-center gap-2">
                 <WifiOff className="h-4 w-4" />
                 Not connected to backend. Please check your connection.
+              </div>
+            )}
+            
+            {!canSendCommands && (
+              <div className="text-sm text-red-400 mt-2 flex items-center gap-2">
+                <Terminal className="h-4 w-4" />
+                You don't have permission to send terminal commands.
               </div>
             )}
           </div>

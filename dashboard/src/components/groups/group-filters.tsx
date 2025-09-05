@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { FilterDropdown } from '@/components/ui/filter-dropdown';
 import { motion } from 'framer-motion';
 import { Search, Plus } from 'lucide-react';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface GroupFiltersProps {
     searchTerm: string;
@@ -23,6 +24,10 @@ export function GroupFilters({
     availablePlatforms,
     onCreateClick
 }: GroupFiltersProps) {
+    const { hasPermission } = usePermissions();
+
+    const canCreateGroup = hasPermission('polocloud.group.create');
+    
     return (
         <motion.div 
             className="flex flex-col sm:flex-row gap-4"
@@ -56,8 +61,15 @@ export function GroupFilters({
 
                 <Button
                     onClick={onCreateClick}
-                    className="h-9 px-4 text-sm font-medium hover:opacity-90 transition-all duration-200 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]"
-                    style={{ backgroundColor: 'oklch(75.54% .1534 231.639)' }}
+                    disabled={!canCreateGroup}
+                    className={`h-9 px-4 text-sm font-medium transition-all duration-200 ${
+                        canCreateGroup 
+                            ? 'hover:opacity-90 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]' 
+                            : 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30'
+                    }`}
+                    style={{ 
+                        backgroundColor: canCreateGroup ? 'oklch(75.54% .1534 231.639)' : undefined
+                    }}
                 >
                     <Plus className="w-4 h-4 mr-2" />
                     Create Group
