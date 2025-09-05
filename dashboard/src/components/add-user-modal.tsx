@@ -16,6 +16,7 @@ import {
 import { Plus, Copy, RefreshCw, Check } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
+import { usePermissions } from '@/hooks/usePermissions'
 
 interface AddUserModalProps {
     onUserAdded: (username: string, password: string) => void
@@ -38,6 +39,9 @@ export function AddUserModal({ onUserAdded }: AddUserModalProps) {
     const [copied, setCopied] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const [error, setError] = useState('')
+
+    const { hasPermission } = usePermissions()
+    const canCreateUser = hasPermission('polocloud.user.create')
 
     useEffect(() => {
         if (isOpen) {
@@ -114,15 +118,22 @@ export function AddUserModal({ onUserAdded }: AddUserModalProps) {
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
+        <Dialog open={isOpen} onOpenChange={canCreateUser ? setIsOpen : undefined}>
+            <DialogTrigger asChild disabled={!canCreateUser}>
                 <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={{ scale: canCreateUser ? 1.02 : 1 }}
+                    whileTap={{ scale: canCreateUser ? 0.98 : 1 }}
                 >
                     <Button
-                        className="h-9 px-4 text-sm font-medium hover:opacity-90 transition-all duration-200 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]"
-                        style={{ backgroundColor: 'oklch(75.54% .1534 231.639)' }}
+                        disabled={!canCreateUser}
+                        className={`h-9 px-4 text-sm font-medium transition-all duration-200 ${
+                            canCreateUser 
+                                ? 'hover:opacity-90 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]' 
+                                : 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30'
+                        }`}
+                        style={{ 
+                            backgroundColor: canCreateUser ? 'oklch(75.54% .1534 231.639)' : undefined
+                        }}
                     >
                         <Plus className="w-4 h-4 mr-2" />
                         Add User

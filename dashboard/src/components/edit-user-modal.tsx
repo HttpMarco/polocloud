@@ -11,6 +11,7 @@ import { motion } from 'framer-motion'
 interface EditUserModalProps {
   user: { uuid: string; username: string; role: number }
   onUserEdited: () => void
+  disabled?: boolean
 }
 
 interface Role {
@@ -24,7 +25,7 @@ interface CurrentUser {
   username: string
 }
 
-export function EditUserModal({ user, onUserEdited }: EditUserModalProps) {
+export function EditUserModal({ user, onUserEdited, disabled = false }: EditUserModalProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [roles, setRoles] = useState<Role[]>([])
@@ -101,10 +102,22 @@ export function EditUserModal({ user, onUserEdited }: EditUserModalProps) {
   const selectedRole = roles.find(role => role.id === selectedRoleId)
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Button variant="ghost" size="sm" className="h-10 w-10 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+    <Dialog open={isOpen} onOpenChange={disabled ? undefined : setIsOpen}>
+      <DialogTrigger asChild disabled={disabled}>
+        <motion.div 
+          whileHover={{ scale: disabled ? 1 : 1.05 }} 
+          whileTap={{ scale: disabled ? 1 : 0.95 }}
+        >
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            disabled={disabled}
+            className={`h-10 w-10 ${
+              disabled 
+                ? 'opacity-40 cursor-not-allowed text-muted-foreground' 
+                : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
+            }`}
+          >
             <Edit2 className="w-5 h-5" />
           </Button>
         </motion.div>

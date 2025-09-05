@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { Moon, Sparkles, Globe, Palette, TreePine, Flame, Monitor } from "lucide-react";
+import { Moon, Sparkles, Globe, Palette, TreePine, Flame, Monitor, Zap, Heart, Coffee, Mountain, Star } from "lucide-react";
 
 export function AppearanceTab() {
   const [selectedTheme, setSelectedTheme] = useState('dark');
@@ -48,11 +48,47 @@ export function AppearanceTab() {
       icon: Flame,
       description: 'Warm orange-red theme',
       colors: ['#2a0a0a', '#3a1a1a', '#f97316']
+    },
+    { 
+      id: 'neon', 
+      name: 'Neon', 
+      icon: Zap,
+      description: 'Electric neon cyberpunk theme',
+      colors: ['#0a0a0a', '#1a0a1a', '#00ff88']
+    },
+    { 
+      id: 'rose', 
+      name: 'Rose', 
+      icon: Heart,
+      description: 'Elegant rose gold theme',
+      colors: ['#2a0a1a', '#3a1a2a', '#f43f5e']
+    },
+    { 
+      id: 'coffee', 
+      name: 'Coffee', 
+      icon: Coffee,
+      description: 'Warm coffee brown theme',
+      colors: ['#1a0f0a', '#2a1f1a', '#d2691e']
+    },
+    { 
+      id: 'mountain', 
+      name: 'Mountain', 
+      icon: Mountain,
+      description: 'Cool mountain blue theme',
+      colors: ['#0a1a2a', '#1a2a3a', '#3b82f6']
+    },
+    { 
+      id: 'cosmic', 
+      name: 'Cosmic', 
+      icon: Star,
+      description: 'Deep space cosmic theme',
+      colors: ['#0a0a2a', '#1a1a3a', '#8b5cf6']
     }
   ];
 
   const applyTheme = (themeId: string) => {
-    document.documentElement.classList.remove('dark', 'darker', 'ocean', 'purple', 'forest', 'sunset', 'light');
+    const allThemes = ['dark', 'darker', 'ocean', 'purple', 'forest', 'sunset', 'neon', 'rose', 'coffee', 'mountain', 'cosmic', 'light'];
+    document.documentElement.classList.remove(...allThemes);
 
     if (themeId !== 'light' && themeId !== 'custom') {
       document.documentElement.classList.add(themeId);
@@ -87,7 +123,7 @@ export function AppearanceTab() {
                 : 'border-border bg-muted/20 hover:border-primary/50 hover:bg-primary/5 hover:shadow-md'
             }`}
             onClick={() => {
-              if (theme.id === 'dark' || theme.id === 'darker' || theme.id === 'ocean' || theme.id === 'purple' || theme.id === 'forest' || theme.id === 'sunset') {
+              if (theme.id !== 'light' && theme.id !== 'custom') {
                 applyTheme(theme.id);
               }
             }}

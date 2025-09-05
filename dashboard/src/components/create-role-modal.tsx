@@ -41,6 +41,22 @@ const availablePermissions = [
   { id: "polocloud.user.self.change-password", label: "Change Password", category: "Self" },
   { id: "polocloud.user.self.tokens", label: "View Tokens", category: "Self" },
   { id: "polocloud.user.self.token.delete", label: "Delete Tokens", category: "Self" },
+
+  { id: "polocloud.user.create", label: "Create Users", category: "Admin" },
+  { id: "polocloud.user.edit", label: "Edit Users", category: "Admin" },
+  { id: "polocloud.user.delete", label: "Delete Users", category: "Admin" },
+  { id: "polocloud.role.create", label: "Create Roles", category: "Admin" },
+  { id: "polocloud.role.edit", label: "Edit Roles", category: "Admin" },
+  { id: "polocloud.role.delete", label: "Delete Roles", category: "Admin" },
+  { id: "polocloud.group.create", label: "Create Groups", category: "Admin" },
+  { id: "polocloud.group.edit", label: "Edit Groups", category: "Admin" },
+  { id: "polocloud.group.delete", label: "Delete Groups", category: "Admin" },
+  { id: "polocloud.service.create", label: "Create Services", category: "Admin" },
+  { id: "polocloud.service.edit", label: "Edit Services", category: "Admin" },
+  { id: "polocloud.service.delete", label: "Delete Services", category: "Admin" },
+  { id: "polocloud.template.create", label: "Create Templates", category: "Admin" },
+  { id: "polocloud.template.edit", label: "Edit Templates", category: "Admin" },
+  { id: "polocloud.template.delete", label: "Delete Templates", category: "Admin" },
 ]
 
 export function CreateRoleModal({ onRoleAdded, isOpen: externalIsOpen, onOpenChange }: CreateRoleModalProps) {
