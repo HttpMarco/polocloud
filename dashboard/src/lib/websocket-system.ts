@@ -1,5 +1,5 @@
 export interface WebSocketMessage {
-  type: 'log' | 'command' | 'status' | 'error' | 'heartbeat';
+  type: 'log' | 'command' | 'status' | 'error' | 'heartbeat' | 'connected' | 'disconnected' | 'message';
   data: string | object | number | boolean | null;
   timestamp?: number;
   service?: string;
@@ -100,9 +100,13 @@ export class WebSocketSystem {
 
     this.updateStatus('connecting');
     
-    try {
-      await this.tryDirectWebSocket();
-    } catch {
+    // ✅ VERBESSERT: Intelligente Verbindungsstrategie
+    const isHttpsFrontend = typeof window !== 'undefined' && 
+                           (window.location.protocol === 'https:' || 
+                            window.location.hostname.includes('vercel.app'));
+    
+    if (isHttpsFrontend) {
+      // ✅ HTTPS Frontend: Direkt zu Proxy, da Mixed Content Problem
       try {
         await this.tryProxyWebSocket();
       } catch {
@@ -110,6 +114,21 @@ export class WebSocketSystem {
           await this.tryServerSentEvents();
         } catch {
           this.startPolling();
+        }
+      }
+    } else {
+      // ✅ HTTP Frontend: Normale Fallback-Kette
+      try {
+        await this.tryDirectWebSocket();
+      } catch {
+        try {
+          await this.tryProxyWebSocket();
+        } catch {
+          try {
+            await this.tryServerSentEvents();
+          } catch {
+            this.startPolling();
+          }
         }
       }
     }
@@ -125,7 +144,17 @@ export class WebSocketSystem {
         }
 
         const { backendIp, token } = credentials;
-        const protocol = this.determineWebSocketProtocol(backendIp);
+        
+        // ✅ VERBESSERT: Bessere Fehlerbehandlung für Mixed Content
+        let protocol: 'ws' | 'wss';
+        try {
+          protocol = this.determineWebSocketProtocol(backendIp);
+        } catch {
+          // Mixed Content Problem - direkt zu Proxy weiterleiten
+          reject(new Error('Mixed Content detected, using proxy instead'));
+          return;
+        }
+        
         const wsUrl = `${protocol}://${backendIp}/polocloud/api/v3${this.config.path}?token=${token}`;
 
         this.ws = new WebSocket(wsUrl);
@@ -437,21 +466,55 @@ export class WebSocketSystem {
     };
   }
 
+  // ✅ DEBUG: Verbindungsmethode anzeigen
+  public getConnectionDebugInfo(): string {
+    const isHttpsFrontend = typeof window !== 'undefined' && 
+                           (window.location.protocol === 'https:' || 
+                            window.location.hostname.includes('vercel.app'));
+    
+    return `Frontend: ${isHttpsFrontend ? 'HTTPS' : 'HTTP'} | Method: ${this.method} | Protocol: ${this.protocol}`;
+  }
+
   public isConnected(): boolean {
     return this.status === 'connected';
   }
 
   private determineWebSocketProtocol(backendIp: string): 'ws' | 'wss' {
+    // ✅ VERBESSERT: Mixed Content Problem beheben
+    
+    // Wenn Frontend auf HTTPS läuft (Vercel), dann IMMER wss verwenden
+    // oder über Proxy gehen (was bereits implementiert ist)
+    const isHttpsFrontend = typeof window !== 'undefined' && 
+                           (window.location.protocol === 'https:' || 
+                            window.location.hostname.includes('vercel.app'));
+    
+    if (isHttpsFrontend) {
+      // ✅ HTTPS Frontend: Nur wss oder Proxy verwenden
+      const isHttpsBackend = backendIp.includes('https://') || 
+                            backendIp.includes(':443') ||
+                            backendIp.startsWith('https://');
+      
+      if (isHttpsBackend) {
+        return 'wss';
+      } else {
+        // ❌ HTTP Backend mit HTTPS Frontend = Mixed Content Block
+        // Das wird automatisch zum Proxy-Fallback führen
+        throw new Error('Mixed Content: HTTPS Frontend cannot connect to HTTP Backend directly');
+      }
+    }
+    
+    // ✅ HTTP Frontend: Normale Logik
     const isLocalBackend = backendIp.includes('localhost') ||
                           backendIp.includes('127.0.0.1') || 
                           backendIp.startsWith('192.168.') ||
-                          backendIp.startsWith('10.');
+                          backendIp.startsWith('10.') ||
+                          backendIp.startsWith('http://');
 
     if (isLocalBackend) {
       return 'ws';
     }
 
-    const isHttpsBackend = backendIp.includes('https') || 
+    const isHttpsBackend = backendIp.includes('https://') || 
                           backendIp.includes(':443') ||
                           (!backendIp.includes(':') && !backendIp.includes('http'));
     return isHttpsBackend ? 'wss' : 'ws';
