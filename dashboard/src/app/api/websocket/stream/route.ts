@@ -48,16 +48,18 @@ export async function GET(request: NextRequest) {
                 `data: ${JSON.stringify(message)}\n\n`
               )
             );
-          } catch {}
-        });
+          } catch (error) {
+        console.warn('API error in route:', error);
+      }});
       }
 
       request.signal.addEventListener('abort', () => {
         sseClients.delete(clientKey);
         try {
           controller.close();
-        } catch  {}
-      });
+        } catch (error) {
+        console.warn('API error in route:', error);
+      }});
     }
   });
 

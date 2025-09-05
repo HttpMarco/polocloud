@@ -10,6 +10,54 @@ interface WebSocketMessage {
 const wsConnections = new Map<string, WebSocket>();
 const messageQueues = new Map<string, WebSocketMessage[]>();
 
+const cleanupConnection = (connectionKey: string) => {
+  const ws = wsConnections.get(connectionKey);
+  if (ws) {
+    try {
+      ws.close();
+    } catch {
+    }
+  }
+  wsConnections.delete(connectionKey);
+  messageQueues.delete(connectionKey);
+};
+
+let cleanupInterval: NodeJS.Timeout | null = null;
+
+const startCleanupInterval = () => {
+  if (cleanupInterval) return;
+  
+  cleanupInterval = setInterval(() => {
+    const now = Date.now();
+    const maxAge = 5 * 60 * 1000;
+    const maxQueueSize = 1000;
+    
+    wsConnections.forEach((ws, key) => {
+      if (ws.readyState !== WebSocket.OPEN) {
+        cleanupConnection(key);
+        return;
+      }
+
+      const queue = messageQueues.get(key);
+      if (queue) {
+        if (queue.length > maxQueueSize) {
+          cleanupConnection(key);
+          return;
+        }
+
+        if (queue.length > 0) {
+          const lastMessage = queue[queue.length - 1];
+          if (now - lastMessage.timestamp > maxAge) {
+            cleanupConnection(key);
+            return;
+          }
+        }
+      }
+    });
+  }, 60000);
+};
+startCleanupInterval();
+
 export async function POST(request: NextRequest) {
   try {
     const { backendIp, path } = await request.json();
@@ -89,23 +137,14 @@ export async function POST(request: NextRequest) {
           }
         };
 
-        ws.onclose = (event) => {
-          wsConnections.delete(connectionKey);
-
-          const queue = messageQueues.get(connectionKey);
-          if (queue) {
-            queue.push({
-              type: 'disconnect',
-              code: event.code,
-              timestamp: Date.now()
-            });
-          }
+        ws.onclose = () => {
+          cleanupConnection(connectionKey);
         };
 
         ws.onerror = () => {
           clearTimeout(timeout);
-          
-          wsConnections.delete(connectionKey);
+
+          cleanupConnection(connectionKey);
           
           resolve(NextResponse.json({
             success: false,
@@ -144,4 +183,4 @@ function determineBackendProtocol(backendIp: string): 'ws' | 'wss' {
   return 'ws';
 }
 
-export { wsConnections, messageQueues };
+export { wsConnections, messageQueues, cleanupConnection };

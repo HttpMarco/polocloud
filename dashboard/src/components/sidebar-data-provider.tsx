@@ -118,8 +118,9 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('sidebarGroups', JSON.stringify(newData.groups));
         localStorage.setItem('sidebarServices', JSON.stringify(newData.services));
       }
-    } catch {}
-  };
+    } catch (error) {
+        console.warn('Sidebar error in sidebar-data-provider:', error);
+      }};
 
   if (shouldHideSidebar) {
     return <>{children}</>;

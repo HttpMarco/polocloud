@@ -13,13 +13,11 @@ export function useServiceWebSocket(serviceName: string, backendIp?: string, tok
     token,
     autoConnect,
     onMessage: (message) => {
-      
       if (typeof message.data === 'string') {
         const now = Date.now();
         const messageData = message.data;
-        
 
-        if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 300) {
+        if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 500) {
           return;
         }
         
@@ -28,7 +26,7 @@ export function useServiceWebSocket(serviceName: string, backendIp?: string, tok
         
         const cleanedMessage = processTerminalLog(messageData, { removeColors: true });
         setLogs(prev => [...prev, cleanedMessage]);
-      } else {}
+      }
     }
   });
 

@@ -42,8 +42,9 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
         const data = await response.json()
         setRoles(data)
       }
-    } catch {}
-  }, [])
+    } catch (error) {
+        console.error('Error in edit-user-modal:', error);
+      }}, [])
 
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -54,8 +55,9 @@ export function EditUserModal({ user, onUserEdited, disabled = false }: EditUser
           setCurrentUser({ role: data.role, username: data.username })
         }
       }
-    } catch {}
-  }, [])
+    } catch (error) {
+        console.error('Error in edit-user-modal:', error);
+      }}, [])
 
   useEffect(() => {
     if (isOpen) {

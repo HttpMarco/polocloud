@@ -81,8 +81,9 @@ export function CloudNavigation() {
               : service
           ));
         }
-      } catch {}
-    }
+      } catch (error) {
+        console.warn('Sidebar error in cloud-navigation:', error);
+      }}
   });
 
   useEffect(() => {

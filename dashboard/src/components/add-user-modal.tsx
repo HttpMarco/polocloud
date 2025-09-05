@@ -114,8 +114,9 @@ export function AddUserModal({ onUserAdded }: AddUserModalProps) {
             await navigator.clipboard.writeText(password)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
-        } catch {}
-    }
+        } catch (error) {
+        console.error('Error in add-user-modal:', error);
+      }}
 
     return (
         <Dialog open={isOpen} onOpenChange={canCreateUser ? setIsOpen : undefined}>

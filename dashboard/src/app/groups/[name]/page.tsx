@@ -75,8 +75,9 @@ export default function GroupOverviewPage() {
                 
                 setGroupServices(servicesForGroup);
             }
-        } catch {}
-    }, [groupName]);
+        } catch (error) {
+        console.warn('Error in page:', error);
+      }}, [groupName]);
 
     useEffect(() => {
         if (groupName) {

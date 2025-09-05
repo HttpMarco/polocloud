@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { wsConnections, messageQueues } from '../connect/route';
+import { wsConnections, messageQueues, cleanupConnection } from '../connect/route';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,13 +17,7 @@ export async function POST(request: NextRequest) {
 
     const connectionKey = `${finalBackendIp}${path}`;
 
-    const ws = wsConnections.get(connectionKey);
-    if (ws) {
-      ws.close(1000);
-      wsConnections.delete(connectionKey);
-    }
-
-    messageQueues.delete(connectionKey);
+    cleanupConnection(connectionKey);
 
     return NextResponse.json({
       success: true,

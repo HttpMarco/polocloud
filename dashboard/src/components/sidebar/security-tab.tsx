@@ -221,8 +221,9 @@ export function SecurityTab() {
       setTokens(prev => prev.filter(token => token.value !== tokenValue));
 
       await fetchTokens();
-    } catch {}
-  };
+    } catch (error) {
+        console.warn('Sidebar error in security-tab:', error);
+      }};
 
   const handleChangePassword = () => {
     setIsPasswordModalOpen(true);

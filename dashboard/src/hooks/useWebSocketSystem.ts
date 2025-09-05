@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { WebSocketSystem, WebSocketMessage, ConnectionStatus, ConnectionInfo, createWebSocketSystem } from '@/lib/websocket-system';
 import { processTerminalLog } from '@/lib/ansi-utils';
 
-let globalHookInstanceCount = 0;
+const globalMessageCache = new Map<string, number>();
+const GLOBAL_DUPLICATE_THRESHOLD = 1000;
 
 interface UseWebSocketSystemProps {
   backendIp?: string;
@@ -58,8 +59,28 @@ export function useWebSocketSystem({
   });
 
   const handleMessage = useCallback((message: WebSocketMessage) => {
+    if (typeof message.data === 'string') {
+      const now = Date.now();
+      const messageKey = `${message.data}_${path}`;
+      
+      const lastSeen = globalMessageCache.get(messageKey);
+      if (lastSeen && now - lastSeen < GLOBAL_DUPLICATE_THRESHOLD) {
+        return;
+      }
+      
+      globalMessageCache.set(messageKey, now);
+
+      if (now % 10000 < 100) {
+        globalMessageCache.forEach((timestamp, key) => {
+          if (now - timestamp > GLOBAL_DUPLICATE_THRESHOLD * 2) {
+            globalMessageCache.delete(key);
+          }
+        });
+      }
+    }
+    
     onMessageRef.current?.(message);
-  }, []);
+  }, [path]);
 
   const handleConnect = useCallback(() => {
     onConnectRef.current?.();
@@ -82,8 +103,6 @@ export function useWebSocketSystem({
 
   useEffect(() => {
     const initializeWebSocket = async () => {
-      globalHookInstanceCount++;
-
       if (wsSystemRef.current) {
         wsSystemRef.current.disconnect();
         wsSystemRef.current = null;
@@ -105,9 +124,9 @@ export function useWebSocketSystem({
       if (autoConnect) {
         setTimeout(() => {
           if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
-            wsSystemRef.current.connect().catch(error => {
+            wsSystemRef.current.connect().catch(() => {
             });
-          } else {}
+          }
         }, 100);
       }
     };
@@ -178,12 +197,12 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     token,
     autoConnect,
     onMessage: (message) => {
-
-      if ((message.type === 'log' || message.type === 'message') && typeof message.data === 'string') {
+      if (message.type === 'log' && typeof message.data === 'string') {
+        
         const now = Date.now();
         const messageData = message.data;
-        
-        if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 300) {
+
+        if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 500) {
           return;
         }
         
@@ -192,7 +211,6 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
         
         const cleanedMessage = processTerminalLog(messageData, { removeColors: true });
         setLogs(prev => [...prev, cleanedMessage]);
-      } else {
       }
     }
   });
