@@ -88,14 +88,8 @@ export class WebSocketSystem {
       return null;
     }
 
-    const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
-    
-    if (isFrontendHttps && !backendIp.startsWith('https://') && !backendIp.startsWith('http://')) {
-      backendIp = `https://${backendIp}`;
-    } else if (isFrontendHttps && backendIp.startsWith('http://')) {
-      backendIp = backendIp.replace('http://', 'https://');
-    }
-
+    // Don't automatically convert to HTTPS here - let the connection methods handle it
+    // This allows us to test HTTPS support first before forcing it
     return { backendIp, token };
   }
 
@@ -152,6 +146,18 @@ export class WebSocketSystem {
         }
 
         const { backendIp, token } = credentials;
+        const isFrontendHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        
+        // If frontend is HTTPS, test if backend supports HTTPS first
+        if (isFrontendHttps) {
+          const backendSupportsHttps = await this.testBackendHttps(backendIp);
+          if (!backendSupportsHttps) {
+            // Backend doesn't support HTTPS, skip direct WebSocket and use proxy
+            reject(new Error('Backend does not support HTTPS, using proxy instead'));
+            return;
+          }
+        }
+        
         const protocol = this.determineWebSocketProtocol(backendIp);
         
         // Ensure proper URL construction for WebSocket
@@ -514,6 +520,28 @@ export class WebSocketSystem {
                           backendIp.includes(':443') ||
                           (!backendIp.includes(':') && !backendIp.includes('http'));
     return isHttpsBackend ? 'wss' : 'ws';
+  }
+
+  private async testBackendHttps(backendIp: string): Promise<boolean> {
+    try {
+      let testUrl: string;
+      if (backendIp.startsWith('http://') || backendIp.startsWith('https://')) {
+        // Backend IP already includes protocol, convert to HTTPS
+        const baseUrl = backendIp.replace(/^https?:\/\//, '');
+        testUrl = `https://${baseUrl}`;
+      } else {
+        // Backend IP is just IP:port
+        testUrl = `https://${backendIp}`;
+      }
+      
+      const response = await fetch(`${testUrl}/polocloud/api/v3/health`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(3000)
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
   }
 
   private handleMessage(data: string | WebSocketMessage): void {
