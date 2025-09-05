@@ -10,7 +10,6 @@ interface UseWebSocketSystemProps {
   path: string;
   token?: string;
   autoConnect?: boolean;
-  serviceName?: string; // ✅ Service-Name für Proxy
   onMessage?: (message: WebSocketMessage) => void;
   onConnect?: () => void;
   onDisconnect?: () => void;
@@ -33,7 +32,6 @@ export function useWebSocketSystem({
   path,
   token,
   autoConnect = true,
-  serviceName,
   onMessage,
   onConnect,
   onDisconnect,
@@ -112,91 +110,25 @@ export function useWebSocketSystem({
         await new Promise(resolve => setTimeout(resolve, 200));
       }
 
-      // ✅ VERBESSERT: Production-Proxy für HTTPS-Frontend
-      const isHttpsFrontend = typeof window !== 'undefined' && window.location.protocol === 'https:';
-      const isLocalBackend = backendIp && (
-        backendIp.includes('localhost') || 
-        backendIp.includes('127.0.0.1') || 
-        backendIp.startsWith('192.168.') ||
-        backendIp.startsWith('10.')
-      );
+      wsSystemRef.current = createWebSocketSystem({
+        backendIp,
+        path,
+        token,
+        onMessage: handleMessage,
+        onConnect: handleConnect,
+        onDisconnect: handleDisconnect,
+        onError: handleError,
+        onStatusChange: handleStatusChange
+      });
 
-              if (isHttpsFrontend && !isLocalBackend) {
-          // ✅ Production: Server-Sent Events über Proxy
-          const proxyUrl = `/api/websocket-proxy?path=${encodeURIComponent(path)}${serviceName ? `&service=${encodeURIComponent(serviceName)}` : ''}`;
-          
-          console.log(`${serviceName || 'WebSocket'} Proxy Debug:`, {
-            isHttpsFrontend,
-            isLocalBackend,
-            path,
-            serviceName,
-            proxyUrl,
-            backendIp,
-            windowLocation: typeof window !== 'undefined' ? window.location.href : 'undefined'
-          });
-          
-          const eventSource = new EventSource(proxyUrl);
-          
-          console.log(`${serviceName || 'WebSocket'} EventSource created:`, proxyUrl);
-        
-        eventSource.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            console.log(`${serviceName || 'WebSocket'} SSE Message:`, data);
-            handleMessage(data);
-          } catch (error) {
-            console.error('Failed to parse SSE message:', error);
+      if (autoConnect) {
+        setTimeout(() => {
+          if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
+            wsSystemRef.current.connect().catch(() => {
+      
+            });
           }
-        };
-
-        eventSource.onerror = (error) => {
-          console.error(`${serviceName || 'WebSocket'} EventSource error:`, error);
-          handleStatusChange('disconnected');
-        };
-
-        eventSource.onopen = () => {
-          console.log(`${serviceName || 'WebSocket'} EventSource connected`);
-          handleStatusChange('connected');
-        };
-
-        // Store EventSource for cleanup
-        (wsSystemRef as unknown as { current: { disconnect: () => void; getConnectionInfo: () => { status: string }; connect: () => Promise<void>; sendMessage: () => void } }).current = { 
-          disconnect: () => eventSource.close(),
-          getConnectionInfo: () => ({ status: connectionInfo.status }),
-          connect: () => Promise.resolve(),
-          sendMessage: () => {}
-        };
-
-      } else {
-        // ✅ Development: Direkte WebSocket-Verbindung
-        console.log(`${serviceName || 'WebSocket'} Development Mode:`, {
-          backendIp,
-          path,
-          serviceName,
-          isHttpsFrontend,
-          isLocalBackend
-        });
-        
-        wsSystemRef.current = createWebSocketSystem({
-          backendIp,
-          path,
-          token,
-          onMessage: handleMessage,
-          onConnect: handleConnect,
-          onDisconnect: handleDisconnect,
-          onError: handleError,
-          onStatusChange: handleStatusChange
-        });
-
-        if (autoConnect) {
-          setTimeout(() => {
-            if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
-              wsSystemRef.current.connect().catch(() => {
-                // Connection failed
-              });
-            }
-          }, 100);
-        }
+        }, 100);
       }
     };
 
@@ -208,7 +140,7 @@ export function useWebSocketSystem({
         wsSystemRef.current = null;
       }
     };
-  }, [backendIp, path, token, autoConnect, serviceName, handleMessage, handleConnect, handleDisconnect, handleError, handleStatusChange, connectionInfo.status]);
+  }, []);
 
   useEffect(() => {
     const updateInfo = () => {
@@ -262,16 +194,16 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
   
   const { connectionInfo, isConnected, connect, disconnect } = useWebSocketSystem({
     backendIp,
-    path: '/logs', // ✅ Terminal-Logs Pfad
+    path: '/logs',
     token,
     autoConnect,
-    serviceName: 'terminal', // ✅ Terminal-Identifier für Proxy
     onMessage: (message) => {
-      // ✅ VERBESSERT: Gleiche Message-Filterung wie Service-WebSocket
-      if (typeof message.data === 'string') {
+    
+      if (message.type === 'log' && typeof message.data === 'string') {
+        
         const now = Date.now();
         const messageData = message.data;
-
+        
         if (messageData === lastMessageRef.current && now - lastMessageTimeRef.current < 500) {
           return;
         }
@@ -298,7 +230,6 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
         backendIp.startsWith('10.')
       );
       
-      // ✅ VERBESSERT: WebSocket-Proxy für Production
       const useProxy = isHttpsFrontend && !isLocalBackend;
       const apiRoute = useProxy ? '/api/terminal/command-proxy' : '/api/terminal/command';
       const response = await fetch(apiRoute, {
@@ -319,7 +250,7 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     } catch {
       setLogs(prev => [...prev, `Error: Failed to send command`]);
     }
-  }, [backendIp]);
+  }, []);
 
   const clearLogs = useCallback(() => {
     setLogs([]);
