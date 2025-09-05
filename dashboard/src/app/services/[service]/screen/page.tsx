@@ -200,19 +200,7 @@ export default function ServiceScreenPage() {
               </Button>
             </div>
             
-            {!isConnected && (
-              <div className="text-sm text-red-400 mt-2 flex items-center gap-2">
-                <WifiOff className="h-4 w-4" />
-                Not connected to service. Please check your connection.
-              </div>
-            )}
             
-            {!canSendCommands && (
-              <div className="text-sm text-red-400 mt-2 flex items-center gap-2">
-                <Terminal className="h-4 w-4" />
-                You don't have permission to send service commands.
-              </div>
-            )}
           </div>
         </Card>
       </div>
