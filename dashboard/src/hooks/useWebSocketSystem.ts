@@ -192,13 +192,17 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
   const lastMessageRef = useRef<string>('');
   const lastMessageTimeRef = useRef<number>(0);
   
+  // ✅ LÖSUNG: Verwende dieselbe Verbindungsmethode wie Services
+  // Das Problem ist, dass Terminal über Proxy läuft, aber Services direkt!
   const { connectionInfo, isConnected, connect, disconnect } = useWebSocketSystem({
     backendIp,
-    path: '/logs',
+    path: '/logs', // ✅ KORREKT: Backend unterstützt /logs Pfad
     token,
     autoConnect,
     onMessage: (message) => {
-      // ✅ BEHOBEN: Alle String-Nachrichten verarbeiten (wie Screen-Seite)
+      // ✅ DEBUG: Alle Nachrichten loggen
+      console.log('Terminal WebSocket Message:', message);
+      
       if (typeof message.data === 'string') {
         const now = Date.now();
         const messageData = message.data;

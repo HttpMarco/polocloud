@@ -203,6 +203,7 @@ export class WebSocketSystem {
           this.updateStatus('connected');
           this.reconnectAttempts = 0;
           
+          // ✅ BEHOBEN: Verwende SSE statt WebSocket für Proxy
           await this.startSSEListener();
           this.config.onConnect?.();
           resolve();
@@ -324,6 +325,8 @@ export class WebSocketSystem {
     this.eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
+        // ✅ DEBUG: SSE-Nachrichten loggen
+        console.log('SSE Message:', data);
         this.handleMessage(data);
       } catch {
       }
