@@ -15,6 +15,7 @@ export default function NewTerminalPage() {
   const [command, setCommand] = useState('');
   const [backendIp, setBackendIp] = useState<string>('');
   const [, setToken] = useState<string>('');
+  const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   const { hasPermission } = usePermissions();
@@ -42,6 +43,19 @@ export default function NewTerminalPage() {
     sendCommand,
     clearLogs
   } = useTerminalWebSocket(undefined, undefined, true);
+
+  // Debug logging
+  useEffect(() => {
+    const addDebugInfo = (info: string) => {
+      setDebugInfo(prev => [...prev, `${new Date().toLocaleTimeString()}: ${info}`]);
+    };
+
+    addDebugInfo(`Connection Status: ${connectionInfo.status}`);
+    addDebugInfo(`Connection Method: ${connectionInfo.method}`);
+    addDebugInfo(`Is Connected: ${isConnected}`);
+    addDebugInfo(`Backend IP: ${backendIp || 'Not set'}`);
+    addDebugInfo(`Total Logs: ${logs.length}`);
+  }, [connectionInfo, isConnected, backendIp, logs.length]);
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -130,6 +144,16 @@ export default function NewTerminalPage() {
             </Button>
           </div>
         </div>
+
+        {/* Debug Information */}
+        <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200 mb-2">Debug Information:</h3>
+          <div className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1">
+            {debugInfo.slice(-10).map((info, index) => (
+              <div key={index}>{info}</div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="px-6">
@@ -141,6 +165,12 @@ export default function NewTerminalPage() {
                   <Terminal className="h-12 w-12 mx-auto mb-4 text-gray-600" />
                   <p>No logs yet. Send a command to get started.</p>
                   <p className="text-xs mt-2 text-gray-500">Connected to {backendIp || 'backend'}</p>
+                  <div className="mt-4 p-2 bg-gray-800 rounded text-xs">
+                    <div>Debug: Status = {connectionInfo.status}</div>
+                    <div>Debug: Method = {connectionInfo.method}</div>
+                    <div>Debug: Connected = {isConnected ? 'Yes' : 'No'}</div>
+                    <div>Debug: Backend = {backendIp || 'Not set'}</div>
+                  </div>
                 </div>
               </div>
             ) : (
