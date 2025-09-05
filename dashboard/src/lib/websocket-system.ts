@@ -128,6 +128,7 @@ export class WebSocketSystem {
         const protocol = this.determineWebSocketProtocol(backendIp);
         const wsUrl = `${protocol}://${backendIp}/polocloud/api/v3${this.config.path}?token=${token}`;
 
+        console.log(`Trying direct WebSocket connection to: ${wsUrl}`);
         this.ws = new WebSocket(wsUrl);
         this.protocol = protocol;
         this.method = 'websocket';
@@ -229,6 +230,7 @@ export class WebSocketSystem {
         
         const sseUrl = `/api/websocket/stream?backendIp=${encodeURIComponent(backendIp)}&path=${encodeURIComponent(this.config.path)}`;
         
+        console.log(`Trying SSE connection to: ${sseUrl}`);
         this.eventSource = new EventSource(sseUrl);
         this.method = 'sse';
         this.protocol = 'https';
@@ -268,6 +270,7 @@ export class WebSocketSystem {
   }
 
   private startPolling(): void {
+    console.log(`Starting polling for path: ${this.config.path}`);
     this.method = 'polling';
     this.protocol = 'https';
     this.updateStatus('connected');
@@ -294,7 +297,9 @@ export class WebSocketSystem {
         
         if (response.ok) {
           const data = await response.json();
+          console.log(`Polling response for ${this.config.path}:`, data);
           if (data.messages && data.messages.length > 0) {
+            console.log(`Received ${data.messages.length} messages via polling`);
             data.messages.forEach((message: WebSocketMessage) => {
               this.handleMessage(message);
             });
