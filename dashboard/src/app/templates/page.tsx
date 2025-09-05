@@ -24,6 +24,7 @@ import { Template } from '@/types/templates';
 import { motion, AnimatePresence } from 'framer-motion';
 import GlobalNavbar from '@/components/global-navbar';
 import { API_ENDPOINTS } from '@/lib/api';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const formatFileSize = (size: unknown): string => {
     if (size === undefined || size === null || size === '') {
@@ -72,6 +73,11 @@ export default function TemplatesPage() {
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [deletingTemplates, setDeletingTemplates] = useState<string[]>([]);
+
+    const { hasPermission } = usePermissions();
+    const canCreateTemplate = hasPermission('polocloud.templates.create');
+    const canEditTemplate = hasPermission('polocloud.templates.edit');
+    const canDeleteTemplate = hasPermission('polocloud.templates.delete');
 
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
@@ -504,8 +510,15 @@ export default function TemplatesPage() {
 
                     <Button
                         onClick={openCreateModal}
-                        className="h-9 px-4 text-sm font-medium hover:opacity-90 transition-all duration-200 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]"
-                        style={{ backgroundColor: 'oklch(75.54% .1534 231.639)' }}
+                        disabled={!canCreateTemplate}
+                        className={`h-9 px-4 text-sm font-medium transition-all duration-200 ${
+                            canCreateTemplate 
+                                ? 'hover:opacity-90 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]' 
+                                : 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30'
+                        }`}
+                        style={{ 
+                            backgroundColor: canCreateTemplate ? 'oklch(75.54% .1534 231.639)' : undefined
+                        }}
                     >
                         <Plus className="w-4 h-4 mr-2" />
                         Create Template
@@ -535,7 +548,7 @@ export default function TemplatesPage() {
                                     }}
                                     layout
                                 >
-                                    <Card className="border-border/40 flex flex-col relative bg-gradient-to-br from-card/80 via-card/60 to-card/80 shadow-lg transition-all duration-300 group hover:shadow-xl hover:scale-[1.02]">
+                                    <Card className="border-border/40 flex flex-col relative bg-gradient-to-br from-card/80 via-card/60 to-card/80 shadow-lg transition-all duration-300 group">
                                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(75.54%,15.34%,0.03)_0%,transparent_50%)] opacity-60 rounded-t-lg"/>
 
                                         <CardHeader className="pb-4 flex-shrink-0 relative z-10">
@@ -585,8 +598,13 @@ export default function TemplatesPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="flex-1 h-8 text-xs border-border/30 text-muted-foreground hover:text-foreground hover:border-border/50"
-                                                    onClick={() => openEditModal(template)}
+                                                    disabled={!canEditTemplate}
+                                                    className={`flex-1 h-8 text-xs transition-all duration-200 ${
+                                                        !canEditTemplate 
+                                                            ? 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30' 
+                                                            : 'border-border/30 text-muted-foreground hover:text-foreground hover:border-border/50'
+                                                    }`}
+                                                    onClick={() => canEditTemplate && openEditModal(template)}
                                                 >
                                                     <Edit className="w-3 h-3 mr-1" />
                                                     Edit
@@ -595,9 +613,13 @@ export default function TemplatesPage() {
                                                 <Button
                                                     variant="outline"
                                                     size="sm"
-                                                    className="h-8 w-8 p-0 border-red-500/30 text-red-500 hover:text-red-600 hover:border-red-500/50"
-                                                    onClick={() => handleDeleteTemplate(template.name)}
-                                                    disabled={deletingTemplates.includes(template.name)}
+                                                    disabled={!canDeleteTemplate || deletingTemplates.includes(template.name)}
+                                                    className={`h-8 w-8 p-0 transition-all duration-200 ${
+                                                        !canDeleteTemplate 
+                                                            ? 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30' 
+                                                            : 'border-red-500/30 text-red-500 hover:text-red-600 hover:border-red-500/50'
+                                                    }`}
+                                                    onClick={() => canDeleteTemplate && handleDeleteTemplate(template.name)}
                                                 >
                                                     {deletingTemplates.includes(template.name) ? (
                                                         <Loader2 className="h-4 w-4 animate-spin" />

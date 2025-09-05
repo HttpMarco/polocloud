@@ -13,6 +13,7 @@ import { API_ENDPOINTS } from '@/lib/api';
 import GlobalNavbar from '@/components/global-navbar';
 import { Group } from '@/types/groups';
 import { toast } from 'sonner';
+import { usePermissions } from '@/hooks/usePermissions';
 
 interface Service {
     name: string;
@@ -32,6 +33,10 @@ export default function GroupOverviewPage() {
     const [error, setError] = useState<string | null>(null);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const { hasPermission } = usePermissions();
+    const canEditGroup = hasPermission('polocloud.group.edit');
+    const canDeleteGroup = hasPermission('polocloud.group.delete');
 
     const loadGroup = useCallback(async () => {
         try {
@@ -164,8 +169,15 @@ export default function GroupOverviewPage() {
                     >
                         <Button
                             onClick={() => router.push(`/groups/${groupName}/edit`)}
-                            className="h-11 px-6 text-sm font-medium hover:opacity-90 transition-all duration-200 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]"
-                            style={{ backgroundColor: 'oklch(75.54% .1534 231.639)' }}
+                            disabled={!canEditGroup}
+                            className={`h-11 px-6 text-sm font-medium transition-all duration-200 ${
+                                canEditGroup 
+                                    ? 'hover:opacity-90 shadow-lg shadow-[0_0_20px_rgba(75.54%,15.34%,231.639,0.3)] hover:shadow-[0_0_30px_rgba(75.54%,15.34%,231.639,0.4)]' 
+                                    : 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30'
+                            }`}
+                            style={{ 
+                                backgroundColor: canEditGroup ? 'oklch(75.54% .1534 231.639)' : undefined
+                            }}
                         >
                             <Edit className="w-4 h-4 mr-2" />
                             Edit Group
@@ -174,7 +186,12 @@ export default function GroupOverviewPage() {
                         <Button
                             variant="outline"
                             onClick={handleDeleteGroup}
-                            className="h-11 px-6 text-sm border-red-500/30 text-red-600 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-200"
+                            disabled={!canDeleteGroup}
+                            className={`h-11 px-6 text-sm transition-all duration-200 ${
+                                canDeleteGroup 
+                                    ? 'border-red-500/30 text-red-600 hover:bg-red-500/10 hover:border-red-500/50' 
+                                    : 'opacity-40 cursor-not-allowed bg-muted text-muted-foreground border border-border/30'
+                            }`}
                         >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Delete Group

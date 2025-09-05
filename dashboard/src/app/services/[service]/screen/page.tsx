@@ -10,6 +10,7 @@ import { Terminal, Send, Trash2, WifiOff, Loader2, Activity } from 'lucide-react
 import { motion } from 'framer-motion';
 import GlobalNavbar from '@/components/global-navbar';
 import { useServiceWebSocket } from '@/hooks/useServiceWebSocket';
+import { usePermissions } from '@/hooks/usePermissions';
 
 
 export default function ServiceScreenPage() {
@@ -17,6 +18,9 @@ export default function ServiceScreenPage() {
   const serviceName = params.service as string;
   const [command, setCommand] = useState('');
   const logsEndRef = useRef<HTMLDivElement>(null);
+
+  const { hasPermission } = usePermissions();
+  const canSendCommands = hasPermission('polocloud.service.screen');
 
   const {
     logs,
@@ -31,7 +35,7 @@ export default function ServiceScreenPage() {
   }, [logs]);
 
   const handleSendCommand = () => {
-    if (!command.trim() || !isConnected) return;
+    if (!command.trim() || !isConnected || !canSendCommands) return;
     
     sendCommand(command);
     setCommand('');
@@ -168,17 +172,29 @@ export default function ServiceScreenPage() {
                 value={command}
                 onChange={(e) => setCommand(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={isConnected ? "Enter service command..." : "Not connected"}
-                disabled={!isConnected}
-                className="font-mono bg-transparent border-none text-white placeholder-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
+                placeholder={
+                  !canSendCommands 
+                    ? "No permission to send commands" 
+                    : isConnected 
+                      ? "Enter service command..." 
+                      : "Not connected"
+                }
+                disabled={!isConnected || !canSendCommands}
+                className={`font-mono bg-transparent border-none text-white focus-visible:ring-0 focus-visible:ring-offset-0 px-0 ${
+                  !canSendCommands ? 'placeholder-red-500' : 'placeholder-gray-500'
+                }`}
               />
 
               <Button 
                 onClick={handleSendCommand}
-                disabled={!command.trim() || !isConnected}
+                disabled={!command.trim() || !isConnected || !canSendCommands}
                 size="sm"
                 variant="ghost"
-                className="text-gray-400 hover:text-white"
+                className={`${
+                  !canSendCommands 
+                    ? 'text-red-500 cursor-not-allowed' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -188,6 +204,13 @@ export default function ServiceScreenPage() {
               <div className="text-sm text-red-400 mt-2 flex items-center gap-2">
                 <WifiOff className="h-4 w-4" />
                 Not connected to service. Please check your connection.
+              </div>
+            )}
+            
+            {!canSendCommands && (
+              <div className="text-sm text-red-400 mt-2 flex items-center gap-2">
+                <Terminal className="h-4 w-4" />
+                You don't have permission to send service commands.
               </div>
             )}
           </div>
