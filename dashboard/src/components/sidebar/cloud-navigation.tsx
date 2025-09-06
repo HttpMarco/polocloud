@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
-import { Badge } from "@/components/ui/badge";
+import { SidebarGroup, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
 import { 
-  Server, 
   Terminal, 
   Activity,
   Users,
@@ -79,7 +77,6 @@ export function CloudNavigation() {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Cloud</SidebarGroupLabel>
       <SidebarMenu>
 
         {/* Groups */}
@@ -90,11 +87,6 @@ export function CloudNavigation() {
           >
             <Building2 className="w-4 h-4" />
             <span>Groups</span>
-            {!isLoading && (
-              <Badge variant="secondary" className="ml-auto">
-                {groups.length}
-              </Badge>
-            )}
             {expandedSections.has('groups') ? (
               <ChevronDown className="w-4 h-4 ml-1" />
             ) : (
@@ -127,11 +119,6 @@ export function CloudNavigation() {
           >
             <Activity className="w-4 h-4" />
             <span>Services</span>
-            {!isLoading && (
-              <Badge variant="secondary" className="ml-auto">
-                {services.length}
-              </Badge>
-            )}
             {expandedSections.has('services') ? (
               <ChevronDown className="w-4 h-4 ml-1" />
             ) : (
@@ -165,11 +152,6 @@ export function CloudNavigation() {
           >
             <Users className="w-4 h-4" />
             <span>Players</span>
-            {!isLoading && (
-              <Badge variant="secondary" className="ml-auto">
-                {players.length}
-              </Badge>
-            )}
           </SidebarMenuButton>
         </SidebarMenuItem>
 
