@@ -8,7 +8,7 @@ import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, 
 import Image from "next/image";
 import { getPlatformIcon } from "@/lib/platform-icons";
 import { useSidebarData } from "@/components/sidebar-data-provider";
-import { useGlobalWebSocket } from "@/lib/global-websocket-manager";
+import { useWebSocketSystem } from "@/hooks/useWebSocketSystem";
 import { Group } from "@/types/groups";
 import { Service } from "@/types/services";
 import { API_ENDPOINTS } from "@/lib/api";
@@ -58,10 +58,11 @@ export function CloudNavigation() {
   const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
   const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
-  const globalWs = useGlobalWebSocket({
+  useWebSocketSystem({
     backendIp: undefined,
     path: '/services/update',
     token: undefined,
+    autoConnect: true,
     onMessage: (message) => {
       try {
         let updateData;
@@ -112,17 +113,8 @@ export function CloudNavigation() {
         }
       } catch (error) {
         console.warn('Sidebar error in cloud-navigation:', error);
-      }
-    }
+      }}
   });
-
-  // Subscribe to global WebSocket
-  useEffect(() => {
-    const unsubscribe = globalWs.subscribe(() => {
-      // Connection established
-    });
-    return unsubscribe;
-  }, [globalWs]);
 
   useEffect(() => {
     setGroups(initialGroups);

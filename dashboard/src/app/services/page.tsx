@@ -7,7 +7,7 @@ import { Service } from '@/types/services';
 import { motion } from 'framer-motion';
 import { API_ENDPOINTS } from '@/lib/api';
 import GlobalNavbar from '@/components/global-navbar';
-import { useGlobalWebSocket } from '@/lib/global-websocket-manager';
+import { useWebSocketSystem } from '@/hooks/useWebSocketSystem';
 import { ServiceCard } from '@/components/services/service-card';
 import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
@@ -24,10 +24,11 @@ export default function ServicesPage() {
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
     const [debugInfo, setDebugInfo] = useState<any>({});
 
-    const globalWs = useGlobalWebSocket({
+    useWebSocketSystem({
         backendIp: undefined,
         path: '/services/update',
         token: undefined,
+        autoConnect: true,
         onMessage: (message) => {
             try {
                 // Debug: Update debug info
@@ -40,9 +41,7 @@ export default function ServicesPage() {
                         dataType: typeof message.data,
                         isString: typeof message.data === 'string'
                     },
-                    messageCount: (prev.messageCount || 0) + 1,
-                    frontendProtocol: typeof window !== 'undefined' ? window.location.protocol : 'unknown',
-                    backendIp: localStorage.getItem('backend_ip') || 'unknown'
+                    messageCount: (prev.messageCount || 0) + 1
                 }));
 
                 let updateData;
@@ -121,13 +120,7 @@ export default function ServicesPage() {
         }
     });
 
-    // Subscribe to global WebSocket
-    useEffect(() => {
-        const unsubscribe = globalWs.subscribe(() => {
-            // Connection established
-        });
-        return unsubscribe;
-    }, [globalWs]);
+    
 
     useEffect(() => {
         loadServices();
@@ -249,8 +242,6 @@ export default function ServicesPage() {
                     <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
                         <div><strong>Messages received:</strong> {debugInfo.messageCount || 0}</div>
                         <div><strong>Updates processed:</strong> {debugInfo.updateCount || 0}</div>
-                        <div><strong>Frontend Protocol:</strong> {debugInfo.frontendProtocol || 'unknown'}</div>
-                        <div><strong>Backend IP:</strong> {debugInfo.backendIp || 'unknown'}</div>
                         {debugInfo.lastMessage && (
                             <div><strong>Last message:</strong> {debugInfo.lastMessage.timestamp} - {debugInfo.lastMessage.dataType}</div>
                         )}
