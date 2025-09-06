@@ -1,211 +1,327 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
-import { 
-  Terminal, 
-  Activity,
-  Users,
-  Building2,
-  ChevronDown,
-  ChevronRight
-} from "lucide-react";
-import { useRouter, usePathname } from "next/navigation";
-import { API_ENDPOINTS } from "@/lib/api/endpoints";
+import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, Loader2, RotateCcw } from "lucide-react";
+import Image from "next/image";
+import { getPlatformIcon } from "@/lib/platform-icons";
+import { useSidebarData } from "@/components/sidebar-data-provider";
+import { useWebSocketSystem } from "@/hooks/useWebSocketSystem";
+import { Group } from "@/types/groups";
+import { Service } from "@/types/services";
+import { API_ENDPOINTS } from "@/lib/api";
+import { toast } from "sonner";
+
+const cloudItems = [
+  {
+    title: "Groups",
+    icon: Package,
+    items: 0,
+    collapsible: false,
+    href: "/groups"
+  },
+  {
+    title: "Services",
+    icon: Cloud,
+    items: 0,
+    collapsible: true,
+  },
+  {
+    title: "Templates",
+    icon: FileText,
+    items: 0,
+    collapsible: false,
+    href: "/templates"
+  },
+  {
+    title: "Players",
+    icon: Users,
+    items: 0,
+    collapsible: false,
+    href: "/players"
+  },
+  {
+    title: "Terminal",
+    icon: Terminal,
+    items: 0,
+    collapsible: false,
+    href: "/terminal"
+  },
+];
 
 export function CloudNavigation() {
-  const [services, setServices] = useState<any[]>([]);
-  const [groups, setGroups] = useState<any[]>([]);
-  const [players, setPlayers] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  
-  const router = useRouter();
-  const pathname = usePathname();
+  const { groups: initialGroups, services: initialServices, isLoading: sidebarDataLoading } = useSidebarData();
+  const [groups, setGroups] = useState<Group[]>(initialGroups);
+  const [services, setServices] = useState<Service[]>(initialServices);
+  const [isGroupsLoading, setIsGroupsLoading] = useState(sidebarDataLoading);
+  const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
+  const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
-  useEffect(() => {
-    const loadData = async () => {
+  useWebSocketSystem({
+    path: '/services/update',
+    autoConnect: true,
+    onMessage: (message) => {
       try {
-        // Load services using the correct endpoint
-        const servicesResponse = await fetch(API_ENDPOINTS.SERVICES.LIST);
-        if (servicesResponse.ok) {
-          const servicesData = await servicesResponse.json();
-          if (servicesData.success && servicesData.services) {
-            setServices(servicesData.services);
+        let updateData;
+        if (typeof message.data === 'string') {
+          try {
+            updateData = JSON.parse(message.data);
+          } catch (parseError) {
+            console.error(parseError);
+            return;
           }
+        } else if (message.data && typeof message.data === 'object') {
+          updateData = message.data;
+        } else {
+          updateData = message;
         }
-
-        // Load groups using the correct endpoint
-        const groupsResponse = await fetch(API_ENDPOINTS.GROUPS.LIST);
-        if (groupsResponse.ok) {
-          const groupsData = await groupsResponse.json();
-          if (groupsData.success && groupsData.groups) {
-            setGroups(groupsData.groups);
-          }
-        }
-
-        // Load players using the correct endpoint
-        const playersResponse = await fetch(API_ENDPOINTS.PLAYERS.LIST);
-        if (playersResponse.ok) {
-          const playersData = await playersResponse.json();
-          if (playersData.success && playersData.players) {
-            setPlayers(playersData.players);
-          }
+        
+        if (updateData && updateData.serviceName && updateData.state) {
+          setServices(prev => prev.map(service => 
+            service.name === updateData.serviceName 
+              ? { ...service, state: updateData.state }
+              : service
+          ));
         }
       } catch (error) {
-        console.error('Failed to load data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+        console.warn('Sidebar error in cloud-navigation:', error);
+      }}
+  });
 
-    loadData();
-  }, []);
+  useEffect(() => {
+    setGroups(initialGroups);
+    setServices(initialServices);
+    setIsGroupsLoading(sidebarDataLoading);
+    setIsServicesLoading(sidebarDataLoading);
+  }, [initialGroups, initialServices, sidebarDataLoading]);
 
-  const toggleSection = (sectionName: string) => {
-    setExpandedSections(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(sectionName)) {
-        newSet.delete(sectionName);
-      } else {
-        newSet.add(sectionName);
-      }
-      return newSet;
-    });
-  };
+  const typedGroups = (groups || []) as Group[];
+  const typedServices = (services || []) as Service[];
 
-  const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/';
+  const getPlatformName = (group: Group): string => {
+    if (typeof group.platform === 'string') {
+      return group.platform
+    } else if (group.platform && typeof group.platform === 'object' && 'name' in group.platform) {
+      return group.platform.name
     }
-    return pathname.startsWith(href);
+    return 'default'
+  }
+
+  const getServiceStatusIcon = (state: string | undefined) => {
+    if (state === 'ONLINE') {
+      return <Play className="w-3 h-3 text-green-500" />
+    } else if (state === 'OFFLINE' || state === 'STOPPING' || state === 'STOPPED') {
+      return <Square className="w-3 h-3 text-red-500" />
+    } else if (state === 'STARTING' || state === 'PREPARING') {
+      return <Loader2 className="w-3 h-3 text-yellow-500 animate-spin" />
+    } else {
+      return <Square className="w-3 h-3 text-gray-500" />
+    }
+  }
+
+  const handleRestartService = async (serviceName: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (restartingServices.includes(serviceName)) return;
+
+    setRestartingServices(prev => [...prev, serviceName]);
+
+    try {
+      const response = await fetch(API_ENDPOINTS.SERVICES.RESTART(serviceName), {
+        method: 'PATCH'
+      });
+
+      if (response.ok) {
+        toast.success(`Service ${serviceName} restarted successfully`);
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Failed to restart service');
+      }
+    } catch {
+      toast.error('Failed to restart service');
+    } finally {
+      setRestartingServices(prev => prev.filter(name => name !== serviceName));
+    }
   };
 
   return (
-    <SidebarGroup className="mt-6">
+    <SidebarGroup>
       <SidebarGroupLabel className="px-2 py-1 text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider">
         Cloud
       </SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
+          {cloudItems.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              {item.title === "Groups" ? (
+                <Collapsible defaultOpen className="group/collapsible">
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="w-full px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
+                      <span className="flex items-center justify-between w-full">
+                        <span className="flex items-center space-x-2">
+                          <item.icon className="w-4 h-4" />
+                          <span 
+                            className="text-sm font-medium cursor-pointer hover:text-sidebar-accent-foreground"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              window.location.href = '/groups'
+                            }}
+                          >
+                            {item.title}
+                          </span>
+                        </span>
+                        <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                      </span>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  
+                  <CollapsibleContent>
+                    <div className="ml-4 mt-1 space-y-1">
+                      {isGroupsLoading ? (
+                        <div className="px-2 py-1.5">
+                          <div className="w-full h-3 bg-sidebar-accent animate-pulse rounded"></div>
+                        </div>
+                      ) : !Array.isArray(typedGroups) || typedGroups.length === 0 ? (
+                        <div className="px-2 py-1.5 text-xs text-sidebar-foreground/40">
+                          No groups found
+                        </div>
+                      ) : (
+                        typedGroups.map((group, index) => (
+                          <a 
+                            key={index} 
+                            href={`/groups/${group.name}`}
+                            className="block px-3 py-2 rounded-md transition-colors"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <Image 
+                                src={getPlatformIcon(getPlatformName(group))} 
+                                alt={`${getPlatformName(group)} icon`}
+                                width={16}
+                                height={16}
+                                className="w-4 h-4 object-contain"
+                                onError={(e) => {
+                                  e.currentTarget.src = '/placeholder.png'
+                                }}
+                              />
+                              <span className="text-sm text-sidebar-foreground/80 truncate">
+                                {group.name}
+                              </span>
+                            </div>
+                          </a>
+                        ))
+                      )}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              ) : item.title === "Services" ? (
+                <Collapsible defaultOpen className="group/collapsible">
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="w-full px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
+                      <span className="flex items-center justify-between w-full">
+                        <span className="flex items-center space-x-2">
+                          <item.icon className="w-4 h-4" />
+                          <span 
+                            className="text-sm font-medium cursor-pointer hover:text-sidebar-accent-foreground"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              window.location.href = '/services'
+                            }}
+                          >
+                            {item.title}
+                          </span>
+                        </span>
+                        <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                      </span>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  
+                  <CollapsibleContent>
+                    <div className="ml-4 mt-1 space-y-1">
+                      {isServicesLoading ? (
+                        <div className="px-2 py-1.5">
+                          <div className="w-full h-3 bg-sidebar-accent animate-pulse rounded"></div>
+                        </div>
+                      ) : !Array.isArray(typedServices) || typedServices.length === 0 ? (
+                        <div className="px-2 py-1.5 text-xs text-sidebar-foreground/40">
+                          No services found
+                        </div>
+                      ) : (
+                        typedServices.map((service, index) => (
+                          <div 
+                            key={index} 
+                            className="group flex items-center justify-between px-3 py-2 rounded-md hover:bg-sidebar-accent transition-colors"
+                          >
+                            <a 
+                              href={`/services/${service.name}/screen`}
+                              className="flex items-center space-x-3 flex-1 min-w-0"
+                            >
+                              {getServiceStatusIcon(service.state)}
+                              <span className="text-sm text-sidebar-foreground/80 truncate">
+                                {service.name}
+                              </span>
+                            </a>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 hover:bg-sidebar-accent-foreground/10"
+                              onClick={(e) => handleRestartService(service.name, e)}
+                              disabled={restartingServices.includes(service.name)}
+                            >
+                              {restartingServices.includes(service.name) ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <RotateCcw className="w-3 h-3" />
+                              )}
+                            </Button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
 
-        {/* Groups */}
-        <SidebarMenuItem>
-          <SidebarMenuButton 
-            onClick={() => toggleSection('groups')}
-            className="w-full justify-start"
-          >
-            <Building2 className="w-4 h-4" />
-            <span>Groups</span>
-            {expandedSections.has('groups') ? (
-              <ChevronDown className="w-4 h-4 ml-1" />
-            ) : (
-              <ChevronRight className="w-4 h-4 ml-1" />
-            )}
-          </SidebarMenuButton>
-          
-          {expandedSections.has('groups') && (
-            <SidebarMenuSub>
-              {groups.map((group) => (
-                <SidebarMenuSubItem key={group.name}>
-                  <SidebarMenuSubButton 
-                    onClick={() => router.push(`/groups/${group.name}`)}
-                    isActive={pathname === `/groups/${group.name}`}
-                    className="w-full justify-start"
-                  >
-                    <span>{group.name}</span>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              ))}
-            </SidebarMenuSub>
-          )}
-        </SidebarMenuItem>
-
-        {/* Services */}
-        <SidebarMenuItem>
-          <SidebarMenuButton 
-            onClick={() => toggleSection('services')}
-            className="w-full justify-start"
-          >
-            <Activity className="w-4 h-4" />
-            <span>Services</span>
-            {expandedSections.has('services') ? (
-              <ChevronDown className="w-4 h-4 ml-1" />
-            ) : (
-              <ChevronRight className="w-4 h-4 ml-1" />
-            )}
-          </SidebarMenuButton>
-          
-          {expandedSections.has('services') && (
-            <SidebarMenuSub>
-              {services.map((service) => (
-                <SidebarMenuSubItem key={service.name}>
-                  <SidebarMenuSubButton 
-                    onClick={() => router.push(`/services/${service.name}/screen`)}
-                    isActive={pathname === `/services/${service.name}/screen`}
-                    className="w-full justify-start"
-                  >
-                    <span>{service.name}</span>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              ))}
-            </SidebarMenuSub>
-          )}
-        </SidebarMenuItem>
-
-         {/* Players */}
-         <SidebarMenuItem>
-           <SidebarMenuButton 
-             onClick={() => toggleSection('players')}
-             className="w-full justify-start"
-           >
-             <Users className="w-4 h-4" />
-             <span>Players</span>
-             {expandedSections.has('players') ? (
-               <ChevronDown className="w-4 h-4 ml-1" />
-             ) : (
-               <ChevronRight className="w-4 h-4 ml-1" />
-             )}
-           </SidebarMenuButton>
-           
-           {expandedSections.has('players') && (
-             <SidebarMenuSub>
-               {players.length === 0 ? (
-                 <SidebarMenuSubItem>
-                   <div className="px-2 py-1 text-sm text-muted-foreground">
-                     {isLoading ? 'Loading...' : 'No players online'}
-                   </div>
-                 </SidebarMenuSubItem>
-               ) : (
-                 players.map((player) => (
-                   <SidebarMenuSubItem key={player.name || player.id}>
-                     <SidebarMenuSubButton 
-                       onClick={() => router.push(`/players/${player.name || player.id}`)}
-                       isActive={pathname === `/players/${player.name || player.id}`}
-                       className="w-full justify-start"
-                     >
-                       <span>{player.name || player.id}</span>
-                     </SidebarMenuSubButton>
-                   </SidebarMenuSubItem>
-                 ))
-               )}
-             </SidebarMenuSub>
-           )}
-         </SidebarMenuItem>
-
-        {/* Terminal */}
-        <SidebarMenuItem>
-          <SidebarMenuButton 
-            onClick={() => router.push('/terminal')}
-            isActive={isActive('/terminal')}
-            className="w-full justify-start"
-          >
-            <Terminal className="w-4 h-4" />
-            <span>Terminal</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+              ) : item.collapsible ? (
+                <Collapsible defaultOpen className="group/collapsible">
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="w-full px-2 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-all duration-200">
+                      <span className="flex items-center justify-between w-full">
+                        <span className="flex items-center justify-between w-full">
+                          <span className="flex items-center space-x-2">
+                            <item.icon className="w-4 h-4" />
+                            <span className="text-sm font-medium">{item.title}</span>
+                          </span>
+                          <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                        </span>
+                      </span>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="ml-4 mt-1 space-y-1">
+                      {Array.from({ length: item.items }).map((_, index) => (
+                        <div key={index} className="px-2 py-1.5 rounded-md hover:bg-sidebar-accent/50 transition-colors">
+                          <div className="w-full h-3 bg-sidebar-accent animate-pulse rounded"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              ) : (
+                <SidebarMenuButton asChild>
+                  <a href={item.href || "#"} className="w-full px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
+                    <span className="flex items-center space-x-2">
+                      <item.icon className="w-4 h-4" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </span>
+                  </a>
+                </SidebarMenuButton>
+              )}
+            </SidebarMenuItem>
+          ))}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  );
+  )
 }
