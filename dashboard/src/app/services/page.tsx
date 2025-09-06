@@ -7,7 +7,7 @@ import { Service } from '@/types/services';
 import { motion } from 'framer-motion';
 import { API_ENDPOINTS } from '@/lib/api';
 import GlobalNavbar from '@/components/global-navbar';
-import { useWebSocketSystem } from '@/hooks/useWebSocketSystem';
+import { useSidebarData } from '@/components/sidebar-data-provider';
 import { ServiceCard } from '@/components/services/service-card';
 import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
@@ -16,73 +16,36 @@ import { ServiceEmptyState } from '@/components/services/service-empty-state';
 import { toast } from 'sonner';
 
 export default function ServicesPage() {
-    const [services, setServices] = useState<Service[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { services: sidebarServices, isLoading: sidebarLoading } = useSidebarData();
+    const [services, setServices] = useState<Service[]>(sidebarServices);
+    const [isLoading, setIsLoading] = useState(sidebarLoading);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGroup, setSelectedGroup] = useState<string>('all');
     const [selectedType, setSelectedType] = useState<string>('all');
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
-    useWebSocketSystem({
-        path: '/services/update',
-        autoConnect: true,
-        onMessage: (message) => {
-            try {
-                let updateData;
-                
-                if (typeof message.data === 'string') {
-                    try {
-                        updateData = JSON.parse(message.data);
-                    } catch {
-                        return;
-                    }
-                } else if (message.data && typeof message.data === 'object') {
-                    updateData = message.data;
-                } else if (message && message.serviceName) {
-                    updateData = message;
-                } else {
-                    return;
-                }
+    // Use shared services data from SidebarDataProvider
+    useEffect(() => {
+        setServices(sidebarServices);
+        setIsLoading(sidebarLoading);
+    }, [sidebarServices, sidebarLoading]);
 
-                if (updateData && updateData.serviceName && updateData.state) {
-
-                    setServices(prev => prev.map(service => 
-                        service.name === updateData.serviceName 
-                            ? { 
-                                ...service, 
-                                state: updateData.state,
-
-                                ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
-                                    playerCount: -1,
-                                    maxPlayerCount: -1,
-                                    cpuUsage: -1,
-                                    memoryUsage: -1,
-                                    maxMemory: -1
-                                } : {}),
-
-                                ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
-                                    playerCount: 0,
-                                    maxPlayerCount: 0,
-                                    cpuUsage: 0,
-                                    memoryUsage: 0,
-                                    maxMemory: 0
-                                } : {})
-                            }
-                            : service
-                    ));
-
-                    if (updateData.state === 'ONLINE') {
-                        setTimeout(() => {
-                            loadServices();
-                        }, 500);
-                    }
-                } else {
-                }
-            } catch {
+    // Listen for service state updates to show toasts
+    useEffect(() => {
+        const handleServiceStateUpdate = (event: CustomEvent) => {
+            const { serviceName, state } = event.detail;
+            if (state === 'ONLINE') {
+                toast.success(`Service ${serviceName} is now online`);
             }
-        }
-    });
+        };
+
+        window.addEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+        
+        return () => {
+            window.removeEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+        };
+    }, []);
 
     
 

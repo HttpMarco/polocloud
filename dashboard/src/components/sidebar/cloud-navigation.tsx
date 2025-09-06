@@ -8,7 +8,6 @@ import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, 
 import Image from "next/image";
 import { getPlatformIcon } from "@/lib/platform-icons";
 import { useSidebarData } from "@/components/sidebar-data-provider";
-import { useWebSocketSystem } from "@/hooks/useWebSocketSystem";
 import { Group } from "@/types/groups";
 import { Service } from "@/types/services";
 import { API_ENDPOINTS } from "@/lib/api";
@@ -58,37 +57,6 @@ export function CloudNavigation() {
   const [isGroupsLoading, setIsGroupsLoading] = useState(sidebarDataLoading);
   const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
   const [restartingServices, setRestartingServices] = useState<string[]>([]);
-
-  useWebSocketSystem({
-    path: '/services/update',
-    autoConnect: true,
-    onMessage: (message) => {
-      try {
-        let updateData;
-        if (typeof message.data === 'string') {
-          try {
-            updateData = JSON.parse(message.data);
-          } catch (parseError) {
-            console.error(parseError);
-            return;
-          }
-        } else if (message.data && typeof message.data === 'object') {
-          updateData = message.data;
-        } else {
-          updateData = message;
-        }
-        
-        if (updateData && updateData.serviceName && updateData.state) {
-          setServices(prev => prev.map(service => 
-            service.name === updateData.serviceName 
-              ? { ...service, state: updateData.state }
-              : service
-          ));
-        }
-      } catch (error) {
-        console.warn('Sidebar error in cloud-navigation:', error);
-      }}
-  });
 
   useEffect(() => {
     setGroups(initialGroups);
