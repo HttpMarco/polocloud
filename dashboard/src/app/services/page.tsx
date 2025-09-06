@@ -49,9 +49,23 @@ export default function ServicesPage() {
 
     // Debug info for WebSocket status
     useEffect(() => {
+        // Parse token like in other components
+        let token = localStorage.getItem('token');
+        if (!token) {
+            const cookies = document.cookie.split(';');
+            for (const cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'token') {
+                    token = value;
+                    break;
+                }
+            }
+        }
+
         console.log('Services Page: Checking credentials', {
             backendIp: localStorage.getItem('backendIp'),
-            token: document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1],
+            token: token ? 'present' : 'missing',
+            allCookies: document.cookie,
             sidebarServices: sidebarServices.length,
             sidebarLoading
         });
@@ -280,7 +294,20 @@ export default function ServicesPage() {
                         <div>Total Services: {services.length}</div>
                         <div>Online Services: {services.filter(s => s.state === 'ONLINE').length}</div>
                         <div>Backend IP: {localStorage.getItem('backendIp') || 'Not found'}</div>
-                        <div>Token: {document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1] ? 'Present' : 'Missing'}</div>
+                        <div>Token: {(() => {
+                            let token = localStorage.getItem('token');
+                            if (!token) {
+                                const cookies = document.cookie.split(';');
+                                for (const cookie of cookies) {
+                                    const [name, value] = cookie.trim().split('=');
+                                    if (name === 'token') {
+                                        token = value;
+                                        break;
+                                    }
+                                }
+                            }
+                            return token ? 'Present' : 'Missing';
+                        })()}</div>
                     </div>
                 </div>
             </div>

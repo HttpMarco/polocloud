@@ -43,12 +43,25 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isClient) {
       const backendIp = localStorage.getItem('backendIp');
-      const token = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('token='))
-        ?.split('=')[1];
       
-      console.log('SidebarDataProvider: Loading credentials', { backendIp, token: token ? 'present' : 'missing' });
+      // Parse cookies like in app-sidebar.tsx
+      let token = localStorage.getItem('token');
+      if (!token) {
+        const cookies = document.cookie.split(';');
+        for (const cookie of cookies) {
+          const [name, value] = cookie.trim().split('=');
+          if (name === 'token') {
+            token = value;
+            break;
+          }
+        }
+      }
+      
+      console.log('SidebarDataProvider: Loading credentials', { 
+        backendIp, 
+        token: token ? 'present' : 'missing',
+        allCookies: document.cookie
+      });
       setBackendCredentials({ backendIp, token: token || null });
     }
   }, [isClient]);
