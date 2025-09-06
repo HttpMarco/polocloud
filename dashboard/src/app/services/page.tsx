@@ -72,10 +72,9 @@ export default function ServicesPage() {
                             : service
                     ));
 
+                    // Remove from restarting services when online
                     if (updateData.state === 'ONLINE') {
-                        setTimeout(() => {
-                            loadServices();
-                        }, 500);
+                        setRestartingServices(prev => prev.filter(name => name !== updateData.serviceName));
                     }
                 } else {
                 }
@@ -127,15 +126,17 @@ export default function ServicesPage() {
             });
 
             if (response.ok) {
-
-
+                toast.success(`Service ${serviceName} restart initiated`);
+                // Don't remove from restarting services here - let WebSocket handle it when ONLINE
             } else {
                 const errorData = await response.json();
                 toast.error(errorData.error || 'Failed to restart service');
+                // Only remove on error
+                setRestartingServices(prev => prev.filter(name => name !== serviceName));
             }
         } catch {
             toast.error('Failed to restart service');
-        } finally {
+            // Only remove on error
             setRestartingServices(prev => prev.filter(name => name !== serviceName));
         }
     };
