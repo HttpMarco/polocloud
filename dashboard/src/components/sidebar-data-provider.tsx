@@ -34,10 +34,31 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
   const [isClient, setIsClient] = useState(false);
 
+  // Get backend credentials
+  const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
+    backendIp: null,
+    token: null
+  });
+
+  useEffect(() => {
+    if (isClient) {
+      const backendIp = localStorage.getItem('backendIp');
+      const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('token='))
+        ?.split('=')[1];
+      
+      console.log('SidebarDataProvider: Loading credentials', { backendIp, token: token ? 'present' : 'missing' });
+      setBackendCredentials({ backendIp, token: token || null });
+    }
+  }, [isClient]);
+
   // Shared WebSocket connection for service updates
   useWebSocketSystem({
+    backendIp: backendCredentials.backendIp || undefined,
+    token: backendCredentials.token || undefined,
     path: '/services/update',
-    autoConnect: !shouldHideSidebar && isClient,
+    autoConnect: !shouldHideSidebar && isClient && !!backendCredentials.backendIp && !!backendCredentials.token,
     onConnect: () => {
       // Dispatch connect event for debug info
       window.dispatchEvent(new CustomEvent('websocketConnect'));

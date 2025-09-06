@@ -49,6 +49,13 @@ export default function ServicesPage() {
 
     // Debug info for WebSocket status
     useEffect(() => {
+        console.log('Services Page: Checking credentials', {
+            backendIp: localStorage.getItem('backendIp'),
+            token: document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1],
+            sidebarServices: sidebarServices.length,
+            sidebarLoading
+        });
+
         const debugElement = document.getElementById('websocket-debug-services');
         if (debugElement) {
             debugElement.textContent = `Services WebSocket: INITIALIZING...`;
@@ -272,6 +279,8 @@ export default function ServicesPage() {
                         <div>Last Update: <span id="last-update-time">Never</span></div>
                         <div>Total Services: {services.length}</div>
                         <div>Online Services: {services.filter(s => s.state === 'ONLINE').length}</div>
+                        <div>Backend IP: {localStorage.getItem('backendIp') || 'Not found'}</div>
+                        <div>Token: {document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1] ? 'Present' : 'Missing'}</div>
                     </div>
                 </div>
             </div>
