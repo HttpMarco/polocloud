@@ -81,9 +81,34 @@ export function CloudNavigation() {
         if (updateData && updateData.serviceName && updateData.state) {
           setServices(prev => prev.map(service => 
             service.name === updateData.serviceName 
-              ? { ...service, state: updateData.state }
+              ? { 
+                  ...service, 
+                  state: updateData.state,
+                  
+                  // Reset stats during transitions
+                  ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
+                    playerCount: -1,
+                    maxPlayerCount: -1,
+                    cpuUsage: -1,
+                    memoryUsage: -1,
+                    maxMemory: -1
+                  } : {}),
+                  
+                  ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
+                    playerCount: 0,
+                    maxPlayerCount: 0,
+                    cpuUsage: 0,
+                    memoryUsage: 0,
+                    maxMemory: 0
+                  } : {})
+                }
               : service
           ));
+
+          // Remove from restarting services when online
+          if (updateData.state === 'ONLINE') {
+            setRestartingServices(prev => prev.filter(name => name !== updateData.serviceName));
+          }
         }
       } catch (error) {
         console.warn('Sidebar error in cloud-navigation:', error);
@@ -135,14 +160,17 @@ export function CloudNavigation() {
       });
 
       if (response.ok) {
-        toast.success(`Service ${serviceName} restarted successfully`);
+        toast.success(`Service ${serviceName} restart initiated`);
+        // Don't remove from restarting services here - let WebSocket handle it when ONLINE
       } else {
         const errorData = await response.json();
         toast.error(errorData.error || 'Failed to restart service');
+        // Only remove on error
+        setRestartingServices(prev => prev.filter(name => name !== serviceName));
       }
     } catch {
       toast.error('Failed to restart service');
-    } finally {
+      // Only remove on error
       setRestartingServices(prev => prev.filter(name => name !== serviceName));
     }
   };

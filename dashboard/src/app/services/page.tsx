@@ -46,13 +46,13 @@ export default function ServicesPage() {
                 }
 
                 if (updateData && updateData.serviceName && updateData.state) {
-
                     setServices(prev => prev.map(service => 
                         service.name === updateData.serviceName 
                             ? { 
                                 ...service, 
                                 state: updateData.state,
-
+                                
+                                // Reset stats during transitions
                                 ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
                                     playerCount: -1,
                                     maxPlayerCount: -1,
@@ -60,7 +60,7 @@ export default function ServicesPage() {
                                     memoryUsage: -1,
                                     maxMemory: -1
                                 } : {}),
-
+                                
                                 ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
                                     playerCount: 0,
                                     maxPlayerCount: 0,
