@@ -45,7 +45,8 @@ export function CloudNavigation() {
           }
         }
 
-        // Load players (placeholder - adjust API endpoint as needed)
+        // Load players - using a placeholder for now
+        // You can implement this when you have a players API endpoint
         setPlayers([]);
       } catch (error) {
         console.error('Failed to load data:', error);
@@ -80,17 +81,6 @@ export function CloudNavigation() {
     <SidebarGroup>
       <SidebarGroupLabel>Cloud</SidebarGroupLabel>
       <SidebarMenu>
-        {/* Dashboard */}
-        <SidebarMenuItem>
-          <SidebarMenuButton 
-            onClick={() => router.push('/')}
-            isActive={isActive('/')}
-            className="w-full justify-start"
-          >
-            <Server className="w-4 h-4" />
-            <span>Dashboard</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
 
         {/* Groups */}
         <SidebarMenuItem>
@@ -169,7 +159,8 @@ export function CloudNavigation() {
         {/* Players */}
         <SidebarMenuItem>
           <SidebarMenuButton 
-            onClick={() => toggleSection('players')}
+            onClick={() => router.push('/players')}
+            isActive={isActive('/players')}
             className="w-full justify-start"
           >
             <Users className="w-4 h-4" />
@@ -179,36 +170,7 @@ export function CloudNavigation() {
                 {players.length}
               </Badge>
             )}
-            {expandedSections.has('players') ? (
-              <ChevronDown className="w-4 h-4 ml-1" />
-            ) : (
-              <ChevronRight className="w-4 h-4 ml-1" />
-            )}
           </SidebarMenuButton>
-          
-          {expandedSections.has('players') && (
-            <SidebarMenuSub>
-              {players.length === 0 ? (
-                <SidebarMenuSubItem>
-                  <div className="px-2 py-1 text-sm text-muted-foreground">
-                    No players online
-                  </div>
-                </SidebarMenuSubItem>
-              ) : (
-                players.map((player) => (
-                  <SidebarMenuSubItem key={player.id}>
-                    <SidebarMenuSubButton 
-                      onClick={() => router.push(`/players/${player.id}`)}
-                      isActive={pathname === `/players/${player.id}`}
-                      className="w-full justify-start"
-                    >
-                      <span>{player.name}</span>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                ))
-              )}
-            </SidebarMenuSub>
-          )}
         </SidebarMenuItem>
 
         {/* Terminal */}
