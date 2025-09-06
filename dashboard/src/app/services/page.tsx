@@ -13,7 +13,6 @@ import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
 import { ServiceHeader } from '@/components/services/service-header';
 import { ServiceEmptyState } from '@/components/services/service-empty-state';
-import { toast } from 'sonner';
 
 export default function ServicesPage() {
     const [services, setServices] = useState<Service[]>([]);
@@ -131,16 +130,12 @@ export default function ServicesPage() {
             });
 
             if (response.ok) {
-                toast.success(`Service ${serviceName} restart initiated`);
                 // Don't remove from restarting services here - let WebSocket handle it when ONLINE
             } else {
-                const errorData = await response.json();
-                toast.error(errorData.error || 'Failed to restart service');
                 // Only remove on error
                 setRestartingServices(prev => prev.filter(name => name !== serviceName));
             }
         } catch {
-            toast.error('Failed to restart service');
             // Only remove on error
             setRestartingServices(prev => prev.filter(name => name !== serviceName));
         }

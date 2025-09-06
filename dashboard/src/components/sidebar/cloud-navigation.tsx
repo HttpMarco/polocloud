@@ -12,7 +12,6 @@ import { useWebSocketSystem } from "@/hooks/useWebSocketSystem";
 import { Group } from "@/types/groups";
 import { Service } from "@/types/services";
 import { API_ENDPOINTS } from "@/lib/api";
-import { toast } from "sonner";
 
 const cloudItems = [
   {
@@ -60,7 +59,9 @@ export function CloudNavigation() {
   const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
   useWebSocketSystem({
+    backendIp: undefined,
     path: '/services/update',
+    token: undefined,
     autoConnect: true,
     onMessage: (message) => {
       try {
@@ -160,16 +161,12 @@ export function CloudNavigation() {
       });
 
       if (response.ok) {
-        toast.success(`Service ${serviceName} restart initiated`);
         // Don't remove from restarting services here - let WebSocket handle it when ONLINE
       } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || 'Failed to restart service');
         // Only remove on error
         setRestartingServices(prev => prev.filter(name => name !== serviceName));
       }
     } catch {
-      toast.error('Failed to restart service');
       // Only remove on error
       setRestartingServices(prev => prev.filter(name => name !== serviceName));
     }
