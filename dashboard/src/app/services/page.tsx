@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { API_ENDPOINTS } from '@/lib/api';
 import GlobalNavbar from '@/components/global-navbar';
 import { useSidebarData } from '@/components/sidebar-data-provider';
+import { useWebSocketSystem } from '@/hooks/useWebSocketSystem';
 import { ServiceCard } from '@/components/services/service-card';
 import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
@@ -24,12 +25,136 @@ export default function ServicesPage() {
     const [selectedGroup, setSelectedGroup] = useState<string>('all');
     const [selectedType, setSelectedType] = useState<string>('all');
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
+    
+    // Direct WebSocket connection for services page
+    const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
+        backendIp: null,
+        token: null
+    });
 
     // Use shared services data from SidebarDataProvider
     useEffect(() => {
         setServices(sidebarServices);
         setIsLoading(sidebarLoading);
     }, [sidebarServices, sidebarLoading]);
+    
+    // Load credentials for direct WebSocket
+    useEffect(() => {
+        const loadCredentials = async () => {
+            const backendIp = localStorage.getItem('backendIp');
+            
+            try {
+                const response = await fetch('/api/auth/token');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.token) {
+                        setBackendCredentials({ backendIp, token: data.token });
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.log('Failed to fetch token from API for direct WebSocket', error);
+            }
+            
+            // Fallback to cookie parsing
+            let token = localStorage.getItem('token');
+            if (!token) {
+                const cookies = document.cookie.split(';');
+                for (const cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'token') {
+                        token = value;
+                        break;
+                    }
+                }
+            }
+            
+            if (!token) {
+                const tokenMatch = document.cookie.match(/token=([^;]+)/);
+                if (tokenMatch) {
+                    token = tokenMatch[1];
+                }
+            }
+            
+            setBackendCredentials({ backendIp, token: token || null });
+        };
+        
+        loadCredentials();
+    }, []);
+    
+    // Direct WebSocket connection
+    useWebSocketSystem({
+        backendIp: backendCredentials.backendIp || undefined,
+        token: backendCredentials.token || undefined,
+        path: '/services/update',
+        autoConnect: !!backendCredentials.backendIp && !!backendCredentials.token,
+        onConnect: () => {
+            console.log('Services Page: WebSocket connected directly');
+            window.dispatchEvent(new CustomEvent('websocketConnect'));
+        },
+        onDisconnect: () => {
+            console.log('Services Page: WebSocket disconnected directly');
+            window.dispatchEvent(new CustomEvent('websocketDisconnect'));
+        },
+        onError: (error) => {
+            console.log('Services Page: WebSocket error directly', error);
+            window.dispatchEvent(new CustomEvent('websocketError', {
+                detail: { message: error.message }
+            }));
+        },
+        onMessage: (message) => {
+            console.log('Services Page: WebSocket message received directly', message);
+            try {
+                let updateData;
+                if (typeof message.data === 'string') {
+                    try {
+                        updateData = JSON.parse(message.data);
+                    } catch (parseError) {
+                        console.error('Failed to parse service update:', parseError);
+                        return;
+                    }
+                } else if (message.data && typeof message.data === 'object') {
+                    updateData = message.data;
+                } else {
+                    updateData = message;
+                }
+                
+                if (updateData && updateData.serviceName && updateData.state) {
+                    // Update local state
+                    setServices(prev => prev.map(service => 
+                        service.name === updateData.serviceName 
+                            ? { 
+                                ...service, 
+                                state: updateData.state,
+                                ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
+                                    playerCount: -1,
+                                    maxPlayerCount: -1,
+                                    cpuUsage: -1,
+                                    memoryUsage: -1,
+                                    maxMemory: -1
+                                } : {}),
+                                ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
+                                    playerCount: 0,
+                                    maxPlayerCount: 0,
+                                    cpuUsage: 0,
+                                    memoryUsage: 0,
+                                    maxMemory: 0
+                                } : {}),
+                                ...(updateData || {})
+                            }
+                            : service
+                    ));
+                    
+                    // Dispatch custom event
+                    window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
+                        detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
+                    }));
+                }
+            } catch (error) {
+                console.warn('Error processing service update:', error);
+            }
+        }
+    });
 
     // Listen for service state updates to show toasts
     useEffect(() => {
@@ -395,9 +520,10 @@ export default function ServicesPage() {
                             <div>Cookie Token Match: {document.cookie.match(/token=([^;]+)/) ? 'Found' : 'Not found'}</div>
                             <div>Cookie Array: {JSON.stringify(document.cookie.split(';').map(c => c.trim()))}</div>
                             <div>WebSocket AutoConnect: {(() => {
-                                const backendIp = localStorage.getItem('backendIp');
-                                const token = localStorage.getItem('token') || document.cookie.match(/token=([^;]+)/)?.[1];
-                                return (!!backendIp && !!token) ? 'Yes' : 'No';
+                                return (!!backendCredentials.backendIp && !!backendCredentials.token) ? 'Yes' : 'No';
+                            })()}</div>
+                            <div>Direct WebSocket Status: {(() => {
+                                return backendCredentials.backendIp && backendCredentials.token ? 'Ready' : 'Waiting for credentials';
                             })()}</div>
                         </div>
                         
