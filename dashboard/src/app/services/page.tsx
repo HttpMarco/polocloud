@@ -143,12 +143,21 @@ export default function ServicesPage() {
         window.addEventListener('websocketDisconnect', handleWebSocketDisconnect as EventListener);
         window.addEventListener('websocketError', handleWebSocketError as EventListener);
         window.addEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+        
+        // Add refresh credentials listener
+        const handleRefreshCredentials = (event: CustomEvent) => {
+            console.log('Refresh credentials event received:', event.detail);
+            // Force a re-render by updating a dummy state
+            setServices(prev => [...prev]);
+        };
+        window.addEventListener('refreshCredentials', handleRefreshCredentials as EventListener);
 
         return () => {
             window.removeEventListener('websocketConnect', handleWebSocketConnect as EventListener);
             window.removeEventListener('websocketDisconnect', handleWebSocketDisconnect as EventListener);
             window.removeEventListener('websocketError', handleWebSocketError as EventListener);
             window.removeEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+            window.removeEventListener('refreshCredentials', handleRefreshCredentials as EventListener);
         };
     }, []);
 
@@ -328,6 +337,77 @@ export default function ServicesPage() {
                             
                             return token ? `Present (${token.substring(0, 20)}...)` : 'Missing';
                         })()}</div>
+                        
+                        {/* Additional Debug Info */}
+                        <div className="mt-2 pt-2 border-t border-border">
+                            <div className="font-semibold text-foreground mb-1">Debug Details:</div>
+                            <div>All Cookies: {document.cookie || 'No cookies found'}</div>
+                            <div>Cookie Count: {document.cookie.split(';').length}</div>
+                            <div>LocalStorage Token: {localStorage.getItem('token') ? 'Present' : 'Missing'}</div>
+                            <div>Cookie Token Match: {document.cookie.match(/token=([^;]+)/) ? 'Found' : 'Not found'}</div>
+                            <div>Cookie Array: {JSON.stringify(document.cookie.split(';').map(c => c.trim()))}</div>
+                            <div>WebSocket AutoConnect: {(() => {
+                                const backendIp = localStorage.getItem('backendIp');
+                                const token = localStorage.getItem('token') || document.cookie.match(/token=([^;]+)/)?.[1];
+                                return (!!backendIp && !!token) ? 'Yes' : 'No';
+                            })()}</div>
+                        </div>
+                        
+                        {/* Manual Test Buttons */}
+                        <div className="mt-3 pt-2 border-t border-border">
+                            <div className="font-semibold text-foreground mb-2">Manual Tests:</div>
+                            <div className="flex gap-2 flex-wrap">
+                                <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                        console.log('Manual WebSocket Test - Current State:', {
+                                            backendIp: localStorage.getItem('backendIp'),
+                                            token: localStorage.getItem('token'),
+                                            cookieToken: document.cookie.match(/token=([^;]+)/)?.[1],
+                                            allCookies: document.cookie,
+                                            pathname: window.location.pathname
+                                        });
+                                        // Trigger a manual connect event for testing
+                                        window.dispatchEvent(new CustomEvent('websocketConnect'));
+                                    }}
+                                >
+                                    Test Connect Event
+                                </Button>
+                                <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                        // Test service state update
+                                        window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
+                                            detail: { 
+                                                serviceName: 'test-service', 
+                                                state: 'ONLINE',
+                                                updateData: { test: true }
+                                            }
+                                        }));
+                                    }}
+                                >
+                                    Test Service Update
+                                </Button>
+                                <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                        // Force refresh credentials
+                                        const backendIp = localStorage.getItem('backendIp');
+                                        const token = localStorage.getItem('token') || document.cookie.match(/token=([^;]+)/)?.[1];
+                                        console.log('Force refresh credentials:', { backendIp, token });
+                                        // Trigger a custom event to refresh
+                                        window.dispatchEvent(new CustomEvent('refreshCredentials', {
+                                            detail: { backendIp, token }
+                                        }));
+                                    }}
+                                >
+                                    Refresh Credentials
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
