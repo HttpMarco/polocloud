@@ -44,35 +44,58 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
     if (isClient) {
       const backendIp = localStorage.getItem('backendIp');
       
-      // Parse cookies like in app-sidebar.tsx
-      let token = localStorage.getItem('token');
-      if (!token) {
-        const cookies = document.cookie.split(';');
-        for (const cookie of cookies) {
-          const [name, value] = cookie.trim().split('=');
-          if (name === 'token') {
-            token = value;
-            break;
+      // Try to get token from API instead of cookies
+      const fetchToken = async () => {
+        try {
+          const response = await fetch('/api/auth/token');
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.token) {
+              console.log('SidebarDataProvider: Token fetched from API', { 
+                backendIp, 
+                token: 'present',
+                tokenValue: data.token.substring(0, 20) + '...'
+              });
+              setBackendCredentials({ backendIp, token: data.token });
+              return;
+            }
+          }
+        } catch (error) {
+          console.log('SidebarDataProvider: Failed to fetch token from API', error);
+        }
+        
+        // Fallback to cookie parsing
+        let token = localStorage.getItem('token');
+        if (!token) {
+          const cookies = document.cookie.split(';');
+          for (const cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'token') {
+              token = value;
+              break;
+            }
           }
         }
-      }
-      
-      // Alternative parsing method if the above doesn't work
-      if (!token) {
-        const tokenMatch = document.cookie.match(/token=([^;]+)/);
-        if (tokenMatch) {
-          token = tokenMatch[1];
+        
+        // Alternative parsing method if the above doesn't work
+        if (!token) {
+          const tokenMatch = document.cookie.match(/token=([^;]+)/);
+          if (tokenMatch) {
+            token = tokenMatch[1];
+          }
         }
-      }
+        
+        console.log('SidebarDataProvider: Loading credentials from cookies', { 
+          backendIp, 
+          token: token ? 'present' : 'missing',
+          allCookies: document.cookie,
+          cookieArray: document.cookie.split(';'),
+          tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token='))
+        });
+        setBackendCredentials({ backendIp, token: token || null });
+      };
       
-      console.log('SidebarDataProvider: Loading credentials', { 
-        backendIp, 
-        token: token ? 'present' : 'missing',
-        allCookies: document.cookie,
-        cookieArray: document.cookie.split(';'),
-        tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token='))
-      });
-      setBackendCredentials({ backendIp, token: token || null });
+      fetchToken();
     }
   }, [isClient]);
 

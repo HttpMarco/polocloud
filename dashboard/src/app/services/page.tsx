@@ -49,37 +49,107 @@ export default function ServicesPage() {
 
     // Debug info for WebSocket status
     useEffect(() => {
-        // Parse token like in other components
-        let token = localStorage.getItem('token');
-        if (!token) {
-            const cookies = document.cookie.split(';');
-            for (const cookie of cookies) {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'token') {
-                    token = value;
-                    break;
+        // Try to get token from API first
+        const fetchToken = async () => {
+            try {
+                const response = await fetch('/api/auth/token');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.token) {
+                        console.log('Services Page: Token fetched from API', {
+                            backendIp: localStorage.getItem('backendIp'),
+                            token: 'present',
+                            tokenValue: data.token.substring(0, 20) + '...',
+                            sidebarServices: sidebarServices.length,
+                            sidebarLoading
+                        });
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.log('Services Page: Failed to fetch token from API', error);
+            }
+            
+            // Fallback to cookie parsing
+            let token = localStorage.getItem('token');
+            if (!token) {
+                const cookies = document.cookie.split(';');
+                for (const cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'token') {
+                        token = value;
+                        break;
+                    }
                 }
             }
-        }
-        
-        // Alternative parsing method if the above doesn't work
-        if (!token) {
-            const tokenMatch = document.cookie.match(/token=([^;]+)/);
-            if (tokenMatch) {
-                token = tokenMatch[1];
+            
+            // Alternative parsing method if the above doesn't work
+            if (!token) {
+                const tokenMatch = document.cookie.match(/token=([^;]+)/);
+                if (tokenMatch) {
+                    token = tokenMatch[1];
+                }
             }
-        }
 
-        console.log('Services Page: Checking credentials', {
-            backendIp: localStorage.getItem('backendIp'),
-            token: token ? 'present' : 'missing',
-            tokenValue: token,
-            allCookies: document.cookie,
-            cookieArray: document.cookie.split(';'),
-            tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token=')),
-            sidebarServices: sidebarServices.length,
-            sidebarLoading
-        });
+            console.log('Services Page: Checking credentials from cookies', {
+                backendIp: localStorage.getItem('backendIp'),
+                token: token ? 'present' : 'missing',
+                tokenValue: token,
+                allCookies: document.cookie,
+                cookieArray: document.cookie.split(';'),
+                tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token=')),
+                sidebarServices: sidebarServices.length,
+                sidebarLoading
+            });
+        };
+        
+        fetchToken();
+        
+        // Update token display
+        const updateTokenDisplay = async () => {
+            try {
+                const response = await fetch('/api/auth/token');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.token) {
+                        const tokenDisplay = document.getElementById('token-display');
+                        if (tokenDisplay) {
+                            tokenDisplay.textContent = `Present (${data.token.substring(0, 20)}...)`;
+                        }
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.log('Failed to fetch token for display', error);
+            }
+            
+            // Fallback to cookie parsing
+            let token = localStorage.getItem('token');
+            if (!token) {
+                const cookies = document.cookie.split(';');
+                for (const cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'token') {
+                        token = value;
+                        break;
+                    }
+                }
+            }
+            
+            if (!token) {
+                const tokenMatch = document.cookie.match(/token=([^;]+)/);
+                if (tokenMatch) {
+                    token = tokenMatch[1];
+                }
+            }
+            
+            const tokenDisplay = document.getElementById('token-display');
+            if (tokenDisplay) {
+                tokenDisplay.textContent = token ? `Present (${token.substring(0, 20)}...)` : 'Missing';
+            }
+        };
+        
+        updateTokenDisplay();
 
         const debugElement = document.getElementById('websocket-debug-services');
         if (debugElement) {
@@ -314,29 +384,7 @@ export default function ServicesPage() {
                         <div>Total Services: {services.length}</div>
                         <div>Online Services: {services.filter(s => s.state === 'ONLINE').length}</div>
                         <div>Backend IP: {localStorage.getItem('backendIp') || 'Not found'}</div>
-                        <div>Token: {(() => {
-                            let token = localStorage.getItem('token');
-                            if (!token) {
-                                const cookies = document.cookie.split(';');
-                                for (const cookie of cookies) {
-                                    const [name, value] = cookie.trim().split('=');
-                                    if (name === 'token') {
-                                        token = value;
-                                        break;
-                                    }
-                                }
-                            }
-                            
-                            // Alternative parsing method
-                            if (!token) {
-                                const tokenMatch = document.cookie.match(/token=([^;]+)/);
-                                if (tokenMatch) {
-                                    token = tokenMatch[1];
-                                }
-                            }
-                            
-                            return token ? `Present (${token.substring(0, 20)}...)` : 'Missing';
-                        })()}</div>
+                        <div>Token: <span id="token-display">Loading...</span></div>
                         
                         {/* Additional Debug Info */}
                         <div className="mt-2 pt-2 border-t border-border">
