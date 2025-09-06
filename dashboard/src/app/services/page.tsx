@@ -46,31 +46,37 @@ export default function ServicesPage() {
                 }
 
                 if (updateData && updateData.serviceName && updateData.state) {
-                    setServices(prev => prev.map(service => 
-                        service.name === updateData.serviceName 
-                            ? { 
-                                ...service, 
-                                state: updateData.state,
-                                
-                                // Reset stats during transitions
-                                ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
-                                    playerCount: -1,
-                                    maxPlayerCount: -1,
-                                    cpuUsage: -1,
-                                    memoryUsage: -1,
-                                    maxMemory: -1
-                                } : {}),
-                                
-                                ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
-                                    playerCount: 0,
-                                    maxPlayerCount: 0,
-                                    cpuUsage: 0,
-                                    memoryUsage: 0,
-                                    maxMemory: 0
-                                } : {})
+                    // Only update if state actually changed
+                    setServices(prev => prev.map(service => {
+                        if (service.name === updateData.serviceName) {
+                            // Only update if state is different
+                            if (service.state !== updateData.state) {
+                                return { 
+                                    ...service, 
+                                    state: updateData.state,
+                                    
+                                    // Reset stats during transitions
+                                    ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
+                                        playerCount: -1,
+                                        maxPlayerCount: -1,
+                                        cpuUsage: -1,
+                                        memoryUsage: -1,
+                                        maxMemory: -1
+                                    } : {}),
+                                    
+                                    ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
+                                        playerCount: 0,
+                                        maxPlayerCount: 0,
+                                        cpuUsage: 0,
+                                        memoryUsage: 0,
+                                        maxMemory: 0
+                                    } : {})
+                                };
                             }
-                            : service
-                    ));
+                            return service; // No change needed
+                        }
+                        return service;
+                    }));
 
                     // Remove from restarting services when online
                     if (updateData.state === 'ONLINE') {
