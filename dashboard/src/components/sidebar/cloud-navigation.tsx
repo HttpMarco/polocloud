@@ -11,6 +11,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
+import { API_ENDPOINTS } from "@/lib/api/endpoints";
 
 export function CloudNavigation() {
   const [services, setServices] = useState<any[]>([]);
@@ -25,8 +26,8 @@ export function CloudNavigation() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load services
-        const servicesResponse = await fetch('/api/services/list');
+        // Load services using the correct endpoint
+        const servicesResponse = await fetch(API_ENDPOINTS.SERVICES.LIST);
         if (servicesResponse.ok) {
           const servicesData = await servicesResponse.json();
           if (servicesData.success && servicesData.services) {
@@ -34,8 +35,8 @@ export function CloudNavigation() {
           }
         }
 
-        // Load groups
-        const groupsResponse = await fetch('/api/groups/list');
+        // Load groups using the correct endpoint
+        const groupsResponse = await fetch(API_ENDPOINTS.GROUPS.LIST);
         if (groupsResponse.ok) {
           const groupsData = await groupsResponse.json();
           if (groupsData.success && groupsData.groups) {
@@ -43,9 +44,14 @@ export function CloudNavigation() {
           }
         }
 
-        // Load players - using a placeholder for now
-        // You can implement this when you have a players API endpoint
-        setPlayers([]);
+        // Load players using the correct endpoint
+        const playersResponse = await fetch(API_ENDPOINTS.PLAYERS.LIST);
+        if (playersResponse.ok) {
+          const playersData = await playersResponse.json();
+          if (playersData.success && playersData.players) {
+            setPlayers(playersData.players);
+          }
+        }
       } catch (error) {
         console.error('Failed to load data:', error);
       } finally {
@@ -147,17 +153,45 @@ export function CloudNavigation() {
           )}
         </SidebarMenuItem>
 
-        {/* Players */}
-        <SidebarMenuItem>
-          <SidebarMenuButton 
-            onClick={() => router.push('/players')}
-            isActive={isActive('/players')}
-            className="w-full justify-start"
-          >
-            <Users className="w-4 h-4" />
-            <span>Players</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+         {/* Players */}
+         <SidebarMenuItem>
+           <SidebarMenuButton 
+             onClick={() => toggleSection('players')}
+             className="w-full justify-start"
+           >
+             <Users className="w-4 h-4" />
+             <span>Players</span>
+             {expandedSections.has('players') ? (
+               <ChevronDown className="w-4 h-4 ml-1" />
+             ) : (
+               <ChevronRight className="w-4 h-4 ml-1" />
+             )}
+           </SidebarMenuButton>
+           
+           {expandedSections.has('players') && (
+             <SidebarMenuSub>
+               {players.length === 0 ? (
+                 <SidebarMenuSubItem>
+                   <div className="px-2 py-1 text-sm text-muted-foreground">
+                     {isLoading ? 'Loading...' : 'No players online'}
+                   </div>
+                 </SidebarMenuSubItem>
+               ) : (
+                 players.map((player) => (
+                   <SidebarMenuSubItem key={player.name || player.id}>
+                     <SidebarMenuSubButton 
+                       onClick={() => router.push(`/players/${player.name || player.id}`)}
+                       isActive={pathname === `/players/${player.name || player.id}`}
+                       className="w-full justify-start"
+                     >
+                       <span>{player.name || player.id}</span>
+                     </SidebarMenuSubButton>
+                   </SidebarMenuSubItem>
+                 ))
+               )}
+             </SidebarMenuSub>
+           )}
+         </SidebarMenuItem>
 
         {/* Terminal */}
         <SidebarMenuItem>
