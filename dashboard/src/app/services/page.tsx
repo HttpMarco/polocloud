@@ -72,14 +72,7 @@ export default function ServicesPage() {
                             : service
                     ));
 
-                    // Reload services when state changes to get updated stats
                     if (updateData.state === 'ONLINE') {
-                        // Wait a bit longer for ONLINE to ensure stats are updated
-                        setTimeout(() => {
-                            loadServices();
-                        }, 2000);
-                    } else if (updateData.state === 'OFFLINE' || updateData.state === 'STOPPED') {
-                        // Quick reload for offline states
                         setTimeout(() => {
                             loadServices();
                         }, 500);
