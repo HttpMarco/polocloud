@@ -13,6 +13,7 @@ import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
 import { ServiceHeader } from '@/components/services/service-header';
 import { ServiceEmptyState } from '@/components/services/service-empty-state';
+import { toast } from 'sonner';
 
 export default function ServicesPage() {
     const [services, setServices] = useState<Service[]>([]);
@@ -22,64 +23,36 @@ export default function ServicesPage() {
     const [selectedGroup, setSelectedGroup] = useState<string>('all');
     const [selectedType, setSelectedType] = useState<string>('all');
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
-    const [debugInfo, setDebugInfo] = useState<any>({});
 
     useWebSocketSystem({
-        backendIp: undefined,
         path: '/services/update',
-        token: undefined,
         autoConnect: true,
         onMessage: (message) => {
             try {
-                // Debug: Update debug info
-                setDebugInfo(prev => ({
-                    ...prev,
-                    lastMessage: {
-                        timestamp: new Date().toLocaleTimeString(),
-                        message: message,
-                        hasData: !!message.data,
-                        dataType: typeof message.data,
-                        isString: typeof message.data === 'string'
-                    },
-                    messageCount: (prev.messageCount || 0) + 1
-                }));
-
                 let updateData;
+                
                 if (typeof message.data === 'string') {
                     try {
                         updateData = JSON.parse(message.data);
-                    } catch (parseError) {
-                        setDebugInfo(prev => ({
-                            ...prev,
-                            parseError: parseError.message,
-                            lastError: new Date().toLocaleTimeString()
-                        }));
+                    } catch {
                         return;
                     }
                 } else if (message.data && typeof message.data === 'object') {
                     updateData = message.data;
-                } else {
+                } else if (message && message.serviceName) {
                     updateData = message;
+                } else {
+                    return;
                 }
-                
+
                 if (updateData && updateData.serviceName && updateData.state) {
-                    setDebugInfo(prev => ({
-                        ...prev,
-                        lastUpdate: {
-                            serviceName: updateData.serviceName,
-                            state: updateData.state,
-                            timestamp: new Date().toLocaleTimeString()
-                        },
-                        updateCount: (prev.updateCount || 0) + 1
-                    }));
 
                     setServices(prev => prev.map(service => 
                         service.name === updateData.serviceName 
                             ? { 
                                 ...service, 
                                 state: updateData.state,
-                                
-                                // Reset stats during transitions
+
                                 ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
                                     playerCount: -1,
                                     maxPlayerCount: -1,
@@ -87,7 +60,7 @@ export default function ServicesPage() {
                                     memoryUsage: -1,
                                     maxMemory: -1
                                 } : {}),
-                                
+
                                 ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
                                     playerCount: 0,
                                     maxPlayerCount: 0,
@@ -99,23 +72,14 @@ export default function ServicesPage() {
                             : service
                     ));
 
-                    // Remove from restarting services when online
                     if (updateData.state === 'ONLINE') {
-                        setRestartingServices(prev => prev.filter(name => name !== updateData.serviceName));
+                        setTimeout(() => {
+                            loadServices();
+                        }, 500);
                     }
                 } else {
-                    setDebugInfo(prev => ({
-                        ...prev,
-                        noUpdateReason: 'Missing serviceName or state',
-                        lastNoUpdate: new Date().toLocaleTimeString()
-                    }));
                 }
-            } catch (error) {
-                setDebugInfo(prev => ({
-                    ...prev,
-                    error: error.message,
-                    lastError: new Date().toLocaleTimeString()
-                }));
+            } catch {
             }
         }
     });
@@ -124,7 +88,7 @@ export default function ServicesPage() {
 
     useEffect(() => {
         loadServices();
-    }, []); // Only load once on mount
+    }, []);
 
     const loadServices = async () => {
         try {
@@ -163,13 +127,15 @@ export default function ServicesPage() {
             });
 
             if (response.ok) {
-                // Don't remove from restarting services here - let WebSocket handle it when ONLINE
+
+
             } else {
-                // Only remove on error
-                setRestartingServices(prev => prev.filter(name => name !== serviceName));
+                const errorData = await response.json();
+                toast.error(errorData.error || 'Failed to restart service');
             }
         } catch {
-            // Only remove on error
+            toast.error('Failed to restart service');
+        } finally {
             setRestartingServices(prev => prev.filter(name => name !== serviceName));
         }
     };
@@ -234,32 +200,6 @@ export default function ServicesPage() {
             <GlobalNavbar />
             
             <div className="h-2"></div>
-            
-            {/* Debug Information */}
-            <div className="px-6 pb-4">
-                <div className="bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4">
-                    <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">🔧 Services Page Debug Info</h3>
-                    <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                        <div><strong>Messages received:</strong> {debugInfo.messageCount || 0}</div>
-                        <div><strong>Updates processed:</strong> {debugInfo.updateCount || 0}</div>
-                        {debugInfo.lastMessage && (
-                            <div><strong>Last message:</strong> {debugInfo.lastMessage.timestamp} - {debugInfo.lastMessage.dataType}</div>
-                        )}
-                        {debugInfo.lastUpdate && (
-                            <div><strong>Last update:</strong> {debugInfo.lastUpdate.serviceName} → {debugInfo.lastUpdate.state} at {debugInfo.lastUpdate.timestamp}</div>
-                        )}
-                        {debugInfo.parseError && (
-                            <div><strong>Parse error:</strong> {debugInfo.parseError} at {debugInfo.lastError}</div>
-                        )}
-                        {debugInfo.noUpdateReason && (
-                            <div><strong>No update reason:</strong> {debugInfo.noUpdateReason} at {debugInfo.lastNoUpdate}</div>
-                        )}
-                        {debugInfo.error && (
-                            <div><strong>Error:</strong> {debugInfo.error} at {debugInfo.lastError}</div>
-                        )}
-                    </div>
-                </div>
-            </div>
             
             {}
             <ServiceHeader />

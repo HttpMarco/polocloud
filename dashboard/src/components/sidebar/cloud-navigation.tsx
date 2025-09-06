@@ -3,15 +3,13 @@
 import { useState, useEffect } from "react";
 import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, Loader2, RotateCcw } from "lucide-react";
+import { Package, Cloud, FileText, Users, Terminal, ChevronRight, Play, Square, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { getPlatformIcon } from "@/lib/platform-icons";
 import { useSidebarData } from "@/components/sidebar-data-provider";
 import { useWebSocketSystem } from "@/hooks/useWebSocketSystem";
 import { Group } from "@/types/groups";
 import { Service } from "@/types/services";
-import { API_ENDPOINTS } from "@/lib/api";
 
 const cloudItems = [
   {
@@ -56,12 +54,9 @@ export function CloudNavigation() {
   const [services, setServices] = useState<Service[]>(initialServices);
   const [isGroupsLoading, setIsGroupsLoading] = useState(sidebarDataLoading);
   const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
-  const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
   useWebSocketSystem({
-    backendIp: undefined,
     path: '/services/update',
-    token: undefined,
     autoConnect: true,
     onMessage: (message) => {
       try {
@@ -82,34 +77,9 @@ export function CloudNavigation() {
         if (updateData && updateData.serviceName && updateData.state) {
           setServices(prev => prev.map(service => 
             service.name === updateData.serviceName 
-              ? { 
-                  ...service, 
-                  state: updateData.state,
-                  
-                  // Reset stats during transitions
-                  ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
-                    playerCount: -1,
-                    maxPlayerCount: -1,
-                    cpuUsage: -1,
-                    memoryUsage: -1,
-                    maxMemory: -1
-                  } : {}),
-                  
-                  ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
-                    playerCount: 0,
-                    maxPlayerCount: 0,
-                    cpuUsage: 0,
-                    memoryUsage: 0,
-                    maxMemory: 0
-                  } : {})
-                }
+              ? { ...service, state: updateData.state }
               : service
           ));
-
-          // Remove from restarting services when online
-          if (updateData.state === 'ONLINE') {
-            setRestartingServices(prev => prev.filter(name => name !== updateData.serviceName));
-          }
         }
       } catch (error) {
         console.warn('Sidebar error in cloud-navigation:', error);
@@ -146,31 +116,6 @@ export function CloudNavigation() {
       return <Square className="w-3 h-3 text-gray-500" />
     }
   }
-
-  const handleRestartService = async (serviceName: string, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    if (restartingServices.includes(serviceName)) return;
-
-    setRestartingServices(prev => [...prev, serviceName]);
-
-    try {
-      const response = await fetch(API_ENDPOINTS.SERVICES.RESTART(serviceName), {
-        method: 'PATCH'
-      });
-
-      if (response.ok) {
-        // Don't remove from restarting services here - let WebSocket handle it when ONLINE
-      } else {
-        // Only remove on error
-        setRestartingServices(prev => prev.filter(name => name !== serviceName));
-      }
-    } catch {
-      // Only remove on error
-      setRestartingServices(prev => prev.filter(name => name !== serviceName));
-    }
-  };
 
   return (
     <SidebarGroup>
@@ -275,33 +220,18 @@ export function CloudNavigation() {
                         </div>
                       ) : (
                         typedServices.map((service, index) => (
-                          <div 
+                          <a 
                             key={index} 
-                            className="group flex items-center justify-between px-3 py-2 rounded-md hover:bg-sidebar-accent transition-colors"
+                            href={`/services/${service.name}/screen`}
+                            className="block px-3 py-2 rounded-md transition-colors"
                           >
-                            <a 
-                              href={`/services/${service.name}/screen`}
-                              className="flex items-center space-x-3 flex-1 min-w-0"
-                            >
+                            <div className="flex items-center space-x-3">
                               {getServiceStatusIcon(service.state)}
                               <span className="text-sm text-sidebar-foreground/80 truncate">
                                 {service.name}
                               </span>
-                            </a>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0 hover:bg-sidebar-accent-foreground/10"
-                              onClick={(e) => handleRestartService(service.name, e)}
-                              disabled={restartingServices.includes(service.name)}
-                            >
-                              {restartingServices.includes(service.name) ? (
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                              ) : (
-                                <RotateCcw className="w-3 h-3" />
-                              )}
-                            </Button>
-                          </div>
+                            </div>
+                          </a>
                         ))
                       )}
                     </div>
