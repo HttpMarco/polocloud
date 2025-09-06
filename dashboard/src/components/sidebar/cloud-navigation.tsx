@@ -58,6 +58,63 @@ export function CloudNavigation() {
   const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
   const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
+  useWebSocketSystem({
+    backendIp: undefined,
+    path: '/services/update',
+    token: undefined,
+    autoConnect: true,
+    onMessage: (message) => {
+      try {
+        let updateData;
+        if (typeof message.data === 'string') {
+          try {
+            updateData = JSON.parse(message.data);
+          } catch (parseError) {
+            console.error(parseError);
+            return;
+          }
+        } else if (message.data && typeof message.data === 'object') {
+          updateData = message.data;
+        } else {
+          updateData = message;
+        }
+        
+        if (updateData && updateData.serviceName && updateData.state) {
+          setServices(prev => prev.map(service => 
+            service.name === updateData.serviceName 
+              ? { 
+                  ...service, 
+                  state: updateData.state,
+                  
+                  // Reset stats during transitions
+                  ...(updateData.state === 'STARTING' || updateData.state === 'PREPARING' ? {
+                    playerCount: -1,
+                    maxPlayerCount: -1,
+                    cpuUsage: -1,
+                    memoryUsage: -1,
+                    maxMemory: -1
+                  } : {}),
+                  
+                  ...(updateData.state === 'STOPPING' || updateData.state === 'STOPPED' ? {
+                    playerCount: 0,
+                    maxPlayerCount: 0,
+                    cpuUsage: 0,
+                    memoryUsage: 0,
+                    maxMemory: 0
+                  } : {})
+                }
+              : service
+          ));
+
+          // Remove from restarting services when online
+          if (updateData.state === 'ONLINE') {
+            setRestartingServices(prev => prev.filter(name => name !== updateData.serviceName));
+          }
+        }
+      } catch (error) {
+        console.warn('Sidebar error in cloud-navigation:', error);
+      }}
+  });
 
   useEffect(() => {
     setGroups(initialGroups);
@@ -79,8 +136,15 @@ export function CloudNavigation() {
   }
 
   const getServiceStatusIcon = (state: string | undefined) => {
-    // Always show online icon
-    return <Play className="w-3 h-3 text-green-500" />
+    if (state === 'ONLINE') {
+      return <Play className="w-3 h-3 text-green-500" />
+    } else if (state === 'OFFLINE' || state === 'STOPPING' || state === 'STOPPED') {
+      return <Square className="w-3 h-3 text-red-500" />
+    } else if (state === 'STARTING' || state === 'PREPARING') {
+      return <Loader2 className="w-3 h-3 text-yellow-500 animate-spin" />
+    } else {
+      return <Square className="w-3 h-3 text-gray-500" />
+    }
   }
 
   const handleRestartService = async (serviceName: string, event: React.MouseEvent) => {

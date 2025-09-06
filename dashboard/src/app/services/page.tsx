@@ -24,7 +24,9 @@ export default function ServicesPage() {
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
     useWebSocketSystem({
+        backendIp: undefined,
         path: '/services/update',
+        token: undefined,
         autoConnect: true,
         onMessage: (message) => {
             try {
