@@ -168,9 +168,9 @@ export default function ServicesPage() {
         const handleServiceStateUpdate = (event: CustomEvent) => {
             const { serviceName, state } = event.detail;
             if (state === 'ONLINE') {
-                toast.success(`${serviceName} is online`, {
+                toast(`${serviceName} is online`, {
                     duration: 3000,
-                    className: "bg-card text-card-foreground border-border",
+                    className: "bg-card text-card-foreground border-border shadow-lg",
                     description: (
                         <div className="flex items-center gap-2 text-muted-foreground">
                             <CheckCircle className="w-4 h-4 text-green-500" />
