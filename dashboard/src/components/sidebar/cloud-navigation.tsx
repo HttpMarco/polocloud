@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from "react";
-import { SidebarGroup, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
+import { SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from "@/components/ui/sidebar";
 import { 
   Terminal, 
   Activity,
@@ -76,8 +76,12 @@ export function CloudNavigation() {
   };
 
   return (
-    <SidebarGroup>
-      <SidebarMenu>
+    <SidebarGroup className="mt-6">
+      <SidebarGroupLabel className="px-2 py-1 text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider">
+        Cloud
+      </SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
 
         {/* Groups */}
         <SidebarMenuItem>
@@ -166,7 +170,8 @@ export function CloudNavigation() {
             <span>Terminal</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
-      </SidebarMenu>
+        </SidebarMenu>
+      </SidebarGroupContent>
     </SidebarGroup>
   );
 }
