@@ -25,7 +25,9 @@ export default function ServicesPage() {
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
     useWebSocketSystem({
+        backendIp: undefined,
         path: '/services/update',
+        token: undefined,
         autoConnect: true,
         onMessage: (message) => {
             try {
@@ -72,7 +74,7 @@ export default function ServicesPage() {
                             : service
                     ));
 
-                    // Remove from restarting services when online and reload page
+                    // Only reload when service comes online
                     if (updateData.state === 'ONLINE') {
                         setRestartingServices(prev => prev.filter(name => name !== updateData.serviceName));
                         // Reload page when service comes online
