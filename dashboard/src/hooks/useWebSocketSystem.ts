@@ -122,13 +122,12 @@ export function useWebSocketSystem({
       });
 
       if (autoConnect) {
-        setTimeout(() => {
-          if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
-            wsSystemRef.current.connect().catch(() => {
-      
-            });
-          }
-        }, 100);
+        // Sofortige Verbindung ohne Timeout
+        if (wsSystemRef.current && wsSystemRef.current.getConnectionInfo().status === 'disconnected') {
+          wsSystemRef.current.connect().catch(() => {
+            // Silent fail - wird automatisch retry
+          });
+        }
       }
     };
 
@@ -140,7 +139,7 @@ export function useWebSocketSystem({
         wsSystemRef.current = null;
       }
     };
-  }, []);
+  }, [backendIp, path, token, autoConnect]); // ← Wichtig: Dependencies hinzugefügt
 
   useEffect(() => {
     const updateInfo = () => {

@@ -7,7 +7,7 @@ import { Service } from '@/types/services';
 import { motion } from 'framer-motion';
 import { API_ENDPOINTS } from '@/lib/api';
 import GlobalNavbar from '@/components/global-navbar';
-import { useWebSocketSystem } from '@/hooks/useWebSocketSystem';
+import { useGlobalWebSocket } from '@/lib/global-websocket-manager';
 import { ServiceCard } from '@/components/services/service-card';
 import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
@@ -24,11 +24,10 @@ export default function ServicesPage() {
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
     const [debugInfo, setDebugInfo] = useState<any>({});
 
-    useWebSocketSystem({
+    const globalWs = useGlobalWebSocket({
         backendIp: undefined,
         path: '/services/update',
         token: undefined,
-        autoConnect: true,
         onMessage: (message) => {
             try {
                 // Debug: Update debug info
@@ -122,7 +121,13 @@ export default function ServicesPage() {
         }
     });
 
-    
+    // Subscribe to global WebSocket
+    useEffect(() => {
+        const unsubscribe = globalWs.subscribe(() => {
+            // Connection established
+        });
+        return unsubscribe;
+    }, [globalWs]);
 
     useEffect(() => {
         loadServices();
