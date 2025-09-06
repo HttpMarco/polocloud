@@ -28,6 +28,7 @@ export default function ServicesPage() {
         path: '/services/update',
         autoConnect: true,
         onMessage: (message) => {
+            console.log('Services page WebSocket message:', message);
             try {
                 let updateData;
                 
@@ -44,6 +45,8 @@ export default function ServicesPage() {
                 } else {
                     return;
                 }
+                
+                console.log('Services page updateData:', updateData);
 
                 if (updateData && updateData.serviceName && updateData.state) {
                     setServices(prev => prev.map(service => 

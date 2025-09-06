@@ -63,6 +63,7 @@ export function CloudNavigation() {
     path: '/services/update',
     autoConnect: true,
     onMessage: (message) => {
+      console.log('Sidebar WebSocket message:', message);
       try {
         let updateData;
         if (typeof message.data === 'string') {
@@ -77,6 +78,8 @@ export function CloudNavigation() {
         } else {
           updateData = message;
         }
+        
+        console.log('Sidebar updateData:', updateData);
         
         if (updateData && updateData.serviceName && updateData.state) {
           setServices(prev => prev.map(service => 
