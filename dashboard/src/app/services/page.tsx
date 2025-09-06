@@ -14,11 +14,8 @@ import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
 import { ServiceHeader } from '@/components/services/service-header';
 import { ServiceEmptyState } from '@/components/services/service-empty-state';
-import { useToast } from '@/hooks/use-toast';
-import { CheckCircle } from 'lucide-react';
 
 export default function ServicesPage() {
-    const { toast } = useToast();
     const { services: sidebarServices, isLoading: sidebarLoading } = useSidebarData();
     const [services, setServices] = useState<Service[]>(sidebarServices);
     const [isLoading, setIsLoading] = useState(sidebarLoading);
@@ -164,29 +161,6 @@ export default function ServicesPage() {
         }
     }, [shouldConnect, connect]);
 
-    // Listen for service state updates to show toasts
-    useEffect(() => {
-        const handleServiceStateUpdate = (event: CustomEvent) => {
-            const { serviceName, state } = event.detail;
-            if (state === 'ONLINE') {
-                toast({
-                    title: `${serviceName} is online`,
-                    description: (
-                        <div className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                            Service is now available
-                        </div>
-                    ),
-                });
-            }
-        };
-
-        window.addEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
-        
-        return () => {
-            window.removeEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
-        };
-    }, []);
 
     
 
