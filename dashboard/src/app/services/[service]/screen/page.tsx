@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Terminal, Send, Trash2, WifiOff, Loader2, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import GlobalNavbar from '@/components/global-navbar';
-import { useServiceWebSocket } from '@/hooks/useServiceWebSocket';
+import { useCentralWebSocket } from '@/hooks/useCentralWebSocket';
 import { usePermissions } from '@/hooks/usePermissions';
 
 
@@ -23,12 +23,12 @@ export default function ServiceScreenPage() {
   const canSendCommands = hasPermission('polocloud.service.screen');
 
   const {
-    logs,
+    terminalLogs: logs,
     connectionInfo,
     isConnected,
-    sendCommand,
-    clearLogs
-  } = useServiceWebSocket(serviceName, undefined, undefined, true);
+    sendServiceCommand: sendCommand,
+    clearTerminalLogs: clearLogs
+  } = useCentralWebSocket();
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,7 +37,7 @@ export default function ServiceScreenPage() {
   const handleSendCommand = () => {
     if (!command.trim() || !isConnected || !canSendCommands) return;
     
-    sendCommand(command);
+    sendCommand(serviceName, command);
     setCommand('');
   };
 
