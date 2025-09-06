@@ -79,12 +79,9 @@ export function CloudNavigation() {
         }
         
         if (updateData && updateData.serviceName && updateData.state) {
-          // Only update if state actually changed
-          setServices(prev => prev.map(service => {
-            if (service.name === updateData.serviceName) {
-              // Only update if state is different
-              if (service.state !== updateData.state) {
-                return { 
+          setServices(prev => prev.map(service => 
+            service.name === updateData.serviceName 
+              ? { 
                   ...service, 
                   state: updateData.state,
                   
@@ -104,12 +101,9 @@ export function CloudNavigation() {
                     memoryUsage: 0,
                     maxMemory: 0
                   } : {})
-                };
-              }
-              return service; // No change needed
-            }
-            return service;
-          }));
+                }
+              : service
+          ));
 
           // Remove from restarting services when online
           if (updateData.state === 'ONLINE') {
