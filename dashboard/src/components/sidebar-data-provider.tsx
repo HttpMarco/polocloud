@@ -55,7 +55,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
               return;
             }
           }
-        } catch (error) {
+        } catch {
           // Silent fallback
         }
         
@@ -90,7 +90,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
   // Shared WebSocket connection for service updates - manual connection like services page
   const shouldConnect = !shouldHideSidebar && isClient && !!backendCredentials.backendIp && !!backendCredentials.token;
   
-  const { connect, disconnect, isConnected } = useWebSocketSystem({
+  const { connect } = useWebSocketSystem({
     backendIp: backendCredentials.backendIp || undefined,
     token: backendCredentials.token || undefined,
     path: '/services/update',
@@ -112,7 +112,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
         if (typeof message.data === 'string') {
           try {
             updateData = JSON.parse(message.data);
-          } catch (parseError) {
+          } catch {
             return;
           }
         } else if (message.data && typeof message.data === 'object') {
@@ -129,7 +129,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
             detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
           }));
         }
-      } catch (error) {
+      } catch {
         // Silent error handling
       }
     }
