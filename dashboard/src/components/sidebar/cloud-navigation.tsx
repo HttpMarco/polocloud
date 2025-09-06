@@ -57,6 +57,7 @@ export function CloudNavigation() {
   const [isGroupsLoading, setIsGroupsLoading] = useState(sidebarDataLoading);
   const [isServicesLoading, setIsServicesLoading] = useState(sidebarDataLoading);
   const [restartingServices, setRestartingServices] = useState<string[]>([]);
+  const [showDebugInfo, setShowDebugInfo] = useState(false);
 
   useEffect(() => {
     setGroups(initialGroups);
@@ -64,6 +65,45 @@ export function CloudNavigation() {
     setIsGroupsLoading(sidebarDataLoading);
     setIsServicesLoading(sidebarDataLoading);
   }, [initialGroups, initialServices, sidebarDataLoading]);
+
+  // Listen for WebSocket updates
+  useEffect(() => {
+    const handleServiceStateUpdate = (event: CustomEvent) => {
+      const { serviceName, state, updateData } = event.detail;
+      console.log('Sidebar: Received service state update:', { serviceName, state, updateData });
+      
+      // Update local services state
+      setServices(prev => prev.map(service => 
+        service.name === serviceName 
+          ? { 
+              ...service, 
+              state: state,
+              ...(state === 'STARTING' || state === 'PREPARING' ? {
+                playerCount: -1,
+                maxPlayerCount: -1,
+                cpuUsage: -1,
+                memoryUsage: -1,
+                maxMemory: -1
+              } : {}),
+              ...(state === 'STOPPING' || state === 'STOPPED' ? {
+                playerCount: 0,
+                maxPlayerCount: 0,
+                cpuUsage: 0,
+                memoryUsage: 0,
+                maxMemory: 0
+              } : {}),
+              ...(updateData || {})
+            }
+            : service
+      ));
+    };
+
+    window.addEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+    };
+  }, []);
 
   const typedGroups = (groups || []) as Group[];
   const typedServices = (services || []) as Service[];
@@ -119,8 +159,45 @@ export function CloudNavigation() {
     <SidebarGroup>
       <SidebarGroupLabel className="px-2 py-1 text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider">
         Cloud
+        <Button
+          size="sm"
+          variant="ghost"
+          className="ml-2 h-4 px-1 text-xs"
+          onClick={() => setShowDebugInfo(!showDebugInfo)}
+        >
+          Debug
+        </Button>
       </SidebarGroupLabel>
       <SidebarGroupContent>
+        {showDebugInfo && (
+          <div className="px-2 py-2 mb-2 bg-sidebar-accent/20 rounded text-xs">
+            <div className="font-semibold mb-1">Sidebar WebSocket Debug:</div>
+            <div>Services: {services.length}</div>
+            <div>Online: {services.filter(s => s.state === 'ONLINE').length}</div>
+            <div>Loading: {isServicesLoading ? 'Yes' : 'No'}</div>
+            <div>Backend IP: {localStorage.getItem('backendIp') || 'Not found'}</div>
+            <div>Token: {(() => {
+              let token = localStorage.getItem('token');
+              if (!token) {
+                const cookies = document.cookie.split(';');
+                for (const cookie of cookies) {
+                  const [name, value] = cookie.trim().split('=');
+                  if (name === 'token') {
+                    token = value;
+                    break;
+                  }
+                }
+              }
+              if (!token) {
+                const tokenMatch = document.cookie.match(/token=([^;]+)/);
+                if (tokenMatch) {
+                  token = tokenMatch[1];
+                }
+              }
+              return token ? `Present (${token.substring(0, 20)}...)` : 'Missing';
+            })()}</div>
+          </div>
+        )}
         <SidebarMenu>
           {cloudItems.map((item) => (
             <SidebarMenuItem key={item.title}>

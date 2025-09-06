@@ -99,27 +99,33 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
     }
   }, [isClient]);
 
-  // Shared WebSocket connection for service updates
-  useWebSocketSystem({
+  // Shared WebSocket connection for service updates - manual connection like services page
+  const shouldConnect = !shouldHideSidebar && isClient && !!backendCredentials.backendIp && !!backendCredentials.token;
+  
+  const { connect, disconnect, isConnected } = useWebSocketSystem({
     backendIp: backendCredentials.backendIp || undefined,
     token: backendCredentials.token || undefined,
     path: '/services/update',
-    autoConnect: !shouldHideSidebar && isClient && !!backendCredentials.backendIp && !!backendCredentials.token,
+    autoConnect: false, // Don't auto-connect, we'll do it manually
     onConnect: () => {
+      console.log('SidebarDataProvider: WebSocket connected');
       // Dispatch connect event for debug info
       window.dispatchEvent(new CustomEvent('websocketConnect'));
     },
     onDisconnect: () => {
+      console.log('SidebarDataProvider: WebSocket disconnected');
       // Dispatch disconnect event for debug info
       window.dispatchEvent(new CustomEvent('websocketDisconnect'));
     },
     onError: (error) => {
+      console.log('SidebarDataProvider: WebSocket error:', error);
       // Dispatch error event for debug info
       window.dispatchEvent(new CustomEvent('websocketError', {
         detail: { message: error.message }
       }));
     },
     onMessage: (message) => {
+      console.log('SidebarDataProvider: WebSocket message received:', message);
       try {
         let updateData;
         if (typeof message.data === 'string') {
@@ -148,6 +154,21 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
       }
     }
   });
+
+  // Manually connect when credentials are ready
+  useEffect(() => {
+    if (shouldConnect) {
+      console.log('SidebarDataProvider: Attempting manual WebSocket connection', {
+        backendIp: backendCredentials.backendIp,
+        token: backendCredentials.token ? 'present' : 'missing',
+        shouldHideSidebar,
+        isClient
+      });
+      connect().catch(error => {
+        console.log('SidebarDataProvider: Manual connection failed:', error);
+      });
+    }
+  }, [shouldConnect, connect, backendCredentials.backendIp, backendCredentials.token, shouldHideSidebar, isClient]);
 
   const loadSidebarData = useCallback(async () => {
     try {
