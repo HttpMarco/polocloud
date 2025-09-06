@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { SidebarProvider } from "@/components/ui/sidebar";
 import ScrollIndicator from "@/components/scroll-indicator";
 import { SidebarDataProvider } from '@/components/sidebar-data-provider';
-import { CentralWebSocketProvider } from '@/hooks/useCentralWebSocket';
+import { ServicesProvider } from '@/contexts/ServicesContext';
 import { AppSidebar } from '@/components/app-sidebar';
 
 interface LayoutWrapperProps {
@@ -20,8 +20,8 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
   }
   
   return (
-    <CentralWebSocketProvider>
-      <SidebarDataProvider>
+    <SidebarDataProvider>
+      <ServicesProvider>
         <ScrollIndicator />
         <SidebarProvider>
           <div className="flex h-screen w-full">
@@ -31,7 +31,7 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
             </main>
           </div>
         </SidebarProvider>
-      </SidebarDataProvider>
-    </CentralWebSocketProvider>
+      </ServicesProvider>
+    </SidebarDataProvider>
   );
 }

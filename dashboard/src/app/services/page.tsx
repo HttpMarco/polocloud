@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { API_ENDPOINTS } from '@/lib/api';
 import GlobalNavbar from '@/components/global-navbar';
-import { useCentralWebSocket } from '@/hooks/useCentralWebSocket';
+import { useServices } from '@/contexts/ServicesContext';
 import { ServiceCard } from '@/components/services/service-card';
 import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
@@ -15,46 +15,12 @@ import { ServiceEmptyState } from '@/components/services/service-empty-state';
 import { toast } from 'sonner';
 
 export default function ServicesPage() {
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGroup, setSelectedGroup] = useState<string>('all');
     const [selectedType, setSelectedType] = useState<string>('all');
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
 
-    const { services, setServices } = useCentralWebSocket();
-
-    
-
-    useEffect(() => {
-        loadServices();
-    }, [loadServices]);
-
-    const loadServices = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            
-            const response = await fetch(API_ENDPOINTS.SERVICES.LIST);
-            if (response.ok) {
-                const data = await response.json();
-                
-                if (Array.isArray(data)) {
-                    setServices(data);
-                } else {
-
-                    setError('Invalid response format from server');
-                }
-            } else {
-                const errorData = await response.json();
-                setError(errorData.error || 'Failed to load services');
-            }
-        } catch {
-            setError('Failed to load services');
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+    const { services, isLoading, error, refreshServices } = useServices();
 
     const handleRestartService = async (serviceName: string) => {
         if (restartingServices.includes(serviceName)) return;
@@ -128,7 +94,7 @@ export default function ServicesPage() {
             <div className="w-full h-full flex items-center justify-center">
                 <div className="text-center">
                     <p className="text-red-500 mb-4">{error}</p>
-                    <Button onClick={loadServices}>Retry</Button>
+                    <Button onClick={refreshServices}>Retry</Button>
                 </div>
             </div>
         );

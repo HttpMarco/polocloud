@@ -197,7 +197,21 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     path: '/logs',
     token,
     autoConnect,
+    onConnect: () => {
+      console.log('Terminal WebSocket connected');
+      setLogs(prev => [...prev, `[DEBUG] WebSocket connected at ${new Date().toLocaleTimeString()}`]);
+    },
+    onDisconnect: () => {
+      console.log('Terminal WebSocket disconnected');
+      setLogs(prev => [...prev, `[DEBUG] WebSocket disconnected at ${new Date().toLocaleTimeString()}`]);
+    },
+    onError: (error) => {
+      console.error('Terminal WebSocket error:', error);
+      setLogs(prev => [...prev, `[DEBUG] WebSocket error: ${error.message}`]);
+    },
     onMessage: (message) => {
+      console.log('Terminal WebSocket message received:', message);
+      setLogs(prev => [...prev, `[DEBUG] Message received: ${JSON.stringify(message).substring(0, 100)}...`]);
       if (typeof message.data === 'string') {
         const now = Date.now();
         const messageData = message.data;

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Terminal, Send, Trash2, WifiOff, Loader2, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import GlobalNavbar from '@/components/global-navbar';
-import { useCentralWebSocket } from '@/hooks/useCentralWebSocket';
+import { useTerminalWebSocket } from '@/hooks/useWebSocketSystem';
 import { usePermissions } from '@/hooks/usePermissions';
 
 export default function NewTerminalPage() {
@@ -36,12 +36,12 @@ export default function NewTerminalPage() {
   }, []);
 
   const {
-    terminalLogs: logs,
+    logs,
     connectionInfo,
     isConnected,
-    sendTerminalCommand: sendCommand,
-    clearTerminalLogs: clearLogs
-  } = useCentralWebSocket();
+    sendCommand,
+    clearLogs
+  } = useTerminalWebSocket(undefined, undefined, true);
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
