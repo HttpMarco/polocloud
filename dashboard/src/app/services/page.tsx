@@ -15,6 +15,7 @@ import { ServiceFilters } from '@/components/services/service-filters';
 import { ServiceHeader } from '@/components/services/service-header';
 import { ServiceEmptyState } from '@/components/services/service-empty-state';
 import { toast } from 'sonner';
+import { CheckCircle } from 'lucide-react';
 
 export default function ServicesPage() {
     const { services: sidebarServices, isLoading: sidebarLoading } = useSidebarData();
@@ -167,24 +168,15 @@ export default function ServicesPage() {
         const handleServiceStateUpdate = (event: CustomEvent) => {
             const { serviceName, state } = event.detail;
             if (state === 'ONLINE') {
-                toast.success(`Service ${serviceName} is now online`, {
-                    description: `The service has successfully started and is ready to accept connections.`,
-                    duration: 4000,
-                });
-            } else if (state === 'OFFLINE') {
-                toast.error(`Service ${serviceName} went offline`, {
-                    description: `The service has stopped and is no longer available.`,
-                    duration: 4000,
-                });
-            } else if (state === 'STARTING') {
-                toast.info(`Service ${serviceName} is starting`, {
-                    description: `The service is currently initializing and will be available shortly.`,
+                toast.success(`${serviceName} is online`, {
                     duration: 3000,
-                });
-            } else if (state === 'STOPPING') {
-                toast.warning(`Service ${serviceName} is stopping`, {
-                    description: `The service is currently shutting down gracefully.`,
-                    duration: 3000,
+                    className: "bg-card text-card-foreground border-border",
+                    description: (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            Service is now available
+                        </div>
+                    ),
                 });
             }
         };
