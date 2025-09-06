@@ -4,7 +4,6 @@ import { createContext, useContext, useEffect, useState, ReactNode, useCallback 
 import { usePathname } from 'next/navigation';
 import { Group } from '@/types/groups';
 import { Service } from '@/types/services';
-import { useServices } from '@/contexts/ServicesContext';
 
 interface SidebarDataContextType {
   groups: Group[];
@@ -21,14 +20,13 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
   const isLoginPage = pathname === '/login';
   const shouldHideSidebar = isOnboardingPage || isLoginPage;
 
-  // Use services from the global ServicesContext
-  const { services, isLoading: servicesLoading } = useServices();
-
   const [sidebarData, setSidebarData] = useState<{
     groups: Group[];
+    services: Service[];
     isLoading: boolean;
   }>({
     groups: [],
+    services: [],
     isLoading: true
   });
 
@@ -36,11 +34,17 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
   const loadSidebarData = useCallback(async () => {
     try {
-      const groupsResponse = await fetch('/api/groups/list');
+      const [groupsResponse, servicesResponse] = await Promise.all([
+        fetch('/api/groups/list'),
+        fetch('/api/services/list')
+      ]);
+
       const groups = groupsResponse.ok ? await groupsResponse.json() : [];
+      const services = servicesResponse.ok ? await servicesResponse.json() : [];
 
       const newData = {
         groups: Array.isArray(groups) ? groups : [],
+        services: Array.isArray(services) ? services : [],
         isLoading: false
       };
 
@@ -48,6 +52,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
       if (isClient) {
         localStorage.setItem('sidebarGroups', JSON.stringify(newData.groups));
+        localStorage.setItem('sidebarServices', JSON.stringify(newData.services));
       }
     } catch {
       setSidebarData(prev => ({ ...prev, isLoading: false }));
@@ -59,10 +64,12 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
     try {
       const savedGroups = localStorage.getItem('sidebarGroups');
+      const savedServices = localStorage.getItem('sidebarServices');
       
-      if (savedGroups) {
+      if (savedGroups && savedServices) {
         setSidebarData({
           groups: JSON.parse(savedGroups),
+          services: JSON.parse(savedServices),
           isLoading: false
         });
       } else {
@@ -90,11 +97,18 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
   const refreshData = async () => {
     try {
-      const groupsResponse = await fetch('/api/groups/list');
+
+      const [groupsResponse, servicesResponse] = await Promise.all([
+        fetch('/api/groups/list'),
+        fetch('/api/services/list')
+      ]);
+
       const groups = groupsResponse.ok ? await groupsResponse.json() : [];
+      const services = servicesResponse.ok ? await servicesResponse.json() : [];
 
       const newData = {
         groups: Array.isArray(groups) ? groups : [],
+        services: Array.isArray(services) ? services : [],
         isLoading: false
       };
 
@@ -102,11 +116,11 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
       if (isClient) {
         localStorage.setItem('sidebarGroups', JSON.stringify(newData.groups));
+        localStorage.setItem('sidebarServices', JSON.stringify(newData.services));
       }
     } catch (error) {
-      console.warn('Sidebar error in sidebar-data-provider:', error);
-    }
-  };
+        console.warn('Sidebar error in sidebar-data-provider:', error);
+      }};
 
   if (shouldHideSidebar) {
     return <>{children}</>;
@@ -115,8 +129,8 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
   return (
     <SidebarDataContext.Provider value={{
       groups: sidebarData.groups,
-      services: services, // Use services from ServicesContext
-      isLoading: sidebarData.isLoading || servicesLoading,
+      services: sidebarData.services,
+      isLoading: sidebarData.isLoading,
       refreshData
     }}>
       {children}
