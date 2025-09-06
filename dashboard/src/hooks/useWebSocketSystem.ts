@@ -198,13 +198,13 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     token,
     autoConnect,
     onConnect: () => {
-      setLogs(prev => [...prev, `[DEBUG] WebSocket connected at ${new Date().toLocaleTimeString()}`]);
+      // WebSocket connected - no debug output needed
     },
     onDisconnect: () => {
-      setLogs(prev => [...prev, `[DEBUG] WebSocket disconnected at ${new Date().toLocaleTimeString()}`]);
+      // WebSocket disconnected - no debug output needed
     },
     onError: (error) => {
-      setLogs(prev => [...prev, `[DEBUG] WebSocket error: ${error.message}`]);
+      // WebSocket error - no debug output needed
     },
     onMessage: (message) => {
       if (typeof message.data === 'string') {
