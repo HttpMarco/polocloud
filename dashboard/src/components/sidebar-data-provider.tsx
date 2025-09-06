@@ -38,6 +38,20 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
   useWebSocketSystem({
     path: '/services/update',
     autoConnect: !shouldHideSidebar && isClient,
+    onConnect: () => {
+      // Dispatch connect event for debug info
+      window.dispatchEvent(new CustomEvent('websocketConnect'));
+    },
+    onDisconnect: () => {
+      // Dispatch disconnect event for debug info
+      window.dispatchEvent(new CustomEvent('websocketDisconnect'));
+    },
+    onError: (error) => {
+      // Dispatch error event for debug info
+      window.dispatchEvent(new CustomEvent('websocketError', {
+        detail: { message: error.message }
+      }));
+    },
     onMessage: (message) => {
       try {
         let updateData;

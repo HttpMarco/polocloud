@@ -47,6 +47,79 @@ export default function ServicesPage() {
         };
     }, []);
 
+    // Debug info for WebSocket status
+    useEffect(() => {
+        const debugElement = document.getElementById('websocket-debug-services');
+        if (debugElement) {
+            debugElement.textContent = `Services WebSocket: INITIALIZING...`;
+            debugElement.dataset.status = 'initializing';
+        }
+
+        // Listen for WebSocket connection events
+        const handleWebSocketConnect = () => {
+            const debugElement = document.getElementById('websocket-debug-services');
+            if (debugElement) {
+                debugElement.dataset.status = 'connected';
+                debugElement.dataset.lastConnect = Date.now().toString();
+                debugElement.textContent = `Services WebSocket: CONNECTED at ${new Date().toLocaleTimeString()}`;
+                debugElement.className = 'text-xs font-mono p-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded border border-green-300 dark:border-green-700';
+            }
+        };
+
+        const handleWebSocketDisconnect = () => {
+            const debugElement = document.getElementById('websocket-debug-services');
+            if (debugElement) {
+                debugElement.dataset.status = 'disconnected';
+                debugElement.dataset.lastDisconnect = Date.now().toString();
+                debugElement.textContent = `Services WebSocket: DISCONNECTED at ${new Date().toLocaleTimeString()}`;
+                debugElement.className = 'text-xs font-mono p-2 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded border border-red-300 dark:border-red-700';
+            }
+        };
+
+        const handleWebSocketError = (event: CustomEvent) => {
+            const debugElement = document.getElementById('websocket-debug-services');
+            if (debugElement) {
+                debugElement.dataset.status = 'error';
+                debugElement.dataset.lastError = Date.now().toString();
+                debugElement.textContent = `Services WebSocket: ERROR - ${event.detail?.message || 'Unknown error'}`;
+                debugElement.className = 'text-xs font-mono p-2 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded border border-yellow-300 dark:border-yellow-700';
+            }
+        };
+
+        const handleServiceStateUpdate = (event: CustomEvent) => {
+            const { serviceName, state } = event.detail;
+            
+            // Update service state debug
+            const serviceDebugElement = document.getElementById('service-state-debug');
+            if (serviceDebugElement) {
+                serviceDebugElement.textContent = `Service State Change: ${serviceName} -> ${state} at ${new Date().toLocaleTimeString()}`;
+                serviceDebugElement.dataset.lastService = serviceName;
+                serviceDebugElement.dataset.lastState = state;
+                serviceDebugElement.dataset.lastChange = Date.now().toString();
+                serviceDebugElement.className = 'text-xs font-mono p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded border border-blue-300 dark:border-blue-700';
+            }
+
+            // Update last update time
+            const lastUpdateElement = document.getElementById('last-update-time');
+            if (lastUpdateElement) {
+                lastUpdateElement.textContent = new Date().toLocaleTimeString();
+            }
+        };
+
+        // Add event listeners
+        window.addEventListener('websocketConnect', handleWebSocketConnect as EventListener);
+        window.addEventListener('websocketDisconnect', handleWebSocketDisconnect as EventListener);
+        window.addEventListener('websocketError', handleWebSocketError as EventListener);
+        window.addEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+
+        return () => {
+            window.removeEventListener('websocketConnect', handleWebSocketConnect as EventListener);
+            window.removeEventListener('websocketDisconnect', handleWebSocketDisconnect as EventListener);
+            window.removeEventListener('websocketError', handleWebSocketError as EventListener);
+            window.removeEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
+        };
+    }, []);
+
     
 
     useEffect(() => {
@@ -163,6 +236,45 @@ export default function ServicesPage() {
             <GlobalNavbar />
             
             <div className="h-2"></div>
+            
+            {/* Debug Information Panel */}
+            <div className="px-6 pb-4">
+                <div className="bg-card border border-border rounded-lg p-4 space-y-3">
+                    <h3 className="text-sm font-semibold text-foreground">WebSocket Debug Information</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* WebSocket Status */}
+                        <div className="space-y-2">
+                            <div 
+                                id="websocket-debug-services"
+                                className="text-xs font-mono p-2 bg-muted rounded border"
+                                data-status="disconnected"
+                            >
+                                Services WebSocket: DISCONNECTED
+                            </div>
+                        </div>
+                        
+                        {/* Service State Changes */}
+                        <div className="space-y-2">
+                            <div 
+                                id="service-state-debug"
+                                className="text-xs font-mono p-2 bg-muted rounded border"
+                                data-last-service=""
+                                data-last-state=""
+                            >
+                                Service State Changes: None yet
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Connection Info */}
+                    <div className="text-xs text-muted-foreground">
+                        <div>Last Update: <span id="last-update-time">Never</span></div>
+                        <div>Total Services: {services.length}</div>
+                        <div>Online Services: {services.filter(s => s.state === 'ONLINE').length}</div>
+                    </div>
+                </div>
+            </div>
             
             {}
             <ServiceHeader />
