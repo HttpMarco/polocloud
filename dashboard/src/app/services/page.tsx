@@ -82,7 +82,29 @@ export default function ServicesPage() {
         loadCredentials();
     }, []);
     
+    // Update debug display when credentials change
+    useEffect(() => {
+        const debugElement = document.getElementById('websocket-debug-services');
+        if (debugElement) {
+            if (backendCredentials.backendIp && backendCredentials.token) {
+                debugElement.textContent = `Services WebSocket: CONNECTING...`;
+                debugElement.dataset.status = 'connecting';
+                debugElement.className = 'text-xs font-mono p-2 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded border border-yellow-300 dark:border-yellow-700';
+            } else {
+                debugElement.textContent = `Services WebSocket: WAITING FOR CREDENTIALS...`;
+                debugElement.dataset.status = 'waiting';
+                debugElement.className = 'text-xs font-mono p-2 bg-gray-100 dark:bg-gray-900/20 text-gray-800 dark:text-gray-200 rounded border border-gray-300 dark:border-gray-700';
+            }
+        }
+    }, [backendCredentials]);
+    
     // Direct WebSocket connection
+    console.log('Services Page: Setting up WebSocket with credentials:', {
+        backendIp: backendCredentials.backendIp,
+        token: backendCredentials.token ? 'present' : 'missing',
+        autoConnect: !!backendCredentials.backendIp && !!backendCredentials.token
+    });
+    
     useWebSocketSystem({
         backendIp: backendCredentials.backendIp || undefined,
         token: backendCredentials.token || undefined,
@@ -90,14 +112,38 @@ export default function ServicesPage() {
         autoConnect: !!backendCredentials.backendIp && !!backendCredentials.token,
         onConnect: () => {
             console.log('Services Page: WebSocket connected directly');
+            // Update debug display immediately
+            const debugElement = document.getElementById('websocket-debug-services');
+            if (debugElement) {
+                debugElement.dataset.status = 'connected';
+                debugElement.dataset.lastConnect = Date.now().toString();
+                debugElement.textContent = `Services WebSocket: CONNECTED at ${new Date().toLocaleTimeString()}`;
+                debugElement.className = 'text-xs font-mono p-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded border border-green-300 dark:border-green-700';
+            }
             window.dispatchEvent(new CustomEvent('websocketConnect'));
         },
         onDisconnect: () => {
             console.log('Services Page: WebSocket disconnected directly');
+            // Update debug display immediately
+            const debugElement = document.getElementById('websocket-debug-services');
+            if (debugElement) {
+                debugElement.dataset.status = 'disconnected';
+                debugElement.dataset.lastDisconnect = Date.now().toString();
+                debugElement.textContent = `Services WebSocket: DISCONNECTED at ${new Date().toLocaleTimeString()}`;
+                debugElement.className = 'text-xs font-mono p-2 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded border border-red-300 dark:border-red-700';
+            }
             window.dispatchEvent(new CustomEvent('websocketDisconnect'));
         },
         onError: (error) => {
             console.log('Services Page: WebSocket error directly', error);
+            // Update debug display immediately
+            const debugElement = document.getElementById('websocket-debug-services');
+            if (debugElement) {
+                debugElement.dataset.status = 'error';
+                debugElement.dataset.lastError = Date.now().toString();
+                debugElement.textContent = `Services WebSocket: ERROR - ${error.message || 'Unknown error'}`;
+                debugElement.className = 'text-xs font-mono p-2 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded border border-yellow-300 dark:border-yellow-700';
+            }
             window.dispatchEvent(new CustomEvent('websocketError', {
                 detail: { message: error.message }
             }));
@@ -579,6 +625,22 @@ export default function ServicesPage() {
                                     }}
                                 >
                                     Refresh Credentials
+                                </Button>
+                                <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                        // Test WebSocket connection
+                                        console.log('Testing WebSocket connection with credentials:', backendCredentials);
+                                        const debugElement = document.getElementById('websocket-debug-services');
+                                        if (debugElement) {
+                                            debugElement.textContent = `Services WebSocket: TESTING CONNECTION...`;
+                                            debugElement.dataset.status = 'testing';
+                                            debugElement.className = 'text-xs font-mono p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded border border-blue-300 dark:border-blue-700';
+                                        }
+                                    }}
+                                >
+                                    Test WebSocket
                                 </Button>
                             </div>
                         </div>
