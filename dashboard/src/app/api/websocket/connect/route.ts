@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const protocol = determineBackendProtocol(finalBackendIp);
+      const protocol = determineBackendProtocol(finalBackendIp, request);
       const wsUrl = `${protocol}://${finalBackendIp}/polocloud/api/v3${path}?token=${token}`;
 
       const ws = new WebSocket(wsUrl);
@@ -129,7 +129,15 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function determineBackendProtocol(backendIp: string): 'ws' | 'wss' {
+function determineBackendProtocol(backendIp: string, request: NextRequest): 'ws' | 'wss' {
+  // Wenn Frontend HTTPS ist, muss WSS verwendet werden (Mixed Content Policy)
+  const isHttpsFrontend = request.headers.get('x-forwarded-proto') === 'https' || 
+                         request.url.startsWith('https://');
+  
+  if (isHttpsFrontend) {
+    return 'wss';
+  }
+
   if (backendIp.includes('localhost') || 
       backendIp.includes('127.0.0.1') || 
       backendIp.startsWith('192.168.') ||

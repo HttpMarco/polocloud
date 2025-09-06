@@ -41,7 +41,9 @@ export default function ServicesPage() {
                         dataType: typeof message.data,
                         isString: typeof message.data === 'string'
                     },
-                    messageCount: (prev.messageCount || 0) + 1
+                    messageCount: (prev.messageCount || 0) + 1,
+                    frontendProtocol: typeof window !== 'undefined' ? window.location.protocol : 'unknown',
+                    backendIp: localStorage.getItem('backend_ip') || 'unknown'
                 }));
 
                 let updateData;
@@ -242,6 +244,8 @@ export default function ServicesPage() {
                     <div className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
                         <div><strong>Messages received:</strong> {debugInfo.messageCount || 0}</div>
                         <div><strong>Updates processed:</strong> {debugInfo.updateCount || 0}</div>
+                        <div><strong>Frontend Protocol:</strong> {debugInfo.frontendProtocol || 'unknown'}</div>
+                        <div><strong>Backend IP:</strong> {debugInfo.backendIp || 'unknown'}</div>
                         {debugInfo.lastMessage && (
                             <div><strong>Last message:</strong> {debugInfo.lastMessage.timestamp} - {debugInfo.lastMessage.dataType}</div>
                         )}

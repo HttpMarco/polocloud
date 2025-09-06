@@ -1,5 +1,5 @@
 export interface WebSocketMessage {
-  type: 'log' | 'command' | 'status' | 'error' | 'heartbeat';
+  type: 'log' | 'command' | 'status' | 'error' | 'heartbeat' | 'connected' | 'disconnected' | 'message';
   data: string | object | number | boolean | null;
   timestamp?: number;
   service?: string;
@@ -442,6 +442,13 @@ export class WebSocketSystem {
   }
 
   private determineWebSocketProtocol(backendIp: string): 'ws' | 'wss' {
+    // Wenn Frontend HTTPS ist, muss WSS verwendet werden (Mixed Content Policy)
+    const isHttpsFrontend = typeof window !== 'undefined' && window.location.protocol === 'https:';
+    
+    if (isHttpsFrontend) {
+      return 'wss';
+    }
+
     const isLocalBackend = backendIp.includes('localhost') ||
                           backendIp.includes('127.0.0.1') || 
                           backendIp.startsWith('192.168.') ||
@@ -486,8 +493,7 @@ export class WebSocketSystem {
         return;
       }
 
-      if (message.type === 'log' || message.type === 'message') {
-
+      if (message.type === 'log' || message.type === 'message' || message.type === 'status' || message.type === 'command' || message.type === 'error') {
         this.config.onMessage?.(message);
         return;
       }
