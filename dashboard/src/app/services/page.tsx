@@ -48,13 +48,12 @@ export default function ServicesPage() {
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success && data.token) {
-                        console.log('Services Page: Credentials loaded from API');
                         setBackendCredentials({ backendIp, token: data.token });
                         return;
                     }
                 }
-            } catch (error) {
-                console.log('Failed to fetch token from API for direct WebSocket', error);
+            } catch {
+                // Silent fallback
             }
             
             // Fallback to cookie parsing
@@ -77,91 +76,38 @@ export default function ServicesPage() {
                 }
             }
             
-            console.log('Services Page: Credentials loaded from fallback');
             setBackendCredentials({ backendIp, token: token || null });
         };
         
         loadCredentials();
     }, []);
     
-    // Update debug display when credentials change
-    useEffect(() => {
-        const debugElement = document.getElementById('websocket-debug-services');
-        if (debugElement) {
-            if (backendCredentials.backendIp && backendCredentials.token) {
-                debugElement.textContent = `Services WebSocket: CONNECTING...`;
-                debugElement.dataset.status = 'connecting';
-                debugElement.className = 'text-xs font-mono p-2 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded border border-yellow-300 dark:border-yellow-700';
-            } else {
-                debugElement.textContent = `Services WebSocket: WAITING FOR CREDENTIALS...`;
-                debugElement.dataset.status = 'waiting';
-                debugElement.className = 'text-xs font-mono p-2 bg-gray-100 dark:bg-gray-900/20 text-gray-800 dark:text-gray-200 rounded border border-gray-300 dark:border-gray-700';
-            }
-        }
-    }, [backendCredentials]);
-    
-    // Direct WebSocket connection - initialize once and connect manually
+    // Direct WebSocket connection
     const shouldConnect = !!backendCredentials.backendIp && !!backendCredentials.token;
     
-    console.log('Services Page: Setting up WebSocket with credentials:', {
-        backendIp: backendCredentials.backendIp,
-        token: backendCredentials.token ? 'present' : 'missing',
-        autoConnect: shouldConnect,
-        fullToken: backendCredentials.token
-    });
-    
-    const { connect, disconnect, isConnected } = useWebSocketSystem({
+    const { connect } = useWebSocketSystem({
         backendIp: backendCredentials.backendIp || undefined,
         token: backendCredentials.token || undefined,
         path: '/services/update',
-        autoConnect: false, // Don't auto-connect, we'll do it manually
+        autoConnect: false,
         onConnect: () => {
-            console.log('Services Page: WebSocket connected directly');
-            // Update debug display immediately
-            const debugElement = document.getElementById('websocket-debug-services');
-            if (debugElement) {
-                debugElement.dataset.status = 'connected';
-                debugElement.dataset.lastConnect = Date.now().toString();
-                debugElement.textContent = `Services WebSocket: CONNECTED at ${new Date().toLocaleTimeString()}`;
-                debugElement.className = 'text-xs font-mono p-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded border border-green-300 dark:border-green-700';
-            }
             window.dispatchEvent(new CustomEvent('websocketConnect'));
         },
         onDisconnect: () => {
-            console.log('Services Page: WebSocket disconnected directly');
-            // Update debug display immediately
-            const debugElement = document.getElementById('websocket-debug-services');
-            if (debugElement) {
-                debugElement.dataset.status = 'disconnected';
-                debugElement.dataset.lastDisconnect = Date.now().toString();
-                debugElement.textContent = `Services WebSocket: DISCONNECTED at ${new Date().toLocaleTimeString()}`;
-                debugElement.className = 'text-xs font-mono p-2 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded border border-red-300 dark:border-red-700';
-            }
             window.dispatchEvent(new CustomEvent('websocketDisconnect'));
         },
         onError: (error) => {
-            console.log('Services Page: WebSocket error directly', error);
-            // Update debug display immediately
-            const debugElement = document.getElementById('websocket-debug-services');
-            if (debugElement) {
-                debugElement.dataset.status = 'error';
-                debugElement.dataset.lastError = Date.now().toString();
-                debugElement.textContent = `Services WebSocket: ERROR - ${error.message || 'Unknown error'}`;
-                debugElement.className = 'text-xs font-mono p-2 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded border border-yellow-300 dark:border-yellow-700';
-            }
             window.dispatchEvent(new CustomEvent('websocketError', {
                 detail: { message: error.message }
             }));
         },
         onMessage: (message) => {
-            console.log('Services Page: WebSocket message received directly', message);
             try {
                 let updateData;
                 if (typeof message.data === 'string') {
                     try {
                         updateData = JSON.parse(message.data);
-                    } catch (parseError) {
-                        console.error('Failed to parse service update:', parseError);
+                    } catch {
                         return;
                     }
                 } else if (message.data && typeof message.data === 'object') {
@@ -202,7 +148,7 @@ export default function ServicesPage() {
                     }));
                 }
             } catch (error) {
-                console.warn('Error processing service update:', error);
+                // Silent error handling
             }
         }
     });
@@ -210,9 +156,8 @@ export default function ServicesPage() {
     // Manually connect when credentials are ready
     useEffect(() => {
         if (shouldConnect) {
-            console.log('Services Page: Attempting manual WebSocket connection');
-            connect().catch(error => {
-                console.log('Services Page: Manual connection failed:', error);
+            connect().catch(() => {
+                // Silent error handling
             });
         }
     }, [shouldConnect, connect]);
@@ -222,7 +167,25 @@ export default function ServicesPage() {
         const handleServiceStateUpdate = (event: CustomEvent) => {
             const { serviceName, state } = event.detail;
             if (state === 'ONLINE') {
-                toast.success(`Service ${serviceName} is now online`);
+                toast.success(`Service ${serviceName} is now online`, {
+                    description: `The service has successfully started and is ready to accept connections.`,
+                    duration: 4000,
+                });
+            } else if (state === 'OFFLINE') {
+                toast.error(`Service ${serviceName} went offline`, {
+                    description: `The service has stopped and is no longer available.`,
+                    duration: 4000,
+                });
+            } else if (state === 'STARTING') {
+                toast.info(`Service ${serviceName} is starting`, {
+                    description: `The service is currently initializing and will be available shortly.`,
+                    duration: 3000,
+                });
+            } else if (state === 'STOPPING') {
+                toast.warning(`Service ${serviceName} is stopping`, {
+                    description: `The service is currently shutting down gracefully.`,
+                    duration: 3000,
+                });
             }
         };
 
@@ -230,190 +193,6 @@ export default function ServicesPage() {
         
         return () => {
             window.removeEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
-        };
-    }, []);
-
-    // Debug info for WebSocket status
-    useEffect(() => {
-        // Try to get token from API first
-        const fetchToken = async () => {
-            try {
-                const response = await fetch('/api/auth/token');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success && data.token) {
-                        console.log('Services Page: Token fetched from API', {
-                            backendIp: localStorage.getItem('backendIp'),
-                            token: 'present',
-                            tokenValue: data.token.substring(0, 20) + '...',
-                            sidebarServices: sidebarServices.length,
-                            sidebarLoading
-                        });
-                        return;
-                    }
-                }
-            } catch (error) {
-                console.log('Services Page: Failed to fetch token from API', error);
-            }
-            
-            // Fallback to cookie parsing
-            let token = localStorage.getItem('token');
-            if (!token) {
-                const cookies = document.cookie.split(';');
-                for (const cookie of cookies) {
-                    const [name, value] = cookie.trim().split('=');
-                    if (name === 'token') {
-                        token = value;
-                        break;
-                    }
-                }
-            }
-            
-            // Alternative parsing method if the above doesn't work
-            if (!token) {
-                const tokenMatch = document.cookie.match(/token=([^;]+)/);
-                if (tokenMatch) {
-                    token = tokenMatch[1];
-                }
-            }
-
-            console.log('Services Page: Checking credentials from cookies', {
-                backendIp: localStorage.getItem('backendIp'),
-                token: token ? 'present' : 'missing',
-                tokenValue: token,
-                allCookies: document.cookie,
-                cookieArray: document.cookie.split(';'),
-                tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token=')),
-                sidebarServices: sidebarServices.length,
-                sidebarLoading
-            });
-        };
-        
-        fetchToken();
-        
-        // Update token display
-        const updateTokenDisplay = async () => {
-            try {
-                const response = await fetch('/api/auth/token');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success && data.token) {
-                        const tokenDisplay = document.getElementById('token-display');
-                        if (tokenDisplay) {
-                            tokenDisplay.textContent = `Present (${data.token.substring(0, 20)}...)`;
-                        }
-                        return;
-                    }
-                }
-            } catch (error) {
-                console.log('Failed to fetch token for display', error);
-            }
-            
-            // Fallback to cookie parsing
-            let token = localStorage.getItem('token');
-            if (!token) {
-                const cookies = document.cookie.split(';');
-                for (const cookie of cookies) {
-                    const [name, value] = cookie.trim().split('=');
-                    if (name === 'token') {
-                        token = value;
-                        break;
-                    }
-                }
-            }
-            
-            if (!token) {
-                const tokenMatch = document.cookie.match(/token=([^;]+)/);
-                if (tokenMatch) {
-                    token = tokenMatch[1];
-                }
-            }
-            
-            const tokenDisplay = document.getElementById('token-display');
-            if (tokenDisplay) {
-                tokenDisplay.textContent = token ? `Present (${token.substring(0, 20)}...)` : 'Missing';
-            }
-        };
-        
-        updateTokenDisplay();
-
-        const debugElement = document.getElementById('websocket-debug-services');
-        if (debugElement) {
-            debugElement.textContent = `Services WebSocket: INITIALIZING...`;
-            debugElement.dataset.status = 'initializing';
-        }
-
-        // Listen for WebSocket connection events
-        const handleWebSocketConnect = () => {
-            const debugElement = document.getElementById('websocket-debug-services');
-            if (debugElement) {
-                debugElement.dataset.status = 'connected';
-                debugElement.dataset.lastConnect = Date.now().toString();
-                debugElement.textContent = `Services WebSocket: CONNECTED at ${new Date().toLocaleTimeString()}`;
-                debugElement.className = 'text-xs font-mono p-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 rounded border border-green-300 dark:border-green-700';
-            }
-        };
-
-        const handleWebSocketDisconnect = () => {
-            const debugElement = document.getElementById('websocket-debug-services');
-            if (debugElement) {
-                debugElement.dataset.status = 'disconnected';
-                debugElement.dataset.lastDisconnect = Date.now().toString();
-                debugElement.textContent = `Services WebSocket: DISCONNECTED at ${new Date().toLocaleTimeString()}`;
-                debugElement.className = 'text-xs font-mono p-2 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 rounded border border-red-300 dark:border-red-700';
-            }
-        };
-
-        const handleWebSocketError = (event: CustomEvent) => {
-            const debugElement = document.getElementById('websocket-debug-services');
-            if (debugElement) {
-                debugElement.dataset.status = 'error';
-                debugElement.dataset.lastError = Date.now().toString();
-                debugElement.textContent = `Services WebSocket: ERROR - ${event.detail?.message || 'Unknown error'}`;
-                debugElement.className = 'text-xs font-mono p-2 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded border border-yellow-300 dark:border-yellow-700';
-            }
-        };
-
-        const handleServiceStateUpdate = (event: CustomEvent) => {
-            const { serviceName, state } = event.detail;
-            
-            // Update service state debug
-            const serviceDebugElement = document.getElementById('service-state-debug');
-            if (serviceDebugElement) {
-                serviceDebugElement.textContent = `Service State Change: ${serviceName} -> ${state} at ${new Date().toLocaleTimeString()}`;
-                serviceDebugElement.dataset.lastService = serviceName;
-                serviceDebugElement.dataset.lastState = state;
-                serviceDebugElement.dataset.lastChange = Date.now().toString();
-                serviceDebugElement.className = 'text-xs font-mono p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded border border-blue-300 dark:border-blue-700';
-            }
-
-            // Update last update time
-            const lastUpdateElement = document.getElementById('last-update-time');
-            if (lastUpdateElement) {
-                lastUpdateElement.textContent = new Date().toLocaleTimeString();
-            }
-        };
-
-        // Add event listeners
-        window.addEventListener('websocketConnect', handleWebSocketConnect as EventListener);
-        window.addEventListener('websocketDisconnect', handleWebSocketDisconnect as EventListener);
-        window.addEventListener('websocketError', handleWebSocketError as EventListener);
-        window.addEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
-        
-        // Add refresh credentials listener
-        const handleRefreshCredentials = (event: CustomEvent) => {
-            console.log('Refresh credentials event received:', event.detail);
-            // Force a re-render by updating a dummy state
-            setServices(prev => [...prev]);
-        };
-        window.addEventListener('refreshCredentials', handleRefreshCredentials as EventListener);
-
-        return () => {
-            window.removeEventListener('websocketConnect', handleWebSocketConnect as EventListener);
-            window.removeEventListener('websocketDisconnect', handleWebSocketDisconnect as EventListener);
-            window.removeEventListener('websocketError', handleWebSocketError as EventListener);
-            window.removeEventListener('serviceStateUpdate', handleServiceStateUpdate as EventListener);
-            window.removeEventListener('refreshCredentials', handleRefreshCredentials as EventListener);
         };
     }, []);
 
@@ -534,178 +313,6 @@ export default function ServicesPage() {
             
             <div className="h-2"></div>
             
-            {/* Debug Information Panel */}
-            <div className="px-6 pb-4">
-                <div className="bg-card border border-border rounded-lg p-4 space-y-3">
-                    <h3 className="text-sm font-semibold text-foreground">WebSocket Debug Information</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* WebSocket Status */}
-                        <div className="space-y-2">
-                            <div 
-                                id="websocket-debug-services"
-                                className="text-xs font-mono p-2 bg-muted rounded border"
-                                data-status="disconnected"
-                            >
-                                Services WebSocket: DISCONNECTED
-                            </div>
-                        </div>
-                        
-                        {/* Service State Changes */}
-                        <div className="space-y-2">
-                            <div 
-                                id="service-state-debug"
-                                className="text-xs font-mono p-2 bg-muted rounded border"
-                                data-last-service=""
-                                data-last-state=""
-                            >
-                                Service State Changes: None yet
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {/* Connection Info */}
-                    <div className="text-xs text-muted-foreground">
-                        <div>Last Update: <span id="last-update-time">Never</span></div>
-                        <div>Total Services: {services.length}</div>
-                        <div>Online Services: {services.filter(s => s.state === 'ONLINE').length}</div>
-                        <div>Backend IP: {localStorage.getItem('backendIp') || 'Not found'}</div>
-                        <div>Token: <span id="token-display">Loading...</span></div>
-                        
-                        {/* Additional Debug Info */}
-                        <div className="mt-2 pt-2 border-t border-border">
-                            <div className="font-semibold text-foreground mb-1">Debug Details:</div>
-                            <div>All Cookies: {document.cookie || 'No cookies found'}</div>
-                            <div>Cookie Count: {document.cookie.split(';').length}</div>
-                            <div>LocalStorage Token: {localStorage.getItem('token') ? 'Present' : 'Missing'}</div>
-                            <div>Cookie Token Match: {document.cookie.match(/token=([^;]+)/) ? 'Found' : 'Not found'}</div>
-                            <div>Cookie Array: {JSON.stringify(document.cookie.split(';').map(c => c.trim()))}</div>
-                            <div>WebSocket AutoConnect: {(() => {
-                                return (!!backendCredentials.backendIp && !!backendCredentials.token) ? 'Yes' : 'No';
-                            })()}</div>
-                            <div>Direct WebSocket Status: {(() => {
-                                return backendCredentials.backendIp && backendCredentials.token ? 'Ready' : 'Waiting for credentials';
-                            })()}</div>
-                        </div>
-                        
-                        {/* Manual Test Buttons */}
-                        <div className="mt-3 pt-2 border-t border-border">
-                            <div className="font-semibold text-foreground mb-2">Manual Tests:</div>
-                            <div className="flex gap-2 flex-wrap">
-                                <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    onClick={() => {
-                                        console.log('Manual WebSocket Test - Current State:', {
-                                            backendIp: localStorage.getItem('backendIp'),
-                                            token: localStorage.getItem('token'),
-                                            cookieToken: document.cookie.match(/token=([^;]+)/)?.[1],
-                                            allCookies: document.cookie,
-                                            pathname: window.location.pathname
-                                        });
-                                        // Trigger a manual connect event for testing
-                                        window.dispatchEvent(new CustomEvent('websocketConnect'));
-                                    }}
-                                >
-                                    Test Connect Event
-                                </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    onClick={() => {
-                                        // Test service state update
-                                        window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
-                                            detail: { 
-                                                serviceName: 'test-service', 
-                                                state: 'ONLINE',
-                                                updateData: { test: true }
-                                            }
-                                        }));
-                                    }}
-                                >
-                                    Test Service Update
-                                </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    onClick={() => {
-                                        // Force refresh credentials
-                                        const backendIp = localStorage.getItem('backendIp');
-                                        const token = localStorage.getItem('token') || document.cookie.match(/token=([^;]+)/)?.[1];
-                                        console.log('Force refresh credentials:', { backendIp, token });
-                                        // Trigger a custom event to refresh
-                                        window.dispatchEvent(new CustomEvent('refreshCredentials', {
-                                            detail: { backendIp, token }
-                                        }));
-                                    }}
-                                >
-                                    Refresh Credentials
-                                </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    onClick={() => {
-                                        // Test WebSocket connection
-                                        console.log('Testing WebSocket connection with credentials:', backendCredentials);
-                                        const debugElement = document.getElementById('websocket-debug-services');
-                                        if (debugElement) {
-                                            debugElement.textContent = `Services WebSocket: TESTING CONNECTION...`;
-                                            debugElement.dataset.status = 'testing';
-                                            debugElement.className = 'text-xs font-mono p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded border border-blue-300 dark:border-blue-700';
-                                        }
-                                        
-                                        // Test the WebSocket URL construction
-                                        if (backendCredentials.backendIp && backendCredentials.token) {
-                                            const protocol = backendCredentials.backendIp.includes('localhost') || 
-                                                          backendCredentials.backendIp.includes('127.0.0.1') || 
-                                                          backendCredentials.backendIp.startsWith('192.168.') ||
-                                                          backendCredentials.backendIp.startsWith('10.') ? 'ws' : 'wss';
-                                            const wsUrl = `${protocol}://${backendCredentials.backendIp}/polocloud/api/v3/services/update?token=${backendCredentials.token}`;
-                                            console.log('Test WebSocket URL:', wsUrl);
-                                            
-                                            // Try to create a test WebSocket
-                                            try {
-                                                const testWs = new WebSocket(wsUrl);
-                                                testWs.onopen = () => {
-                                                    console.log('Test WebSocket: Connected successfully');
-                                                    testWs.close();
-                                                };
-                                                testWs.onerror = (error) => {
-                                                    console.log('Test WebSocket: Error:', error);
-                                                };
-                                                testWs.onclose = (event) => {
-                                                    console.log('Test WebSocket: Closed with code:', event.code, 'reason:', event.reason);
-                                                };
-                                            } catch (error) {
-                                                console.log('Test WebSocket: Failed to create:', error);
-                                            }
-                                        }
-                                    }}
-                                >
-                                    Test WebSocket
-                                </Button>
-                                <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    onClick={() => {
-                                        // Manual connect button
-                                        console.log('Manual connect button clicked');
-                                        if (shouldConnect) {
-                                            connect().catch(error => {
-                                                console.log('Manual connect failed:', error);
-                                            });
-                                        } else {
-                                            console.log('Cannot connect: credentials not ready');
-                                        }
-                                    }}
-                                >
-                                    Manual Connect
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             {}
             <ServiceHeader />

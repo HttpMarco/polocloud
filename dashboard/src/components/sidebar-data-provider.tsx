@@ -51,17 +51,12 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
           if (response.ok) {
             const data = await response.json();
             if (data.success && data.token) {
-              console.log('SidebarDataProvider: Token fetched from API', { 
-                backendIp, 
-                token: 'present',
-                tokenValue: data.token.substring(0, 20) + '...'
-              });
               setBackendCredentials({ backendIp, token: data.token });
               return;
             }
           }
         } catch (error) {
-          console.log('SidebarDataProvider: Failed to fetch token from API', error);
+          // Silent fallback
         }
         
         // Fallback to cookie parsing
@@ -85,13 +80,6 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
           }
         }
         
-        console.log('SidebarDataProvider: Loading credentials from cookies', { 
-          backendIp, 
-          token: token ? 'present' : 'missing',
-          allCookies: document.cookie,
-          cookieArray: document.cookie.split(';'),
-          tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token='))
-        });
         setBackendCredentials({ backendIp, token: token || null });
       };
       
@@ -108,31 +96,23 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
     path: '/services/update',
     autoConnect: false, // Don't auto-connect, we'll do it manually
     onConnect: () => {
-      console.log('SidebarDataProvider: WebSocket connected');
-      // Dispatch connect event for debug info
       window.dispatchEvent(new CustomEvent('websocketConnect'));
     },
     onDisconnect: () => {
-      console.log('SidebarDataProvider: WebSocket disconnected');
-      // Dispatch disconnect event for debug info
       window.dispatchEvent(new CustomEvent('websocketDisconnect'));
     },
     onError: (error) => {
-      console.log('SidebarDataProvider: WebSocket error:', error);
-      // Dispatch error event for debug info
       window.dispatchEvent(new CustomEvent('websocketError', {
         detail: { message: error.message }
       }));
     },
     onMessage: (message) => {
-      console.log('SidebarDataProvider: WebSocket message received:', message);
       try {
         let updateData;
         if (typeof message.data === 'string') {
           try {
             updateData = JSON.parse(message.data);
           } catch (parseError) {
-            console.error('Failed to parse service update:', parseError);
             return;
           }
         } else if (message.data && typeof message.data === 'object') {
@@ -150,7 +130,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
           }));
         }
       } catch (error) {
-        console.warn('Error processing service update:', error);
+        // Silent error handling
       }
     }
   });
@@ -158,17 +138,11 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
   // Manually connect when credentials are ready
   useEffect(() => {
     if (shouldConnect) {
-      console.log('SidebarDataProvider: Attempting manual WebSocket connection', {
-        backendIp: backendCredentials.backendIp,
-        token: backendCredentials.token ? 'present' : 'missing',
-        shouldHideSidebar,
-        isClient
-      });
-      connect().catch(error => {
-        console.log('SidebarDataProvider: Manual connection failed:', error);
+      connect().catch(() => {
+        // Silent error handling
       });
     }
-  }, [shouldConnect, connect, backendCredentials.backendIp, backendCredentials.token, shouldHideSidebar, isClient]);
+  }, [shouldConnect, connect]);
 
   const loadSidebarData = useCallback(async () => {
     try {

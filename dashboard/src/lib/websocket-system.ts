@@ -86,7 +86,6 @@ export class WebSocketSystem {
 
   public async connect(): Promise<void> {
     if (this.status === 'connecting' || this.status === 'connected') {
-      console.log('WebSocket: Already connecting or connected, skipping');
       return;
     }
 
@@ -94,33 +93,22 @@ export class WebSocketSystem {
 
     const credentials = await this.getBackendIpAndToken();
     if (!credentials) {
-      console.log('WebSocket: No credentials available');
       const error = new Error('BackendIP or Token not available');
       this.handleError(error);
       throw error;
     }
 
-    console.log('WebSocket: Starting connection with credentials:', {
-      backendIp: credentials.backendIp,
-      token: credentials.token ? 'present' : 'missing',
-      path: this.config.path
-    });
-
     this.updateStatus('connecting');
     
     try {
-      console.log('WebSocket: Trying direct WebSocket connection');
       await this.tryDirectWebSocket();
     } catch (error) {
-      console.log('WebSocket: Direct connection failed, trying proxy:', error);
       try {
         await this.tryProxyWebSocket();
       } catch (error) {
-        console.log('WebSocket: Proxy connection failed, trying SSE:', error);
         try {
           await this.tryServerSentEvents();
         } catch (error) {
-          console.log('WebSocket: SSE failed, falling back to polling:', error);
           this.startPolling();
         }
       }
@@ -132,7 +120,6 @@ export class WebSocketSystem {
       try {
         const credentials = await this.getBackendIpAndToken();
         if (!credentials) {
-          console.log('WebSocket: No credentials for direct connection');
           reject(new Error('BackendIP or Token not available'));
           return;
         }
@@ -140,8 +127,6 @@ export class WebSocketSystem {
         const { backendIp, token } = credentials;
         const protocol = this.determineWebSocketProtocol(backendIp);
         const wsUrl = `${protocol}://${backendIp}/polocloud/api/v3${this.config.path}?token=${token}`;
-
-        console.log('WebSocket: Attempting direct connection to:', wsUrl);
 
         this.ws = new WebSocket(wsUrl);
         this.protocol = protocol;
@@ -153,7 +138,6 @@ export class WebSocketSystem {
         }, 5000);
         
         this.ws.onopen = () => {
-          console.log('WebSocket: Direct connection opened successfully');
           clearTimeout(timeout);
           this.updateStatus('connected');
           this.reconnectAttempts = 0;
@@ -163,12 +147,10 @@ export class WebSocketSystem {
         };
         
         this.ws.onmessage = (event) => {
-          console.log('WebSocket: Message received:', event.data);
           this.handleMessage(event.data);
         };
         
         this.ws.onclose = (event) => {
-          console.log('WebSocket: Connection closed with code:', event.code, 'reason:', event.reason);
           clearTimeout(timeout);
           this.handleDisconnect();
           
@@ -178,7 +160,6 @@ export class WebSocketSystem {
         };
         
         this.ws.onerror = (error) => {
-          console.log('WebSocket: Connection error:', error);
           clearTimeout(timeout);
           this.handleError(new Error('WebSocket error'));
           reject(error);
