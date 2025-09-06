@@ -48,6 +48,7 @@ export default function ServicesPage() {
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success && data.token) {
+                        console.log('Services Page: Credentials loaded from API');
                         setBackendCredentials({ backendIp, token: data.token });
                         return;
                     }
@@ -76,6 +77,7 @@ export default function ServicesPage() {
                 }
             }
             
+            console.log('Services Page: Credentials loaded from fallback');
             setBackendCredentials({ backendIp, token: token || null });
         };
         
@@ -98,19 +100,21 @@ export default function ServicesPage() {
         }
     }, [backendCredentials]);
     
-    // Direct WebSocket connection
+    // Direct WebSocket connection - initialize once and connect manually
+    const shouldConnect = !!backendCredentials.backendIp && !!backendCredentials.token;
+    
     console.log('Services Page: Setting up WebSocket with credentials:', {
         backendIp: backendCredentials.backendIp,
         token: backendCredentials.token ? 'present' : 'missing',
-        autoConnect: !!backendCredentials.backendIp && !!backendCredentials.token,
+        autoConnect: shouldConnect,
         fullToken: backendCredentials.token
     });
     
-    useWebSocketSystem({
+    const { connect, disconnect, isConnected } = useWebSocketSystem({
         backendIp: backendCredentials.backendIp || undefined,
         token: backendCredentials.token || undefined,
         path: '/services/update',
-        autoConnect: !!backendCredentials.backendIp && !!backendCredentials.token,
+        autoConnect: false, // Don't auto-connect, we'll do it manually
         onConnect: () => {
             console.log('Services Page: WebSocket connected directly');
             // Update debug display immediately
@@ -202,6 +206,16 @@ export default function ServicesPage() {
             }
         }
     });
+
+    // Manually connect when credentials are ready
+    useEffect(() => {
+        if (shouldConnect) {
+            console.log('Services Page: Attempting manual WebSocket connection');
+            connect().catch(error => {
+                console.log('Services Page: Manual connection failed:', error);
+            });
+        }
+    }, [shouldConnect, connect]);
 
     // Listen for service state updates to show toasts
     useEffect(() => {
@@ -669,6 +683,23 @@ export default function ServicesPage() {
                                     }}
                                 >
                                     Test WebSocket
+                                </Button>
+                                <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => {
+                                        // Manual connect button
+                                        console.log('Manual connect button clicked');
+                                        if (shouldConnect) {
+                                            connect().catch(error => {
+                                                console.log('Manual connect failed:', error);
+                                            });
+                                        } else {
+                                            console.log('Cannot connect: credentials not ready');
+                                        }
+                                    }}
+                                >
+                                    Manual Connect
                                 </Button>
                             </div>
                         </div>
