@@ -57,10 +57,20 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
         }
       }
       
+      // Alternative parsing method if the above doesn't work
+      if (!token) {
+        const tokenMatch = document.cookie.match(/token=([^;]+)/);
+        if (tokenMatch) {
+          token = tokenMatch[1];
+        }
+      }
+      
       console.log('SidebarDataProvider: Loading credentials', { 
         backendIp, 
         token: token ? 'present' : 'missing',
-        allCookies: document.cookie
+        allCookies: document.cookie,
+        cookieArray: document.cookie.split(';'),
+        tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token='))
       });
       setBackendCredentials({ backendIp, token: token || null });
     }

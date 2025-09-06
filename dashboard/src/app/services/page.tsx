@@ -61,11 +61,22 @@ export default function ServicesPage() {
                 }
             }
         }
+        
+        // Alternative parsing method if the above doesn't work
+        if (!token) {
+            const tokenMatch = document.cookie.match(/token=([^;]+)/);
+            if (tokenMatch) {
+                token = tokenMatch[1];
+            }
+        }
 
         console.log('Services Page: Checking credentials', {
             backendIp: localStorage.getItem('backendIp'),
             token: token ? 'present' : 'missing',
+            tokenValue: token,
             allCookies: document.cookie,
+            cookieArray: document.cookie.split(';'),
+            tokenFromCookie: document.cookie.split(';').find(c => c.trim().startsWith('token=')),
             sidebarServices: sidebarServices.length,
             sidebarLoading
         });
@@ -306,7 +317,16 @@ export default function ServicesPage() {
                                     }
                                 }
                             }
-                            return token ? 'Present' : 'Missing';
+                            
+                            // Alternative parsing method
+                            if (!token) {
+                                const tokenMatch = document.cookie.match(/token=([^;]+)/);
+                                if (tokenMatch) {
+                                    token = tokenMatch[1];
+                                }
+                            }
+                            
+                            return token ? `Present (${token.substring(0, 20)}...)` : 'Missing';
                         })()}</div>
                     </div>
                 </div>
