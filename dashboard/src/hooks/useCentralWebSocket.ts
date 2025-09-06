@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, createContext, useContext, ReactNode } from 'react';
+import React, { useEffect, useRef, useState, useCallback, createContext, useContext, ReactNode } from 'react';
 import { WebSocketSystem, WebSocketMessage, ConnectionStatus, ConnectionInfo, createWebSocketSystem } from '@/lib/websocket-system';
 import { processTerminalLog } from '@/lib/ansi-utils';
 
@@ -69,7 +69,7 @@ export function CentralWebSocketProvider({ children }: { children: ReactNode }) 
       
       const cleanedMessage = processTerminalLog(messageData, { removeColors: true });
       setTerminalLogs(prev => [...prev, cleanedMessage]);
-    } else if (message.type === 'message' || typeof message.data === 'object') {
+    } else if (typeof message.data === 'object') {
       // Service updates
       try {
         let updateData;
@@ -318,11 +318,7 @@ export function CentralWebSocketProvider({ children }: { children: ReactNode }) 
     sendServiceCommand
   };
 
-  return (
-    <CentralWebSocketContext.Provider value={value}>
-      {children}
-    </CentralWebSocketContext.Provider>
-  );
+  return React.createElement(CentralWebSocketContext.Provider, { value }, children);
 }
 
 export function useCentralWebSocket() {
