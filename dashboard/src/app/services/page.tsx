@@ -147,7 +147,7 @@ export default function ServicesPage() {
                         detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
                     }));
                 }
-            } catch (error) {
+            } catch {
                 // Silent error handling
             }
         }
