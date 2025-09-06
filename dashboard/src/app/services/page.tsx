@@ -102,7 +102,8 @@ export default function ServicesPage() {
     console.log('Services Page: Setting up WebSocket with credentials:', {
         backendIp: backendCredentials.backendIp,
         token: backendCredentials.token ? 'present' : 'missing',
-        autoConnect: !!backendCredentials.backendIp && !!backendCredentials.token
+        autoConnect: !!backendCredentials.backendIp && !!backendCredentials.token,
+        fullToken: backendCredentials.token
     });
     
     useWebSocketSystem({
@@ -637,6 +638,33 @@ export default function ServicesPage() {
                                             debugElement.textContent = `Services WebSocket: TESTING CONNECTION...`;
                                             debugElement.dataset.status = 'testing';
                                             debugElement.className = 'text-xs font-mono p-2 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 rounded border border-blue-300 dark:border-blue-700';
+                                        }
+                                        
+                                        // Test the WebSocket URL construction
+                                        if (backendCredentials.backendIp && backendCredentials.token) {
+                                            const protocol = backendCredentials.backendIp.includes('localhost') || 
+                                                          backendCredentials.backendIp.includes('127.0.0.1') || 
+                                                          backendCredentials.backendIp.startsWith('192.168.') ||
+                                                          backendCredentials.backendIp.startsWith('10.') ? 'ws' : 'wss';
+                                            const wsUrl = `${protocol}://${backendCredentials.backendIp}/polocloud/api/v3/services/update?token=${backendCredentials.token}`;
+                                            console.log('Test WebSocket URL:', wsUrl);
+                                            
+                                            // Try to create a test WebSocket
+                                            try {
+                                                const testWs = new WebSocket(wsUrl);
+                                                testWs.onopen = () => {
+                                                    console.log('Test WebSocket: Connected successfully');
+                                                    testWs.close();
+                                                };
+                                                testWs.onerror = (error) => {
+                                                    console.log('Test WebSocket: Error:', error);
+                                                };
+                                                testWs.onclose = (event) => {
+                                                    console.log('Test WebSocket: Closed with code:', event.code, 'reason:', event.reason);
+                                                };
+                                            } catch (error) {
+                                                console.log('Test WebSocket: Failed to create:', error);
+                                            }
                                         }
                                     }}
                                 >
