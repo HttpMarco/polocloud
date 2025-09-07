@@ -198,13 +198,12 @@ export function useTerminalWebSocket(backendIp?: string, token?: string, autoCon
     token,
     autoConnect,
     onConnect: () => {
-      // WebSocket connected - no debug output needed
     },
     onDisconnect: () => {
-      // WebSocket disconnected - no debug output needed
+
     },
     onError: (error) => {
-      // WebSocket error - no debug output needed
+
     },
     onMessage: (message) => {
       if (typeof message.data === 'string') {

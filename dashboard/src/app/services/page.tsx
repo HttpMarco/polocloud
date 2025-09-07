@@ -31,20 +31,17 @@ export default function ServicesPage() {
     const [connectionAttempts, setConnectionAttempts] = useState(0);
     const [lastHeartbeatResponse, setLastHeartbeatResponse] = useState<Date | null>(null);
     const [, setConnectionHealth] = useState<'healthy' | 'stale' | 'dead'>('healthy');
-    
-    // Direct WebSocket connection for services page
+
     const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
         backendIp: null,
         token: null
     });
 
-    // Use shared services data from SidebarDataProvider
     useEffect(() => {
         setServices(sidebarServices);
         setIsLoading(sidebarLoading);
     }, [sidebarServices, sidebarLoading]);
-    
-    // Load credentials for direct WebSocket
+
     useEffect(() => {
         const loadCredentials = async () => {
             const backendIp = localStorage.getItem('backendIp');
@@ -59,10 +56,8 @@ export default function ServicesPage() {
                     }
                 }
             } catch {
-                // Silent fallback
             }
-            
-            // Fallback to cookie parsing
+
             let token = localStorage.getItem('token');
             if (!token) {
                 const cookies = document.cookie.split(';');
@@ -87,8 +82,7 @@ export default function ServicesPage() {
         
         loadCredentials();
     }, []);
-    
-    // Direct WebSocket connection
+
     const shouldConnect = !!backendCredentials.backendIp && !!backendCredentials.token;
     
     const { connect, disconnect, sendMessage } = useWebSocketSystem({
@@ -101,43 +95,38 @@ export default function ServicesPage() {
             setConnectionHealth('healthy');
             setLastHeartbeatResponse(new Date());
             window.dispatchEvent(new CustomEvent('websocketConnect'));
-            
-            // Clear any existing reconnect interval
+
             if (reconnectInterval) {
                 clearTimeout(reconnectInterval);
                 setReconnectInterval(null);
             }
-            
-            // Start ping interval with response monitoring
+
             const interval = setInterval(() => {
                 sendMessage({ type: 'heartbeat', data: { timestamp: Date.now() } });
-                
-                // Check if we haven't received a response in 2 minutes
+
                 const now = new Date();
                 if (lastHeartbeatResponse && (now.getTime() - lastHeartbeatResponse.getTime()) > 120000) {
                     setConnectionHealth('stale');
                     disconnect();
                 }
-            }, 30000); // Ping every 30 seconds
+            }, 30000);
             setPingInterval(interval);
         },
         onDisconnect: () => {
             window.dispatchEvent(new CustomEvent('websocketDisconnect'));
-            
-            // Clear ping interval
+
             if (pingInterval) {
                 clearInterval(pingInterval);
                 setPingInterval(null);
             }
-            
-            // Start reconnection attempts
+
             if (shouldConnect && connectionAttempts < 5) {
                 const reconnectTimer = setTimeout(() => {
                     setConnectionAttempts(prev => prev + 1);
                     connect().catch(() => {
-                        // Silent error handling
+
                     });
-                }, 5000); // Try to reconnect after 5 seconds
+                }, 5000);
                 setReconnectInterval(reconnectTimer);
             }
         },
@@ -145,13 +134,11 @@ export default function ServicesPage() {
             window.dispatchEvent(new CustomEvent('websocketError', {
                 detail: { message: error.message }
             }));
-            
-            // Start reconnection attempts on error
+
             if (shouldConnect && connectionAttempts < 5) {
                 const reconnectTimer = setTimeout(() => {
                     setConnectionAttempts(prev => prev + 1);
                     connect().catch(() => {
-                        // Silent error handling
                     });
                 }, 5000);
                 setReconnectInterval(reconnectTimer);
@@ -171,13 +158,11 @@ export default function ServicesPage() {
                 } else {
                     updateData = message;
                 }
-                
-                // Update heartbeat response time for any message
+
                 setLastHeartbeatResponse(new Date());
                 setConnectionHealth('healthy');
                 
                 if (updateData && updateData.serviceName && updateData.state) {
-                    // Update local state
                     setServices(prev => prev.map(service => 
                         service.name === updateData.serviceName 
                             ? { 
@@ -201,36 +186,30 @@ export default function ServicesPage() {
                             }
                             : service
                     ));
-                    
-                    // Reload page ONLY when service goes online to refresh all data
+
                     if (updateData.state === 'ONLINE') {
                         setTimeout(() => {
                             window.location.reload();
-                        }, 1000); // Wait 1 second to show the state change
+                        }, 1000);
                     }
-                    
-                    // Dispatch custom event
+
                     window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
                         detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
                     }));
                 }
             } catch {
-                // Silent error handling
             }
         }
     });
 
-    // Manually connect when credentials are ready
     useEffect(() => {
         if (shouldConnect) {
             setConnectionAttempts(0);
             connect().catch(() => {
-                // Silent error handling
             });
         }
     }, [shouldConnect, connect]);
 
-    // Cleanup intervals on unmount
     useEffect(() => {
         return () => {
             if (pingInterval) {
@@ -287,22 +266,18 @@ export default function ServicesPage() {
             });
 
             if (response.ok) {
-                // Check if WebSocket is still healthy, if not, force reconnect
                 const now = new Date();
                 if (lastHeartbeatResponse && (now.getTime() - lastHeartbeatResponse.getTime()) > 60000) {
                     setConnectionHealth('stale');
                     disconnect();
                     setTimeout(() => {
                         connect().catch(() => {
-                            // Silent error handling
                         });
                     }, 1000);
                 }
             } else {
-                // Silent error handling
             }
         } catch {
-            // Silent error handling
         } finally {
             setRestartingServices(prev => prev.filter(name => name !== serviceName));
         }

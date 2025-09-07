@@ -34,7 +34,6 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
 
   const [isClient, setIsClient] = useState(false);
 
-  // Get backend credentials
   const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
     backendIp: null,
     token: null
@@ -43,8 +42,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isClient) {
       const backendIp = localStorage.getItem('backendIp');
-      
-      // Try to get token from API instead of cookies
+
       const fetchToken = async () => {
         try {
           const response = await fetch('/api/auth/token');
@@ -56,10 +54,8 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
             }
           }
         } catch {
-          // Silent fallback
         }
-        
-        // Fallback to cookie parsing
+
         let token = localStorage.getItem('token');
         if (!token) {
           const cookies = document.cookie.split(';');
@@ -71,8 +67,7 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
             }
           }
         }
-        
-        // Alternative parsing method if the above doesn't work
+
         if (!token) {
           const tokenMatch = document.cookie.match(/token=([^;]+)/);
           if (tokenMatch) {
@@ -87,14 +82,13 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
     }
   }, [isClient]);
 
-  // Shared WebSocket connection for service updates - manual connection like services page
   const shouldConnect = !shouldHideSidebar && isClient && !!backendCredentials.backendIp && !!backendCredentials.token;
   
   const { connect } = useWebSocketSystem({
     backendIp: backendCredentials.backendIp || undefined,
     token: backendCredentials.token || undefined,
     path: '/services/update',
-    autoConnect: false, // Don't auto-connect, we'll do it manually
+    autoConnect: false,
     onConnect: () => {
       window.dispatchEvent(new CustomEvent('websocketConnect'));
     },
@@ -123,23 +117,19 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
         
         if (updateData && updateData.serviceName && updateData.state) {
           updateServiceState(updateData.serviceName, updateData.state, updateData);
-          
-          // Dispatch custom event for other components to listen to
+
           window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
             detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
           }));
         }
       } catch {
-        // Silent error handling
       }
     }
   });
 
-  // Manually connect when credentials are ready
   useEffect(() => {
     if (shouldConnect) {
       connect().catch(() => {
-        // Silent error handling
       });
     }
   }, [shouldConnect, connect]);
@@ -215,7 +205,6 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
           ? { 
               ...service, 
               state: state,
-              // Apply additional state-specific updates
               ...(state === 'STARTING' || state === 'PREPARING' ? {
                 playerCount: -1,
                 maxPlayerCount: -1,
@@ -230,7 +219,6 @@ export function SidebarDataProvider({ children }: { children: ReactNode }) {
                 memoryUsage: 0,
                 maxMemory: 0
               } : {}),
-              // Apply any additional data from the update
               ...(additionalData || {})
             }
           : service

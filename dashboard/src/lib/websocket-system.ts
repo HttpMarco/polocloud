@@ -491,7 +491,6 @@ export class WebSocketSystem {
         return;
       }
 
-      // For terminal logs, also handle raw string data
       if (typeof message.data === 'string' && message.data.trim()) {
         this.config.onMessage?.(message);
         return;

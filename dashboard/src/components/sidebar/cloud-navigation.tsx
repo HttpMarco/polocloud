@@ -64,12 +64,10 @@ export function CloudNavigation() {
     setIsServicesLoading(sidebarDataLoading);
   }, [initialGroups, initialServices, sidebarDataLoading]);
 
-  // Listen for WebSocket updates
   useEffect(() => {
     const handleServiceStateUpdate = (event: CustomEvent) => {
       const { serviceName, state, updateData } = event.detail;
-      
-      // Update local services state
+
       setServices(prev => prev.map(service => 
         service.name === serviceName 
           ? { 
@@ -140,12 +138,9 @@ export function CloudNavigation() {
       });
 
       if (response.ok) {
-        // Silent success - no toast
       } else {
-        // Silent error handling
       }
     } catch {
-      // Silent error handling
     } finally {
       setRestartingServices(prev => prev.filter(name => name !== serviceName));
     }
