@@ -14,9 +14,6 @@ import { ServiceStats } from '@/components/services/service-stats';
 import { ServiceFilters } from '@/components/services/service-filters';
 import { ServiceHeader } from '@/components/services/service-header';
 import { ServiceEmptyState } from '@/components/services/service-empty-state';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Wifi, WifiOff, Clock, Activity } from 'lucide-react';
 
 export default function ServicesPage() {
     const { services: sidebarServices, isLoading: sidebarLoading } = useSidebarData();
@@ -28,19 +25,12 @@ export default function ServicesPage() {
     const [selectedType, setSelectedType] = useState<string>('all');
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
     
-    // Debug state
-    const [showDebugInfo, setShowDebugInfo] = useState(false);
-    const [websocketStatus, setWebsocketStatus] = useState<string>('DISCONNECTED');
-    const [lastPing, setLastPing] = useState<Date | null>(null);
+    // WebSocket state
     const [pingInterval, setPingInterval] = useState<NodeJS.Timeout | null>(null);
     const [reconnectInterval, setReconnectInterval] = useState<NodeJS.Timeout | null>(null);
-    const [serviceStateChanges, setServiceStateChanges] = useState<Array<{serviceName: string, state: string, timestamp: Date}>>([]);
-    const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
     const [connectionAttempts, setConnectionAttempts] = useState(0);
-    const [lastError, setLastError] = useState<string | null>(null);
     const [lastHeartbeatResponse, setLastHeartbeatResponse] = useState<Date | null>(null);
-    const [connectionHealth, setConnectionHealth] = useState<'healthy' | 'stale' | 'dead'>('healthy');
-    const [allMessages, setAllMessages] = useState<Array<{timestamp: Date, message: unknown}>>([]);
+    const [, setConnectionHealth] = useState<'healthy' | 'stale' | 'dead'>('healthy');
     
     // Direct WebSocket connection for services page
     const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
@@ -107,10 +97,7 @@ export default function ServicesPage() {
         path: '/services/update',
         autoConnect: false,
         onConnect: () => {
-            setWebsocketStatus('CONNECTED');
-            setLastUpdate(new Date());
             setConnectionAttempts(0);
-            setLastError(null);
             setConnectionHealth('healthy');
             setLastHeartbeatResponse(new Date());
             window.dispatchEvent(new CustomEvent('websocketConnect'));
@@ -124,20 +111,17 @@ export default function ServicesPage() {
             // Start ping interval with response monitoring
             const interval = setInterval(() => {
                 sendMessage({ type: 'heartbeat', data: { timestamp: Date.now() } });
-                setLastPing(new Date());
                 
                 // Check if we haven't received a response in 2 minutes
                 const now = new Date();
                 if (lastHeartbeatResponse && (now.getTime() - lastHeartbeatResponse.getTime()) > 120000) {
                     setConnectionHealth('stale');
-                    console.log('WebSocket connection appears stale, attempting reconnect...');
                     disconnect();
                 }
             }, 30000); // Ping every 30 seconds
             setPingInterval(interval);
         },
         onDisconnect: () => {
-            setWebsocketStatus('DISCONNECTED');
             window.dispatchEvent(new CustomEvent('websocketDisconnect'));
             
             // Clear ping interval
@@ -150,17 +134,14 @@ export default function ServicesPage() {
             if (shouldConnect && connectionAttempts < 5) {
                 const reconnectTimer = setTimeout(() => {
                     setConnectionAttempts(prev => prev + 1);
-                    setWebsocketStatus('RECONNECTING');
                     connect().catch(() => {
-                        setWebsocketStatus('ERROR');
+                        // Silent error handling
                     });
                 }, 5000); // Try to reconnect after 5 seconds
                 setReconnectInterval(reconnectTimer);
             }
         },
         onError: (error) => {
-            setWebsocketStatus('ERROR');
-            setLastError(error.message);
             window.dispatchEvent(new CustomEvent('websocketError', {
                 detail: { message: error.message }
             }));
@@ -169,9 +150,8 @@ export default function ServicesPage() {
             if (shouldConnect && connectionAttempts < 5) {
                 const reconnectTimer = setTimeout(() => {
                     setConnectionAttempts(prev => prev + 1);
-                    setWebsocketStatus('RECONNECTING');
                     connect().catch(() => {
-                        setWebsocketStatus('ERROR');
+                        // Silent error handling
                     });
                 }, 5000);
                 setReconnectInterval(reconnectTimer);
@@ -179,19 +159,11 @@ export default function ServicesPage() {
         },
         onMessage: (message) => {
             try {
-                // Log all messages for debugging
-                const timestamp = new Date();
-                setAllMessages(prev => [
-                    { timestamp, message: JSON.parse(JSON.stringify(message)) },
-                    ...prev.slice(0, 19) // Keep last 20 messages
-                ]);
-                
                 let updateData;
                 if (typeof message.data === 'string') {
                     try {
                         updateData = JSON.parse(message.data);
                     } catch {
-                        console.log('Failed to parse message data:', message.data);
                         return;
                     }
                 } else if (message.data && typeof message.data === 'object') {
@@ -200,22 +172,11 @@ export default function ServicesPage() {
                     updateData = message;
                 }
                 
-                console.log('WebSocket message received:', updateData);
-                
                 // Update heartbeat response time for any message
                 setLastHeartbeatResponse(new Date());
                 setConnectionHealth('healthy');
                 
                 if (updateData && updateData.serviceName && updateData.state) {
-                    console.log(`Service state update: ${updateData.serviceName} -> ${updateData.state}`);
-                    
-                    // Track state changes for debug
-                    setServiceStateChanges(prev => [
-                        { serviceName: updateData.serviceName, state: updateData.state, timestamp: new Date() },
-                        ...prev.slice(0, 9) // Keep last 10 changes
-                    ]);
-                    setLastUpdate(new Date());
-                    
                     // Update local state
                     setServices(prev => prev.map(service => 
                         service.name === updateData.serviceName 
@@ -245,11 +206,9 @@ export default function ServicesPage() {
                     window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
                         detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
                     }));
-                } else {
-                    console.log('Message received but no service state update:', updateData);
                 }
-            } catch (error) {
-                console.error('Error processing WebSocket message:', error);
+            } catch {
+                // Silent error handling
             }
         }
     });
@@ -257,10 +216,9 @@ export default function ServicesPage() {
     // Manually connect when credentials are ready
     useEffect(() => {
         if (shouldConnect) {
-            setWebsocketStatus('CONNECTING');
             setConnectionAttempts(0);
             connect().catch(() => {
-                setWebsocketStatus('ERROR');
+                // Silent error handling
             });
         }
     }, [shouldConnect, connect]);
@@ -325,12 +283,11 @@ export default function ServicesPage() {
                 // Check if WebSocket is still healthy, if not, force reconnect
                 const now = new Date();
                 if (lastHeartbeatResponse && (now.getTime() - lastHeartbeatResponse.getTime()) > 60000) {
-                    console.log('WebSocket appears stale during restart, forcing reconnect...');
                     setConnectionHealth('stale');
                     disconnect();
                     setTimeout(() => {
                         connect().catch(() => {
-                            setWebsocketStatus('ERROR');
+                            // Silent error handling
                         });
                     }, 1000);
                 }
@@ -404,236 +361,6 @@ export default function ServicesPage() {
             <GlobalNavbar />
             
             <div className="h-2"></div>
-            
-            {/* Debug Toggle Button */}
-            <div className="px-6 pb-2">
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowDebugInfo(!showDebugInfo)}
-                    className="text-xs"
-                >
-                    {showDebugInfo ? 'Hide' : 'Show'} WebSocket Debug
-                </Button>
-            </div>
-            
-            {/* Debug Information Panel */}
-            {showDebugInfo && (
-                <div className="px-6 pb-4">
-                    <Card className="bg-card border-border">
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-sm flex items-center gap-2">
-                                <Activity className="w-4 h-4" />
-                                WebSocket Debug Information
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                                <div>
-                                    <div className="text-muted-foreground">Services WebSocket:</div>
-                                    <Badge 
-                                        variant={websocketStatus === 'CONNECTED' ? 'default' : websocketStatus === 'CONNECTING' || websocketStatus === 'RECONNECTING' ? 'secondary' : 'destructive'}
-                                        className="text-xs"
-                                    >
-                                        {websocketStatus === 'CONNECTED' && <Wifi className="w-3 h-3 mr-1" />}
-                                        {(websocketStatus === 'DISCONNECTED' || websocketStatus === 'ERROR') && <WifiOff className="w-3 h-3 mr-1" />}
-                                        {websocketStatus}
-                                    </Badge>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Service State Changes:</div>
-                                    <div className="font-mono text-xs">{serviceStateChanges.length}</div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Last Update:</div>
-                                    <div className="font-mono text-xs">
-                                        {lastUpdate ? lastUpdate.toLocaleTimeString() : 'Never'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Last Ping:</div>
-                                    <div className="font-mono text-xs">
-                                        {lastPing ? lastPing.toLocaleTimeString() : 'Never'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Last Response:</div>
-                                    <div className="font-mono text-xs">
-                                        {lastHeartbeatResponse ? lastHeartbeatResponse.toLocaleTimeString() : 'Never'}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                                <div>
-                                    <div className="text-muted-foreground">Connection Attempts:</div>
-                                    <div className="font-mono text-xs">{connectionAttempts}/5</div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Last Error:</div>
-                                    <div className="font-mono text-xs text-red-500 truncate">
-                                        {lastError || 'None'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Auto Refresh:</div>
-                                    <div className="font-mono text-xs">Disabled</div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Heartbeat:</div>
-                                    <div className="font-mono text-xs">Every 30s</div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Connection Health:</div>
-                                    <Badge 
-                                        variant={connectionHealth === 'healthy' ? 'default' : connectionHealth === 'stale' ? 'secondary' : 'destructive'}
-                                        className="text-xs"
-                                    >
-                                        {connectionHealth.toUpperCase()}
-                                    </Badge>
-                                </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                                <div>
-                                    <div className="text-muted-foreground">Total Services:</div>
-                                    <div className="font-mono">{services.length}</div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Online Services:</div>
-                                    <div className="font-mono">{services.filter(s => s.state === 'ONLINE').length}</div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Backend IP:</div>
-                                    <div className="font-mono text-xs">{backendCredentials.backendIp || 'Missing'}</div>
-                                </div>
-                                <div>
-                                    <div className="text-muted-foreground">Token:</div>
-                                    <div className="font-mono text-xs">
-                                        {backendCredentials.token ? 'Present' : 'Missing'}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            {serviceStateChanges.length > 0 && (
-                                <div>
-                                    <div className="text-muted-foreground text-xs mb-2">Recent State Changes:</div>
-                                    <div className="space-y-1 max-h-32 overflow-y-auto">
-                                        {serviceStateChanges.slice(0, 5).map((change, index) => (
-                                            <div key={index} className="flex justify-between text-xs font-mono">
-                                                <span>{change.serviceName}</span>
-                                                <Badge variant="outline" className="text-xs">
-                                                    {change.state}
-                                                </Badge>
-                                                <span className="text-muted-foreground">
-                                                    {change.timestamp.toLocaleTimeString()}
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                            
-                            {allMessages.length > 0 && (
-                                <div>
-                                    <div className="text-muted-foreground text-xs mb-2">All WebSocket Messages (Last 10):</div>
-                                    <div className="space-y-1 max-h-40 overflow-y-auto bg-muted/20 p-2 rounded text-xs font-mono">
-                                        {allMessages.slice(0, 10).map((msg, index) => (
-                                            <div key={index} className="border-b border-border/20 pb-1">
-                                                <div className="text-muted-foreground">
-                                                    {msg.timestamp.toLocaleTimeString()}
-                                                </div>
-                                                <div className="text-xs break-all">
-                                                    {JSON.stringify(msg.message, null, 2)}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                            
-                            <div className="flex gap-2 pt-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                        if (websocketStatus === 'CONNECTED') {
-                                            disconnect();
-                                        } else {
-                                            connect();
-                                        }
-                                    }}
-                                    className="text-xs"
-                                >
-                                    {websocketStatus === 'CONNECTED' ? 'Disconnect' : 'Connect'}
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                        sendMessage({ type: 'heartbeat', data: { timestamp: Date.now() } });
-                                        setLastPing(new Date());
-                                    }}
-                                    className="text-xs"
-                                    disabled={websocketStatus !== 'CONNECTED'}
-                                >
-                                    <Clock className="w-3 h-3 mr-1" />
-                                    Send Ping
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                        loadServices();
-                                        setLastUpdate(new Date());
-                                    }}
-                                    className="text-xs"
-                                >
-                                    <Activity className="w-3 h-3 mr-1" />
-                                    Manual Refresh
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                        console.log('Forcing WebSocket reconnect...');
-                                        setConnectionHealth('stale');
-                                        disconnect();
-                                        setTimeout(() => {
-                                            connect().catch(() => {
-                                                setWebsocketStatus('ERROR');
-                                            });
-                                        }, 1000);
-                                    }}
-                                    className="text-xs"
-                                    disabled={websocketStatus !== 'CONNECTED'}
-                                >
-                                    <Wifi className="w-3 h-3 mr-1" />
-                                    Force Reconnect
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                        console.log('=== WebSocket Debug Info ===');
-                                        console.log('Status:', websocketStatus);
-                                        console.log('Health:', connectionHealth);
-                                        console.log('Last Response:', lastHeartbeatResponse);
-                                        console.log('All Messages:', allMessages);
-                                        console.log('Service State Changes:', serviceStateChanges);
-                                        console.log('Current Services:', services);
-                                        console.log('========================');
-                                    }}
-                                    className="text-xs"
-                                >
-                                    <Activity className="w-3 h-3 mr-1" />
-                                    Debug Log
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
             
             <ServiceHeader />
 
