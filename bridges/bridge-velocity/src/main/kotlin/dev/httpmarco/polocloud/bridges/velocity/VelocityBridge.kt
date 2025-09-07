@@ -16,15 +16,14 @@ import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
 import dev.httpmarco.polocloud.shared.service.Service
 import org.bstats.velocity.Metrics
-import org.slf4j.Logger
 import java.net.InetSocketAddress
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private val logger: Logger, val metricsFactory: Metrics.Factory) : BridgeInstance<ServerInfo>() {
-
-
-    private val registeredFallbacks = ArrayList<RegisteredServer>()
+class VelocityBridge @Inject constructor(
+    val proxyServer: ProxyServer,
+    val metricsFactory: Metrics.Factory
+) : BridgeInstance<RegisteredServer, ServerInfo>() {
 
     private lateinit var metrics: Metrics
 
@@ -33,27 +32,31 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
         proxyServer.allServers.forEach {
             proxyServer.unregisterServer(it.serverInfo)
         }
-        logger.debug("Unregistered all servers on startup by Polocloud-Bridge")
     }
 
     @Subscribe
     fun onInitialize(event: ProxyInitializeEvent) {
-        super.initialize()
-        val pluginId = 26763 
+        val pluginId = 26763
         metrics = metricsFactory.make(this, pluginId)
     }
 
     @Subscribe
     fun onConnect(event: PlayerChooseInitialServerEvent) {
-        event.setInitialServer(registeredFallbacks.minByOrNull { it.playersConnected.size })
+        findFallback()?.let { event.setInitialServer(it) }
     }
 
     @Subscribe
     fun onPlayerJoin(event: ServerConnectedEvent) {
         val player = event.player
-        val serviceName = event.server.serverInfo.name
-
-        updatePolocloudPlayer(PlayerJoinEvent(PolocloudPlayer(player.username, player.uniqueId, serviceName)))
+        updatePolocloudPlayer(
+            PlayerJoinEvent(
+                PolocloudPlayer(
+                    player.username,
+                    player.uniqueId,
+                    event.server.serverInfo.name
+                )
+            )
+        )
     }
 
     @Subscribe
@@ -63,7 +66,7 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
         val serviceName = player.currentServer
             .flatMap { Optional.ofNullable(it.serverInfo.name) }
             .orElse(null)
-        if(serviceName == null) {
+        if (serviceName == null) {
             // Player was not connected to any service
             return
         }
@@ -74,36 +77,38 @@ class VelocityBridge @Inject constructor(val proxyServer: ProxyServer, private v
     @Subscribe
     fun onKick(event: KickedFromServerEvent) {
         if (event.player.isActive) {
-            if(event.server.serverInfo == null) {
+            if (event.server.serverInfo == null) {
                 // Player was not connected to any service
                 return
             }
-            val server = registeredFallbacks.filter { it.serverInfo.name != event.server.serverInfo.name }.minByOrNull { it.playersConnected.size }
-
-            if(server == null || server == event.server) {
+            val server = findFallback()
+            if (server == null || server == event.server) {
                 return
             }
             event.result = KickedFromServerEvent.RedirectPlayer.create(server)
         }
     }
 
-    override fun generateInfo(service: Service): ServerInfo {
+    override fun generateServerInfo(service: Service): ServerInfo {
         return ServerInfo(service.name(), InetSocketAddress(service.hostname, service.port))
     }
 
-    override fun registerService(identifier: ServerInfo, fallback: Boolean) {
-        val server = proxyServer.registerServer(identifier)
-
-        if (fallback) {
-            registeredFallbacks.add(server)
-        }
+    override fun registerServerInfo(
+        identifier: ServerInfo,
+        service: Service
+    ): RegisteredServer {
+        return proxyServer.registerServer(identifier)
     }
 
-    override fun unregisterService(identifier: ServerInfo) {
-        proxyServer.unregisterServer(identifier)
+    override fun unregister(identifier: RegisteredServer) {
+        proxyServer.unregisterServer(identifier.serverInfo)
     }
 
-    override fun findInfo(name: String): ServerInfo? {
-        return proxyServer.getServer(name).map { it -> it.serverInfo }.getOrNull()
+    override fun findServer(name: String): RegisteredServer? {
+        return proxyServer.getServer(name).getOrNull()
+    }
+
+    override fun playerCount(info: RegisteredServer): Int {
+        return info.playersConnected.size
     }
 }

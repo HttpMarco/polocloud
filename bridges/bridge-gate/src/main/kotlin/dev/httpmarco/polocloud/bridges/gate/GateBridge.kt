@@ -10,8 +10,7 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.nio.file.Path
 
-class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : BridgeInstance<Server>() {
-    private val polocloud: Polocloud = Polocloud(serviceName, agentPort, false)
+class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : BridgeInstance<Server, Server>( Polocloud(serviceName, agentPort, false)) {
     private val fallbackServices = ArrayList<Service>()
     private val yaml: Yaml
 
@@ -21,8 +20,6 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
         options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
         options.isPrettyFlow = true
         yaml = Yaml(options)
-
-        initialize(polocloud)
         subscribePlayerCount()
     }
 
@@ -61,11 +58,19 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
         fallbackServices.sortBy { it.playerCount }
     }
 
-    override fun generateInfo(service: Service): Server {
+    private fun updateFallback(config: MutableMap<String, Any>) {
+        sortServices()
+
+        val configSection = config.getOrPut("config") { mutableMapOf<String, Any>() } as MutableMap<String, Any>
+        val orderedList = fallbackServices.map { it.name() }
+        configSection["try"] = orderedList
+    }
+
+    override fun generateServerInfo(service: Service): Server {
         return Server(service.name(), service.hostname, service.port, service)
     }
 
-    override fun registerService(identifier: Server, fallback: Boolean) {
+    override fun registerServerInfo(identifier: Server, service: Service): Server {
         if (identifier.service != null) {
             fallbackServices.add(identifier.service)
         }
@@ -81,14 +86,15 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
         val serverAddress = "${identifier.hostname}:${identifier.port}"
         serversSection[identifier.name] = serverAddress
 
-        if (fallback) {
+        if (isFallback(service)) {
             updateFallback(config)
         }
 
         saveYamlConfig(configFile, config)
+        return findServer(identifier.name)!!
     }
 
-    override fun unregisterService(identifier: Server) {
+    override fun unregister(identifier: Server) {
         val service = fallbackServices.first { it.name() == identifier.name }
         fallbackServices.remove(service)
 
@@ -103,15 +109,7 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
         saveYamlConfig(configFile, config)
     }
 
-    private fun updateFallback(config: MutableMap<String, Any>) {
-        sortServices()
-
-        val configSection = config.getOrPut("config") { mutableMapOf<String, Any>() } as MutableMap<String, Any>
-        val orderedList = fallbackServices.map { it.name() }
-        configSection["try"] = orderedList
-    }
-
-    override fun findInfo(name: String): Server? {
+    override fun findServer(name: String): Server? {
         return try {
             val configFile = servicePath.resolve("config.yml").toFile()
             val config = loadYamlConfig(configFile)
@@ -134,5 +132,9 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) : B
         } catch (_: Exception) {
             null
         }
+    }
+
+    override fun playerCount(info: Server): Int {
+        return info.service!!.playerCount
     }
 }

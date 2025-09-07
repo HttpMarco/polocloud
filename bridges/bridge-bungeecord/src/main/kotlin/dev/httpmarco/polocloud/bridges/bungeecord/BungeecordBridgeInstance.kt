@@ -17,39 +17,11 @@ import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 import java.net.InetSocketAddress
 
-class BungeecordBridgeInstance : BridgeInstance<ServerInfo>(), Listener {
-
-    val registeredFallbacks = ArrayList<ServerInfo>()
-
-    init {
-        this.initialize()
-    }
-
-    override fun unregisterService(identifier: ServerInfo) {
-        ProxyServer.getInstance().servers.remove(identifier.name)
-        registeredFallbacks.remove(identifier)
-    }
-
-    override fun findInfo(name: String): ServerInfo? {
-        return ProxyServer.getInstance().getServerInfo(name)
-    }
-
-    override fun generateInfo(service: Service): ServerInfo {
-        return ProxyServer.getInstance()
-            .constructServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null, false)
-    }
-
-    override fun registerService(identifier: ServerInfo, fallback: Boolean) {
-        ProxyServer.getInstance().servers[identifier.name] = identifier
-
-        if (fallback) {
-            registeredFallbacks.add(identifier)
-        }
-    }
+class BungeecordBridgeInstance : BridgeInstance<ServerInfo, ServerInfo>(), Listener {
 
     @EventHandler
     fun onPostLogin(event: PreLoginEvent) {
-        if (registeredFallbacks.isEmpty()) {
+        if (hasFallbacks()) {
             event.reason = TextComponent("No fallback servers are registered.")
         }
     }
@@ -57,7 +29,7 @@ class BungeecordBridgeInstance : BridgeInstance<ServerInfo>(), Listener {
     @EventHandler
     fun connect(event: ServerConnectEvent) {
         if (event.reason == ServerConnectEvent.Reason.JOIN_PROXY || event.reason == ServerConnectEvent.Reason.LOBBY_FALLBACK) {
-            val target = registeredFallbacks.minByOrNull { it.players.size }
+            val target = findFallback()
 
             if (target == null) {
                 event.player.disconnect(TextComponent("No fallback servers available."))
@@ -92,10 +64,28 @@ class BungeecordBridgeInstance : BridgeInstance<ServerInfo>(), Listener {
     @EventHandler
     fun kick(event: ServerKickEvent) {
         event.isCancelled = true
-        event.cancelServer =  registeredFallbacks.filter { it.name != event.kickedFrom.name }.minByOrNull { it.players.size }
+        event.cancelServer = findFallback()
     }
 
-    fun findFallback(): ServerInfo? {
-        return registeredFallbacks.minByOrNull { it.players.size }
+    override fun generateServerInfo(service: Service): ServerInfo {
+        return ProxyServer.getInstance()
+            .constructServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null, false)
+    }
+
+    override fun registerServerInfo(identifier: ServerInfo, service: Service): ServerInfo {
+        ProxyServer.getInstance().servers[identifier.name] = identifier
+        return identifier
+    }
+
+    override fun unregister(identifier: ServerInfo) {
+        ProxyServer.getInstance().servers.remove(identifier.name)
+    }
+
+    override fun findServer(name: String): ServerInfo? {
+        return ProxyServer.getInstance().getServerInfo(name)
+    }
+
+    override fun playerCount(info: ServerInfo): Int {
+        return info.players.size
     }
 }

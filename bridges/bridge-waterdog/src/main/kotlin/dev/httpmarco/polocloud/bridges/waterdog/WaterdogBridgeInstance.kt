@@ -15,40 +15,9 @@ import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo
 import dev.waterdog.waterdogpe.player.ProxiedPlayer
 import java.net.InetSocketAddress
 
-class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>(), IJoinHandler {
-
-    val registeredFallbacks = ArrayList<BedrockServerInfo>()
+class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo, BedrockServerInfo>(), IJoinHandler {
 
     init {
-        registerEvents()
-        initialize()
-    }
-
-    override fun generateInfo(service: Service): BedrockServerInfo {
-        return BedrockServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null)
-    }
-
-    override fun registerService(
-        identifier: BedrockServerInfo,
-        fallback: Boolean
-    ) {
-        ProxyServer.getInstance().registerServerInfo(identifier)
-
-        if (fallback) {
-            registeredFallbacks.add(identifier)
-        }
-    }
-
-    override fun unregisterService(identifier: BedrockServerInfo) {
-        ProxyServer.getInstance().removeServerInfo(identifier.serverName)
-        registeredFallbacks.remove(identifier)
-    }
-
-    override fun findInfo(name: String): BedrockServerInfo? {
-        return ProxyServer.getInstance().getServerInfo(name) as BedrockServerInfo?
-    }
-
-    private fun registerEvents() {
         val eventManager = ProxyServer.getInstance().eventManager
 
         eventManager.subscribe(PlayerLoginEvent::class.java) { event ->
@@ -74,8 +43,28 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>(), IJoinHandler
         }
     }
 
-    fun findFallback(): ServerInfo? {
-        return registeredFallbacks.minByOrNull { it.players.size }
+    override fun generateServerInfo(service: Service): BedrockServerInfo {
+        return BedrockServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null)
+    }
+
+    override fun registerServerInfo(
+        identifier: BedrockServerInfo,
+        service: Service
+    ): BedrockServerInfo {
+        ProxyServer.getInstance().registerServerInfo(identifier)
+        return findServer(identifier.serverName)!!
+    }
+
+    override fun unregister(identifier: BedrockServerInfo) {
+        ProxyServer.getInstance().removeServerInfo(identifier.serverName)
+    }
+
+    override fun findServer(name: String): BedrockServerInfo? {
+        return ProxyServer.getInstance().getServerInfo(name) as BedrockServerInfo?
+    }
+
+    override fun playerCount(info: BedrockServerInfo): Int {
+        return info.players.size
     }
 
     override fun determineServer(p0: ProxiedPlayer?): ServerInfo {
