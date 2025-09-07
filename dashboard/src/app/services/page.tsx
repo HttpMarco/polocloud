@@ -202,6 +202,13 @@ export default function ServicesPage() {
                             : service
                     ));
                     
+                    // Reload page when service goes online to refresh all data
+                    if (updateData.state === 'ONLINE') {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000); // Wait 1 second to show the state change
+                    }
+                    
                     // Dispatch custom event
                     window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
                         detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
