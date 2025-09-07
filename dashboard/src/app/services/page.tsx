@@ -202,7 +202,7 @@ export default function ServicesPage() {
                             : service
                     ));
                     
-                    // Reload page when service goes online to refresh all data
+                    // Reload page ONLY when service goes online to refresh all data
                     if (updateData.state === 'ONLINE') {
                         setTimeout(() => {
                             window.location.reload();
