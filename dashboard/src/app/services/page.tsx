@@ -38,6 +38,8 @@ export default function ServicesPage() {
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
     const [connectionAttempts, setConnectionAttempts] = useState(0);
     const [lastError, setLastError] = useState<string | null>(null);
+    const [lastHeartbeatResponse, setLastHeartbeatResponse] = useState<Date | null>(null);
+    const [connectionHealth, setConnectionHealth] = useState<'healthy' | 'stale' | 'dead'>('healthy');
     
     // Direct WebSocket connection for services page
     const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
@@ -108,6 +110,8 @@ export default function ServicesPage() {
             setLastUpdate(new Date());
             setConnectionAttempts(0);
             setLastError(null);
+            setConnectionHealth('healthy');
+            setLastHeartbeatResponse(new Date());
             window.dispatchEvent(new CustomEvent('websocketConnect'));
             
             // Clear any existing reconnect interval
@@ -116,10 +120,18 @@ export default function ServicesPage() {
                 setReconnectInterval(null);
             }
             
-            // Start ping interval
+            // Start ping interval with response monitoring
             const interval = setInterval(() => {
                 sendMessage({ type: 'heartbeat', data: { timestamp: Date.now() } });
                 setLastPing(new Date());
+                
+                // Check if we haven't received a response in 2 minutes
+                const now = new Date();
+                if (lastHeartbeatResponse && (now.getTime() - lastHeartbeatResponse.getTime()) > 120000) {
+                    setConnectionHealth('stale');
+                    console.log('WebSocket connection appears stale, attempting reconnect...');
+                    disconnect();
+                }
             }, 30000); // Ping every 30 seconds
             setPingInterval(interval);
         },
@@ -178,6 +190,10 @@ export default function ServicesPage() {
                 } else {
                     updateData = message;
                 }
+                
+                // Update heartbeat response time for any message
+                setLastHeartbeatResponse(new Date());
+                setConnectionHealth('healthy');
                 
                 if (updateData && updateData.serviceName && updateData.state) {
                     // Track state changes for debug
@@ -291,7 +307,18 @@ export default function ServicesPage() {
             });
 
             if (response.ok) {
-                // Silent success - WebSocket will handle the state updates
+                // Check if WebSocket is still healthy, if not, force reconnect
+                const now = new Date();
+                if (lastHeartbeatResponse && (now.getTime() - lastHeartbeatResponse.getTime()) > 60000) {
+                    console.log('WebSocket appears stale during restart, forcing reconnect...');
+                    setConnectionHealth('stale');
+                    disconnect();
+                    setTimeout(() => {
+                        connect().catch(() => {
+                            setWebsocketStatus('ERROR');
+                        });
+                    }, 1000);
+                }
             } else {
                 // Silent error handling
             }
@@ -414,6 +441,12 @@ export default function ServicesPage() {
                                         {lastPing ? lastPing.toLocaleTimeString() : 'Never'}
                                     </div>
                                 </div>
+                                <div>
+                                    <div className="text-muted-foreground">Last Response:</div>
+                                    <div className="font-mono text-xs">
+                                        {lastHeartbeatResponse ? lastHeartbeatResponse.toLocaleTimeString() : 'Never'}
+                                    </div>
+                                </div>
                             </div>
                             
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
@@ -434,6 +467,15 @@ export default function ServicesPage() {
                                 <div>
                                     <div className="text-muted-foreground">Heartbeat:</div>
                                     <div className="font-mono text-xs">Every 30s</div>
+                                </div>
+                                <div>
+                                    <div className="text-muted-foreground">Connection Health:</div>
+                                    <Badge 
+                                        variant={connectionHealth === 'healthy' ? 'default' : connectionHealth === 'stale' ? 'secondary' : 'destructive'}
+                                        className="text-xs"
+                                    >
+                                        {connectionHealth.toUpperCase()}
+                                    </Badge>
                                 </div>
                             </div>
                             
@@ -516,6 +558,25 @@ export default function ServicesPage() {
                                 >
                                     <Activity className="w-3 h-3 mr-1" />
                                     Manual Refresh
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        console.log('Forcing WebSocket reconnect...');
+                                        setConnectionHealth('stale');
+                                        disconnect();
+                                        setTimeout(() => {
+                                            connect().catch(() => {
+                                                setWebsocketStatus('ERROR');
+                                            });
+                                        }, 1000);
+                                    }}
+                                    className="text-xs"
+                                    disabled={websocketStatus !== 'CONNECTED'}
+                                >
+                                    <Wifi className="w-3 h-3 mr-1" />
+                                    Force Reconnect
                                 </Button>
                             </div>
                         </CardContent>
