@@ -14,6 +14,7 @@ import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.common.language.Language
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
+import dev.httpmarco.polocloud.shared.properties.JAVA_PATH
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import org.yaml.snakeyaml.util.Tuple
@@ -105,7 +106,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         }
 
         while (Agent.runtime.serviceStorage().findAll()
-             .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
+                .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
             ||
             cpuUsage() > Agent.config.maxCPUPercentageToStart
         ) {
@@ -233,9 +234,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
 
         when (platform.language) {
             Language.JAVA -> {
-
-                val javaPath = abstractService.group.properties["javaPath"]?.takeIf {
-                    it.isString && JavaUtils().isValidJavaPath(it.asString)
+                val javaPath = abstractService.group.properties.get(JAVA_PATH)?.takeIf {
+                    JavaUtils().isValidJavaPath(it)
                 } ?: System.getProperty("java.home")
 
                 commands.add("${javaPath}/bin/java")

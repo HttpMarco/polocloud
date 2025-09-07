@@ -2,9 +2,8 @@ package dev.httpmarco.polocloud.shared.groups
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
-import dev.httpmarco.polocloud.shared.service.Service
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.groups.GroupSnapshot
 import kotlin.collections.component1
@@ -20,7 +19,7 @@ open class Group(
     percentageToStartNewService: Double,
     val createdAt: Long,
     val templates: List<Template>,
-    var properties: Map<String, JsonPrimitive>
+    val properties: PropertyHolder
 ) {
 
     var minMemory: Int = minMemory
@@ -40,6 +39,9 @@ open class Group(
 
     companion object {
         fun bindSnapshot(snapshot: GroupSnapshot): Group {
+
+            val propertyHolder = PropertyHolder.empty()
+
             return Group(
                 snapshot.name,
                 snapshot.minimumMemory,
@@ -50,7 +52,8 @@ open class Group(
                 snapshot.percentageToStartNewService,
                 snapshot.createdAt,
                 Template.bindSnapshot(snapshot.templatesList),
-                snapshot.propertiesMap.map { it.key to JsonPrimitive(it.value) }.toMap()
+                propertyHolder
+                //  snapshot.propertiesMap.map { it.key to JsonPrimitive(it.value) }.toMap()
             )
         }
     }
@@ -66,7 +69,7 @@ open class Group(
             .setPercentageToStartNewService(percentageToStartNewService)
             .setCreatedAt(createdAt)
             .addAllTemplates(templates.map { it.toSnapshot() })
-            .putAllProperties(properties.map { it.key to it.value.toString() }.toMap())
+            //.putAllProperties(properties.map { it.key to it.value.toString() }.toMap())
             .build()
     }
 }
@@ -87,7 +90,7 @@ fun Group.toJson(): JsonObject {
     }
 
     val groupProperties = JsonObject().apply {
-        properties.forEach { (key, value) ->
+        properties.all().forEach { (key, value) ->
             add(key, value)
         }
     }

@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.k8s
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import io.fabric8.kubernetes.client.KubernetesClient
 import java.util.concurrent.CompletableFuture
 
@@ -42,7 +43,7 @@ class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : 
                     PlatformIndex("", ""),
                     0,
                     emptyList(),
-                    hashMapOf()
+                    PropertyHolder.empty()
                 )
             }
             .toList()

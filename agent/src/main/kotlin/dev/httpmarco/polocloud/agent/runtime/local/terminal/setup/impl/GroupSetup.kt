@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl
 
-import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.i18n
@@ -9,6 +8,9 @@ import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.FALLBACK
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
+import dev.httpmarco.polocloud.shared.properties.STATIC
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 
@@ -52,24 +54,23 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
         val maxOnlineServices = result.arg(maxOnlineServicesArgument)
         val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else false
         val static = if (result.contains(staticArgument)) result.arg(staticArgument) else false
+        val properties = PropertyHolder.empty()
 
         val templates = mutableListOf(
             Template("EVERY"),
             Template("EVERY_" + originalPlatform.type.name)
         )
 
-        val properties = HashMap<String, JsonPrimitive>()
 
         if (fallback) {
-            properties["fallback"] = JsonPrimitive(true)
+            properties.with(FALLBACK, true)
+            // TODO SEAR
             templates.add(Template("EVERY_FALLBACK"))
         }
 
         if (static) {
-            properties["static"] = JsonPrimitive(true)
+            properties.with(STATIC, true)
         }
-
-        templates.add(Template(name))
 
         // TODO USE EVERY TEMPLATE IF EXISTS
         val group = AbstractGroup(
@@ -84,6 +85,8 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             templates,
             properties
         )
+
+        templates.add(Template(name))
 
         if (group.isProxy() && Agent.runtime.serviceStorage().findAll().stream().anyMatch { it.type == GroupType.SERVER }) {
             i18n.warn("agent.local-runtime.setup.group.warnProxyCantWork")

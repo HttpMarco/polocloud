@@ -48,7 +48,7 @@ class GroupCommand(private val groupStorage: RuntimeGroupStorage, private val te
             i18n.info("agent.terminal.command.group.info.templates", group.templates.stream().map { it.name }.toList().joinToString(separator = "&8, &f"))
             i18n.info("agent.terminal.command.group.info.line.7")
 
-            group.properties.forEach { (key, value) ->
+            group.properties.all().forEach { (key, value) ->
                 logger.info("   &8- &7$key&8: &f$value")
             }
 

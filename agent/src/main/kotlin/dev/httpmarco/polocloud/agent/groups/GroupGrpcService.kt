@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.groups
 import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.groups.FindGroupRequest
 import dev.httpmarco.polocloud.v1.groups.FindGroupResponse
@@ -43,10 +44,12 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             return
         }
 
-        val properties = HashMap<String, JsonPrimitive>()
-        request.propertiesMap.forEach { t, u -> {
-            properties.put(t, JsonPrimitive(u))
-        } }
+        val properties = PropertyHolder.empty()
+        request.propertiesMap.forEach { (t, u) ->
+            run {
+                properties.raw(t, JsonPrimitive(u))
+            }
+        }
 
         val group = AbstractGroup(
             request.name,
@@ -75,15 +78,17 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             return
         }
 
-        val properties = HashMap<String, JsonPrimitive>()
+        val properties = PropertyHolder.empty()
         request.propertiesMap.forEach { (key, value) ->
-            properties[key] = when {
-                value.lowercase().toBooleanStrictOrNull() != null -> JsonPrimitive(value.toBoolean())
-                value.toIntOrNull() != null -> JsonPrimitive(value.toInt())
-                value.toDoubleOrNull() != null -> JsonPrimitive(value.toDouble())
-                value.toFloatOrNull() != null -> JsonPrimitive(value.toFloat())
-                else -> JsonPrimitive(value)
-            }
+            properties.raw(
+                key, when {
+                    value.lowercase().toBooleanStrictOrNull() != null -> JsonPrimitive(value.toBoolean())
+                    value.toIntOrNull() != null -> JsonPrimitive(value.toInt())
+                    value.toDoubleOrNull() != null -> JsonPrimitive(value.toDouble())
+                    value.toFloatOrNull() != null -> JsonPrimitive(value.toFloat())
+                    else -> JsonPrimitive(value)
+                }
+            )
         }
 
         val group = AbstractGroup(

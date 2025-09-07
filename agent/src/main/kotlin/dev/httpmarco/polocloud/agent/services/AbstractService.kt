@@ -27,7 +27,7 @@ abstract class AbstractService(val group: AbstractGroup) :
     ) {
 
     init {
-        properties += group.properties.map { it.key to it.value.toString() }.toMap()
+        properties += group.properties.all().map { it.key to it.value.toString() }.toMap()
         Agent.eventProvider().call(ServiceChangeStateEvent(this))
     }
 

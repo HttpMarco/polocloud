@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.agent.groups
 
-import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.platforms.Platform
@@ -9,8 +8,7 @@ import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import java.nio.file.Path
 import kotlin.io.path.Path
-import dev.httpmarco.polocloud.agent.utils.IndexDetector
-import dev.httpmarco.polocloud.agent.runtime.local.LocalService
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 
@@ -24,7 +22,7 @@ open class AbstractGroup(
     platform: PlatformIndex,
     createdAt: Long,
     templates: List<Template>,
-    properties: Map<String, JsonPrimitive>
+    properties: PropertyHolder
 ) :
     Group(
         name,
