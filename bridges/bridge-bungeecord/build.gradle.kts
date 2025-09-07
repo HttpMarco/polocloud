@@ -17,10 +17,8 @@ repositories {
 
 
 dependencies {
-    implementation(projects.sdk.sdkJava)
-    implementation(projects.bridges.bridgeApi)
+    api(projects.bridges.bridgeApi)
     implementation(libs.bstats.bungeecord)
-
     compileOnly(libs.bungeecord)
 }
 

@@ -1,4 +1,4 @@
 dependencies {
-    compileOnly(projects.shared)
-    compileOnly(projects.sdk.sdkJava)
+    api(projects.shared)
+    api(projects.sdk.sdkJava)
 }

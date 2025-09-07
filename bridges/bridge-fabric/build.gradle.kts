@@ -20,9 +20,7 @@ val placeholders = mapOf(
 )
 
 dependencies {
-    compileOnly(projects.sdk.sdkJava)
     compileOnly(projects.bridges.bridgeApi)
-
     compileOnly(libs.gson)
 }
 
@@ -50,14 +48,14 @@ tasks.register<Jar>("mergeFabricVersions") {
     }
 
     // put the normal code such as config in the jar
-    from("$buildDir/classes/java/main")
-    from("$buildDir/classes/kotlin/main")
+    from("${layout.buildDirectory.get()}/classes/java/main")
+    from("${layout.buildDirectory.get()}/classes/kotlin/main")
 
     // we replace the placeholders here
     dependsOn("processResources")
 
     // we only take the json from our main source
-    from("$buildDir/resources/main") {
+    from("${layout.buildDirectory.get()}/resources/main") {
         include("fabric.mod.json")
         include("bridge.json")
     }
