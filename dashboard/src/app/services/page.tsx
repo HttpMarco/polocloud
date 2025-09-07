@@ -33,8 +33,11 @@ export default function ServicesPage() {
     const [websocketStatus, setWebsocketStatus] = useState<string>('DISCONNECTED');
     const [lastPing, setLastPing] = useState<Date | null>(null);
     const [pingInterval, setPingInterval] = useState<NodeJS.Timeout | null>(null);
+    const [reconnectInterval, setReconnectInterval] = useState<NodeJS.Timeout | null>(null);
     const [serviceStateChanges, setServiceStateChanges] = useState<Array<{serviceName: string, state: string, timestamp: Date}>>([]);
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+    const [connectionAttempts, setConnectionAttempts] = useState(0);
+    const [lastError, setLastError] = useState<string | null>(null);
     
     // Direct WebSocket connection for services page
     const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
@@ -103,7 +106,15 @@ export default function ServicesPage() {
         onConnect: () => {
             setWebsocketStatus('CONNECTED');
             setLastUpdate(new Date());
+            setConnectionAttempts(0);
+            setLastError(null);
             window.dispatchEvent(new CustomEvent('websocketConnect'));
+            
+            // Clear any existing reconnect interval
+            if (reconnectInterval) {
+                clearInterval(reconnectInterval);
+                setReconnectInterval(null);
+            }
             
             // Start ping interval
             const interval = setInterval(() => {
@@ -121,12 +132,37 @@ export default function ServicesPage() {
                 clearInterval(pingInterval);
                 setPingInterval(null);
             }
+            
+            // Start reconnection attempts
+            if (shouldConnect && connectionAttempts < 5) {
+                const reconnectTimer = setTimeout(() => {
+                    setConnectionAttempts(prev => prev + 1);
+                    setWebsocketStatus('RECONNECTING');
+                    connect().catch(() => {
+                        setWebsocketStatus('ERROR');
+                    });
+                }, 5000); // Try to reconnect after 5 seconds
+                setReconnectInterval(reconnectTimer);
+            }
         },
         onError: (error) => {
             setWebsocketStatus('ERROR');
+            setLastError(error.message);
             window.dispatchEvent(new CustomEvent('websocketError', {
                 detail: { message: error.message }
             }));
+            
+            // Start reconnection attempts on error
+            if (shouldConnect && connectionAttempts < 5) {
+                const reconnectTimer = setTimeout(() => {
+                    setConnectionAttempts(prev => prev + 1);
+                    setWebsocketStatus('RECONNECTING');
+                    connect().catch(() => {
+                        setWebsocketStatus('ERROR');
+                    });
+                }, 5000);
+                setReconnectInterval(reconnectTimer);
+            }
         },
         onMessage: (message) => {
             try {
@@ -191,20 +227,36 @@ export default function ServicesPage() {
     useEffect(() => {
         if (shouldConnect) {
             setWebsocketStatus('CONNECTING');
+            setConnectionAttempts(0);
             connect().catch(() => {
                 setWebsocketStatus('ERROR');
             });
         }
     }, [shouldConnect, connect]);
 
-    // Cleanup ping interval on unmount
+    // Cleanup intervals on unmount
     useEffect(() => {
         return () => {
             if (pingInterval) {
                 clearInterval(pingInterval);
             }
+            if (reconnectInterval) {
+                clearTimeout(reconnectInterval);
+            }
         };
-    }, [pingInterval]);
+    }, [pingInterval, reconnectInterval]);
+
+    // Force refresh services data periodically
+    useEffect(() => {
+        const refreshInterval = setInterval(() => {
+            if (websocketStatus === 'CONNECTED') {
+                // Refresh services data every 2 minutes to ensure we have latest state
+                loadServices();
+            }
+        }, 120000); // 2 minutes
+
+        return () => clearInterval(refreshInterval);
+    }, [websocketStatus]);
 
 
     
@@ -250,7 +302,15 @@ export default function ServicesPage() {
             });
 
             if (response.ok) {
-                // Silent success
+                // Force refresh services after restart to ensure we get the latest state
+                setTimeout(() => {
+                    loadServices();
+                }, 2000); // Wait 2 seconds for restart to begin
+                
+                // Also refresh again after 10 seconds to catch the final state
+                setTimeout(() => {
+                    loadServices();
+                }, 10000);
             } else {
                 // Silent error handling
             }
@@ -349,11 +409,11 @@ export default function ServicesPage() {
                                 <div>
                                     <div className="text-muted-foreground">Services WebSocket:</div>
                                     <Badge 
-                                        variant={websocketStatus === 'CONNECTED' ? 'default' : websocketStatus === 'CONNECTING' ? 'secondary' : 'destructive'}
+                                        variant={websocketStatus === 'CONNECTED' ? 'default' : websocketStatus === 'CONNECTING' || websocketStatus === 'RECONNECTING' ? 'secondary' : 'destructive'}
                                         className="text-xs"
                                     >
                                         {websocketStatus === 'CONNECTED' && <Wifi className="w-3 h-3 mr-1" />}
-                                        {websocketStatus === 'DISCONNECTED' && <WifiOff className="w-3 h-3 mr-1" />}
+                                        {(websocketStatus === 'DISCONNECTED' || websocketStatus === 'ERROR') && <WifiOff className="w-3 h-3 mr-1" />}
                                         {websocketStatus}
                                     </Badge>
                                 </div>
@@ -372,6 +432,27 @@ export default function ServicesPage() {
                                     <div className="font-mono text-xs">
                                         {lastPing ? lastPing.toLocaleTimeString() : 'Never'}
                                     </div>
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                                <div>
+                                    <div className="text-muted-foreground">Connection Attempts:</div>
+                                    <div className="font-mono text-xs">{connectionAttempts}/5</div>
+                                </div>
+                                <div>
+                                    <div className="text-muted-foreground">Last Error:</div>
+                                    <div className="font-mono text-xs text-red-500 truncate">
+                                        {lastError || 'None'}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="text-muted-foreground">Auto Refresh:</div>
+                                    <div className="font-mono text-xs">Every 2min</div>
+                                </div>
+                                <div>
+                                    <div className="text-muted-foreground">Heartbeat:</div>
+                                    <div className="font-mono text-xs">Every 30s</div>
                                 </div>
                             </div>
                             
@@ -442,6 +523,18 @@ export default function ServicesPage() {
                                 >
                                     <Clock className="w-3 h-3 mr-1" />
                                     Send Ping
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        loadServices();
+                                        setLastUpdate(new Date());
+                                    }}
+                                    className="text-xs"
+                                >
+                                    <Activity className="w-3 h-3 mr-1" />
+                                    Refresh Services
                                 </Button>
                             </div>
                         </CardContent>
