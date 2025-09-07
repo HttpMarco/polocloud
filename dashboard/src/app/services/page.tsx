@@ -112,7 +112,7 @@ export default function ServicesPage() {
             
             // Clear any existing reconnect interval
             if (reconnectInterval) {
-                clearInterval(reconnectInterval);
+                clearTimeout(reconnectInterval);
                 setReconnectInterval(null);
             }
             
