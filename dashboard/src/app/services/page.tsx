@@ -246,17 +246,6 @@ export default function ServicesPage() {
         };
     }, [pingInterval, reconnectInterval]);
 
-    // Force refresh services data periodically
-    useEffect(() => {
-        const refreshInterval = setInterval(() => {
-            if (websocketStatus === 'CONNECTED') {
-                // Refresh services data every 2 minutes to ensure we have latest state
-                loadServices();
-            }
-        }, 120000); // 2 minutes
-
-        return () => clearInterval(refreshInterval);
-    }, [websocketStatus]);
 
 
     
@@ -302,15 +291,7 @@ export default function ServicesPage() {
             });
 
             if (response.ok) {
-                // Force refresh services after restart to ensure we get the latest state
-                setTimeout(() => {
-                    loadServices();
-                }, 2000); // Wait 2 seconds for restart to begin
-                
-                // Also refresh again after 10 seconds to catch the final state
-                setTimeout(() => {
-                    loadServices();
-                }, 10000);
+                // Silent success - WebSocket will handle the state updates
             } else {
                 // Silent error handling
             }
@@ -448,7 +429,7 @@ export default function ServicesPage() {
                                 </div>
                                 <div>
                                     <div className="text-muted-foreground">Auto Refresh:</div>
-                                    <div className="font-mono text-xs">Every 2min</div>
+                                    <div className="font-mono text-xs">Disabled</div>
                                 </div>
                                 <div>
                                     <div className="text-muted-foreground">Heartbeat:</div>
@@ -534,7 +515,7 @@ export default function ServicesPage() {
                                     className="text-xs"
                                 >
                                     <Activity className="w-3 h-3 mr-1" />
-                                    Refresh Services
+                                    Manual Refresh
                                 </Button>
                             </div>
                         </CardContent>
