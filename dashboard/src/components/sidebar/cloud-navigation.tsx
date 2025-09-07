@@ -11,7 +11,6 @@ import { useSidebarData } from "@/components/sidebar-data-provider";
 import { Group } from "@/types/groups";
 import { Service } from "@/types/services";
 import { API_ENDPOINTS } from "@/lib/api";
-import { toast } from "sonner";
 
 const cloudItems = [
   {
@@ -141,13 +140,12 @@ export function CloudNavigation() {
       });
 
       if (response.ok) {
-        toast.success(`Service ${serviceName} restarted successfully`);
+        // Silent success - no toast
       } else {
-        const errorData = await response.json();
-        toast.error(errorData.error || 'Failed to restart service');
+        // Silent error handling
       }
     } catch {
-      toast.error('Failed to restart service');
+      // Silent error handling
     } finally {
       setRestartingServices(prev => prev.filter(name => name !== serviceName));
     }
