@@ -40,6 +40,7 @@ export default function ServicesPage() {
     const [lastError, setLastError] = useState<string | null>(null);
     const [lastHeartbeatResponse, setLastHeartbeatResponse] = useState<Date | null>(null);
     const [connectionHealth, setConnectionHealth] = useState<'healthy' | 'stale' | 'dead'>('healthy');
+    const [allMessages, setAllMessages] = useState<Array<{timestamp: Date, message: unknown}>>([]);
     
     // Direct WebSocket connection for services page
     const [backendCredentials, setBackendCredentials] = useState<{backendIp: string | null, token: string | null}>({
@@ -178,11 +179,19 @@ export default function ServicesPage() {
         },
         onMessage: (message) => {
             try {
+                // Log all messages for debugging
+                const timestamp = new Date();
+                setAllMessages(prev => [
+                    { timestamp, message: JSON.parse(JSON.stringify(message)) },
+                    ...prev.slice(0, 19) // Keep last 20 messages
+                ]);
+                
                 let updateData;
                 if (typeof message.data === 'string') {
                     try {
                         updateData = JSON.parse(message.data);
                     } catch {
+                        console.log('Failed to parse message data:', message.data);
                         return;
                     }
                 } else if (message.data && typeof message.data === 'object') {
@@ -191,11 +200,15 @@ export default function ServicesPage() {
                     updateData = message;
                 }
                 
+                console.log('WebSocket message received:', updateData);
+                
                 // Update heartbeat response time for any message
                 setLastHeartbeatResponse(new Date());
                 setConnectionHealth('healthy');
                 
                 if (updateData && updateData.serviceName && updateData.state) {
+                    console.log(`Service state update: ${updateData.serviceName} -> ${updateData.state}`);
+                    
                     // Track state changes for debug
                     setServiceStateChanges(prev => [
                         { serviceName: updateData.serviceName, state: updateData.state, timestamp: new Date() },
@@ -232,9 +245,11 @@ export default function ServicesPage() {
                     window.dispatchEvent(new CustomEvent('serviceStateUpdate', {
                         detail: { serviceName: updateData.serviceName, state: updateData.state, updateData }
                     }));
+                } else {
+                    console.log('Message received but no service state update:', updateData);
                 }
-            } catch {
-                // Silent error handling
+            } catch (error) {
+                console.error('Error processing WebSocket message:', error);
             }
         }
     });
@@ -519,6 +534,24 @@ export default function ServicesPage() {
                                 </div>
                             )}
                             
+                            {allMessages.length > 0 && (
+                                <div>
+                                    <div className="text-muted-foreground text-xs mb-2">All WebSocket Messages (Last 10):</div>
+                                    <div className="space-y-1 max-h-40 overflow-y-auto bg-muted/20 p-2 rounded text-xs font-mono">
+                                        {allMessages.slice(0, 10).map((msg, index) => (
+                                            <div key={index} className="border-b border-border/20 pb-1">
+                                                <div className="text-muted-foreground">
+                                                    {msg.timestamp.toLocaleTimeString()}
+                                                </div>
+                                                <div className="text-xs break-all">
+                                                    {JSON.stringify(msg.message, null, 2)}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            
                             <div className="flex gap-2 pt-2">
                                 <Button
                                     variant="outline"
@@ -577,6 +610,24 @@ export default function ServicesPage() {
                                 >
                                     <Wifi className="w-3 h-3 mr-1" />
                                     Force Reconnect
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        console.log('=== WebSocket Debug Info ===');
+                                        console.log('Status:', websocketStatus);
+                                        console.log('Health:', connectionHealth);
+                                        console.log('Last Response:', lastHeartbeatResponse);
+                                        console.log('All Messages:', allMessages);
+                                        console.log('Service State Changes:', serviceStateChanges);
+                                        console.log('Current Services:', services);
+                                        console.log('========================');
+                                    }}
+                                    className="text-xs"
+                                >
+                                    <Activity className="w-3 h-3 mr-1" />
+                                    Debug Log
                                 </Button>
                             </div>
                         </CardContent>
