@@ -49,6 +49,8 @@ class Platform(
     private val setFileName: Boolean = true,
     // mapping how the OS names will be named in the %os% placeholder (optional)
     private val osNameMapping: Map<OS, String> = emptyMap(),
+    // mapping how the architecture names will be named in the %arch% placeholder (optional)
+    private val archNameMapping: Map<String, String> = emptyMap(),
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
@@ -109,7 +111,7 @@ class Platform(
 
             var replacedUrl = url.replace("%version%", version.version)
                 .replace("%suffix%", language.suffix())
-                .replace("%arch%", currentCPUArchitecture)
+                .replace("%arch%", archDownloadName())
                 .replace("%os%", osDownloadName())
 
             version.additionalProperties.forEach { (key, value) ->
@@ -163,5 +165,9 @@ class Platform(
 
     private fun osDownloadName(): String {
         return osNameMapping.getOrElse(currentOS) { currentOS.name }
+    }
+
+    private fun archDownloadName(): String {
+        return archNameMapping.getOrElse(currentCPUArchitecture) { currentCPUArchitecture }
     }
 }

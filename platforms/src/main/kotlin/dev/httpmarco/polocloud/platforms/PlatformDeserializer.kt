@@ -53,6 +53,11 @@ class PlatformDeserializer : JsonDeserializer<Platform> {
                 context.deserialize(it, object : TypeToken<Map<OS, String>>() {}.type)
             } ?: emptyMap(),
 
+            archNameMapping = obj.get("archNameMapping")?.let {
+                val raw: Map<String, String> = context.deserialize(it, object : TypeToken<Map<String, String>>() {}.type)
+                raw.mapKeys { (k, _) -> k.lowercase() }
+            } ?: emptyMap(),
+            
             defaultStartPort = obj.get("defaultStartPort")?.asInt
         )
     }
