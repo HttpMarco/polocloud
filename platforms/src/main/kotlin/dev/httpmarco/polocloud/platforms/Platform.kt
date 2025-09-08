@@ -107,9 +107,12 @@ class Platform(
 
             val version = this.version(version) ?: throw PlatformVersionInvalidException()
 
+
+            // Special architecture mapping: Only for Gate, map aarch64 to arm64 for the download URL
+            val archForUrl = if (name.equals("gate", ignoreCase = true) && currentCPUArchitecture == "aarch64") "arm64" else currentCPUArchitecture
             var replacedUrl = url.replace("%version%", version.version)
                 .replace("%suffix%", language.suffix())
-                .replace("%arch%", currentCPUArchitecture)
+                .replace("%arch%", archForUrl)
                 .replace("%os%", osDownloadName())
 
             version.additionalProperties.forEach { (key, value) ->
