@@ -6,9 +6,7 @@
   "copyServerIcon": false,
   "shutdownCommand": "",
   "defaultStartPort": 25565,
-  "tasks": [
-    "GATE_SETUP"
-  ],
+  "tasks": ["GATE_SETUP"],
   "versions": [
     {
       "version": "0.55.0"
@@ -19,5 +17,8 @@
     "WIN": "windows",
     "LINUX": "linux",
     "MACOS": "darwin"
+  },
+  "archNameMapping": {
+    "aarch64": "arm64"
   }
 }
