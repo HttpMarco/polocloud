@@ -16,7 +16,7 @@ import dev.httpmarco.polocloud.v1.services.ServiceState
 abstract class BridgeInstance<F, T>(protected val polocloud: PolocloudShared = Polocloud.instance()) {
 
     /** List of registered fallback servers */
-    private val registeredFallbacks = mutableListOf<F>()
+    val registeredFallbacks = hashMapOf<Service, F>()
 
     init {
         // Register all currently online servers of type SERVER at startup
@@ -26,8 +26,10 @@ abstract class BridgeInstance<F, T>(protected val polocloud: PolocloudShared = P
             .forEach { registerNewServer(it) }
 
         // Subscribe to service state change events
-        polocloud.eventProvider().subscribe(ServiceChangeStateEvent::class.java) { event ->
-            handleServiceStateChange(event.service)
+        polocloud.eventProvider().subscribe(ServiceChangeStateEvent::class.java) {
+            if (it.service.type == GroupType.SERVER) {
+                handleServiceStateChange(it.service)
+            }
         }
     }
 
@@ -48,10 +50,11 @@ abstract class BridgeInstance<F, T>(protected val polocloud: PolocloudShared = P
      * Registers a new server with the proxy.
      * Adds it to fallback list if configured as fallback.
      */
-    private fun registerNewServer(service: Service) {
+    protected open fun registerNewServer(service: Service) {
         val serverInfo = registerServerInfo(generateServerInfo(service), service)
+
         if (isFallback(service)) {
-            registeredFallbacks.add(serverInfo)
+            registeredFallbacks[service] = serverInfo
         }
     }
 
@@ -62,8 +65,8 @@ abstract class BridgeInstance<F, T>(protected val polocloud: PolocloudShared = P
     private fun unregisterServer(service: Service) {
         findServer(service.name())?.let { server ->
             unregister(server)
-            registeredFallbacks.remove(server)
         }
+        registeredFallbacks.remove(service)
     }
 
     /**
@@ -89,7 +92,14 @@ abstract class BridgeInstance<F, T>(protected val polocloud: PolocloudShared = P
      * Finds the fallback server with the fewest connected players.
      */
     fun findFallback(): F? {
-        return registeredFallbacks.minByOrNull { playerCount(it) }
+        return registeredFallbacks.keys
+            .sortedWith(
+                compareBy(
+                    { it.properties["fallbackPriority"]?.toIntOrNull() ?: Int.MAX_VALUE },
+                    { playerCount(findServer(it.name())!!) }
+                ))
+            .firstOrNull()
+            ?.let { registeredFallbacks[it] }
     }
 
     /**
