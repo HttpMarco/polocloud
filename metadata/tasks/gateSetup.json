@@ -8,8 +8,17 @@
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
         "key": "config.status.motd",
-        "fileMode": "IF_NOT_EXISTS",
         "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+      }
+    },
+    {
+      "name": "Setup bind",
+      "description": "Setup the port and hostname",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "config.bind",
+        "value": "%hostname%:%port%"
       }
     },
     {
