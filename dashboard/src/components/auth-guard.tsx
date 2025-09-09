@@ -14,14 +14,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      // Skip auth check for auth pages
       if (pathname === '/login' || pathname === '/onboarding') {
         setIsChecking(false);
         return;
       }
 
       try {
-        // First try to get token from API
         const response = await fetch('/api/auth/token');
         if (response.ok) {
           const data = await response.json();
@@ -31,13 +29,10 @@ export function AuthGuard({ children }: AuthGuardProps) {
           }
         }
       } catch {
-        // Silent fallback
       }
 
-      // Check cookies only
       let hasToken = false;
 
-      // Check cookies
       const cookies = document.cookie.split(';');
       for (const cookie of cookies) {
         const [name, value] = cookie.trim().split('=');
@@ -47,7 +42,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
         }
       }
 
-      // Check with regex as fallback
       if (!hasToken) {
         const tokenMatch = document.cookie.match(/token=([^;]+)/);
         if (tokenMatch && tokenMatch[1]) {
@@ -56,7 +50,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
       }
 
       if (!hasToken) {
-        // No token found, redirect to onboarding
         router.push('/onboarding');
         return;
       }
@@ -67,7 +60,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
     checkAuthentication();
   }, [pathname, router]);
 
-  // Show loading while checking authentication
   if (isChecking) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-background">
