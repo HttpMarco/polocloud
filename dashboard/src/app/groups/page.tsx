@@ -30,27 +30,16 @@ export default function GroupsPage() {
             setIsLoading(true);
             
             const response = await fetch(API_ENDPOINTS.GROUPS.LIST);
-            if (response.ok) {
-                const data = await response.json();
-                
-                if (Array.isArray(data)) {
-                    setGroups(data);
-                } else if (data && typeof data === 'object' && 'message' in data) {
-                    // Always set empty array for "No groups found", don't treat as error
-                    if (data.message === 'No groups found') {
-                        setGroups([]);
-                    } else {
-                        setGroups([]); // Set empty array instead of error
-                    }
-                } else {
-                    setGroups([]); // Set empty array instead of error
-                }
+            const data = await response.json();
+            
+            if (Array.isArray(data)) {
+                setGroups(data);
             } else {
-                // Set empty array instead of error to show UI
+                // Always set empty array for any non-array response
                 setGroups([]);
             }
         } catch {
-            // Set empty array instead of error to show UI
+            // Always set empty array on any error to show UI
             setGroups([]);
         } finally {
             setIsLoading(false);
