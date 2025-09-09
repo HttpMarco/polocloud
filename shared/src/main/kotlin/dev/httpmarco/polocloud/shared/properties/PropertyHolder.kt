@@ -5,9 +5,9 @@ import com.google.gson.JsonElement
 
 private val propertySerializer = GsonBuilder().serializeNulls().create()
 
-open class PropertyHolder {
-
+open class PropertyHolder(
     private val properties: MutableMap<String, JsonElement> = mutableMapOf()
+) {
 
     fun <T> hasProperty(property: Property<T>) : Boolean {
         return properties.containsKey(property.name)

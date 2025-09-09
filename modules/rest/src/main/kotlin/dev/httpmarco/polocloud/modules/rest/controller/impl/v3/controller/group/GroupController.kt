@@ -15,6 +15,7 @@ import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 import dev.httpmarco.polocloud.shared.groups.toJson
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.polocloudShared
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
 import io.javalin.http.Context
 
@@ -104,7 +105,7 @@ class GroupController : Controller("/group") {
             platformIndex,
             model.createdAt,
             templates,
-            model.properties
+            PropertyHolder(model.properties)
         )
 
         (Agent.groupProvider() as SharedGroupProvider<Group>).create(group)
