@@ -9,3 +9,5 @@ val STATIC = Property<Boolean>("static")
 val START_PORT = Property<Int>("startPort")
 
 val JAVA_PATH = Property<String>("javaPath")
+
+val MAINTENANCE = Property<Boolean>("maintenance")
