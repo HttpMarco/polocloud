@@ -18,7 +18,6 @@ export default function GroupsPage() {
     const router = useRouter();
     const [groups, setGroups] = useState<Group[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
 
@@ -29,7 +28,6 @@ export default function GroupsPage() {
     const loadGroups = async () => {
         try {
             setIsLoading(true);
-            setError(null);
             
             const response = await fetch(API_ENDPOINTS.GROUPS.LIST);
             if (response.ok) {
@@ -38,23 +36,22 @@ export default function GroupsPage() {
                 if (Array.isArray(data)) {
                     setGroups(data);
                 } else if (data && typeof data === 'object' && 'message' in data) {
-
+                    // Always set empty array for "No groups found", don't treat as error
                     if (data.message === 'No groups found') {
                         setGroups([]);
                     } else {
-                        setError(data.message || 'No groups found');
+                        setGroups([]); // Set empty array instead of error
                     }
                 } else {
-
-                    setError('Invalid response format from server');
+                    setGroups([]); // Set empty array instead of error
                 }
             } else {
-                const errorData = await response.json();
-                setError(errorData.error || 'Failed to load groups');
+                // Set empty array instead of error to show UI
+                setGroups([]);
             }
         } catch {
-
-            setError('Failed to load groups');
+            // Set empty array instead of error to show UI
+            setGroups([]);
         } finally {
             setIsLoading(false);
         }
@@ -109,16 +106,6 @@ export default function GroupsPage() {
         );
     }
 
-    if (error) {
-        return (
-            <div className="w-full h-full flex items-center justify-center">
-                <div className="text-center">
-                    <p className="text-red-500 mb-4">{error}</p>
-                    <Button onClick={loadGroups}>Retry</Button>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 ultra-smooth-scroll">
