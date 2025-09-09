@@ -32,10 +32,13 @@ export default function GroupsPage() {
             const response = await fetch(API_ENDPOINTS.GROUPS.LIST);
             const data = await response.json();
             
-            if (Array.isArray(data)) {
+            if (response.ok && Array.isArray(data)) {
                 setGroups(data);
+            } else if (response.status === 400 && data.message === 'No groups found') {
+                // Backend returns 400 with "No groups found" - treat as empty array
+                setGroups([]);
             } else {
-                // Always set empty array for any non-array response
+                // Any other response - set empty array
                 setGroups([]);
             }
         } catch {
