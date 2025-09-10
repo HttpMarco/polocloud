@@ -3,6 +3,8 @@
 import { SidebarFooter } from "@/components/ui/sidebar";
 import { Settings, LogOut } from "lucide-react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { API_ENDPOINTS } from "@/lib/api";
 
 interface UserData {
   username: string;
@@ -17,8 +19,33 @@ interface SidebarFooterComponentProps {
 }
 
 export function SidebarFooterComponent({ userData, onSettingsClick, onLogout }: SidebarFooterComponentProps) {
+  const [version, setVersion] = useState<string>('');
+
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch(API_ENDPOINTS.SYSTEM.VERSION);
+        if (response.ok) {
+          const data = await response.json();
+          setVersion(data.version || '');
+        }
+      } catch {
+        // Silent fallback
+      }
+    };
+
+    fetchVersion();
+  }, []);
+
   return (
     <SidebarFooter className="border-t border-sidebar-border p-3">
+      {version && (
+        <div className="text-center mb-4">
+          <p className="text-xs text-sidebar-foreground/60">
+            v{version}
+          </p>
+        </div>
+      )}
       <div className="flex items-center space-x-3">
         <div className="w-8 h-8 rounded-lg overflow-hidden">
           <Image 

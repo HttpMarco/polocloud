@@ -4,37 +4,34 @@ import { buildBackendUrl } from '@/lib/api/utils';
 export async function GET(request: NextRequest) {
   try {
     const backendIp = request.cookies.get('backend_ip')?.value;
-    if (!backendIp) {
-      return NextResponse.json({ error: 'No backend connection found' }, { status: 400 });
-    }
-
     const token = request.cookies.get('token')?.value;
-    if (!token) {
-      return NextResponse.json({ error: 'No authentication token found' }, { status: 401 });
+
+    if (!backendIp) {
+      return NextResponse.json({ error: 'Backend IP not configured' }, { status: 400 });
     }
 
-    const decodedBackendIp = decodeURIComponent(backendIp);
+    if (!token) {
+      return NextResponse.json({ error: 'Authentication token not found' }, { status: 401 });
+    }
 
-    const response = await fetch(buildBackendUrl(decodedBackendIp, '/polocloud/api/v3/system/version'), {
-      method: 'GET',
+    const backendResponse = await fetch(buildBackendUrl(backendIp, '/polocloud/api/v3/system/version'), {
       headers: {
-        'Cookie': `token=${token}`
+        'Cookie': `token=${token}`,
+        'Content-Type': 'application/json'
       }
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      return NextResponse.json(data.data || data);
-    } else {
-      const errorData = await response.json().catch(() => ({}));
+    if (!backendResponse.ok) {
+      const errorData = await backendResponse.json().catch(() => ({}));
       return NextResponse.json({ 
-        error: errorData.message || 'Failed to fetch system version' 
-      }, { status: response.status });
+        error: errorData.message || 'Failed to fetch version' 
+      }, { status: backendResponse.status });
     }
+
+    const data = await backendResponse.json();
+    return NextResponse.json(data.data || data);
+
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
-
-

@@ -371,7 +371,7 @@ export default function GroupOverviewPage() {
                                                 <Badge 
                                                     variant="secondary" 
                                                     className="text-sm px-4 py-2 text-muted-foreground bg-background/50 border border-border/30 hover:bg-background/70 transition-colors duration-200 cursor-pointer"
-                                                    onClick={() => router.push(`/templates/${template.name}`)}
+                                                    onClick={() => router.push('/templates')}
                                                 >
                                                     {template.name}
                                                 </Badge>
@@ -445,15 +445,6 @@ export default function GroupOverviewPage() {
                                                     >
                                                         {service.state}
                                                     </Badge>
-                                                    
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        className="h-9 px-4 text-sm border-border/50 text-foreground hover:bg-background/50 hover:border-border transition-all duration-200"
-                                                        onClick={() => router.push('/services')}
-                                                    >
-                                                        View
-                                                    </Button>
                                                 </div>
                                             </motion.div>
                                         ))}

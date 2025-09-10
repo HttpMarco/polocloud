@@ -14,7 +14,7 @@ interface GroupCreateRequest {
   percentageToStartNewService: number;
   createdAt: number;
   templates: string[];
-  properties: Record<string, boolean>;
+  properties: Record<string, any>;
 }
 
 export async function POST(request: NextRequest) {
@@ -49,14 +49,27 @@ export async function POST(request: NextRequest) {
         name: body.platform.name,
         version: body.platform.version
       },
-      percentageToStartNewService: percentage,
-      createdAt: body.createdAt,
+      percentageToStartNewService: parseFloat(percentage.toFixed(2)),
+      createdAt: Math.floor(body.createdAt / 1000),
       templates: body.templates,
-      properties: {
-        fallback: body.properties.fallback,
-        static: body.properties.static
-      }
+      properties: JSON.stringify({
+        "fallback": body.properties?.fallback || false,
+        "static": body.properties?.static || false
+      })
     };
+    
+    console.log('Sending request to backend:', JSON.stringify(requestBody, null, 2));
+    console.log('Request body type check:', {
+      name: typeof requestBody.name,
+      minMemory: typeof requestBody.minMemory,
+      maxMemory: typeof requestBody.maxMemory,
+      minOnlineService: typeof requestBody.minOnlineService,
+      maxOnlineService: typeof requestBody.maxOnlineService,
+      percentageToStartNewService: typeof requestBody.percentageToStartNewService,
+      createdAt: typeof requestBody.createdAt,
+      templates: Array.isArray(requestBody.templates),
+      properties: typeof requestBody.properties
+    });
     
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -69,6 +82,7 @@ export async function POST(request: NextRequest) {
     
     if (!response.ok) {
       const errorData = await response.json();
+      console.log('Backend error response:', errorData);
       return NextResponse.json(
         { error: errorData.message || 'Failed to create group' },
         { status: response.status }

@@ -44,6 +44,7 @@ export const API_ENDPOINTS = {
 
     SYSTEM: {
         INFORMATION: '/api/system/information',
+        VERSION: '/api/system/version',
         AVERAGE: '/api/system/average',
         AVERAGE_WITH_RANGE: (from: number, to: number) => `/api/system/average?from=${from}&to=${to}`,
         MINUTES: '/api/system/minutes',

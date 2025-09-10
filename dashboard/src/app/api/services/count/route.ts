@@ -31,10 +31,13 @@ export async function GET(request: NextRequest) {
       const services = response.data || [];
 
       const totalServices = Array.isArray(services) ? services.length : 0;
+      const onlineServices = Array.isArray(services) ? services.filter((service: any) => service.state === 'ONLINE').length : 0;
+
+      const percentage = totalServices > 0 ? Math.round((onlineServices / totalServices) * 100) : 0;
 
       const data = {
         serviceCount: totalServices,
-        percentage: 0
+        percentage: percentage
       };
       
       return NextResponse.json(data);

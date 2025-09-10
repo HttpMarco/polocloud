@@ -70,6 +70,10 @@ export default function SystemInfoBadges() {
         };
 
         loadSystemInfo();
+
+        const interval = setInterval(loadSystemInfo, 5000);
+
+        return () => clearInterval(interval);
     }, [token]);
 
     if (isLoading || !systemInfo) {
