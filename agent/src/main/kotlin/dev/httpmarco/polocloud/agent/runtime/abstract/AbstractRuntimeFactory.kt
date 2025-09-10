@@ -50,10 +50,6 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
         val platform = service.group.platform()
         val version = service.group.platform.version
 
-        i18n.info("agent.local-runtime.factory.boot.up", service.name())
-        service.state = ServiceState.STARTING
-        Agent.eventService.call(ServiceChangeStateEvent(service))
-
         val environment = this.environment(service)
 
         val path = factoryPath.resolve(service.name())
@@ -69,6 +65,10 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
             }
             return
         }
+
+        i18n.info("agent.local-runtime.factory.boot.up", service.name())
+        service.state = ServiceState.STARTING
+        Agent.eventService.call(ServiceChangeStateEvent(service))
 
         // copy all templates to the service path
         Agent.runtime.templateStorage().bindTemplate(service)

@@ -4,25 +4,130 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractRuntimeFactory
+import dev.httpmarco.polocloud.common.os.cpuUsage
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
 
+/**
+ * LocalRuntimeFactory manages service instances running locally on the host machine.
+ * It handles service boot, shutdown, runtime tracking, and cleanup.
+ */
 class LocalRuntimeFactory(var localRuntime: LocalRuntime) : AbstractRuntimeFactory<LocalService>(LOCAL_FACTORY_PATH) {
 
     init {
-        // if folder exists, delete all files inside
+        // If the local factory path exists, delete all contents to ensure a clean start
         if (LOCAL_FACTORY_PATH.exists()) {
             LOCAL_FACTORY_PATH.toFile().listFiles()?.forEach { it.deleteRecursively() }
         }
-        // init factory path
+        // Create the factory directory if it doesn't exist
         LOCAL_FACTORY_PATH.createDirectories()
     }
 
-    // todo IMPLEMENT AGAIN
-        /*
+    /**
+     * Shutdown a local service safely.
+     * Cleans up processes, stops tracking, handles recordings, and deletes non-static files.
+     */
+    @OptIn(ExperimentalPathApi::class)
+    override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean): ServiceSnapshot {
+        // If the service is already stopping or stopped, return its snapshot
+        if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPED) {
+            return service.toSnapshot()
+        }
+
+        service.state = ServiceState.STOPPING
+        val eventService = Agent.eventService
+
+        i18n.info("agent.local-runtime.factory.shutdown", service.name())
+
+        // Remove any event subscriptions for this service
+        eventService.dropServiceSubscriptions(service)
+        // Notify other services that this service is stopping
+        eventService.call(ServiceChangeStateEvent(service))
+
+        // Attempt to gracefully shutdown the process
+        service.process?.let { process ->
+            try {
+                val shutdownCommand = service.group.platform().shutdownCommand
+                if (shutdownCommand.isNotEmpty() && shutdownCleanUp && service.executeCommand(shutdownCommand)) {
+                    // Wait a short time for graceful exit
+                    if (process.waitFor(5, TimeUnit.SECONDS)) {
+                        service.state = ServiceState.STOPPED
+                    }
+                }
+            } catch (_: Exception) {
+                // Ignore exceptions, we only care about stopping the process
+            }
+
+            // Force-stop any remaining processes if still running
+            if (service.state != ServiceState.STOPPED) {
+                process.toHandle().children().forEach { child ->
+                    try { child.destroy() } catch (_: Exception) { /* ignore */ }
+                }
+                process.toHandle().destroyForcibly()
+                process.waitFor()
+                service.process = null
+                service.state = ServiceState.STOPPED
+            }
+        }
+
+        // Stop screen recording if active
+        if (localRuntime.terminal.screenService.isServiceRecoding(service)) {
+            localRuntime.terminal.screenService.stopCurrentRecording()
+        }
+
+        // Stop internal service tracking
+        service.stopTracking()
+
+        // Give Windows a small delay to ensure process termination
+        if (!Thread.currentThread().isVirtual && shutdownCleanUp) {
+            Thread.sleep(200)
+        }
+
+        // Delete service files if not static
+        if (!service.isStatic()) {
+            service.path.deleteRecursively()
+        }
+
+        // Finalize service state and fire shutdown event
+        service.state = ServiceState.STOPPED
+        Agent.eventProvider().call(ServiceChangeStateEvent(service))
+        Agent.runtime.serviceStorage().dropAbstractService(service)
+
+        i18n.info(
+            "agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful",
+            service.name()
+        )
+
+        return service.toSnapshot()
+    }
+
+    /**
+     * Generate a new instance of a local service for a given group.
+     */
+    override fun generateInstance(group: AbstractGroup): LocalService {
+        return LocalService(group)
+    }
+
+    /**
+     * Shutdown any background threads or thread pools used by the factory.
+     */
+    fun shutdown() {
+        cacheThreadPool.shutdown()
+    }
+
+    /**
+     * Boot a local service process with appropriate runtime checks and environment.
+     * Waits until CPU usage and concurrent starts are under configured limits.
+     */
+    override fun runRuntimeBoot(service: LocalService) {
+        val version = service.group.platform.version
+        val platform = service.group.platform()
+        val versionObject = platform.version(version)
+
+        // Check that the service runtime matches required version
         val (correctRuntime, currentRuntime) = checkRuntimeVersion(service)
         if (!correctRuntime) {
             if (currentRuntime == null) {
@@ -41,109 +146,27 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : AbstractRuntimeFacto
             }
         }
 
-         */
-
-        /*
+        // Wait until CPU usage and max concurrent starts allow launching the service
         while (Agent.runtime.serviceStorage().findAll()
                 .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
-            ||
-            cpuUsage() > Agent.config.maxCPUPercentageToStart
+            || cpuUsage() > Agent.config.maxCPUPercentageToStart
         ) {
             Thread.sleep(1000)
         }
 
-         */
+        // Build and start the process
+        val processBuilder = ProcessBuilder(languageSpecificBootArguments(service))
+            .directory(service.path.toFile())
 
-    @OptIn(ExperimentalPathApi::class)
-    override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean): ServiceSnapshot {
-        if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPED) {
-            return service.toSnapshot()
-        }
-
-        service.state = ServiceState.STOPPING
-        val eventService = Agent.eventService
-
-        i18n.info("agent.local-runtime.factory.shutdown", service.name())
-
-
-        // first, we need to drop all subscriptions for this service
-        // the service went down, so we don't need to send any events anymore
-        eventService.dropServiceSubscriptions(service)
-        // then we call the shutdown event -> for all other services
-        eventService.call(ServiceChangeStateEvent(service))
-
-        if (service.process != null) {
-            try {
-                val shutdownCommand = service.group.platform().shutdownCommand
-                if (shutdownCommand.isNotEmpty() && shutdownCleanUp && service.executeCommand(shutdownCommand)) {
-                    if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
-                        service.process!!.exitValue()
-                        service.state = ServiceState.STOPPED
-                    }
-                }
-            } catch (_: Exception) {
-                // ignore exceptions, we just want to stop the process
-            }
-
-            if (service.state != ServiceState.STOPPED) {
-
-                service.process!!.toHandle().children().forEach { child ->
-                    try {
-                        child.destroy()
-                    } catch (_: Exception) {
-                        // ignore exceptions, we just want to stop the process}
-                    }
-                }
-
-                service.process!!.toHandle().destroyForcibly()
-                service.process!!.waitFor()
-                service.process = null
-                service.state = ServiceState.STOPPED
-            }
-        }
-
-        if (localRuntime.terminal.screenService.isServiceRecoding(service)) {
-            localRuntime.terminal.screenService.stopCurrentRecording()
-        }
-        service.stopTracking()
-
-        // windows need some time to destroy the process
-        if (!Thread.currentThread().isVirtual && shutdownCleanUp) {
-            Thread.sleep(200) // wait for a process to be destroyed
-        }
-
-        if (!service.isStatic()) {
-            service.path.deleteRecursively()
-        }
-
-        service.state = ServiceState.STOPPED
-        Agent.eventProvider().call(ServiceChangeStateEvent(service))
-        Agent.runtime.serviceStorage().dropAbstractService(service)
-        i18n.info(
-            "agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful",
-            service.name()
-        )
-
-        return service.toSnapshot()
-    }
-
-    override fun generateInstance(group: AbstractGroup): LocalService {
-        return LocalService(group)
-    }
-
-    fun shutdown() {
-        cacheThreadPool.shutdown()
-    }
-
-    override fun runRuntimeBoot(service: LocalService) {
-        val processBuilder = ProcessBuilder(languageSpecificBootArguments(service)).directory(service.path.toFile())
+        // Inject environment variables into the service process
         processBuilder.environment().putAll(
             mapOf(
-                Pair("agent_port", Agent.config.port.toString()),
-                Pair("service-name", service.name())
+                "agent_port" to Agent.config.port.toString(),
+                "service-name" to service.name()
             )
         )
 
+        // Start the service process and begin tracking
         service.process = processBuilder.start()
         service.startTracking()
     }
