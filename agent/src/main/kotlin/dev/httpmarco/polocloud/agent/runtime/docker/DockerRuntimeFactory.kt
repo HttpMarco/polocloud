@@ -14,7 +14,7 @@ import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractRuntimeFactory
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 
-class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<DockerService>() {
+class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<DockerService>(DOCKER_FACTORY_PATH) {
 
     override fun runRuntimeBoot(service: DockerService) {
         client.pullImageCmd("openjdk").withTag("21-jdk").start().awaitCompletion()

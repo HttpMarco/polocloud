@@ -3,7 +3,6 @@ package dev.httpmarco.polocloud.agent.runtime.abstract
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
-import dev.httpmarco.polocloud.agent.runtime.local.LOCAL_FACTORY_PATH
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.agent.utils.JavaUtils
 import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
@@ -17,6 +16,7 @@ import dev.httpmarco.polocloud.shared.properties.JAVA_PATH
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import org.yaml.snakeyaml.util.Tuple
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.ArrayList
 import java.util.Collections
 import java.util.concurrent.ExecutorService
@@ -25,7 +25,7 @@ import kotlin.collections.addAll
 import kotlin.io.path.createDirectories
 import kotlin.io.path.name
 
-abstract class AbstractRuntimeFactory<T :  AbstractService> :  RuntimeFactory<T> {
+abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path) : RuntimeFactory<T> {
 
     val cacheThreadPool: ExecutorService by lazy { Executors.newFixedThreadPool(Agent.config.maxCachingProcesses) }
     val runningCacheProcesses: MutableList<Tuple<String, String>> by lazy {
@@ -56,7 +56,7 @@ abstract class AbstractRuntimeFactory<T :  AbstractService> :  RuntimeFactory<T>
 
         val environment = this.environment(service)
 
-        val path = LOCAL_FACTORY_PATH.resolve(service.name())
+        val path = factoryPath.resolve(service.name())
         path.createDirectories()
 
         //loading cache before starting service
