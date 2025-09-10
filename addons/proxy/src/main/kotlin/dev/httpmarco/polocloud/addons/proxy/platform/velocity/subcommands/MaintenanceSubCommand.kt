@@ -5,6 +5,7 @@ import com.velocitypowered.api.command.CommandSource
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityCloudSubCommand
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
 import dev.httpmarco.polocloud.sdk.java.Polocloud
+import dev.httpmarco.polocloud.shared.properties.MAINTENANCE
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand {
@@ -33,20 +34,13 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand
             "on" -> {
 
                 val group = Polocloud.instance().groupProvider().find(proxyAddon.poloService.groupName)!!
-                val maintenanceEnabled = group.properties["maintenance"]?.asBoolean ?: false
+                val maintenanceEnabled = group.properties.get(MAINTENANCE) ?: false
                 if(maintenanceEnabled) {
                     source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_enabled_already")))
                     return
                 }
 
-                val properties = HashMap<String, JsonPrimitive>()
-                group.properties.forEach {
-                    if(it.key != "maintenance") {
-                        properties.put(it.key, it.value)
-                    }
-                }
-                properties.put("maintenance", JsonPrimitive(true))
-                group.properties = properties
+                group.properties.with(MAINTENANCE, true)
                 Polocloud.instance().groupProvider().update(group)
 
                 source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_enabled")))
@@ -55,23 +49,16 @@ class MaintenanceSubCommand(val proxyAddon: ProxyAddon): VelocityCloudSubCommand
             "off" -> {
 
                 val group = Polocloud.instance().groupProvider().find(proxyAddon.poloService.groupName)!!
-                val maintenanceEnabled = group.properties["maintenance"]?.asBoolean ?: false
+                val maintenanceEnabled = group.properties.get(MAINTENANCE) ?: false
                 if(!maintenanceEnabled) {
                     source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_disabled_already")))
                     return
                 }
 
-                val properties = HashMap<String, JsonPrimitive>()
-                group.properties.forEach {
-                    if(it.key != "maintenance") {
-                        properties.put(it.key, it.value)
-                    }
-                }
-                group.properties = properties
+                group.properties.with(MAINTENANCE, false)
                 Polocloud.instance().groupProvider().update(group)
 
                 source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("maintenance_disabled")))
-
             }
             else -> {
                 source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("usage_maintenance")))
