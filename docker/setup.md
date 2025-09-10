@@ -1,5 +1,7 @@
 ### Setup Kubernetes Cluster
 
+FIRST CHANGE PATH IN docker-compose.yml FILE
 ```
-docker run -d  --name polocloud -v /polocloud:/cloud/local polocloud:development
+docker stack deploy -c docker-compose.yml polocloud
 ```
+

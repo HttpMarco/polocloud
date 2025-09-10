@@ -1,0 +1,16 @@
+services:
+  agent:
+    image: polocloud:development
+    networks:
+      - polocloud-net
+    volumes:
+      - PATH:/cloud/local
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+networks:
+  polocloud-net:
+    driver: overlay
