@@ -21,7 +21,7 @@ class DockerTemplateStorage(val client: DockerClient) : RuntimeTemplateStorage<D
     }
 
     override fun bindTemplate(service: DockerService) {
-        TODO("Not yet implemented")
+        // todo
     }
 
     override fun saveTemplate(template: Template, service: DockerService) {
