@@ -2,15 +2,10 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.core.DefaultDockerClientConfig
-import com.github.dockerjava.core.DockerClientBuilder
-import dev.httpmarco.polocloud.agent.i18n
+import com.github.dockerjava.core.DockerClientImpl
+import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
 import dev.httpmarco.polocloud.agent.runtime.Runtime
-import dev.httpmarco.polocloud.agent.runtime.RuntimeConfigHolder
-import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplateStorage
 import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractThreadedRuntimeQueue
-import dev.httpmarco.polocloud.agent.services.AbstractService
-import java.nio.file.Files
-import java.nio.file.Paths
 
 
 class DockerRuntime : Runtime() {
@@ -19,17 +14,20 @@ class DockerRuntime : Runtime() {
     private val serviceStorage = DockerRuntimeServiceStorage(client)
     private val groupStorage = DockerRuntimeGroupStorage()
     private val expender = DockerExpender(client)
-    private val runtimeFactory = DockerFactory(client)
+    private val runtimeFactory = DockerRuntimeFactory(client)
     private val templateStorage = DockerTemplateStorage(client)
     private val dockerConfigHolder = DockerConfigHolder()
     private val runtimeQueue = AbstractThreadedRuntimeQueue()
 
     fun createLocalDockerClient(): DockerClient {
-        val config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-            .withDockerHost("unix:///var/run/docker.sock")
+        val config = DefaultDockerClientConfig.createDefaultConfigBuilder().build()
+
+        val httpClient = ApacheDockerHttpClient.Builder()
+            .dockerHost(config.dockerHost)
+            .sslConfig(config.sslConfig)
             .build()
 
-        return DockerClientBuilder.getInstance(config).build()
+        return DockerClientImpl.getInstance(config, httpClient)
     }
 
     override fun boot() {
