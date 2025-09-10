@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.addons.proxy.ProxyConfigAccessor
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityPlatform
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.sdk.java.Polocloud
+import dev.httpmarco.polocloud.shared.properties.MAINTENANCE
 import net.kyori.adventure.text.minimessage.MiniMessage
 
 class VelocityMotdUpdater (
@@ -21,7 +22,7 @@ class VelocityMotdUpdater (
     @Subscribe
     fun onProxyPing(event: ProxyPingEvent) {
         val group = Polocloud.instance().groupProvider().find(platform.proxyAddon().poloService.groupName)!!
-        if(group.properties["maintenance"]?.asBoolean ?: false) {
+        if(group.properties.get(MAINTENANCE) ?: false) {
             // maintenance mode is enabled, use maintenance MOTD
             if(!config.maintenanceMotd().enabled) {
                 // maintenance motd is disabled
