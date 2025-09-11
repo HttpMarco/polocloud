@@ -6,7 +6,7 @@ version = "1.0"
 nexus-publish = "2.0.0"
 
 # libraries
-gson = "2.13.1"
+gson = "2.13.2"
 oshi="6.8.3"
 
 # configuration
