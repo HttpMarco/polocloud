@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent
 import dev.httpmarco.polocloud.updater.Updater
 import org.jline.jansi.AnsiConsole
 import kotlin.system.exitProcess
+import java.util.concurrent.CompletableFuture
 
 private val SHUTDOWN_HOOK = "polocloud-shutdown-hook"
 private var inShutdown = false
@@ -25,9 +26,9 @@ fun exitPolocloud(cleanShutdown: Boolean = true, shouldUpdate: Boolean = false) 
 
     try {
         val services = Agent.runtime.serviceStorage().findAll()
-        
-        val shutdownThreads = services.map { service ->
-            Thread.ofVirtual().start {
+
+        val shutdownFutures = services.map { service ->
+            CompletableFuture.runAsync {
                 try {
                     service.shutdown(cleanShutdown)
                 } catch (e: Exception) {
@@ -35,7 +36,8 @@ fun exitPolocloud(cleanShutdown: Boolean = true, shouldUpdate: Boolean = false) 
                 }
             }
         }
-        shutdownThreads.forEach { it.join() }
+
+        CompletableFuture.allOf(*shutdownFutures.toTypedArray()).join()
 
         Agent.moduleProvider.unloadModules()
 
