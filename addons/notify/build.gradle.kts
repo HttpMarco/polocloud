@@ -12,11 +12,7 @@ repositories {
 dependencies {
     compileOnly(libs.velocity)
     compileOnly(libs.bungeecord)
-
-    compileOnly(libs.gson)
-    implementation(projects.sdk.sdkJava)
-
-    implementation(projects.addons.api)
+    api(projects.addons.api)
 }
 
 tasks.processResources {

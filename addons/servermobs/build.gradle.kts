@@ -1,5 +1,5 @@
 dependencies {
-    implementation(projects.addons.api)
+    api(projects.addons.api)
     implementation(libs.spigot)
     implementation(libs.npc.bukkit)
 }
