@@ -31,6 +31,7 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
      * Pulls the image, sets up mounts, networking, and service replication.
      */
     override fun runRuntimeBoot(service: DockerService) {
+        /*
         // Pull the base image before creating the service
         client.pullImageCmd("openjdk").withTag("21-jdk").start().awaitCompletion()
 
@@ -80,6 +81,8 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
         // Create the service in Docker Swarm
         val createServiceResponse = client.createServiceCmd(serviceSpec).exec()
         service.containerId = createServiceResponse.id // Store service ID
+
+         */
     }
 
     /**

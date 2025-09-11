@@ -1,9 +1,109 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
-import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractGroupStorage
+import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.api.model.ContainerSpec
+import com.github.dockerjava.api.model.ServiceModeConfig
+import com.github.dockerjava.api.model.ServiceReplicatedModeOptions
+import com.github.dockerjava.api.model.ServiceSpec
+import com.github.dockerjava.api.model.TaskSpec
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
+import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
+import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
+import java.util.concurrent.CompletableFuture
 
-class DockerRuntimeGroupStorage : AbstractGroupStorage() {
+class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage {
 
+    override fun updateGroup(group: AbstractGroup) {
+        TODO("Not yet implemented")
+    }
 
+    override fun destroy(abstractGroup: AbstractGroup) {
+        val services = client.listServicesCmd()
+            .withLabelFilter(mapOf("polocloud" to "true", "name" to abstractGroup.name))
+            .exec()
+            .filter { it.spec?.name == "polocloud-${abstractGroup.name}" }
 
+        if (services.isEmpty()) {
+            return
+        }
+
+        services.forEach { service ->
+            client.removeServiceCmd(service.id).exec()
+        }
+    }
+
+    override fun publish(abstractGroup: AbstractGroup) {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAll(): List<AbstractGroup> {
+        val services = client.listServicesCmd()
+            .withLabelFilter(mapOf("polocloud" to "true"))
+            .exec()
+
+        return services.map { mapGroupData(it.spec?.labels ?: emptyMap()) }
+    }
+
+    override fun findAllAsync(): CompletableFuture<List<AbstractGroup>> = CompletableFuture.supplyAsync { findAll() }
+
+    override fun find(name: String): AbstractGroup {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAsync(name: String): CompletableFuture<AbstractGroup?> {
+        return CompletableFuture.supplyAsync { find(name) }
+    }
+
+    override fun create(group: AbstractGroup): AbstractGroup {
+        val data = mutableMapOf<String, String>()
+
+        group.toSnapshot().allFields.map {
+            data[it.key.name] = it.value.toString()
+        }
+
+        val serviceSpec = ServiceSpec()
+            .withName("polocloud-${group.name}")
+            .withLabels(data)
+            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec().withImage("myimage:latest")))
+            .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)))
+
+        client.createServiceCmd(serviceSpec).exec()
+        return group
+    }
+
+    override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        return CompletableFuture.supplyAsync { create(group) }
+    }
+
+    override fun update(group: AbstractGroup): AbstractGroup? {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
+        return CompletableFuture.supplyAsync { update(group) }
+    }
+
+    override fun delete(name: String): AbstractGroup? {
+        TODO("Not yet implemented")
+    }
+
+    override fun reload() {
+        TODO("Not yet implemented")
+    }
+
+    private fun mapGroupData(data: Map<String, String>): AbstractGroup {
+        return AbstractGroup(
+            name = data["name"] ?: "unknown",
+            minMemory = data["minMemory"]?.toInt() ?: 512,
+            maxMemory = data["maxMemory"]?.toInt() ?: 1024,
+            minOnlineServices = data["minOnlineServices"]?.toInt() ?: 1,
+            maxOnlineServices = data["maxOnlineServices"]?.toInt() ?: 10,
+            percentageToStartNewService = data["percentageToStartNewService"]?.toDouble() ?: 0.75,
+            platform = PlatformIndex(data["platformName"] ?: "default", data["platformVersion"] ?: "latest"),
+            createdAt = data["createdAt"]?.toLong() ?: System.currentTimeMillis(),
+            templates = emptyList(),
+            properties = PropertyHolder()
+        )
+    }
 }

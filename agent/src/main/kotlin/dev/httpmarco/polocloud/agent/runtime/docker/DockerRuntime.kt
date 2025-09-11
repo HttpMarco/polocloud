@@ -12,7 +12,7 @@ class DockerRuntime : Runtime() {
 
     private val client = createLocalDockerClient()
     private val serviceStorage = DockerRuntimeServiceStorage(client)
-    private val groupStorage = DockerRuntimeGroupStorage()
+    private val groupStorage = DockerRuntimeGroupStorage(client)
     private val expender = DockerExpender(client)
     private val runtimeFactory = DockerRuntimeFactory(client)
     private val templateStorage = DockerTemplateStorage(client)
