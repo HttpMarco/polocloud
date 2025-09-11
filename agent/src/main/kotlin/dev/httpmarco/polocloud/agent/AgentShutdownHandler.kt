@@ -23,11 +23,19 @@ fun exitPolocloud(cleanShutdown: Boolean = true, shouldUpdate: Boolean = false) 
 
     i18n.info("agent.shutdown.starting")
 
-
     try {
-        Agent.runtime.serviceStorage().findAll().forEach {
-            it.shutdown(cleanShutdown)
+        val services = Agent.runtime.serviceStorage().findAll()
+        
+        val shutdownThreads = services.map { service ->
+            Thread.ofVirtual().start {
+                try {
+                    service.shutdown(cleanShutdown)
+                } catch (e: Exception) {
+                    logger.throwable(e)
+                }
+            }
         }
+        shutdownThreads.forEach { it.join() }
 
         Agent.moduleProvider.unloadModules()
 
