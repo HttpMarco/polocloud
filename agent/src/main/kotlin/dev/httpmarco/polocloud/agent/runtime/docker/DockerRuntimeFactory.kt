@@ -2,11 +2,15 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.model.ContainerSpec
+import com.github.dockerjava.api.model.EndpointSpec
 import com.github.dockerjava.api.model.Mount
 import com.github.dockerjava.api.model.MountType
 import com.github.dockerjava.api.model.NetworkAttachmentConfig
+import com.github.dockerjava.api.model.PortConfig
 import com.github.dockerjava.api.model.ServiceModeConfig
 import com.github.dockerjava.api.model.ServiceReplicatedModeOptions
+import com.github.dockerjava.api.model.ServiceRestartCondition
+import com.github.dockerjava.api.model.ServiceRestartPolicy
 import com.github.dockerjava.api.model.ServiceSpec
 import com.github.dockerjava.api.model.TaskSpec
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
@@ -35,26 +39,32 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
             .withImage("openjdk:21-jdk")
             .withDir("/app") // Working directory inside the container
             .withCommand(languageSpecificBootArguments(service))
-            .withMounts(listOf(
-                Mount().withType(MountType.BIND)
-                    .withSource("C:/Users/nervi/Desktop/123/temp/${service.name()}")
-                    .withTarget("/app") // Bind mount host folder to container
-            ))
+            .withMounts(
+                listOf(
+                    Mount().withType(MountType.BIND)
+                        .withSource("C:/Users/mirco/Desktop/te/temp/${service.name()}")
+                        .withTarget("/app") // Bind mount host folder to container
+                )
+            )
 
         // Optional: Expose ports if the service is a proxy
         val endpointSpec = if (service.group.platform().type == GroupType.PROXY) {
             // Publish the container's port to the same port on the host
-            com.github.dockerjava.api.model.EndpointSpec().withPorts(listOf(
-                com.github.dockerjava.api.model.PortConfig()
-                    .withProtocol(com.github.dockerjava.api.model.PortConfigProtocol.TCP)
-                    .withTargetPort(service.port)    // Container port
-                    .withPublishedPort(service.port) // Host port
-            ))
+            EndpointSpec().withPorts(
+                listOf(
+                    PortConfig()
+                        .withProtocol(com.github.dockerjava.api.model.PortConfigProtocol.TCP)
+                        .withTargetPort(service.port)    // Container port
+                        .withPublishedPort(service.port)
+                        .withPublishMode(PortConfig.PublishMode.ingress)
+                )
+            )
         } else null
 
         // Define the task specification, including network attachment
         val taskSpec = TaskSpec()
             .withContainerSpec(containerSpec)
+            .withRestartPolicy(ServiceRestartPolicy().withCondition(ServiceRestartCondition.NONE))
             .withNetworks(listOf(NetworkAttachmentConfig().withTarget(DOCKER_NETWORK))) // Overlay network
 
         // Define the service specification (name, replication, labels)
