@@ -10,3 +10,7 @@ dependencies {
     implementation(libs.bundles.jwt)
     implementation(libs.argon2)
 }
+
+tasks.jar {
+    dependsOn(tasks.shadowJar)
+}
