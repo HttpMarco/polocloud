@@ -12,406 +12,410 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
+      
       - name: Install jq
         run: sudo apt-get install -y jq
 
-      # PAPER (PaperMC API)
       - name: Check Paper updates
         id: paper
         run: |
+          echo "Checking Paper updates..."
           CURRENT_PAPER=$(cat metadata/platforms/paper.json | jq '.versions')
+          
           PAPER_VERSIONS=$(curl -s "https://api.papermc.io/v2/projects/paper" | jq '.versions')
+          echo "Found Paper versions: $PAPER_VERSIONS"
           
-          NEW_PAPER=$(echo "$PAPER_VERSIONS" | jq -r '.[]' | while read version; do
+          NEW_VERSIONS="[]"
+          for version in $(echo "$PAPER_VERSIONS" | jq -r '.[]'); do
+            echo "Checking version: $version"
             BUILD_ID=$(curl -s "https://api.papermc.io/v2/projects/paper/versions/$version" | jq '.builds | max')
-            echo "{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_PAPER $NEW_PAPER" | jq -s '.[1] - .[0]')
+            echo "Latest build for $version: $BUILD_ID"
+            
+            if [ "$BUILD_ID" != "null" ]; then
+              SHOULD_ADD=$(echo "$CURRENT_PAPER" | jq --arg v "$version" --arg b "$BUILD_ID" '
+                if length == 0 then true
+                else
+                  (.[] | select(.version == $v) | .buildId // 0) as $current |
+                  if $current == 0 then true
+                  else ($b | tonumber) > ($current | tonumber)
+                  end
+                end
+              ')
+              
+              if [ "$SHOULD_ADD" = "true" ]; then
+                CURRENT_BUILD=$(echo "$CURRENT_PAPER" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
+                NEW_VERSION="{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
+                NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
+              else
+                CURRENT_BUILD=$(echo "$CURRENT_PAPER" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
+              fi
+            fi
+          done
           
           if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
+            echo "New Paper versions found:"
+            echo "$NEW_VERSIONS" | jq .
             echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > paper-new.json
+            
+            jq --slurpfile new <(echo "$NEW_VERSIONS") \
+              '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
+              metadata/platforms/paper.json > paper-temp.json
+            mv paper-temp.json metadata/platforms/paper.json
+            echo "Paper metadata updated successfully"
           else
+            echo "No new Paper versions"
             echo "has_updates=false" >> $GITHUB_OUTPUT
           fi
 
-      # VELOCITY (PaperMC API)
       - name: Check Velocity updates
         id: velocity
         run: |
+          echo "Checking Velocity updates..."
           CURRENT_VELOCITY=$(cat metadata/platforms/velocity.json | jq '.versions')
+          
           VELOCITY_VERSIONS=$(curl -s "https://api.papermc.io/v2/projects/velocity" | jq '.versions')
+          echo "Found Velocity versions: $VELOCITY_VERSIONS"
           
-          NEW_VELOCITY=$(echo "$VELOCITY_VERSIONS" | jq -r '.[]' | while read version; do
+          NEW_VERSIONS="[]"
+          for version in $(echo "$VELOCITY_VERSIONS" | jq -r '.[]'); do
+            echo "Checking version: $version"
             BUILD_ID=$(curl -s "https://api.papermc.io/v2/projects/velocity/versions/$version" | jq '.builds | max')
-            echo "{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_VELOCITY $NEW_VELOCITY" | jq -s '.[1] - .[0]')
+            echo "Latest build for $version: $BUILD_ID"
+            
+            if [ "$BUILD_ID" != "null" ]; then
+              SHOULD_ADD=$(echo "$CURRENT_VELOCITY" | jq --arg v "$version" --arg b "$BUILD_ID" '
+                if length == 0 then true
+                else
+                  (.[] | select(.version == $v) | .buildId // 0) as $current |
+                  if $current == 0 then true
+                  else ($b | tonumber) > ($current | tonumber)
+                  end
+                end
+              ')
+              
+              if [ "$SHOULD_ADD" = "true" ]; then
+                CURRENT_BUILD=$(echo "$CURRENT_VELOCITY" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
+                NEW_VERSION="{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
+                NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
+              else
+                CURRENT_BUILD=$(echo "$CURRENT_VELOCITY" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
+              fi
+            fi
+          done
           
           if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
+            echo "New Velocity versions found:"
+            echo "$NEW_VERSIONS" | jq .
             echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > velocity-new.json
+            
+            jq --slurpfile new <(echo "$NEW_VERSIONS") \
+              '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
+              metadata/platforms/velocity.json > velocity-temp.json
+            mv velocity-temp.json metadata/platforms/velocity.json
+            echo "Velocity metadata updated successfully"
           else
+            echo "No new Velocity versions"
             echo "has_updates=false" >> $GITHUB_OUTPUT
           fi
 
-      # FOLIA (PaperMC API)
       - name: Check Folia updates
         id: folia
         run: |
+          echo "Checking Folia updates..."
           CURRENT_FOLIA=$(cat metadata/platforms/folia.json | jq '.versions')
-          FOLIA_VERSIONS=$(curl -s "https://api.papermc.io/v2/projects/folia" | jq '.versions')
           
-          NEW_FOLIA=$(echo "$FOLIA_VERSIONS" | jq -r '.[]' | while read version; do
+          FOLIA_VERSIONS=$(curl -s "https://api.papermc.io/v2/projects/folia" | jq '.versions')
+          echo "Found Folia versions: $FOLIA_VERSIONS"
+          
+          NEW_VERSIONS="[]"
+          for version in $(echo "$FOLIA_VERSIONS" | jq -r '.[]'); do
+            echo "Checking version: $version"
             BUILD_DATA=$(curl -s "https://api.papermc.io/v2/projects/folia/versions/$version")
             BUILD_ID=$(echo "$BUILD_DATA" | jq '.builds | max')
-            HASH=$(echo "$BUILD_DATA" | jq -r '.builds[] | select(.build == '$BUILD_ID') | .downloads.application.sha256')
-            echo "{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\", \"hash\": \"$HASH\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_FOLIA $NEW_FOLIA" | jq -s '.[1] - .[0]')
+            echo "Latest build for $version: $BUILD_ID"
+            
+            HASH=$(curl -s "https://api.papermc.io/v2/projects/folia/versions/$version/builds/$BUILD_ID" | jq -r '.downloads.application.sha256 // empty')
+            echo "Hash for $version build $BUILD_ID: $HASH"
+            
+            if [ "$BUILD_ID" != "null" ] && [ -n "$HASH" ]; then
+              SHOULD_ADD=$(echo "$CURRENT_FOLIA" | jq --arg v "$version" --arg b "$BUILD_ID" '
+                if length == 0 then true
+                else
+                  (.[] | select(.version == $v) | .buildId // 0) as $current |
+                  if $current == 0 then true
+                  else ($b | tonumber) > ($current | tonumber)
+                  end
+                end
+              ')
+              
+              if [ "$SHOULD_ADD" = "true" ]; then
+                CURRENT_BUILD=$(echo "$CURRENT_FOLIA" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
+                NEW_VERSION="{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\", \"hash\": \"$HASH\"}"
+                NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
+              else
+                CURRENT_BUILD=$(echo "$CURRENT_FOLIA" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
+              fi
+            fi
+          done
           
           if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
+            echo "New Folia versions found:"
+            echo "$NEW_VERSIONS" | jq .
             echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > folia-new.json
+            
+            jq --slurpfile new <(echo "$NEW_VERSIONS") \
+              '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
+              metadata/platforms/folia.json > folia-temp.json
+            mv folia-temp.json metadata/platforms/folia.json
+            echo "Folia metadata updated successfully"
           else
+            echo "No new Folia versions"
             echo "has_updates=false" >> $GITHUB_OUTPUT
           fi
 
-      # PURPUR (Purpur API)
       - name: Check Purpur updates
         id: purpur
         run: |
+          echo "Checking Purpur updates..."
           CURRENT_PURPUR=$(cat metadata/platforms/purpur.json | jq '.versions')
+          
           PURPUR_VERSIONS=$(curl -s "https://api.purpurmc.org/v2/versions" | jq '.versions')
+          echo "Found Purpur versions: $PURPUR_VERSIONS"
           
-          NEW_PURPUR=$(echo "$PURPUR_VERSIONS" | jq -r '.[]' | while read version; do
-            BUILD_ID=$(curl -s "https://api.purpurmc.org/v2/purpur/$version" | jq '.builds | max')
-            echo "{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_PURPUR $NEW_PURPUR" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > purpur-new.json
-          else
+          if [ "$PURPUR_VERSIONS" = "null" ] || [ "$PURPUR_VERSIONS" = "[]" ]; then
+            echo "No Purpur versions found or API error"
             echo "has_updates=false" >> $GITHUB_OUTPUT
+          else
+            NEW_VERSIONS="[]"
+            for version in $(echo "$PURPUR_VERSIONS" | jq -r '.[]'); do
+              echo "Checking version: $version"
+              BUILD_ID=$(curl -s "https://api.purpurmc.org/v2/purpur/$version" | jq '.builds | max')
+              echo "Latest build for $version: $BUILD_ID"
+              
+              if [ "$BUILD_ID" != "null" ]; then
+                SHOULD_ADD=$(echo "$CURRENT_PURPUR" | jq --arg v "$version" --arg b "$BUILD_ID" '
+                  if length == 0 then true
+                  else
+                    (.[] | select(.version == $v) | .buildId // 0) as $current |
+                    if $current == 0 then true
+                    else ($b | tonumber) > ($current | tonumber)
+                    end
+                  end
+                ')
+                
+                if [ "$SHOULD_ADD" = "true" ]; then
+                  CURRENT_BUILD=$(echo "$CURRENT_PURPUR" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                  echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
+                  NEW_VERSION="{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
+                  NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
+                else
+                  CURRENT_BUILD=$(echo "$CURRENT_PURPUR" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                  echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
+                fi
+              fi
+            done
+            
+            if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
+              echo "New Purpur versions found:"
+              echo "$NEW_VERSIONS" | jq .
+              echo "has_updates=true" >> $GITHUB_OUTPUT
+              
+              jq --slurpfile new <(echo "$NEW_VERSIONS") \
+                '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
+                metadata/platforms/purpur.json > purpur-temp.json
+              mv purpur-temp.json metadata/platforms/purpur.json
+              echo "Purpur metadata updated successfully"
+            else
+              echo "No new Purpur versions"
+              echo "has_updates=false" >> $GITHUB_OUTPUT
+            fi
           fi
 
-      # FABRIC (Fabric API)
-      - name: Check Fabric updates
-        id: fabric
-        run: |
-          CURRENT_FABRIC=$(cat metadata/platforms/fabric.json | jq '.versions')
-          
-          # Hole Game versions
-          GAME_VERSIONS=$(curl -s "https://meta.fabricmc.net/v2/versions/game" | jq '.[:5]')
-          
-          # Hole Loader versions
-          LOADER_VERSION=$(curl -s "https://meta.fabricmc.net/v2/versions/loader" | jq '.[0].version')
-          
-          # Hole Fabric API versions
-          API_VERSION=$(curl -s "https://meta.fabricmc.net/v2/versions/fabric-api" | jq '.[0].version')
-          
-          # Erstelle neue Fabric Versionen
-          NEW_FABRIC=$(echo "$GAME_VERSIONS" | jq --arg loader "$LOADER_VERSION" --arg api "$API_VERSION" \
-            '[.[] | {version: .version, buildId: $loader, fabricAPIVersion: $api}]')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_FABRIC $NEW_FABRIC" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > fabric-new.json
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-
-      # LEAF (Leaf API)
-      - name: Check Leaf updates
-        id: leaf
-        run: |
-          CURRENT_LEAF=$(cat metadata/platforms/leaf.json | jq '.versions')
-          LEAF_VERSIONS=$(curl -s "https://api.leafmc.one/v2/projects/leaf" | jq '.versions')
-          
-          NEW_LEAF=$(echo "$LEAF_VERSIONS" | jq -r '.[]' | while read version; do
-            BUILD_ID=$(curl -s "https://api.leafmc.one/v2/projects/leaf/versions/$version" | jq '.builds | max')
-            echo "{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_LEAF $NEW_LEAF" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > leaf-new.json
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-
-      # BUNGEECORD (Jenkins API)
-      - name: Check BungeeCord updates
-        id: bungeecord
-        run: |
-          CURRENT_BUNGEECORD=$(cat metadata/platforms/bungeecord.json | jq '.versions')
-          
-          # Hole neueste Build-Info
-          LATEST_BUILD=$(curl -s "https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/api/json" | jq '.number')
-          
-          NEW_BUNGEECORD=$(echo "[{\"version\": \"latest\", \"buildId\": \"$LATEST_BUILD\"}]" | jq '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_BUNGEECORD $NEW_BUNGEECORD" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > bungeecord-new.json
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-
-      # WATERFALL (PaperMC API)
       - name: Check Waterfall updates
         id: waterfall
         run: |
+          echo "Checking Waterfall updates..."
           CURRENT_WATERFALL=$(cat metadata/platforms/waterfall.json | jq '.versions')
+          
           WATERFALL_VERSIONS=$(curl -s "https://api.papermc.io/v2/projects/waterfall" | jq '.versions')
+          echo "Found Waterfall versions: $WATERFALL_VERSIONS"
           
-          NEW_WATERFALL=$(echo "$WATERFALL_VERSIONS" | jq -r '.[]' | while read version; do
+          NEW_VERSIONS="[]"
+          for version in $(echo "$WATERFALL_VERSIONS" | jq -r '.[]'); do
+            echo "Checking version: $version"
             BUILD_ID=$(curl -s "https://api.papermc.io/v2/projects/waterfall/versions/$version" | jq '.builds | max')
-            echo "{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_WATERFALL $NEW_WATERFALL" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > waterfall-new.json
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-          
-
-      # ADVANCEDSLIMEPAPER (InfernalSuite API)
-      - name: Check AdvancedSlimePaper updates
-        id: advancedslimepaper
-        run: |
-          CURRENT_ASP=$(cat metadata/platforms/advancedslimepaper.json | jq '.versions')
-          ASP_VERSIONS=$(curl -s "https://api.infernalsuite.com/v1/projects/asp/versions" | jq '.versions')
-          
-          NEW_ASP=$(echo "$ASP_VERSIONS" | jq -r '.[]' | while read version; do
-            VERSION_DATA=$(curl -s "https://api.infernalsuite.com/v1/projects/asp/versions/$version")
-            VERSION_HASH=$(echo "$VERSION_DATA" | jq -r '.version_hash')
-            HASH=$(echo "$VERSION_DATA" | jq -r '.hash')
-            echo "{\"version\": \"$version\", \"version_hash\": \"$VERSION_HASH\", \"hash\": \"$HASH\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_ASP $NEW_ASP" | jq -s '.[1] - .[0]')
+            echo "Latest build for $version: $BUILD_ID"
+            
+            if [ "$BUILD_ID" != "null" ]; then
+              SHOULD_ADD=$(echo "$CURRENT_WATERFALL" | jq --arg v "$version" --arg b "$BUILD_ID" '
+                if length == 0 then true
+                else
+                  (.[] | select(.version == $v) | .buildId // 0) as $current |
+                  if $current == 0 then true
+                  else ($b | tonumber) > ($current | tonumber)
+                  end
+                end
+              ')
+              
+              if [ "$SHOULD_ADD" = "true" ]; then
+                CURRENT_BUILD=$(echo "$CURRENT_WATERFALL" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
+                NEW_VERSION="{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
+                NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
+              else
+                CURRENT_BUILD=$(echo "$CURRENT_WATERFALL" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
+              fi
+            fi
+          done
           
           if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
+            echo "New Waterfall versions found:"
+            echo "$NEW_VERSIONS" | jq .
             echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > advancedslimepaper-new.json
+            
+            jq --slurpfile new <(echo "$NEW_VERSIONS") \
+              '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
+              metadata/platforms/waterfall.json > waterfall-temp.json
+            mv waterfall-temp.json metadata/platforms/waterfall.json
+            echo "Waterfall metadata updated successfully"
           else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-
-      # GATE (GitHub Releases)
-      - name: Check Gate updates
-        id: gate
-        run: |
-          CURRENT_GATE=$(cat metadata/platforms/gate.json | jq '.versions')
-          GATE_RELEASES=$(curl -s "https://api.github.com/repos/minekube/gate/releases" | jq '.[:5] | map({version: .tag_name | ltrimstr("v")})')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_GATE $GATE_RELEASES" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > gate-new.json
-          else
+            echo "No new Waterfall versions"
             echo "has_updates=false" >> $GITHUB_OUTPUT
           fi
 
-      # LIMBO (Jenkins API)
       - name: Check Limbo updates
         id: limbo
         run: |
+          echo "Checking Limbo updates..."
           CURRENT_LIMBO=$(cat metadata/platforms/limbo.json | jq '.versions')
           
-          # Hole neueste Builds von Jenkins
-          LIMBO_BUILDS=$(curl -s "https://ci.loohpjames.com/job/Limbo/api/json" | jq '.builds[:5]')
+          JENKINS_API="https://ci.loohpjames.com/job/Limbo/api/json"
+          LIMBO_BUILDS=$(curl -s "$JENKINS_API" | jq '.builds[] | {number: .number, url: .url}')
+          echo "Found Limbo builds: $LIMBO_BUILDS"
           
-          NEW_LIMBO=$(echo "$LIMBO_BUILDS" | jq -r '.[] | .number' | while read buildId; do
-            BUILD_DATA=$(curl -s "https://ci.loohpjames.com/job/Limbo/$buildId/api/json")
-            VERSION=$(echo "$BUILD_DATA" | jq -r '.actions[] | select(._class == "hudson.model.ParametersAction") | .parameters[] | select(.name == "MINECRAFT_VERSION") | .value')
-            JAR_VERSION=$(echo "$BUILD_DATA" | jq -r '.actions[] | select(._class == "hudson.model.ParametersAction") | .parameters[] | select(.name == "JAR_VERSION") | .value')
-            echo "{\"version\": \"$VERSION\", \"jarVersion\": \"$JAR_VERSION\", \"buildId\": \"$buildId\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_LIMBO $NEW_LIMBO" | jq -s '.[1] - .[0]')
+          NEW_VERSIONS="[]"
+          for build in $(echo "$LIMBO_BUILDS" | jq -c '.'); do
+            BUILD_NUMBER=$(echo "$build" | jq -r '.number')
+            BUILD_URL=$(echo "$build" | jq -r '.url')
+            
+            echo "Checking build: $BUILD_NUMBER"
+            
+            BUILD_DETAILS=$(curl -s "${BUILD_URL}api/json")
+            VERSION=$(echo "$BUILD_DETAILS" | jq -r '.actions[] | select(.type == "hudson.model.ParametersAction") | .parameters[] | select(.name == "MINECRAFT_VERSION") | .value // empty')
+            JAR_VERSION=$(echo "$BUILD_DETAILS" | jq -r '.actions[] | select(.type == "hudson.model.ParametersAction") | .parameters[] | select(.name == "JAR_VERSION") | .value // empty')
+            
+            echo "Build $BUILD_NUMBER: version=$VERSION, jarVersion=$JAR_VERSION"
+            
+            if [ -n "$VERSION" ] && [ -n "$JAR_VERSION" ]; then
+              SHOULD_ADD=$(echo "$CURRENT_LIMBO" | jq --arg v "$VERSION" --arg b "$BUILD_NUMBER" '
+                if length == 0 then true
+                else
+                  (.[] | select(.version == $v) | .buildId // 0) as $current |
+                  if $current == 0 then true
+                  else ($b | tonumber) > ($current | tonumber)
+                  end
+                end
+              ')
+              
+              if [ "$SHOULD_ADD" = "true" ]; then
+                CURRENT_BUILD=$(echo "$CURRENT_LIMBO" | jq --arg v "$VERSION" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "New version found: $VERSION build $BUILD_NUMBER (current: $CURRENT_BUILD)"
+                NEW_VERSION="{\"version\": \"$VERSION\", \"jarVersion\": \"$JAR_VERSION\", \"buildId\": \"$BUILD_NUMBER\"}"
+                NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
+              else
+                CURRENT_BUILD=$(echo "$CURRENT_LIMBO" | jq --arg v "$VERSION" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "Version $VERSION build $BUILD_NUMBER already exists or is older (current: $CURRENT_BUILD)"
+              fi
+            fi
+          done
           
           if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
+            echo "New Limbo versions found:"
+            echo "$NEW_VERSIONS" | jq .
             echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > limbo-new.json
+            
+            jq --slurpfile new <(echo "$NEW_VERSIONS") \
+              '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
+              metadata/platforms/limbo.json > limbo-temp.json
+            mv limbo-temp.json metadata/platforms/limbo.json
+            echo "Limbo metadata updated successfully"
           else
+            echo "No new Limbo versions"
             echo "has_updates=false" >> $GITHUB_OUTPUT
           fi
 
-      # NUKKIT (Maven API)
-      - name: Check Nukkit updates
-        id: nukkit
+      - name: Check Leaf updates
+        id: leaf
         run: |
-          CURRENT_NUKKIT=$(cat metadata/platforms/nukkit.json | jq '.versions')
+          echo "Checking Leaf updates..."
+          CURRENT_LEAF=$(cat metadata/platforms/leaf.json | jq '.versions')
           
-          # Hole neueste Version von Maven
-          NUKKIT_VERSION=$(curl -s "https://repo.opencollab.dev/api/maven/latest/versions/cn/nukkit/nukkit" | jq '.version')
+          LEAF_VERSIONS=$(curl -s "https://api.leafmc.one/v2/projects/leaf" | jq '.versions')
+          echo "Found Leaf versions: $LEAF_VERSIONS"
           
-          NEW_NUKKIT=$(echo "[{\"version\": \"latest\", \"buildId\": \"$NUKKIT_VERSION\"}]" | jq '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_NUKKIT $NEW_NUKKIT" | jq -s '.[1] - .[0]')
+          NEW_VERSIONS="[]"
+          for version in $(echo "$LEAF_VERSIONS" | jq -r '.[]'); do
+            echo "Checking version: $version"
+            BUILD_ID=$(curl -s "https://api.leafmc.one/v2/projects/leaf/versions/$version" | jq '.builds | max')
+            echo "Latest build for $version: $BUILD_ID"
+            
+            if [ "$BUILD_ID" != "null" ]; then
+              SHOULD_ADD=$(echo "$CURRENT_LEAF" | jq --arg v "$version" --arg b "$BUILD_ID" '
+                if length == 0 then true
+                else
+                  (.[] | select(.version == $v) | .buildId // 0) as $current |
+                  if $current == 0 then true
+                  else ($b | tonumber) > ($current | tonumber)
+                  end
+                end
+              ')
+              
+              if [ "$SHOULD_ADD" = "true" ]; then
+                CURRENT_BUILD=$(echo "$CURRENT_LEAF" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
+                NEW_VERSION="{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
+                NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
+              else
+                CURRENT_BUILD=$(echo "$CURRENT_LEAF" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
+              fi
+            fi
+          done
           
           if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
+            echo "New Leaf versions found:"
+            echo "$NEW_VERSIONS" | jq .
             echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > nukkit-new.json
+            
+            jq --slurpfile new <(echo "$NEW_VERSIONS") \
+              '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
+              metadata/platforms/leaf.json > leaf-temp.json
+            mv leaf-temp.json metadata/platforms/leaf.json
+            echo "Leaf metadata updated successfully"
           else
+            echo "No new Leaf versions"
             echo "has_updates=false" >> $GITHUB_OUTPUT
           fi
-
-      # PANDASPIGOT (Custom API)
-      - name: Check PandaSpigot updates
-        id: pandaspigot
-        run: |
-          CURRENT_PANDA=$(cat metadata/platforms/pandaspigot.json | jq '.versions')
-          PANDA_VERSIONS=$(curl -s "https://downloads.hpfxd.com/v2/projects/pandaspigot/versions" | jq '.versions')
-          
-          NEW_PANDA=$(echo "$PANDA_VERSIONS" | jq -r '.[]' | while read version; do
-            BUILD_ID=$(curl -s "https://downloads.hpfxd.com/v2/projects/pandaspigot/versions/$version" | jq '.builds | max')
-            echo "{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_PANDA $NEW_PANDA" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > pandaspigot-new.json
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-
-      # PUMPKIN (GitHub API)
-      - name: Check Pumpkin updates
-        id: pumpkin
-        run: |
-          CURRENT_PUMPKIN=$(cat metadata/platforms/pumpkin.json | jq '.versions')
-          PUMPKIN_COMMITS=$(curl -s "https://api.github.com/repos/Pumpkin-MC/Pumpkin/commits" | jq '.[:5] | map({version: .commit.message | split(" ")[0], commitHash: .sha})')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_PUMPKIN $PUMPKIN_COMMITS" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > pumpkin-new.json
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi
-
-      # SPIGOT (Custom API)
-      - name: Check Spigot updates
-        id: spigot
-        run: |
-          CURRENT_SPIGOT=$(cat metadata/platforms/spigot.json | jq '.versions')
-          SPIGOT_VERSIONS=$(curl -s "https://getbukkit.org/api/versions" | jq '.versions')
-          
-          NEW_SPIGOT=$(echo "$SPIGOT_VERSIONS" | jq -r '.[]' | while read version; do
-            BUILD_ID=$(curl -s "https://getbukkit.org/api/versions/$version" | jq '.buildId')
-            echo "{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
-          done | jq -s '.')
-          
-          NEW_VERSIONS=$(echo "$CURRENT_SPIGOT $NEW_SPIGOT" | jq -s '.[1] - .[0]')
-          
-          if [ "$(echo $NEW_VERSIONS | jq length)" -gt 0 ]; then
-            echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "$NEW_VERSIONS" > spigot-new.json
-          else
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-          fi   
-
-      # Update alle Platforms
-      - name: Update Paper metadata
-        if: steps.paper.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new paper-new.json \
-            '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
-            metadata/platforms/paper.json > paper-updated.json
-          mv paper-updated.json metadata/platforms/paper.json
-
-      - name: Update Velocity metadata
-        if: steps.velocity.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new velocity-new.json \
-            '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
-            metadata/platforms/velocity.json > velocity-updated.json
-          mv velocity-updated.json metadata/platforms/velocity.json
-
-      - name: Update Folia metadata
-        if: steps.folia.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new folia-new.json \
-            '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
-            metadata/platforms/folia.json > folia-updated.json
-          mv folia-updated.json metadata/platforms/folia.json
-
-      - name: Update Purpur metadata
-        if: steps.purpur.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new purpur-new.json \
-            '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
-            metadata/platforms/purpur.json > purpur-updated.json
-          mv purpur-updated.json metadata/platforms/purpur.json
-
-      - name: Update Fabric metadata
-        if: steps.fabric.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new fabric-new.json \
-            '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
-            metadata/platforms/fabric.json > fabric-updated.json
-          mv fabric-updated.json metadata/platforms/fabric.json
-
-      - name: Update Leaf metadata
-        if: steps.leaf.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new leaf-new.json \
-            '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
-            metadata/platforms/leaf.json > leaf-updated.json
-          mv leaf-updated.json metadata/platforms/leaf.json
-
-      - name: Update BungeeCord metadata
-        if: steps.bungeecord.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new bungeecord-new.json \
-            '.versions = (.versions + $new[0])' \
-            metadata/platforms/bungeecord.json > bungeecord-updated.json
-          mv bungeecord-updated.json metadata/platforms/bungeecord.json
-
-      - name: Update Waterfall metadata
-        if: steps.waterfall.outputs.has_updates == 'true'
-        run: |
-          jq --slurpfile new waterfall-new.json \
-            '.versions = (.versions + $new[0]) | .versions |= sort_by(.version) | .versions |= reverse' \
-            metadata/platforms/waterfall.json > waterfall-updated.json
-          mv waterfall-updated.json metadata/platforms/waterfall.json
-
+      
       - name: Create Pull Request
-        if: steps.paper.outputs.has_updates == 'true' || steps.velocity.outputs.has_updates == 'true' || steps.folia.outputs.has_updates == 'true' || steps.purpur.outputs.has_updates == 'true' || steps.fabric.outputs.has_updates == 'true' || steps.leaf.outputs.has_updates == 'true' || steps.bungeecord.outputs.has_updates == 'true' || steps.waterfall.outputs.has_updates == 'true'
+        if: steps.paper.outputs.has_updates == 'true' || steps.velocity.outputs.has_updates == 'true' || steps.folia.outputs.has_updates == 'true' || steps.purpur.outputs.has_updates == 'true' || steps.waterfall.outputs.has_updates == 'true' || steps.limbo.outputs.has_updates == 'true' || steps.leaf.outputs.has_updates == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update platform metadata with new versions"
-          title: "🔄 Platform Updates: New versions available"
+          title: "Platform Updates: New versions available"
           body: |
             ## Platform Updates
             
@@ -421,10 +425,9 @@ jobs:
             - **Velocity**: ${{ steps.velocity.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
             - **Folia**: ${{ steps.folia.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
             - **Purpur**: ${{ steps.purpur.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
-            - **Fabric**: ${{ steps.fabric.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
-            - **Leaf**: ${{ steps.leaf.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
-            - **BungeeCord**: ${{ steps.bungeecord.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
             - **Waterfall**: ${{ steps.waterfall.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
+            - **Limbo**: ${{ steps.limbo.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
+            - **Leaf**: ${{ steps.leaf.outputs.has_updates == 'true' && '✅ Updated' || '❌ No updates' }}
             
             ### Changes
             - Updated `metadata/platforms/*.json` files
