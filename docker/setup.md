@@ -6,3 +6,8 @@ docker swarm init
 docker stack deploy -c docker-compose.yml polocloud
 ```
 
+List all services
+```
+docker service ls
+```
+
