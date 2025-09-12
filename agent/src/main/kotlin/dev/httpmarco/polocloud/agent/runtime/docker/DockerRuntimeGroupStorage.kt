@@ -10,6 +10,7 @@ import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.properties.PropertyHolder
+import dev.httpmarco.polocloud.shared.template.Template
 import java.util.concurrent.CompletableFuture
 
 class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage {
@@ -66,22 +67,13 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
     }
 
     override fun create(group: AbstractGroup): AbstractGroup {
-        val data = mutableMapOf<String, String>()
-        data["polocloud"] = "true"
-
-        group.toSnapshot().allFields.map {
-            println("Key: ${it.key.name}, Value: ${it.value}")
-            data[it.key.name] = it.value.toString()
-        }
-
         val serviceSpec = ServiceSpec()
             .withName("polocloud-${group.name}")
-            .withLabels(data)
-            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec().withImage("open-jkd:jdk17")))
+            .withLabels(toGroupData(group))
+            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec().withImage("open-jdk:jdk17")))
             .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)))
 
         client.createServiceCmd(serviceSpec).exec()
-        println("created")
         return group
     }
 
@@ -107,16 +99,32 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
 
     private fun mapGroupData(data: Map<String, String>): AbstractGroup {
         return AbstractGroup(
-            name = data["name"] ?: "unknown",
-            minMemory = data["minMemory"]?.toInt() ?: 512,
-            maxMemory = data["maxMemory"]?.toInt() ?: 1024,
-            minOnlineServices = data["minOnlineServices"]?.toInt() ?: 1,
-            maxOnlineServices = data["maxOnlineServices"]?.toInt() ?: 10,
-            percentageToStartNewService = data["percentageToStartNewService"]?.toDouble() ?: 0.75,
-            platform = PlatformIndex(data["platformName"] ?: "default", data["platformVersion"] ?: "latest"),
+            name = data["name"] ?: "null",
+            minMemory = data["minMemory"]?.toInt() ?: -1,
+            maxMemory = data["maxMemory"]?.toInt() ?: -1,
+            minOnlineServices = data["minOnlineServices"]?.toInt() ?: -1,
+            maxOnlineServices = data["maxOnlineServices"]?.toInt() ?: -1,
+            percentageToStartNewService = data["percentageToStartNewService"]?.toDouble() ?: -1.0,
+            platform = PlatformIndex(data["platformName"] ?: "null", data["platformVersion"] ?: "null"),
             createdAt = data["createdAt"]?.toLong() ?: System.currentTimeMillis(),
-            templates = emptyList(),
+            templates = data["templates"]?.split(",")?.map { Template(it) } ?: mutableListOf(),
             properties = PropertyHolder()
         )
+    }
+
+    private fun toGroupData(group: AbstractGroup): Map<String, String> {
+        val data = mutableMapOf<String, String>()
+        data["polocloud"] = "true"
+        data["name"] = group.name
+        data["minMemory"] = group.minMemory.toString()
+        data["maxMemory"] = group.maxMemory.toString()
+        data["minOnlineServices"] = group.minOnlineService.toString()
+        data["maxOnlineServices"] = group.maxOnlineService.toString()
+        data["percentageToStartNewService"] = group.percentageToStartNewService.toString()
+        data["platformName"] = group.platform.name
+        data["platformVersion"] = group.platform.version
+        data["createdAt"] = group.createdAt.toString()
+        data["templates"] = group.templates.joinToString(",") { it.name }
+        return data
     }
 }
