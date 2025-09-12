@@ -156,26 +156,29 @@ export function CloudNavigation() {
           {cloudItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               {item.title === "Groups" ? (
-                <Collapsible defaultOpen className="group/collapsible">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="w-full px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
-                      <span className="flex items-center justify-between w-full">
-                        <span className="flex items-center space-x-2">
-                          <item.icon className="w-4 h-4" />
-                          <span 
-                            className="text-sm font-medium cursor-pointer hover:text-sidebar-accent-foreground"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              window.location.href = '/groups'
-                            }}
-                          >
-                            {item.title}
-                          </span>
+                <Collapsible className="group/collapsible">
+                  <div className="flex items-center">
+                    <SidebarMenuButton 
+                      className="flex-1 px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+                      onClick={() => window.location.href = '/groups'}
+                    >
+                      <span className="flex items-center space-x-2">
+                        <item.icon className="w-4 h-4" />
+                        <span className="text-sm font-medium">
+                          {item.title}
                         </span>
-                        <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
                       </span>
                     </SidebarMenuButton>
-                  </CollapsibleTrigger>
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 hover:bg-sidebar-accent"
+                      >
+                        <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                      </Button>
+                    </CollapsibleTrigger>
+                  </div>
                   
                   <CollapsibleContent>
                     <div className="ml-4 mt-1 space-y-1">
@@ -216,26 +219,29 @@ export function CloudNavigation() {
                   </CollapsibleContent>
                 </Collapsible>
               ) : item.title === "Services" ? (
-                <Collapsible defaultOpen className="group/collapsible">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="w-full px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200">
-                      <span className="flex items-center justify-between w-full">
-                        <span className="flex items-center space-x-2">
-                          <item.icon className="w-4 h-4" />
-                          <span 
-                            className="text-sm font-medium cursor-pointer hover:text-sidebar-accent-foreground"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              window.location.href = '/services'
-                            }}
-                          >
-                            {item.title}
-                          </span>
+                <Collapsible className="group/collapsible">
+                  <div className="flex items-center">
+                    <SidebarMenuButton 
+                      className="flex-1 px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200"
+                      onClick={() => window.location.href = '/services'}
+                    >
+                      <span className="flex items-center space-x-2">
+                        <item.icon className="w-4 h-4" />
+                        <span className="text-sm font-medium">
+                          {item.title}
                         </span>
-                        <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
                       </span>
                     </SidebarMenuButton>
-                  </CollapsibleTrigger>
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0 hover:bg-sidebar-accent"
+                      >
+                        <ChevronRight className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                      </Button>
+                    </CollapsibleTrigger>
+                  </div>
                   
                   <CollapsibleContent>
                     <div className="ml-4 mt-1 space-y-1">
@@ -283,7 +289,7 @@ export function CloudNavigation() {
                 </Collapsible>
 
               ) : item.collapsible ? (
-                <Collapsible defaultOpen className="group/collapsible">
+                <Collapsible className="group/collapsible">
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton className="w-full px-2 py-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-all duration-200">
                       <span className="flex items-center justify-between w-full">

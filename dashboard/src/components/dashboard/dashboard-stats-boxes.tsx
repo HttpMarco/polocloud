@@ -35,7 +35,7 @@ export function DashboardStatsBoxes({
                         <span className="text-xs font-medium text-muted-foreground">Current Memory</span>
                     </div>
                     <div className="text-lg font-bold text-foreground">
-                        {realMemoryUsage > 0 ? (
+                        {realMemoryUsage !== null && realMemoryUsage !== undefined ? (
                             <span>
                                 {Math.round(memorySpring.value)} MB
                             </span>
@@ -56,7 +56,7 @@ export function DashboardStatsBoxes({
                         <span className="text-xs font-medium text-muted-foreground">Current CPU</span>
                     </div>
                     <div className="text-lg font-bold text-foreground">
-                        {realCpuUsage > 0 ? (
+                        {realCpuUsage !== null && realCpuUsage !== undefined ? (
                             <span>
                                 {Math.round(cpuSpring.value * 10) / 10}%
                             </span>
@@ -77,7 +77,7 @@ export function DashboardStatsBoxes({
                         <span className="text-xs font-medium text-muted-foreground">Avg Memory</span>
                     </div>
                     <div className="text-lg font-bold text-foreground">
-                        {avgMemory && avgMemory > 0 ? (
+                        {avgMemory !== null && avgMemory !== undefined ? (
                             <span>
                                 {Math.round(avgMemorySpring.value)} MB
                             </span>
@@ -98,7 +98,7 @@ export function DashboardStatsBoxes({
                         <span className="text-xs font-medium text-muted-foreground">Avg CPU</span>
                     </div>
                     <div className="text-lg font-bold text-foreground">
-                        {avgCpu && avgCpu > 0 ? (
+                        {avgCpu !== null && avgCpu !== undefined ? (
                             <span>
                                 {Math.round(avgCpuSpring.value * 10) / 10}%
                             </span>

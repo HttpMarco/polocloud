@@ -17,11 +17,11 @@ export default function DashboardPage() {
     const [groupTrendDirection, setGroupTrendDirection] = useState<'up' | 'down' | 'stable'>('stable');
     const [serviceCount, setServiceCount] = useState<number>(0);
     const [isLoadingServices, setIsLoadingServices] = useState(true);
-    const [serviceTrend, setServiceTrend] = useState<string>('+0%');
+    const [serviceTrend, setServiceTrend] = useState<string>('0%');
     const [serviceTrendDirection, setServiceTrendDirection] = useState<'up' | 'down' | 'stable'>('stable');
 
-    const [realMemoryUsage, setRealMemoryUsage] = useState<number>(0);
-    const [realCpuUsage, setRealCpuUsage] = useState<number>(0);
+    const [realMemoryUsage, setRealMemoryUsage] = useState<number | null>(null);
+    const [realCpuUsage, setRealCpuUsage] = useState<number | null>(null);
     const [avgMemory, setAvgMemory] = useState<number | null>(null);
     const [avgCpu, setAvgCpu] = useState<number | null>(null);
     const [timeRange, setTimeRange] = useState<'10m' | '1d' | '3d' | '7d'>('7d');
@@ -199,34 +199,26 @@ export default function DashboardPage() {
                 if (countResponse.ok) {
                     const countData = await countResponse.json();
                     const runningCount = countData.serviceCount || 0;
-                    setServiceCount(runningCount);
-                }
-
-                const now = Date.now();
-                const oneDayAgo = now - (24 * 60 * 60 * 1000);
-                
-                const trendResponse = await fetch(`${API_ENDPOINTS.SERVICES.COUNT_WITH_RANGE(oneDayAgo, now)}`);
-                if (trendResponse.ok) {
-                    const trendData = await trendResponse.json();
-                    const rawPercentage = trendData.percentage || 0;
-                    const percentage = rawPercentage === 0 ? 0 : rawPercentage;
+                    const onlinePercentage = countData.percentage || 0;
                     
-                    if (percentage > 0) {
-                        setServiceTrend(`+${Math.round(percentage)}%`);
+                    setServiceCount(runningCount);
+
+                    if (onlinePercentage === 100) {
+                        setServiceTrend('100%');
                         setServiceTrendDirection('up');
-                    } else if (percentage < 0) {
-                        setServiceTrend(`${Math.round(percentage)}%`);
-                        setServiceTrendDirection('down');
+                    } else if (onlinePercentage > 0) {
+                        setServiceTrend(`${onlinePercentage}%`);
+                        setServiceTrendDirection('up');
                     } else {
-                        setServiceTrend('+0%');
-                        setServiceTrendDirection('stable');
+                        setServiceTrend('0%');
+                        setServiceTrendDirection('down');
                     }
                 } else {
-                    setServiceTrend('+0%');
-                    setServiceTrendDirection('stable');
+                    setServiceTrend('0%');
+                    setServiceTrendDirection('down');
                 }
             } catch  {
-                setServiceTrend('+0%');
+                setServiceTrend('0%');
                 setServiceTrendDirection('stable');
             } finally {
                 setIsLoadingServices(false);
@@ -242,19 +234,36 @@ export default function DashboardPage() {
             const response = await fetch(API_ENDPOINTS.SYSTEM.INFORMATION);
             if (response.ok) {
                 const data = await response.json();
+
+                let totalMemoryUsage = 0;
+                let totalCpuUsage = 0;
                 
-                if (Math.abs(data.memoryUsage - realMemoryUsage) > 1 || 
-                    Math.abs(data.cpuUsage - realCpuUsage) > 0.1) {
-                    setRealMemoryUsage(data.memoryUsage);
-                    setRealCpuUsage(data.cpuUsage);
+                if (data.memoryUsage && typeof data.memoryUsage === 'object') {
+                    totalMemoryUsage = data.memoryUsage.total || 0;
+                } else if (typeof data.memoryUsage === 'number') {
+                    totalMemoryUsage = data.memoryUsage;
+                }
+                
+                if (data.cpuUsage && typeof data.cpuUsage === 'object') {
+                    totalCpuUsage = data.cpuUsage.total || 0;
+                } else if (typeof data.cpuUsage === 'number') {
+                    totalCpuUsage = data.cpuUsage;
+                }
+
+                if (totalMemoryUsage > 0 || totalCpuUsage > 0) {
+                    setRealMemoryUsage(totalMemoryUsage);
+                    setRealCpuUsage(totalCpuUsage);
+                } else {
+                    setRealMemoryUsage(null);
+                    setRealCpuUsage(null);
                 }
             } else {
-                setRealMemoryUsage(2048);
-                setRealCpuUsage(25);
+                setRealMemoryUsage(null);
+                setRealCpuUsage(null);
             }
         } catch {
-            setRealMemoryUsage(2048);
-            setRealCpuUsage(25);
+            setRealMemoryUsage(null);
+            setRealCpuUsage(null);
         }
     }, [realMemoryUsage, realCpuUsage]);
 
@@ -267,17 +276,12 @@ export default function DashboardPage() {
             if (response.ok) {
                 const data = await response.json();
 
-                if (data.avgRam !== undefined && data.avgCpu !== undefined) {
-                    
-                    if (data.avgRam > 0 && data.avgCpu > 0) {
-                        setAvgMemory(data.avgRam);
-                        setAvgCpu(data.avgCpu);
-                    } else {
-                        
-                        setAvgMemory(null);
-                        setAvgCpu(null);
-                    }
-                    
+                const totalAvgRam = data.avgRam?.total || 0;
+                const totalAvgCpu = data.avgCpu?.total || 0;
+
+                if (totalAvgRam !== undefined && totalAvgCpu !== undefined) {
+                    setAvgMemory(totalAvgRam);
+                    setAvgCpu(totalAvgCpu);
                 } else {
                     setAvgMemory(null);
                     setAvgCpu(null);

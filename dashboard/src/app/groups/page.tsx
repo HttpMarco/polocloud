@@ -18,7 +18,6 @@ export default function GroupsPage() {
     const router = useRouter();
     const [groups, setGroups] = useState<Group[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
 
@@ -29,32 +28,22 @@ export default function GroupsPage() {
     const loadGroups = async () => {
         try {
             setIsLoading(true);
-            setError(null);
             
             const response = await fetch(API_ENDPOINTS.GROUPS.LIST);
-            if (response.ok) {
-                const data = await response.json();
-                
-                if (Array.isArray(data)) {
-                    setGroups(data);
-                } else if (data && typeof data === 'object' && 'message' in data) {
-
-                    if (data.message === 'No groups found') {
-                        setGroups([]);
-                    } else {
-                        setError(data.message || 'No groups found');
-                    }
-                } else {
-
-                    setError('Invalid response format from server');
-                }
+            const data = await response.json();
+            
+            if (response.ok && Array.isArray(data)) {
+                setGroups(data);
+            } else if (response.status === 400 && data.message === 'No groups found') {
+                // Backend returns 400 with "No groups found" - treat as empty array
+                setGroups([]);
             } else {
-                const errorData = await response.json();
-                setError(errorData.error || 'Failed to load groups');
+                // Any other response - set empty array
+                setGroups([]);
             }
         } catch {
-
-            setError('Failed to load groups');
+            // Always set empty array on any error to show UI
+            setGroups([]);
         } finally {
             setIsLoading(false);
         }
@@ -109,16 +98,6 @@ export default function GroupsPage() {
         );
     }
 
-    if (error) {
-        return (
-            <div className="w-full h-full flex items-center justify-center">
-                <div className="text-center">
-                    <p className="text-red-500 mb-4">{error}</p>
-                    <Button onClick={loadGroups}>Retry</Button>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 ultra-smooth-scroll">

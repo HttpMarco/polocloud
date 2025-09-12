@@ -90,9 +90,27 @@ export default function GroupEditPage() {
     }, [groupName, loadGroup]);
 
     const handleInputChange = (field: keyof typeof formData, value: string) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        let processedValue = value;
+        if (field === 'minMemory' || field === 'maxMemory' || field === 'minOnlineService' || field === 'maxOnlineService' || field === 'percentageToStartNewService') {
+            if (field === 'percentageToStartNewService') {
+                processedValue = value.replace(/[^0-9]/g, '');
+                if (processedValue === '' || parseInt(processedValue) < 0) {
+                    processedValue = '0';
+                }
+                if (parseInt(processedValue) > 100) {
+                    processedValue = '100';
+                }
+            } else {
+                processedValue = value.replace(/[^0-9]/g, '');
+                if (processedValue === '' || parseInt(processedValue) <= 0) {
+                    processedValue = '1';
+                }
+            }
+        }
 
-        const newData = { ...formData, [field]: value };
+        setFormData(prev => ({ ...prev, [field]: processedValue }));
+
+        const newData = { ...formData, [field]: processedValue };
         const hasChangesNow = Object.keys(newData).some(key =>
             newData[key as keyof typeof newData] !== originalData[key as keyof typeof originalData]
         );
@@ -275,6 +293,8 @@ export default function GroupEditPage() {
                                             <Input
                                                 id="minMemory"
                                                 type="number"
+                                                min="1"
+                                                step="1"
                                                 value={formData.minMemory}
                                                 onChange={(e) => handleInputChange('minMemory', e.target.value)}
                                                 placeholder="512"
@@ -287,6 +307,8 @@ export default function GroupEditPage() {
                                             <Input
                                                 id="maxMemory"
                                                 type="number"
+                                                min="1"
+                                                step="1"
                                                 value={formData.maxMemory}
                                                 onChange={(e) => handleInputChange('maxMemory', e.target.value)}
                                                 placeholder="2048"
@@ -318,6 +340,8 @@ export default function GroupEditPage() {
                                             <Input
                                                 id="minOnlineService"
                                                 type="number"
+                                                min="1"
+                                                step="1"
                                                 value={formData.minOnlineService}
                                                 onChange={(e) => handleInputChange('minOnlineService', e.target.value)}
                                                 placeholder="1"
@@ -330,6 +354,8 @@ export default function GroupEditPage() {
                                             <Input
                                                 id="maxOnlineService"
                                                 type="number"
+                                                min="1"
+                                                step="1"
                                                 value={formData.maxOnlineService}
                                                 onChange={(e) => handleInputChange('maxOnlineService', e.target.value)}
                                                 placeholder="5"
@@ -360,12 +386,12 @@ export default function GroupEditPage() {
                                         <Input
                                             id="percentageToStartNewService"
                                             type="number"
+                                            step="1"
                                             value={formData.percentageToStartNewService}
                                             onChange={(e) => handleInputChange('percentageToStartNewService', e.target.value)}
                                             placeholder="80"
                                             min="0"
                                             max="100"
-                                            step="0.1"
                                             className="border-border/50 bg-background/50 focus:border-[oklch(75.54%_0.1534_231.639,0.5)] focus:ring-[oklch(75.54%_0.1534_231.639,0.2)]"
                                         />
                                         <p className="text-sm text-muted-foreground">

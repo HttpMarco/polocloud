@@ -14,7 +14,7 @@ interface GroupCreateRequest {
   percentageToStartNewService: number;
   createdAt: number;
   templates: string[];
-  properties: Record<string, boolean>;
+  properties: Record<string, any>;
 }
 
 export async function POST(request: NextRequest) {
@@ -34,28 +34,20 @@ export async function POST(request: NextRequest) {
     
     const apiUrl = buildBackendUrl(backendIp, '/polocloud/api/v3/group/create');
 
-    const minMemoryMB = parseInt(body.minMemory.toString().replace(/\D/g, ''));
-    const maxMemoryMB = parseInt(body.maxMemory.toString().replace(/\D/g, ''));
-
-    const percentage = parseFloat(body.percentageToStartNewService.toString());
-
     const requestBody = {
       name: body.name,
-      minMemory: minMemoryMB,
-      maxMemory: maxMemoryMB,
+      minMemory: body.minMemory,
+      maxMemory: body.maxMemory,
       minOnlineService: body.minOnlineService,
       maxOnlineService: body.maxOnlineService,
       platform: {
         name: body.platform.name,
         version: body.platform.version
       },
-      percentageToStartNewService: percentage,
+      percentageToStartNewService: body.percentageToStartNewService,
       createdAt: body.createdAt,
       templates: body.templates,
-      properties: {
-        fallback: body.properties.fallback,
-        static: body.properties.static
-      }
+      properties: body.properties || {}
     };
     
     const response = await fetch(apiUrl, {
