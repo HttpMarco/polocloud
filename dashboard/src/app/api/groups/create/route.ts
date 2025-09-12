@@ -34,42 +34,21 @@ export async function POST(request: NextRequest) {
     
     const apiUrl = buildBackendUrl(backendIp, '/polocloud/api/v3/group/create');
 
-    const minMemoryMB = parseInt(body.minMemory.toString().replace(/\D/g, ''));
-    const maxMemoryMB = parseInt(body.maxMemory.toString().replace(/\D/g, ''));
-
-    const percentage = parseFloat(body.percentageToStartNewService.toString());
-
     const requestBody = {
       name: body.name,
-      minMemory: minMemoryMB,
-      maxMemory: maxMemoryMB,
+      minMemory: body.minMemory,
+      maxMemory: body.maxMemory,
       minOnlineService: body.minOnlineService,
       maxOnlineService: body.maxOnlineService,
       platform: {
         name: body.platform.name,
         version: body.platform.version
       },
-      percentageToStartNewService: parseFloat(percentage.toFixed(2)),
-      createdAt: Math.floor(body.createdAt / 1000),
+      percentageToStartNewService: body.percentageToStartNewService,
+      createdAt: body.createdAt,
       templates: body.templates,
-      properties: JSON.stringify({
-        "fallback": body.properties?.fallback || false,
-        "static": body.properties?.static || false
-      })
+      properties: body.properties || {}
     };
-    
-    console.log('Sending request to backend:', JSON.stringify(requestBody, null, 2));
-    console.log('Request body type check:', {
-      name: typeof requestBody.name,
-      minMemory: typeof requestBody.minMemory,
-      maxMemory: typeof requestBody.maxMemory,
-      minOnlineService: typeof requestBody.minOnlineService,
-      maxOnlineService: typeof requestBody.maxOnlineService,
-      percentageToStartNewService: typeof requestBody.percentageToStartNewService,
-      createdAt: typeof requestBody.createdAt,
-      templates: Array.isArray(requestBody.templates),
-      properties: typeof requestBody.properties
-    });
     
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -82,7 +61,6 @@ export async function POST(request: NextRequest) {
     
     if (!response.ok) {
       const errorData = await response.json();
-      console.log('Backend error response:', errorData);
       return NextResponse.json(
         { error: errorData.message || 'Failed to create group' },
         { status: response.status }
