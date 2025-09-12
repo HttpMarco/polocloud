@@ -2,11 +2,12 @@ package dev.httpmarco.polocloud.shared.properties
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
 
 private val propertySerializer = GsonBuilder().serializeNulls().create()
 
 open class PropertyHolder(
-    private val properties: MutableMap<String, JsonPrimitive> = mutableMapOf()
+    private val properties: MutableMap<String, JsonElement> = mutableMapOf()
 ) {
 
     fun <T> hasProperty(property: Property<T>) : Boolean {

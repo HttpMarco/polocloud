@@ -6,7 +6,7 @@ services:
     networks:
       - polocloud-net
     volumes:
-      - C:\Users\mirco\Desktop\te:/cloud/local
+      - C:\Users\nervi\Desktop\123:/cloud/local
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8080:8080"

@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
 import dev.httpmarco.polocloud.agent.runtime.RuntimeLoader
 import java.nio.file.Files
@@ -9,12 +10,9 @@ class DockerRuntimeLoader : RuntimeLoader {
 
     override fun runnable(): Boolean {
         return try {
-            val dockerEnv = Files.exists(Paths.get("/.dockerenv"))
-            val cgroupDocker = try {
-                Files.readAllLines(Paths.get("/proc/1/cgroup")).any { it.contains("docker") }
-            } catch (_: Exception) { false }
-            dockerEnv && cgroupDocker
-        } catch (_: Exception) {
+            return Files.exists(Paths.get("/.dockerenv")) || Files.exists(Paths.get("/run/.containerenv"))
+        } catch (e: Exception) {
+            i18n.debug("agent.runtime.docker.connection.failed", e.javaClass.simpleName, e.message)
             false
         }
     }
