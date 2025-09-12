@@ -2,16 +2,25 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.model.ContainerSpec
+import com.github.dockerjava.api.model.Mount
+import com.github.dockerjava.api.model.MountType
 import com.github.dockerjava.api.model.ServiceModeConfig
 import com.github.dockerjava.api.model.ServiceReplicatedModeOptions
 import com.github.dockerjava.api.model.ServiceSpec
 import com.github.dockerjava.api.model.TaskSpec
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
+import dev.httpmarco.polocloud.agent.utils.JavaUtils
+import dev.httpmarco.polocloud.common.language.Language
+import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.JAVA_PATH
 import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
+import java.util.ArrayList
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.addAll
+import kotlin.io.path.name
 
 class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage {
 
@@ -70,7 +79,18 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
         val serviceSpec = ServiceSpec()
             .withName("polocloud-${group.name}")
             .withLabels(toGroupData(group))
-            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec().withImage("open-jdk:jdk17")))
+            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec()
+                .withImage("openjdk:21-jdk")
+                .withDir("/app")
+                .withCommand(languageSpecificBootArguments(group))
+                .withMounts(
+                    listOf(
+                        Mount().withType(MountType.BIND)
+                            .withSource("C:\\Users\\nervi\\Desktop\\123\\temp/proxy-1")
+                            .withTarget("/app") // Bind mount host folder to container
+                    )
+                )
+            ))
             .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)))
 
         client.createServiceCmd(serviceSpec).exec()
@@ -126,5 +146,39 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
         data["createdAt"] = group.createdAt.toString()
         data["templates"] = group.templates.joinToString(",") { it.name }
         return data
+    }
+
+    protected fun languageSpecificBootArguments(group: AbstractGroup): ArrayList<String> {
+        val platform = group.platform()
+        val commands = ArrayList<String>()
+
+        when (platform.language) {
+            Language.JAVA -> {
+                commands.add(javaLanguagePath(group))
+                commands.addAll(
+                    listOf(
+                        "-Dterminal.jline=false",
+                        "-Dfile.encoding=UTF-8",
+                        "-Xms" + group.minMemory + "M",
+                        "-Xmx" + group.maxMemory + "M",
+                        "-jar",
+                        group.applicationPlatformFile().name
+                    )
+                )
+                commands.addAll(platform.arguments)
+            }
+
+            Language.GO, Language.RUST -> {
+                commands.addAll(currentOS.executableCurrentDirectoryCommand(group.applicationPlatformFile().name))
+            }
+        }
+        return commands
+    }
+
+    protected open fun javaLanguagePath(group: AbstractGroup) : String {
+        val javaPath = group.properties.get(JAVA_PATH)?.takeIf {
+            JavaUtils().isValidJavaPath(it)
+        } ?: System.getProperty("java.home")
+        return "${javaPath}/bin/java"
     }
 }

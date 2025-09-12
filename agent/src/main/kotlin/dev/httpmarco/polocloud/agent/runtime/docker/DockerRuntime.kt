@@ -1,10 +1,12 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.api.async.ResultCallback
+import com.github.dockerjava.api.model.Event
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
-import dev.httpmarco.polocloud.agent.runtime.Runtime
+import dev.httpmarco.polocloud.agent.runtime.*
 import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractThreadedRuntimeQueue
 import dev.httpmarco.polocloud.agent.runtime.local.LocalCloudInformationThread
 import dev.httpmarco.polocloud.agent.runtime.local.LocalCpuDetectionThread
@@ -38,6 +40,20 @@ class DockerRuntime : Runtime() {
     }
 
     override fun boot() {
+        client.eventsCmd()
+            .withEventTypeFilter("container")
+         //   .withActionFilter("start")   // <-- statt withEventFilter
+            .exec(object : ResultCallback.Adapter<Event>() {
+                override fun onNext(event: Event) {
+                    val containerId = event.id
+                    val serviceName = event.actor?.attributes?.get("com.docker.swarm.service.name")
+                    val taskId = event.actor?.attributes?.get("com.docker.swarm.task.id")
+                    val taskSlot = event.actor?.attributes?.get("com.docker.swarm.task.slot")
+
+                    println("Neuer Replica gestartet: Container=$containerId, Service=$serviceName, TaskID=$taskId, Slot=$taskSlot")
+                }
+            })
+
         runtimeQueue.start()
 
         this.runtimeCpuDetectionThread.start()
