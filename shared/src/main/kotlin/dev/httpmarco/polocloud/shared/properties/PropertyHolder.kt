@@ -7,7 +7,7 @@ import com.google.gson.JsonPrimitive
 private val propertySerializer = GsonBuilder().serializeNulls().create()
 
 open class PropertyHolder(
-    private val properties: MutableMap<String, JsonElement> = mutableMapOf()
+    private val properties: MutableMap<String, JsonPrimitive> = mutableMapOf()
 ) {
 
     fun <T> hasProperty(property: Property<T>) : Boolean {
@@ -19,7 +19,7 @@ open class PropertyHolder(
     }
 
     fun <T> with(property: Property<T>, value: T) : PropertyHolder {
-        properties[property.name] = propertySerializer.toJsonTree(value)
+        properties[property.name] = propertySerializer.toJsonTree(value) as JsonPrimitive
         return this
     }
 
@@ -27,7 +27,7 @@ open class PropertyHolder(
         properties.remove(property.name)
     }
 
-    fun raw(key: String, value: JsonElement) : PropertyHolder {
+    fun raw(key: String, value: JsonPrimitive) : PropertyHolder {
         properties[key] = value
         return this
     }

@@ -34,7 +34,7 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
     }
 
     override fun publish(abstractGroup: AbstractGroup) {
-        TODO("Not yet implemented")
+       this.create(group = abstractGroup)
     }
 
     override fun findAll(): List<AbstractGroup> {
@@ -47,8 +47,18 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
 
     override fun findAllAsync(): CompletableFuture<List<AbstractGroup>> = CompletableFuture.supplyAsync { findAll() }
 
-    override fun find(name: String): AbstractGroup {
-        TODO("Not yet implemented")
+    override fun find(name: String): AbstractGroup? {
+        val services = client.listServicesCmd()
+            .withLabelFilter(mapOf("polocloud" to "true", "name" to name))
+            .exec()
+            .filter { it.spec?.name == "polocloud-$name" }
+
+        if (services.isEmpty()) {
+            return null
+        }
+
+        val service = services.first()
+        return mapGroupData(service.spec?.labels ?: emptyMap())
     }
 
     override fun findAsync(name: String): CompletableFuture<AbstractGroup?> {
@@ -59,16 +69,18 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
         val data = mutableMapOf<String, String>()
 
         group.toSnapshot().allFields.map {
+            println("Key: ${it.key.name}, Value: ${it.value}")
             data[it.key.name] = it.value.toString()
         }
 
         val serviceSpec = ServiceSpec()
             .withName("polocloud-${group.name}")
             .withLabels(data)
-            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec().withImage("myimage:latest")))
+            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec().withImage("open-jkd:jdk17")))
             .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)))
 
         client.createServiceCmd(serviceSpec).exec()
+        println("created")
         return group
     }
 
