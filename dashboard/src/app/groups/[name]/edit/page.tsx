@@ -90,24 +90,18 @@ export default function GroupEditPage() {
     }, [groupName, loadGroup]);
 
     const handleInputChange = (field: keyof typeof formData, value: string) => {
-        // Prevent negative values for numeric fields
         let processedValue = value;
         if (field === 'minMemory' || field === 'maxMemory' || field === 'minOnlineService' || field === 'maxOnlineService' || field === 'percentageToStartNewService') {
-            // Remove any negative signs or non-numeric characters
             if (field === 'percentageToStartNewService') {
                 processedValue = value.replace(/[^0-9]/g, '');
-                // Ensure value is not negative or empty
                 if (processedValue === '' || parseInt(processedValue) < 0) {
                     processedValue = '0';
                 }
-                // Limit to max 100
                 if (parseInt(processedValue) > 100) {
                     processedValue = '100';
                 }
             } else {
-                // For memory and service count fields, only allow positive integers
                 processedValue = value.replace(/[^0-9]/g, '');
-                // Ensure value is not 0 or negative
                 if (processedValue === '' || parseInt(processedValue) <= 0) {
                     processedValue = '1';
                 }
