@@ -58,15 +58,15 @@ class BungeecordCloudCommand(
     private fun usage(config: ProxyConfig): String {
         return buildString {
             appendLine("")
-            appendLine(config.prefix() + "§7Available §b§l/polocloud commands:")
-            appendLine(config.prefix() + "§b/polocloud info")
-            appendLine(config.prefix() + "§b/polocloud list")
-            appendLine(config.prefix() + "§b/polocloud start <groupName>")
-            appendLine(config.prefix() + "§b/polocloud stop <server>")
-            appendLine(config.prefix() + "§b/polocloud create <template> [static]")
-            appendLine(config.prefix() + "§b/polocloud delete <server> §7")
-            appendLine(config.prefix() + "§b/polocloud maintenance <on|off> [group]")
-            appendLine(config.prefix() + "§b/polocloud broadcast <message>")
+            appendLine(config.prefix() + config.messages("usage_header"))
+            appendLine(config.prefix() + config.messages("usage_info"))
+            appendLine(config.prefix() + config.messages("usage_list"))
+            appendLine(config.prefix() + config.messages("usage_start"))
+            appendLine(config.prefix() + config.messages("usage_stop"))
+            appendLine(config.prefix() + config.messages("usage_create"))
+            appendLine(config.prefix() + config.messages("usage_delete"))
+            appendLine(config.prefix() + config.messages("usage_maintenance"))
+            appendLine(config.prefix() + config.messages("usage_broadcast"))
         }
     }
 

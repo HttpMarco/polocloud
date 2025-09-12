@@ -56,15 +56,15 @@ class VelocityCloudCommand(
     private fun usage(config: ProxyConfig): String {
         return buildString {
             appendLine("")
-            appendLine(config.prefix() + "<gray>Available <gradient:#00fdee:#118bd1><bold>/polocloud</bold></gradient> commands:")
-            appendLine(config.prefix() + "<aqua>/polocloud info</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud list</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud start <groupName></aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud stop <server></aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud create <template> [static]</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud delete <server></aqua> <gray>")
-            appendLine(config.prefix() + "<aqua>/polocloud maintenance <on|off> [group]</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud broadcast <message></aqua>")
+            appendLine(config.prefix() + config.messages("usage_header"))
+            appendLine(config.prefix() + config.messages("usage_info"))
+            appendLine(config.prefix() + config.messages("usage_list"))
+            appendLine(config.prefix() + config.messages("usage_start"))
+            appendLine(config.prefix() + config.messages("usage_stop"))
+            appendLine(config.prefix() + config.messages("usage_create"))
+            appendLine(config.prefix() + config.messages("usage_delete"))
+            appendLine(config.prefix() + config.messages("usage_maintenance"))
+            appendLine(config.prefix() + config.messages("usage_broadcast"))
         }
     }
 }
