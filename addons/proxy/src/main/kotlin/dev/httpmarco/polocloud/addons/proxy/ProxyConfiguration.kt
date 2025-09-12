@@ -16,11 +16,9 @@ data class ProxyConfiguration(
         
         // StartSubCommand messages
         "group_not_found" to "§cGroup §b%group% does not exist!",
-        "usage_start" to "§7Usage: §b/polocloud start <groupName>",
         
         // StopSubCommand messages
         "service_not_found" to "§cService §b%service% does not exist!",
-        "usage_stop" to "§7Usage: §b/polocloud stop <service>",
         
         // PlayersSubCommand messages
         "no_players_online_players" to "§7No players are currently online.",
@@ -44,6 +42,8 @@ data class ProxyConfiguration(
         "usage_info" to "§b/polocloud info",
         "usage_list" to "§b/polocloud list",
         "usage_players" to "§b/polocloud players",
+        "usage_stop" to "§b/polocloud stop <service>",
+        "usage_start" to "§b/polocloud start <groupName>",
         "usage_create" to "§b/polocloud create <template> [static]",
         "usage_delete" to "§b/polocloud delete <server>",
         "usage_maintenance" to "§b/polocloud maintenance <on|off> [group]",
