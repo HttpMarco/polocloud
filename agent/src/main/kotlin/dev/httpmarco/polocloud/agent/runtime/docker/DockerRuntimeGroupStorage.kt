@@ -67,6 +67,7 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
 
     override fun create(group: AbstractGroup): AbstractGroup {
         val data = mutableMapOf<String, String>()
+        data["polocloud"] = "true"
 
         group.toSnapshot().allFields.map {
             println("Key: ${it.key.name}, Value: ${it.value}")
