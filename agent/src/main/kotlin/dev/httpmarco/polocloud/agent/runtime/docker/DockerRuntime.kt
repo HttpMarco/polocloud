@@ -3,6 +3,8 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.async.ResultCallback
 import com.github.dockerjava.api.model.Event
+import com.github.dockerjava.api.model.Mount
+import com.github.dockerjava.api.model.MountType
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
@@ -42,15 +44,42 @@ class DockerRuntime : Runtime() {
     override fun boot() {
         client.eventsCmd()
             .withEventTypeFilter("container")
-         //   .withActionFilter("start")   // <-- statt withEventFilter
             .exec(object : ResultCallback.Adapter<Event>() {
                 override fun onNext(event: Event) {
+                    val action = event.action
                     val containerId = event.id
                     val serviceName = event.actor?.attributes?.get("com.docker.swarm.service.name")
-                    val taskId = event.actor?.attributes?.get("com.docker.swarm.task.id")
-                    val taskSlot = event.actor?.attributes?.get("com.docker.swarm.task.slot")
 
-                    println("Neuer Replica gestartet: Container=$containerId, Service=$serviceName, TaskID=$taskId, Slot=$taskSlot")
+                    if (action == "start" && serviceName != null) {
+
+                        val task = client.listTasksCmd()
+                            .withServiceFilter(serviceName)
+                            .exec()
+                            .firstOrNull { it.status?.containerStatus?.containerID == containerId }
+
+                        val taskSlot = task?.slot
+
+                        val service = client.inspectServiceCmd(serviceName).exec()
+                        val version = service.version?.index
+                        val spec = service.spec!!
+
+                        val updatedSpec = spec.withTaskTemplate(
+                            spec.taskTemplate!!.withContainerSpec(
+                                spec.taskTemplate!!.containerSpec!!.withMounts(
+                                    listOf(
+                                        Mount()
+                                            .withType(MountType.BIND)
+                                            .withSource("C:\\Users\\mirco\\Desktop\\te\\temp\\${serviceName.split("-").last()}-$taskSlot")
+                                            .withTarget("/app")
+                                    )
+                                )
+                            )
+                        )
+
+                        client.updateServiceCmd(service.id, updatedSpec)
+                            .withVersion(version!!)
+                            .exec()
+                    }
                 }
             })
 

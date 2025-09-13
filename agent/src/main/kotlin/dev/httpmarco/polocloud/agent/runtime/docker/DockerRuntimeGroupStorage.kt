@@ -2,19 +2,15 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.model.ContainerSpec
-import com.github.dockerjava.api.model.Mount
-import com.github.dockerjava.api.model.MountType
 import com.github.dockerjava.api.model.ServiceModeConfig
 import com.github.dockerjava.api.model.ServiceReplicatedModeOptions
 import com.github.dockerjava.api.model.ServiceSpec
 import com.github.dockerjava.api.model.TaskSpec
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
-import dev.httpmarco.polocloud.agent.utils.JavaUtils
 import dev.httpmarco.polocloud.common.language.Language
 import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
-import dev.httpmarco.polocloud.shared.properties.JAVA_PATH
 import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
 import java.util.ArrayList
@@ -22,7 +18,7 @@ import java.util.concurrent.CompletableFuture
 import kotlin.collections.addAll
 import kotlin.io.path.name
 
-class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage {
+open class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage {
 
     override fun updateGroup(group: AbstractGroup) {
         TODO("Not yet implemented")
@@ -83,13 +79,6 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
                 .withImage("openjdk:21-jdk")
                 .withDir("/app")
                 .withCommand(languageSpecificBootArguments(group))
-                .withMounts(
-                    listOf(
-                        Mount().withType(MountType.BIND)
-                            .withSource("C:\\Users\\nervi\\Desktop\\123\\temp/proxy-1")
-                            .withTarget("/app") // Bind mount host folder to container
-                    )
-                )
             ))
             .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)))
 
@@ -176,9 +165,6 @@ class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage 
     }
 
     protected open fun javaLanguagePath(group: AbstractGroup) : String {
-        val javaPath = group.properties.get(JAVA_PATH)?.takeIf {
-            JavaUtils().isValidJavaPath(it)
-        } ?: System.getProperty("java.home")
-        return "${javaPath}/bin/java"
+        return "java"
     }
 }
