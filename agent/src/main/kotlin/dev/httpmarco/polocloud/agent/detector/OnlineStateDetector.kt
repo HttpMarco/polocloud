@@ -42,7 +42,6 @@ class OnlineStateDetector : Detector {
 
             try {
                 Socket().use { socket ->
-                    println("Pinging service ${service.name()} at $host:$port")
                     socket.connect(InetSocketAddress(host, port), 500)
 
                     val out = socket.getOutputStream()
