@@ -3,29 +3,39 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 import com.github.dockerjava.api.DockerClient
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
-import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CopyOnWriteArrayList
 
 class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStorage<DockerService> {
 
-    private val services = CopyOnWriteArrayList<DockerService>()
+    override fun findAll(): List<DockerService> {
+        val services = client.listServicesCmd().exec()
+        val result = arrayListOf<DockerService>()
 
-    override fun findAll(): List<DockerService> = this.services
+        services.forEach {
+            if(!it.spec!!.labels!!.contains("polocloud")) {
+                return@forEach
+            }
 
+            val serviceName = it.spec!!.name
+
+
+
+          //  result.add(DockerService())
+            println("Found service: ${it.spec!!.name}")
+        }
+
+        return result
+    }
 
     override fun findAllAsync() = CompletableFuture.completedFuture(findAll())
 
     override fun find(name: String): DockerService? {
-        return this.services.stream()
-            .filter { it.name() == name }
-            .findFirst()
-            .orElse(null)
+       return null;
     }
 
     override fun findAsync(name: String): CompletableFuture<DockerService?> =
@@ -41,9 +51,7 @@ class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStor
     }
 
     override fun findByGroup(group: Group): List<DockerService> {
-        return this.services.stream()
-            .filter { it.group == group }
-            .toList()
+      return listOf()
     }
 
     override fun findByGroupAsync(group: Group): CompletableFuture<List<DockerService>> {
@@ -70,11 +78,11 @@ class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStor
     }
 
     override fun deployService(service: DockerService) {
-        this.services.add(service)
+
     }
 
     override fun dropService(service: DockerService) {
-        this.services.remove(service)
+
     }
 
     override fun implementedService(abstractService: AbstractService): DockerService {
