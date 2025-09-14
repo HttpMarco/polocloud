@@ -1,0 +1,76 @@
+---
+title: Group Types
+description: Overview of all available GroupType enums in PoloCloud.
+---
+
+import { DynamicCodeBlock } from 'fumadocs-ui/components/dynamic-codeblock';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Server, Settings, Database, Zap, Globe, Terminal } from 'lucide-react';
+
+## Overview of Group Types
+
+In PoloCloud, services are categorized by their **GroupType**, which defines their role or classification in the system. Understanding these types helps you filter and manage services efficiently.
+
+<div className="text-center mb-12">
+    <div className="w-20 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full mx-auto mb-6" />
+    <div className="text-xl text-muted-foreground max-w-3xl mx-auto">
+        Categorize your services by their function and purpose
+    </div>
+</div>
+
+## GroupType Enum
+
+The `GroupType` enum defines three main categories for services:
+
+<DynamicCodeBlock
+  lang="java"
+  code={`enum GroupType {
+    SERVICE,
+    SERVER,
+    PROXY
+}`}
+/>
+
+
+## Usage Examples
+
+<Callout type="info">
+**Group Type Filtering**
+
+Use group types to filter and manage services based on their function. This helps organize your cloud infrastructure and apply type-specific configurations.
+</Callout>
+
+### Filtering by Group Type
+
+<Tabs items={['Kotlin', 'Java']}>
+    <Tab value="Kotlin">
+        <DynamicCodeBlock lang="kotlin" code={`// Find all server groups
+val serverGroups = groupProvider.findAll()
+    .filter { it.type == GroupType.SERVER }
+
+// Find all proxy groups
+val proxyGroups = groupProvider.findAll()
+    .filter { it.type == GroupType.PROXY }
+
+// Find all service groups
+val serviceGroups = groupProvider.findAll()
+    .filter { it.type == GroupType.SERVICE }`} />
+    </Tab>
+    <Tab value="Java">
+        <DynamicCodeBlock lang="java" code={`// Find all server groups
+List<Group> serverGroups = groupProvider.findAll().stream()
+    .filter(group -> group.getType() == GroupType.SERVER)
+    .collect(Collectors.toList());
+
+// Find all proxy groups
+List<Group> proxyGroups = groupProvider.findAll().stream()
+    .filter(group -> group.getType() == GroupType.PROXY)
+    .collect(Collectors.toList());
+
+// Find all service groups
+List<Group> serviceGroups = groupProvider.findAll().stream()
+    .filter(group -> group.getType() == GroupType.SERVICE)
+    .collect(Collectors.toList());`} />
+    </Tab>
+</Tabs>
