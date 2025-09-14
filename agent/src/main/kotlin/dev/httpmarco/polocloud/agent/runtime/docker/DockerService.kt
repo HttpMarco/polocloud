@@ -51,4 +51,8 @@ class DockerService(
         group.minMemory,
         group.maxMemory
     )
+
+    override fun changeState(state: ServiceState) {
+        super.changeState(state)
+    }
 }

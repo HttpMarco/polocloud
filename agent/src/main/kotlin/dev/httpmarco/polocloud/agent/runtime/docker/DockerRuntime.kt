@@ -10,6 +10,7 @@ import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.*
+import dev.httpmarco.polocloud.v1.services.ServiceState
 
 
 class DockerRuntime : Runtime() {
@@ -51,9 +52,13 @@ class DockerRuntime : Runtime() {
 
                         val taskSlot = task?.slot
 
+                        // TODO handle all service labels
+
+
                         val service = client.inspectServiceCmd(serviceName).exec()
                         val version = service.version?.index
                         val spec = service.spec!!
+                        spec.labels?.set("state", ServiceState.STARTING.name)
 
                         val updatedSpec = spec.withTaskTemplate(
                             spec.taskTemplate!!.withContainerSpec(
@@ -67,7 +72,6 @@ class DockerRuntime : Runtime() {
                                 )
                             )
                         )
-
                         client.updateServiceCmd(service.id, updatedSpec)
                             .withVersion(version!!)
                             .exec()

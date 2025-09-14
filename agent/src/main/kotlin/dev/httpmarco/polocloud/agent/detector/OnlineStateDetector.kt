@@ -25,7 +25,7 @@ class OnlineStateDetector : Detector {
         val services = Agent.runtime.serviceStorage().findAll()
 
         services.forEach { service ->
-            val host = "127.0.0.1"
+            val host = service.hostname
             val port = service.port
 
             if (service.isBedrockLike()) {
@@ -42,6 +42,7 @@ class OnlineStateDetector : Detector {
 
             try {
                 Socket().use { socket ->
+                    println("Pinging service ${service.name()} at $host:$port")
                     socket.connect(InetSocketAddress(host, port), 500)
 
                     val out = socket.getOutputStream()
@@ -174,7 +175,7 @@ class OnlineStateDetector : Detector {
 
     private fun callOnline(service: Service) {
         if (service.state == ServiceState.STARTING) {
-            service.state = ServiceState.ONLINE
+            service.changeState(ServiceState.ONLINE)
             Agent.eventService.call(ServiceChangeStateEvent(service))
             i18n.info("agent.detector.service.online", service.name())
         }

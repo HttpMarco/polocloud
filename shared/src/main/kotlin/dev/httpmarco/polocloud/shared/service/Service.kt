@@ -55,6 +55,10 @@ open class Service(
         return "${groupName}-${id}"
     }
 
+    open fun changeState(state: ServiceState) {
+        this.state = state
+    }
+
     companion object {
         fun bindSnapshot(snapshot: ServiceSnapshot): Service {
             return Service(

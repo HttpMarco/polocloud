@@ -162,7 +162,7 @@ class GroupController : Controller("/group") {
 
         group = group as AbstractGroup
 
-        Agent.runtime.groupStorage().destroy(group)
+        Agent.runtime.groupStorage().delete(group)
         group.shutdownAll()
 
         context.defaultResponse(204)

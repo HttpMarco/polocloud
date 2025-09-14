@@ -24,8 +24,6 @@ class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStor
             if (spec.labels?.containsKey("polocloud") != true) return@forEach
 
             val serviceName = spec.name
-            val labels = spec.labels!!
-
             val tasks = client.listTasksCmd()
                 .withServiceFilter(service.id)
                 .exec()
@@ -33,37 +31,27 @@ class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStor
             tasks.filter {
                 return@filter it.status.state.name == "RUNNING"
             }.forEach { task ->
-                val containerId = task.status.containerStatus?.containerID
-
-                val hostname = if (containerId != null) {
-                    try {
-                        val containerInfo = client.inspectContainerCmd(containerId).exec()
-                        containerInfo.name?.trimStart('/') ?: "unknown"
-                    } catch (_: com.github.dockerjava.api.exception.NotFoundException) {
-                        "unknown"
-                    }
-                } else {
-                    "unknown"
-                }
+                val serviceInfo = client.inspectServiceCmd(service.id).exec()
+                val virtualIp = serviceInfo.endpoint?.virtualIPs?.firstOrNull()?.addr?.substringBefore('/') ?: "unknown"
+                val labels = task.spec.containerSpec!!.labels!!
 
                 result.add(
                     DockerService(
                         name = serviceName.split("-").getOrElse(1) { serviceName },
                         index = task.slot ?: -1,
-                        state = ServiceState.PREPARING,
+                        state = ServiceState.valueOf(labels["state"]!!),
                         platformType = GroupType.valueOf(labels["type"] ?: GroupType.UNRECOGNIZED.name),
                         environment = hashMapOf(),
-                        host = hostname,
+                        host = virtualIp,
                         port = 25565,
                         templates = listOf(),
                         information = dev.httpmarco.polocloud.shared.service.ServiceInformation(System.currentTimeMillis()),
-                        minMemory = labels["minMemory"]?.toIntOrNull() ?: 512,
-                        maxMemory = labels["maxMemory"]?.toIntOrNull() ?: 1024
+                        minMemory = labels["minMemory"]!!.toInt(),
+                        maxMemory = labels["maxMemory"]!!.toInt()
                     )
                 )
             }
         }
-
         return result
     }
 

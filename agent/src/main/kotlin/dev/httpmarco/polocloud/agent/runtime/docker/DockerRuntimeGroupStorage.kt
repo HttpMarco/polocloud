@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.model.ContainerSpec
+import com.github.dockerjava.api.model.NetworkAttachmentConfig
 import com.github.dockerjava.api.model.ServiceModeConfig
 import com.github.dockerjava.api.model.ServiceReplicatedModeOptions
 import com.github.dockerjava.api.model.ServiceSpec
@@ -13,6 +14,7 @@ import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
+import dev.httpmarco.polocloud.v1.services.ServiceState
 import java.util.ArrayList
 import java.util.concurrent.CompletableFuture
 import kotlin.io.path.name
@@ -152,6 +154,7 @@ open class DockerRuntimeGroupStorage(private val client: DockerClient) : Runtime
     private fun toGroupData(group: AbstractGroup): Map<String, String> = mapOf(
         "polocloud" to "true",
         "name" to group.name,
+        "state" to ServiceState.PREPARING.name,
         "minMemory" to group.minMemory.toString(),
         "maxMemory" to group.maxMemory.toString(),
         "minOnlineServices" to group.minOnlineService.toString(),
@@ -229,6 +232,9 @@ open class DockerRuntimeGroupStorage(private val client: DockerClient) : Runtime
                 ServiceModeConfig().withReplicated(
                     ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)
                 )
+            )
+            .withNetworks(
+                listOf(NetworkAttachmentConfig().withTarget(DOCKER_NETWORK))
             )
 
     /**
