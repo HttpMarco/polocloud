@@ -3,7 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import {
     Play,
     Square,
@@ -14,7 +16,9 @@ import {
     HardDrive,
     Settings,
     Terminal,
-    RefreshCcw
+    RefreshCcw,
+    Copy,
+    Check
 } from 'lucide-react';
 import { Service } from '@/types/services';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -47,24 +51,43 @@ const formatMemory = (current: number, max: number): string => {
     return `${current} / ${max} MB`;
 };
 
+const truncateHostname = (hostname: string, maxLength: number = 25): string => {
+    if (hostname.length <= maxLength) {
+        return hostname;
+    }
+    return hostname.substring(0, maxLength) + '...';
+};
+
 export function ServiceCard({ service, index, restartingServices, onRestart }: ServiceCardProps) {
     const isRestarting = restartingServices.includes(service.name);
+    const [copied, setCopied] = useState(false);
 
     const { hasPermission } = usePermissions();
     const canAccessTerminal = hasPermission('polocloud.service.screen');
     const canRestartService = hasPermission('polocloud.service.restart');
 
+    const handleCopyHostname = async () => {
+        try {
+            await navigator.clipboard.writeText(`${service.hostname}:${service.port}`);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy hostname:', err);
+        }
+    };
+
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.85 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-                duration: 0.8,
-                delay: index * 0.1,
-                ease: [0.34, 1.56, 0.64, 1]
-            }}
-        >
-            <Card className="border-border/40 flex flex-col relative bg-gradient-to-br from-card/80 via-card/60 to-card/80 shadow-lg transition-all duration-300 group w-80 h-96">
+        <TooltipProvider>
+            <motion.div
+                initial={{ opacity: 0, y: 40, scale: 0.85 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                    duration: 0.8,
+                    delay: index * 0.1,
+                    ease: [0.34, 1.56, 0.64, 1]
+                }}
+            >
+                <Card className="border-border/40 flex flex-col relative bg-gradient-to-br from-card/80 via-card/60 to-card/80 shadow-lg transition-all duration-300 group w-80 h-96">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(75.54%,15.34%,0.03)_0%,transparent_50%)] opacity-60 rounded-t-lg"/>
                 
                 <CardHeader className="pb-4 flex-shrink-0 relative z-10">
@@ -84,9 +107,33 @@ export function ServiceCard({ service, index, restartingServices, onRestart }: S
                                     {service.name}
                                 </CardTitle>
                                 <div className="flex items-center gap-2 mt-1">
-                                    <p className="text-sm text-muted-foreground">
-                                        {service.hostname}:{service.port}
-                                    </p>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <button
+                                                onClick={handleCopyHostname}
+                                                className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 cursor-pointer flex items-center gap-1 group"
+                                                title="Click to copy full hostname"
+                                            >
+                                                <span className="truncate">
+                                                    {truncateHostname(`${service.hostname}:${service.port}`)}
+                                                </span>
+                                                {copied ? (
+                                                    <Check className="w-3 h-3 text-green-500" />
+                                                ) : (
+                                                    <Copy className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                )}
+                                            </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="bottom" className="max-w-xs">
+                                            <div className="text-center">
+                                                <p className="font-medium">Full Hostname:</p>
+                                                <p className="text-xs break-all">{service.hostname}:{service.port}</p>
+                                                <p className="text-xs text-muted-foreground mt-1">
+                                                    {copied ? 'Copied to clipboard!' : 'Click to copy'}
+                                                </p>
+                                            </div>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 </div>
                             </div>
                         </div>
@@ -231,5 +278,6 @@ export function ServiceCard({ service, index, restartingServices, onRestart }: S
                 </CardContent>
             </Card>
         </motion.div>
+        </TooltipProvider>
     );
 }
