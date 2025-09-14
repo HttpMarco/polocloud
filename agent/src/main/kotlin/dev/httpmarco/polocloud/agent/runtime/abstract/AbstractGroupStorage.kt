@@ -36,17 +36,6 @@ abstract class AbstractGroupStorage(val path: Path = Path("local/groups")) : Run
         }.toList())
     }
 
-
-    override fun publish(abstractGroup: AbstractGroup) {
-        Files.writeString(groupPath(abstractGroup), STORAGE_GSON.toJson(abstractGroup))
-        this.cachedAbstractGroups.add(abstractGroup)
-    }
-
-    override fun destroy(abstractGroup: AbstractGroup) {
-        this.cachedAbstractGroups.remove(abstractGroup)
-        this.groupPath(abstractGroup).deleteIfExists()
-    }
-
     override fun findAll(): List<AbstractGroup> {
         return this.cachedAbstractGroups
     }
@@ -63,7 +52,8 @@ abstract class AbstractGroupStorage(val path: Path = Path("local/groups")) : Run
         if (this.find(group.name) != null) {
             return null // group already exists
         }
-        this.publish(group)
+        Files.writeString(groupPath(group), STORAGE_GSON.toJson(group))
+        this.cachedAbstractGroups.add(group)
         return group
     }
 
@@ -91,7 +81,8 @@ abstract class AbstractGroupStorage(val path: Path = Path("local/groups")) : Run
 
     override fun delete(name: String): AbstractGroup? {
         val group = this.find(name) ?: return null
-        this.destroy(group)
+        this.cachedAbstractGroups.remove(group)
+        this.groupPath(group).deleteIfExists()
         return group
     }
 

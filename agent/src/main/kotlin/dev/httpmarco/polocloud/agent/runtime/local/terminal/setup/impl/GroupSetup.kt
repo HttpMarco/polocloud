@@ -96,7 +96,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             i18n.warn("agent.local-runtime.setup.group.warnMultipleProxies")
         }
 
-        Agent.runtime.groupStorage().publish(group)
+        Agent.runtime.groupStorage().create(group)
         return group
     }
 }

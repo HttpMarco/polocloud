@@ -6,8 +6,7 @@ import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 
 interface RuntimeGroupStorage : SharedGroupProvider<AbstractGroup>, Reloadable {
 
-    fun destroy(abstractGroup: AbstractGroup)
-
-    fun publish(abstractGroup: AbstractGroup)
-
+    override fun reload() {
+        // Default implementation does nothing
+    }
 }

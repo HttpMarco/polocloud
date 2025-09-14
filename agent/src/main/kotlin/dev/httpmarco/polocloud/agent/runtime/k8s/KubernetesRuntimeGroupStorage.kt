@@ -9,18 +9,6 @@ import java.util.concurrent.CompletableFuture
 
 class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : RuntimeGroupStorage {
 
-    override fun reload() {
-        TODO("Not yet implemented")
-    }
-
-    override fun destroy(abstractGroup: AbstractGroup) {
-        TODO("Not yet implemented")
-    }
-
-    override fun publish(abstractGroup: AbstractGroup) {
-        TODO("Not yet implemented")
-    }
-
     override fun findAll(): List<AbstractGroup> {
         return kubeClient
             .resources(KubernetesGroup::class.java)

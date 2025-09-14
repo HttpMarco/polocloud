@@ -15,146 +15,160 @@ import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import dev.httpmarco.polocloud.shared.template.Template
 import java.util.ArrayList
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.addAll
 import kotlin.io.path.name
 
-open class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage {
+/**
+ * A runtime storage implementation for managing AbstractGroups using Docker Swarm.
+ * Each AbstractGroup is represented as a Docker Service.
+ *
+ * @param client The DockerClient used to interact with the Docker API.
+ */
+open class DockerRuntimeGroupStorage(private val client: DockerClient) : RuntimeGroupStorage {
 
-    override fun destroy(abstractGroup: AbstractGroup) {
-        val services = client.listServicesCmd()
-            .withLabelFilter(mapOf("polocloud" to "true", "name" to abstractGroup.name))
-            .exec()
-            .filter { it.spec?.name == "polocloud-${abstractGroup.name}" }
-
-        if (services.isEmpty()) {
-            return
-        }
-
-        services.forEach { service ->
-            client.removeServiceCmd(service.id).exec()
-        }
-    }
-
-    override fun publish(abstractGroup: AbstractGroup) {
-       this.create(group = abstractGroup)
-    }
-
+    /**
+     * Retrieves all groups stored in Docker.
+     *
+     * @return A list of all AbstractGroups.
+     */
     override fun findAll(): List<AbstractGroup> {
         val services = client.listServicesCmd()
             .withLabelFilter(mapOf("polocloud" to "true"))
             .exec()
-
         return services.map { mapGroupData(it.spec?.labels ?: emptyMap()) }
     }
 
-    override fun findAllAsync(): CompletableFuture<List<AbstractGroup>> = CompletableFuture.supplyAsync { findAll() }
+    /**
+     * Retrieves all groups asynchronously.
+     *
+     * @return A CompletableFuture containing a list of all AbstractGroups.
+     */
+    override fun findAllAsync(): CompletableFuture<List<AbstractGroup>> =
+        CompletableFuture.supplyAsync { findAll() }
 
-    override fun find(name: String): AbstractGroup? {
-        val services = client.listServicesCmd()
-            .withLabelFilter(mapOf("polocloud" to "true", "name" to name))
-            .exec()
-            .filter { it.spec?.name == "polocloud-$name" }
+    /**
+     * Finds a group by its name.
+     *
+     * @param name The name of the group to find.
+     * @return The AbstractGroup if found, null otherwise.
+     */
+    override fun find(name: String): AbstractGroup? =
+        findServiceByName(name)?.let { mapGroupData(it.spec?.labels ?: emptyMap()) }
 
-        if (services.isEmpty()) {
-            return null
-        }
+    /**
+     * Finds a group by its name asynchronously.
+     *
+     * @param name The name of the group to find.
+     * @return A CompletableFuture containing the AbstractGroup if found, null otherwise.
+     */
+    override fun findAsync(name: String): CompletableFuture<AbstractGroup?> =
+        CompletableFuture.supplyAsync { find(name) }
 
-        val service = services.first()
-        return mapGroupData(service.spec?.labels ?: emptyMap())
-    }
-
-    override fun findAsync(name: String): CompletableFuture<AbstractGroup?> {
-        return CompletableFuture.supplyAsync { find(name) }
-    }
-
+    /**
+     * Creates a Docker service for the given group.
+     *
+     * @param group The AbstractGroup to create.
+     * @return The created AbstractGroup.
+     */
     override fun create(group: AbstractGroup): AbstractGroup {
-        val serviceSpec = ServiceSpec()
-            .withName("polocloud-${group.name}")
-            .withLabels(toGroupData(group))
-            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec()
-                .withImage("openjdk:21-jdk")
-                .withDir("/app")
-                .withCommand(languageSpecificBootArguments(group))
-            ))
-            .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)))
-
-        client.createServiceCmd(serviceSpec).exec()
+        client.createServiceCmd(buildServiceSpec(group)).exec()
         return group
     }
 
-    override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
-        return CompletableFuture.supplyAsync { create(group) }
-    }
+    /**
+     * Creates a Docker service asynchronously.
+     *
+     * @param group The AbstractGroup to create.
+     * @return A CompletableFuture containing the created AbstractGroup.
+     */
+    override fun createAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> =
+        CompletableFuture.supplyAsync { create(group) }
 
+    /**
+     * Updates an existing Docker service to reflect the current state of the group.
+     *
+     * @param group The AbstractGroup with updated settings.
+     * @return The updated AbstractGroup, or null if the service does not exist.
+     */
     override fun update(group: AbstractGroup): AbstractGroup? {
-        val services = client.listServicesCmd()
-            .withLabelFilter(mapOf("polocloud" to "true", "name" to group.name))
-            .exec()
-            .filter { it.spec?.name == "polocloud-${group.name}" }
-
-        if (services.isEmpty()) {
-            return null
-        }
-
-        val service = services.first()
-        val updatedSpec = ServiceSpec()
-            .withName(service.spec?.name)
-            .withLabels(toGroupData(group))
-            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec()
-                .withImage("openjdk:21-jdk")
-                .withDir("/app")
-                .withCommand(languageSpecificBootArguments(group))
-            ))
-            .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions()
-                .withReplicas(group.minOnlineService)
-            ))
-        client.updateServiceCmd(service.id, updatedSpec).exec()
+        val service = findServiceByName(group.name) ?: return null
+        client.updateServiceCmd(service.id, buildServiceSpec(group, service.spec?.name)).exec()
         return group
     }
 
-    override fun updateAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {
-        return CompletableFuture.supplyAsync { update(group) }
-    }
+    /**
+     * Updates an existing Docker service asynchronously.
+     *
+     * @param group The AbstractGroup with updated settings.
+     * @return A CompletableFuture containing the updated AbstractGroup, or null if not found.
+     */
+    override fun updateAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> =
+        CompletableFuture.supplyAsync { update(group) }
 
+    /**
+     * Deletes a group by name and returns the deleted group.
+     *
+     * @param name The name of the group to delete.
+     * @return The deleted AbstractGroup, or null if it did not exist.
+     */
     override fun delete(name: String): AbstractGroup? {
-        TODO("Not yet implemented")
+        val group = find(name)
+        group?.let {
+            findServiceByName(group.name)?.let {
+                client.removeServiceCmd(it.id).exec()
+            }
+        }
+        return group
     }
 
-    override fun reload() {
-        TODO("Not yet implemented")
-    }
-
-    private fun mapGroupData(data: Map<String, String>): AbstractGroup {
-        return AbstractGroup(
+    /**
+     * Converts Docker service labels into an AbstractGroup object.
+     *
+     * @param data The labels map from a Docker service.
+     * @return The AbstractGroup represented by the labels.
+     */
+    private fun mapGroupData(data: Map<String, String>): AbstractGroup =
+        AbstractGroup(
             name = data["name"] ?: "null",
             minMemory = data["minMemory"]?.toInt() ?: -1,
             maxMemory = data["maxMemory"]?.toInt() ?: -1,
             minOnlineServices = data["minOnlineServices"]?.toInt() ?: -1,
             maxOnlineServices = data["maxOnlineServices"]?.toInt() ?: -1,
             percentageToStartNewService = data["percentageToStartNewService"]?.toDouble() ?: -1.0,
-            platform = PlatformIndex(data["platformName"] ?: "null", data["platformVersion"] ?: "null"),
+            platform = PlatformIndex(
+                data["platformName"] ?: "null",
+                data["platformVersion"] ?: "null"
+            ),
             createdAt = data["createdAt"]?.toLong() ?: System.currentTimeMillis(),
             templates = data["templates"]?.split(",")?.map { Template(it) } ?: mutableListOf(),
             properties = PropertyHolder()
         )
-    }
 
-    private fun toGroupData(group: AbstractGroup): Map<String, String> {
-        val data = mutableMapOf<String, String>()
-        data["polocloud"] = "true"
-        data["name"] = group.name
-        data["minMemory"] = group.minMemory.toString()
-        data["maxMemory"] = group.maxMemory.toString()
-        data["minOnlineServices"] = group.minOnlineService.toString()
-        data["maxOnlineServices"] = group.maxOnlineService.toString()
-        data["percentageToStartNewService"] = group.percentageToStartNewService.toString()
-        data["platformName"] = group.platform.name
-        data["platformVersion"] = group.platform.version
-        data["createdAt"] = group.createdAt.toString()
-        data["templates"] = group.templates.joinToString(",") { it.name }
-        return data
-    }
+    /**
+     * Converts an AbstractGroup into Docker service labels.
+     *
+     * @param group The AbstractGroup to convert.
+     * @return A map of label keys and values representing the group.
+     */
+    private fun toGroupData(group: AbstractGroup): Map<String, String> = mapOf(
+        "polocloud" to "true",
+        "name" to group.name,
+        "minMemory" to group.minMemory.toString(),
+        "maxMemory" to group.maxMemory.toString(),
+        "minOnlineServices" to group.minOnlineService.toString(),
+        "maxOnlineServices" to group.maxOnlineService.toString(),
+        "percentageToStartNewService" to group.percentageToStartNewService.toString(),
+        "platformName" to group.platform.name,
+        "platformVersion" to group.platform.version,
+        "createdAt" to group.createdAt.toString(),
+        "templates" to group.templates.joinToString(",") { it.name }
+    )
 
+    /**
+     * Generates the correct startup command for the group based on its platform.
+     *
+     * @param group The AbstractGroup to generate command for.
+     * @return A list of command arguments.
+     */
     protected fun languageSpecificBootArguments(group: AbstractGroup): ArrayList<String> {
         val platform = group.platform()
         val commands = ArrayList<String>()
@@ -166,8 +180,8 @@ open class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupSto
                     listOf(
                         "-Dterminal.jline=false",
                         "-Dfile.encoding=UTF-8",
-                        "-Xms" + group.minMemory + "M",
-                        "-Xmx" + group.maxMemory + "M",
+                        "-Xms${group.minMemory}M",
+                        "-Xmx${group.maxMemory}M",
                         "-jar",
                         group.applicationPlatformFile().name
                     )
@@ -179,10 +193,52 @@ open class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupSto
                 commands.addAll(currentOS.executableCurrentDirectoryCommand(group.applicationPlatformFile().name))
             }
         }
+
         return commands
     }
 
-    protected open fun javaLanguagePath(group: AbstractGroup) : String {
-        return "java"
-    }
+    /**
+     * Returns the Java executable path. Can be overridden for custom paths.
+     *
+     * @param group The AbstractGroup to run.
+     * @return The Java executable path as a string.
+     */
+    protected open fun javaLanguagePath(group: AbstractGroup): String = "java"
+
+    /**
+     * Builds a ServiceSpec for creating or updating a Docker service.
+     *
+     * @param group The AbstractGroup to represent.
+     * @param serviceName Optional service name; defaults to "polocloud-{group.name}".
+     * @return A ServiceSpec configured for Docker.
+     */
+    private fun buildServiceSpec(group: AbstractGroup, serviceName: String? = null): ServiceSpec =
+        ServiceSpec()
+            .withName(serviceName ?: "polocloud-${group.name}")
+            .withLabels(toGroupData(group))
+            .withTaskTemplate(
+                TaskSpec().withContainerSpec(
+                    ContainerSpec()
+                        .withImage("openjdk:21-jdk")
+                        .withDir("/app")
+                        .withCommand(languageSpecificBootArguments(group))
+                )
+            )
+            .withMode(
+                ServiceModeConfig().withReplicated(
+                    ServiceReplicatedModeOptions().withReplicas(group.minOnlineService)
+                )
+            )
+
+    /**
+     * Finds a Docker service by its group name.
+     *
+     * @param name The group name.
+     * @return The Docker service if found, null otherwise.
+     */
+    private fun findServiceByName(name: String) =
+        client.listServicesCmd()
+            .withLabelFilter(mapOf("polocloud" to "true", "name" to name))
+            .exec()
+            .firstOrNull { it.spec?.name == "polocloud-$name" }
 }
