@@ -1,6 +1,6 @@
 'use client';
 
-import { CompatibilityTable } from './compatibility-table';
+import { CompatibilityCards } from './compatibility-cards';
 import { motion } from 'framer-motion';
 
 export function CompatibilitySection() {
@@ -101,7 +101,7 @@ export function CompatibilitySection() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.0, delay: 1.0 }}
           >
-            <CompatibilityTable />
+            <CompatibilityCards />
           </motion.div>
         </motion.div>
       </div>

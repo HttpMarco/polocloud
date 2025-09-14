@@ -1,7 +1,8 @@
 "use client";
 
-import { Star, User } from "lucide-react";
+import { Star, User, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface FeedbackCardProps {
   username: string;
@@ -20,6 +21,12 @@ export default function FeedbackCard({
   createdAt,
   className
 }: FeedbackCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const shouldTruncate = description.length > 200;
+  const truncatedDescription = shouldTruncate && !isExpanded 
+    ? description.substring(0, 200) + "..."
+    : description;
   return (
     <div className={cn(
       "relative flex-shrink-0 w-96 p-8 rounded-2xl border border-border/50",
@@ -72,8 +79,29 @@ export default function FeedbackCard({
           </div>
         </div>
 
-        <div className="text-muted-foreground text-base leading-relaxed line-clamp-4">
-          &ldquo;{description}&rdquo;
+        <div className="space-y-3">
+          <div className="text-muted-foreground text-base leading-relaxed">
+            &ldquo;{truncatedDescription}&rdquo;
+          </div>
+          
+          {shouldTruncate && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex items-center gap-1 text-primary hover:text-primary/80 text-sm font-medium transition-colors duration-200 group"
+            >
+              {isExpanded ? (
+                <>
+                  <span>Read Less</span>
+                  <ChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                </>
+              ) : (
+                <>
+                  <span>Read More</span>
+                  <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-200" />
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         <div className="mt-6 pt-4 border-t border-border/30">

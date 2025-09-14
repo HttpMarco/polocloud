@@ -39,9 +39,9 @@ export function FooterBrand() {
                     <Github className="w-5 h-5" />
                 </a>
                 <Link 
-                    href="/docs/cloud" 
+                    href="/download" 
                     className="text-muted-foreground dark:text-white/60 hover:text-foreground dark:hover:text-white transition-all duration-300 hover:scale-105 transform p-2 rounded-lg border border-border/30 dark:border-white/10 hover:border-border/50 dark:hover:border-white/20"
-                    title="Documentation"
+                    title="Download"
                 >
                     <BookOpen className="w-5 h-5" />
                 </Link>

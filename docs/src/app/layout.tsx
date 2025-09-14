@@ -20,7 +20,7 @@ export const viewport = {
 
 export const metadata = {
     title: 'PoloCloud | Simplest and easiest Cloud for Minecraft',
-    description: 'Simplest and easiest Cloud for Minecraft',
+    description: 'Deploy and manage your Minecraft servers with ease. Built for performance, designed for simplicity. Support for Paper, Spigot, Fabric and more.',
     keywords: 'Minecraft, Cloud, Server Management, Hosting, PoloCloud, Gaming',
     authors: [{ name: 'PoloCloud Team' }],
     creator: 'PoloCloud',
@@ -29,19 +29,12 @@ export const metadata = {
         title: 'PoloCloud | Simplest and easiest Cloud for Minecraft',
         url: 'https://polocloud.de/',
         siteName: 'PoloCloud',
-        description: 'Simplest and easiest Cloud for Minecraft. Manage your servers with ease.',
+        description: 'Deploy and manage your Minecraft servers with ease. Built for performance, designed for simplicity.',
         images: [
             {
                 url: 'https://polocloud.de/logo.png',
                 width: 512,
                 height: 512,
-                alt: 'PoloCloud Logo - Minecraft Cloud Management',
-                type: 'image/png',
-            },
-            {
-                url: 'https://polocloud.de/og-image.png',
-                width: 1200,
-                height: 630,
                 alt: 'PoloCloud - Minecraft Cloud Management Platform',
                 type: 'image/png',
             },
@@ -53,11 +46,13 @@ export const metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'PoloCloud | Simplest and easiest Cloud for Minecraft',
-        description: 'Simplest and easiest Cloud for Minecraft. Manage your servers with ease.',
+        description: 'Deploy and manage your Minecraft servers with ease. Built for performance, designed for simplicity.',
         images: [
             {
-                url: 'https://polocloud.de/og-image.png',
+                url: 'https://polocloud.de/logo.png',
                 alt: 'PoloCloud - Minecraft Cloud Management Platform',
+                width: 512,
+                height: 512,
             }
         ],
         creator: '@polocloud',
@@ -122,13 +117,27 @@ export default function Layout({children}: { children: ReactNode }) {
             <meta name="msapplication-TileColor" content="#0078ff" />
             <meta name="msapplication-config" content="/browserconfig.xml" />
 
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
+            <meta property="og:image:width" content="512" />
+            <meta property="og:image:height" content="512" />
             <meta property="og:image:type" content="image/png" />
             <meta property="og:image:alt" content="PoloCloud - Minecraft Cloud Management Platform" />
 
-            <meta name="discord:invite" content="discord.polocloud.de" />
+            {/* Discord Embed Meta Tags */}
+            <meta name="discord:invite" content="https://discord.com/invite/mQ39S2EWNV" />
             <meta name="discord:server" content="PoloCloud Community" />
+            <meta property="og:type" content="website" />
+            <meta property="og:site_name" content="PoloCloud" />
+            
+            {/* Additional Open Graph Tags for better previews */}
+            <meta property="og:locale" content="en_US" />
+            <meta property="og:updated_time" content={new Date().toISOString()} />
+            
+            {/* Twitter Card Meta Tags */}
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:site" content="@polocloud" />
+            <meta name="twitter:creator" content="@polocloud" />
+            <meta name="twitter:image:width" content="512" />
+            <meta name="twitter:image:height" content="512" />
 
             <meta name="keywords" content="Minecraft, Cloud, Server Management, Hosting, PoloCloud, Gaming, Server Hosting, Minecraft Server" />
             <meta name="author" content="PoloCloud Team" />

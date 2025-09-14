@@ -36,11 +36,11 @@ export default function NotFound() {
                     </Link>
 
                     <Link
-                        href="/docs"
+                        href="/download"
                         className="inline-flex items-center gap-3 px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-all duration-200 font-medium group"
                     >
                         <Search className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        <span>Browse documentation</span>
+                        <span>Download PoloCloud</span>
                     </Link>
                 </div>
 

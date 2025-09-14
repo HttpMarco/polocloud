@@ -11,10 +11,10 @@ export function FooterLinks() {
     ];
 
     const documentationLinks = [
-        { href: '/docs/cloud', label: 'Getting Started', icon: BookOpen },
-        { href: '/docs/cloud/installation', label: 'Installation', icon: Code },
-        { href: '/docs/cloud/configuration', label: 'Configuration', icon: FileText },
-        { href: '/docs/cloud/api', label: 'API Reference', icon: ExternalLink }
+        { href: '/download', label: 'Download', icon: BookOpen },
+        { href: 'https://github.com/HttpMarco/polocloud', label: 'GitHub Repository', icon: ExternalLink, external: true },
+        { href: '/roadmap', label: 'Roadmap', icon: Map },
+        { href: '/changelog', label: 'Changelog', icon: FileText }
     ];
 
     const moreLinks = [
