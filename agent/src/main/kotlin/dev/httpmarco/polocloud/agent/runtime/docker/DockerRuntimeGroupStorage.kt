@@ -20,10 +20,6 @@ import kotlin.io.path.name
 
 open class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupStorage {
 
-    override fun updateGroup(group: AbstractGroup) {
-        TODO("Not yet implemented")
-    }
-
     override fun destroy(abstractGroup: AbstractGroup) {
         val services = client.listServicesCmd()
             .withLabelFilter(mapOf("polocloud" to "true", "name" to abstractGroup.name))
@@ -91,7 +87,29 @@ open class DockerRuntimeGroupStorage(val client: DockerClient) : RuntimeGroupSto
     }
 
     override fun update(group: AbstractGroup): AbstractGroup? {
-        TODO("Not yet implemented")
+        val services = client.listServicesCmd()
+            .withLabelFilter(mapOf("polocloud" to "true", "name" to group.name))
+            .exec()
+            .filter { it.spec?.name == "polocloud-${group.name}" }
+
+        if (services.isEmpty()) {
+            return null
+        }
+
+        val service = services.first()
+        val updatedSpec = ServiceSpec()
+            .withName(service.spec?.name)
+            .withLabels(toGroupData(group))
+            .withTaskTemplate(TaskSpec().withContainerSpec(ContainerSpec()
+                .withImage("openjdk:21-jdk")
+                .withDir("/app")
+                .withCommand(languageSpecificBootArguments(group))
+            ))
+            .withMode(ServiceModeConfig().withReplicated(ServiceReplicatedModeOptions()
+                .withReplicas(group.minOnlineService)
+            ))
+        client.updateServiceCmd(service.id, updatedSpec).exec()
+        return group
     }
 
     override fun updateAsync(group: AbstractGroup): CompletableFuture<AbstractGroup?> {

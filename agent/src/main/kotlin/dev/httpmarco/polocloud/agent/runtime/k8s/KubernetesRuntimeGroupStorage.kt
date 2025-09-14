@@ -9,10 +9,6 @@ import java.util.concurrent.CompletableFuture
 
 class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : RuntimeGroupStorage {
 
-    override fun updateGroup(group: AbstractGroup) {
-        TODO("Not yet implemented")
-    }
-
     override fun reload() {
         TODO("Not yet implemented")
     }

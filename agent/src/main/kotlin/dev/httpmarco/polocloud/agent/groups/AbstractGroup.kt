@@ -39,7 +39,7 @@ open class AbstractGroup(
 
     fun update() {
         // update the group
-        Agent.runtime.groupStorage().updateGroup(this)
+        Agent.runtime.groupStorage().update(this)
     }
 
     fun serviceCount(): Int {

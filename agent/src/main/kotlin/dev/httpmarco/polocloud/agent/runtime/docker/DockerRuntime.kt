@@ -8,9 +8,8 @@ import com.github.dockerjava.api.model.MountType
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
-import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.*
-import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractThreadedRuntimeQueue
 
 
 class DockerRuntime : Runtime() {
@@ -22,7 +21,6 @@ class DockerRuntime : Runtime() {
     private val runtimeFactory = DockerRuntimeFactory(client)
     private val templateStorage = DockerTemplateStorage(client)
     private val dockerConfigHolder = DockerConfigHolder()
-    private val runtimeQueue = AbstractThreadedRuntimeQueue()
 
     fun createLocalDockerClient(): DockerClient {
         val config = DefaultDockerClientConfig.createDefaultConfigBuilder().build()
@@ -77,7 +75,7 @@ class DockerRuntime : Runtime() {
                 }
             })
 
-        runtimeQueue.start()
+        logger.info("Already find running services&8: &f${serviceStorage().findAll().joinToString { it.name() }}")
     }
 
     override fun serviceStorage() = serviceStorage

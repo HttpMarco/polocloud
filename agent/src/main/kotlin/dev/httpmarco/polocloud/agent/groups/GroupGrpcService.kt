@@ -104,7 +104,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             properties
         )
 
-        Agent.runtime.groupStorage().updateGroup(group)
+        Agent.runtime.groupStorage().update(group)
         responseObserver.onNext(group.toSnapshot())
         responseObserver.onCompleted()
     }

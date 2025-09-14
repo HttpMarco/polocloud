@@ -75,7 +75,13 @@ abstract class AbstractGroupStorage(val path: Path = Path("local/groups")) : Run
         if(this.find(group.name) == null) {
             return null
         }
-        this.updateGroup(group)
+        // overwrite the existing group file with the new data
+        Files.writeString(groupPath(group), STORAGE_GSON.toJson(group))
+        // update the cached group
+        val index = this.cachedAbstractGroups.indexOfFirst { it.name == group.name }
+        if (index != -1) {
+            this.cachedAbstractGroups[index] = group
+        }
         return group
     }
 
@@ -91,18 +97,6 @@ abstract class AbstractGroupStorage(val path: Path = Path("local/groups")) : Run
 
     private fun groupPath(abstractGroup: AbstractGroup): Path {
         return path.resolve(abstractGroup.name + ".json")
-    }
-
-    override fun updateGroup(group: AbstractGroup) {
-        // overwrite the existing group file with the new data
-        Files.writeString(groupPath(group), STORAGE_GSON.toJson(group))
-        // update the cached group
-        val index = this.cachedAbstractGroups.indexOfFirst { it.name == group.name }
-        if (index != -1) {
-            this.cachedAbstractGroups[index] = group
-            return
-        }
-        i18n.warn("agent.local-runtime.group-storage.update-group.not-found", group.name)
     }
 
     override fun reload() {
