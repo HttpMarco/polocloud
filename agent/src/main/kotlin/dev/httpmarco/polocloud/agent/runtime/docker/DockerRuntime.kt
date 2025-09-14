@@ -91,6 +91,6 @@ class DockerRuntime : Runtime() {
     override fun configHolder() = dockerConfigHolder
 
     override fun sendCommand(command: String) {
-        TODO("Not yet implemented")
+        //todo DELETE HERE
     }
 }

@@ -157,6 +157,7 @@ open class DockerRuntimeGroupStorage(private val client: DockerClient) : Runtime
         "minOnlineServices" to group.minOnlineService.toString(),
         "maxOnlineServices" to group.maxOnlineService.toString(),
         "percentageToStartNewService" to group.percentageToStartNewService.toString(),
+        "type" to group.platform().type.name,
         "platformName" to group.platform.name,
         "platformVersion" to group.platform.version,
         "createdAt" to group.createdAt.toString(),
