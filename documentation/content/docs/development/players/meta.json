@@ -1,0 +1,9 @@
+{
+  "title": "Players",
+  "pages": [
+    "find-all",
+    "find-by-name", 
+    "find-by-service",
+    "player-count"
+  ]
+}
