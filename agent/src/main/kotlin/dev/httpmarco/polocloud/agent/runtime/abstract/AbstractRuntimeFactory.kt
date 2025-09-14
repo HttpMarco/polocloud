@@ -47,8 +47,8 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
             return
         }
 
-        val platform = service.group.platform()
-        val version = service.group.platform.version
+        val platform = service.group().platform()
+        val version = service.group().platform.version
 
         val environment = this.environment(service)
 
@@ -74,7 +74,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
         Agent.runtime.templateStorage().bindTemplate(service)
 
         // copy the platform files to the service path and setup service
-        platform.prepare(path, service.group.platform.version, environment)
+        platform.prepare(path, service.group().platform.version, environment)
 
         val serverIcon = this.javaClass.classLoader.getResource("server-icon.png")!!
         val serverIconPath = path.resolve("server-icon.png")
@@ -102,8 +102,8 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
      * @see PlatformParameters
      */
     protected fun environment(service: T) : PlatformParameters {
-        val version = service.group.platform.version
-        val platform = service.group.platform()
+        val version = service.group().platform.version
+        val platform = service.group().platform()
         val versionObject = platform.version(version)
 
         val environment = PlatformParameters(
@@ -119,7 +119,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
         environment.addParameter("file_suffix", platform.language.suffix())
-        environment.addParameter("filename", service.group.applicationPlatformFile().name)
+        environment.addParameter("filename", service.group().applicationPlatformFile().name)
 
         val velocityPlatforms = listOf("velocity", "gate")
         environment.addParameter("velocity_use", Agent.runtime.groupStorage().findAll().stream().anyMatch { velocityPlatforms.contains(it.platform().name) })
@@ -140,7 +140,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
             runningCacheProcesses.remove(processEntry)
 
             val servicesToBoot =
-                waitingServices.filter { it.group.platform.name == platform.name && it.group.platform.version == version }
+                waitingServices.filter { it.group().platform.name == platform.name && it.group().platform.version == version }
             servicesToBoot.forEach {
                 this.bootApplication(it)
             }
@@ -149,7 +149,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
     }
 
     protected fun languageSpecificBootArguments(service: T): ArrayList<String> {
-        val platform = service.group.platform()
+        val platform = service.group().platform()
         val commands = ArrayList<String>()
 
         when (platform.language) {
@@ -162,21 +162,21 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
                         "-Xms" + service.minMemory + "M",
                         "-Xmx" + service.maxMemory + "M",
                         "-jar",
-                        service.group.applicationPlatformFile().name
+                        service.group().applicationPlatformFile().name
                     )
                 )
                 commands.addAll(platform.arguments)
             }
 
             Language.GO, Language.RUST -> {
-                commands.addAll(currentOS.executableCurrentDirectoryCommand(service.group.applicationPlatformFile().name))
+                commands.addAll(currentOS.executableCurrentDirectoryCommand(service.group().applicationPlatformFile().name))
             }
         }
         return commands
     }
 
     protected open fun javaLanguagePath(service: T) : String {
-        val javaPath = service.group.properties.get(JAVA_PATH)?.takeIf {
+        val javaPath = service.group().properties.get(JAVA_PATH)?.takeIf {
             JavaUtils().isValidJavaPath(it)
         } ?: System.getProperty("java.home")
         return "${javaPath}/bin/java"

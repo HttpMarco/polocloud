@@ -8,11 +8,37 @@ import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangePl
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.shared.service.ServiceInformation
+import dev.httpmarco.polocloud.shared.template.Template
+import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
-abstract class AbstractService(val group: AbstractGroup) :
+abstract class AbstractService(
+    name: String,
+    index: Int,
+    state: ServiceState,
+    platformType: GroupType,
+    environment: HashMap<String, String>,
+    host: String,
+    port: Int,
+    templates: List<Template>,
+    information: ServiceInformation,
+    minMemory: Int,
+    maxMemory: Int
+) : Service(
+    name,
+    index,
+    state,
+    platformType,
+    environment,
+    host,
+    port,
+    templates,
+    information,
+    minMemory,
+    maxMemory
+) {
 
-    Service(
+    constructor(group: AbstractGroup) : this(
         group.name,
         IndexDetector.findIndex(group),
         ServiceState.PREPARING,
@@ -24,10 +50,14 @@ abstract class AbstractService(val group: AbstractGroup) :
         ServiceInformation(System.currentTimeMillis()),
         group.minMemory,
         group.maxMemory
-    ) {
+    )
+
+    fun group(): AbstractGroup {
+        return Agent.runtime.groupStorage().find(groupName)!!
+    }
 
     init {
-        properties += group.properties.all().map { it.key to it.value.toString() }.toMap()
+        properties += group()!!.properties.all().map { it.key to it.value.toString() }.toMap()
         Agent.eventProvider().call(ServiceChangeStateEvent(this))
     }
 

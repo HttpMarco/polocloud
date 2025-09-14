@@ -50,7 +50,7 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : AbstractRuntimeFacto
         // Attempt to gracefully shutdown the process
         service.process?.let { process ->
             try {
-                val shutdownCommand = service.group.platform().shutdownCommand
+                val shutdownCommand = service.group().platform().shutdownCommand
                 if (shutdownCommand.isNotEmpty() && shutdownCleanUp && service.executeCommand(shutdownCommand)) {
                     // Wait a short time for graceful exit
                     if (process.waitFor(5, TimeUnit.SECONDS)) {
@@ -123,8 +123,8 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : AbstractRuntimeFacto
      * Waits until CPU usage and concurrent starts are under configured limits.
      */
     override fun runRuntimeBoot(service: LocalService) {
-        val version = service.group.platform.version
-        val platform = service.group.platform()
+        val version = service.group().platform.version
+        val platform = service.group().platform()
         val versionObject = platform.version(version)
 
         // Check that the service runtime matches required version
@@ -133,14 +133,14 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : AbstractRuntimeFacto
             if (currentRuntime == null) {
                 i18n.warn(
                     "agent.local-runtime.factory.boot.missing-runtime",
-                    service.group.platform().language,
+                    service.group().platform().language,
                     versionObject?.requiredRuntimeVersion
                 )
             } else {
                 i18n.warn(
                     "agent.local-runtime.factory.boot.wrong-runtime",
                     currentRuntime,
-                    service.group.platform().language,
+                    service.group().platform().language,
                     versionObject?.requiredRuntimeVersion
                 )
             }

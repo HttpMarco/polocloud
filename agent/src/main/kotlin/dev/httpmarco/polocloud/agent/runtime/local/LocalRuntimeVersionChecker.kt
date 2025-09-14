@@ -3,11 +3,11 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.common.version.runtimeVersion
 
 fun checkRuntimeVersion(service: LocalService): Pair<Boolean, String?> {
-    val requiredVersionValue = service.group.platform()
-        .version(service.group.platform.version)
+    val requiredVersionValue = service.group().platform()
+        .version(service.group().platform.version)
         ?.requiredRuntimeVersion ?: return true to null
 
-    val currentVersion = runtimeVersion(service.group.platform().language)
+    val currentVersion = runtimeVersion(service.group().platform().language)
     if (currentVersion.isEmpty()) return false to null
 
     val operatorRegex = Regex("""^(>=|<=|>|<|==)\s*(.+)""")

@@ -41,7 +41,7 @@ class LocalRuntimeServiceStorage : RuntimeServiceStorage<LocalService> {
 
     override fun findByGroup(group: Group): List<LocalService> {
         return this.services.stream()
-            .filter { it.group == group }
+            .filter { it.group() == group }
             .toList()
     }
 

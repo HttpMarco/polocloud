@@ -35,7 +35,7 @@ class JLine3Completer(private val terminal: JLine3Terminal) : Completer {
                 return
             }
 
-            val commands = arrayOf("exit", service.group.platform().shutdownCommand)
+            val commands = arrayOf("exit", service.group().platform().shutdownCommand)
             for (command in commands) {
                 if (command.startsWith(line.word())) {
                     candidates.add(Candidate(command))
