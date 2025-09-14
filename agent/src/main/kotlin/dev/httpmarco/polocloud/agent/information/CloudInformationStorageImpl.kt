@@ -7,7 +7,7 @@ import dev.httpmarco.polocloud.shared.information.AggregateCloudInformation
 import dev.httpmarco.polocloud.shared.information.CloudInformation
 import dev.httpmarco.polocloud.shared.information.StatAggregate
 
-private val cachedInformation =  mutableListOf<CloudStatistic>()
+private val cachedInformation = mutableListOf<CloudStatistic>()
 
 private val minuteAggregates = mutableMapOf<Long, StatAggregate>()
 private val hourAggregates = mutableMapOf<Long, StatAggregate>()
@@ -29,41 +29,24 @@ class CloudInformationStorageImpl : CloudInformationStorage {
         return cachedInformation.map { it.toCloudInformation() }
     }
 
-    override fun findMinutes(from: Long, to: Long): List<AggregateCloudInformation> {
+
+    private fun findAggregate(from: Long, to: Long, slot: Long): List<AggregateCloudInformation> {
         return minuteAggregates
-            .filterKeys { it in (from / 60000)..(to / 60000) }
+            .filterKeys { it in (from / slot)..(to / slot) }
             .map { (bucket, agg) ->
                 AggregateCloudInformation(
-                    timestamp = bucket * 60000,
+                    timestamp = bucket * slot,
                     avgCpu = if (agg.count > 0) agg.cpuSum / agg.count else 0.0,
                     avgRam = if (agg.count > 0) agg.ramSum / agg.count else 0.0
                 )
             }
     }
 
-    override fun findHours(from: Long, to: Long): List<AggregateCloudInformation> {
-        return hourAggregates
-            .filterKeys { it in (from / 3600000)..(to / 3600000) }
-            .map { (bucket, agg) ->
-                AggregateCloudInformation(
-                    timestamp = bucket * 3600000,
-                    avgCpu = if (agg.count > 0) agg.cpuSum / agg.count else 0.0,
-                    avgRam = if (agg.count > 0) agg.ramSum / agg.count else 0.0
-                )
-            }
-    }
+    override fun findMinutes(from: Long, to: Long) = findAggregate(from, to, 60000)
 
-    override fun findDays(from: Long, to: Long): List<AggregateCloudInformation> {
-        return dayAggregates
-            .filterKeys { it in (from / 86400000)..(to / 86400000) }
-            .map { (bucket, agg) ->
-                AggregateCloudInformation(
-                    timestamp = bucket * 86400000,
-                    avgCpu = if (agg.count > 0) agg.cpuSum / agg.count else 0.0,
-                    avgRam = if (agg.count > 0) agg.ramSum / agg.count else 0.0
-                )
-            }
-    }
+    override fun findHours(from: Long, to: Long) = findAggregate(from, to, 3600000)
+
+    override fun findDays(from: Long, to: Long) = findAggregate(from, to, 86400000)
 
     override fun findAverage(from: Long, to: Long): AggregateCloudInformation {
         val relevant = cachedInformation.filter { it.timestamp in from..to }
