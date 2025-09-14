@@ -222,6 +222,7 @@ open class DockerRuntimeGroupStorage(private val client: DockerClient) : Runtime
             .withTaskTemplate(
                 TaskSpec().withContainerSpec(
                     ContainerSpec()
+                        // TODO use custom images from config
                         .withImage("openjdk:21-jdk")
                         .withDir("/app")
                         .withCommand(languageSpecificBootArguments(group))
