@@ -57,6 +57,8 @@ open class Service(
 
     open fun changeState(state: ServiceState) {
         this.state = state
+
+        // TODO update service in docker storage
     }
 
     companion object {

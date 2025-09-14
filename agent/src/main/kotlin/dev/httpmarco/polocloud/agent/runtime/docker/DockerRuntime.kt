@@ -53,12 +53,13 @@ class DockerRuntime : Runtime() {
                         val taskSlot = task?.slot
 
                         // TODO handle all service labels
+                        //   "state" to ServiceState.PREPARING.name,
 
 
                         val service = client.inspectServiceCmd(serviceName).exec()
                         val version = service.version?.index
                         val spec = service.spec!!
-                        spec.labels?.set("state", ServiceState.STARTING.name)
+                       // spec.labels?.set("state", ServiceState.STARTING.name)
 
                         val updatedSpec = spec.withTaskTemplate(
                             spec.taskTemplate!!.withContainerSpec(
@@ -69,9 +70,14 @@ class DockerRuntime : Runtime() {
                                             .withSource("C:\\Users\\mirco\\Desktop\\te\\temp\\${serviceName.split("-").last()}-$taskSlot")
                                             .withTarget("/app")
                                     )
+                                ).withLabels(mapOf(
+                                    "state" to ServiceState.STARTING.name,
+                                    "minMemory" to "512",
+                                    "maxMemory" to "512")
                                 )
                             )
                         )
+
                         client.updateServiceCmd(service.id, updatedSpec)
                             .withVersion(version!!)
                             .exec()

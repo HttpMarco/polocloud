@@ -154,7 +154,6 @@ open class DockerRuntimeGroupStorage(private val client: DockerClient) : Runtime
     private fun toGroupData(group: AbstractGroup): Map<String, String> = mapOf(
         "polocloud" to "true",
         "name" to group.name,
-        "state" to ServiceState.PREPARING.name,
         "minMemory" to group.minMemory.toString(),
         "maxMemory" to group.maxMemory.toString(),
         "minOnlineServices" to group.minOnlineService.toString(),
