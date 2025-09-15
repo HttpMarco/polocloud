@@ -37,7 +37,6 @@ class DockerService(
 
     lateinit var containerId: String
 
-
     constructor(group: AbstractGroup) : this(
         group.name,
         IndexDetector.findIndex(group),
@@ -52,7 +51,7 @@ class DockerService(
         group.maxMemory
     )
 
-    override fun changeState(state: ServiceState) {
-        super.changeState(state)
+    fun update() {
+
     }
 }

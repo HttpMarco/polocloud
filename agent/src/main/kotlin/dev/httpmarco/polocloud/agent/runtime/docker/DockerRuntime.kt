@@ -15,7 +15,7 @@ import dev.httpmarco.polocloud.v1.services.ServiceState
 
 class DockerRuntime : Runtime() {
 
-    private val client = createLocalDockerClient()
+    val client = createLocalDockerClient()
     private val serviceStorage = DockerRuntimeServiceStorage(client)
     private val groupStorage = DockerRuntimeGroupStorage(client)
     private val expender = DockerExpender(client)
@@ -51,15 +51,12 @@ class DockerRuntime : Runtime() {
                             .firstOrNull { it.status?.containerStatus?.containerID == containerId }
 
                         val taskSlot = task?.slot
-
-                        // TODO handle all service labels
-                        //   "state" to ServiceState.PREPARING.name,
-
-
                         val service = client.inspectServiceCmd(serviceName).exec()
                         val version = service.version?.index
                         val spec = service.spec!!
-                       // spec.labels?.set("state", ServiceState.STARTING.name)
+
+                        val basePath = "/cloud/local/temp"
+                        val dynamicPath = "$basePath/${serviceName.split("-").last()}-$taskSlot"
 
                         val updatedSpec = spec.withTaskTemplate(
                             spec.taskTemplate!!.withContainerSpec(
@@ -67,7 +64,7 @@ class DockerRuntime : Runtime() {
                                     listOf(
                                         Mount()
                                             .withType(MountType.BIND)
-                                            .withSource("C:\\Users\\mirco\\Desktop\\te\\temp\\${serviceName.split("-").last()}-$taskSlot")
+                                            .withSource(dynamicPath)
                                             .withTarget("/app")
                                     )
                                 ).withLabels(mapOf(
