@@ -15,7 +15,7 @@ import dev.httpmarco.polocloud.v1.services.ServiceState
 
 class DockerRuntime : Runtime() {
 
-    val client = createLocalDockerClient()
+    private val client = createLocalDockerClient()
     private val serviceStorage = DockerRuntimeServiceStorage(client)
     private val groupStorage = DockerRuntimeGroupStorage(client)
     private val expender = DockerExpender(client)
@@ -51,12 +51,13 @@ class DockerRuntime : Runtime() {
                             .firstOrNull { it.status?.containerStatus?.containerID == containerId }
 
                         val taskSlot = task?.slot
+
+                        // TODO handle all service labels
+
+
                         val service = client.inspectServiceCmd(serviceName).exec()
                         val version = service.version?.index
                         val spec = service.spec!!
-
-                        val basePath = "/cloud/local/temp"
-                        val dynamicPath = "$basePath/${serviceName.split("-").last()}-$taskSlot"
 
                         val updatedSpec = spec.withTaskTemplate(
                             spec.taskTemplate!!.withContainerSpec(
@@ -64,17 +65,12 @@ class DockerRuntime : Runtime() {
                                     listOf(
                                         Mount()
                                             .withType(MountType.BIND)
-                                            .withSource(dynamicPath)
+                                            .withSource("C:\\Users\\nervi\\Desktop\\123\\temp\\${serviceName.split("-").last()}-$taskSlot")
                                             .withTarget("/app")
                                     )
-                                ).withLabels(mapOf(
-                                    "state" to ServiceState.STARTING.name,
-                                    "minMemory" to "512",
-                                    "maxMemory" to "512")
                                 )
                             )
                         )
-
                         client.updateServiceCmd(service.id, updatedSpec)
                             .withVersion(version!!)
                             .exec()

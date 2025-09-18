@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
+import com.github.dockerjava.api.command.UpdateContainerCmd
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.agent.utils.IndexDetector
@@ -8,6 +9,8 @@ import dev.httpmarco.polocloud.shared.service.ServiceInformation
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
+import java.util.Map
+
 
 class DockerService(
     name: String,
@@ -52,6 +55,7 @@ class DockerService(
     )
 
     fun update() {
+
 
     }
 }

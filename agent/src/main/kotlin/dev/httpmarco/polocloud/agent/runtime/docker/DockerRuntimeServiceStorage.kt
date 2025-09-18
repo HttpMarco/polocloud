@@ -8,51 +8,20 @@ import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
-import dev.httpmarco.polocloud.v1.services.ServiceState
+import redis.clients.jedis.Jedis
 import java.util.concurrent.CompletableFuture
 
 class DockerRuntimeServiceStorage(val client: DockerClient) : RuntimeServiceStorage<DockerService> {
 
+    private val redis = Jedis("polocloud_redis", 6379);
+
+    init {
+        redis.connect()
+    }
+
+
     override fun findAll(): List<DockerService> {
-        val services = client.listServicesCmd().exec()
-        val result = arrayListOf<DockerService>()
-
-        services.forEach { service ->
-            val spec = service.spec ?: return@forEach
-
-            // nur Services mit Label "polocloud"
-            if (spec.labels?.containsKey("polocloud") != true) return@forEach
-
-            val serviceName = spec.name
-            val tasks = client.listTasksCmd()
-                .withServiceFilter(service.id)
-                .exec()
-
-            tasks.filter {
-                return@filter it.status.state.name == "RUNNING"
-            }.forEach { task ->
-                val serviceInfo = client.inspectServiceCmd(service.id).exec()
-                val virtualIp = serviceInfo.endpoint?.virtualIPs?.firstOrNull()?.addr?.substringBefore('/') ?: "unknown"
-                val labels = task.spec.containerSpec!!.labels!!
-
-                result.add(
-                    DockerService(
-                        name = serviceName.split("-").getOrElse(1) { serviceName },
-                        index = task.slot ?: -1,
-                        state = ServiceState.valueOf(labels["state"]!!),
-                        platformType = GroupType.valueOf(labels["type"] ?: GroupType.UNRECOGNIZED.name),
-                        environment = hashMapOf(),
-                        host = virtualIp,
-                        port = 25565,
-                        templates = listOf(),
-                        information = dev.httpmarco.polocloud.shared.service.ServiceInformation(System.currentTimeMillis()),
-                        minMemory = labels["minMemory"]!!.toInt(),
-                        maxMemory = labels["maxMemory"]!!.toInt()
-                    )
-                )
-            }
-        }
-        return result
+        return listOf()
     }
 
     override fun findAllAsync() = CompletableFuture.completedFuture(findAll())
