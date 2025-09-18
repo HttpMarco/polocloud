@@ -130,8 +130,9 @@ class Platform(
         }
     }
 
-    fun cacheExists(version: String): Boolean {
-        return cachePath(version).exists()
+    fun cacheExists(version: String?): Boolean {
+        val path = version?.let { cachePath(it) }
+        return path?.exists() ?: false
     }
 
     private fun cachePath(version: String): Path {
