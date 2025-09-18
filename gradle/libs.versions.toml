@@ -49,7 +49,7 @@ npc-bukkit = "3.0.0-beta13"
 bstats = "3.1.0"
 
 # utils
-lombok = "1.18.40"
+lombok = "1.18.42"
 
 # nrc
 nrc-server-api = "1.0"
