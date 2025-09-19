@@ -1,16 +1,15 @@
 plugins {
     id("java-library")
-    id("com.gradleup.shadow") version "9.0.0"
+    id("com.gradleup.shadow") version "9.1.0"
 }
 
 dependencies {
     api(projects.shared)
-    implementation(projects.common)
+    api(projects.common)
+    api(libs.grpc.netty)
+    api(projects.proto)
 
     compileOnly(libs.gson)
-    implementation(libs.bundles.proto)
-    implementation(libs.grpc.netty)
-    api(projects.proto)
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -21,6 +20,11 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.shadowJar {
     archiveFileName = "sdk-java-3.0.0-pre.6-SNAPSHOT.jar"
+
+    relocate("com.google.protobuf", "dev.httpmarco.polocloud.sdk.java.relocated.protobuf")
+
+    mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.jar {

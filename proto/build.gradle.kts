@@ -2,13 +2,13 @@ import com.google.protobuf.gradle.id
 
 plugins {
     id("java")
-    kotlin("jvm") version "2.2.10"
+    kotlin("jvm") version "2.2.20"
     id("com.google.protobuf") version "0.9.5"
 }
 
 dependencies {
-    implementation(libs.bundles.proto)
     api(libs.bundles.proto)
+
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
@@ -21,11 +21,12 @@ tasks.withType<JavaCompile>().configureEach {
 protobuf {
     protobuf {
         protoc {
+            // dont update this version
             artifact = "com.google.protobuf:protoc:3.25.8"
         }
         plugins {
             id("grpc") {
-                artifact = "io.grpc:protoc-gen-grpc-java:1.73.0"
+                artifact = "io.grpc:protoc-gen-grpc-java:1.75.0"
             }
         }
         generateProtoTasks {

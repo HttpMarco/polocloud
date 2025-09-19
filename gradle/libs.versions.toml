@@ -6,26 +6,27 @@ version = "1.0"
 nexus-publish = "2.0.0"
 
 # libraries
-gson = "2.13.1"
-oshi="6.8.3"
+gson = "2.13.2"
+oshi="6.9.0"
 
 # configuration
 configurate = "4.2.0"
-yaml = "2.4"
+yaml = "2.5"
 tomlj = "1.1.1"
 
 # networking
-grpc = "1.74.0"
+grpc = "1.75.0"
+redis = "6.2.0"
 
 # terminal
-jline = "3.30.5"
+jline = "3.30.6"
 
 slf4j = "2.0.17"
 log4j = "2.25.1"
 
 # runtime
 docker = "3.6.0"
-k8s = "7.3.1"
+k8s = "7.4.0"
 
 # rest
 javalin = "6.7.0"
@@ -49,7 +50,10 @@ npc-bukkit = "3.0.0-beta13"
 bstats = "3.1.0"
 
 # utils
-lombok = "1.18.38"
+lombok = "1.18.42"
+
+# nrc
+nrc-server-api = "1.0"
 
 [libraries]
 
@@ -69,6 +73,8 @@ grpc-protobuf = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc
 grpc-stub = { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
 grpc-services = { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }
 
+redis = { group = "redis.clients", name = "jedis", version.ref = "redis" }
+
 # terminal
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }
 jline-console-ui = { group = "org.jline", name = "jline-console-ui", version.ref = "jline" }
@@ -85,6 +91,7 @@ k8s = { group = "io.fabric8", name = "kubernetes-client", version.ref = "k8s" }
 
 # rest
 javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+javalin-ssl = { group = "io.javalin.community.ssl", name = "ssl-plugin", version.ref = "javalin" }
 java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
 javalin-jwt = { group = "com.github.kmehrunes", name = "javalin-jwt", version.ref = "javalin-jwt" }
 argon2 = { group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2" }
@@ -108,6 +115,15 @@ bstats-bungeecord = { group = "org.bstats", name = "bstats-bungeecord", version.
 # utils
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 
+# nrc
+nrc-core = { group = "gg.norisk", name = "nrc-server-api-core", version.ref = "nrc-server-api" }
+nrc-paper = { group = "gg.norisk", name = "nrc-server-api-paper", version.ref = "nrc-server-api" }
+nrc-velocity = { group = "gg.norisk", name = "nrc-server-api-velocity", version.ref = "nrc-server-api" }
+nrc-spigot = { group = "gg.norisk", name = "nrc-server-api-spigot", version.ref = "nrc-server-api" }
+nrc-bungeecord = { group = "gg.norisk", name = "nrc-server-api-bungeecord", version.ref = "nrc-server-api" }
+nrc-fabric = { group = "gg.norisk", name = "nrc-server-api-fabric", version.ref = "nrc-server-api" }
+
+
 [plugins]
 nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
 
@@ -119,3 +135,4 @@ runtime = ["docker", "docker-http", "k8s"]
 jline = ["jline", "jline-console-ui"]
 fabric = ["fabric", "fabric-language-kotlin"]
 jwt = [ "java-jwt", "javalin-jwt" ]
+nrc = ["nrc-core", "nrc-paper", "nrc-velocity", "nrc-spigot", "nrc-bungeecord", "nrc-fabric"]

@@ -5,6 +5,7 @@
   "url": "https://api.papermc.io/v2/projects/velocity/versions/%version%/builds/%buildId%/downloads/velocity-%version%-%buildId%.jar",
   "bridge": "velocity-bridge",
   "bridgePath": "plugins",
+  "defaultStartPort": 25565,
   "tasks": [
     "VELOCITY_PROXY_TOKEN_TASK",
     "VELOCITY_SETUP_TASK"
@@ -12,7 +13,7 @@
   "versions": [
     {
       "version": "3.4.0-SNAPSHOT",
-      "buildId": "523"
+      "buildId": "534"
     }
   ]
 }

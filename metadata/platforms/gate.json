@@ -5,10 +5,12 @@
   "url": "https://github.com/minekube/gate/releases/download/v%version%/gate_%version%_%os%_%arch%%suffix%",
   "copyServerIcon": false,
   "shutdownCommand": "",
-  "tasks": [
-    "GATE_SETUP"
-  ],
+  "defaultStartPort": 25565,
+  "tasks": ["GATE_SETUP"],
   "versions": [
+    {
+      "version": "0.55.0"
+    },
     {
       "version": "0.51.0"
     }
@@ -18,5 +20,8 @@
     "WIN": "windows",
     "LINUX": "linux",
     "MACOS": "darwin"
+  },
+  "archNameMapping": {
+    "aarch64": "arm64"
   }
 }

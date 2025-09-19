@@ -1,11 +1,6 @@
 import org.gradle.kotlin.dsl.projects
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-plugins {
-    id("com.gradleup.shadow") version "9.0.0"
-}
-
-
 repositories {
     maven {
         name = "papermc"
@@ -15,10 +10,8 @@ repositories {
 
 dependencies {
     compileOnly(libs.velocity)
-
     implementation(libs.bstats.velocity)
-    implementation(projects.sdk.sdkJava)
-    implementation(projects.bridges.bridgeApi)
+    api(projects.bridges.bridgeApi)
 }
 
 

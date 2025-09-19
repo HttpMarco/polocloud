@@ -57,10 +57,6 @@ class KubernetesRuntimeServiceStorage : RuntimeServiceStorage<KubernetesService>
         TODO("Not yet implemented")
     }
 
-    override fun bootInstance(name: String): ServiceSnapshot {
-        TODO("Not yet implemented")
-    }
-
     override fun shutdownService(name: String): ServiceSnapshot {
         TODO("Not yet implemented")
     }

@@ -1,200 +1,101 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.logger
-import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
-import dev.httpmarco.polocloud.agent.services.AbstractService
-import dev.httpmarco.polocloud.agent.utils.JavaUtils
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractRuntimeFactory
 import dev.httpmarco.polocloud.common.os.cpuUsage
-import dev.httpmarco.polocloud.common.os.currentOS
-import dev.httpmarco.polocloud.common.version.polocloudVersion
-import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
-import dev.httpmarco.polocloud.platforms.Platform
-import dev.httpmarco.polocloud.platforms.PlatformLanguage
-import dev.httpmarco.polocloud.platforms.PlatformParameters
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceShutdownEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStartingEvent
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceStoppingEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
-import org.yaml.snakeyaml.util.Tuple
-import java.nio.file.Files
-import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.*
 
-class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<LocalService> {
-
-    val cacheThreadPool: ExecutorService by lazy { Executors.newFixedThreadPool(Agent.config.maxCachingProcesses) }
-    val runningCacheProcesses: MutableList<Tuple<String, String>> by lazy {
-        Collections.synchronizedList(
-            mutableListOf()
-        )
-    }
-    val waitingServices: MutableList<LocalService> by lazy { Collections.synchronizedList(mutableListOf()) }
+/**
+ * LocalRuntimeFactory manages service instances running locally on the host machine.
+ * It handles service boot, shutdown, runtime tracking, and cleanup.
+ */
+class LocalRuntimeFactory(var localRuntime: LocalRuntime) : AbstractRuntimeFactory<LocalService>(LOCAL_FACTORY_PATH) {
 
     init {
-        // if folder exists, delete all files inside
+        // If the local factory path exists, delete all contents to ensure a clean start
         if (LOCAL_FACTORY_PATH.exists()) {
             LOCAL_FACTORY_PATH.toFile().listFiles()?.forEach { it.deleteRecursively() }
         }
-        // init factory path
+        // Create the factory directory if it doesn't exist
         LOCAL_FACTORY_PATH.createDirectories()
     }
 
-    override fun bootApplication(service: LocalService) {
-        if (service.state != ServiceState.PREPARING) {
-            i18n.error("agent.local-runtime.factory.boot.error", service.name(), service.state)
-            return
-        }
-
-        val platform = service.group.platform()
-        val version = service.group.platform.version
-
-        val serverIcon = this.javaClass.classLoader.getResource("server-icon.png")!!
-
-        val environment = PlatformParameters(
-            platform.version(version)
-        )
-        environment.addParameter("hostname", service.hostname)
-        environment.addParameter("port", service.port)
-        environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon.openStream()))
-        environment.addParameter("agent_port", Agent.config.port)
-        environment.addParameter("service-name", service.name())
-        environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
-        environment.addParameter("file_suffix", platform.language.suffix())
-        environment.addParameter("filename", service.group.applicationPlatformFile().name)
-
-        // find a better way here
-        val velocityPlatforms = listOf("velocity", "gate")
-        environment.addParameter(
-            "velocity_use",
-            Agent.runtime.groupStorage().findAll().stream().anyMatch { velocityPlatforms.contains(it.platform().name) })
-        environment.addParameter("version", polocloudVersion())
-
-        //loading cache before starting service
-        val cacheIsRunning = runningCacheProcesses.any { platform.name == it._1() && version == it._2() }
-        if (!platform.cacheExists(version) || cacheIsRunning) {
-            waitingServices.add(service)
-
-            if (!cacheIsRunning) {
-                this.handleMissingCache(platform, version, environment)
-            }
-
-            return
-        }
-
-        while (Agent.runtime.serviceStorage().findAll()
-                .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
-            ||
-            cpuUsage() > Agent.config.maxCPUPercentageToStart
-        ) {
-            Thread.sleep(1000)
-        }
-
-        i18n.info("agent.local-runtime.factory.boot.up", service.name())
-
-        service.state = ServiceState.STARTING
-        Agent.eventService.call(ServiceStartingEvent(service))
-
-        service.path.createDirectories()
-
-        // copy all templates to the service path
-        Agent.runtime.templates().bindTemplate(service)
-
-        // copy the platform files to the service path and setup service
-        platform.prepare(service.path, service.group.platform.version, environment)
-
-
-        val serverIconPath = service.path.resolve("server-icon.png")
-        // copy server-icon if not exists
-        if (Files.notExists(serverIconPath)) {
-            Files.copy(serverIcon.openStream(), serverIconPath)
-        }
-
-        // basically current only the java command is supported yet
-        val commands = getLanguageSpecificCommands(platform, service)
-
-        val processBuilder = ProcessBuilder(commands).directory(service.path.toFile())
-        processBuilder.environment().putAll(
-            mapOf(
-                Pair("agent_port", Agent.config.port.toString()),
-                Pair("service-name", service.name())
-            )
-        )
-
-        service.process = processBuilder.start()
-        service.startTracking()
-    }
-
+    /**
+     * Shutdown a local service safely.
+     * Cleans up processes, stops tracking, handles recordings, and deletes non-static files.
+     */
     @OptIn(ExperimentalPathApi::class)
     override fun shutdownApplication(service: LocalService, shutdownCleanUp: Boolean): ServiceSnapshot {
+        // If the service is already stopping or stopped, return its snapshot
         if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPED) {
             return service.toSnapshot()
         }
 
         service.state = ServiceState.STOPPING
         val eventService = Agent.eventService
-        eventService.call(ServiceStoppingEvent(service))
 
         i18n.info("agent.local-runtime.factory.shutdown", service.name())
 
-
-        // first, we need to drop all subscriptions for this service
-        // the service went down, so we don't need to send any events anymore
+        // Remove any event subscriptions for this service
         eventService.dropServiceSubscriptions(service)
-        // then we call the shutdown event -> for all other services
-        eventService.call(ServiceShutdownEvent(service))
+        // Notify other services that this service is stopping
+        eventService.call(ServiceChangeStateEvent(service))
 
-        if (service.process != null) {
+        // Attempt to gracefully shutdown the process
+        service.process?.let { process ->
             try {
-                val shutdownCommand = service.group.platform().shutdownCommand
+                val shutdownCommand = service.group().platform().shutdownCommand
                 if (shutdownCommand.isNotEmpty() && shutdownCleanUp && service.executeCommand(shutdownCommand)) {
-                    if (service.process!!.waitFor(5, TimeUnit.SECONDS)) {
-                        service.process!!.exitValue()
+                    // Wait a short time for graceful exit
+                    if (process.waitFor(5, TimeUnit.SECONDS)) {
                         service.state = ServiceState.STOPPED
                     }
                 }
             } catch (_: Exception) {
-                // ignore exceptions, we just want to stop the process
+                // Ignore exceptions, we only care about stopping the process
             }
 
+            // Force-stop any remaining processes if still running
             if (service.state != ServiceState.STOPPED) {
-
-                service.process!!.toHandle().children().forEach { child ->
-                    try {
-                        child.destroy()
-                    } catch (_: Exception) {
-                        // ignore exceptions, we just want to stop the process}
-                    }
+                process.toHandle().children().forEach { child ->
+                    try { child.destroy() } catch (_: Exception) { /* ignore */ }
                 }
-
-                service.process!!.toHandle().destroyForcibly()
-                service.process!!.waitFor()
+                process.toHandle().destroyForcibly()
+                process.waitFor()
                 service.process = null
                 service.state = ServiceState.STOPPED
             }
         }
 
+        // Stop screen recording if active
         if (localRuntime.terminal.screenService.isServiceRecoding(service)) {
             localRuntime.terminal.screenService.stopCurrentRecording()
         }
+
+        // Stop internal service tracking
         service.stopTracking()
 
-        // windows need some time to destroy the process
+        // Give Windows a small delay to ensure process termination
         if (!Thread.currentThread().isVirtual && shutdownCleanUp) {
-            Thread.sleep(200) // wait for a process to be destroyed
+            Thread.sleep(200)
         }
 
+        // Delete service files if not static
         if (!service.isStatic()) {
             service.path.deleteRecursively()
         }
 
+        // Finalize service state and fire shutdown event
         service.state = ServiceState.STOPPED
+        Agent.eventProvider().call(ServiceChangeStateEvent(service))
         Agent.runtime.serviceStorage().dropAbstractService(service)
+
         i18n.info(
             "agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful",
             service.name()
@@ -203,58 +104,70 @@ class LocalRuntimeFactory(var localRuntime: LocalRuntime) : RuntimeFactory<Local
         return service.toSnapshot()
     }
 
+    /**
+     * Generate a new instance of a local service for a given group.
+     */
+    override fun generateInstance(group: AbstractGroup): LocalService {
+        return LocalService(group)
+    }
+
+    /**
+     * Shutdown any background threads or thread pools used by the factory.
+     */
     fun shutdown() {
         cacheThreadPool.shutdown()
     }
 
-    private fun getLanguageSpecificCommands(platform: Platform, abstractService: AbstractService): ArrayList<String> {
-        val commands = ArrayList<String>()
+    /**
+     * Boot a local service process with appropriate runtime checks and environment.
+     * Waits until CPU usage and concurrent starts are under configured limits.
+     */
+    override fun runRuntimeBoot(service: LocalService) {
+        val version = service.group().platform.version
+        val platform = service.group().platform()
+        val versionObject = platform.version(version)
 
-        when (platform.language) {
-            PlatformLanguage.JAVA -> {
-
-                val javaPath = abstractService.group.properties["javaPath"]?.takeIf {
-                    it.isString && JavaUtils().isValidJavaPath(it.asString)
-                } ?: System.getProperty("java.home")
-
-                commands.add("${javaPath}/bin/java")
-                commands.addAll(
-                    listOf(
-                        "-Dterminal.jline=false",
-                        "-Dfile.encoding=UTF-8",
-                        "-Xms" + abstractService.minMemory + "M",
-                        "-Xmx" + abstractService.maxMemory + "M",
-                        "-jar",
-                        abstractService.group.applicationPlatformFile().name
-                    )
+        // Check that the service runtime matches required version
+        val (correctRuntime, currentRuntime) = checkRuntimeVersion(service)
+        if (!correctRuntime) {
+            if (currentRuntime == null) {
+                i18n.warn(
+                    "agent.local-runtime.factory.boot.missing-runtime",
+                    service.group().platform().language,
+                    versionObject?.requiredRuntimeVersion
                 )
-                commands.addAll(platform.arguments)
-            }
-
-            PlatformLanguage.GO, PlatformLanguage.RUST -> {
-                commands.addAll(currentOS.executableCurrentDirectoryCommand(abstractService.group.applicationPlatformFile().name))
+            } else {
+                i18n.warn(
+                    "agent.local-runtime.factory.boot.wrong-runtime",
+                    currentRuntime,
+                    service.group().platform().language,
+                    versionObject?.requiredRuntimeVersion
+                )
             }
         }
-        return commands
-    }
 
-    private fun handleMissingCache(platform: Platform, version: String, environment: PlatformParameters) {
-        val platformName = platform.name
-
-        val processEntry = Tuple(platformName, version)
-        runningCacheProcesses.add(processEntry)
-
-        cacheThreadPool.execute {
-            i18n.info("agent.local-runtime.factory.boot.platform.prepare", version, platformName)
-            platform.cachePrepare(version, environment)
-            runningCacheProcesses.remove(processEntry)
-
-            val servicesToBoot =
-                waitingServices.filter { it.group.platform.name == platform.name && it.group.platform.version == version }
-            servicesToBoot.forEach {
-                this.bootApplication(it)
-            }
-            waitingServices.removeAll(servicesToBoot)
+        // Wait until CPU usage and max concurrent starts allow launching the service
+        while (Agent.runtime.serviceStorage().findAll()
+                .count { it.state == ServiceState.STARTING } >= Agent.config.maxConcurrentServersStarts
+            || cpuUsage() > Agent.config.maxCPUPercentageToStart
+        ) {
+            Thread.sleep(1000)
         }
+
+        // Build and start the process
+        val processBuilder = ProcessBuilder(languageSpecificBootArguments(service))
+            .directory(service.path.toFile())
+
+        // Inject environment variables into the service process
+        processBuilder.environment().putAll(
+            mapOf(
+                "agent_port" to Agent.config.port.toString(),
+                "service-name" to service.name()
+            )
+        )
+
+        // Start the service process and begin tracking
+        service.process = processBuilder.start()
+        service.startTracking()
     }
 }

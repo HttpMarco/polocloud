@@ -20,12 +20,12 @@ import dev.httpmarco.polocloud.shared.events.SharedEventProvider
 import dev.httpmarco.polocloud.shared.groups.SharedGroupProvider
 import dev.httpmarco.polocloud.shared.logging.Logger
 import dev.httpmarco.polocloud.shared.player.SharedPlayerProvider
-import dev.httpmarco.polocloud.shared.polocloudShared
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider
 import dev.httpmarco.polocloud.shared.information.SharedCloudInformationProvider
 import dev.httpmarco.polocloud.agent.information.CloudInformationStorageImpl
 import dev.httpmarco.polocloud.agent.platform.PlatformStorageImpl
 import dev.httpmarco.polocloud.shared.platform.SharedPlatformProvider
+import dev.httpmarco.polocloud.shared.template.SharedTemplateProvider
 import dev.httpmarco.polocloud.updater.Updater
 
 // global terminal instance for the agent
@@ -98,7 +98,7 @@ object Agent : PolocloudShared(true) {
         i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformPool.versionSize())
         i18n.info("agent.starting.successful")
 
-        this.onlineStateDetector.detect()
+      //  this.onlineStateDetector.detect()
         PlayerListener()
     }
 
@@ -138,4 +138,5 @@ object Agent : PolocloudShared(true) {
     override fun logger(): Logger = logger
 
     override fun platformProvider(): SharedPlatformProvider<*> = this.platformStorage
+    override fun templateProvider(): SharedTemplateProvider<*> = this.runtime.templateStorage()
 }

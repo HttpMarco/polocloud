@@ -2,13 +2,24 @@
   "name": "PUMPKIN_CONFIG_TASK",
   "steps": [
     {
+      "name": "Motd",
+      "description": "Change the motd if no file present",
+      "filename": "config/configuration.toml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "motd",
+        "fileMode": "IF_NOT_EXISTS",
+        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\\\\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+      }
+    },
+    {
       "name": "Update server port",
       "description": "Change Server Port for all spigot forks",
       "filename": "config/configuration.toml",
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
-        "key": "java_edition_port",
-        "value": "%port%"
+        "key": "java_edition_address",
+        "value": "0.0.0.0:%port%"
       }
     },
     {
@@ -59,16 +70,6 @@
         "type": "PlatformFilePropertyUpdateAction",
         "key": "networking.proxy.velocity.secret",
         "value": "%velocityProxyToken%"
-      }
-    },
-    {
-      "name": "Motd",
-      "description": "Change the motd if no file present",
-      "filename": "config/configuration.toml",
-      "action": {
-        "type": "PlatformFilePropertyUpdateAction",
-        "key": "motd",
-        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\\\\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
       }
     },
     {

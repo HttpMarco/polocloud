@@ -1,14 +1,17 @@
 package dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.impl
 
-import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
+import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.InputContext
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.arguments.type.*
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.Setup
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.setup.SetupStep
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.FALLBACK
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
+import dev.httpmarco.polocloud.shared.properties.STATIC
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 
 class GroupSetup : Setup<AbstractGroup>("Group setup") {
@@ -16,8 +19,8 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
     private val nameArgument = TextArgument("name")
     private val platformArgument = PlatformArgument("platform")
     private val platformVersionArgument = PlatformVersionArgument(platformArgument)
-    private val minMemoryArgument = IntArgument("minMemory", 1)
-    private val maxMemoryArgument = IntArgument("maxMemory", 1)
+    private val minMemoryArgument = MemoryArgument("minMemory")
+    private val maxMemoryArgument = MemoryArgument("maxMemory", previousArg = minMemoryArgument)
     private val percentageToStartNewService = IntArgument("percentageToStartNewService", 0)
     private val minOnlineServicesArgument = IntArgument("minOnlineServices", 0)
     private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", -1)
@@ -51,18 +54,25 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
         val maxOnlineServices = result.arg(maxOnlineServicesArgument)
         val fallback = if (result.contains(fallbackArgument)) result.arg(fallbackArgument) else false
         val static = if (result.contains(staticArgument)) result.arg(staticArgument) else false
+        val properties = PropertyHolder.empty()
 
-        val properties = HashMap<String, JsonPrimitive>()
+        val templates = mutableListOf(
+            Template("EVERY"),
+            Template("EVERY_" + originalPlatform.type.name)
+        )
+
 
         if (fallback) {
-            properties.put("fallback", JsonPrimitive(true))
+            properties.with(FALLBACK, true)
+            // TODO SEAR
+            templates.add(Template("EVERY_FALLBACK"))
         }
 
         if (static) {
-            properties.put("static", JsonPrimitive(true))
+            properties.with(STATIC, true)
         }
 
-
+        // TODO USE EVERY TEMPLATE IF EXISTS
         val group = AbstractGroup(
             name,
             minMemory,
@@ -71,14 +81,22 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
             maxOnlineServices,
             percentageToStartNewService.toDouble(),
             platform,
-            GroupInformation(System.currentTimeMillis()),
-            listOf(
-                "EVERY", "EVERY_" + originalPlatform.type.name, name
-            ),
+            System.currentTimeMillis(),
+            templates,
             properties
         )
 
-        Agent.runtime.groupStorage().publish(group)
+        templates.add(Template(name))
+
+        if (group.isProxy() && Agent.runtime.serviceStorage().findAll().stream().anyMatch { it.type == GroupType.SERVER }) {
+            i18n.warn("agent.local-runtime.setup.group.warnProxyCantWork")
+        }
+
+        if (group.isProxy() && Agent.runtime.groupStorage().findAll().any({ it.isProxy() && it.platform() != group.platform() })) {
+            i18n.warn("agent.local-runtime.setup.group.warnMultipleProxies")
+        }
+
+        Agent.runtime.groupStorage().create(group)
         return group
     }
 }

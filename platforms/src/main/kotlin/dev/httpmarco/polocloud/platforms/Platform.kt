@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.platforms
 
 import dev.httpmarco.polocloud.common.filesystem.copyDirectoryContent
+import dev.httpmarco.polocloud.common.language.Language
 import dev.httpmarco.polocloud.common.os.OS
 import dev.httpmarco.polocloud.common.os.currentCPUArchitecture
 import dev.httpmarco.polocloud.common.os.currentOS
@@ -21,7 +22,7 @@ import kotlin.io.path.*
 class Platform(
     val name: String,
     val url: String,
-    val language: PlatformLanguage,
+    val language: Language,
     // default is "stop"
     val shutdownCommand: String = "stop",
     // the type of platform, proxy, server, or service
@@ -34,6 +35,8 @@ class Platform(
     val versions: List<PlatformVersion>,
     // if bridge present, the bridge that should be used for this platform
     val bridge: Bridge? = null,
+    //The first port used for port selection unless startPort is set in group
+    val defaultStartPort: Int?,
     // if the path is empty, the platform will not copy the bridge
     private val bridgePath: String? = null,
     // the tasks that should be run after the platform is prepared
@@ -46,6 +49,8 @@ class Platform(
     private val setFileName: Boolean = true,
     // mapping how the OS names will be named in the %os% placeholder (optional)
     private val osNameMapping: Map<OS, String> = emptyMap(),
+    // mapping how the architecture names will be named in the %arch% placeholder (optional)
+    private val archNameMapping: Map<String, String> = emptyMap(),
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
@@ -93,40 +98,48 @@ class Platform(
         }
     }
 
+    @OptIn(ExperimentalPathApi::class)
     fun cachePrepare(version: String, environment: PlatformParameters) {
         // This method should build the cache for a platform version, such as downloading files,
         // loading dependencies or compile the platform
         val cachePath = cachePath(version)
         cachePath.parent.createDirectories()
-        val version = this.version(version) ?: throw PlatformVersionInvalidException()
 
-        var replacedUrl = url.replace("%version%", version.version)
-            .replace("%suffix%", language.suffix())
-            .replace("%arch%", currentCPUArchitecture)
-            .replace("%os%", osDownloadName())
+        try {
 
-        version.additionalProperties.forEach { (key, value) ->
-            replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
-        }
+            val version = this.version(version) ?: throw PlatformVersionInvalidException()
 
-        val downloadFile = if (setFileName) cachePath.toFile() else cachePath.parent.resolve("download").toFile()
+            var replacedUrl = url.replace("%version%", version.version)
+                .replace("%suffix%", language.suffix())
+                .replace("%arch%", archDownloadName())
+                .replace("%os%", osDownloadName())
 
-        URI(
-            replacedUrl
-        ).toURL().openStream().use { input ->
-            downloadFile.outputStream().use { output ->
-                input.copyTo(output)
+            version.additionalProperties.forEach { (key, value) ->
+                replacedUrl = replacedUrl.replace("%$key%", value.asJsonPrimitive.asString)
             }
-        }
 
-        preTasks().forEach { it.runTask(cachePath.parent, environment) }
+            val downloadFile = if (setFileName) cachePath.toFile() else cachePath.parent.resolve("download").toFile()
 
-        if (language.nativeExecutable && downloadFile.exists() && listOf(OS.LINUX, OS.MACOS).contains(currentOS)) {
-            val perms = downloadFile.toPath().getPosixFilePermissions().toMutableSet()
-            if (!perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
-                perms.add(PosixFilePermission.OWNER_EXECUTE)
-                downloadFile.toPath().setPosixFilePermissions(perms)
+            URI(
+                replacedUrl
+            ).toURL().openStream().use { input ->
+                downloadFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
             }
+
+            preTasks().forEach { it.runTask(cachePath.parent, environment) }
+
+            if (language.nativeExecutable && downloadFile.exists() && listOf(OS.LINUX, OS.MACOS).contains(currentOS)) {
+                val perms = downloadFile.toPath().getPosixFilePermissions().toMutableSet()
+                if (!perms.contains(PosixFilePermission.OWNER_EXECUTE)) {
+                    perms.add(PosixFilePermission.OWNER_EXECUTE)
+                    downloadFile.toPath().setPosixFilePermissions(perms)
+                }
+            }
+        } catch (e: Exception) {
+            cachePath.parent.deleteRecursively()
+            throw e
         }
     }
 
@@ -153,5 +166,9 @@ class Platform(
 
     private fun osDownloadName(): String {
         return osNameMapping.getOrElse(currentOS) { currentOS.name }
+    }
+
+    private fun archDownloadName(): String {
+        return archNameMapping.getOrElse(currentCPUArchitecture) { currentCPUArchitecture }
     }
 }

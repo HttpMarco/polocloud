@@ -8,6 +8,7 @@ import dev.httpmarco.polocloud.addons.api.MiniMessageFormatter
 import dev.httpmarco.polocloud.addons.proxy.ProxyConfigAccessor
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.VelocityPlatform
 import dev.httpmarco.polocloud.sdk.java.Polocloud
+import dev.httpmarco.polocloud.shared.properties.MAINTENANCE
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 
@@ -23,7 +24,7 @@ class PlayerLoginEvent (
         if(!event.player.hasPermission("polocloud.addons.proxy.maintenance.bypass")) {
             // Check if the server is in maintenance mode
             val group = Polocloud.instance().groupProvider().find(platform.proxyAddon().poloService.groupName)!!
-            if(group.properties["maintenance"]?.asBoolean ?: false) {
+            if(group.properties.get(MAINTENANCE) ?: false) {
                 // Maintenance mode is enabled, check if the maintenance MOTD is enabled
                 event.result = ResultedEvent.ComponentResult.denied(MiniMessage.miniMessage().deserialize(config.messages("maintenance_kick")))
                 return

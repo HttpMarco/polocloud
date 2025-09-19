@@ -1,7 +1,6 @@
 package dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.group
 
 import com.google.gson.JsonPrimitive
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.GroupInformationModel
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.model.platform.PlatformModel
 
 data class GroupCreateModel(
@@ -12,7 +11,7 @@ data class GroupCreateModel(
     val maxOnlineService: Int = 0,
     val platform: PlatformModel = PlatformModel(),
     val percentageToStartNewService: Double = 0.0,
-    val information: GroupInformationModel = GroupInformationModel(),
+    val createdAt: Long = 0L,
     val templates: List<String> = emptyList(),
-    val properties: Map<String, JsonPrimitive> = emptyMap()
+    val properties: MutableMap<String, JsonPrimitive> = mutableMapOf()
 )

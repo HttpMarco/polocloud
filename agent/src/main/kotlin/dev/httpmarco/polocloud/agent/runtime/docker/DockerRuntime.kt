@@ -1,29 +1,53 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
-import dev.httpmarco.polocloud.agent.i18n
-import dev.httpmarco.polocloud.agent.runtime.Runtime
-import dev.httpmarco.polocloud.agent.runtime.RuntimeConfigHolder
-import dev.httpmarco.polocloud.agent.runtime.RuntimeTemplates
-import dev.httpmarco.polocloud.agent.services.AbstractService
-import java.nio.file.Files
-import java.nio.file.Paths
+import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.api.async.ResultCallback
+import com.github.dockerjava.api.model.Event
+import com.github.dockerjava.api.model.Frame
+import com.github.dockerjava.api.model.Mount
+import com.github.dockerjava.api.model.MountType
+import com.github.dockerjava.core.DefaultDockerClientConfig
+import com.github.dockerjava.core.DockerClientImpl
+import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
+import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.logger
+import dev.httpmarco.polocloud.agent.runtime.*
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
+import dev.httpmarco.polocloud.common.version.polocloudVersion
+import dev.httpmarco.polocloud.platforms.PlatformParameters
+import dev.httpmarco.polocloud.shared.service.ServiceInformation
+import dev.httpmarco.polocloud.v1.GroupType
+import dev.httpmarco.polocloud.v1.services.ServiceState
+import kotlin.io.path.Path
+import kotlin.io.path.name
 
 
-class DockerRuntime : Runtime {
+class DockerRuntime : Runtime() {
 
-    private val serviceStorage = DockerRuntimeServiceStorage()
+    private val client = createLocalDockerClient()
+    private val serviceStorage = DockerRuntimeServiceStorage(client)
     private val groupStorage = DockerRuntimeGroupStorage()
-    private val expender = DockerExpender()
-    private val runtimeFactory = DockerFactory()
-    private val started = System.currentTimeMillis()
+    private val expender = DockerExpender(client)
+    private val runtimeFactory = DockerRuntimeFactory(client)
+    private val templateStorage = DockerTemplateStorage(client)
+    private val dockerConfigHolder = DockerConfigHolder()
+    private val informationThread = DockerCloudInformationThread()
+    private val queue = DockerThreadedRuntimeQueue()
 
-    override fun runnable(): Boolean {
-        return try {
-            return Files.exists(Paths.get("/.dockerenv")) || Files.exists(Paths.get("/run/.containerenv"))
-        } catch (e: Exception) {
-            i18n.debug("agent.runtime.docker.connection.failed", e.javaClass.simpleName, e.message)
-            false
-        }
+    fun createLocalDockerClient(): DockerClient {
+        val config = DefaultDockerClientConfig.createDefaultConfigBuilder().build()
+
+        val httpClient = ApacheDockerHttpClient.Builder()
+            .dockerHost(config.dockerHost)
+            .sslConfig(config.sslConfig)
+            .build()
+
+        return DockerClientImpl.getInstance(config, httpClient)
+    }
+
+    override fun boot() {
+        informationThread.start()
+      //  queue.start()
     }
 
     override fun serviceStorage() = serviceStorage
@@ -34,14 +58,11 @@ class DockerRuntime : Runtime {
 
     override fun expender() = expender
 
-    override fun templates(): RuntimeTemplates<AbstractService> {
-        TODO("Not yet implemented")
+    override fun templateStorage() = templateStorage
+
+    override fun configHolder() = dockerConfigHolder
+
+    override fun sendCommand(command: String) {
+        //todo DELETE HERE
     }
-
-    override fun configHolder(): RuntimeConfigHolder {
-        TODO("Not yet implemented")
-    }
-
-    override fun started() = started
-
 }

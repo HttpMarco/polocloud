@@ -1,8 +1,34 @@
+version: "3.9"
+
 services:
-  polocloud:
-    image: openjdk:24
-    container_name: polocloud
+  redis:
+    image: redis:7-alpine
+    container_name: polocloud-redis
+    networks:
+      - polocloud-net
+    ports:
+      - "6379:6379"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  agent:
+    image: polocloud:development
+    networks:
+      - polocloud-net
     volumes:
-      - ./:/app
-    working_dir: /app
-    command: ["java", "-jar", "polocloud-launcher.jar"]
+      - C:\Users\mirco\Desktop\te\:/cloud/local
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  polocloud-net:
+    driver: overlay

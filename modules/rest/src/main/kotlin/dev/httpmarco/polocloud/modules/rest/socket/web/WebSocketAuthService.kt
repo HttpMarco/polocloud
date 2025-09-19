@@ -42,8 +42,8 @@ class WebSocketAuthService {
         }
     }
 
+
     private fun extractToken(context: WsConnectContext): Optional<String> {
         return Optional.ofNullable(context.queryParam("token"))
     }
-
 }

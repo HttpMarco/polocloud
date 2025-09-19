@@ -2,6 +2,9 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /cloud
 
-COPY ../agent/build/libs/polocloud-agent.jar /cloud/cloud-agent.jar
+ARG POLOCLOUD_VERSION=dev
+ENV POLOCLOUD_VERSION=$POLOCLOUD_VERSION
 
-ENTRYPOINT ["java", "-jar", "/cloud/cloud-agent.jar"]
+COPY /build/libs/polocloud-agent-${POLOCLOUD_VERSION}-all.jar /cloud/polocloud-launcher.jar
+
+ENTRYPOINT ["java", "-jar", "/cloud/polocloud-launcher.jar"]

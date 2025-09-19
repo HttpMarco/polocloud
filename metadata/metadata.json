@@ -13,7 +13,8 @@
     "fabric",
     "folia",
     "advancedslimepaper",
-    "waterdog"
+    "waterdog",
+    "pandaspigot"
   ],
   "tasks": [
     "eula",

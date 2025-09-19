@@ -1,10 +1,5 @@
 import org.gradle.kotlin.dsl.projects
 
-plugins {
-    id("com.gradleup.shadow") version "9.0.0"
-}
-
-
 repositories {
     maven {
         name = "waterdog-repo"
@@ -22,8 +17,7 @@ repositories {
 
 dependencies {
     compileOnly(libs.waterdog)
-    implementation(projects.sdk.sdkJava)
-    implementation(projects.bridges.bridgeApi)
+    api(projects.bridges.bridgeApi)
 }
 
 tasks.processResources {

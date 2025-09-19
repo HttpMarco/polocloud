@@ -2,35 +2,63 @@ package dev.httpmarco.polocloud.agent.services
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
+import dev.httpmarco.polocloud.agent.utils.IndexDetector
 import dev.httpmarco.polocloud.agent.utils.PortDetector
-import dev.httpmarco.polocloud.shared.events.definitions.ServiceChangePlayerCountEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangePlayerCountEvent
+import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.httpmarco.polocloud.shared.service.ServiceInformation
+import dev.httpmarco.polocloud.shared.template.Template
+import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
-abstract class AbstractService(val group: AbstractGroup, id: Int, hostname: String = "127.0.0.1") :
+abstract class AbstractService(
+    name: String,
+    index: Int,
+    state: ServiceState,
+    platformType: GroupType,
+    environment: HashMap<String, String>,
+    host: String,
+    port: Int,
+    templates: List<Template>,
+    information: ServiceInformation,
+    minMemory: Int,
+    maxMemory: Int
+) : Service(
+    name,
+    index,
+    state,
+    platformType,
+    environment,
+    host,
+    port,
+    templates,
+    information,
+    minMemory,
+    maxMemory
+) {
 
-    Service(
+    constructor(group: AbstractGroup) : this(
         group.name,
-        id,
+        IndexDetector.findIndex(group),
         ServiceState.PREPARING,
         group.platform().type,
         hashMapOf(),
-        hostname,
+        if (group.isProxy()) "0.0.0.0" else "127.0.0.1",
         PortDetector.nextPort(group),
         group.templates,
         ServiceInformation(System.currentTimeMillis()),
         group.minMemory,
-        group.maxMemory,
-        -1,
-        -1,
-        -1.0,
-        -1.0,
-        ""
-    ) {
+        group.maxMemory
+    )
+
+    fun group(): AbstractGroup {
+        return Agent.runtime.groupStorage().find(groupName)!!
+    }
 
     init {
-        properties += group.properties.map { it.key to it.value.toString() }.toMap()
+        properties += group().properties.all().map { it.key to it.value.toString() }.toMap()
+        Agent.eventProvider().call(ServiceChangeStateEvent(this))
     }
 
     fun isStatic(): Boolean {

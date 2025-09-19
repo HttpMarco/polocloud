@@ -2,17 +2,14 @@ package dev.httpmarco.polocloud.agent.groups
 
 import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.groups.FindGroupRequest
 import dev.httpmarco.polocloud.v1.groups.FindGroupResponse
 import dev.httpmarco.polocloud.v1.groups.GroupControllerGrpc
-import dev.httpmarco.polocloud.v1.groups.GroupCreateRequest
-import dev.httpmarco.polocloud.v1.groups.GroupCreateResponse
 import dev.httpmarco.polocloud.v1.groups.GroupDeleteRequest
-import dev.httpmarco.polocloud.v1.groups.GroupDeleteResponse
-import dev.httpmarco.polocloud.v1.groups.GroupUpdateRequest
-import dev.httpmarco.polocloud.v1.groups.GroupUpdateResponse
+import dev.httpmarco.polocloud.v1.groups.GroupSnapshot
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import io.grpc.stub.StreamObserver
@@ -39,57 +36,18 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
 
     }
 
-    override fun create(request: GroupCreateRequest, responseObserver: StreamObserver<GroupCreateResponse>) {
+    override fun create(request: GroupSnapshot, responseObserver: StreamObserver<GroupSnapshot>) {
         val groupStorage = Agent.runtime.groupStorage()
-        val builder = GroupCreateResponse.newBuilder()
 
         if (groupStorage.find(request.name) != null) {
             responseObserver.onError(StatusRuntimeException(Status.ALREADY_EXISTS))
             return
         }
 
-        val properties = HashMap<String, JsonPrimitive>()
-        request.propertiesMap.forEach { t, u -> {
-            properties.put(t, JsonPrimitive(u))
-        } }
-
-        val group = AbstractGroup(
-            request.name,
-            request.minimumMemory,
-            request.maximumMemory,
-            request.minimumOnline,
-            request.maximumOnline,
-            request.percentageToStartNewService,
-            PlatformIndex(request.platform.name, request.platform.version),
-            GroupInformation(System.currentTimeMillis()),
-            request.templatesList,
-            properties
-        )
-
-        Agent.runtime.groupStorage().publish(group)
-        builder.setGroup(group.toSnapshot())
-        responseObserver.onNext(builder.build())
-        responseObserver.onCompleted()
-
-    }
-
-    override fun update(request: GroupUpdateRequest, responseObserver: StreamObserver<GroupUpdateResponse>) {
-        val groupStorage = Agent.runtime.groupStorage()
-        val builder = GroupUpdateResponse.newBuilder()
-
-        if (groupStorage.find(request.name) == null) {
-            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
-            return
-        }
-
-        val properties = HashMap<String, JsonPrimitive>()
-        request.propertiesMap.forEach { (key, value) ->
-            properties[key] = when {
-                value.lowercase().toBooleanStrictOrNull() != null -> JsonPrimitive(value.toBoolean())
-                value.toIntOrNull() != null -> JsonPrimitive(value.toInt())
-                value.toDoubleOrNull() != null -> JsonPrimitive(value.toDouble())
-                value.toFloatOrNull() != null -> JsonPrimitive(value.toFloat())
-                else -> JsonPrimitive(value)
+        val properties = PropertyHolder.empty()
+        request.propertiesMap.forEach { (t, u) ->
+            run {
+                properties.raw(t, JsonPrimitive(u))
             }
         }
 
@@ -101,20 +59,58 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
             request.maximumOnline,
             request.percentageToStartNewService,
             PlatformIndex(request.platform.name, request.platform.version),
-            GroupInformation.bindSnapshot(request.information),
-            request.templatesList,
+            System.currentTimeMillis(),
+            Template.bindSnapshot(request.templatesList),
             properties
         )
 
-        Agent.runtime.groupStorage().updateGroup(group)
-        builder.setGroup(group.toSnapshot())
-        responseObserver.onNext(builder.build())
+        Agent.runtime.groupStorage().create(group)
+        responseObserver.onNext(group.toSnapshot())
+        responseObserver.onCompleted()
+
+    }
+
+    override fun update(request: GroupSnapshot, responseObserver: StreamObserver<GroupSnapshot>) {
+        val groupStorage = Agent.runtime.groupStorage()
+
+        if (groupStorage.find(request.name) == null) {
+            responseObserver.onError(StatusRuntimeException(Status.NOT_FOUND))
+            return
+        }
+
+        val properties = PropertyHolder.empty()
+        request.propertiesMap.forEach { (key, value) ->
+            properties.raw(
+                key, when {
+                    value.lowercase().toBooleanStrictOrNull() != null -> JsonPrimitive(value.toBoolean())
+                    value.toIntOrNull() != null -> JsonPrimitive(value.toInt())
+                    value.toDoubleOrNull() != null -> JsonPrimitive(value.toDouble())
+                    value.toFloatOrNull() != null -> JsonPrimitive(value.toFloat())
+                    else -> JsonPrimitive(value)
+                }
+            )
+        }
+
+        val group = AbstractGroup(
+            request.name,
+            request.minimumMemory,
+            request.maximumMemory,
+            request.minimumOnline,
+            request.maximumOnline,
+            request.percentageToStartNewService,
+            PlatformIndex(request.platform.name, request.platform.version),
+            request.createdAt,
+            Template.bindSnapshot(request.templatesList),
+            properties
+        )
+
+        Agent.runtime.groupStorage().update(group)
+        responseObserver.onNext(group.toSnapshot())
         responseObserver.onCompleted()
     }
 
-    override fun delete(request: GroupDeleteRequest, responseObserver: StreamObserver<GroupDeleteResponse>) {
+    override fun delete(request: GroupDeleteRequest, responseObserver: StreamObserver<GroupSnapshot>) {
         val groupStorage = Agent.runtime.groupStorage()
-        val builder = GroupDeleteResponse.newBuilder()
 
         val group = groupStorage.find(request.name)
         if (group == null) {
@@ -124,9 +120,7 @@ class GroupGrpcService : GroupControllerGrpc.GroupControllerImplBase() {
 
         Agent.runtime.serviceStorage().findByGroup(group).forEach { it.shutdown() }
         Agent.runtime.groupStorage().delete(group.name)
-        builder.setGroup(group.toSnapshot())
-        responseObserver.onNext(builder.build())
+        responseObserver.onNext(group.toSnapshot())
         responseObserver.onCompleted()
     }
-
 }

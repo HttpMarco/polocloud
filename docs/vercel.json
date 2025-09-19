@@ -5,5 +5,8 @@
       "deploymentEnabled": {
         "master": true
       }
+    },
+    "github": {
+      "silent": true
     }
   }

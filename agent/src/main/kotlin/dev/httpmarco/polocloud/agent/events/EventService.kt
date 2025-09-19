@@ -33,7 +33,7 @@ class EventService : SharedEventProvider() {
     }
 
     fun dropServiceSubscriptions(service: Service) {
-        remoteEvents.forEach { (event, subs) ->
+        remoteEvents.forEach { (_, subs) ->
             subs.removeIf { it.service == service }
         }
     }

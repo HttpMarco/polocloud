@@ -4,13 +4,16 @@ import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.AuthProvider
 import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
-import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AliveController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.HealthController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.AuthController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.SystemInformationController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.group.GroupController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.platform.PlatformController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.player.PlayerController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.role.RoleController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.service.ServiceController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.template.TemplateController
+import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.terminal.TerminalController
 import dev.httpmarco.polocloud.modules.rest.controller.impl.v3.controller.user.UserController
 import dev.httpmarco.polocloud.modules.rest.controller.methods.Request
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData
@@ -28,59 +31,57 @@ class ControllerProvider {
 
     init {
         registerControllers(
-            AliveController(),
+            HealthController(),
             UserController(),
             AuthController(),
             RoleController(),
+            PlatformController(),
+            TemplateController(),
             GroupController(),
             ServiceController(),
-            PlatformController(),
-            SystemInformationController()
-        )
-
-        this.controllers.forEach { handle(it) }
+            PlayerController(),
+            SystemInformationController(),
+            TerminalController()
+        ).forEach(::registerControllerRoutes)
     }
 
-    private fun registerControllers(vararg controller: Controller) {
-        this.controllers.addAll(controller)
+    private fun registerControllers(vararg controllerInstances: Controller): List<Controller> {
+        controllers.addAll(controllerInstances)
+        return controllerInstances.toList()
     }
 
-    private fun handle(controller: Controller) {
-       val basePath = API_PATH + controller.path
+    private fun registerControllerRoutes(controller: Controller) {
+        val basePath = API_PATH + controller.path
+
         controller::class.java.methods
             .filter { it.isAnnotationPresent(Request::class.java) }
-            .forEach { registerRoute(it, controller, basePath) }
-    }
+            .forEach { method ->
+                val annotation = method.getAnnotation(Request::class.java)
+                val type = HandlerType.valueOf(annotation.requestType.name)
+                val fullPath = basePath + annotation.path
 
-    private fun registerRoute(method: Method, controller: Controller, basePath: String) {
-        val annotation = method.getAnnotation(Request::class.java)
-        val type = HandlerType.valueOf(annotation.requestType.name)
-        val path = basePath + annotation.path
-        val permission = annotation.permission
-
-        RestModule.instance.httpServer.app.addHttpHandler(type, path) { ctx ->
-            AuthProvider(RequestMethodData(method, controller, permission)).handle(ctx)
-        }
-    }
-
-    fun processRequest(method: Method, controller: Controller, ctx: Context, user: User?, token: Token?) {
-        try {
-            if (ctx.result() == null) {
-                val params = mutableListOf<Any?>()
-
-                method.parameters.forEach { param ->
-                    when (param.type) {
-                        Context::class.java -> params.add(ctx)
-                        User::class.java -> params.add(user)
-                        Token::class.java -> params.add(token)
-                        else -> params.add(null)
-                    }
+                RestModule.instance.httpServer.app.addHttpHandler(type, fullPath) { context ->
+                    AuthProvider(RequestMethodData(method, controller, annotation.permission)).handle(context)
                 }
-
-                method.invoke(controller, *params.toTypedArray())
             }
+    }
+
+    fun processRequest(method: Method, controller: Controller, context: Context, user: User?, token: Token?) {
+        try {
+            if (context.result() != null) return
+
+            val args = method.parameters.map { param ->
+                when (param.type) {
+                    Context::class.java -> context
+                    User::class.java -> user
+                    Token::class.java -> token
+                    else -> null
+                }
+            }.toTypedArray()
+
+            method.invoke(controller, *args)
         } catch (e: Exception) {
-            ctx.status(500).result("Internal Server Error")
+            context.defaultResponse(500,"Internal Server Error")
             e.printStackTrace()
         }
     }

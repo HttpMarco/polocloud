@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.runtime.k8s
 
+import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 
@@ -9,6 +10,10 @@ class KubernetesFactory : RuntimeFactory<KubernetesService> {
     }
 
     override fun shutdownApplication(service: KubernetesService, shutdownCleanUp: Boolean): ServiceSnapshot {
+        TODO("Not yet implemented")
+    }
+
+    override fun generateInstance(group: AbstractGroup): KubernetesService {
         TODO("Not yet implemented")
     }
 }

@@ -23,7 +23,7 @@ In the project, you can see:
 - `app/layout.config.tsx`: Shared options for layouts, optional but preferred to keep.
 
 | Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
+|---------------------------|--------------------------------------------------------|
 | `app/(home)`              | The route group for your landing page and other pages. |
 | `app/docs`                | The documentation layout and pages.                    |
 | `app/api/search/route.ts` | The Route Handler for search.                          |

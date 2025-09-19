@@ -1,0 +1,51 @@
+{
+  "name": "spigot",
+  "type": "SERVER",
+  "language": "JAVA",
+  "url": "https://getbukkit.org/get/%buildId%",
+  "arguments": [
+    "-nogui"
+  ],
+  "tasks": [
+    "EULA_TASK",
+    "SPIGOT_SERVER_PROPERTIES"
+  ],
+  "versions": [
+    {
+      "version": "1.21.8",
+      "buildId": "8smOqbVnSl8RvSvlvkSNsUxEv0Y3g7Vo"
+    },
+    {
+      "version": "1.21.5",
+      "buildId": "cNW08KHVlCEwof2IkXbxXIKeDPbfgMBU"
+    },
+    {
+      "version": "1.21.4",
+      "buildId": "vUvveVKWgnYEO4zC7ey2pqkGtaAxvS6v"
+    },
+    {
+      "version": "1.21.3",
+      "buildId": "RnpgqIvNyXe7nFTZZJyIkXl4shuhFUXm"
+    },
+    {
+      "version": "1.21.1",
+      "buildId": "yqv2djplb2mijkqTIUUmC7F6pbJMpFdX"
+    },
+    {
+      "version": "1.20.6",
+      "buildId": "QRmEAkJCu1HcZkgxVSmVgHZYwZ03Ua1R"
+    },
+    {
+      "version": "1.20.4",
+      "buildId": "vdYtG2jRHgslyLJLaIUK2xVAL95LshGI"
+    },
+    {
+      "version": "1.20.2",
+      "buildId": "ZcRnnYaSJs89j5TUCLdyXVsmem6ovqnn"
+    },
+    {
+      "version": "1.20.1",
+      "buildId": "U9uE8nD9E8ubIns3NuTK6rnKrUVOVc45"
+    }
+  ]
+}
