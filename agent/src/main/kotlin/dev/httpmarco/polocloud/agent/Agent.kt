@@ -98,7 +98,7 @@ object Agent : PolocloudShared(true) {
         i18n.info("agent.starting.platforms.count", PlatformPool.size(), PlatformPool.versionSize())
         i18n.info("agent.starting.successful")
 
-      //  this.onlineStateDetector.detect()
+        this.onlineStateDetector.detect()
         PlayerListener()
     }
 

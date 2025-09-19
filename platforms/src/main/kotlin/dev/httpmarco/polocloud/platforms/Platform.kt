@@ -65,7 +65,6 @@ class Platform(
             throw PlatformVersionInvalidException()
         }
 
-
         if (!path.exists()) {
             throw PlatformCacheMissingException()
         }
@@ -75,18 +74,21 @@ class Platform(
         // copy the platform file to the service path
         copyDirectoryContent(path.parent, servicePath, StandardCopyOption.REPLACE_EXISTING)
 
+        println(1)
         if (bridge == null) {
             return
         }
-
+        println(3)
         //on_promise situation -> copy files to the service path
         if (bridge.type == BridgeType.ON_PREMISE) {
             val targetBridge = servicePath.resolve(bridgePath + "/" + bridge.path.name)
             targetBridge.parent.createDirectories()
             Files.copy(bridge.path, targetBridge, StandardCopyOption.REPLACE_EXISTING)
+            println(3)
             return
         }
 
+        println(4)
         if (bridge.type == BridgeType.OFF_PREMISE) {
             val bridgeClass = Class.forName(bridge.bridgeClass)
             bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java)

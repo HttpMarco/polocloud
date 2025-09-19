@@ -1,15 +1,15 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.Bind
-import com.github.dockerjava.api.model.Volume
+import com.github.dockerjava.api.model.ExposedPort
+import com.github.dockerjava.api.model.Mount
+import com.github.dockerjava.api.model.MountType
+import com.github.dockerjava.api.model.PortBinding
+import com.github.dockerjava.api.model.Ports
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
-import dev.httpmarco.polocloud.agent.runtime.RuntimeFactory
-import dev.httpmarco.polocloud.common.language.Language
-import dev.httpmarco.polocloud.common.os.currentOS
-import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractRuntimeFactory
+import dev.httpmarco.polocloud.v1.GroupType
 import kotlin.io.path.Path
-import kotlin.io.path.name
 
 /**
  * DockerRuntimeFactory is responsible for managing Docker-based service instances.
@@ -17,64 +17,55 @@ import kotlin.io.path.name
  * This class is Swarm-aware: it creates services instead of plain containers, allowing
  * replication and overlay networking.
  */
-class DockerRuntimeFactory(val client: DockerClient) : RuntimeFactory<DockerService> {
+class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<DockerService>(Path("local/temp")) {
 
     /**
      * Starts a Docker service using Docker Swarm.
      * Pulls the image, sets up mounts, networking, and service replication.
      */
-    override fun bootApplication(service: DockerService) {
-        val container = client.createContainerCmd("openjdk:21-jdk")
+    override fun runRuntimeBoot(service: DockerService) {
+        val rawContainer = client.createContainerCmd("openjdk:21-jdk")
             .withName(service.name())
-            .withBinds(
-                Bind(
-                    Path("C:/Users/mirco/Desktop/te/temp/${service.name()}").toAbsolutePath().toString(),
-                    Volume("/app")
+            .withWorkingDir("/app")
+            .withCmd(*languageSpecificBootArguments(service).toTypedArray())
+
+        val hostConfig = rawContainer.hostConfig!!
+            .withMounts(
+                listOf(
+                    Mount().withType(MountType.BIND)
+                        .withSource("C:\\Users\\mirco\\Desktop\\te\\temp\\${service.name()}")
+                        .withTarget("/app")
                 )
             )
-            .withWorkingDir("/app")
-            .withCmd(*languageSpecificBootArguments(service.group()).toTypedArray())
-            .exec()
 
+
+            if(service.type == GroupType.PROXY) {
+                val exposed = ExposedPort.tcp(service.port)
+                rawContainer.withExposedPorts(exposed)
+                hostConfig.withPortBindings(PortBinding(Ports.Binding.bindPort(service.port),exposed))
+            }
+
+        val container = rawContainer.exec()
         client.startContainerCmd(container.id).exec()
-        println("Container proxy-${service.name()} gestartet mit ID: ${container.id}")
-    }
 
-    protected fun languageSpecificBootArguments(group: AbstractGroup): ArrayList<String> {
-        val platform = group.platform()
-        val commands = ArrayList<String>()
-        when (platform.language) {
-            Language.JAVA -> {
-                commands.add("java")
-                commands.addAll(
-                    listOf(
-                        "-Dterminal.jline=false",
-                        "-Dfile.encoding=UTF-8",
-                        "-Xms${group.minMemory}M",
-                        "-Xmx${group.maxMemory}M",
-                        "-jar",
-                        group.applicationPlatformFile().name
-                    )
-                )
-                commands.addAll(platform.arguments)
-            }
+        val inspection = client.inspectContainerCmd(container.id).exec()
+        val ip = inspection.networkSettings.networks.values.firstOrNull()?.ipAddress!!
 
-            Language.GO, Language.RUST -> {
-                commands.addAll(currentOS.executableCurrentDirectoryCommand(group.applicationPlatformFile().name))
-            }
-        }
-        return commands
+        service.containerId = container.id
+        service.changeToContainerHostname(ip)
     }
 
     /**
      * Stops and removes the Docker service.
      * Uses the service container ID, forces removal if needed.
      */
-    override fun shutdownApplication(service: DockerService, shutdownCleanUp: Boolean): ServiceSnapshot {
-        // Stop and remove the container/service
+    override fun runRuntimeShutdown(service: DockerService, shutdownCleanUp: Boolean) {
         client.stopContainerCmd(service.containerId).exec()
         client.removeContainerCmd(service.containerId).withForce(true).exec()
-        return service.toSnapshot()
+    }
+
+    override fun javaLanguagePath(service: DockerService): String {
+        return "java"
     }
 
     /**

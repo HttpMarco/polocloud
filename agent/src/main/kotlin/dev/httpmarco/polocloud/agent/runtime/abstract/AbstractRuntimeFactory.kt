@@ -13,6 +13,7 @@ import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformParameters
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.properties.JAVA_PATH
+import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
 import dev.httpmarco.polocloud.v1.services.ServiceState
 import org.yaml.snakeyaml.util.Tuple
 import java.nio.file.Files
@@ -86,11 +87,43 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
         this.runRuntimeBoot(service)
     }
 
+    override fun shutdownApplication(service: T, shutdownCleanUp: Boolean): ServiceSnapshot {
+        // If the service is already stopping or stopped, return its snapshot
+        if (service.state == ServiceState.STOPPING || service.state == ServiceState.STOPPED) {
+            return service.toSnapshot()
+        }
+
+        service.state = ServiceState.STOPPING
+        val eventService = Agent.eventService
+
+        i18n.info("agent.local-runtime.factory.shutdown", service.name())
+
+        // Remove any event subscriptions for this service
+        eventService.dropServiceSubscriptions(service)
+        // Notify other services that this service is stopping
+        eventService.call(ServiceChangeStateEvent(service))
+
+        this.runRuntimeShutdown(service, shutdownCleanUp)
+
+        // Finalize service state and fire shutdown event
+        service.state = ServiceState.STOPPED
+        Agent.eventProvider().call(ServiceChangeStateEvent(service))
+        Agent.runtime.serviceStorage().dropAbstractService(service)
+
+        i18n.info(
+            "agent.local-runtime.factory${if (service.isStatic()) ".static" else ""}.shutdown.successful",
+            service.name()
+        )
+        return service.toSnapshot()
+    }
+
     /**
      * Runs the runtime boot process for the given [service].
      * This method is called after all checks are done and the environment is prepared.
      */
     abstract fun runRuntimeBoot(service: T)
+
+    abstract fun runRuntimeShutdown(service: T, shutdownCleanUp: Boolean)
 
     /**
      * Prepares the environment parameters for the given [service].

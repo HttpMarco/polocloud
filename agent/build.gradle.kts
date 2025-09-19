@@ -17,7 +17,6 @@ dependencies {
 
     implementation(libs.gson)
     implementation(libs.oshi)
-    implementation(libs.redis)
 
     implementation(libs.bundles.confirationPool)
     implementation(projects.platforms)

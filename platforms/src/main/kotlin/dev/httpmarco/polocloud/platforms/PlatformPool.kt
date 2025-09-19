@@ -42,5 +42,4 @@ object PlatformPool {
     fun findBindBridge(name: String): Bridge? {
         return platformBridges.firstOrNull { it.name == name }
     }
-
 }

@@ -47,7 +47,7 @@ class DockerRuntime : Runtime() {
 
     override fun boot() {
         informationThread.start()
-      //  queue.start()
+        queue.start()
     }
 
     override fun serviceStorage() = serviceStorage

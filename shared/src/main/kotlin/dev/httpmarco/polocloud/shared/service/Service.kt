@@ -16,7 +16,7 @@ open class Service(
     var state: ServiceState,
     val type: GroupType,
     var properties: Map<String, String>,
-    val hostname: String,
+    hostname: String,
     val port: Int,
     var templates: List<Template>,
     val information: ServiceInformation,
@@ -49,6 +49,9 @@ open class Service(
         protected set
 
     var motd: String = motd
+        protected set
+
+    var hostname: String = hostname
         protected set
 
     fun name(): String {

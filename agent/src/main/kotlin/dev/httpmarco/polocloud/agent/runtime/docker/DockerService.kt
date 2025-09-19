@@ -52,8 +52,7 @@ class DockerService(
         group.maxMemory
     )
 
-    fun update() {
-
-
+    fun changeToContainerHostname(hostname: String) {
+        this.hostname  = hostname
     }
 }

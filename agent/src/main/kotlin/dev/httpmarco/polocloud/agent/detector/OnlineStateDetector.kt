@@ -25,7 +25,7 @@ class OnlineStateDetector : Detector {
         val services = Agent.runtime.serviceStorage().findAll()
 
         services.forEach { service ->
-            val host = service.hostname
+            val host = if (service.hostname == "0.0.0.0") "127.0.0.1" else service.hostname
             val port = service.port
 
             if (service.isBedrockLike()) {
@@ -90,6 +90,7 @@ class OnlineStateDetector : Detector {
                                 descriptionObj["text"]?.asString
                             }
                         }
+
                         else -> null
                     }
 
