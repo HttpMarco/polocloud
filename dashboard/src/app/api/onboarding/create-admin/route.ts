@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     let response = await fetch(backendUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(requestBody)
     });
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
       });
