@@ -30,7 +30,6 @@ export function SidebarFooterComponent({ userData, onSettingsClick, onLogout }: 
           setVersion(data.version || '');
         }
       } catch {
-        // Silent fallback
       }
     };
 
