@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { User, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { setCredentialsCookie } from '@/lib/auth-credentials';
 
 interface OnboardingData {
     backendUrl: string;
@@ -55,7 +56,7 @@ export function AdminAccountStep({ data, setData, onNext }: AdminAccountStepProp
         setError(null);
 
         try {
-            const backendIp = data.backendUrl;
+            const backendIp = localStorage.getItem('backendIp') || data.backendUrl;
             if (!backendIp) {
                 throw new Error('Backend IP not found. Please connect to backend first.');
             }
@@ -74,8 +75,12 @@ export function AdminAccountStep({ data, setData, onNext }: AdminAccountStepProp
             });
 
             if (response.ok) {
-                localStorage.setItem('adminUsername', data.username);
-                localStorage.setItem('adminPassword', data.password);
+                setCredentialsCookie({
+                    backendIp: backendIp,
+                    username: data.username,
+                    password: data.password
+                });
+
                 localStorage.setItem('isLoggedIn', 'true');
                 
                 onNext();
