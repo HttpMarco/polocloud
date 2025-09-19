@@ -35,14 +35,10 @@ export default function GroupsPage() {
             if (response.ok && Array.isArray(data)) {
                 setGroups(data);
             } else if (response.status === 400 && data.message === 'No groups found') {
-                // Backend returns 400 with "No groups found" - treat as empty array
                 setGroups([]);
-            } else {
-                // Any other response - set empty array
                 setGroups([]);
             }
         } catch {
-            // Always set empty array on any error to show UI
             setGroups([]);
         } finally {
             setIsLoading(false);
