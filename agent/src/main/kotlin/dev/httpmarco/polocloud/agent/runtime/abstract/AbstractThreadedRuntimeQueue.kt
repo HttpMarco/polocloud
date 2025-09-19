@@ -4,8 +4,6 @@ import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.shutdownProcess
-import dev.httpmarco.polocloud.agent.utils.IndexDetector
-import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
 import dev.httpmarco.polocloud.v1.services.ServiceState
 
 open class AbstractThreadedRuntimeQueue : Thread("polocloud-local-runtime-queue") {
@@ -13,7 +11,6 @@ open class AbstractThreadedRuntimeQueue : Thread("polocloud-local-runtime-queue"
     override fun run() {
         try {
             val runtime = Agent.runtime
-
             while (!isInterrupted && !shutdownProcess()) {
                 runtime.groupStorage().findAll().forEach { group ->
                     val required = requiredServersThatStart(group)

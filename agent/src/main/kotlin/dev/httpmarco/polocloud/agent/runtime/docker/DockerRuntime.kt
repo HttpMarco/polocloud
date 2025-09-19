@@ -3,25 +3,36 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.async.ResultCallback
 import com.github.dockerjava.api.model.Event
+import com.github.dockerjava.api.model.Frame
 import com.github.dockerjava.api.model.Mount
 import com.github.dockerjava.api.model.MountType
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
+import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.*
+import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
+import dev.httpmarco.polocloud.common.version.polocloudVersion
+import dev.httpmarco.polocloud.platforms.PlatformParameters
+import dev.httpmarco.polocloud.shared.service.ServiceInformation
+import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
+import kotlin.io.path.Path
+import kotlin.io.path.name
 
 
 class DockerRuntime : Runtime() {
 
     private val client = createLocalDockerClient()
     private val serviceStorage = DockerRuntimeServiceStorage(client)
-    private val groupStorage = DockerRuntimeGroupStorage(client)
+    private val groupStorage = DockerRuntimeGroupStorage()
     private val expender = DockerExpender(client)
     private val runtimeFactory = DockerRuntimeFactory(client)
     private val templateStorage = DockerTemplateStorage(client)
     private val dockerConfigHolder = DockerConfigHolder()
+    private val informationThread = DockerCloudInformationThread()
+    private val queue = DockerThreadedRuntimeQueue()
 
     fun createLocalDockerClient(): DockerClient {
         val config = DefaultDockerClientConfig.createDefaultConfigBuilder().build()
@@ -35,50 +46,8 @@ class DockerRuntime : Runtime() {
     }
 
     override fun boot() {
-        client.eventsCmd()
-            .withEventTypeFilter("container")
-            .exec(object : ResultCallback.Adapter<Event>() {
-                override fun onNext(event: Event) {
-                    val action = event.action
-                    val containerId = event.id
-                    val serviceName = event.actor?.attributes?.get("com.docker.swarm.service.name")
-
-                    if (action == "start" && serviceName != null) {
-
-                        val task = client.listTasksCmd()
-                            .withServiceFilter(serviceName)
-                            .exec()
-                            .firstOrNull { it.status?.containerStatus?.containerID == containerId }
-
-                        val taskSlot = task?.slot
-
-                        // TODO handle all service labels
-
-
-                        val service = client.inspectServiceCmd(serviceName).exec()
-                        val version = service.version?.index
-                        val spec = service.spec!!
-
-                        val updatedSpec = spec.withTaskTemplate(
-                            spec.taskTemplate!!.withContainerSpec(
-                                spec.taskTemplate!!.containerSpec!!.withMounts(
-                                    listOf(
-                                        Mount()
-                                            .withType(MountType.BIND)
-                                            .withSource("C:\\Users\\nervi\\Desktop\\123\\temp\\${serviceName.split("-").last()}-$taskSlot")
-                                            .withTarget("/app")
-                                    )
-                                )
-                            )
-                        )
-                        client.updateServiceCmd(service.id, updatedSpec)
-                            .withVersion(version!!)
-                            .exec()
-                    }
-                }
-            })
-
-        logger.info("Already find running services&8: &f${serviceStorage().findAll().joinToString { it.name() }}")
+        informationThread.start()
+      //  queue.start()
     }
 
     override fun serviceStorage() = serviceStorage
