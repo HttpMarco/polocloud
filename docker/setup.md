@@ -2,12 +2,6 @@
 
 FIRST CHANGE PATH IN docker-compose.yml FILE
 ```
-docker swarm init  
-docker stack deploy -c docker-compose.yml polocloud
-```
-
-List all services
-```
-docker service ls
+docker run -d --name agent -p 8080:8080 -v C:\Users\mirco\Desktop\te\:/cloud/local -v /var/run/docker.sock:/var/run/docker.sock polocloud:development
 ```
 

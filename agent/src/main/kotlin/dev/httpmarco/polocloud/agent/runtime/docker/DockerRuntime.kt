@@ -1,25 +1,12 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.async.ResultCallback
-import com.github.dockerjava.api.model.Event
-import com.github.dockerjava.api.model.Frame
-import com.github.dockerjava.api.model.Mount
-import com.github.dockerjava.api.model.MountType
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
-import dev.httpmarco.polocloud.agent.Agent
-import dev.httpmarco.polocloud.agent.logger
 import dev.httpmarco.polocloud.agent.runtime.*
-import dev.httpmarco.polocloud.common.image.pngToBase64DataUrl
-import dev.httpmarco.polocloud.common.version.polocloudVersion
-import dev.httpmarco.polocloud.platforms.PlatformParameters
-import dev.httpmarco.polocloud.shared.service.ServiceInformation
-import dev.httpmarco.polocloud.v1.GroupType
-import dev.httpmarco.polocloud.v1.services.ServiceState
-import kotlin.io.path.Path
-import kotlin.io.path.name
+import java.net.Inet4Address
+import java.net.NetworkInterface
 
 
 class DockerRuntime : Runtime() {
@@ -64,5 +51,19 @@ class DockerRuntime : Runtime() {
 
     override fun sendCommand(command: String) {
         //todo DELETE HERE
+    }
+
+    override fun detectLocalAddress(): String {
+        val interfaces = NetworkInterface.getNetworkInterfaces()
+        for (iface in interfaces) {
+            if (!iface.isLoopback && iface.isUp) {
+                for (addr in iface.inetAddresses) {
+                    if (addr is Inet4Address && !addr.isLoopbackAddress) {
+                        return addr.hostAddress
+                    }
+                }
+            }
+        }
+        return "null";
     }
 }

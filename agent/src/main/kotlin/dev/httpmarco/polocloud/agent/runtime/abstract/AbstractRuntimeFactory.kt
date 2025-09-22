@@ -149,6 +149,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
         environment.addParameter("port", service.port)
         environment.addParameter("server_icon", pngToBase64DataUrl(serverIcon.openStream()))
         environment.addParameter("agent_port", Agent.config.port)
+        environment.addParameter("agent_hostname", Agent.runtime.detectLocalAddress())
         environment.addParameter("service-name", service.name())
         environment.addParameter("velocityProxyToken", Agent.securityProvider.proxySecureToken)
         environment.addParameter("file_suffix", platform.language.suffix())
@@ -187,7 +188,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
 
         when (platform.language) {
             Language.JAVA -> {
-                commands.add(javaLanguagePath(service))
+                commands.addAll(javaLanguagePath(service))
                 commands.addAll(
                     listOf(
                         "-Dterminal.jline=false",
@@ -208,10 +209,10 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
         return commands
     }
 
-    protected open fun javaLanguagePath(service: T) : String {
+    protected open fun javaLanguagePath(service: T) : List<String> {
         val javaPath = service.group().properties.get(JAVA_PATH)?.takeIf {
             JavaUtils().isValidJavaPath(it)
         } ?: System.getProperty("java.home")
-        return "${javaPath}/bin/java"
+        return listOf("${javaPath}/bin/java")
     }
 }

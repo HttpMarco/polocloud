@@ -50,16 +50,19 @@ public final class Polocloud extends PolocloudShared {
     }
 
     Polocloud() {
-        this(null, System.getenv().containsKey("agent_port") ? Integer.parseInt(System.getenv("agent_port")) : 8932, true); // use default port for standalone
+        this(null,
+                System.getenv().containsKey("agent_hostname") ? System.getenv("agent_hostname") : "127.0.0.1",
+                System.getenv().containsKey("agent_port") ? Integer.parseInt(System.getenv("agent_port")) : 8932,
+                true); // use default port for standalone
         instance = this;
     }
 
     //for off premise bridges
-    public Polocloud(String serviceName, int agentPort, boolean setShared) {
+    public Polocloud(String serviceName, String agentHostname, int agentPort, boolean setShared) {
         super(setShared);
         this.serviceName = serviceName;
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("127.0.0.1", agentPort)
+                .forAddress(agentHostname, agentPort)
                 .usePlaintext()
                 .build();
 

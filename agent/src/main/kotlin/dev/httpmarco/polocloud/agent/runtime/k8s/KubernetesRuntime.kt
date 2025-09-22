@@ -27,4 +27,8 @@ class KubernetesRuntime(client: KubernetesClient) : Runtime() {
     override fun sendCommand(command: String) {
         TODO("Not yet implemented")
     }
+
+    override fun detectLocalAddress(): String {
+        TODO("Not yet implemented")
+    }
 }

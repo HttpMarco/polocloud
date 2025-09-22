@@ -111,4 +111,10 @@ abstract class Runtime {
      * to send commands to the runtime.
      */
     abstract fun sendCommand(command: String)
+
+    /**
+     * Detects the local address of the runtime environment.
+     * This method should be overridden by specific runtime implementations
+     */
+    abstract fun detectLocalAddress() : String
 }

@@ -1,15 +1,17 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.ExposedPort
-import com.github.dockerjava.api.model.Mount
-import com.github.dockerjava.api.model.MountType
-import com.github.dockerjava.api.model.PortBinding
-import com.github.dockerjava.api.model.Ports
+import com.github.dockerjava.api.command.InspectContainerResponse
+import com.github.dockerjava.api.model.*
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractRuntimeFactory
 import dev.httpmarco.polocloud.v1.GroupType
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.stream.Collectors
 import kotlin.io.path.Path
+
 
 /**
  * DockerRuntimeFactory is responsible for managing Docker-based service instances.
@@ -24,34 +26,39 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
      * Pulls the image, sets up mounts, networking, and service replication.
      */
     override fun runRuntimeBoot(service: DockerService) {
-        val rawContainer = client.createContainerCmd("openjdk:21-jdk")
+        val createCmd = client.createContainerCmd("openjdk:21-jdk")
             .withName(service.name())
             .withWorkingDir("/app")
             .withCmd(*languageSpecificBootArguments(service).toTypedArray())
 
-        val hostConfig = rawContainer.hostConfig!!
-            .withMounts(
-                listOf(
-                    Mount().withType(MountType.BIND)
-                        .withSource("C:\\Users\\mirco\\Desktop\\te\\temp\\${service.name()}")
-                        .withTarget("/app")
-                )
-            )
+        val envList = environment(service).parameters.map { (key, value) -> "$key=$value" }.toMutableList()
 
+        // TODO USE RIGHT ENV FOR USE 100% OF RAM
+        //envList.add("MEMORY=")
+        if (envList.isNotEmpty()) {
+            createCmd.withEnv(*envList.toTypedArray())
+        }
 
-            if(service.type == GroupType.PROXY) {
-                val exposed = ExposedPort.tcp(service.port)
-                rawContainer.withExposedPorts(exposed)
-                hostConfig.withPortBindings(PortBinding(Ports.Binding.bindPort(service.port),exposed))
-            }
+        val bindSource = localUserVolumePath() + "\\temp\\${service.name()}"
+        val hostConfig = HostConfig.newHostConfig()
+            .withBinds(Bind.parse("$bindSource:/app"))
 
-        val container = rawContainer.exec()
-        client.startContainerCmd(container.id).exec()
+        if (service.type == GroupType.PROXY) {
+            val exposed = ExposedPort.tcp(service.port)
+            createCmd.withExposedPorts(exposed)
+            hostConfig.withPortBindings(PortBinding(Ports.Binding.bindPort(service.port), exposed))
+        }
 
-        val inspection = client.inspectContainerCmd(container.id).exec()
-        val ip = inspection.networkSettings.networks.values.firstOrNull()?.ipAddress!!
+        createCmd.withHostConfig(hostConfig)
 
-        service.containerId = container.id
+        val containerResponse = createCmd.exec()
+        client.startContainerCmd(containerResponse.id).exec()
+
+        val inspection = client.inspectContainerCmd(containerResponse.id).exec()
+        val ip = inspection.networkSettings.networks.values.firstOrNull()?.ipAddress
+            ?: throw IllegalStateException("null")
+
+        service.containerId = containerResponse.id
         service.changeToContainerHostname(ip)
     }
 
@@ -64,8 +71,8 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
         client.removeContainerCmd(service.containerId).withForce(true).exec()
     }
 
-    override fun javaLanguagePath(service: DockerService): String {
-        return "java"
+    override fun javaLanguagePath(service: DockerService): List<String> {
+        return listOf("java")
     }
 
     /**
@@ -73,5 +80,30 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
      */
     override fun generateInstance(group: AbstractGroup): DockerService {
         return DockerService(group)
+    }
+
+    private fun localUserVolumePath(): String {
+        val containerInfo = client.inspectContainerCmd(containerId()).exec()
+        val mounts = containerInfo.mounts
+
+        val targetPath = "/cloud/local"
+
+        val mount = mounts!!.firstOrNull { it.destination!!.path == targetPath }
+            ?: throw IllegalStateException("No mount found for $targetPath")
+
+        return mount.source!!
+    }
+
+    fun containerId(): String {
+        for (line in Files.readAllLines(Paths.get("/proc/self/cgroup"))) {
+            val idx = line.lastIndexOf("/")
+            if (idx != -1 && line.contains("docker")) {
+                val candidate = line.substring(idx + 1)
+                if (candidate.matches("[0-9a-f]{12,64}".toRegex())) {
+                    return candidate
+                }
+            }
+        }
+        return ""
     }
 }

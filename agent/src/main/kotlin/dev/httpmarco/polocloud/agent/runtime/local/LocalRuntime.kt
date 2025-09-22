@@ -82,4 +82,8 @@ class LocalRuntime : Runtime() {
 
         this.terminal.commandService.call(commandName, args)
     }
+
+    override fun detectLocalAddress(): String {
+        return "127.0.0.1"
+    }
 }
