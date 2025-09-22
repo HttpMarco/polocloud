@@ -1,0 +1,18 @@
+{
+  "title": "Documentation",
+  "description": "General docs",
+  "icon": "Cloudy",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "installation",
+    "---First Group Setup---",
+    "group-setup",
+    "---Available Commands---",
+    "services",
+    "commands",
+    "---Dashboard Hosting---",
+    "dashboard"
+  ]
+}
