@@ -32,7 +32,8 @@ class VelocityMotdUpdater (
                 .replace("%version%", polocloudVersion)
                 .replace("%online_players%", server.playerCount.toString())
             val newVersionName = config.maintenanceMotd().pingMessage
-            val newPing = ServerPing.builder()
+
+            val newPing = event.ping.asBuilder()
                 .description(MiniMessage.miniMessage().deserialize(motdLines))
                 .version(ServerPing.Version(1, newVersionName))
                 .maximumPlayers(event.ping.players.orElse(null)?.max ?: 0)
@@ -58,7 +59,7 @@ class VelocityMotdUpdater (
             .replace("%version%", polocloudVersion)
             .replace("%online_players%", server.playerCount.toString())
 
-        val newPing = ServerPing.builder()
+        val newPing = event.ping.asBuilder()
             .description(MiniMessage.miniMessage().deserialize(motdLines))
             .version(ping.version)
             .maximumPlayers(ping.players.orElse(null) ?.max ?: 0)
