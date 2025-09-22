@@ -54,7 +54,6 @@ export function BackendConnectStep({ data, setData, onNext }: BackendConnectStep
             }
 
             setIsConnected(true);
-
             localStorage.setItem('backendIp', data.backendUrl.trim());
             document.cookie = `backend_ip=${encodeURIComponent(data.backendUrl.trim())}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=lax`;
 

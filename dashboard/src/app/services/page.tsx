@@ -24,8 +24,7 @@ export default function ServicesPage() {
     const [selectedGroup, setSelectedGroup] = useState<string>('all');
     const [selectedType, setSelectedType] = useState<string>('all');
     const [restartingServices, setRestartingServices] = useState<string[]>([]);
-    
-    // WebSocket state
+
     const [pingInterval, setPingInterval] = useState<NodeJS.Timeout | null>(null);
     const [reconnectInterval, setReconnectInterval] = useState<NodeJS.Timeout | null>(null);
     const [connectionAttempts, setConnectionAttempts] = useState(0);

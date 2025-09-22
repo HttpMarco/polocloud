@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Eye, EyeOff, LogIn, User, Lock, Wifi, CheckCircle, AlertCircle, Zap } from 'lucide-react';
+import { Eye, EyeOff, LogIn, User, Lock, Wifi, CheckCircle, AlertCircle, Zap, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -116,8 +116,6 @@ export default function LoginPage() {
                     const needsPasswordChange = backendNeedsChange || (!localPasswordChanged && userData.user?.hasChangedPassword === undefined);
 
                     if (userData.authenticated && userData.user && needsPasswordChange) {
-                        localStorage.setItem('adminUsername', username.trim());
-                        localStorage.setItem('adminPassword', password);
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.setItem('needsPasswordChange', 'true');
 
@@ -133,8 +131,6 @@ export default function LoginPage() {
                             router.push('/');
                         }, 500);
                     } else {
-                        localStorage.setItem('adminUsername', username.trim());
-                        localStorage.setItem('adminPassword', password);
                         localStorage.setItem('isLoggedIn', 'true');
 
                         window.dispatchEvent(new CustomEvent('user-logged-in', {
@@ -149,8 +145,6 @@ export default function LoginPage() {
                         }, 500);
                     }
                 } else {
-                    localStorage.setItem('adminUsername', username.trim());
-                    localStorage.setItem('adminPassword', password);
                     localStorage.setItem('isLoggedIn', 'true');
 
                     window.dispatchEvent(new CustomEvent('user-logged-in', {
@@ -386,6 +380,42 @@ export default function LoginPage() {
                             </Card>
                         </motion.div>
 
+                        <motion.div
+                            className="text-center space-y-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 1.5, ease: "easeOut" }}
+                        >
+                            <motion.div
+                                className="relative"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <Button
+                                    variant="outline"
+                                    className="w-full h-10 text-sm font-medium border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+                                    onClick={() => router.push('/onboarding')}
+                                >
+                                    <Settings className="h-4 w-4 mr-2" />
+                                    You are server owner?
+                                </Button>
+                            </motion.div>
+
+                            <div className="relative">
+                                <div className="absolute inset-0 flex items-center">
+                                    <span className="w-full border-t border-muted-foreground/20" />
+                                </div>
+                                <div className="relative flex justify-center text-xs uppercase">
+                                    <span className="bg-background px-2 text-muted-foreground">or</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <p className="text-sm text-muted-foreground">
+                                    Connect to existing backend
+                                </p>
+                            </div>
+                        </motion.div>
 
                     </motion.div>
                 </div>
@@ -618,17 +648,43 @@ export default function LoginPage() {
                     </motion.div>
 
                     <motion.div
-                        className="text-center space-y-3"
+                        className="text-center space-y-4"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 2, ease: "easeOut" }}
                     >
-                        <p className="text-sm text-muted-foreground">
-                            Don&apos;t have an account?{' '}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            Contact a Server Administrator to create an account.
-                        </p>
+                        <motion.div
+                            className="relative"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <Button
+                                variant="outline"
+                                className="w-full h-10 text-sm font-medium border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+                                onClick={() => router.push('/onboarding')}
+                            >
+                                <Settings className="h-4 w-4 mr-2" />
+                                You are server owner?
+                            </Button>
+                        </motion.div>
+
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t border-muted-foreground/20" />
+                            </div>
+                            <div className="relative flex justify-center text-xs uppercase">
+                                <span className="bg-background px-2 text-muted-foreground">or</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">
+                                Don&apos;t have an account?{' '}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                                Contact a Server Administrator to create an account.
+                            </p>
+                        </div>
                     </motion.div>
                 </motion.div>
             </div>

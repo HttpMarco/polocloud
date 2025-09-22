@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { 
   Settings, 
   Lock
 } from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/api";
+import { getUsernameFromCookie } from "@/lib/auth-credentials";
+import { useAuth } from '@/hooks/useAuth';
 import { SidebarHeaderComponent } from "@/components/sidebar/sidebar-header";
 import { CloudNavigation } from "@/components/sidebar/cloud-navigation";
 import { TeamNavigation } from "@/components/sidebar/team-navigation";
@@ -43,7 +44,7 @@ const loadUserData = async (): Promise<UserData> => {
   if (userDataCache) return userDataCache;
   
   try {
-    const adminUsername = localStorage.getItem('adminUsername');
+    const adminUsername = getUsernameFromCookie() || localStorage.getItem('adminUsername');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
 
 
@@ -309,6 +310,7 @@ export function AppSidebar() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const { logout } = useAuth();
 
   const [changePasswordData, setChangePasswordData] = useState<ChangePasswordData>({
     currentPassword: '',
@@ -316,7 +318,6 @@ export function AppSidebar() {
     confirmPassword: ''
   });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const loadDataAsync = async () => {
@@ -327,7 +328,7 @@ export function AppSidebar() {
         setIsLoading(false);
       } catch (error) {
         console.log('Error loading user data:', error);
-        const adminUsername = localStorage.getItem('adminUsername');
+        const adminUsername = getUsernameFromCookie() || localStorage.getItem('adminUsername');
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         
         if (adminUsername && isLoggedIn === 'true') {
@@ -401,9 +402,11 @@ export function AppSidebar() {
       if (response.ok) {
         resetUserDataCache();
         setUserData({ username: 'Guest', userUUID: '', role: null });
-        router.push('/login');
+        logout();
       }
-    } catch {}
+    } catch {
+      logout();
+    }
   };
 
   const handleChangePassword = async () => {

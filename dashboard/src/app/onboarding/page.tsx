@@ -48,6 +48,7 @@ export default function OnboardingPage() {
         } else {
 
             localStorage.setItem('backendIp', onboardingData.backendUrl);
+            document.cookie = `backend_ip=${encodeURIComponent(onboardingData.backendUrl)}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=lax`;
             localStorage.setItem('onboarding-completed', 'true');
             window.location.href = '/';
         }
