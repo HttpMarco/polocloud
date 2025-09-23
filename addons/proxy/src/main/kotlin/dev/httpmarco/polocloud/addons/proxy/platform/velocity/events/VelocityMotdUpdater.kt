@@ -18,11 +18,11 @@ class VelocityMotdUpdater (
 ) {
 
     private val polocloudVersion: String = polocloudVersion()
+    private val selfGroup =  Polocloud.instance().groupProvider().find(platform.proxyAddon().poloService.groupName)!!
 
     @Subscribe
     fun onProxyPing(event: ProxyPingEvent) {
-        val group = Polocloud.instance().groupProvider().find(platform.proxyAddon().poloService.groupName)!!
-        if(group.properties.get(MAINTENANCE) ?: false) {
+        if(selfGroup.properties.get(MAINTENANCE) ?: false) {
             // maintenance mode is enabled, use maintenance MOTD
             if(!config.maintenanceMotd().enabled) {
                 // maintenance motd is disabled
@@ -66,7 +66,5 @@ class VelocityMotdUpdater (
             .onlinePlayers(ping.players.orElse(null)?.online ?: 0)
 
         event.ping = newPing.build()
-
     }
-
 }

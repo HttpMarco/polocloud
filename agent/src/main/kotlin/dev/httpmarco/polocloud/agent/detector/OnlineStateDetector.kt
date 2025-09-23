@@ -1,5 +1,6 @@
 package dev.httpmarco.polocloud.agent.detector
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
@@ -78,36 +79,47 @@ class OnlineStateDetector : Detector {
                     val json: JsonObject = GSON.fromJson(String(jsonData), JsonObject::class.java)
                     val description = json["description"]
 
-                    val motd = when {
-                        description?.isJsonPrimitive == true -> description.asString
-                        description?.isJsonObject == true -> {
-                            val descriptionObj = description.asJsonObject
-                            if (descriptionObj.has("extra")) {
-                                descriptionObj["extra"].asJsonArray.joinToString("") {
-                                    it.asJsonObject["text"]?.asString ?: ""
-                                }
-                            } else {
-                                descriptionObj["text"]?.asString
-                            }
-                        }
-
-                        else -> null
-                    }
-
+                    val motd = parseMotd(description)
                     val players = json["players"]?.asJsonObject
                     val playerCount = players?.get("online")?.asJsonPrimitive?.asInt ?: -1
 
-                    service.updateMotd(motd!!)
+                    service.updateMotd(motd)
                     service.updatePlayerCount(playerCount)
                     service.updateMaxPlayerCount(players?.get("max")?.asJsonPrimitive?.asInt ?: -1)
 
                     this.callOnline(service)
                 }
-            } catch (_: Throwable) {
+            } catch (e: Throwable) {
                 // ignore connection errors, the service is not online yet
             }
         }
     }
+
+    fun parseMotd(element: JsonElement?): String {
+        if (element == null || element.isJsonNull) return ""
+
+        return when {
+            element.isJsonPrimitive -> element.asString
+            element.isJsonObject -> {
+                val obj = element.asJsonObject
+                buildString {
+                    if (obj.has("text")) {
+                        append(obj["text"].asString)
+                    }
+                    if (obj.has("extra")) {
+                        obj["extra"].asJsonArray.forEach { child ->
+                            append(parseMotd(child))
+                        }
+                    }
+                }
+            }
+            element.isJsonArray -> {
+                element.asJsonArray.joinToString("") { parseMotd(it) }
+            }
+            else -> ""
+        }
+    }
+
 
     private fun pingBedrock(host: String, port: Int): Triple<String?, Int, Int>? {
         return try {
