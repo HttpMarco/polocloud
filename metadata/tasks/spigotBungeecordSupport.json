@@ -1,0 +1,15 @@
+{
+  "name": "SPIGOT_BUNGEECORD_SUPPORT",
+  "steps": [
+    {
+      "name": "Change bungeecord mode",
+      "description": "Set the bungeecord option in spigot.yml",
+      "filename": "spigot.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "settings.bungeecord",
+        "value": "%bungeecord_use%"
+      }
+    }
+  ]
+}

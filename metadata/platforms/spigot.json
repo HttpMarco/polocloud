@@ -8,7 +8,8 @@
   ],
   "tasks": [
     "EULA_TASK",
-    "SPIGOT_SERVER_PROPERTIES"
+    "SPIGOT_SERVER_PROPERTIES",
+	"SPIGOT_BUNGEECORD_SUPPORT"
   ],
   "versions": [
     {

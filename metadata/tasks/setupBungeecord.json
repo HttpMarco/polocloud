@@ -21,6 +21,16 @@
         "key": "listeners.0.host",
         "value": "%hostname%:%port%"
       }
+    },
+	{
+      "name": "Enable ip forwarding",
+      "description": "Allow to share ip, name and uuid to the spigot, paper server etc.",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "ip_forward",
+        "value": "true"
+      }
     }
   ]
 }

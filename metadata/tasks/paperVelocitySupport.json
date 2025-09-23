@@ -12,16 +12,6 @@
       }
     },
     {
-      "name": "Change bungeecord mode",
-      "description": "Set the bungeecord option in spigot.yml",
-      "filename": "spigot.yml",
-      "action": {
-        "type": "PlatformFilePropertyUpdateAction",
-        "key": "settings.bungeecord",
-        "value": "%bungeecord_use%"
-      }
-    },
-    {
       "name": "Change velocity proxy token",
       "description": "Set up the Velocity proxy token by writing to the file.",
       "filename": "config/paper-global.yml",
