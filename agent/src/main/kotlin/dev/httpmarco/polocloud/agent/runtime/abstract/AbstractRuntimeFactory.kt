@@ -157,6 +157,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
 
         val velocityPlatforms = listOf("velocity", "gate")
         environment.addParameter("velocity_use", Agent.runtime.groupStorage().findAll().stream().anyMatch { velocityPlatforms.contains(it.platform().name) })
+        environment.addParameter("bungeecord_use", Agent.runtime.groupStorage().findAll().stream().anyMatch { "bungeecord" == it.platform().name })
         environment.addParameter("version", polocloudVersion())
 
         return environment
