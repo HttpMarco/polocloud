@@ -88,11 +88,12 @@ class Platform(
 
         if (bridge.type == BridgeType.OFF_PREMISE) {
             val bridgeClass = Class.forName(bridge.bridgeClass)
-            bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java)
+            bridgeClass.getDeclaredConstructor(Path::class.java, String::class.java, Int::class.java, String::class.java)
                 .newInstance(
                     servicePath,
                     environment.getStringParameter("service-name"),
-                    environment.getIntParameter("agent_port")
+                    environment.getIntParameter("agent_port"),
+                    environment.getIntParameter("agent_hostname")
                 )
         }
     }

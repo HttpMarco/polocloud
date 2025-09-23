@@ -10,8 +10,8 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.nio.file.Path
 
-class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int) :
-    BridgeInstance<Server, Server>(Polocloud(serviceName, agentPort, false)) {
+class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int, agentHostname: String) :
+    BridgeInstance<Server, Server>(Polocloud(serviceName, agentHostname, agentPort, false)) {
     private val yaml: Yaml
 
     init {
