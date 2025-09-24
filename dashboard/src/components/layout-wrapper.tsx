@@ -18,7 +18,9 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
   const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !isAuthPage) {
+    const isLoggedInFromStorage = localStorage.getItem('isLoggedIn') === 'true';
+    
+    if (!isLoading && !isAuthenticated && !isAuthPage && !isLoggedInFromStorage) {
       window.location.href = '/login';
     }
   }, [isAuthenticated, isLoading, isAuthPage]);
