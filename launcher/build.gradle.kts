@@ -96,3 +96,17 @@ tasks.register("buildDependencies") {
         println("✅ Exported agent dependencies to ${outputFile.absolutePath}")
     }
 }
+
+tasks.register<Exec>("dockerBuild") {
+    dependsOn(tasks.jar)
+    val imageName = "polocloud:development"
+
+    // Docker build
+    commandLine(
+        "docker", "build",
+        "--build-arg", "POLOCLOUD_VERSION=$version",
+        "-t", imageName,
+        "-f", "../docker/Dockerfile",
+        "."
+    )
+}

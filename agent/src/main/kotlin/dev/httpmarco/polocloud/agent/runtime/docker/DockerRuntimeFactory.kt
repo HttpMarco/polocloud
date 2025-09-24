@@ -86,7 +86,6 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
 
     private fun localUserVolumePath(): String {
         val string = containerId()
-        println("Container ID: $string")
         val containerInfo = client.inspectContainerCmd(string).exec()
         val mounts = containerInfo.mounts
 
