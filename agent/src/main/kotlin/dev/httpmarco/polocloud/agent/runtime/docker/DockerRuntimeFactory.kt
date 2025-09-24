@@ -42,6 +42,7 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
         val bindSource = localUserVolumePath() + "\\temp\\${service.name()}"
         val hostConfig = HostConfig.newHostConfig()
             .withBinds(Bind.parse("$bindSource:/app"))
+            .withMemory( service.maxMemory * 1024 * 1024L)
 
         if (service.type == GroupType.PROXY) {
             val exposed = ExposedPort.tcp(service.port)
@@ -83,7 +84,9 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
     }
 
     private fun localUserVolumePath(): String {
-        val containerInfo = client.inspectContainerCmd(containerId()).exec()
+        val string = containerId()
+        println("Container ID: $string")
+        val containerInfo = client.inspectContainerCmd(string).exec()
         val mounts = containerInfo.mounts
 
         val targetPath = "/cloud/local"
@@ -95,15 +98,27 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
     }
 
     fun containerId(): String {
-        for (line in Files.readAllLines(Paths.get("/proc/self/cgroup"))) {
-            val idx = line.lastIndexOf("/")
-            if (idx != -1 && line.contains("docker")) {
-                val candidate = line.substring(idx + 1)
-                if (candidate.matches("[0-9a-f]{12,64}".toRegex())) {
-                    return candidate
-                }
-            }
+        // 1) try env HOSTNAME
+        System.getenv("HOSTNAME")?.let {
+            if (it.matches(Regex("[0-9a-f]{12,64}"))) return it
         }
+
+        // 2) try etc/hostname
+        try {
+            val host = Files.readString(Paths.get("/etc/hostname")).trim()
+            if (host.matches(Regex("[0-9a-f]{12,64}"))) return host
+        } catch (_: Exception) {}
+
+        // 3) (Optional) try /proc/self/mountinfo
+        try {
+            val lines = Files.readAllLines(Paths.get("/proc/self/mountinfo"))
+            val regex = Regex("[0-9a-f]{64}")
+            lines.forEach { line ->
+                regex.find(line)?.let { return it.value }
+            }
+        } catch (_: Exception) {}
+
+        // nichts gefunden
         return ""
     }
 }
