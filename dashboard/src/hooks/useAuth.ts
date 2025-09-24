@@ -75,11 +75,28 @@ export function useAuth() {
       }
     };
 
+    const handleUserLogin = () => {
+      checkAuth();
+    };
+
     checkAuth();
+
+    window.addEventListener('user-logged-in', handleUserLogin);
+
+    return () => {
+      window.removeEventListener('user-logged-in', handleUserLogin);
+    };
   }, []);
 
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('backendIp');
+    
+
+    document.cookie = 'polocloud_credentials=; path=/; expires=Thu, 01 Jan 2025 00:00:00 GMT';
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 2025 00:00:00 GMT';
+    document.cookie = 'backend_ip=; path=/; expires=Thu, 01 Jan 2025 00:00:00 GMT';
+    
     setAuthState({
       isAuthenticated: false,
       isLoading: false,

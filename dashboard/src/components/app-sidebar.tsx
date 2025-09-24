@@ -12,7 +12,7 @@ import {
   Lock
 } from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/api";
-import { getUsernameFromCookie } from "@/lib/auth-credentials";
+import { getUsernameFromCookie, clearCredentialsCookie } from "@/lib/auth-credentials";
 import { useAuth } from '@/hooks/useAuth';
 import { SidebarHeaderComponent } from "@/components/sidebar/sidebar-header";
 import { CloudNavigation } from "@/components/sidebar/cloud-navigation";
@@ -402,9 +402,11 @@ export function AppSidebar() {
       if (response.ok) {
         resetUserDataCache();
         setUserData({ username: 'Guest', userUUID: '', role: null });
+        clearCredentialsCookie();
         logout();
       }
     } catch {
+      clearCredentialsCookie();
       logout();
     }
   };

@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { FlyingParticles } from './components/FlyingParticles';
+import { setCredentialsCookie } from '@/lib/auth-credentials';
 
 export default function LoginPage() {
     const [username, setUsername] = useState('');
@@ -119,6 +120,15 @@ export default function LoginPage() {
                         localStorage.setItem('isLoggedIn', 'true');
                         localStorage.setItem('needsPasswordChange', 'true');
 
+                        const backendIp = localStorage.getItem('backendIp');
+                        if (backendIp) {
+                            setCredentialsCookie({
+                                backendIp: backendIp,
+                                username: username.trim(),
+                                password: password
+                            });
+                        }
+
                         window.dispatchEvent(new CustomEvent('user-logged-in', {
                             detail: {
                                 username: username.trim(),
@@ -127,11 +137,18 @@ export default function LoginPage() {
                             }
                         }));
 
-                        setTimeout(() => {
-                            router.push('/');
-                        }, 500);
+                        router.push('/');
                     } else {
                         localStorage.setItem('isLoggedIn', 'true');
+
+                        const backendIp = localStorage.getItem('backendIp');
+                        if (backendIp) {
+                            setCredentialsCookie({
+                                backendIp: backendIp,
+                                username: username.trim(),
+                                password: password
+                            });
+                        }
 
                         window.dispatchEvent(new CustomEvent('user-logged-in', {
                             detail: {
@@ -140,12 +157,19 @@ export default function LoginPage() {
                             }
                         }));
 
-                        setTimeout(() => {
-                            router.push('/');
-                        }, 500);
+                        router.push('/');
                     }
                 } else {
                     localStorage.setItem('isLoggedIn', 'true');
+
+                    const backendIp = localStorage.getItem('backendIp');
+                    if (backendIp) {
+                        setCredentialsCookie({
+                            backendIp: backendIp,
+                            username: username.trim(),
+                            password: password
+                        });
+                    }
 
                     window.dispatchEvent(new CustomEvent('user-logged-in', {
                         detail: {
@@ -154,9 +178,7 @@ export default function LoginPage() {
                         }
                     }));
 
-                    setTimeout(() => {
-                        router.push('/');
-                    }, 500);
+                    router.push('/');
                 }
             } else {
                 const errorData = await response.json();
