@@ -31,6 +31,16 @@
         "key": "online-mode",
         "value": "false"
       }
+    },
+	{
+      "name": "Change bungeecord mode",
+      "description": "Set the bungeecord option in spigot.yml",
+      "filename": "spigot.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "settings.bungeecord",
+        "value": "true"
+      }
     }
   ]
 }

@@ -11,6 +11,7 @@ import dev.httpmarco.polocloud.common.os.currentOS
 import dev.httpmarco.polocloud.common.version.polocloudVersion
 import dev.httpmarco.polocloud.platforms.Platform
 import dev.httpmarco.polocloud.platforms.PlatformParameters
+import dev.httpmarco.polocloud.platforms.ServerPlatformForwarding
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangeStateEvent
 import dev.httpmarco.polocloud.shared.properties.JAVA_PATH
 import dev.httpmarco.polocloud.v1.services.ServiceSnapshot
@@ -156,8 +157,15 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
         environment.addParameter("filename", service.group().applicationPlatformFile().name)
 
         val velocityPlatforms = listOf("velocity", "gate")
-        environment.addParameter("velocity_use", Agent.runtime.groupStorage().findAll().stream().anyMatch { velocityPlatforms.contains(it.platform().name) })
-        environment.addParameter("bungeecord_use", Agent.runtime.groupStorage().findAll().stream().anyMatch { "bungeecord" == it.platform().name })
+
+        val groupStorage = Agent.runtime.groupStorage()
+        val modernForwardingMode = groupStorage.findAll().filter { it.isServer() }.all { it.platform().forwarding == ServerPlatformForwarding.MODERN }
+
+        environment.addParameter("forwarding", (if(modernForwardingMode) ServerPlatformForwarding.MODERN.name else ServerPlatformForwarding.LEGACY.name).lowercase())
+
+        // TODO USE THIS WITH ALL PLATFORMS
+        environment.addParameter("velocity_use", groupStorage.findAll().stream().anyMatch { velocityPlatforms.contains(it.platform().name) })
+        environment.addParameter("bungeecord_use", groupStorage.findAll().stream().anyMatch { "bungeecord" == it.platform().name })
         environment.addParameter("version", polocloudVersion())
 
         return environment

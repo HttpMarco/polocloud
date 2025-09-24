@@ -121,4 +121,8 @@ open class AbstractGroup(
     fun isProxy(): Boolean {
         return platform().type == GroupType.PROXY
     }
+
+    fun isServer(): Boolean {
+        return platform().type == GroupType.SERVER
+    }
 }

@@ -19,7 +19,7 @@
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
         "key": "player-info-forwarding-mode",
-        "value": "modern"
+        "value": "%forwarding%"
       }
     },
     {

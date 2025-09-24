@@ -3,6 +3,7 @@
   "type": "SERVER",
   "language": "JAVA",
   "url": "https://api.papermc.io/v2/projects/paper/versions/%version%/builds/%buildId%/downloads/paper-%version%-%buildId%.jar",
+  "forwarding": "MODERN",
   "arguments": [
     "-nogui"
   ],
@@ -31,8 +32,7 @@
   "tasks": [
     "EULA_TASK",
     "SPIGOT_SERVER_PROPERTIES",
-	"SPIGOT_BUNGEECORD_SUPPORT",
-    "PAPER_PROXY_SUPPORT_TASK",
+    "PAPER_PROXY_SUPPORT_TASK"
   ],
   "preTasks": [
     "LOAD_PAPER_DEPENDENCIES_TASK"

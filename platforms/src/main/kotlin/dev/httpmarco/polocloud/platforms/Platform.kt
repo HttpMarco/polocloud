@@ -51,6 +51,8 @@ class Platform(
     private val osNameMapping: Map<OS, String> = emptyMap(),
     // mapping how the architecture names will be named in the %arch% placeholder (optional)
     private val archNameMapping: Map<String, String> = emptyMap(),
+    // property for proxy forwarding support
+    val forwarding: ServerPlatformForwarding = ServerPlatformForwarding.LEGACY
 ) {
 
     fun prepare(servicePath: Path, version: String, environment: PlatformParameters) {
