@@ -57,6 +57,7 @@ class EventService : SharedEventProvider() {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : Event> subscribe(eventType: Class<T>, result: (T) -> Any) {
         val eventName = eventType.simpleName
         localSubscribers.computeIfAbsent(eventName) { mutableListOf() }
