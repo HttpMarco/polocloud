@@ -10,7 +10,7 @@ private var inShutdown = false
 
 fun registerHook() {
     Runtime.getRuntime().addShutdownHook(Thread({
-        exitPolocloud()
+        exitPolocloud(cleanShutdown = false)
     }, SHUTDOWN_HOOK))
 }
 

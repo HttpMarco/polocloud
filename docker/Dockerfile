@@ -7,4 +7,7 @@ ENV POLOCLOUD_VERSION=$POLOCLOUD_VERSION
 
 COPY /build/libs/polocloud-launcher.jar /cloud/polocloud-launcher.jar
 
+# Stop-Signal explizit setzen
+STOPSIGNAL SIGTERM
+
 ENTRYPOINT ["java", "-jar", "/cloud/polocloud-launcher.jar"]
