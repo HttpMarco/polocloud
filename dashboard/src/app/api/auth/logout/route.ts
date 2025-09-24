@@ -51,6 +51,14 @@ export async function POST(request: NextRequest) {
       path: '/'
     });
 
+    nextResponse.cookies.set('polocloud_credentials', '', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/'
+    });
+
     return nextResponse;
   } catch {
     return NextResponse.json(
