@@ -68,8 +68,9 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
      * Uses the service container ID, forces removal if needed.
      */
     override fun runRuntimeShutdown(service: DockerService, shutdownCleanUp: Boolean) {
-        client.stopContainerCmd(service.containerId).exec()
-        client.removeContainerCmd(service.containerId).withForce(true).exec()
+        val id = service.containerId ?: return
+        client.stopContainerCmd(id).exec()
+        client.removeContainerCmd(id).withForce(true).exec()
     }
 
     override fun javaLanguagePath(service: DockerService): List<String> {

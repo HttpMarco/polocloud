@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.k8s
 
 import dev.httpmarco.polocloud.agent.runtime.Runtime
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractServiceStatsThread
 import io.fabric8.kubernetes.client.KubernetesClient
 
 class KubernetesRuntime(client: KubernetesClient) : Runtime() {
@@ -29,6 +30,10 @@ class KubernetesRuntime(client: KubernetesClient) : Runtime() {
     }
 
     override fun detectLocalAddress(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun serviceStatsThread(): AbstractServiceStatsThread<*> {
         TODO("Not yet implemented")
     }
 }

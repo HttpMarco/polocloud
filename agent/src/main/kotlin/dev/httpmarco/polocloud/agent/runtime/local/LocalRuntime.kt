@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.Runtime
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractServiceStatsThread
 import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractThreadedRuntimeQueue
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.JLine3Terminal
 import dev.httpmarco.polocloud.agent.runtime.local.terminal.commands.impl.GroupCommand
@@ -24,8 +25,6 @@ class LocalRuntime : Runtime() {
     private val configHolder = LocalRuntimeConfigHolder()
 
     lateinit var terminal: JLine3Terminal
-
-    private val runtimeCpuDetectionThread = LocalCpuDetectionThread()
     private val runtimeCloudInformationThread = LocalCloudInformationThread()
 
     override fun boot() {
@@ -35,7 +34,6 @@ class LocalRuntime : Runtime() {
         terminal.commandService.registerCommand(TemplateCommand())
 
         this.runtimeQueue.start()
-        this.runtimeCpuDetectionThread.start()
         this.runtimeCloudInformationThread.start()
     }
 
@@ -65,7 +63,6 @@ class LocalRuntime : Runtime() {
 
     override fun shutdown() {
         this.terminal.shutdown()
-        this.runtimeCpuDetectionThread.interrupt()
         this.runtimeCloudInformationThread.interrupt()
         this.runtimeQueue.interrupt()
         this.runtimeFactory.shutdown()
@@ -85,5 +82,9 @@ class LocalRuntime : Runtime() {
 
     override fun detectLocalAddress(): String {
         return "127.0.0.1"
+    }
+
+    override fun serviceStatsThread(): AbstractServiceStatsThread<*> {
+        return LocalServiceStatsThread()
     }
 }

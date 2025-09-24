@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractServiceStatsThread
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntimeLoader
 import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
@@ -49,6 +50,9 @@ abstract class Runtime {
 
         // if nothing is done here, the boot method is called directly
         Agent.boot()
+
+        // start the service stats thread
+        serviceStatsThread().start()
     }
 
     open fun boot() {
@@ -117,4 +121,10 @@ abstract class Runtime {
      * This method should be overridden by specific runtime implementations
      */
     abstract fun detectLocalAddress() : String
+
+    /**
+     * Returns the service stats thread for the runtime.
+     * This method should be overridden by the specific runtime implementations
+     */
+    abstract fun serviceStatsThread(): AbstractServiceStatsThread<*>
 }

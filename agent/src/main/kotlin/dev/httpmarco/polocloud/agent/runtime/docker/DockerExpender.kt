@@ -12,7 +12,7 @@ class DockerExpender(val client: DockerClient) : RuntimeExpender<DockerService> 
         command: String
     ): Boolean {
         val output = mutableListOf<String>()
-        val execId = client.execCreateCmd(service.containerId).withAttachStdout(true).withAttachStderr(true).withCmd("sh", "-c", command).exec().id
+        val execId = client.execCreateCmd(service.containerId!!).withAttachStdout(true).withAttachStderr(true).withCmd("sh", "-c", command).exec().id
 
         client.execStartCmd(execId)
             .exec(object : ResultCallback.Adapter<Frame>() {
@@ -27,7 +27,7 @@ class DockerExpender(val client: DockerClient) : RuntimeExpender<DockerService> 
 
     override fun readLogs(service: DockerService, lines: Int): List<String> {
         val logLines = mutableListOf<String>()
-        client.logContainerCmd(service.containerId)
+        client.logContainerCmd(service.containerId!!)
             .withTail(lines)
             .withStdOut(true)
             .withStdErr(true)

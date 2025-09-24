@@ -5,6 +5,7 @@ import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
 import dev.httpmarco.polocloud.agent.runtime.*
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractServiceStatsThread
 import java.net.Inet4Address
 import java.net.NetworkInterface
 
@@ -65,5 +66,9 @@ class DockerRuntime : Runtime() {
             }
         }
         return "null";
+    }
+
+    override fun serviceStatsThread(): AbstractServiceStatsThread<*> {
+        return DockerServiceStatsThread(this.client)
     }
 }

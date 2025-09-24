@@ -36,7 +36,7 @@ class DockerService(
     maxMemory
 ) {
 
-    lateinit var containerId: String
+    var containerId: String? = null
 
     constructor(group: AbstractGroup) : this(
         group.name,
