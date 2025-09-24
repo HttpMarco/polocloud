@@ -45,6 +45,11 @@ class PlatformDeserializer : JsonDeserializer<Platform> {
                 context.deserialize(it, object : TypeToken<List<String>>() {}.type)
             } ?: emptyList(),
 
+
+            forwarding = ServerPlatformForwarding.valueOf(
+                (obj.get("forwarding")?.asString?: ServerPlatformForwarding.LEGACY.name)
+            ),
+
             copyServerIcon = obj.get("copyServerIcon")?.asBoolean ?: true,
 
             setFileName = obj.get("setFileName")?.asBoolean ?: true,
@@ -54,10 +59,11 @@ class PlatformDeserializer : JsonDeserializer<Platform> {
             } ?: emptyMap(),
 
             archNameMapping = obj.get("archNameMapping")?.let {
-                val raw: Map<String, String> = context.deserialize(it, object : TypeToken<Map<String, String>>() {}.type)
+                val raw: Map<String, String> =
+                    context.deserialize(it, object : TypeToken<Map<String, String>>() {}.type)
                 raw.mapKeys { (k, _) -> k.lowercase() }
             } ?: emptyMap(),
-            
+
             defaultStartPort = obj.get("defaultStartPort")?.asInt
         )
     }
