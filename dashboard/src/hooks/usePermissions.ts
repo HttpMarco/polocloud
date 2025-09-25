@@ -23,9 +23,35 @@ const loadUserData = async (): Promise<UserData> => {
   if (userDataCache) return userDataCache;
   
   try {
-    const adminUsername = localStorage.getItem('adminUsername');
+    let adminUsername = localStorage.getItem('adminUsername');
     const isLoggedIn = localStorage.getItem('isLoggedIn');
-    
+
+    if (isLoggedIn === 'true' && !adminUsername) {
+      const cookies = document.cookie.split(';');
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'adminUsername') {
+          adminUsername = value;
+          break;
+        }
+      }
+
+      if (!adminUsername) {
+        try {
+          const userResponse = await fetch('/api/auth/me');
+          if (userResponse.ok) {
+            const responseData = await userResponse.json();
+            if (responseData.authenticated && responseData.user) {
+              const role = responseData.user.role;
+              if (role === -1 || (role && role.id === -1) || (role && role.label === 'Admin') || (role && Array.isArray(role.permissions) && role.permissions.includes('*'))) {
+                adminUsername = responseData.user.username || 'admin';
+              }
+            }
+          }
+        } catch {}
+      }
+    }
+
     if (adminUsername && isLoggedIn === 'true') {
       try {
         const userResponse = await fetch('/api/auth/me');
@@ -35,16 +61,21 @@ const loadUserData = async (): Promise<UserData> => {
           if (responseData.authenticated && responseData.user) {
             const username = responseData.user.username || adminUsername;
             const userUUID = responseData.user.uuid || 'admin-' + Date.now();
-
             let role = null;
-            if (responseData.user.role !== undefined && responseData.user.role !== null) {
-              try {
-                const roleResponse = await fetch(`/api/role/${responseData.user.role}`);
-                if (roleResponse.ok) {
-                  const roleData = await roleResponse.json();
-                  role = roleData;
-                }
-              } catch {}
+            const incomingRole = responseData.user.role;
+            if (incomingRole !== undefined && incomingRole !== null) {
+              if (typeof incomingRole === 'object' && (Array.isArray(incomingRole.permissions) || incomingRole.permissions === undefined)) {
+                role = incomingRole;
+              } else {
+                try {
+                  const roleId = String(incomingRole);
+                  const roleResponse = await fetch(`/api/role/${roleId}`);
+                  if (roleResponse.ok) {
+                    const roleData = await roleResponse.json();
+                    role = roleData;
+                  }
+                } catch {}
+              }
             }
 
             if (role) {
@@ -54,7 +85,6 @@ const loadUserData = async (): Promise<UserData> => {
           }
         }
       } catch {}
-
       if (adminUsername === 'admin') {
         const role = {
           id: -1,
@@ -62,20 +92,64 @@ const loadUserData = async (): Promise<UserData> => {
           hexColor: '#dc2626',
           permissions: ['*']
         };
-        
-        userDataCache = { 
-          username: adminUsername, 
+
+        userDataCache = {
+          username: adminUsername,
           userUUID: 'admin-' + Date.now(),
-          role 
+          role
         };
         return userDataCache;
       }
     }
 
+    if (isLoggedIn === 'true') {
+      try {
+        const userResponse = await fetch('/api/auth/me');
+        if (userResponse.ok) {
+          const responseData = await userResponse.json();
+          if (responseData.authenticated && responseData.user) {
+            const role = responseData.user.role;
+            if (role === -1 || (role && role.id === -1) || (role && role.label === 'Admin') || (role && Array.isArray(role.permissions) && role.permissions.includes('*'))) {
+              const adminRole = {
+                id: -1,
+                label: 'Admin',
+                hexColor: '#dc2626',
+                permissions: ['*']
+              };
+
+              userDataCache = {
+                username: responseData.user.username || 'admin',
+                userUUID: responseData.user.uuid || 'admin-' + Date.now(),
+                role: adminRole
+              };
+              return userDataCache;
+            }
+          }
+        }
+      } catch {}
+    }
+
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
-    
+
   } catch {
+    const adminUsername = localStorage.getItem('adminUsername');
+    if (adminUsername === 'admin') {
+      const role = {
+        id: -1,
+        label: 'Admin',
+        hexColor: '#dc2626',
+        permissions: ['*']
+      };
+
+      userDataCache = {
+        username: adminUsername,
+        userUUID: 'admin-' + Date.now(),
+        role
+      };
+      return userDataCache;
+    }
+
     userDataCache = { username: 'Guest', userUUID: '', role: null };
     return userDataCache;
   }
