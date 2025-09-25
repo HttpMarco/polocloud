@@ -53,7 +53,7 @@ bstats = "3.1.0"
 lombok = "1.18.42"
 
 # nrc
-nrc-server-api = "1.0"
+nrc-server-api = "0.1.1"
 
 [libraries]
 
@@ -121,7 +121,6 @@ nrc-paper = { group = "gg.norisk", name = "nrc-server-api-paper", version.ref = 
 nrc-velocity = { group = "gg.norisk", name = "nrc-server-api-velocity", version.ref = "nrc-server-api" }
 nrc-spigot = { group = "gg.norisk", name = "nrc-server-api-spigot", version.ref = "nrc-server-api" }
 nrc-bungeecord = { group = "gg.norisk", name = "nrc-server-api-bungeecord", version.ref = "nrc-server-api" }
-nrc-fabric = { group = "gg.norisk", name = "nrc-server-api-fabric", version.ref = "nrc-server-api" }
 
 
 [plugins]
@@ -135,4 +134,4 @@ runtime = ["docker", "docker-http", "k8s"]
 jline = ["jline", "jline-console-ui"]
 fabric = ["fabric", "fabric-language-kotlin"]
 jwt = [ "java-jwt", "javalin-jwt" ]
-nrc = ["nrc-core", "nrc-paper", "nrc-velocity", "nrc-spigot", "nrc-bungeecord", "nrc-fabric"]
+nrc = ["nrc-core", "nrc-paper", "nrc-velocity", "nrc-spigot", "nrc-bungeecord"]

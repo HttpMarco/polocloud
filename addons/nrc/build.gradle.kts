@@ -7,7 +7,7 @@ dependencies {
 }
 
 repositories {
-    maven("https://repo.norisk.gg/repository/maven-public/")
+    maven("https://maven.norisk.gg/repository/maven-releases/")
 }
 
 tasks.processResources {
