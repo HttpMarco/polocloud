@@ -47,11 +47,32 @@ export default function GroupEditPage() {
         percentageToStartNewService: ''
     });
 
-    const loadGroup = useCallback(async () => {
+    const withLoading = async (fn: () => Promise<void>) => {
         try {
             setIsLoading(true);
             setError(null);
+            await fn();
+        } catch {
+            setError('Operation failed');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    const withSaving = async (fn: () => Promise<void>) => {
+        try {
+            setIsSaving(true);
+            await fn();
+        } catch {
+            setErrorMessage('Operation failed');
+            setErrorModalOpen(true);
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const loadGroup = useCallback(async () => {
+        await withLoading(async () => {
             const response = await fetch(API_ENDPOINTS.GROUPS.LIST);
             if (response.ok) {
                 const data = await response.json();
@@ -76,11 +97,7 @@ export default function GroupEditPage() {
             } else {
                 setError('Failed to load group');
             }
-        } catch {
-            setError('Failed to load group');
-        } finally {
-            setIsLoading(false);
-        }
+        });
     }, [groupName]);
 
     useEffect(() => {
@@ -120,8 +137,7 @@ export default function GroupEditPage() {
     const handleSave = async () => {
         if (!hasChanges) return;
 
-        setIsSaving(true);
-        try {
+        await withSaving(async () => {
             const response = await fetch(API_ENDPOINTS.GROUPS.EDIT(groupName), {
                 method: 'PATCH',
                 headers: {
@@ -147,12 +163,7 @@ export default function GroupEditPage() {
                 setErrorMessage(errorData.error || 'Failed to update group');
                 setErrorModalOpen(true);
             }
-        } catch {
-            setErrorMessage('Failed to update group');
-            setErrorModalOpen(true);
-        } finally {
-            setIsSaving(false);
-        }
+        });
     };
 
     const handleCancel = () => {

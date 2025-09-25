@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -38,15 +38,20 @@ export default function CreateGroupPage() {
     }
   });
 
-  useEffect(() => {
-    loadPlatforms();
-  }, []);
-
-  const loadPlatforms = async () => {
+  const withLoading = async (fn: () => Promise<void>) => {
     try {
       setIsLoading(true);
       setError(null);
-      
+      await fn();
+    } catch {
+      setError('Operation failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadPlatforms = useCallback(async () => {
+    await withLoading(async () => {
       const response = await fetch('/api/platforms/list');
       if (response.ok) {
         const data = await response.json();
@@ -72,12 +77,12 @@ export default function CreateGroupPage() {
         const errorData = await response.json();
         setError(errorData.error || 'Failed to load platforms');
       }
-    } catch {
-      setError('Failed to load platforms');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    });
+  }, []);
+
+  useEffect(() => {
+    loadPlatforms();
+  }, [loadPlatforms]);
 
   const handleNext = () => {
     if (currentStep < 6) {

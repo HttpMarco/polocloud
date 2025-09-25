@@ -82,6 +82,18 @@ export function CreateRoleModal({ onRoleAdded, isOpen: externalIsOpen, onOpenCha
   const [showColorPicker, setShowColorPicker] = useState(false)
   const colorPickerRef = useRef<HTMLDivElement>(null)
 
+  const withLoading = async (fn: () => Promise<void>) => {
+    try {
+      setIsLoading(true);
+      setError('');
+      await fn();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Ein Fehler ist aufgetreten');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
@@ -102,10 +114,7 @@ export function CreateRoleModal({ onRoleAdded, isOpen: externalIsOpen, onOpenCha
     e.preventDefault()
     if (!label.trim() || !hexColor) return
 
-    setIsLoading(true)
-    setError('')
-    
-    try {
+    await withLoading(async () => {
       const backendIp = localStorage.getItem('backendIp')
       if (!backendIp) {
         throw new Error('Backend IP nicht gefunden. Bitte verbinde dich zuerst mit dem Backend.')
@@ -132,11 +141,7 @@ export function CreateRoleModal({ onRoleAdded, isOpen: externalIsOpen, onOpenCha
       setHexColor('#3B82F6')
       setSelectedPermissions([])
       setIsOpen(false)
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Unbekannter Fehler')
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
 
   const handlePermissionChange = (permissionId: string, checked: boolean) => {

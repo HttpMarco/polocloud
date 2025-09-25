@@ -43,6 +43,18 @@ export function AddUserModal({ onUserAdded }: AddUserModalProps) {
     const { hasPermission } = usePermissions()
     const canCreateUser = hasPermission('polocloud.user.create')
 
+    const withLoading = async (fn: () => Promise<void>) => {
+        try {
+            setIsLoading(true);
+            setError('');
+            await fn();
+        } catch (error) {
+            setError(error instanceof Error ? error.message : 'Ein Fehler ist aufgetreten');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (isOpen) {
             setPassword('')
@@ -55,11 +67,7 @@ export function AddUserModal({ onUserAdded }: AddUserModalProps) {
         e.preventDefault()
         if (!username.trim()) return
 
-        setIsLoading(true)
-        setError('')
-
-        try {
-
+        await withLoading(async () => {
             const backendIp = localStorage.getItem('backendIp')
             if (!backendIp) {
                 throw new Error('Backend IP nicht gefunden. Bitte verbinde dich zuerst mit dem Backend.')
@@ -97,12 +105,7 @@ export function AddUserModal({ onUserAdded }: AddUserModalProps) {
                 setIsOpen(false)
                 setShowSuccess(false)
             }, 3000)
-
-        } catch (error) {
-            setError(error instanceof Error ? error.message : 'Unbekannter Fehler')
-        } finally {
-            setIsLoading(false)
-        }
+        })
     }
 
     const generateNewPassword = () => {
