@@ -21,7 +21,7 @@ class CommandService {
 
     fun commandsByName(name: String): MutableList<Command> {
         return commands.stream().filter {
-            it!!.name == name || Arrays.stream(it.aliases).anyMatch({ s -> s.equals(name) })
+            it!!.name.equals(name, ignoreCase = true) || Arrays.stream(it.aliases).anyMatch({ s -> s.equals(name, ignoreCase = true) })
         }.toList()
     }
 
