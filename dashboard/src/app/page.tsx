@@ -35,6 +35,34 @@ export default function DashboardPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showPasswordChangeModal, setShowPasswordChangeModal] = useState(false);
 
+    const handleSystemError = () => {
+        setRealMemoryUsage(null);
+        setRealCpuUsage(null);
+    };
+
+    const handleTrendError = () => {
+        setGroupTrend('+0%');
+        setGroupTrendDirection('stable');
+    };
+
+    const handleServiceTrendError = () => {
+        setServiceTrend('0%');
+        setServiceTrendDirection('stable');
+    };
+
+    const setTrendData = (percentage: number, setTrend: (value: string) => void, setDirection: (direction: 'up' | 'down' | 'stable') => void) => {
+        if (percentage > 0) {
+            setTrend(`+${Math.round(percentage)}%`);
+            setDirection('up');
+        } else if (percentage < 0) {
+            setTrend(`${Math.round(percentage)}%`);
+            setDirection('down');
+        } else {
+            setTrend('+0%');
+            setDirection('stable');
+        }
+    };
+
     const getTimeRangeInSeconds = useCallback(() => {
         switch (timeRange) {
             case '10m':
@@ -168,24 +196,12 @@ export default function DashboardPage() {
                 if (trendResponse.ok) {
                     const trendData = await trendResponse.json();
                     const percentage = trendData.data?.percentage || 0;
-                    
-                    if (percentage > 0) {
-                        setGroupTrend(`+${Math.round(percentage)}%`);
-                        setGroupTrendDirection('up');
-                    } else if (percentage < 0) {
-                        setGroupTrend(`${Math.round(percentage)}%`);
-                        setGroupTrendDirection('down');
-                    } else {
-                        setGroupTrend('+0%');
-                        setGroupTrendDirection('stable');
-                    }
+                    setTrendData(percentage, setGroupTrend, setGroupTrendDirection);
                 } else {
-                    setGroupTrend('+0%');
-                    setGroupTrendDirection('stable');
+                    handleTrendError();
                 }
             } catch {
-                setGroupTrend('+0%');
-                setGroupTrendDirection('stable');
+                handleTrendError();
             } finally {
                 setIsLoadingGroups(false);
             }
@@ -214,12 +230,10 @@ export default function DashboardPage() {
                         setServiceTrendDirection('down');
                     }
                 } else {
-                    setServiceTrend('0%');
-                    setServiceTrendDirection('down');
+                    handleServiceTrendError();
                 }
             } catch  {
-                setServiceTrend('0%');
-                setServiceTrendDirection('stable');
+                handleServiceTrendError();
             } finally {
                 setIsLoadingServices(false);
             }
@@ -254,18 +268,15 @@ export default function DashboardPage() {
                     setRealMemoryUsage(totalMemoryUsage);
                     setRealCpuUsage(totalCpuUsage);
                 } else {
-                    setRealMemoryUsage(null);
-                    setRealCpuUsage(null);
+                    handleSystemError();
                 }
             } else {
-                setRealMemoryUsage(null);
-                setRealCpuUsage(null);
+                handleSystemError();
             }
         } catch {
-            setRealMemoryUsage(null);
-            setRealCpuUsage(null);
+            handleSystemError();
         }
-    }, [realMemoryUsage, realCpuUsage]);
+    }, []);
 
     const loadSystemAverage = useCallback(async () => {
         try {
@@ -287,12 +298,10 @@ export default function DashboardPage() {
                     setAvgCpu(null);
                 }
             } else {
-                
                 setAvgMemory(null);
                 setAvgCpu(null);
             }
         } catch {
-            
             setAvgMemory(null);
             setAvgCpu(null);
         }
@@ -530,16 +539,16 @@ export default function DashboardPage() {
                         variants={itemVariants}
                     >
                         <DashboardCharts
-                            realMemoryUsage={realMemoryUsage}
-                            realCpuUsage={realCpuUsage}
+                            realMemoryUsage={realMemoryUsage || 0}
+                            realCpuUsage={realCpuUsage || 0}
                             avgMemory={avgMemory}
                             avgCpu={avgCpu}
                             timeRange={timeRange}
                             setTimeRange={setTimeRange}
                             memoizedChartData={memoizedChartData}
                             isClient={isClient}
-                            memorySpring={{ value: realMemoryUsage }}
-                            cpuSpring={{ value: realCpuUsage }}
+                            memorySpring={{ value: realMemoryUsage || 0 }}
+                            cpuSpring={{ value: realCpuUsage || 0 }}
                             avgMemorySpring={{ value: avgMemory || 0 }}
                             avgCpuSpring={{ value: avgCpu || 0 }}
                         />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Service } from '@/types/services';
@@ -35,6 +35,18 @@ export default function ServicesPage() {
         backendIp: null,
         token: null
     });
+
+    const withLoading = async (fn: () => Promise<void>) => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            await fn();
+        } catch {
+            setError('Operation failed');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
         setServices(sidebarServices);
@@ -224,15 +236,8 @@ export default function ServicesPage() {
 
     
 
-    useEffect(() => {
-        loadServices();
-    }, []);
-
-    const loadServices = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            
+    const loadServices = useCallback(async () => {
+        await withLoading(async () => {
             const response = await fetch(API_ENDPOINTS.SERVICES.LIST);
             if (response.ok) {
                 const data = await response.json();
@@ -240,19 +245,18 @@ export default function ServicesPage() {
                 if (Array.isArray(data)) {
                     setServices(data);
                 } else {
-
                     setError('Invalid response format from server');
                 }
             } else {
                 const errorData = await response.json();
                 setError(errorData.error || 'Failed to load services');
             }
-        } catch {
-            setError('Failed to load services');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        });
+    }, []);
+
+    useEffect(() => {
+        loadServices();
+    }, [loadServices]);
 
     const handleRestartService = async (serviceName: string) => {
         if (restartingServices.includes(serviceName)) return;

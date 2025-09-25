@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { API_ENDPOINTS } from '@/lib/api'
@@ -21,14 +21,18 @@ export default function GroupsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
 
-    useEffect(() => {
-        loadGroups();
-    }, []);
-
-    const loadGroups = async () => {
+    const withLoading = async (fn: () => Promise<void>) => {
         try {
             setIsLoading(true);
-            
+            await fn();
+        } catch {
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const loadGroups = useCallback(async () => {
+        await withLoading(async () => {
             const response = await fetch(API_ENDPOINTS.GROUPS.LIST);
             const data = await response.json();
             
@@ -36,14 +40,13 @@ export default function GroupsPage() {
                 setGroups(data);
             } else if (response.status === 400 && data.message === 'No groups found') {
                 setGroups([]);
-                setGroups([]);
             }
-        } catch {
-            setGroups([]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        });
+    }, []);
+
+    useEffect(() => {
+        loadGroups();
+    }, [loadGroups]);
 
 
 

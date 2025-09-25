@@ -19,6 +19,25 @@ const resetUserDataCache = () => {
   userDataCache = null;
 };
 
+const createAdminRole = () => ({
+  id: -1,
+  label: 'Admin',
+  hexColor: '#dc2626',
+  permissions: ['*']
+});
+
+const createAdminUserData = (username: string) => ({
+  username,
+  userUUID: 'admin-' + Date.now(),
+  role: createAdminRole()
+});
+
+const createGuestUserData = () => ({
+  username: 'Guest',
+  userUUID: '',
+  role: null
+});
+
 const loadUserData = async (): Promise<UserData> => {
   if (userDataCache) return userDataCache;
   
@@ -86,18 +105,7 @@ const loadUserData = async (): Promise<UserData> => {
         }
       } catch {}
       if (adminUsername === 'admin') {
-        const role = {
-          id: -1,
-          label: 'Admin',
-          hexColor: '#dc2626',
-          permissions: ['*']
-        };
-
-        userDataCache = {
-          username: adminUsername,
-          userUUID: 'admin-' + Date.now(),
-          role
-        };
+        userDataCache = createAdminUserData(adminUsername);
         return userDataCache;
       }
     }
@@ -110,18 +118,7 @@ const loadUserData = async (): Promise<UserData> => {
           if (responseData.authenticated && responseData.user) {
             const role = responseData.user.role;
             if (role === -1 || (role && role.id === -1) || (role && role.label === 'Admin') || (role && Array.isArray(role.permissions) && role.permissions.includes('*'))) {
-              const adminRole = {
-                id: -1,
-                label: 'Admin',
-                hexColor: '#dc2626',
-                permissions: ['*']
-              };
-
-              userDataCache = {
-                username: responseData.user.username || 'admin',
-                userUUID: responseData.user.uuid || 'admin-' + Date.now(),
-                role: adminRole
-              };
+              userDataCache = createAdminUserData(responseData.user.username || 'admin');
               return userDataCache;
             }
           }
@@ -129,28 +126,17 @@ const loadUserData = async (): Promise<UserData> => {
       } catch {}
     }
 
-    userDataCache = { username: 'Guest', userUUID: '', role: null };
+    userDataCache = createGuestUserData();
     return userDataCache;
 
   } catch {
     const adminUsername = localStorage.getItem('adminUsername');
     if (adminUsername === 'admin') {
-      const role = {
-        id: -1,
-        label: 'Admin',
-        hexColor: '#dc2626',
-        permissions: ['*']
-      };
-
-      userDataCache = {
-        username: adminUsername,
-        userUUID: 'admin-' + Date.now(),
-        role
-      };
+      userDataCache = createAdminUserData(adminUsername);
       return userDataCache;
     }
 
-    userDataCache = { username: 'Guest', userUUID: '', role: null };
+    userDataCache = createGuestUserData();
     return userDataCache;
   }
 };
@@ -164,7 +150,7 @@ export function usePermissions() {
       const data = await loadUserData();
       setUserData(data);
     } catch {
-      setUserData({ username: 'Guest', userUUID: '', role: null });
+      setUserData(createGuestUserData());
     } finally {
       setIsLoading(false);
     }
