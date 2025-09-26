@@ -43,6 +43,17 @@ export function SecurityTab() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
+  const withLoading = async (fn: () => Promise<void>) => {
+    try {
+      setIsLoading(true);
+      await fn();
+    } catch {
+      setTokens([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const parseTokensData = useCallback(async (rawTokens: RawTokenData[]): Promise<TokenData[]> => {
     const parsedTokens: TokenData[] = [];
 
@@ -91,8 +102,7 @@ export function SecurityTab() {
   }, []);
 
   const fetchTokens = useCallback(async () => {
-    setIsLoading(true);
-    try {
+    await withLoading(async () => {
       const backendIP = localStorage.getItem('backendIp');
       if (!backendIP) {
         setTokens([]);
@@ -112,11 +122,7 @@ export function SecurityTab() {
       } else {
         setTokens([]);
       }
-    } catch {
-      setTokens([]);
-    } finally {
-      setIsLoading(false);
-    }
+    });
   }, [parseTokensData]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -98,6 +98,52 @@ export default function TemplatesPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ open: boolean; templateName: string | null }>({ open: false, templateName: null });
 
+    const withLoading = async (fn: () => Promise<void>) => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            await fn();
+        } catch {
+            setError('Operation failed');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const withSaving = async (fn: () => Promise<void>) => {
+        try {
+            setIsSaving(true);
+            setEditError(null);
+            await fn();
+        } catch {
+            setEditError('Operation failed');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const withCreating = async (fn: () => Promise<void>) => {
+        try {
+            setIsCreating(true);
+            setCreateError(null);
+            await fn();
+        } catch {
+            setCreateError('Operation failed');
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
+    const showSuccess = (message: string) => {
+        setSuccessMessage(message);
+        setSuccessModalOpen(true);
+    };
+
+    const showError = (message: string) => {
+        setErrorMessage(message);
+        setErrorModalOpen(true);
+    };
+
     const validateTemplateName = (name: string): { isValid: boolean; error: string | null } => {
         const trimmedName = name.trim();
 
@@ -140,15 +186,8 @@ export default function TemplatesPage() {
         }
     };
 
-    useEffect(() => {
-        loadTemplates();
-    }, []);
-
-    const loadTemplates = async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-
+    const loadTemplates = useCallback(async () => {
+        await withLoading(async () => {
             const response = await fetch(API_ENDPOINTS.TEMPLATES.LIST);
             if (response.ok) {
                 const data = await response.json();
@@ -162,19 +201,18 @@ export default function TemplatesPage() {
                     );
                     setTemplates(validTemplates);
                 } else {
-
                     setError('Invalid response format from server');
                 }
             } else {
                 const errorData = await response.json();
                 setError(errorData.error || 'Failed to load templates');
             }
-        } catch {
-            setError('Failed to load templates');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+        });
+    }, []);
+
+    useEffect(() => {
+        loadTemplates();
+    }, [loadTemplates]);
 
     const handleDeleteTemplate = async (templateName: string) => {
         setDeleteConfirmModal({ open: true, templateName });
@@ -193,16 +231,13 @@ export default function TemplatesPage() {
 
             if (response.ok || response.status === 202) {
                 setTemplates(prev => prev.filter(t => t.name !== templateName));
-                setSuccessMessage(`Template "${templateName}" deleted successfully!`);
-                setSuccessModalOpen(true);
+                showSuccess(`Template "${templateName}" deleted successfully!`);
             } else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.error || 'Failed to delete template');
-                setErrorModalOpen(true);
+                showError(errorData.error || 'Failed to delete template');
             }
         } catch {
-            setErrorMessage('Failed to delete template');
-            setErrorModalOpen(true);
+            showError('Failed to delete template');
         } finally {
             setDeletingTemplates(prev => prev.filter(name => name !== templateName));
             setDeleteConfirmModal({ open: false, templateName: null });
@@ -242,10 +277,7 @@ export default function TemplatesPage() {
             return;
         }
 
-        setIsSaving(true);
-        setEditError(null);
-
-        try {
+        await withSaving(async () => {
             const response = await fetch(API_ENDPOINTS.TEMPLATES.EDIT(editingTemplate.name), {
                 method: 'PATCH',
                 headers: {
@@ -257,27 +289,19 @@ export default function TemplatesPage() {
             });
 
             if (response.ok || response.status === 202) {
-
                 setTemplates(prev => prev.map(t =>
                     t.name === editingTemplate.name
                         ? { ...t, name: editName.trim() }
                         : t
                 ));
 
-                setSuccessMessage('Template updated successfully!');
-                setSuccessModalOpen(true);
+                showSuccess('Template updated successfully!');
                 closeEditModal();
             } else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.error || 'Failed to update template');
-                setErrorModalOpen(true);
+                showError(errorData.error || 'Failed to update template');
             }
-        } catch  {
-            setErrorMessage('Failed to update template');
-            setErrorModalOpen(true);
-        } finally {
-            setIsSaving(false);
-        }
+        });
     };
 
     const openCreateModal = () => {
@@ -309,10 +333,7 @@ export default function TemplatesPage() {
             return;
         }
 
-        setIsCreating(true);
-        setCreateError(null);
-
-        try {
+        await withCreating(async () => {
             const response = await fetch(API_ENDPOINTS.TEMPLATES.CREATE, {
                 method: 'POST',
                 headers: {
@@ -345,24 +366,13 @@ export default function TemplatesPage() {
                 }
 
                 setTemplates(prev => [...prev, validTemplate]);
-                setSuccessMessage('Template created successfully!');
-                setSuccessModalOpen(true);
+                showSuccess('Template created successfully!');
                 closeCreateModal();
             } else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.message || 'Failed to create template');
-                setErrorModalOpen(true);
+                showError(errorData.message || 'Failed to create template');
             }
-        } catch (error) {
-            if (error instanceof Error) {
-                setErrorMessage(`Failed to create template: ${error.message}`);
-            } else {
-                setErrorMessage('Failed to create template');
-            }
-            setErrorModalOpen(true);
-        } finally {
-            setIsCreating(false);
-        }
+        });
     };
 
     const filteredTemplates = useMemo(() => {
