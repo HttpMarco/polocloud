@@ -13,7 +13,7 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 Choose your preferred installation method:
 
-<Tabs items={['Local', 'Docker', 'Kubernetes']}>
+<Tabs items={['Local', 'Docker']}>
   <Tab value="Local">
     <div className="text-muted-foreground mb-4">
       Install PoloCloud directly on your local machine. Requires Java 17 or higher.
@@ -67,7 +67,7 @@ Choose your preferred installation method:
     <div className="relative group">
       <DynamicCodeBlock 
         lang="bash" 
-        code='docker pull polocloud/polocloud:latest'
+        code='docker pull ghcr.io/httpmarco/polocloud:latest'
         className="rounded-lg border border-border/50 bg-muted/30"
       />
     </div>
@@ -76,31 +76,7 @@ Choose your preferred installation method:
     <div className="relative group">
       <DynamicCodeBlock 
         lang="bash" 
-        code='docker run -d --name polocloud -p 8080:8080 polocloud/polocloud:latest'
-        className="rounded-lg border border-border/50 bg-muted/30"
-      />
-    </div>
-  </Tab>
-  
-  <Tab value="Kubernetes">
-    <div className="text-muted-foreground mb-4">
-      Deploy PoloCloud on a Kubernetes cluster. Requires kubectl configured.
-    </div>
-    
-    <div className="text-muted-foreground mb-3">Apply the PoloCloud Kubernetes manifests:</div>
-    <div className="relative group">
-      <DynamicCodeBlock 
-        lang="bash" 
-        code='kubectl apply -f https://raw.githubusercontent.com/PoloCloud/PoloCloud/main/k8s/polocloud-init.yml'
-        className="rounded-lg border border-border/50 bg-muted/30"
-      />
-    </div>
-    
-    <div className="text-muted-foreground mb-3 mt-4">Check if PoloCloud is running:</div>
-    <div className="relative group">
-      <DynamicCodeBlock 
-        lang="bash" 
-        code='kubectl get pods -l app=polocloud'
+        code='docker run -d --name polocloud -p 8080:8080 ghcr.io/httpmarco/polocloud:latest'
         className="rounded-lg border border-border/50 bg-muted/30"
       />
     </div>
