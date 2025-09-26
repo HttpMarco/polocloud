@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class PolocloudProcess extends Thread {
 
     private final List<PolocloudLib> processLibs;
+    private Process process;
 
     public PolocloudProcess() {
         this.processLibs = PolocloudLib.of(PolocloudParameters.REQUIRED_LIBS);
@@ -33,7 +34,7 @@ public class PolocloudProcess extends Thread {
         }
 
         try {
-            Process process = processBuilder.start();
+            process = processBuilder.start();
             process.waitFor();
             process.exitValue();
         } catch (IOException | InterruptedException e) {
@@ -72,5 +73,9 @@ public class PolocloudProcess extends Thread {
 
     private boolean windowsProcess() {
         return System.getProperty("os.name").toLowerCase(Locale.getDefault()).contains("win");
+    }
+
+    public void shutdown() {
+        this.process.destroy();
     }
 }
