@@ -83,23 +83,26 @@ class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalS
 
     override fun delete(template: LocalTemplate) {
         val path = templatePath(template)
+        this.cachedTemplates.removeIf { it.name == template.name }
+        
         if (!Files.exists(path)) {
             return
         }
+        try {
+            Files.walkFileTree(path, object : SimpleFileVisitor<Path>() {
+                override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                    Files.delete(file)
+                    return FileVisitResult.CONTINUE
+                }
 
-        Files.walkFileTree(path, object : SimpleFileVisitor<Path>() {
-            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                Files.delete(file)
-                return FileVisitResult.CONTINUE
-            }
-
-            override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
-                Files.delete(dir)
-                return FileVisitResult.CONTINUE
-            }
-        })
-
-        this.cachedTemplates.removeIf { it.name == template.name }
+                override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+                    Files.delete(dir)
+                    return FileVisitResult.CONTINUE
+                }
+            })
+        } catch (e: IOException) {
+            logger.warn("Error deleting template ${template.name}: ${e.message}")
+        }
     }
 
     override fun update(template: LocalTemplate, newName: String) {
