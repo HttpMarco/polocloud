@@ -12,8 +12,16 @@ class LocalTemplate(name: String) : Template(name, "unknown") {
     }
 
     private fun folderSizeBytes(path: Path): Long {
+        if (!Files.exists(path) || !Files.isDirectory(path)) {
+            return 0L
+        }
+        
         var size = 0L
-        Files.walk(path).forEach { if (Files.isRegularFile(it)) size += Files.size(it) }
+        try {
+            Files.walk(path).forEach { if (Files.isRegularFile(it)) size += Files.size(it) }
+        } catch (e: Exception) {
+            return 0L
+        }
         return size
     }
 }
