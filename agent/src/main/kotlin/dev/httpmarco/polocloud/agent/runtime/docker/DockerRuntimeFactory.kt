@@ -41,6 +41,7 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
 
         val bindSource = localUserVolumePath() + "\\temp\\${service.name()}"
         val hostConfig = HostConfig.newHostConfig()
+            .withAutoRemove(true)
             .withBinds(Bind.parse("$bindSource:/app"))
             .withMemory( service.maxMemory * 1024 * 1024L)
 
