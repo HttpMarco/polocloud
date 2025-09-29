@@ -18,6 +18,7 @@ import java.net.InetSocketAddress
 class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo, BedrockServerInfo>(), IJoinHandler {
 
     init {
+        this.processBind()
         val eventManager = ProxyServer.getInstance().eventManager
 
         eventManager.subscribe(PlayerLoginEvent::class.java) { event ->

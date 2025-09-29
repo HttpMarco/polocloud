@@ -2,6 +2,7 @@ package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
 import com.github.dockerjava.api.command.InspectContainerResponse
+import com.github.dockerjava.api.exception.NotModifiedException
 import com.github.dockerjava.api.model.*
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractRuntimeFactory
@@ -43,7 +44,7 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
         val hostConfig = HostConfig.newHostConfig()
             .withAutoRemove(true)
             .withBinds(Bind.parse("$bindSource:/app"))
-            .withMemory( service.maxMemory * 1024 * 1024L)
+            .withMemory(service.maxMemory * 1024 * 1024L)
 
         if (service.type == GroupType.PROXY) {
             val exposed = ExposedPort.tcp(service.port)
@@ -71,14 +72,12 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
     override fun runRuntimeShutdown(service: DockerService, shutdownCleanUp: Boolean) {
         val id = service.containerId ?: return
         try {
-            client.stopContainerCmd(id).exec()
-
-            client.waitContainerCmd(id).start().awaitStatusCode()
-
-            client.removeContainerCmd(id)
-                .withForce(true)
-                .withRemoveVolumes(true) // evtl. sinnvoll
-                .exec()
+            try {
+                client.stopContainerCmd(id).exec()
+                client.waitContainerCmd(id).start().awaitStatusCode()
+            } catch (_: NotModifiedException) {
+                // Container was already stopped
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -118,7 +117,8 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
         try {
             val host = Files.readString(Paths.get("/etc/hostname")).trim()
             if (host.matches(Regex("[0-9a-f]{12,64}"))) return host
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
 
         // 3) (Optional) try /proc/self/mountinfo
         try {
@@ -127,7 +127,8 @@ class DockerRuntimeFactory(val client: DockerClient) : AbstractRuntimeFactory<Do
             lines.forEach { line ->
                 regex.find(line)?.let { return it.value }
             }
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
 
         // nichts gefunden
         return ""

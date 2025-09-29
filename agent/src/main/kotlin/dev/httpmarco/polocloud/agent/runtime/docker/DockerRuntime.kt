@@ -9,8 +9,8 @@ import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
 import dev.httpmarco.polocloud.agent.runtime.*
 import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractServiceStatsThread
-import java.net.Inet4Address
-import java.net.NetworkInterface
+import dev.httpmarco.polocloud.common.network.localAddress
+import dev.httpmarco.polocloud.v1.services.ServiceState
 
 /**
  * DockerRuntime integrates PoloCloud with Docker, providing:
@@ -67,18 +67,15 @@ class DockerRuntime : Runtime() {
         client.eventsCmd().exec(object : ResultCallback.Adapter<Event>() {
             override fun onNext(event: Event) {
                 try {
+                    if (event.type == EventType.CONTAINER && event.action == "destroy") {
+                        serviceStorage.findAll().stream().filter { it.containerId == event.id }.findFirst()
+                            .ifPresent { service -> service.changeState(ServiceState.STOPPING) }
+                        return
+                    }
 
-                    println("Received Docker event: Type=${event.type}, Action=${event.action}, ActorID=${event.actor?.id}")
-
-                    if (event.type == EventType.CONTAINER &&
-                        event.action == "stop" &&
-                        event.actor?.attributes != null
-                    ) {
-                        val labelValue = event.actor!!.attributes?.get("polocloud")
-                        if (labelValue.equals("true", ignoreCase = true)) {
-                            println("⚠ Container with label polocloud=true was stopped: ${event.actor!!.id}")
-                            // TODO: Add cleanup or restart logic here
-                        }
+                    if (event.type == EventType.CONTAINER && event.action == "die") {
+                        serviceStorage.findAll().stream().filter { it.containerId == event.id }.findFirst()
+                            .ifPresent { service -> factory().shutdownApplication(service, true) }
                     }
                 } catch (e: Exception) {
                     System.err.println("Error while handling Docker event: ${e.message}")
@@ -110,7 +107,7 @@ class DockerRuntime : Runtime() {
      * @return Local IPv4 address as String, or "null" if none was found.
      */
     override fun detectLocalAddress(): String {
-        return detectLocalAddress()
+        return localAddress()
     }
 
     /**

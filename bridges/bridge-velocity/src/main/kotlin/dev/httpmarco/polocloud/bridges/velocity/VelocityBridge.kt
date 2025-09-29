@@ -36,6 +36,8 @@ class VelocityBridge @Inject constructor(
 
     @Subscribe
     fun onInitialize(event: ProxyInitializeEvent) {
+        this.processBind()
+
         val pluginId = 26763
         metrics = metricsFactory.make(this, pluginId)
     }

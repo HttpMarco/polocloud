@@ -18,7 +18,7 @@ abstract class BridgeInstance<F, T>(protected val polocloud: PolocloudShared = P
     /** List of registered fallback servers */
     val registeredFallbacks = hashMapOf<Service, F>()
 
-    init {
+    fun processBind() {
         // Register all currently online servers of type SERVER at startup
         polocloud.serviceProvider()
             .findByType(GroupType.SERVER)

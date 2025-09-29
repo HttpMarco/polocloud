@@ -19,6 +19,10 @@ import java.net.InetSocketAddress
 
 class BungeecordBridgeInstance : BridgeInstance<ServerInfo, ServerInfo>(), Listener {
 
+    init {
+        this.processBind()
+    }
+
     @EventHandler
     fun onPostLogin(event: PreLoginEvent) {
         if (hasFallbacks()) {

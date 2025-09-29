@@ -15,6 +15,8 @@ class GateBridge(val servicePath: Path, serviceName: String, agentPort: Int, age
     private val yaml: Yaml
 
     init {
+        this.processBind()
+
         // SnakeYAML konfigurieren
         val options = DumperOptions()
         options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
