@@ -16,7 +16,6 @@ tomlj = "1.1.1"
 
 # networking
 grpc = "1.75.0"
-redis = "6.2.0"
 
 # terminal
 jline = "3.30.6"
@@ -72,8 +71,6 @@ grpc-netty = { group = "io.grpc", name = "grpc-netty", version.ref = "grpc" }
 grpc-protobuf = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
 grpc-stub = { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
 grpc-services = { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }
-
-redis = { group = "redis.clients", name = "jedis", version.ref = "redis" }
 
 # terminal
 jline = { group = "org.jline", name = "jline", version.ref = "jline" }

@@ -1,6 +1,7 @@
 package dev.httpmarco.polocloud.agent.runtime.local.tracking
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.runtime.abstract.Track
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
 import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceLogEvent
@@ -10,7 +11,7 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.util.LinkedList
 
-class LocalServiceLogTrack(private val service: LocalService) : LocalTrack() {
+class ServiceLogTrack(private val service: LocalService) : Track() {
 
     val cachedLogs = LinkedList<String>()
 

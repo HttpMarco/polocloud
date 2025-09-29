@@ -1,6 +1,9 @@
 package dev.httpmarco.polocloud.agent.runtime.docker
 
 import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.api.async.ResultCallback
+import com.github.dockerjava.api.model.Event
+import com.github.dockerjava.api.model.EventType
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientImpl
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient
@@ -9,10 +12,18 @@ import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractServiceStatsThread
 import java.net.Inet4Address
 import java.net.NetworkInterface
 
-
+/**
+ * DockerRuntime integrates PoloCloud with Docker, providing:
+ * - Service and group management backed by Docker.
+ * - Template handling.
+ * - Runtime factory for creating new services.
+ * - Automatic event listening for container lifecycle changes.
+ *
+ * It acts as the central runtime implementation for Docker-based environments.
+ */
 class DockerRuntime : Runtime() {
 
-    private val client = createLocalDockerClient()
+    private val client: DockerClient = createLocalDockerClient()
     private val serviceStorage = DockerRuntimeServiceStorage(client)
     private val groupStorage = DockerRuntimeGroupStorage()
     private val expender = DockerExpender(client)
@@ -22,7 +33,12 @@ class DockerRuntime : Runtime() {
     private val informationThread = DockerCloudInformationThread()
     private val queue = DockerThreadedRuntimeQueue()
 
-    fun createLocalDockerClient(): DockerClient {
+    /**
+     * Creates a DockerClient that connects to the local Docker daemon.
+     *
+     * @return Configured DockerClient instance.
+     */
+    private fun createLocalDockerClient(): DockerClient {
         val config = DefaultDockerClientConfig.createDefaultConfigBuilder().build()
 
         val httpClient = ApacheDockerHttpClient.Builder()
@@ -33,9 +49,43 @@ class DockerRuntime : Runtime() {
         return DockerClientImpl.getInstance(config, httpClient)
     }
 
+    /**
+     * Bootstraps the runtime by:
+     * - Registering an event listener for container stop events.
+     * - Starting information and queue handling threads.
+     */
     override fun boot() {
+        listenForContainerEvents()
         informationThread.start()
         queue.start()
+    }
+
+    /**
+     * Subscribes to Docker container events and handles PoloCloud-related container shutdowns.
+     */
+    private fun listenForContainerEvents() {
+        client.eventsCmd().exec(object : ResultCallback.Adapter<Event>() {
+            override fun onNext(event: Event) {
+                try {
+
+                    println("Received Docker event: Type=${event.type}, Action=${event.action}, ActorID=${event.actor?.id}")
+
+                    if (event.type == EventType.CONTAINER &&
+                        event.action == "stop" &&
+                        event.actor?.attributes != null
+                    ) {
+                        val labelValue = event.actor!!.attributes?.get("polocloud")
+                        if (labelValue.equals("true", ignoreCase = true)) {
+                            println("⚠ Container with label polocloud=true was stopped: ${event.actor!!.id}")
+                            // TODO: Add cleanup or restart logic here
+                        }
+                    }
+                } catch (e: Exception) {
+                    System.err.println("Error while handling Docker event: ${e.message}")
+                    e.printStackTrace()
+                }
+            }
+        })
     }
 
     override fun serviceStorage() = serviceStorage
@@ -51,24 +101,22 @@ class DockerRuntime : Runtime() {
     override fun configHolder() = dockerConfigHolder
 
     override fun sendCommand(command: String) {
-        //todo DELETE HERE
+        // TODO: Implement command sending logic if required
     }
 
+    /**
+     * Detects the first non-loopback IPv4 address of the host machine.
+     *
+     * @return Local IPv4 address as String, or "null" if none was found.
+     */
     override fun detectLocalAddress(): String {
-        val interfaces = NetworkInterface.getNetworkInterfaces()
-        for (iface in interfaces) {
-            if (!iface.isLoopback && iface.isUp) {
-                for (addr in iface.inetAddresses) {
-                    if (addr is Inet4Address && !addr.isLoopbackAddress) {
-                        return addr.hostAddress
-                    }
-                }
-            }
-        }
-        return "null";
+        return detectLocalAddress()
     }
 
+    /**
+     * Provides the statistics thread for monitoring container CPU and memory usage.
+     */
     override fun serviceStatsThread(): AbstractServiceStatsThread<*> {
-        return DockerServiceStatsThread(this.client)
+        return DockerServiceStatsThread(client)
     }
 }

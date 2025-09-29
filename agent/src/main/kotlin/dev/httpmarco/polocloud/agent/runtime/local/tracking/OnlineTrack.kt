@@ -1,8 +1,9 @@
 package dev.httpmarco.polocloud.agent.runtime.local.tracking
 
+import dev.httpmarco.polocloud.agent.runtime.abstract.Track
 import dev.httpmarco.polocloud.agent.runtime.local.LocalService
 
-class LocalOnlineTrack(private val localService: LocalService) : LocalTrack() {
+class OnlineTrack(private val localService: LocalService) : Track() {
 
     override fun start() {
         this.threads.add(Thread.startVirtualThread {

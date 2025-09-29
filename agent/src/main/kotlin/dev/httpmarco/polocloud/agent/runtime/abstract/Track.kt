@@ -1,6 +1,6 @@
-package dev.httpmarco.polocloud.agent.runtime.local.tracking
+package dev.httpmarco.polocloud.agent.runtime.abstract
 
-abstract class LocalTrack {
+abstract class Track {
 
     protected val threads = mutableListOf<Thread>()
 

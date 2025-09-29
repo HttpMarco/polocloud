@@ -1,8 +1,8 @@
 package dev.httpmarco.polocloud.agent.runtime.local
 
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
-import dev.httpmarco.polocloud.agent.runtime.local.tracking.LocalOnlineTrack
-import dev.httpmarco.polocloud.agent.runtime.local.tracking.LocalServiceLogTrack
+import dev.httpmarco.polocloud.agent.runtime.local.tracking.OnlineTrack
+import dev.httpmarco.polocloud.agent.runtime.local.tracking.ServiceLogTrack
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import oshi.software.os.OSProcess
 
@@ -10,8 +10,8 @@ import oshi.software.os.OSProcess
 class LocalService(abstractGroup: AbstractGroup) :
     AbstractService(abstractGroup) {
 
-    private val logTracker = LocalServiceLogTrack(this)
-    private val onlineTrack = LocalOnlineTrack(this)
+    private val logTracker = ServiceLogTrack(this)
+    private val onlineTrack = OnlineTrack(this)
 
     var process: Process? = null
 
