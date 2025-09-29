@@ -2,6 +2,8 @@ package dev.httpmarco.polocloud.agent.services
 
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
+import dev.httpmarco.polocloud.agent.runtime.local.LOCAL_FACTORY_PATH
+import dev.httpmarco.polocloud.agent.runtime.local.LOCAL_STATIC_FACTORY_PATH
 import dev.httpmarco.polocloud.agent.utils.IndexDetector
 import dev.httpmarco.polocloud.agent.utils.PortDetector
 import dev.httpmarco.polocloud.shared.events.definitions.service.ServiceChangePlayerCountEvent
@@ -11,6 +13,7 @@ import dev.httpmarco.polocloud.shared.service.ServiceInformation
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 import dev.httpmarco.polocloud.v1.services.ServiceState
+import java.nio.file.Path
 
 abstract class AbstractService(
     name: String,
@@ -23,8 +26,8 @@ abstract class AbstractService(
     templates: List<Template>,
     information: ServiceInformation,
     minMemory: Int,
-    maxMemory: Int
-) : Service(
+    maxMemory: Int,
+    ) : Service(
     name,
     index,
     state,
@@ -37,6 +40,8 @@ abstract class AbstractService(
     minMemory,
     maxMemory
 ) {
+
+    val path: Path = (if (isStatic()) LOCAL_STATIC_FACTORY_PATH else LOCAL_FACTORY_PATH).resolve(name())
 
     constructor(group: AbstractGroup) : this(
         group.name,

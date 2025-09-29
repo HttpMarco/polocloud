@@ -54,7 +54,7 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
 
         val environment = this.environment(service)
 
-        val path = factoryPath.resolve(service.name())
+        val path = service.path
         path.createDirectories()
 
         //loading cache before starting service
