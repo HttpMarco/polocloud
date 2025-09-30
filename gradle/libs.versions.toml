@@ -48,6 +48,9 @@ npc-bukkit = "3.0.0-beta13"
 # bStats
 bstats = "3.1.0"
 
+# placeholder api
+placeholderapi = "2.11.6"
+
 # utils
 lombok = "1.18.42"
 
@@ -108,6 +111,9 @@ npc-bukkit = { group = "io.github.juliarn", name = "npc-lib-bukkit", version.ref
 bstats-spigot = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
 bstats-velocity = { group = "org.bstats", name = "bstats-velocity", version.ref = "bstats" }
 bstats-bungeecord = { group = "org.bstats", name = "bstats-bungeecord", version.ref = "bstats" }
+
+# placeholder api
+placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 
 # utils
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
