@@ -192,11 +192,9 @@ export function CompatibilityCards() {
                             transitionDelay: `${index * 150}ms`
                         }}
                     >
-                        {/* Gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                         
                         <div className="relative p-4">
-                            {/* Platform Header */}
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="relative">
                                     <PlatformIcon platform={platform} />
@@ -215,9 +213,7 @@ export function CompatibilityCards() {
                                 </div>
                             </div>
 
-                            {/* Content */}
                             <div className="space-y-4">
-                                {/* Versions Support */}
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -243,7 +239,6 @@ export function CompatibilityCards() {
                                     </div>
                                 </div>
 
-                                {/* Addons Support */}
                                 {Object.keys(platform.addons).length > 0 && (
                                     <div>
                                         <div className="flex items-center gap-2 mb-2">
