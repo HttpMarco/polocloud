@@ -43,7 +43,7 @@ spigot = "1.21.5-R0.1-SNAPSHOT"
 fabric = "0.16.14"
 fabric-language-kotlin = "1.13.4+kotlin.2.2.0"
 
-npc-bukkit = "3.0.0-beta13"
+npc-bukkit = "3.0.0-beta.14"
 
 # bStats
 bstats = "3.1.0"
