@@ -19,25 +19,24 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 protobuf {
-    protobuf {
-        protoc {
-            // dont update this version
-            artifact = "com.google.protobuf:protoc:3.25.8"
+    protoc {
+        // dont update this version
+        artifact = "com.google.protobuf:protoc:3.25.8"
+    }
+    plugins {
+        id("grpc") {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.75.0"
         }
-        plugins {
-            id("grpc") {
-                artifact = "io.grpc:protoc-gen-grpc-java:1.75.0"
-            }
-        }
-        generateProtoTasks {
-            ofSourceSet("main").forEach {
-                it.plugins {
-                    id("grpc") {}
-                }
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.plugins {
+                id("grpc") {}
             }
         }
     }
 }
+
 
 tasks.jar {
     archiveFileName.set("polocloud-proto-$version.jar")
