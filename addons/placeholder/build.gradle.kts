@@ -8,9 +8,9 @@ repositories {
 dependencies {
     compileOnly(libs.spigot)
     compileOnly(libs.placeholderapi)
-    
-    implementation(projects.sdk.sdkJava)
+
     implementation(projects.addons.api)
+    api(projects.sdk.sdkJava)
 }
 
 tasks.processResources {
@@ -21,6 +21,4 @@ tasks.processResources {
 
 tasks.shadowJar {
     archiveFileName.set("polocloud-${project.name}-$version.jar")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    mergeServiceFiles()
 }

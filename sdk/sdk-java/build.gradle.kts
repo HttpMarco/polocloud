@@ -22,10 +22,27 @@ tasks.shadowJar {
     archiveFileName = "sdk-java-3.0.0-pre.6-SNAPSHOT.jar"
 
     relocate("com.google.protobuf", "dev.httpmarco.polocloud.sdk.java.relocated.protobuf")
+    relocate("io.grpc.protobuf", "dev.httpmarco.polocloud.sdk.java.relocated.grpc.protobuf")
+    relocate("io.grpc.protobuf.lite", "dev.httpmarco.polocloud.sdk.java.relocated.grpc.protobuf.lite")
+    relocate("io.grpc.stub", "dev.httpmarco.polocloud.sdk.java.relocated.grpc.stub")
 
-    mergeServiceFiles()
+    // Wichtig: gRPC & protobuf service files korrekt zusammenführen
+    mergeServiceFiles {
+        include("META-INF/services/io.grpc.*")
+        include("META-INF/services/com.google.protobuf.*")
+        include("META-INF/services/javax.annotation.processing.Processor")
+    }
+
+    // Shadow 9.x: manche .proto- oder META-INF-Files werden sonst zu aggressiv reduziert
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    minimize {
+        exclude(dependency("io.grpc:.*"))
+        exclude(dependency("com.google.protobuf:.*"))
+    }
+
 }
+
 
 tasks.jar {
     dependsOn(tasks.shadowJar)

@@ -35,6 +35,26 @@ tasks.jar {
 
 tasks.shadowJar {
     archiveFileName.set("polocloud-agent-$version-all.jar")
+
+    relocate("com.google.protobuf", "dev.httpmarco.polocloud.sdk.java.relocated.protobuf")
+    relocate("io.grpc.protobuf", "dev.httpmarco.polocloud.sdk.java.relocated.grpc.protobuf")
+
+
+    // gRPC + protobuf ServiceLoader-Einträge korrekt mergen
+    mergeServiceFiles {
+        include("META-INF/services/io.grpc.*")
+        include("META-INF/services/com.google.protobuf.*")
+        include("META-INF/services/javax.annotation.processing.Processor")
+    }
+
+    // Doppelte META-INF-Einträge ausschließen (kommt häufig durch project dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    // Verhindern, dass Shadow wichtige gRPC-Klassen rausschmeißt
+    minimize {
+        exclude(dependency("io.grpc:.*"))
+        exclude(dependency("com.google.protobuf:.*"))
+    }
 }
 
 tasks.test {
