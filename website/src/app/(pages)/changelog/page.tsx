@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { Calendar, User, Tag, ArrowRight, MessageCircle, GitBranch } from 'lucide-react';
+import { MessageCircle, GitBranch } from 'lucide-react';
+import { ChangelogList } from '@/components/changelog/changelog-list';
 
 interface ChangelogPost {
   title: string;
@@ -43,35 +43,6 @@ async function getChangelogPosts(): Promise<ChangelogPost[]> {
   return [];
 }
 
-function getTypeColor(type: string) {
-  switch (type) {
-    case 'major':
-      return 'bg-red-500/10 text-red-500 border-red-500/20';
-    case 'minor':
-      return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
-    case 'patch':
-      return 'bg-green-500/10 text-green-500 border-green-500/20';
-    case 'hotfix':
-      return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
-    default:
-      return 'bg-gray-500/10 text-gray-500 border-gray-500/20';
-  }
-}
-
-function getTypeIcon(type: string) {
-  switch (type) {
-    case 'major':
-      return '🚀';
-    case 'minor':
-      return '✨';
-    case 'patch':
-      return '🐛';
-    case 'hotfix':
-      return '🚨';
-    default:
-      return '📝';
-  }
-}
 
 export default async function ChangelogsPage() {
   const posts = await getChangelogPosts();
@@ -98,79 +69,7 @@ export default async function ChangelogsPage() {
           </p>
         </div>
 
-        <div className="space-y-3 sm:space-y-4">
-          {posts.length === 0 ? (
-            <div className="text-center py-8 sm:py-12">
-              <GitBranch className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-3 sm:mb-4" />
-              <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">No changelog entries yet</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">We&apos;ll post release notes here as we ship new versions.</p>
-            </div>
-          ) : (
-            posts.map((post) => (
-              <article
-                key={post.slug}
-                className="group bg-card/30 backdrop-blur-sm border border-border/50 rounded-lg p-3 sm:p-4 hover:bg-card/40 hover:border-border/70 transition-all duration-300 relative"
-              >
-                <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5 sm:gap-2 items-end">
-                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium border ${getTypeColor(post.type || 'patch')}`}>
-                    {post.type?.toUpperCase() || 'PATCH'}
-                  </span>
-                </div>
-
-                <div className="flex flex-col lg:flex-row lg:items-start gap-3 sm:gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-base sm:text-lg">{getTypeIcon(post.type || 'patch')}</span>
-                      <div className="flex flex-col">
-                        <span className="text-xs font-mono text-muted-foreground">
-                          v{post.version || '0.0.0'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-muted-foreground mb-2 sm:mb-3">
-                      {post.date && (
-                        <div className="flex items-center gap-1 bg-muted/50 px-2 py-1 rounded-full">
-                          <Calendar className="w-3 h-3" />
-                          <span className="hidden sm:inline">{new Date(post.date).toLocaleDateString('de-DE', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}</span>
-                          <span className="sm:hidden">{new Date(post.date).toLocaleDateString('de-DE', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <h2 className="text-base sm:text-lg md:text-xl font-bold text-foreground dark:text-white mb-2 group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h2>
-
-                    {post.description && (
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 leading-relaxed">
-                        {post.description}
-                      </p>
-                    )}
-
-                    <Link
-                      href={`/changelog/${post.slug}`}
-                      className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium text-xs sm:text-sm group/link"
-                    >
-                      Read Release Notes
-                      <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))
-          )}
-        </div>
+        <ChangelogList posts={posts} />
 
         <div className="mt-12 sm:mt-16 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 rounded-xl p-4 sm:p-6 text-center">
           <MessageCircle className="w-6 h-6 sm:w-8 sm:w-8 text-primary mx-auto mb-2 sm:mb-3" />

@@ -1,5 +1,10 @@
+import { PageLayout } from '@/components/layout/page-layout';
 import { FeedbackContent } from './components/feedback-content';
 
 export default function FeedbackPage() {
-  return <FeedbackContent />;
+  return (
+    <PageLayout>
+      <FeedbackContent />
+    </PageLayout>
+  );
 }

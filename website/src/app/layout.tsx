@@ -122,17 +122,14 @@ export default function Layout({children}: { children: ReactNode }) {
             <meta property="og:image:type" content="image/png" />
             <meta property="og:image:alt" content="PoloCloud - Minecraft Cloud Management Platform" />
 
-            {/* Discord Embed Meta Tags */}
             <meta name="discord:invite" content="https://discord.com/invite/mQ39S2EWNV" />
             <meta name="discord:server" content="PoloCloud Community" />
             <meta property="og:type" content="website" />
             <meta property="og:site_name" content="PoloCloud" />
-            
-            {/* Additional Open Graph Tags for better previews */}
+
             <meta property="og:locale" content="en_US" />
             <meta property="og:updated_time" content={new Date().toISOString()} />
-            
-            {/* Twitter Card Meta Tags */}
+
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:site" content="@polocloud" />
             <meta name="twitter:creator" content="@polocloud" />

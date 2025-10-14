@@ -9,10 +9,8 @@ export function HomeDropdown() {
 
   const goToHome = () => {
     if (pathname !== '/') {
-      // Wenn nicht auf der Homepage, dorthin navigieren
       router.push('/');
     } else {
-      // Wenn bereits auf der Homepage, zur Hero-Sektion scrollen
       window.scrollTo({
         top: 0,
         behavior: 'smooth'

@@ -18,7 +18,7 @@ export function AddonsCTA() {
                 rel="noopener noreferrer"
                 whileHover={{
                     scale: 1.05,
-                    boxShadow: "0 20px 40px rgba(99, 102, 241, 0.3)",
+                    boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
                     y: -2
                 }}
                 whileTap={{ scale: 0.95 }}

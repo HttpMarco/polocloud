@@ -49,7 +49,7 @@ export function FeedbackContent() {
       isLoading,
       authError
     });
-  }, []);
+  }, [user, hasSubmittedFeedback, existingFeedback, isLoading, authError]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -263,7 +263,7 @@ export function FeedbackContent() {
         let errorData;
         try {
           errorData = await response.json();
-        } catch (e) {
+        } catch {
           errorData = { error: 'Network or server error' };
         }
         console.error('Feedback submission failed:', errorData);
@@ -324,14 +324,12 @@ export function FeedbackContent() {
   if (isLoading) {
     console.log('Rendering loading state');
     return (
-      <div className="relative">
+      <div className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl relative z-10 flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-24 w-24 sm:h-32 sm:w-32 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-base sm:text-lg text-muted-foreground">Loading feedback system...</p>
-          </div>
+        <div className="relative z-10 text-center">
+          <div className="animate-spin rounded-full h-32 w-32 sm:h-40 sm:w-40 border-b-2 border-primary mx-auto mb-6"></div>
+          <p className="text-lg sm:text-xl text-muted-foreground">Loading feedback system...</p>
         </div>
       </div>
     );
@@ -343,10 +341,10 @@ export function FeedbackContent() {
     const isPending = existingFeedback.isPending;
 
     return (
-      <div className="relative">
+      <div className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-5xl relative z-10">
         <motion.div
           ref={containerRef}
           initial={{ opacity: 0, y: 20 }}
@@ -354,27 +352,27 @@ export function FeedbackContent() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <div className="mb-6 sm:mb-8">
-            {isPending ? (
-              <>
-                <Clock className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500 mx-auto mb-3 sm:mb-4" />
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-6 sm:mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">Feedback under review!</h1>
-                <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 px-4 sm:px-0">
-                  Your feedback has been submitted and is currently being reviewed by our team.
-                </p>
-              </>
-            ) : (
-              <>
-            <CheckCircle className="w-12 h-12 sm:w-16 sm:h-16 text-green-500 mx-auto mb-3 sm:mb-4" />
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-6 sm:mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">Feedback already submitted!</h1>
-            <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 px-4 sm:px-0">
-                  Thank you for your valuable feedback! Here is an overview of your submission:
-            </p>
-              </>
-            )}
-          </div>
+           <div className="mb-8 sm:mb-12">
+             {isPending ? (
+               <>
+                 <Clock className="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mx-auto mb-6 sm:mb-8" />
+                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-8 sm:mb-10 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">Feedback under review!</h1>
+                 <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 px-4 sm:px-0">
+                   Your feedback has been submitted and is currently being reviewed by our team.
+                 </p>
+               </>
+             ) : (
+               <>
+             <CheckCircle className="w-16 h-16 sm:w-20 sm:h-20 text-green-500 mx-auto mb-6 sm:mb-8" />
+                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-8 sm:mb-10 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">Feedback already submitted!</h1>
+             <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 px-4 sm:px-0">
+                   Thank you for your valuable feedback! Here is an overview of your submission:
+             </p>
+               </>
+             )}
+           </div>
 
-          <div className="bg-card border border-border rounded-xl p-4 sm:p-8 mb-6 sm:mb-8 backdrop-blur-sm shadow-lg">
+          <div className="bg-card border border-border rounded-xl p-6 sm:p-10 mb-8 sm:mb-12 backdrop-blur-sm shadow-lg">
 
             <div className="flex flex-col md:flex-row items-center justify-between mb-4 sm:mb-6 gap-4">
               <div className="flex items-center gap-3 sm:gap-4">
@@ -510,10 +508,10 @@ export function FeedbackContent() {
   if (!user) {
     console.log('Rendering login prompt state');
     return (
-      <div className="relative">
+      <div className="relative min-h-screen flex items-center justify-center">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-5xl relative z-10">
         <motion.div
           ref={containerRef}
           initial={{ opacity: 0, y: 20 }}
@@ -521,13 +519,13 @@ export function FeedbackContent() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <div className="mb-6 sm:mb-8">
-            <MessageSquare className="w-12 h-12 sm:w-16 sm:h-16 text-primary mx-auto mb-3 sm:mb-4" />
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-6 sm:mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">Give Feedback</h1>
-            <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6 px-4 sm:px-0">
-              Sign in with your Discord account to give feedback.
-            </p>
-          </div>
+           <div className="mb-8 sm:mb-12">
+             <MessageSquare className="w-16 h-16 sm:w-20 sm:h-20 text-primary mx-auto mb-6 sm:mb-8" />
+             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-8 sm:mb-10 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">Give Feedback</h1>
+             <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 px-4 sm:px-0">
+               Sign in with your Discord account to give feedback.
+             </p>
+           </div>
 
           {authError && (
             <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 text-destructive text-sm sm:text-base">
@@ -535,10 +533,10 @@ export function FeedbackContent() {
             </div>
           )}
 
-          <button
-            onClick={handleDiscordLogin}
-            className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-[#5865F2] text-white rounded-lg hover:bg-[#4752C4] transition-colors text-base sm:text-lg font-medium"
-          >
+           <button
+             onClick={handleDiscordLogin}
+             className="inline-flex items-center gap-3 sm:gap-4 px-8 sm:px-10 py-4 sm:py-5 bg-[#5865F2] text-white rounded-lg hover:bg-[#4752C4] transition-colors text-lg sm:text-xl font-medium"
+           >
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
             </svg>
@@ -553,10 +551,10 @@ export function FeedbackContent() {
 
   console.log('Rendering feedback form state');
   return (
-    <div className="relative">
+    <div className="relative min-h-screen flex items-center justify-center">
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] dark:bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)]" />
 
-      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-4xl relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-5xl relative z-10">
       <motion.div
         ref={containerRef}
         initial={{ opacity: 0, y: 20 }}
@@ -564,19 +562,19 @@ export function FeedbackContent() {
         transition={{ duration: 0.6 }}
         className="text-center"
       >
-        <div className="mb-6 sm:mb-8">
-          <div className="text-center mb-8 sm:mb-10">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-6 sm:mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">
-              Give Feedback
-            </h1>
-            <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-transparent via-border/50 to-transparent rounded-full mx-auto mb-3 sm:mb-4" />
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4 sm:px-0">
-              Share your thoughts with us and help us improve PoloCloud.
-            </p>
-          </div>
-        </div>
+         <div className="mb-8 sm:mb-12">
+           <div className="text-center mb-10 sm:mb-12">
+             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-8 sm:mb-10 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent tracking-tight leading-tight">
+               Give Feedback
+             </h1>
+             <div className="w-20 sm:w-24 h-1 bg-gradient-to-r from-transparent via-border/50 to-transparent rounded-full mx-auto mb-4 sm:mb-6" />
+             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
+               Share your thoughts with us and help us improve PoloCloud.
+             </p>
+           </div>
+         </div>
 
-        <div className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-border/50 rounded-xl p-4 sm:p-6 backdrop-blur-xl shadow-lg relative overflow-hidden mb-4 sm:mb-6">
+        <div className="bg-gradient-to-br from-card via-card/95 to-card/90 border border-border/50 rounded-xl p-6 sm:p-8 backdrop-blur-xl shadow-lg relative overflow-hidden mb-6 sm:mb-8">
 
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 rounded-xl"></div>
           <div className="absolute top-0 right-0 w-16 sm:w-20 h-16 sm:h-20 bg-primary/10 rounded-full blur-2xl"></div>
@@ -616,40 +614,40 @@ export function FeedbackContent() {
             </button>
           </div>
 
-            <div className="text-center mb-6 sm:mb-8">
-              <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
-                Your Feedback
-              </h2>
-              <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
-                Share your opinion with us
-              </p>
-              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-muted/50 text-muted-foreground rounded-full text-xs sm:text-sm border border-border/50">
-                <Info className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">You can only submit feedback once</span>
-                <span className="sm:hidden">One submission only</span>
-              </div>
-            </div>
+             <div className="text-center mb-8 sm:mb-10">
+               <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+                 Your Feedback
+               </h2>
+               <p className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6">
+                 Share your opinion with us
+               </p>
+               <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-3 bg-muted/50 text-muted-foreground rounded-full text-sm sm:text-base border border-border/50">
+                 <Info className="w-4 h-4 sm:w-5 sm:h-5" />
+                 <span className="hidden sm:inline">You can only submit feedback once</span>
+                 <span className="sm:hidden">One submission only</span>
+               </div>
+             </div>
 
                       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
 
-              <div className="space-y-2 sm:space-y-3">
-                <label className="block text-base sm:text-lg font-semibold text-foreground text-center">
+              <div className="space-y-4 sm:space-y-6">
+                <label className="block text-lg sm:text-xl font-semibold text-foreground text-center">
                   How would you rate PoloCloud?
                 </label>
-                <div className="flex justify-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                <div className="flex justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                   {renderStars(selectedRating)}
                 </div>
                 {selectedRating > 0 && (
                   <div className="text-center">
-                    <span className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-primary/10 text-primary rounded-full text-xs sm:text-sm font-medium border border-primary/20">
+                    <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-primary/10 text-primary rounded-full text-sm sm:text-base font-medium border border-primary/20">
                       {getRatingText(selectedRating)}
                     </span>
               </div>
                 )}
             </div>
 
-              <div className="space-y-2 sm:space-y-3">
-                <label htmlFor="description" className="block text-base sm:text-lg font-semibold text-foreground">
+              <div className="space-y-4 sm:space-y-6">
+                <label htmlFor="description" className="block text-lg sm:text-xl font-semibold text-foreground">
                   Description
               </label>
                 <div className="relative">
@@ -659,12 +657,12 @@ export function FeedbackContent() {
                 onChange={(e) => setDescription(e.target.value)}
                 required
                 minLength={10}
-                rows={4}
-                    className="w-full px-4 sm:px-5 py-2 sm:py-3 bg-background/50 border border-border/50 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 focus:bg-background/80 transition-all duration-300 resize-none text-foreground placeholder:text-muted-foreground/60 text-sm sm:text-base"
+                rows={5}
+                    className="w-full px-5 sm:px-6 py-3 sm:py-4 bg-background/50 border border-border/50 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary/50 focus:bg-background/80 transition-all duration-300 resize-none text-foreground placeholder:text-muted-foreground/60 text-base sm:text-lg"
                     placeholder="Describe your feedback in detail... What do you like? What could be improved?"
                   />
-                  <div className="absolute bottom-2 right-2">
-                    <span className={`text-xs sm:text-sm font-medium px-2 py-1 rounded-full ${
+                  <div className="absolute bottom-3 right-3">
+                    <span className={`text-sm sm:text-base font-medium px-3 py-1.5 rounded-full ${
                       description.length >= 10
                         ? 'bg-green-500/20 text-green-600 border border-green-500/30'
                         : 'bg-muted text-muted-foreground border border-border'
@@ -673,16 +671,16 @@ export function FeedbackContent() {
                     </span>
                   </div>
                 </div>
-                <p className="text-xs sm:text-sm text-muted-foreground text-center">
+                <p className="text-sm sm:text-base text-muted-foreground text-center">
                   Minimum 10 characters required
               </p>
             </div>
 
-              <div className="pt-2">
+              <div className="pt-4">
             <button
               type="submit"
               disabled={selectedRating === 0 || description.length < 10 || isSubmitting}
-                  className="w-full inline-flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground font-semibold rounded-lg hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base"
+                  className="w-full inline-flex items-center justify-center gap-3 sm:gap-4 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground font-semibold rounded-lg hover:shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] text-base sm:text-lg"
             >
               {isSubmitting ? (
                 <>
