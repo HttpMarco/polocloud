@@ -8,7 +8,7 @@ repositories {
 dependencies {
     compileOnly(libs.spigot)
     compileOnly(libs.placeholderapi)
-    
+
     implementation(projects.sdk.sdkJava)
     implementation(projects.addons.api)
 }
@@ -21,6 +21,14 @@ tasks.processResources {
 
 tasks.shadowJar {
     archiveFileName.set("polocloud-${project.name}-$version.jar")
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Beispiel für relocate
+    relocate("io.netty", "dev.httpmarco.polocloud.shadow.netty")
+    relocate("io.grpc", "dev.httpmarco.polocloud.shadow.grpc")
+
+    // Vermeide doppelte Services
     mergeServiceFiles()
+
+    // Optional: explizit bestimmte META-INF-Dateien ausschließen
+    exclude("META-INF/LICENSE.txt")
+    exclude("META-INF/io.netty.versions.properties")
 }
