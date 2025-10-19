@@ -5,7 +5,6 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.proxy.ProxyServer
 import dev.httpmarco.polocloud.addons.proxy.ProxyAddon
-import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.events.PlayerLoginEvent
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.events.PlayerLoginEvent
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.events.VelocityMotdUpdater
 import org.slf4j.Logger
