@@ -31,7 +31,7 @@
   ],
   "tasks": [
     "EULA_TASK",
-    "SPIGOT_SERVER_PROPERTIES",
+    "PAPER_SERVER_PROPERTIES",
     "PAPER_PROXY_SUPPORT_TASK"
   ],
   "preTasks": [
