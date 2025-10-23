@@ -21,14 +21,8 @@ tasks.processResources {
 
 tasks.shadowJar {
     archiveFileName.set("polocloud-${project.name}-$version.jar")
-    // Beispiel für relocate
-    relocate("io.netty", "dev.httpmarco.polocloud.shadow.netty")
-    relocate("io.grpc", "dev.httpmarco.polocloud.shadow.grpc")
 
-    // Vermeide doppelte Services
-    mergeServiceFiles()
-
-    // Optional: explizit bestimmte META-INF-Dateien ausschließen
-    exclude("META-INF/LICENSE.txt")
-    exclude("META-INF/io.netty.versions.properties")
+    mergeServiceFiles {
+        include("META-INF/services/io.grpc.*")
+    }
 }
