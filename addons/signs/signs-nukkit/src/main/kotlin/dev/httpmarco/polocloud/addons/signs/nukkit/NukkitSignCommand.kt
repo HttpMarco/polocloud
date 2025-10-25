@@ -32,7 +32,6 @@ class NukkitSignCommand: Command(
                     return false
                 }
 
-                p0.sendMessage(targetBlock.id.toString())
                 if (!NukkitConnectors.isSupported(targetBlock)) {
                     player.sendMessage("§cThis block type is not supported!")
                     return false
