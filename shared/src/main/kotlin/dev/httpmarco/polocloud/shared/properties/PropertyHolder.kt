@@ -14,8 +14,23 @@ open class PropertyHolder(
         return properties.containsKey(property.name)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T> get(property: Property<T>) : T? {
-        return properties[property.name] as T?
+        val jsonPrimitive = properties[property.name] ?: return null
+        
+        return when {
+            jsonPrimitive.isBoolean -> jsonPrimitive.asBoolean as T
+            jsonPrimitive.isNumber -> {
+                // Try to determine if it's an Int or other number type
+                val number = jsonPrimitive.asNumber
+                when {
+                    number is Int || number.toDouble() == number.toInt().toDouble() -> number.toInt() as T
+                    else -> number as T
+                }
+            }
+            jsonPrimitive.isString -> jsonPrimitive.asString as T
+            else -> null
+        }
     }
 
     fun <T> with(property: Property<T>, value: T) : PropertyHolder {
