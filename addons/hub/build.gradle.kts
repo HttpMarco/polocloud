@@ -15,6 +15,7 @@ repositories {
 dependencies {
     compileOnly(libs.velocity)
     compileOnly(libs.bungeecord)
+    compileOnly(libs.waterdog)
 
     api(projects.addons.api)
     implementation(libs.bstats.bungeecord)
@@ -22,7 +23,7 @@ dependencies {
 }
 
 tasks.processResources {
-    filesMatching(listOf("plugin.yml", "velocity-plugin.json")) {
+    filesMatching(listOf("plugin.yml", "velocity-plugin.json", "waterdog.yml")) {
         expand("version" to version)
     }
 }
