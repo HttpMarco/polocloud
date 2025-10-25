@@ -5,7 +5,7 @@ WORKDIR /cloud
 ARG POLOCLOUD_VERSION=dev
 ENV POLOCLOUD_VERSION=$POLOCLOUD_VERSION
 
-COPY /build/libs/polocloud-launcher.jar /cloud/polocloud-launcher.jar
+COPY ../launcher/build/libs/polocloud-launcher.jar /cloud/polocloud-launcher.jar
 
 # Stop-Signal explizit setzen
 STOPSIGNAL SIGTERM
