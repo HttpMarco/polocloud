@@ -5,6 +5,7 @@ import dev.httpmarco.polocloud.addons.proxy.platform.bungeecord.BungeecordCloudS
 import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.properties.MAINTENANCE
 import net.md_5.bungee.api.CommandSender
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 
 class MaintenanceSubCommand(
@@ -38,6 +39,14 @@ class MaintenanceSubCommand(
 
                 group.properties.with(MAINTENANCE, true)
                 Polocloud.instance().groupProvider().update(group)
+
+                // Kick all players without bypass permission
+                val kickMessage = TextComponent(config.messages("maintenance_kick"))
+                ProxyServer.getInstance().players.forEach { player ->
+                    if (!player.hasPermission("polocloud.addons.proxy.maintenance.bypass")) {
+                        player.disconnect(kickMessage)
+                    }
+                }
 
                 sender.sendMessage(TextComponent(config.prefix() + config.messages("maintenance_enabled")))
 
