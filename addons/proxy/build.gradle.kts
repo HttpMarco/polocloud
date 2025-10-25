@@ -7,6 +7,19 @@ repositories {
         name = "bungeecord-repo"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots")
     }
+
+    maven {
+        name = "waterdog-repo"
+        url = uri("https://repo.waterdog.dev/main")
+    }
+    maven {
+        name = "opencollab-snapshots"
+        url = uri("https://repo.opencollab.dev/maven-snapshots/")
+    }
+    maven {
+        name = "opencollab-releases"
+        url = uri("https://repo.opencollab.dev/maven-releases/")
+    }
 }
 
 dependencies {

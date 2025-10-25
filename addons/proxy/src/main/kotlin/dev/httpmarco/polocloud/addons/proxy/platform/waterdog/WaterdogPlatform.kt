@@ -16,7 +16,7 @@ class WaterdogPlatform: Plugin() {
         proxyAddon = ProxyAddon(File("plugins/polocloud"), false)
         val config = proxyAddon.config
 
-        val pluginManager = ProxyServer.getInstance().pluginManager
+        ProxyServer.getInstance().pluginManager
         proxy.commandMap.registerCommand(
             WaterdogCloudCommand(
                 proxyAddon
