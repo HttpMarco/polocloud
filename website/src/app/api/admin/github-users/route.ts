@@ -14,7 +14,7 @@ interface GitHubAdminUser {
 
 async function loadGitHubAdminUsers(): Promise<GitHubAdminUser[]> {
   try {
-    const adminFile = await getFileFromGitHub('docs/data/github-admin-users.json');
+    const adminFile = await getFileFromGitHub('website/data/github-admin-users.json');
     if (adminFile && adminFile.content) {
       try {
         const users = JSON.parse(adminFile.content);
@@ -59,7 +59,7 @@ async function saveGitHubAdminUsers(users: GitHubAdminUser[]): Promise<void> {
 
   let sha: string | undefined;
   try {
-    const existingFile = await getFileFromGitHub('docs/data/github-admin-users.json');
+    const existingFile = await getFileFromGitHub('website/data/github-admin-users.json');
     if (existingFile) {
       sha = existingFile.sha;
     }
@@ -68,7 +68,7 @@ async function saveGitHubAdminUsers(users: GitHubAdminUser[]): Promise<void> {
   }
 
   await createOrUpdateBlogFile(
-    'docs/data/github-admin-users.json',
+    'website/data/github-admin-users.json',
     content,
     `Update GitHub admin users list`,
     sha
