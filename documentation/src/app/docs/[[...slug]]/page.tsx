@@ -7,9 +7,6 @@ import {
 import { notFound } from 'next/navigation';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 import { getMDXComponents } from '@/mdx-components';
-import { getGithubLastEdit } from 'fumadocs-core/server';
-
-const development = process.env.NODE_ENV === 'development';
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
@@ -20,14 +17,9 @@ export default async function Page(props: {
 
   const MDXContent = page.data.body;
 
-  const lastModified = !development 
-    ? await getGithubLastEdit({
-        owner: 'httpMarco',
-        repo: 'polocloud',
-        sha: 'master',
-        path: `documentation/content/docs/${page.file.path}`,
-      })
-    : undefined;
+  // Disabled to avoid GitHub API rate limits during build
+  // To enable: Add GITHUB_TOKEN to Vercel environment variables
+  const lastModified = undefined;
 
   const editOnGithub = {
     owner: 'httpMarco',
