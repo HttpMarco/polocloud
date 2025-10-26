@@ -49,6 +49,8 @@ abstract class Setup<T>(private val name: String, private val canExited: Boolean
         val finished = this.steps.removeFirst()
 
         val value = context.arg(finished.argument)
+
+        @Suppress("UNCHECKED_CAST")
         val typed = finished.action as (Any?) -> Unit
         typed(value)
 

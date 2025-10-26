@@ -2,6 +2,12 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /cloud
 
-COPY ../agent/build/libs/polocloud-agent.jar /cloud/cloud-agent.jar
+ARG POLOCLOUD_VERSION=dev
+ENV POLOCLOUD_VERSION=$POLOCLOUD_VERSION
 
-ENTRYPOINT ["java", "-jar", "/cloud/cloud-agent.jar"]
+COPY ../launcher/build/libs/polocloud-launcher.jar /cloud/polocloud-launcher.jar
+
+# Stop-Signal explizit setzen
+STOPSIGNAL SIGTERM
+
+ENTRYPOINT ["java", "-jar", "/cloud/polocloud-launcher.jar"]

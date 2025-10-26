@@ -6,6 +6,7 @@ option java_package = "dev.httpmarco.polocloud.v1.services";
 option java_multiple_files = true;
 
 import "polocloud/v1/proto/object_utils.proto";
+import "polocloud/v1/proto/template_provider.proto";
 
 service ServiceController {
   rpc find(ServiceFindRequest) returns (ServiceFindResponse);
@@ -36,8 +37,8 @@ message ServiceBootWithConfigurationRequest {
   string group_name = 1;
   optional uint32 minimum_memory = 2;
   optional uint32 maximum_memory = 3;
-  repeated string templates = 4;
-  repeated string excluded_templates = 5;
+  repeated TemplateSnapshot templates = 4;
+  repeated TemplateSnapshot excluded_templates = 5;
   map<string, string> properties = 6;
 }
 
@@ -61,7 +62,7 @@ message ServiceSnapshot {
   uint32 maximum_memory = 5;
   string hostname = 6;
   uint32 port = 7;
-  repeated string templates = 8;
+  repeated TemplateSnapshot templates = 8;
   uint32 max_player_count = 9;
   uint32 player_count = 10;
   double memory_usage = 11;
@@ -73,7 +74,7 @@ message ServiceSnapshot {
 }
 
 message ServiceInformationSnapshot {
-  int64 createdAt = 1;
+  int64 created_at = 1;
 }
 
 enum ServiceState {

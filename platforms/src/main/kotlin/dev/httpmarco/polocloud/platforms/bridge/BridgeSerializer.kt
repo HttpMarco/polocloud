@@ -23,7 +23,7 @@ class BridgeSerializer : JsonSerializer<Bridge>, JsonDeserializer<Bridge> {
         src: Bridge,
         typeOfSrc: Type,
         context: JsonSerializationContext
-    ): JsonElement? {
+    ): JsonElement {
         return JsonPrimitive(src.name)
     }
 }

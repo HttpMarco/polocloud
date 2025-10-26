@@ -6,26 +6,26 @@ version = "1.0"
 nexus-publish = "2.0.0"
 
 # libraries
-gson = "2.13.1"
-oshi="6.8.3"
+gson = "2.13.2"
+oshi="6.9.1"
 
 # configuration
 configurate = "4.2.0"
-yaml = "2.4"
+yaml = "2.5"
 tomlj = "1.1.1"
 
 # networking
-grpc = "1.74.0"
+grpc = "1.76.0"
 
 # terminal
-jline = "3.30.5"
+jline = "3.30.6"
 
 slf4j = "2.0.17"
-log4j = "2.25.1"
+log4j = "2.25.2"
 
 # runtime
 docker = "3.6.0"
-k8s = "7.3.1"
+k8s = "7.4.0"
 
 # rest
 javalin = "6.7.0"
@@ -38,18 +38,25 @@ argon2 = "2.12"
 # platforms
 velocity = "3.4.0-SNAPSHOT"
 waterdog = "2.0.4-SNAPSHOT"
-bungeecord = "1.21-R0.4-SNAPSHOT"
+bungeecord = "1.21-R0.4"
 spigot = "1.21.5-R0.1-SNAPSHOT"
 fabric = "0.16.14"
 fabric-language-kotlin = "1.13.4+kotlin.2.2.0"
+nukkit = "1.0-SNAPSHOT"
 
-npc-bukkit = "3.0.0-beta13"
+npc-bukkit = "3.0.0-beta.15"
 
 # bStats
 bstats = "3.1.0"
 
+# placeholder api
+placeholderapi = "2.11.6"
+
 # utils
-lombok = "1.18.38"
+lombok = "1.18.42"
+
+# nrc
+nrc-server-api = "0.1.1"
 
 [libraries]
 
@@ -64,7 +71,7 @@ configurate-alt-toml = { group = "org.tomlj", name = "tomlj", version.ref = "tom
 snake-yaml = { group = "org.yaml", name = "snakeyaml", version.ref = "yaml" }
 
 # networking
-grpc-netty = { group = "io.grpc", name = "grpc-netty", version.ref = "grpc" }
+grpc-netty = { group = "io.grpc", name = "grpc-netty-shaded", version.ref = "grpc" }
 grpc-protobuf = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
 grpc-stub = { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
 grpc-services = { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }
@@ -85,6 +92,7 @@ k8s = { group = "io.fabric8", name = "kubernetes-client", version.ref = "k8s" }
 
 # rest
 javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+javalin-ssl = { group = "io.javalin.community.ssl", name = "ssl-plugin", version.ref = "javalin" }
 java-jwt = { group = "com.auth0", name = "java-jwt", version.ref = "jwt" }
 javalin-jwt = { group = "com.github.kmehrunes", name = "javalin-jwt", version.ref = "javalin-jwt" }
 argon2 = { group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2" }
@@ -94,6 +102,7 @@ velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref =
 waterdog = { group = "dev.waterdog.waterdogpe", name = "waterdog", version.ref = "waterdog"}
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 spigot = { group = "org.spigotmc", name = "spigot-api", version.ref = "spigot" }
+nukkit = { group = "cn.nukkit", name = "nukkit", version.ref = "nukkit" }
 
 fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
 fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
@@ -105,8 +114,19 @@ bstats-spigot = { group = "org.bstats", name = "bstats-bukkit", version.ref = "b
 bstats-velocity = { group = "org.bstats", name = "bstats-velocity", version.ref = "bstats" }
 bstats-bungeecord = { group = "org.bstats", name = "bstats-bungeecord", version.ref = "bstats" }
 
+# placeholder api
+placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
+
 # utils
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+
+# nrc
+nrc-core = { group = "gg.norisk", name = "nrc-server-api-core", version.ref = "nrc-server-api" }
+nrc-paper = { group = "gg.norisk", name = "nrc-server-api-paper", version.ref = "nrc-server-api" }
+nrc-velocity = { group = "gg.norisk", name = "nrc-server-api-velocity", version.ref = "nrc-server-api" }
+nrc-spigot = { group = "gg.norisk", name = "nrc-server-api-spigot", version.ref = "nrc-server-api" }
+nrc-bungeecord = { group = "gg.norisk", name = "nrc-server-api-bungeecord", version.ref = "nrc-server-api" }
+
 
 [plugins]
 nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexus-publish" }
@@ -119,3 +139,4 @@ runtime = ["docker", "docker-http", "k8s"]
 jline = ["jline", "jline-console-ui"]
 fabric = ["fabric", "fabric-language-kotlin"]
 jwt = [ "java-jwt", "javalin-jwt" ]
+nrc = ["nrc-core", "nrc-paper", "nrc-velocity", "nrc-spigot", "nrc-bungeecord"]

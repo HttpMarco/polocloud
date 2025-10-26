@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
+    kotlin("jvm") version "2.2.21"
 }
 
 dependencies {
@@ -7,8 +7,8 @@ dependencies {
 
     implementation(libs.bundles.proto)
     implementation(libs.grpc.netty)
-    compileOnly(projects.proto)
-    compileOnly(projects.shared)
+    implementation(projects.proto)
+    implementation(projects.shared)
 
     implementation(libs.bundles.terminal)
     implementation(libs.bundles.runtime)
@@ -18,10 +18,10 @@ dependencies {
     implementation(libs.oshi)
 
     implementation(libs.bundles.confirationPool)
-    compileOnly(projects.platforms)
-    compileOnly(projects.common)
-    compileOnly(projects.updater)
-    compileOnly(projects.bridges.bridgeApi)
+    implementation(projects.platforms)
+    implementation(projects.common)
+    implementation(projects.updater)
+    implementation(projects.bridges.bridgeApi)
 }
 
 tasks.jar {

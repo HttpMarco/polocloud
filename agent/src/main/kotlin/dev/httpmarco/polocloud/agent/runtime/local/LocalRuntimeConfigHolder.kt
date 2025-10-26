@@ -14,21 +14,21 @@ class LocalRuntimeConfigHolder : RuntimeConfigHolder {
 
     private val gson = GsonBuilder().setPrettyPrinting().registerTypeAdapter(Locale::class.java, LocalSerializer()).create()
 
-    override fun <T : Config> read(key: String, defaultValue: T): T {
-        val target = Path("$key.json")
+    override fun <T : Config> read(fileName: String, defaultValue: T): T {
+        val target = Path("$fileName.json")
 
         if (target.exists()) {
             val config = gson.fromJson(target.readText(Charsets.UTF_8), defaultValue.javaClass)
-            this.write(key, config)
+            this.write(fileName, config)
             return config
         }
 
-        this.write(key, defaultValue)
+        this.write(fileName, defaultValue)
         return defaultValue
     }
 
-    override fun <T : Config> write(key: String, value: T) {
-        val target = Path("$key.json")
+    override fun <T : Config> write(fileName: String, value: T) {
+        val target = Path("$fileName.json")
         target.writeText(gson.toJson(value))
     }
 }

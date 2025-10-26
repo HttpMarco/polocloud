@@ -2,6 +2,17 @@
   "name": "SPIGOT_SERVER_PROPERTIES",
   "steps": [
     {
+      "name": "Motd",
+      "description": "Change the motd if no file present",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "motd",
+        "fileMode": "IF_NOT_EXISTS",
+        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+      }
+    },
+    {
       "name": "Update server port",
       "description": "Change Server Port for all spigot forks",
       "filename": "server.properties",
@@ -21,14 +32,14 @@
         "value": "false"
       }
     },
-    {
-      "name": "Motd",
-      "description": "Change the motd if no file present",
-      "filename": "server.properties",
+	{
+      "name": "Change bungeecord mode",
+      "description": "Set the bungeecord option in spigot.yml",
+      "filename": "spigot.yml",
       "action": {
         "type": "PlatformFilePropertyUpdateAction",
-        "key": "motd",
-        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+        "key": "settings.bungeecord",
+        "value": "%bungeecord_use%"
       }
     }
   ]

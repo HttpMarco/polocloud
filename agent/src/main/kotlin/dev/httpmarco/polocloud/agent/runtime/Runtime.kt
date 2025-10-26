@@ -1,12 +1,18 @@
 package dev.httpmarco.polocloud.agent.runtime
 
 import dev.httpmarco.polocloud.agent.Agent
+import dev.httpmarco.polocloud.agent.runtime.abstract.AbstractServiceStatsThread
 import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntime
+import dev.httpmarco.polocloud.agent.runtime.docker.DockerRuntimeLoader
 import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntime
+import dev.httpmarco.polocloud.agent.runtime.k8s.KubernetesRuntimeLoader
 import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntime
+import dev.httpmarco.polocloud.agent.runtime.local.LocalRuntimeLoader
 import dev.httpmarco.polocloud.agent.services.AbstractService
 
-interface Runtime {
+abstract class Runtime {
+
+    private val started = System.currentTimeMillis()
 
     companion object {
         /**
@@ -20,11 +26,11 @@ interface Runtime {
          */
         fun create(): Runtime {
             val runtime = listOf(
-                KubernetesRuntime(),
-                DockerRuntime(),
-                LocalRuntime() // Fallback if others are not runnable
-            ).firstOrNull { it.runnable() } ?: LocalRuntime()
-            return runtime
+                KubernetesRuntimeLoader(),
+                DockerRuntimeLoader(),
+                LocalRuntimeLoader() // Fallback if others are not runnable
+            ).firstOrNull { it.runnable() } ?: LocalRuntimeLoader()
+            return runtime.instance()
         }
     }
 
@@ -36,7 +42,7 @@ interface Runtime {
      * ...
      * 4. shutdown - called to shut down the runtime
      */
-    fun initialize() {
+    open fun initialize() {
         // Default implementation does nothing.
         // This method can be overridden by specific runtime implementations
         // to perform any necessary initialization.
@@ -44,68 +50,81 @@ interface Runtime {
 
         // if nothing is done here, the boot method is called directly
         Agent.boot()
+
+        // start the service stats thread
+        serviceStatsThread().start()
     }
 
-    fun boot() {
+    open fun boot() {
         // Default implementation does nothing.
         // This method can be overridden by specific runtime implementations
         // to perform any necessary bootstrapping or initialization.
     }
 
     /**
-     * Check if the runtime is runnable.
-     * This method should be overridden by the specific runtime implementations
-     */
-    fun runnable(): Boolean
-
-    /**
      * Returns the current storage for the runtime.
      * Only for all service related operations.
      */
-    fun serviceStorage(): RuntimeServiceStorage<*>
+    abstract fun serviceStorage(): RuntimeServiceStorage<*>
 
     /**
      * Returns the current group storage for the runtime.
      * Only for all group related operations.
      */
-    fun groupStorage(): RuntimeGroupStorage
+    abstract fun groupStorage(): RuntimeGroupStorage
 
     /**
      * Returns the current factory for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun factory(): RuntimeFactory<AbstractService>
+    abstract fun factory(): RuntimeFactory<AbstractService>
 
     /**
      * Returns the expender for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun expender(): RuntimeExpender<AbstractService>
+    abstract fun expender(): RuntimeExpender<AbstractService>
 
     /**
      * Returns the templates for the runtime.
      * This method should be overridden by the specific runtime implementations
      */
-    fun templates(): RuntimeTemplates<AbstractService>
+    abstract fun templateStorage(): RuntimeTemplateStorage<*, AbstractService>
 
     /**
      * Returns the holder for the runtime configuration.
      */
-    fun configHolder(): RuntimeConfigHolder
-
-    /*
-    Returns the start time of the cloud
-     */
-    fun started(): Long
+    abstract fun configHolder(): RuntimeConfigHolder
 
     /**
      * Shuts down the runtime.
      * This method can be overridden by specific runtime implementations
      * to perform any necessary shutdown operations.
      */
-    fun shutdown() {
+    open fun shutdown() {
         // Default implementation does nothing.
         // This method can be overridden by specific runtime implementations
         // to perform any necessary shutdown operations.
     }
+
+    fun started(): Long = started
+
+    /**
+     * Sends a command to the runtime.
+     * This method can be overridden by specific runtime implementations
+     * to send commands to the runtime.
+     */
+    abstract fun sendCommand(command: String)
+
+    /**
+     * Detects the local address of the runtime environment.
+     * This method should be overridden by specific runtime implementations
+     */
+    abstract fun detectLocalAddress() : String
+
+    /**
+     * Returns the service stats thread for the runtime.
+     * This method should be overridden by the specific runtime implementations
+     */
+    abstract fun serviceStatsThread(): AbstractServiceStatsThread<*>
 }

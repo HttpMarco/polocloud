@@ -2,7 +2,10 @@ package dev.httpmarco.polocloud.modules.rest.auth
 
 import dev.httpmarco.polocloud.modules.rest.RestModule
 import dev.httpmarco.polocloud.modules.rest.auth.user.User
+import dev.httpmarco.polocloud.modules.rest.auth.user.token.Token
 import dev.httpmarco.polocloud.modules.rest.controller.ControllerProvider.Companion.API_PATH
+import dev.httpmarco.polocloud.modules.rest.controller.OpenEndpoint
+import dev.httpmarco.polocloud.modules.rest.controller.defaultResponse
 import dev.httpmarco.polocloud.modules.rest.controller.methods.RequestMethodData
 import dev.httpmarco.polocloud.modules.rest.usersConfiguration
 import io.javalin.http.Context
@@ -10,98 +13,90 @@ import io.javalin.http.HandlerType
 import java.util.UUID
 
 class AuthProvider(
-    private val requestMethodData: RequestMethodData
+    private val requestData: RequestMethodData
 ) {
 
+    private val openEndpoints = listOf(
+        OpenEndpoint("$API_PATH/health", HandlerType.GET), // health endpoint needs to be public to check if the restapi is reachable
+        OpenEndpoint("$API_PATH/auth/login", HandlerType.POST) { usersConfiguration.users.isNotEmpty() }, // normal login
+        OpenEndpoint("$API_PATH/user/self", HandlerType.POST) { usersConfiguration.users.isEmpty() } // Admin account setup (first account creation)
+    )
+
     fun handle(context: Context) {
-        var user: User? = null
-        var tokenRaw: String? = null
-
-        if (!isUserCreationAllowed(context)) {
-            if (!isLogin(context) && !isAlive(context)) {
-                user = userByContext(context)
-
-                if (user == null) {
-                    context.status(401).result("Unauthorized")
-                    return
-                }
-
-                tokenRaw = context.cookie("token")
-
-                if (tokenRaw !in user.tokens.map { it.value }) {
-                    context.status(401).result("Invalid or expired token")
-                    return
-                }
-
-                if (!isPermitted(user)) {
-                    context.status(403).result("Forbidden")
-                    return
-                }
-
-                RestModule.instance.userProvider.updateActivity(user, user.tokens.first { it.value == tokenRaw })
-            }
+        if (isOpenEndpoint(context)) {
+            process(context, null, null)
+            return
         }
 
+        val tokenValue = context.cookie("token")
+        val user = validateTokenAndFetchUser(context, tokenValue) ?: return
+
+        if (!user.tokens.any { it.value == tokenValue }) {
+            context.defaultResponse(401,"Invalid or expired token")
+            return
+        }
+
+        if (!hasPermission(user)) {
+            context.defaultResponse(403,"Forbidden")
+            return
+        }
+
+        val token = user.tokens.first { it.value == tokenValue }
+        RestModule.instance.userProvider.updateActivity(user, token)
+
+        process(context, user, token)
+    }
+
+    private fun isOpenEndpoint(context: Context): Boolean {
+        val path = context.path().trimEnd('/')
+        val method = context.method()
+
+        return openEndpoints.any { endpoint ->
+            endpoint.path == path &&
+                    endpoint.method == method &&
+                    endpoint.condition()
+        }
+    }
+
+    private fun process(context: Context, user: User?, token: Token?) {
         RestModule.instance.controllerProvider.processRequest(
-            requestMethodData.method,
-            requestMethodData.controller,
+            requestData.method,
+            requestData.controller,
             context,
             user,
-            user?.tokens?.firstOrNull { it.value == tokenRaw }
+            token
         )
     }
 
-    private fun isLogin(context: Context): Boolean {
-        return context.path().trimEnd('/') == "$API_PATH/auth/login"
-                && context.method() == HandlerType.POST
-                && usersConfiguration.users.isNotEmpty()
-    }
-
-    private fun isAlive(context: Context): Boolean {
-        return context.path().trimEnd('/') == "$API_PATH/alive"
-                && context.method() == HandlerType.GET
-    }
-
-    private fun isUserCreationAllowed(context: Context): Boolean {
-        return context.path().trimEnd('/') == "$API_PATH/user/self"
-                && context.method() == HandlerType.POST
-                && usersConfiguration.users.isEmpty()
-    }
-
-    private fun userByContext(context: Context): User? {
-        val decodedTokenOpt = context.cookie("token")?.let {
-            RestModule.instance.jwtProvider.provider().validateToken(it)
-        }
-
-        if (decodedTokenOpt == null || !decodedTokenOpt.isPresent) {
-            context.status(401).result("Missing or invalid token")
+    private fun validateTokenAndFetchUser(context: Context, token: String?): User? {
+        if (token.isNullOrBlank()) {
+            context.defaultResponse(401,"Missing token")
             return null
         }
 
-        val decodedToken = decodedTokenOpt.get()
-        val uuid = decodedToken.getClaim("uuid").asString()?.let {
-            try { UUID.fromString(it) } catch (e: IllegalArgumentException) { null }
-        }
+        val jwt = RestModule.instance.jwtProvider.provider()
+            .validateToken(token)
+            .takeIf { it?.isPresent == true }
+            ?.get()
+            ?: run {
+                context.defaultResponse(401,"Invalid token")
+                return null
+            }
 
-        if (uuid == null) {
-            context.status(401).result("Invalid token: missing UUID claim")
+        val uuid = try {
+            UUID.fromString(jwt.getClaim("uuid").asString())
+        } catch (_: IllegalArgumentException) {
+            null
+        } ?: run {
+            context.defaultResponse(401,"Invalid token: missing UUID claim")
             return null
         }
 
         return RestModule.instance.userProvider.userByUUID(uuid)
     }
 
-    private fun isPermitted(user: User): Boolean {
-        val permission = requestMethodData.permission
-
-        if (permission.isEmpty()) {
-            return true
-        }
-
-        if (user.role == null) {
-            return false
-        }
-
-        return user.role!!.hasPermission(permission)
+    private fun hasPermission(user: User): Boolean {
+        val permission = requestData.permission
+        return permission.isEmpty() || user.role?.hasPermission(permission) == true
     }
 }

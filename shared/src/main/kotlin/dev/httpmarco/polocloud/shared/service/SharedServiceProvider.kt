@@ -101,7 +101,9 @@ interface SharedServiceProvider<S : Service> {
      *
      * @param name the name of the service instance to boot
      */
-    fun bootInstance(name: String): ServiceSnapshot
+    fun bootInstance(name: String): ServiceSnapshot {
+        return bootInstanceWithConfiguration(name, SharedBootConfiguration())
+    }
 
     /**
      * Shuts down the specified service.

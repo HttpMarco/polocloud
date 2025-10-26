@@ -1,6 +1,5 @@
 package dev.httpmarco.polocloud.agent.groups
 
-import com.google.gson.JsonPrimitive
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.services.AbstractService
 import dev.httpmarco.polocloud.platforms.Platform
@@ -9,9 +8,8 @@ import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
 import java.nio.file.Path
 import kotlin.io.path.Path
-import dev.httpmarco.polocloud.agent.utils.IndexDetector
-import dev.httpmarco.polocloud.agent.runtime.local.LocalService
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
+import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.v1.GroupType
 
 open class AbstractGroup(
@@ -22,9 +20,9 @@ open class AbstractGroup(
     maxOnlineServices: Int,
     percentageToStartNewService: Double,
     platform: PlatformIndex,
-    information: GroupInformation,
-    templates: List<String>,
-    properties: Map<String, JsonPrimitive>
+    createdAt: Long,
+    templates: List<Template>,
+    properties: PropertyHolder
 ) :
     Group(
         name,
@@ -34,14 +32,14 @@ open class AbstractGroup(
         maxOnlineServices,
         platform,
         percentageToStartNewService,
-        information,
+        createdAt,
         templates,
         properties
     ) {
 
     fun update() {
         // update the group
-        Agent.runtime.groupStorage().updateGroup(this)
+        Agent.runtime.groupStorage().update(this)
     }
 
     fun serviceCount(): Int {
@@ -84,16 +82,16 @@ open class AbstractGroup(
         this.maxOnlineService = maxOnlineServices
     }
 
+    fun updatePercentageToStartNewService(percentageToStartNewService: Double) {
+        this.percentageToStartNewService = percentageToStartNewService
+    }
+
     fun startServices(amount: Int): List<AbstractService> {
         val startedServices = mutableListOf<AbstractService>()
-        
-        repeat(amount) {
-            val index = IndexDetector.findIndex(this)
-            val service = when (this.platform().type) {
-                GroupType.PROXY -> LocalService(this, index, "0.0.0.0")
-                else -> LocalService(this, index)
-            }
 
+        // todo duplicated code
+        repeat(amount) {
+            val service = Agent.runtime.factory().generateInstance(this)
             Agent.runtime.serviceStorage().deployAbstractService(service)
             Agent.runtime.factory().bootApplication(service)
             startedServices.add(service)
@@ -118,5 +116,13 @@ open class AbstractGroup(
 
     override fun hashCode(): Int {
         return javaClass.hashCode()
+    }
+
+    fun isProxy(): Boolean {
+        return platform().type == GroupType.PROXY
+    }
+
+    fun isServer(): Boolean {
+        return platform().type == GroupType.SERVER
     }
 }

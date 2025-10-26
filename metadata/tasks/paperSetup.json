@@ -1,0 +1,36 @@
+{
+  "name": "PAPER_SERVER_PROPERTIES",
+  "steps": [
+    {
+      "name": "Motd",
+      "description": "Change the motd if no file present",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "motd",
+        "fileMode": "IF_NOT_EXISTS",
+        "value": "§b§lPolocloud §8- §7Simple and lightweight §8- §f%version%\n§8» §7GitHub§8: §f§ngithub.polocloud.de"
+      }
+    },
+    {
+      "name": "Update server port",
+      "description": "Change Server Port for all spigot forks",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "server-port",
+        "value": "%port%"
+      }
+    },
+    {
+      "name": "Update online mode",
+      "description": "Change the online mode setting for all spigot forks",
+      "filename": "server.properties",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "online-mode",
+        "value": "false"
+      }
+    }
+  ]
+}

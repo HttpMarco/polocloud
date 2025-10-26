@@ -11,4 +11,7 @@ data class PlatformIndex(val name: String, val version: String) {
             .build()
     }
 
+    override fun toString(): String {
+        return "$name-$version"
+    }
 }

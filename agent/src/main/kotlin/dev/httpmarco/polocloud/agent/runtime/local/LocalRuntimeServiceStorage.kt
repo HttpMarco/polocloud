@@ -3,6 +3,7 @@ package dev.httpmarco.polocloud.agent.runtime.local
 import dev.httpmarco.polocloud.agent.Agent
 import dev.httpmarco.polocloud.agent.runtime.RuntimeServiceStorage
 import dev.httpmarco.polocloud.agent.services.AbstractService
+import dev.httpmarco.polocloud.agent.utils.IndexDetector
 import dev.httpmarco.polocloud.shared.groups.Group
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration
 import dev.httpmarco.polocloud.v1.GroupType
@@ -40,7 +41,7 @@ class LocalRuntimeServiceStorage : RuntimeServiceStorage<LocalService> {
 
     override fun findByGroup(group: Group): List<LocalService> {
         return this.services.stream()
-            .filter { it.group == group }
+            .filter { it.group() == group }
             .toList()
     }
 
@@ -60,11 +61,7 @@ class LocalRuntimeServiceStorage : RuntimeServiceStorage<LocalService> {
         name: String,
         configuration: SharedBootConfiguration
     ): ServiceSnapshot {
-        TODO("Not yet implemented")
-    }
-
-    override fun bootInstance(name: String): ServiceSnapshot {
-        TODO("Not yet implemented")
+        TODO()
     }
 
     override fun shutdownService(name: String): ServiceSnapshot {

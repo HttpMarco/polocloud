@@ -1,11 +1,10 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
+    kotlin("jvm") version "2.2.21"
 }
 
 dependencies {
-    api(projects.proto)
+    compileOnly(projects.proto)
     compileOnly(libs.gson)
-    implementation(projects.proto)
 }
 
 kotlin {

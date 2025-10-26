@@ -36,7 +36,7 @@ tasks.jar {
     manifest {
         attributes(
             "Main-Class" to "dev.httpmarco.polocloud.launcher.PolocloudLauncher",
-            "polocloud-version" to version
+            "POLOCLOUD_VERSION" to version
         )
     }
     archiveFileName.set("polocloud-launcher.jar")
@@ -95,4 +95,18 @@ tasks.register("buildDependencies") {
         }
         println("✅ Exported agent dependencies to ${outputFile.absolutePath}")
     }
+}
+
+tasks.register<Exec>("dockerBuild") {
+    dependsOn(tasks.jar)
+    val imageName = "polocloud:development"
+
+    // Docker build
+    commandLine(
+        "docker", "build",
+        "--build-arg", "POLOCLOUD_VERSION=$version",
+        "-t", imageName,
+        "-f", "../docker/Dockerfile",
+        "."
+    )
 }

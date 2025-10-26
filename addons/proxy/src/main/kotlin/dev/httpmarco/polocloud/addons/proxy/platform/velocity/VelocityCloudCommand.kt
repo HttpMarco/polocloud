@@ -12,20 +12,19 @@ import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StartS
 import dev.httpmarco.polocloud.addons.proxy.platform.velocity.subcommands.StopSubCommand
 import net.kyori.adventure.text.minimessage.MiniMessage
 
-class VelocityCloudCommand(
-    val proxyAddon: ProxyAddon,
-    private val proxyServer: ProxyServer
-) : SimpleCommand {
+class VelocityCloudCommand(val proxyAddon: ProxyAddon, private val proxyServer: ProxyServer) :
+        SimpleCommand {
 
     private val miniMessage = MiniMessage.miniMessage()
-    private val subCommands = mapOf(
-        "info" to InfoSubCommand(proxyAddon),
-        "start" to StartSubCommand(proxyAddon),
-        "stop" to StopSubCommand(proxyAddon),
-        "list" to ListSubCommand(proxyAddon),
-        "players" to PlayersSubCommand(proxyAddon, proxyServer),
-        "maintenance" to MaintenanceSubCommand(proxyAddon)
-    )
+    private val subCommands =
+            mapOf(
+                    "info" to InfoSubCommand(proxyAddon),
+                    "start" to StartSubCommand(proxyAddon),
+                    "stop" to StopSubCommand(proxyAddon),
+                    "list" to ListSubCommand(proxyAddon),
+                    "players" to PlayersSubCommand(proxyAddon, proxyServer),
+                    "maintenance" to MaintenanceSubCommand(proxyAddon, proxyServer)
+            )
 
     override fun execute(invocation: SimpleCommand.Invocation) {
         val source = invocation.source()
@@ -33,7 +32,9 @@ class VelocityCloudCommand(
         val config = this.proxyAddon.config
 
         if (!source.hasPermission("polocloud.addons.proxy.command.cloud")) {
-            source.sendMessage(miniMessage.deserialize(config.prefix() + config.messages("no_permission")))
+            source.sendMessage(
+                    miniMessage.deserialize(config.prefix() + config.messages("no_permission"))
+            )
             return
         }
 
@@ -56,15 +57,15 @@ class VelocityCloudCommand(
     private fun usage(config: ProxyConfig): String {
         return buildString {
             appendLine("")
-            appendLine(config.prefix() + "<gray>Available <gradient:#00fdee:#118bd1><bold>/polocloud</bold></gradient> commands:")
-            appendLine(config.prefix() + "<aqua>/polocloud info</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud list</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud start <groupName></aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud stop <server></aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud create <template> [static]</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud delete <server></aqua> <gray>")
-            appendLine(config.prefix() + "<aqua>/polocloud maintenance <on|off> [group]</aqua>")
-            appendLine(config.prefix() + "<aqua>/polocloud broadcast <message></aqua>")
+            appendLine(config.prefix() + config.messages("usage_header"))
+            appendLine(config.prefix() + config.messages("usage_info"))
+            appendLine(config.prefix() + config.messages("usage_list"))
+            appendLine(config.prefix() + config.messages("usage_start"))
+            appendLine(config.prefix() + config.messages("usage_stop"))
+            appendLine(config.prefix() + config.messages("usage_create"))
+            appendLine(config.prefix() + config.messages("usage_delete"))
+            appendLine(config.prefix() + config.messages("usage_maintenance"))
+            appendLine(config.prefix() + config.messages("usage_broadcast"))
         }
     }
 }

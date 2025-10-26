@@ -1,18 +1,22 @@
 package dev.httpmarco.polocloud.sdk.java.services;
 
 import dev.httpmarco.polocloud.common.future.FutureConverterKt;
+import dev.httpmarco.polocloud.sdk.java.Polocloud;
 import dev.httpmarco.polocloud.shared.groups.Group;
 import dev.httpmarco.polocloud.shared.service.Service;
 import dev.httpmarco.polocloud.shared.service.SharedBootConfiguration;
 import dev.httpmarco.polocloud.shared.service.SharedServiceProvider;
+import dev.httpmarco.polocloud.shared.template.Template;
 import dev.httpmarco.polocloud.v1.GroupType;
 import dev.httpmarco.polocloud.v1.services.*;
+import dev.httpmarco.polocloud.v1.templates.TemplateSnapshot;
 import io.grpc.ManagedChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public final class ServiceProvider implements SharedServiceProvider<Service> {
 
@@ -73,18 +77,31 @@ public final class ServiceProvider implements SharedServiceProvider<Service> {
     @NotNull
     @Override
     public ServiceSnapshot bootInstanceWithConfiguration(@NotNull String name, @NotNull SharedBootConfiguration configuration) {
-        int minMemory = configuration.minMemory() != null ? configuration.minMemory() : 0;
-        int maxMemory = configuration.maxMemory() != null ? configuration.maxMemory() : 0;
+        Group group = Polocloud.instance().groupProvider().find(name);
+        if(group == null) {
+            throw new IllegalStateException("Group not found");
+        }
+        int minMemory = configuration.minMemory() != null ? configuration.minMemory() : group.getMinMemory();
+        int maxMemory = configuration.maxMemory() != null ? configuration.maxMemory() : group.getMaxMemory();
         if (minMemory <= 0 || maxMemory <= 0) {
             throw new IllegalArgumentException("Minimum and maximum memory must be greater than 0.");
         }
+
+        List<TemplateSnapshot> templates = configuration.templates().stream()
+                .map(Template::toSnapshot)
+                .collect(Collectors.toList());
+
+        List<TemplateSnapshot> excludedTemplates = configuration.excludedTemplates().stream()
+                .map(Template::toSnapshot)
+                .collect(Collectors.toList());
+
         return this.blockingStub.bootWithConfiguration(
                 ServiceBootWithConfigurationRequest.newBuilder()
                         .setGroupName(name)
                         .setMinimumMemory(minMemory)
                         .setMaximumMemory(maxMemory)
-                        .addAllTemplates(configuration.templates())
-                        .addAllExcludedTemplates(configuration.excludedTemplates())
+                        .addAllTemplates(templates)
+                        .addAllExcludedTemplates(excludedTemplates)
                         .putAllProperties(configuration.properties())
                         .build()
         ).getService();

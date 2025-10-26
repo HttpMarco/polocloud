@@ -2,28 +2,12 @@ package dev.httpmarco.polocloud.agent.runtime.k8s
 
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
-import dev.httpmarco.polocloud.shared.groups.GroupInformation
 import dev.httpmarco.polocloud.shared.platform.PlatformIndex
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
 import io.fabric8.kubernetes.client.KubernetesClient
 import java.util.concurrent.CompletableFuture
 
 class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : RuntimeGroupStorage {
-
-    override fun updateGroup(group: AbstractGroup) {
-        TODO("Not yet implemented")
-    }
-
-    override fun reload() {
-        TODO("Not yet implemented")
-    }
-
-    override fun destroy(abstractGroup: AbstractGroup) {
-        TODO("Not yet implemented")
-    }
-
-    override fun publish(abstractGroup: AbstractGroup) {
-        TODO("Not yet implemented")
-    }
 
     override fun findAll(): List<AbstractGroup> {
         return kubeClient
@@ -41,9 +25,9 @@ class KubernetesRuntimeGroupStorage(private val kubeClient: KubernetesClient) : 
                     0,
                     0.0,
                     PlatformIndex("", ""),
-                    GroupInformation(0),
+                    0,
                     emptyList(),
-                    hashMapOf()
+                    PropertyHolder.empty()
                 )
             }
             .toList()

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
+    kotlin("jvm") version "2.2.21"
 }
 
 dependencies {
@@ -11,7 +11,7 @@ tasks.jar {
     manifest {
         attributes(
             "Main-Class" to "dev.httpmarco.polocloud.updater.UpdaterRuntime",
-            "polocloud-version" to version
+            "POLOCLOUD_VERSION" to version
         )
     }
     archiveFileName.set("polocloud-updater-$version.jar")

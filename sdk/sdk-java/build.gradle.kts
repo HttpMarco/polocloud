@@ -5,12 +5,11 @@ plugins {
 
 dependencies {
     api(projects.shared)
-    implementation(projects.common)
+    api(projects.common)
+    api(libs.grpc.netty)
+    api(projects.proto)
 
     compileOnly(libs.gson)
-    implementation(libs.bundles.proto)
-    implementation(libs.grpc.netty)
-    api(projects.proto)
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -21,6 +20,9 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.shadowJar {
     archiveFileName = "sdk-java-3.0.0-pre.6-SNAPSHOT.jar"
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    relocate("com.google.protobuf", "dev.httpmarco.polocloud.sdk.java.relocated.protobuf")
 }
 
 tasks.jar {

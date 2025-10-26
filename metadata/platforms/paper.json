@@ -3,6 +3,7 @@
   "type": "SERVER",
   "language": "JAVA",
   "url": "https://api.papermc.io/v2/projects/paper/versions/%version%/builds/%buildId%/downloads/paper-%version%-%buildId%.jar",
+  "forwarding": "MODERN",
   "arguments": [
     "-nogui"
   ],
@@ -30,7 +31,7 @@
   ],
   "tasks": [
     "EULA_TASK",
-    "SPIGOT_SERVER_PROPERTIES",
+    "PAPER_SERVER_PROPERTIES",
     "PAPER_PROXY_SUPPORT_TASK"
   ],
   "preTasks": [
@@ -38,8 +39,12 @@
   ],
   "versions": [
     {
+      "version": "1.21.10",
+      "buildId": "88"
+    },
+    {
       "version": "1.21.8",
-      "buildId": "28"
+      "buildId": "60"
     },
     {
       "version": "1.21.7",

@@ -26,17 +26,11 @@ class BungeecordPlatform: Plugin() {
 
 class BungeecordHubCommand(private val config: HubConfig) : Command("hub", null, *config.aliases().toTypedArray()) {
     override fun execute(sender: CommandSender, args: Array<String>) {
-        if (!sender.hasPermission("polocloud.addons.hub.command")) {
-            sender.sendMessage(TextComponent(config.prefix() + config.messages("no_permission")))
-            return
-        }
-
         if(sender !is ProxiedPlayer) {
             sender.sendMessage(TextComponent(config.prefix() +  config.messages("only_players")))
             return
         }
 
-        val player = sender
         val fallback = Polocloud.instance().serviceProvider()
             .findByType(GroupType.SERVER)
             .firstOrNull {
@@ -44,29 +38,29 @@ class BungeecordHubCommand(private val config: HubConfig) : Command("hub", null,
             }
 
         if (fallback == null) {
-            player.sendMessage(TextComponent(config.prefix() + config.messages("no_fallback_found")))
+            sender.sendMessage(TextComponent(config.prefix() + config.messages("no_fallback_found")))
             return
         }
 
         val targetServer = ProxyServer.getInstance().servers[fallback.name()]
         if (targetServer == null) {
-            player.sendMessage(TextComponent(config.prefix() + config.messages("no_fallback_found")))
+            sender.sendMessage(TextComponent(config.prefix() + config.messages("no_fallback_found")))
             return
         }
 
-        if (player.server.info.name == targetServer.name) {
-            player.sendMessage(
+        if (sender.server.info.name == targetServer.name) {
+            sender.sendMessage(
                 TextComponent(
 
                     config.prefix() + config.messages("already_connected_to_fallback")
-                    .replace("{server}", fallback.name())
+                        .replace("{server}", fallback.name())
                 )
             )
             return
         }
 
-        player.connect(targetServer)
-        player.sendMessage(
+        sender.connect(targetServer)
+        sender.sendMessage(
             TextComponent(
                 config.prefix() + config.messages("connected_to_fallback")
                     .replace("{server}", fallback.name())

@@ -12,6 +12,16 @@
       }
     },
     {
+      "name": "Setup bind",
+      "description": "Setup the port and hostname",
+      "filename": "config.yml",
+      "action": {
+        "type": "PlatformFilePropertyUpdateAction",
+        "key": "config.bind",
+        "value": "%hostname%:%port%"
+      }
+    },
+    {
       "name": "Set server icon",
       "description": "Set server icon as base64",
       "filename": "config.yml",

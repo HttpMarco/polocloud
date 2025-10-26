@@ -1,78 +1,38 @@
 package dev.httpmarco.polocloud.bridges.waterdog
 
 import dev.httpmarco.polocloud.bridge.api.BridgeInstance
-import dev.httpmarco.polocloud.sdk.java.Polocloud
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerJoinEvent
 import dev.httpmarco.polocloud.shared.events.definitions.PlayerLeaveEvent
 import dev.httpmarco.polocloud.shared.player.PolocloudPlayer
 import dev.httpmarco.polocloud.shared.service.Service
 import dev.waterdog.waterdogpe.ProxyServer
+import dev.waterdog.waterdogpe.event.defaults.InitialServerConnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerDisconnectedEvent
 import dev.waterdog.waterdogpe.event.defaults.PlayerLoginEvent
-import dev.waterdog.waterdogpe.event.defaults.ServerConnectedEvent
+import dev.waterdog.waterdogpe.network.connection.handler.IJoinHandler
 import dev.waterdog.waterdogpe.network.serverinfo.BedrockServerInfo
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo
+import dev.waterdog.waterdogpe.player.ProxiedPlayer
 import java.net.InetSocketAddress
 
-class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
-
-    val registeredFallbacks = ArrayList<BedrockServerInfo>()
+class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo, BedrockServerInfo>(), IJoinHandler {
 
     init {
-        registerEvents()
-        initialize()
-    }
-
-    override fun generateInfo(service: Service): BedrockServerInfo {
-        val serverInfo = BedrockServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null)
-        ProxyServer.getInstance().registerServerInfo(serverInfo)
-
-        return serverInfo
-    }
-
-    override fun registerService(
-        identifier: BedrockServerInfo,
-        fallback: Boolean
-    ) {
-        ProxyServer.getInstance().registerServerInfo(identifier)
-
-        if (fallback) {
-            registeredFallbacks.add(identifier)
-        }
-    }
-
-    override fun unregisterService(identifier: BedrockServerInfo) {
-        ProxyServer.getInstance().removeServerInfo(identifier.serverName)
-        registeredFallbacks.remove(identifier)
-    }
-
-    override fun findInfo(name: String): BedrockServerInfo? {
-        return ProxyServer.getInstance().getServerInfo(name) as BedrockServerInfo?
-    }
-
-    private fun registerEvents() {
+        this.processBind()
         val eventManager = ProxyServer.getInstance().eventManager
 
         eventManager.subscribe(PlayerLoginEvent::class.java) { event ->
-            if (registeredFallbacks.isEmpty()) {
+            val fallback = findFallback()
+
+            if (fallback == null) {
                 event.cancelReason = "No fallback servers are registered."
                 event.isCancelled = true
             }
         }
 
-        eventManager.subscribe(ServerConnectedEvent::class.java) { event ->
-            val polocloudPlayer = Polocloud.instance().playerProvider().findByName(event.player.name)
-            if (polocloudPlayer == null) {
-                val fallback = findFallback()
-                if (fallback != null) {
-                    event.player.connect(fallback)
-                } else {
-                    event.player.disconnect("No fallback servers available.")
-                }
-            }
-
+        eventManager.subscribe(InitialServerConnectedEvent::class.java) { event ->
             val player = event.player
-            val cloudPlayer = PolocloudPlayer(player.name, player.uniqueId, event.targetServer.serverName)
+            val cloudPlayer = PolocloudPlayer(player.name, player.uniqueId, event.serverInfo.serverName)
             updatePolocloudPlayer(PlayerJoinEvent(cloudPlayer))
         }
 
@@ -84,7 +44,31 @@ class WaterdogBridgeInstance : BridgeInstance<BedrockServerInfo>() {
         }
     }
 
-    fun findFallback(): ServerInfo? {
-        return registeredFallbacks.minByOrNull { it.players.size }
+    override fun generateServerInfo(service: Service): BedrockServerInfo {
+        return BedrockServerInfo(service.name(), InetSocketAddress(service.hostname, service.port), null)
+    }
+
+    override fun registerServerInfo(
+        identifier: BedrockServerInfo,
+        service: Service
+    ): BedrockServerInfo {
+        ProxyServer.getInstance().registerServerInfo(identifier)
+        return findServer(identifier.serverName)!!
+    }
+
+    override fun unregister(identifier: BedrockServerInfo) {
+        ProxyServer.getInstance().removeServerInfo(identifier.serverName)
+    }
+
+    override fun findServer(name: String): BedrockServerInfo? {
+        return ProxyServer.getInstance().getServerInfo(name) as BedrockServerInfo?
+    }
+
+    override fun playerCount(info: BedrockServerInfo): Int {
+        return info.players.size
+    }
+
+    override fun determineServer(p0: ProxiedPlayer?): ServerInfo {
+        return findFallback()!!
     }
 }

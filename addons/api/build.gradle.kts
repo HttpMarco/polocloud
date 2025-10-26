@@ -1,3 +1,4 @@
 dependencies {
-    implementation(libs.gson)
+    compileOnly(libs.gson)
+    implementation(projects.sdk.sdkJava)
 }

@@ -1,0 +1,12 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "framework": "nextjs",
+    "git": {
+      "deploymentEnabled": {
+        "master": true
+      }
+    },
+    "github": {
+      "silent": true
+    }
+  }
