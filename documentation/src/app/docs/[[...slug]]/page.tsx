@@ -2,7 +2,6 @@ import { source } from '@/lib/source';
 import {
   DocsPage,
   DocsBody,
-  DocsDescription,
   DocsTitle,
 } from 'fumadocs-ui/page';
 import { notFound } from 'next/navigation';
@@ -25,16 +24,16 @@ export default async function Page(props: {
     ? await getGithubLastEdit({
         owner: 'httpMarco',
         repo: 'polocloud',
-        sha: 'docs',
-        path: `docs/content/docs/${page.path}`,
+        sha: 'master',
+        path: `documentation/content/docs/${page.file.path}`,
       })
     : undefined;
 
   const editOnGithub = {
     owner: 'httpMarco',
     repo: 'polocloud',
-    path: `docs/content/docs/${page.path}`,
-    sha: 'docs',
+    path: `documentation/content/docs/${page.file.path}`,
+    sha: 'master',
   }
   
   return (
