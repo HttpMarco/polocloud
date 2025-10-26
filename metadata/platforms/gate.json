@@ -9,6 +9,9 @@
   "tasks": ["GATE_SETUP"],
   "versions": [
     {
+      "version": "0.57.1"
+    },
+    {
       "version": "0.55.0"
     },
     {

@@ -13,6 +13,11 @@
   ],
   "versions": [
     {
+      "version": "1.21.10",
+      "jarVersion": "0.7.16-ALPHA",
+      "buildId": "64"
+    },
+    {
       "version": "1.21.8",
       "jarVersion": "0.7.15-ALPHA",
       "buildId": "58"

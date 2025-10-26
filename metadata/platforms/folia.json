@@ -17,6 +17,11 @@
   ],
   "versions": [
     {
+      "version": "1.21.8",
+      "buildId": "6",
+      "hash": "233843cfd5001b6f658fcab549178d694cc37f0277d004ea295de0a94c57278f"
+    },
+    {
       "version": "1.21.6",
       "buildId": "6",
       "hash": "917a8abaa542c1d0ef0e969693e227a7bfe1c42e671aaa806309e00a64efc234"
