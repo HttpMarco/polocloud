@@ -22,6 +22,8 @@ tasks.processResources {
 tasks.shadowJar {
     archiveFileName.set("polocloud-${project.name}-$version.jar")
 
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     mergeServiceFiles {
         include("META-INF/services/io.grpc.*")
     }
