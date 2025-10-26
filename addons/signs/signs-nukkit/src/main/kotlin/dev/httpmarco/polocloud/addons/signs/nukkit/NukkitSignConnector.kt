@@ -34,7 +34,7 @@ class NukkitSignConnector(data: SignData) : SignConnector(data) {
         }
 
         val lines = Array(4) { i ->
-            replaceText(frame.lines.getOrNull(i) ?: " ")
+            replaceText(frame.lines.getOrNull(i) ?: " ").replace("\\u00a7", "§")
         }
 
         sign.setText(*lines)
