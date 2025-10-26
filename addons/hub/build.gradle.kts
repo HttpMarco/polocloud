@@ -30,6 +30,7 @@ dependencies {
     compileOnly(libs.bungeecord)
     compileOnly(libs.waterdog)
 
+    implementation(projects.sdk.sdkJava)
     api(projects.addons.api)
     implementation(libs.bstats.bungeecord)
     implementation(libs.bstats.velocity)
