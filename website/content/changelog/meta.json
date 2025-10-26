@@ -2,7 +2,12 @@
   "pages": [
     {
       "title": "Changelog",
-      "pages": []
+      "pages": [
+        {
+          "title": "Version  3.0.0-pre-6",
+          "url": "/changelog/v-300-pre-6"
+        }
+      ]
     }
   ]
 }
