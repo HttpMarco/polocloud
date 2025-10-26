@@ -4,10 +4,10 @@ repositories {
 }
 
 dependencies {
+    implementation(projects.sdk.sdkJava)
     compileOnly(libs.spigot)
     compileOnly(libs.placeholderapi)
     implementation(projects.addons.api)
-    implementation(projects.sdk.sdkJava)
 }
 
 tasks.processResources {

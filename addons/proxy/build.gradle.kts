@@ -26,6 +26,7 @@ dependencies {
     compileOnly(libs.waterdog)
     compileOnly(libs.velocity)
     compileOnly(libs.bungeecord)
+    implementation(projects.sdk.sdkJava)
     api(projects.addons.api)
 }
 
