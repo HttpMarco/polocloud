@@ -71,7 +71,7 @@ configurate-alt-toml = { group = "org.tomlj", name = "tomlj", version.ref = "tom
 snake-yaml = { group = "org.yaml", name = "snakeyaml", version.ref = "yaml" }
 
 # networking
-grpc-netty = { group = "io.grpc", name = "grpc-netty", version.ref = "grpc" }
+grpc-netty = { group = "io.grpc", name = "grpc-netty-shaded", version.ref = "grpc" }
 grpc-protobuf = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
 grpc-stub = { group = "io.grpc", name = "grpc-stub", version.ref = "grpc" }
 grpc-services = { group = "io.grpc", name = "grpc-services", version.ref = "grpc" }

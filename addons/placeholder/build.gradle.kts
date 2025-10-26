@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 repositories {
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -8,9 +6,8 @@ repositories {
 dependencies {
     compileOnly(libs.spigot)
     compileOnly(libs.placeholderapi)
-
-    implementation(projects.sdk.sdkJava)
     implementation(projects.addons.api)
+    implementation(projects.sdk.sdkJava)
 }
 
 tasks.processResources {
@@ -20,11 +17,6 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
-    archiveFileName.set("polocloud-${project.name}-$version.jar")
-
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    mergeServiceFiles {
-        include("META-INF/services/io.grpc.*")
-    }
+    archiveFileName.set("polocloud-${project.name}-$version.jar")
 }

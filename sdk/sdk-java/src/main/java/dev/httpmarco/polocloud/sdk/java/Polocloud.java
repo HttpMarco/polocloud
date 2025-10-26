@@ -25,6 +25,9 @@ import dev.httpmarco.polocloud.shared.template.SharedTemplateProvider;
 import dev.httpmarco.polocloud.shared.template.Template;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
+import io.grpc.netty.shaded.io.netty.channel.nio.NioEventLoopGroup;
+import io.grpc.netty.shaded.io.netty.channel.socket.nio.NioSocketChannel;
 import org.jetbrains.annotations.NotNull;
 
 public final class Polocloud extends PolocloudShared {
@@ -61,9 +64,14 @@ public final class Polocloud extends PolocloudShared {
     public Polocloud(String serviceName, String agentHostname, int agentPort, boolean setShared) {
         super(setShared);
         this.serviceName = serviceName;
-        ManagedChannel channel = ManagedChannelBuilder
+
+        NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+
+        ManagedChannel channel = NettyChannelBuilder
                 .forAddress(agentHostname, agentPort)
                 .usePlaintext()
+                .channelType(NioSocketChannel.class)
+                .eventLoopGroup(eventLoopGroup)
                 .build();
 
         this.eventProvider = new EventProvider(channel, this);
