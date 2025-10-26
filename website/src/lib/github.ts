@@ -422,10 +422,10 @@ export const GITHUB_REPO_CONFIG = {
   owner: process.env.GITHUB_REPO_OWNER || 'HttpMarco',
   repo: process.env.GITHUB_REPO_NAME || 'polocloud',
   branch: process.env.GITHUB_BRANCH || 'master',
-  blogPath: 'docs/content/blog',
-  changelogPath: 'docs/content/changelog',
-  metaFile: 'docs/content/blog/meta.json',
-  changelogMetaFile: 'docs/content/changelog/meta.json',
+  blogPath: 'website/content/blog',
+  changelogPath: 'website/content/changelog',
+  metaFile: 'website/content/blog/meta.json',
+  changelogMetaFile: 'website/content/changelog/meta.json',
 };
 
 export interface BlogPostMetadata {
@@ -621,7 +621,7 @@ export interface FeedbackData {
 
 export async function getFeedbackFromGitHub(): Promise<FeedbackData[]> {
   try {
-    const feedbackFile = await getFileFromGitHub('docs/data/feedback.json');
+    const feedbackFile = await getFileFromGitHub('website/data/feedback.json');
 
     if (feedbackFile) {
       const feedbackData = JSON.parse(feedbackFile.content);
@@ -637,11 +637,11 @@ export async function getFeedbackFromGitHub(): Promise<FeedbackData[]> {
 
 export async function saveFeedbackToGitHub(feedbackData: FeedbackData[], commitMessage: string): Promise<void> {
   try {
-    const feedbackFile = await getFileFromGitHub('docs/data/feedback.json');
+    const feedbackFile = await getFileFromGitHub('website/data/feedback.json');
     const content = JSON.stringify(feedbackData, null, 2);
 
     await createOrUpdateBlogFile(
-      'docs/data/feedback.json',
+      'website/data/feedback.json',
       content,
       commitMessage,
       feedbackFile?.sha
@@ -717,7 +717,7 @@ export async function getUserFeedbackFromGitHub(userId: string): Promise<Feedbac
 export async function getPartnersFromGitHub() {
   try {
     console.log('Fetching partners from GitHub...');
-    const partnersFile = await getFileFromGitHub('docs/data/partners.json');
+    const partnersFile = await getFileFromGitHub('website/data/partners.json');
     
     if (partnersFile) {
       const partners = JSON.parse(partnersFile.content);
@@ -766,12 +766,12 @@ export async function savePartnersToGitHub(partners: Array<{
 }>, commitMessage?: string): Promise<void> {
   try {
     const content = JSON.stringify(partners, null, 2);
-    const partnersFile = await getFileFromGitHub('docs/data/partners.json');
+    const partnersFile = await getFileFromGitHub('website/data/partners.json');
     
     const message = commitMessage || `Update partners list - ${new Date().toISOString()}`;
     
     await createOrUpdateBlogFile(
-      'docs/data/partners.json',
+      'website/data/partners.json',
       content,
       message,
       partnersFile?.sha
@@ -809,7 +809,7 @@ export async function savePartnersToGitHub(partners: Array<{
 export async function getPlatformsFromGitHub() {
   try {
     console.log('Fetching platforms from GitHub...');
-    const platformsFile = await getFileFromGitHub('docs/data/platforms.json');
+    const platformsFile = await getFileFromGitHub('website/data/platforms.json');
     
     if (platformsFile) {
       const platforms = JSON.parse(platformsFile.content);
@@ -859,12 +859,12 @@ export async function savePlatformsToGitHub(platforms: Array<{
 }>, commitMessage?: string): Promise<void> {
   try {
     const content = JSON.stringify(platforms, null, 2);
-    const platformsFile = await getFileFromGitHub('docs/data/platforms.json');
+    const platformsFile = await getFileFromGitHub('website/data/platforms.json');
     
     const message = commitMessage || `Update platforms list - ${new Date().toISOString()}`;
     
     await createOrUpdateBlogFile(
-      'docs/data/platforms.json',
+      'website/data/platforms.json',
       content,
       message,
       platformsFile?.sha
@@ -1087,11 +1087,11 @@ export async function getChangelogFromGitHub(): Promise<ChangelogMetadata[]> {
 
 export async function saveChangelogToGitHub(changelogData: ChangelogMetadata[], commitMessage: string): Promise<void> {
   try {
-    const changelogFile = await getFileFromGitHub('docs/data/changelog.json');
+    const changelogFile = await getFileFromGitHub('website/data/changelog.json');
     const content = JSON.stringify(changelogData, null, 2);
 
     await createOrUpdateBlogFile(
-      'docs/data/changelog.json',
+      'website/data/changelog.json',
       content,
       commitMessage,
       changelogFile?.sha
