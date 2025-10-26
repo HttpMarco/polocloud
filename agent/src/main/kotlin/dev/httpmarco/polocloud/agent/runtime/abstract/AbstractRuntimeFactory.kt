@@ -203,7 +203,16 @@ abstract class AbstractRuntimeFactory<T : AbstractService>(val factoryPath: Path
                         "-Dterminal.jline=false",
                         "-Dfile.encoding=UTF-8",
                         "-Xms" + service.minMemory + "M",
-                        "-Xmx" + service.maxMemory + "M",
+                        "-Xmx" + service.maxMemory + "M"
+                    )
+                )
+
+                if (platform.flags.isNotEmpty()) {
+                    commands.addAll(platform.flags)
+                }
+
+                commands.addAll(
+                    listOf(
                         "-jar",
                         service.group().applicationPlatformFile().name
                     )
