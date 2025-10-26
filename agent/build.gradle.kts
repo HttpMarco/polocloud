@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm") version "2.2.21"
-    id("com.gradleup.shadow") version "9.2.2"
 }
 
 dependencies {
@@ -31,10 +30,6 @@ tasks.jar {
         attributes("Main-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt")
         attributes("Premain-Class" to "dev.httpmarco.polocloud.agent.AgentBootKt")
     }
-}
-
-tasks.shadowJar {
-    archiveFileName.set("polocloud-agent-$version-all.jar")
 }
 
 tasks.test {

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.proto)
+    compileOnly(projects.proto)
     compileOnly(libs.gson)
 }
 
