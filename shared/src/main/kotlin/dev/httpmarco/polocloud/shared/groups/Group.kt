@@ -100,10 +100,11 @@ fun Group.toJson(): JsonObject {
             JsonArray().apply {
                 templates.forEach { template ->
                     add(
-                            JsonObject().apply {
-                                addProperty("name", template.name)
-                                addProperty("size", template.size())
-                            }
+                        template.name
+//                            JsonObject().apply {
+//                                addProperty("name", template.name)
+//                                addProperty("size", template.size())
+//                            }
                     )
                 }
             }
@@ -121,6 +122,6 @@ fun Group.toJson(): JsonObject {
         addProperty("percentageToStartNewService", percentageToStartNewService)
         addProperty("createdAt", createdAt)
         add("templates", groupTemplates)
-        add("groupProperties", groupProperties)
+        add("properties", groupProperties)
     }
 }
