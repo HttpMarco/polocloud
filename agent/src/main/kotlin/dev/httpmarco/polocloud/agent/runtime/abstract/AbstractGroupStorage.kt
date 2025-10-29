@@ -4,6 +4,8 @@ import com.google.gson.GsonBuilder
 import dev.httpmarco.polocloud.agent.groups.AbstractGroup
 import dev.httpmarco.polocloud.agent.i18n
 import dev.httpmarco.polocloud.agent.runtime.RuntimeGroupStorage
+import dev.httpmarco.polocloud.shared.properties.PropertyHolder
+import dev.httpmarco.polocloud.shared.properties.PropertySerializer
 import dev.httpmarco.polocloud.shared.template.Template
 import dev.httpmarco.polocloud.shared.template.TemplateSerializer
 import java.nio.file.Files
@@ -19,6 +21,8 @@ abstract class AbstractGroupStorage(val path: Path = Path("local/groups")) : Run
     private lateinit var cachedAbstractGroups: ArrayList<AbstractGroup>
 
     private val STORAGE_GSON = GsonBuilder().setPrettyPrinting()
+        .registerTypeHierarchyAdapter(PropertyHolder::class.java, PropertySerializer())
+        .registerTypeAdapter(PropertyHolder::class.java, PropertySerializer())
         .registerTypeHierarchyAdapter(Template::class.java, TemplateSerializer())
         .registerTypeAdapter(Template::class.java, TemplateSerializer())
         .create()
