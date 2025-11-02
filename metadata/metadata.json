@@ -22,6 +22,7 @@
     "gateSetup",
     "velocityProxyToken",
     "paperProxySupport",
+    "paperVelocitySupport",
     "velocitySetup",
     "buildPumpkin",
     "limboSetup",
@@ -30,6 +31,9 @@
     "paperLoadDependencies",
     "pumpkinSetup",
     "setupBungeecord",
-    "fabricDownloadDependencies"
+    "fabricDownloadDependencies",
+    "paperSetup",
+    "waterdogSetup",
+    "fabricVelocitySupport"
   ]
 }
