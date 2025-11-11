@@ -44,7 +44,7 @@ fabric = "0.16.14"
 fabric-language-kotlin = "1.13.4+kotlin.2.2.0"
 nukkit = "1.0-SNAPSHOT"
 
-npc-bukkit = "3.0.0-beta.15"
+npc-bukkit = "3.0.0-beta.16"
 
 # bStats
 bstats = "3.1.0"
