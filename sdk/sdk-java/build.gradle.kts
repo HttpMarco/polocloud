@@ -19,7 +19,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 tasks.shadowJar {
-    archiveFileName = "sdk-java-3.0.0-pre.6-SNAPSHOT.jar"
+    archiveFileName = "sdk-java-3.0.0-pre.6.1-SNAPSHOT.jar"
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     relocate("com.google.protobuf", "dev.httpmarco.polocloud.sdk.java.relocated.protobuf")
