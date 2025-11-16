@@ -48,12 +48,12 @@ jobs:
               ')
               
               if [ "$SHOULD_ADD" = "true" ]; then
-                CURRENT_BUILD=$(echo "$CURRENT_PAPER" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_PAPER" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
                 NEW_VERSION="{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
                 NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
               else
-                CURRENT_BUILD=$(echo "$CURRENT_PAPER" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_PAPER" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
               fi
             fi
@@ -101,12 +101,12 @@ jobs:
               ')
               
               if [ "$SHOULD_ADD" = "true" ]; then
-                CURRENT_BUILD=$(echo "$CURRENT_VELOCITY" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_VELOCITY" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
                 NEW_VERSION="{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
                 NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
               else
-                CURRENT_BUILD=$(echo "$CURRENT_VELOCITY" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_VELOCITY" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
               fi
             fi
@@ -158,12 +158,12 @@ jobs:
               ')
               
               if [ "$SHOULD_ADD" = "true" ]; then
-                CURRENT_BUILD=$(echo "$CURRENT_FOLIA" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_FOLIA" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
                 NEW_VERSION="{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\", \"hash\": \"$HASH\"}"
                 NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
               else
-                CURRENT_BUILD=$(echo "$CURRENT_FOLIA" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_FOLIA" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
               fi
             fi
@@ -215,12 +215,12 @@ jobs:
                 ')
                 
                 if [ "$SHOULD_ADD" = "true" ]; then
-                  CURRENT_BUILD=$(echo "$CURRENT_PURPUR" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                  CURRENT_BUILD=$(echo "$CURRENT_PURPUR" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                   echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
                   NEW_VERSION="{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
                   NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
                 else
-                  CURRENT_BUILD=$(echo "$CURRENT_PURPUR" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                  CURRENT_BUILD=$(echo "$CURRENT_PURPUR" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                   echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
                 fi
               fi
@@ -269,12 +269,12 @@ jobs:
               ')
               
               if [ "$SHOULD_ADD" = "true" ]; then
-                CURRENT_BUILD=$(echo "$CURRENT_WATERFALL" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_WATERFALL" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
                 NEW_VERSION="{\"version\": \"$version\", \"buildId\": \"$BUILD_ID\"}"
                 NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
               else
-                CURRENT_BUILD=$(echo "$CURRENT_WATERFALL" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_WATERFALL" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
               fi
             fi
@@ -330,12 +330,12 @@ jobs:
               ')
               
               if [ "$SHOULD_ADD" = "true" ]; then
-                CURRENT_BUILD=$(echo "$CURRENT_LIMBO" | jq --arg v "$VERSION" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_LIMBO" | jq -r --arg v "$VERSION" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "New version found: $VERSION build $BUILD_NUMBER (current: $CURRENT_BUILD)"
                 NEW_VERSION="{\"version\": \"$VERSION\", \"jarVersion\": \"$JAR_VERSION\", \"buildId\": \"$BUILD_NUMBER\"}"
                 NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
               else
-                CURRENT_BUILD=$(echo "$CURRENT_LIMBO" | jq --arg v "$VERSION" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_LIMBO" | jq -r --arg v "$VERSION" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "Version $VERSION build $BUILD_NUMBER already exists or is older (current: $CURRENT_BUILD)"
               fi
             fi
@@ -383,12 +383,12 @@ jobs:
               ')
               
               if [ "$SHOULD_ADD" = "true" ]; then
-                CURRENT_BUILD=$(echo "$CURRENT_LEAF" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_LEAF" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "New version found: $version build $BUILD_ID (current: $CURRENT_BUILD)"
                 NEW_VERSION="{\"version\": \"$version\", \"buildId\": $BUILD_ID}"
                 NEW_VERSIONS=$(echo "$NEW_VERSIONS $NEW_VERSION" | jq -s '.[0] + [.[1]]')
               else
-                CURRENT_BUILD=$(echo "$CURRENT_LEAF" | jq --arg v "$version" '.[] | select(.version == $v) | .buildId // "0"')
+                CURRENT_BUILD=$(echo "$CURRENT_LEAF" | jq -r --arg v "$version" 'if length == 0 then "0" else (.[] | select(.version == $v) | .buildId // "0") // "0" end')
                 echo "Version $version build $BUILD_ID already exists or is older (current: $CURRENT_BUILD)"
               fi
             fi
