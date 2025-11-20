@@ -21,7 +21,7 @@ class GroupSetup : Setup<AbstractGroup>("Group setup") {
     private val platformVersionArgument = PlatformVersionArgument(platformArgument)
     private val minMemoryArgument = MemoryArgument("minMemory")
     private val maxMemoryArgument = MemoryArgument("maxMemory", previousArg = minMemoryArgument)
-    private val percentageToStartNewService = IntArgument("percentageToStartNewService", 0)
+    private val percentageToStartNewService = IntArgument("percentageToStartNewService", 0, 100)
     private val minOnlineServicesArgument = IntArgument("minOnlineServices", 0)
     private val maxOnlineServicesArgument = IntArgument("maxOnlineServices", -1)
     private val fallbackArgument = YesNotArgument("fallback")
