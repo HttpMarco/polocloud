@@ -96,18 +96,19 @@ class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalS
 
     override fun reload() {
         this.cachedTemplates.clear()
-        create("EVERY")
-        create("EVERY_FALLBACK")
-
-        GroupType.entries.forEach {
-            create("EVERY_${it.name}")
-        }
 
         Files.list(LOCAL_TEMPLATE_PATH).forEach { dir ->
             if (Files.isDirectory(dir)) {
                 val name = dir.fileName.toString()
                 this.cachedTemplates.add(LocalTemplate(name))
             }
+        }
+
+        create("EVERY")
+        create("EVERY_FALLBACK")
+
+        GroupType.entries.forEach {
+            create("EVERY_${it.name}")
         }
     }
 }
