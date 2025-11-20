@@ -97,6 +97,8 @@ class LocalRuntimeTemplateStorage : RuntimeTemplateStorage<LocalTemplate, LocalS
     override fun reload() {
         this.cachedTemplates.clear()
 
+        Files.createDirectories(LOCAL_TEMPLATE_PATH)
+
         Files.list(LOCAL_TEMPLATE_PATH).forEach { dir ->
             if (Files.isDirectory(dir)) {
                 val name = dir.fileName.toString()
