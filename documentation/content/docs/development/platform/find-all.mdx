@@ -20,7 +20,7 @@ Use this method to retrieve a list of all available platforms in your cloud infr
       code={`val platforms = platformProvider.findAll()
 
 for (platform in platforms) {
-    println("Found platform: \${platform.name} \${platform.version} (\${platform.type})")
+    println("Found platform: \${platform.name} (\${platform.type}) - Versions: \${platform.versions.size}")
 }`}
     />
   </Tab>
@@ -30,7 +30,7 @@ for (platform in platforms) {
       code={`List<Platform> platforms = platformProvider.findAll();
 
 for (Platform platform : platforms) {
-    System.out.println("Found platform: " + platform.getName() + " " + platform.getVersion() + " (" + platform.getType() + ")");
+    System.out.println("Found platform: " + platform.name + " (" + platform.type + ") - Versions: " + platform.versions.size());
 }`}
     />
   </Tab>

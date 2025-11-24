@@ -40,8 +40,7 @@ val serverPlatforms = platformProvider.find(GroupType.SERVER)
 // Find all proxy platforms
 val proxyPlatforms = platformProvider.find(GroupType.PROXY)
 
-// Find all service platforms
-val servicePlatforms = platformProvider.find(GroupType.SERVICE)`} />
+// Note: GroupType.SERVICE is not typically used for platforms`} />
   </Tab>
   <Tab value="Java">
     <DynamicCodeBlock lang="java" code={`// Find all server platforms
@@ -50,8 +49,7 @@ List<Platform> serverPlatforms = platformProvider.find(GroupType.SERVER);
 // Find all proxy platforms
 List<Platform> proxyPlatforms = platformProvider.find(GroupType.PROXY);
 
-// Find all service platforms
-List<Platform> servicePlatforms = platformProvider.find(GroupType.SERVICE);`} />
+// Note: GroupType.SERVICE is not typically used for platforms`} />
   </Tab>
 </Tabs>
 

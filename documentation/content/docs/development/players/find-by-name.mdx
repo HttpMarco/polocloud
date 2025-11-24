@@ -45,7 +45,7 @@ If you prefer non-blocking access, use the asynchronous version:
       lang="java"
       code={`playerProvider.findByNameAsync("Notch").thenAccept(player -> {
     if (player == null) return;
-    System.out.println("Found player: " + player.getName() + " on " + player.getCurrentServiceName());
+    System.out.println("Found player: " + player.name + " on " + player.currentServiceName);
 });`}
     />
   </Tab>

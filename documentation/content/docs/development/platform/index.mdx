@@ -16,10 +16,10 @@ The `PlatformProvider` gives you access to manage and work with platforms in you
 
 <Tabs items={['Kotlin', 'Java']}>
     <Tab value="Kotlin">
-        <DynamicCodeBlock lang="kotlin" code='val platformProvider = PoloCloud.platformProvider()' />
+        <DynamicCodeBlock lang="kotlin" code='val platformProvider = Polocloud.instance().platformProvider()' />
     </Tab>
     <Tab value="Java">
-        <DynamicCodeBlock lang="java" code='var platformProvider = PoloCloud.platformProvider();' />
+        <DynamicCodeBlock lang="java" code='SharedPlatformProvider&lt;Platform&gt; platformProvider = Polocloud.instance().platformProvider();' />
     </Tab>
 </Tabs>
 
@@ -67,13 +67,11 @@ List<Platform> proxyPlatforms = platformProvider.find(GroupType.PROXY);`} />
 Each platform contains essential information about the server software, version, and compatibility with different group types.
 </Callout>
 
-| Property        | Type           | Description                                    |
-| --------------- | -------------- | ---------------------------------------------- |
-| `name`          | `String`       | The platform's unique identifier               |
-| `version`       | `String`       | Version of the platform                        |
-| `type`          | `GroupType`    | Type of platform (SERVER, PROXY, SERVICE)      |
-| `description`   | `String`       | Human-readable description of the platform     |
-| `properties`    | `Map<String, String>` | Platform-specific configuration properties |
+| Property        | Type           | Description                                    | Access Method |
+| --------------- | -------------- | ---------------------------------------------- | ------------- |
+| `name`          | `String`       | The platform's unique identifier               | Direct field |
+| `type`          | `GroupType`    | Type of platform (SERVER, PROXY, SERVICE)      | Direct field |
+| `versions`      | `List<PlatformVersion>` | Available versions for this platform    | Direct field |
 
 ## Platform Management Examples
 
@@ -86,9 +84,11 @@ val platforms = platformProvider.findAll()
 
 platforms.forEach { platform ->
     println("Platform: \${platform.name}")
-    println("  Version: \${platform.version}")
     println("  Type: \${platform.type}")
-    println("  Description: \${platform.description}")
+    println("  Versions: \${platform.versions.size}")
+    platform.versions.forEach { version ->
+        println("    - \${version.version}")
+    }
     println("---")
 }`} />
     </Tab>
@@ -97,10 +97,12 @@ platforms.forEach { platform ->
 List<Platform> platforms = platformProvider.findAll();
 
 for (Platform platform : platforms) {
-    System.out.println("Platform: " + platform.getName());
-    System.out.println("  Version: " + platform.getVersion());
-    System.out.println("  Type: " + platform.getType());
-    System.out.println("  Description: " + platform.getDescription());
+    System.out.println("Platform: " + platform.name);
+    System.out.println("  Type: " + platform.type);
+    System.out.println("  Versions: " + platform.versions.size());
+    for (PlatformVersion version : platform.versions) {
+        System.out.println("    - " + version.version);
+    }
     System.out.println("---");
 }`} />
     </Tab>
@@ -114,8 +116,9 @@ for (Platform platform : platforms) {
 val platform = platformProvider.find("paper")
 
 if (platform != null) {
-    println("Found platform: \${platform.name} \${platform.version}")
+    println("Found platform: \${platform.name}")
     println("Type: \${platform.type}")
+    println("Available versions: \${platform.versions.size}")
 } else {
     println("Platform not found")
 }`} />
@@ -125,8 +128,9 @@ if (platform != null) {
 Platform platform = platformProvider.find("paper");
 
 if (platform != null) {
-    System.out.println("Found platform: " + platform.getName() + " " + platform.getVersion());
-    System.out.println("Type: " + platform.getType());
+    System.out.println("Found platform: " + platform.name);
+    System.out.println("Type: " + platform.type);
+    System.out.println("Available versions: " + platform.versions.size());
 } else {
     System.out.println("Platform not found");
 }`} />
@@ -142,7 +146,7 @@ val serverPlatforms = platformProvider.find(GroupType.SERVER)
 
 println("Server Platforms:")
 serverPlatforms.forEach { platform ->
-    println("- \${platform.name} \${platform.version}")
+    println("- \${platform.name} (versions: \${platform.versions.size})")
 }
 
 // Find all proxy platforms
@@ -150,7 +154,7 @@ val proxyPlatforms = platformProvider.find(GroupType.PROXY)
 
 println("Proxy Platforms:")
 proxyPlatforms.forEach { platform ->
-    println("- \${platform.name} \${platform.version}")
+    println("- \${platform.name} (versions: \${platform.versions.size})")
 }`} />
     </Tab>
     <Tab value="Java">
@@ -159,7 +163,7 @@ List<Platform> serverPlatforms = platformProvider.find(GroupType.SERVER);
 
 System.out.println("Server Platforms:");
 for (Platform platform : serverPlatforms) {
-    System.out.println("- " + platform.getName() + " " + platform.getVersion());
+    System.out.println("- " + platform.name + " (versions: " + platform.versions.size() + ")");
 }
 
 // Find all proxy platforms
@@ -167,7 +171,7 @@ List<Platform> proxyPlatforms = platformProvider.find(GroupType.PROXY);
 
 System.out.println("Proxy Platforms:");
 for (Platform platform : proxyPlatforms) {
-    System.out.println("- " + platform.getName() + " " + platform.getVersion());
+    System.out.println("- " + platform.name + " (versions: " + platform.versions.size() + ")");
 }`} />
     </Tab>
 </Tabs>

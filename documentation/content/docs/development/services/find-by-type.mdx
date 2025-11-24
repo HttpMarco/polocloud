@@ -30,7 +30,7 @@ services.forEach { service ->
     <DynamicCodeBlock lang="java" code={`List<Service> services = serviceProvider.findByType(GroupType.SERVER);
 
 for (Service service : services) {
-    System.out.println("Service: " + service.name() + " - Type: " + service.getType());
+    System.out.println("Service: " + service.name() + " - Type: " + service.type);
 }`} />
   </Tab>
 </Tabs>
@@ -58,7 +58,7 @@ For non-blocking retrieval, use the async version:
     if (services.isEmpty()) return;
 
     for (Service service : services) {
-        System.out.println("Service: " + service.name() + " - Type: " + service.getType());
+        System.out.println("Service: " + service.name() + " - Type: " + service.type);
     }
 });`} />
   </Tab>

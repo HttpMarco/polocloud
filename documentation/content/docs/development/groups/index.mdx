@@ -36,10 +36,10 @@ First, get access to the group provider using the PoloCloud SDK:
 
 <Tabs items={['Kotlin', 'Java']}>
     <Tab value="Kotlin">
-        <DynamicCodeBlock lang="kotlin" code='val groupProvider = PoloCloud.groupProvider()' />
+        <DynamicCodeBlock lang="kotlin" code='val groupProvider = Polocloud.instance().groupProvider()' />
     </Tab>
     <Tab value="Java">
-        <DynamicCodeBlock lang="java" code='var groupProvider = PoloCloud.groupProvider();' />
+        <DynamicCodeBlock lang="java" code='SharedGroupProvider&lt;Group&gt; groupProvider = Polocloud.instance().groupProvider();' />
     </Tab>
 </Tabs>
 
@@ -150,16 +150,16 @@ val savedGroupAsync = groupProvider.updateAsync(updatedGroup)`} />
     <Tab value="Java">
         <DynamicCodeBlock lang="java" code={`// Create updated group with new settings
 Group updatedGroup = new Group(
-    lobbyGroup.getName(),
+    lobbyGroup.name,
     2048,  // Updated minMemory
     4096,  // Updated maxMemory
-    lobbyGroup.getMinOnlineService(),
-    lobbyGroup.getMaxOnlineService(),
-    lobbyGroup.getPlatform(),
-    lobbyGroup.getPercentageToStartNewService(),
-    lobbyGroup.getCreatedAt(),
-    lobbyGroup.getTemplates(),
-    lobbyGroup.getProperties()
+    lobbyGroup.minOnlineService,
+    lobbyGroup.maxOnlineService,
+    lobbyGroup.platform,
+    lobbyGroup.percentageToStartNewService,
+    lobbyGroup.createdAt,
+    lobbyGroup.templates,
+    lobbyGroup.properties
 );
 
 // Save changes
