@@ -41,36 +41,29 @@ The `GroupType` enum defines three main categories for services:
 Use group types to filter and manage services based on their function. This helps organize your cloud infrastructure and apply type-specific configurations.
 </Callout>
 
-### Filtering by Group Type
+### Filtering Services by Group Type
+
+Note: `GroupType` is used to filter **Services**, not Groups. Groups don't have a type field.
 
 <Tabs items={['Kotlin', 'Java']}>
     <Tab value="Kotlin">
-        <DynamicCodeBlock lang="kotlin" code={`// Find all server groups
-val serverGroups = groupProvider.findAll()
-    .filter { it.type == GroupType.SERVER }
+        <DynamicCodeBlock lang="kotlin" code={`// Find all server services
+val serverServices = serviceProvider.findByType(GroupType.SERVER)
 
-// Find all proxy groups
-val proxyGroups = groupProvider.findAll()
-    .filter { it.type == GroupType.PROXY }
+// Find all proxy services
+val proxyServices = serviceProvider.findByType(GroupType.PROXY)
 
-// Find all service groups
-val serviceGroups = groupProvider.findAll()
-    .filter { it.type == GroupType.SERVICE }`} />
+// Find all service-type services
+val serviceTypeServices = serviceProvider.findByType(GroupType.SERVICE)`} />
     </Tab>
     <Tab value="Java">
-        <DynamicCodeBlock lang="java" code={`// Find all server groups
-List<Group> serverGroups = groupProvider.findAll().stream()
-    .filter(group -> group.getType() == GroupType.SERVER)
-    .collect(Collectors.toList());
+        <DynamicCodeBlock lang="java" code={`// Find all server services
+List<Service> serverServices = serviceProvider.findByType(GroupType.SERVER);
 
-// Find all proxy groups
-List<Group> proxyGroups = groupProvider.findAll().stream()
-    .filter(group -> group.getType() == GroupType.PROXY)
-    .collect(Collectors.toList());
+// Find all proxy services
+List<Service> proxyServices = serviceProvider.findByType(GroupType.PROXY);
 
-// Find all service groups
-List<Group> serviceGroups = groupProvider.findAll().stream()
-    .filter(group -> group.getType() == GroupType.SERVICE)
-    .collect(Collectors.toList());`} />
+// Find all service-type services
+List<Service> serviceTypeServices = serviceProvider.findByType(GroupType.SERVICE);`} />
     </Tab>
 </Tabs>

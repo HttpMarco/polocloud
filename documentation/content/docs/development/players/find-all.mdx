@@ -30,7 +30,7 @@ for (player in players) {
       code={`List<PolocloudPlayer> players = playerProvider.findAll();
 
 for (PolocloudPlayer player : players) {
-    System.out.println("Found player: " + player.getName() + " on " + player.getCurrentServiceName());
+    System.out.println("Found player: " + player.name + " on " + player.currentServiceName);
 }`}
     />
   </Tab>
@@ -64,7 +64,7 @@ Use the async version if you want to avoid blocking the thread.
     if (players.isEmpty()) return;
 
     for (PolocloudPlayer player : players) {
-        System.out.println("Found player: " + player.getName() + " on " + player.getCurrentServiceName());
+        System.out.println("Found player: " + player.name + " on " + player.currentServiceName);
     }
 });`}
     />

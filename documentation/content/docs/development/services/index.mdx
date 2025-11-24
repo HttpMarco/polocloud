@@ -26,10 +26,10 @@ Get access to the service provider using the PoloCloud SDK:
 
 <Tabs items={['Kotlin', 'Java']}>
     <Tab value="Kotlin">
-        <DynamicCodeBlock lang="kotlin" code='val serverProvider = PoloCloud.serverProvider()' />
+        <DynamicCodeBlock lang="kotlin" code='val serviceProvider = Polocloud.instance().serviceProvider()' />
     </Tab>
     <Tab value="Java">
-        <DynamicCodeBlock lang="java" code='var serverProvider = PoloCloud.serverProvider();' />
+        <DynamicCodeBlock lang="java" code='SharedServiceProvider&lt;Service&gt; serviceProvider = Polocloud.instance().serviceProvider();' />
     </Tab>
 </Tabs>
 
@@ -43,13 +43,11 @@ Boot new service instances with custom configurations:
 val serviceSnapshot = serviceProvider.bootInstance("lobby")
 
 // Start a service with custom configuration
-val bootConfig = SharedBootConfiguration(
-    minMemory = 2048,
-    maxMemory = 4096,
-    templates = listOf(lobbyTemplate),
-    excludedTemplates = emptyList(),
-    properties = mapOf("custom-property" to "value")
-)
+val bootConfig = SharedBootConfiguration()
+    .withMinMemory(2048)
+    .withMaxMemory(4096)
+    .withTemplate(lobbyTemplate)
+    .withProperty("custom-property", "value")
 val customServiceSnapshot = serviceProvider.bootInstanceWithConfiguration("lobby", bootConfig)`} />
     </Tab>
     <Tab value="Java">
@@ -57,13 +55,11 @@ val customServiceSnapshot = serviceProvider.bootInstanceWithConfiguration("lobby
 ServiceSnapshot serviceSnapshot = serviceProvider.bootInstance("lobby");
 
 // Start a service with custom configuration
-SharedBootConfiguration bootConfig = new SharedBootConfiguration(
-    2048,  // minMemory
-    4096,  // maxMemory
-    List.of(lobbyTemplate),
-    List.of(),  // excludedTemplates
-    Map.of("custom-property", "value")
-);
+SharedBootConfiguration bootConfig = new SharedBootConfiguration()
+    .withMinMemory(2048)
+    .withMaxMemory(4096)
+    .withTemplate(lobbyTemplate)
+    .withProperty("custom-property", "value");
 ServiceSnapshot customServiceSnapshot = serviceProvider.bootInstanceWithConfiguration("lobby", bootConfig);`} />
     </Tab>
 </Tabs>
@@ -101,19 +97,23 @@ if (service != null) {
 Each service contains detailed information about its current state, performance metrics, and configuration.
 </Callout>
 
-| Property        | Type           | Description                                    |
-| --------------- | -------------- | ---------------------------------------------- |
-| `groupName`     | `String`       | The group this service belongs to              |
-| `id`            | `Int`          | Unique service identifier within the group     |
-| `state`         | `ServiceState` | Current state (STARTING, RUNNING, STOPPED)     |
-| `type`          | `GroupType`    | Service type (SERVICE, SERVER, PROXY)          |
-| `hostname`      | `String`       | Network hostname for connections               |
-| `port`          | `Int`          | Network port for connections                   |
-| `playerCount`   | `Int`          | Current number of connected players            |
-| `maxPlayerCount`| `Int`          | Maximum number of players allowed              |
-| `memoryUsage`   | `Double`       | Current memory usage percentage                |
-| `cpuUsage`      | `Double`       | Current CPU usage percentage                   |
-| `motd`          | `String`       | Message of the day displayed to players        |
-| `properties`    | `Map<String, String>` | Custom service properties                 |
-| `templates`     | `List<Template>` | Templates used for this service            |
+| Property        | Type           | Description                                    | Access Method |
+| --------------- | -------------- | ---------------------------------------------- | ------------- |
+| `groupName`     | `String`       | The group this service belongs to              | Direct field |
+| `id`            | `Int`          | Unique service identifier within the group     | Direct field |
+| `name()`        | `String`       | Full service name (groupName-id)              | Method |
+| `state`         | `ServiceState` | Current state (STARTING, ONLINE, STOPPING, STOPPED) | Direct field |
+| `type`          | `GroupType`    | Service type (SERVICE, SERVER, PROXY)          | Direct field |
+| `hostname`      | `String`       | Network hostname for connections               | Direct field |
+| `port`          | `Int`          | Network port for connections                   | Direct field |
+| `playerCount`   | `Int`          | Current number of connected players            | Direct field |
+| `maxPlayerCount`| `Int`          | Maximum number of players allowed              | Direct field |
+| `memoryUsage`   | `Double`       | Current memory usage percentage                | Direct field |
+| `cpuUsage`      | `Double`       | Current CPU usage percentage                   | Direct field |
+| `motd`          | `String`       | Message of the day displayed to players        | Direct field |
+| `properties`    | `Map<String, String>` | Custom service properties                 | Direct field |
+| `templates`     | `List<Template>` | Templates used for this service            | Direct field |
+| `minMemory`     | `Int`          | Minimum memory allocation                      | Direct field |
+| `maxMemory`     | `Int`          | Maximum memory allocation                      | Direct field |
+| `information`   | `ServiceInformation` | Additional service information          | Direct field |
 

@@ -20,7 +20,7 @@ Use this method to retrieve a list of all available templates in your cloud infr
       code={`val templates = templateProvider.findAll()
 
 for (template in templates) {
-    println("Found template: \${template.name} (\${template.size()} bytes)")
+    println("Found template: \${template.name} (\${template.size()})")
 }`}
     />
   </Tab>
@@ -30,7 +30,7 @@ for (template in templates) {
       code={`List<Template> templates = templateProvider.findAll();
 
 for (Template template : templates) {
-    System.out.println("Found template: " + template.getName() + " (" + template.size() + " bytes)");
+    System.out.println("Found template: " + template.name + " (" + template.size() + ")");
 }`}
     />
   </Tab>
@@ -52,7 +52,7 @@ Use the async version if you want to avoid blocking the thread.
     if (templates.isEmpty()) return@thenAccept
 
     templates.forEach {
-        println("Found template: \${it.name} (\${it.size()} bytes)")
+        println("Found template: \${it.name} (\${it.size()})")
     }
 }`}
     />
@@ -64,7 +64,7 @@ Use the async version if you want to avoid blocking the thread.
     if (templates.isEmpty()) return;
 
     for (Template template : templates) {
-        System.out.println("Found template: " + template.getName() + " (" + template.size() + " bytes)");
+        System.out.println("Found template: " + template.name + " (" + template.size() + ")");
     }
 });`}
     />

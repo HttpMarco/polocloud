@@ -32,7 +32,7 @@ services.forEach { service ->
 List<Service> services = serviceProvider.findByGroup(group);
 
 for (Service service : services) {
-    System.out.println("Service: " + service.name() + " - Group: " + service.getGroupName());
+    System.out.println("Service: " + service.name() + " - Group: " + service.groupName);
 }`} />
   </Tab>
 </Tabs>
@@ -51,7 +51,7 @@ services.forEach { service ->
     <DynamicCodeBlock lang="java" code={`List<Service> services = serviceProvider.findByGroup("lobby");
 
 for (Service service : services) {
-    System.out.println("Service: " + service.name() + " - Group: " + service.getGroupName());
+    System.out.println("Service: " + service.name() + " - Group: " + service.groupName);
 }`} />
   </Tab>
 </Tabs>
@@ -77,7 +77,7 @@ for (Service service : services) {
     if (services.isEmpty()) return;
 
     for (Service service : services) {
-        System.out.println("Service: " + service.name() + " - Group: " + service.getGroupName());
+        System.out.println("Service: " + service.name() + " - Group: " + service.groupName);
     }
 });`} />
   </Tab>
@@ -100,7 +100,7 @@ for (Service service : services) {
     if (services.isEmpty()) return;
 
     for (Service service : services) {
-        System.out.println("Service: " + service.name() + " - Group: " + service.getGroupName());
+        System.out.println("Service: " + service.name() + " - Group: " + service.groupName);
     }
 });`} />
   </Tab>

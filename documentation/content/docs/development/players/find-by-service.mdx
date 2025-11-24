@@ -21,7 +21,7 @@ You can filter players either by passing a `Service` object or the service's nam
 <Tabs items={['Kotlin', 'Java']}>
   <Tab value="Kotlin">
     <DynamicCodeBlock lang="kotlin" code={`val service: Service = ... // obtain or create service instance
-val players = playerProvider.findByService(service)
+val players = playerProvider.findByService(service.name())
 
 players.forEach { player ->
     println("Player: \${player.name} - Service: \${player.currentServiceName}")
@@ -29,10 +29,10 @@ players.forEach { player ->
   </Tab>
   <Tab value="Java">
     <DynamicCodeBlock lang="java" code={`Service service = ...; // obtain or create service instance
-List<PolocloudPlayer> players = playerProvider.findByService(service);
+List<PolocloudPlayer> players = playerProvider.findByService(service.name());
 
 for (PolocloudPlayer player : players) {
-    System.out.println("Player: " + player.getName() + " - Service: " + player.getCurrentServiceName());
+    System.out.println("Player: " + player.name + " - Service: " + player.currentServiceName);
 }`} />
   </Tab>
 </Tabs>
@@ -51,7 +51,7 @@ players.forEach { player ->
     <DynamicCodeBlock lang="java" code={`List<PolocloudPlayer> players = playerProvider.findByService("lobby-1");
 
 for (PolocloudPlayer player : players) {
-    System.out.println("Player: " + player.getName() + " - Service: " + player.getCurrentServiceName());
+    System.out.println("Player: " + player.name + " - Service: " + player.currentServiceName);
 }`} />
   </Tab>
 </Tabs>
@@ -77,7 +77,7 @@ for (PolocloudPlayer player : players) {
     if (players.isEmpty()) return;
 
     for (PolocloudPlayer player : players) {
-        System.out.println("Player: " + player.getName() + " - Service: " + player.getCurrentServiceName());
+        System.out.println("Player: " + player.name + " - Service: " + player.currentServiceName);
     }
 });`} />
   </Tab>
@@ -100,7 +100,7 @@ for (PolocloudPlayer player : players) {
     if (players.isEmpty()) return;
 
     for (PolocloudPlayer player : players) {
-        System.out.println("Player: " + player.getName() + " - Service: " + player.getCurrentServiceName());
+        System.out.println("Player: " + player.name + " - Service: " + player.currentServiceName);
     }
 });`} />
   </Tab>

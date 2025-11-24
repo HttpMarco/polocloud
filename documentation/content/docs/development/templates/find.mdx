@@ -36,7 +36,7 @@ If you prefer non-blocking access, use the asynchronous version:
       lang="kotlin"
       code={`templateProvider.findAsync("lobby-template").thenAccept { template ->
     if (template == null) return@thenAccept
-    println("Found template: \${template.name} (\${template.size()} bytes)")
+    println("Found template: \${template.name} (\${template.size()})")
 }`}
     />
   </Tab>
@@ -45,7 +45,7 @@ If you prefer non-blocking access, use the asynchronous version:
       lang="java"
       code={`templateProvider.findAsync("lobby-template").thenAccept(template -> {
     if (template == null) return;
-    System.out.println("Found template: " + template.getName() + " (" + template.size() + " bytes)");
+    System.out.println("Found template: " + template.name + " (" + template.size() + ")");
 });`}
     />
   </Tab>

@@ -23,10 +23,10 @@ The `TemplateProvider` gives you access to manage and work with templates in you
 
 <Tabs items={['Kotlin', 'Java']}>
     <Tab value="Kotlin">
-        <DynamicCodeBlock lang="kotlin" code='val templateProvider = PoloCloud.templateProvider()' />
+        <DynamicCodeBlock lang="kotlin" code='val templateProvider = Polocloud.instance().templateProvider()' />
     </Tab>
     <Tab value="Java">
-        <DynamicCodeBlock lang="java" code='var templateProvider = PoloCloud.templateProvider();' />
+        <DynamicCodeBlock lang="java" code='SharedTemplateProvider&lt;Template&gt; templateProvider = Polocloud.instance().templateProvider();' />
     </Tab>
 </Tabs>
 
@@ -74,12 +74,10 @@ CompletableFuture<Template> lobbyTemplateAsync = templateProvider.findAsync("lob
 Each template contains essential information about its configuration, files, and usage in your cloud infrastructure.
 </Callout>
 
-| Property        | Type           | Description                                    |
-| --------------- | -------------- | ---------------------------------------------- |
-| `name`          | `String`       | The template's unique identifier               |
-| `size`          | `Long`         | Total size of all files in the template        |
-| `files`         | `List<File>`   | List of files included in this template        |
-| `properties`    | `Map<String, String>` | Template-specific configuration properties |
+| Property        | Type           | Description                                    | Access Method |
+| --------------- | -------------- | ---------------------------------------------- | ------------- |
+| `name`          | `String`       | The template's unique identifier               | Direct field |
+| `size()`        | `String`       | Total size of all files in the template (human-readable) | Method |
 
 ## Template Management Examples
 
@@ -92,9 +90,7 @@ val templates = templateProvider.findAll()
 
 templates.forEach { template ->
     println("Template: \${template.name}")
-    println("  Size: \${template.size()} bytes")
-    println("  Files: \${template.files.size}")
-    println("  Properties: \${template.properties}")
+    println("  Size: \${template.size()}")
     println("---")
 }`} />
     </Tab>
@@ -103,10 +99,8 @@ templates.forEach { template ->
 List<Template> templates = templateProvider.findAll();
 
 for (Template template : templates) {
-    System.out.println("Template: " + template.getName());
-    System.out.println("  Size: " + template.size() + " bytes");
-    System.out.println("  Files: " + template.getFiles().size());
-    System.out.println("  Properties: " + template.getProperties());
+    System.out.println("Template: " + template.name);
+    System.out.println("  Size: " + template.size());
     System.out.println("---");
 }`} />
     </Tab>
@@ -131,8 +125,8 @@ if (template != null) {
 Template template = templateProvider.find("lobby-template");
 
 if (template != null) {
-    System.out.println("Found template: " + template.getName());
-    System.out.println("Size: " + template.size() + " bytes");
+    System.out.println("Found template: " + template.name);
+    System.out.println("Size: " + template.size());
 } else {
     System.out.println("Template not found");
 }`} />
@@ -164,13 +158,13 @@ templateProvider.findAsync("lobby-template").thenAccept { template ->
 templateProvider.findAllAsync().thenAccept(templates -> {
     System.out.println("Found " + templates.size() + " templates");
     for (Template template : templates) {
-        System.out.println("- " + template.getName() + " (" + template.size() + " bytes)");
+        System.out.println("- " + template.name + " (" + template.size() + ")");
     }
 });
 
 templateProvider.findAsync("lobby-template").thenAccept(template -> {
     if (template != null) {
-        System.out.println("Template found: " + template.getName());
+        System.out.println("Template found: " + template.name);
     } else {
         System.out.println("Template not found");
     }

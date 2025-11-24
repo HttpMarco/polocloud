@@ -23,10 +23,10 @@ The `PlayerProvider` is your main entry point for all player-related operations 
 
 <Tabs items={['Kotlin', 'Java']}>
     <Tab value="Kotlin">
-        <DynamicCodeBlock lang="kotlin" code='val playerProvider = PoloCloud.playerProvider()' />
+        <DynamicCodeBlock lang="kotlin" code='val playerProvider = Polocloud.instance().playerProvider()' />
     </Tab>
     <Tab value="Java">
-        <DynamicCodeBlock lang="java" code='var playerProvider = PoloCloud.playerProvider();' />
+        <DynamicCodeBlock lang="java" code='SharedPlayerProvider&lt;PolocloudPlayer&gt; playerProvider = Polocloud.instance().playerProvider();' />
     </Tab>
 </Tabs>
 
@@ -81,11 +81,12 @@ CompletableFuture<List<PolocloudPlayer>> lobbyPlayersAsync = playerProvider.find
 Each player object contains essential information about their current state and location in your cloud infrastructure.
 </Callout>
 
-| Property           | Type     | Description                                    |
-| ------------------ | -------- | ---------------------------------------------- |
-| `name`             | `String` | The player's display name                      |
-| `uniqueId`         | `UUID`   | The player's unique identifier                 |
-| `currentServiceName` | `String` | The service the player is currently connected to |
+| Property           | Type     | Description                                    | Access Method |
+| ------------------ | -------- | ---------------------------------------------- | ------------- |
+| `name`             | `String` | The player's display name                      | Direct field |
+| `uniqueId`         | `UUID`   | The player's unique identifier (UUID object)   | Direct field |
+| `uniqueId()`       | `String` | The player's unique identifier as string      | Method |
+| `currentServiceName` | `String` | The service the player is currently connected to | Direct field |
 
 ## Player Tracking Examples
 
@@ -113,7 +114,7 @@ Map<String, List<PolocloudPlayer>> playersByService = allPlayers.stream()
 playersByService.forEach((serviceName, players) -> {
     System.out.println(serviceName + ": " + players.size() + " players");
     players.forEach(player -> 
-        System.out.println("  - " + player.getName() + " (" + player.uniqueId() + ")")
+        System.out.println("  - " + player.name + " (" + player.uniqueId() + ")")
     );
 });`} />
     </Tab>

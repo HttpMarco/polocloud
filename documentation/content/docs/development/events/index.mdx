@@ -16,10 +16,10 @@ The `EventProvider` gives you access to send and receive events in your PoloClou
 
 <Tabs items={['Kotlin', 'Java']}>
     <Tab value="Kotlin">
-        <DynamicCodeBlock lang="kotlin" code='val eventProvider = PoloCloud.eventProvider()' />
+        <DynamicCodeBlock lang="kotlin" code='val eventProvider = Polocloud.instance().eventProvider()' />
     </Tab>
     <Tab value="Java">
-        <DynamicCodeBlock lang="java" code='var eventProvider = PoloCloud.eventProvider();' />
+        <DynamicCodeBlock lang="java" code='SharedEventProvider eventProvider = Polocloud.instance().eventProvider();' />
     </Tab>
 </Tabs>
 
@@ -90,7 +90,7 @@ eventProvider.subscribe(MyCustomEvent::class.java) { event ->
     <Tab value="Java">
         <DynamicCodeBlock lang="java" code={`// Subscribe to player join events
 eventProvider.subscribe(PlayerJoinEvent.class, event -> {
-    System.out.println("Player joined: " + event.getPlayer().getName());
+    System.out.println("Player joined: " + event.getPlayer().name);
     // Handle player join logic
 });
 
@@ -175,13 +175,17 @@ eventProvider.subscribe(MyCustomEvent.class, event -> {
 eventProvider.subscribe(ServiceChangeStateEvent::class.java) { event ->
     val service = event.service
     when (service.state) {
-        ServiceState.RUNNING -> {
-            println("Service \${service.name()} is now running")
+        ServiceState.ONLINE -> {
+            println("Service \${service.name()} is now online")
             // Start monitoring, send notifications, etc.
         }
         ServiceState.STOPPED -> {
             println("Service \${service.name()} has stopped")
             // Cleanup, restart logic, etc.
+        }
+        ServiceState.STOPPING -> {
+            println("Service \${service.name()} is stopping")
+            // Prepare for shutdown
         }
         ServiceState.STARTING -> {
             println("Service \${service.name()} is starting")
@@ -194,14 +198,18 @@ eventProvider.subscribe(ServiceChangeStateEvent::class.java) { event ->
         <DynamicCodeBlock lang="java" code={`// Monitor service state changes
 eventProvider.subscribe(ServiceChangeStateEvent.class, event -> {
     Service service = event.getService();
-    switch (service.getState()) {
-        case RUNNING:
-            System.out.println("Service " + service.name() + " is now running");
+    switch (service.state) {
+        case ONLINE:
+            System.out.println("Service " + service.name() + " is now online");
             // Start monitoring, send notifications, etc.
             break;
         case STOPPED:
             System.out.println("Service " + service.name() + " has stopped");
             // Cleanup, restart logic, etc.
+            break;
+        case STOPPING:
+            System.out.println("Service " + service.name() + " is stopping");
+            // Prepare for shutdown
             break;
         case STARTING:
             System.out.println("Service " + service.name() + " is starting");
@@ -235,14 +243,14 @@ eventProvider.subscribe(PlayerLeaveEvent::class.java) { event ->
         <DynamicCodeBlock lang="java" code={`// Track player activity
 eventProvider.subscribe(PlayerJoinEvent.class, event -> {
     PolocloudPlayer player = event.getPlayer();
-    System.out.println("Player " + player.getName() + " joined " + player.getCurrentServiceName());
+    System.out.println("Player " + player.name + " joined " + player.currentServiceName);
     
     // Update player count, send welcome message, etc.
 });
 
 eventProvider.subscribe(PlayerLeaveEvent.class, event -> {
     PolocloudPlayer player = event.getPlayer();
-    System.out.println("Player " + player.getName() + " left " + player.getCurrentServiceName());
+    System.out.println("Player " + player.name + " left " + player.currentServiceName);
     
     // Update player count, cleanup, etc.
 });`} />
