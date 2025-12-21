@@ -34,5 +34,15 @@
     "status": "APPROVED",
     "approvedBy": "HttpMarco",
     "approvedAt": "2025-11-13T11:01:26.857Z"
+  },
+  {
+    "userId": "1222250424309121145",
+    "username": "sonstso.",
+    "rating": 1,
+    "description": "samma des geht jör gor ned, wie man sich sowas traut",
+    "avatar": "https://cdn.discordapp.com/avatars/1222250424309121145/a7b903b3a8e6f9854909cb9bb489965d.png",
+    "id": "1766347215683",
+    "createdAt": "2025-12-21T20:00:15.683Z",
+    "status": "PENDING"
   }
 ]
