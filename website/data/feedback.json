@@ -46,5 +46,15 @@
     "status": "REJECTED",
     "rejectedBy": "RECHERGG",
     "rejectedAt": "2026-01-02T12:16:49.571Z"
+  },
+  {
+    "userId": "1059621019947634739",
+    "username": "mecrytv",
+    "rating": 5,
+    "description": "It's not even a full release yet, and the cloud is really great. Awesome performance, good & fast support, and it really supports every Minecraft version. I can only recommend the cloud if you're looking for a better alternative with a good API to Simplecloud & CloudNet.",
+    "avatar": "https://cdn.discordapp.com/avatars/1059621019947634739/92b8f042bec39712da5188d770739c82.png",
+    "id": "1767356520774",
+    "createdAt": "2026-01-02T12:22:00.774Z",
+    "status": "PENDING"
   }
 ]
