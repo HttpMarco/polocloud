@@ -43,6 +43,8 @@
     "avatar": "https://cdn.discordapp.com/avatars/1222250424309121145/a7b903b3a8e6f9854909cb9bb489965d.png",
     "id": "1766347215683",
     "createdAt": "2025-12-21T20:00:15.683Z",
-    "status": "PENDING"
+    "status": "REJECTED",
+    "rejectedBy": "RECHERGG",
+    "rejectedAt": "2026-01-02T12:16:49.571Z"
   }
 ]
