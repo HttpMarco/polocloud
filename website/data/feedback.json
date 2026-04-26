@@ -58,5 +58,15 @@
     "status": "APPROVED",
     "approvedBy": "RECHERGG",
     "approvedAt": "2026-01-02T22:13:46.285Z"
+  },
+  {
+    "userId": "1415461763280932984",
+    "username": "mqxfps",
+    "rating": 5,
+    "description": "ich liebe diese cloud!",
+    "avatar": "https://cdn.discordapp.com/avatars/1415461763280932984/0b946654608dc14b77a272efa1fe8410.png",
+    "id": "1777207638589",
+    "createdAt": "2026-04-26T12:47:18.589Z",
+    "status": "PENDING"
   }
 ]
