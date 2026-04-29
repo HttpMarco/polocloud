@@ -70,5 +70,15 @@
     "status": "APPROVED",
     "approvedBy": "jakubbbdev",
     "approvedAt": "2026-04-28T08:33:10.595Z"
+  },
+  {
+    "userId": "390214021405736960",
+    "username": "crazj_",
+    "rating": 5,
+    "description": "w system\n\nonly thing but probably just my opinion is making it more \"infra-as-code\", no configs but rather like minestom",
+    "avatar": "https://cdn.discordapp.com/avatars/390214021405736960/bd6b02bb724d403d309d26b757ade0b7.png",
+    "id": "1777476308245",
+    "createdAt": "2026-04-29T15:25:08.245Z",
+    "status": "PENDING"
   }
 ]
